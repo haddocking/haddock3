@@ -1,0 +1,7 @@
+haddock.modules.analysis.caprieval.capri module
+===============================================
+
+.. automodule:: haddock.modules.analysis.caprieval.capri
+   :members:
+   :undoc-members:
+   :show-inheritance:

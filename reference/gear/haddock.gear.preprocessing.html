@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDB preprocessing &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Restart run" href="haddock.gear.restart_run.html" />
+    <link rel="prev" title="Prepare run" href="haddock.gear.prepare_run.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libs/haddock.libs.html">Libs Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="haddock.gear.html">Gear Reference</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="haddock.gear.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.clean_steps.html">Clean output from step folders</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.config.html">Configuration file I/O</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.expandable_parameters.html">Expandable parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.extend_run.html">Start from copy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.greetings.html">Greetings messages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.haddockmodel.html">HADDOCK models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.parameters.html">Parameters helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.prepare_run.html">Prepare run</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">PDB preprocessing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.restart_run.html">Restart run</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.validations.html">Validations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.yaml2cfg.html">YAML configs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.zerofill.html">Zero fill prefix</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.gear.html#module-haddock.gear">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
+          <li class="breadcrumb-item"><a href="haddock.gear.html">Gear Reference</a></li>
+      <li class="breadcrumb-item active">PDB preprocessing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/gear/haddock.gear.preprocessing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.gear.preprocessing">
+<span id="pdb-preprocessing"></span><h1>PDB preprocessing<a class="headerlink" href="#module-haddock.gear.preprocessing" title="Permalink to this heading"></a></h1>
+<p>Process input PDB files to ensure compatibility with HADDOCK3.</p>
+<p>This module checks and modifies PDB files for compatibility with
+HADDOCK3. There are three types of checks/modifications:</p>
+<ol class="arabic simple">
+<li><p>Performed to each PDB line-by-line, in a equal fashion of <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>.
+In fact, this step mostly uses the <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code> package.</p></li>
+<li><p>Performed on each PDB as a whole.</p></li>
+<li><p>Performed on all PDBs together.</p></li>
+</ol>
+<section id="main-functions">
+<h2>Main functions<a class="headerlink" href="#main-functions" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.process_pdbs" title="haddock.gear.preprocessing.process_pdbs"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_pdbs()</span></code></a></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">read_additional_residues()</span></code></p></li>
+</ul>
+</section>
+<section id="corrections-performed-on-1">
+<h2>Corrections performed on 1)<a class="headerlink" href="#corrections-performed-on-1" title="Permalink to this heading"></a></h2>
+<p>The following actions are perfomed sequentially over all PDBs:</p>
+<ol class="arabic simple">
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_keepcoord</span></code></p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_tidy</span></code> with <code class="docutils literal notranslate"><span class="pre">strict=True</span></code></p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-toos</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_element</span></code></p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_selaltloc</span></code></p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_pdb_occ</span></code> with <code class="docutils literal notranslate"><span class="pre">occupancy=1.00</span></code></p></li>
+<li><p>replace <code class="docutils literal notranslate"><span class="pre">MSE</span></code> to <code class="docutils literal notranslate"><span class="pre">MET</span></code></p></li>
+<li><p>replace <code class="docutils literal notranslate"><span class="pre">HSD</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code></p></li>
+<li><p>replace <code class="docutils literal notranslate"><span class="pre">HSE</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code></p></li>
+<li><p>replace <code class="docutils literal notranslate"><span class="pre">HID</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code></p></li>
+<li><p>replace <code class="docutils literal notranslate"><span class="pre">HIE</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code></p></li>
+<li><p>add_charges_to_ions, see <a class="reference internal" href="#haddock.gear.preprocessing.add_charges_to_ions" title="haddock.gear.preprocessing.add_charges_to_ions"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_charges_to_ions()</span></code></a></p></li>
+<li><p>convert <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> to <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> for those atoms that should be <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>.
+Considers the additional residues provided by the user.
+See <a class="reference internal" href="#haddock.gear.preprocessing.convert_ATOM_to_HETATM" title="haddock.gear.preprocessing.convert_ATOM_to_HETATM"><code class="xref py py-func docutils literal notranslate"><span class="pre">convert_ATOM_to_HETATM()</span></code></a>.</p></li>
+<li><p>convert <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> to <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> for those atoms that should be <code class="docutils literal notranslate"><span class="pre">ATOM</span></code>,</p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-toos</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_fixinsert</span></code>, with <code class="docutils literal notranslate"><span class="pre">option_list=[]</span></code>.</p></li>
+<li><p>remove unsupported <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>. Considers residues provided by the user.</p></li>
+<li><p>remove unsupported <code class="docutils literal notranslate"><span class="pre">ATOM</span></code>. Considers residues provided by the user.</p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_reatom</span></code>, start from <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_tidy</span></code> with <code class="docutils literal notranslate"><span class="pre">strict=True</span></code></p></li>
+</ol>
+</section>
+<section id="corrections-performed-on-2">
+<h2>Corrections performed on 2)<a class="headerlink" href="#corrections-performed-on-2" title="Permalink to this heading"></a></h2>
+<p>The following actions are performed sequentially for each PDB:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.models_should_have_the_same_labels" title="haddock.gear.preprocessing.models_should_have_the_same_labels"><code class="xref py py-func docutils literal notranslate"><span class="pre">models_should_have_the_same_labels()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.solve_no_chainID_no_segID" title="haddock.gear.preprocessing.solve_no_chainID_no_segID"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve_no_chainID_no_segID()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.homogenize_chains" title="haddock.gear.preprocessing.homogenize_chains"><code class="xref py py-func docutils literal notranslate"><span class="pre">homogenize_chains()</span></code></a></p></li>
+</ul>
+<p>Read the documentation of the above functions for details what they do.</p>
+</section>
+<section id="corrections-performed-on-3">
+<h2>Corrections performed on 3)<a class="headerlink" href="#corrections-performed-on-3" title="Permalink to this heading"></a></h2>
+<p>The following actions are performed to all PDBs together:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.correct_equal_chain_segids" title="haddock.gear.preprocessing.correct_equal_chain_segids"><code class="xref py py-func docutils literal notranslate"><span class="pre">correct_equal_chain_segids()</span></code></a></p></li>
+</ul>
+<p>Read the documentation of the above functions for details what they do.</p>
+</section>
+<section id="when-it-happens">
+<h2>When it happens<a class="headerlink" href="#when-it-happens" title="Permalink to this heading"></a></h2>
+<p>The PDB processing step is performed by default when reading the input
+molecules and copying them to the <cite>data/</cite> folder inside the run
+directory. When PDBs are processed, a copy of the original input PDBs is
+also stored in the <cite>data/</cite> folder.</p>
+<p>To deactivate this initial PDB processing, set <code class="docutils literal notranslate"><span class="pre">skip_preprocess</span> <span class="pre">=</span> <span class="pre">False</span></code>
+in the general parameters of the configuration file.</p>
+</section>
+<section id="additional-information">
+<h2>Additional information<a class="headerlink" href="#additional-information" title="Permalink to this heading"></a></h2>
+<p>If you are a developer and want to read more about the history of this
+preprocessing module, visit:</p>
+<p><a class="reference external" href="https://github.com/haddocking/haddock3/projects/16">https://github.com/haddocking/haddock3/projects/16</a></p>
+</section>
+<dl class="py exception">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.ModelsDifferError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">ModelsDifferError</span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#ModelsDifferError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.ModelsDifferError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/haddock.core.exceptions.html#haddock.core.exceptions.HaddockError" title="haddock.core.exceptions.HaddockError"><code class="xref py py-class docutils literal notranslate"><span class="pre">HaddockError</span></code></a></p>
+<p>MODELS of the PDB differ in atom labels.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.add_charges_to_ions">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">add_charges_to_ions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#add_charges_to_ions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.add_charges_to_ions" title="Permalink to this definition"></a></dt>
+<dd><p>Add charges to ions according to HADDOCK3 specifications.</p>
+<ol class="arabic simple">
+<li><p>Check if charge is correctly defined in residue name.
+If so, yield the line with correct residue name and charge at the
+end.</p></li>
+<li><p>Check if charge is correctly defined in atom name.</p></li>
+<li><p>Create charge from element. This might need manual edit in case
+the atom as an unconventional charge.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fhandler</strong> (<em>file-hanlder, list, or list-like</em>) – Lines of the PDB file. This function will consumes lines over a
+<code class="docutils literal notranslate"><span class="pre">for</span></code> loop; mind it if you use a generator.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>line</strong> (<em>str</em>) – Line-by-line: modified ion lines and any other line.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.convert_ATOM_to_HETATM">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_ATOM_to_HETATM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ATOM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HETATM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.12)"><span class="pre">Container</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'A2G',</span> <span class="pre">'ACD',</span> <span class="pre">'ACN',</span> <span class="pre">'ACT',</span> <span class="pre">'ADY',</span> <span class="pre">'AG',</span> <span class="pre">'AG1',</span> <span class="pre">'AL',</span> <span class="pre">'AL3',</span> <span class="pre">'AMN',</span> <span class="pre">'AR',</span> <span class="pre">'AS',</span> <span class="pre">'AU',</span> <span class="pre">'AU1',</span> <span class="pre">'AU3',</span> <span class="pre">'BDY',</span> <span class="pre">'BEN',</span> <span class="pre">'BGC',</span> <span class="pre">'BMA',</span> <span class="pre">'BR',</span> <span class="pre">'BR1',</span> <span class="pre">'BUT',</span> <span class="pre">'CA',</span> <span class="pre">'CA2',</span> <span class="pre">'CD',</span> <span class="pre">'CD2',</span> <span class="pre">'CHE',</span> <span class="pre">'CL',</span> <span class="pre">'CL1',</span> <span class="pre">'CO',</span> <span class="pre">'CO2',</span> <span class="pre">'CO3',</span> <span class="pre">'COH',</span> <span class="pre">'COM',</span> <span class="pre">'CR',</span> <span class="pre">'CR2',</span> <span class="pre">'CR3',</span> <span class="pre">'CS',</span> <span class="pre">'CS1',</span> <span class="pre">'CU',</span> <span class="pre">'CU1',</span> <span class="pre">'CU2',</span> <span class="pre">'CYA',</span> <span class="pre">'DFO',</span> <span class="pre">'DME',</span> <span class="pre">'DMS',</span> <span class="pre">'DOD',</span> <span class="pre">'EOL',</span> <span class="pre">'ETA',</span> <span class="pre">'ETH',</span> <span class="pre">'F',</span> <span class="pre">'F1',</span> <span class="pre">'FCA',</span> <span class="pre">'FCB',</span> <span class="pre">'FE',</span> <span class="pre">'FE2',</span> <span class="pre">'FE3',</span> <span class="pre">'FUC',</span> <span class="pre">'FUL',</span> <span class="pre">'GAL',</span> <span class="pre">'GLA',</span> <span class="pre">'GLC',</span> <span class="pre">'GXL',</span> <span class="pre">'HEB',</span> <span class="pre">'HEC',</span> <span class="pre">'HG',</span> <span class="pre">'HG1',</span> <span class="pre">'HG2',</span> <span class="pre">'HO',</span> <span class="pre">'HO3',</span> <span class="pre">'HOH',</span> <span class="pre">'I',</span> <span class="pre">'I1',</span> <span class="pre">'IMI',</span> <span class="pre">'IR',</span> <span class="pre">'IR3',</span> <span class="pre">'K',</span> <span class="pre">'K1',</span> <span class="pre">'KR',</span> <span class="pre">'LI1',</span> <span class="pre">'MAG',</span> <span class="pre">'MAN',</span> <span class="pre">'MER',</span> <span class="pre">'MG',</span> <span class="pre">'MG2',</span> <span class="pre">'MIY',</span> <span class="pre">'MN',</span> <span class="pre">'MN2',</span> <span class="pre">'MN3',</span> <span class="pre">'MO',</span> <span class="pre">'MO3',</span> <span class="pre">'NA',</span> <span class="pre">'NA1',</span> <span class="pre">'NAG',</span> <span class="pre">'NDG',</span> <span class="pre">'NGA',</span> <span class="pre">'NI',</span> <span class="pre">'NI2',</span> <span class="pre">'O2',</span> <span class="pre">'OS',</span> <span class="pre">'OS4',</span> <span class="pre">'PB',</span> <span class="pre">'PB2',</span> <span class="pre">'PHN',</span> <span class="pre">'PO4',</span> <span class="pre">'PT',</span> <span class="pre">'PT2',</span> <span class="pre">'RAM',</span> <span class="pre">'SIA',</span> <span class="pre">'SIB',</span> <span class="pre">'SO4',</span> <span class="pre">'SR',</span> <span class="pre">'SR2',</span> <span class="pre">'THS',</span> <span class="pre">'TIP',</span> <span class="pre">'TIP3',</span> <span class="pre">'U3',</span> <span class="pre">'U4',</span> <span class="pre">'URE',</span> <span class="pre">'V',</span> <span class="pre">'V2',</span> <span class="pre">'V3',</span> <span class="pre">'WAT',</span> <span class="pre">'WO4',</span> <span class="pre">'XE',</span> <span class="pre">'XYP',</span> <span class="pre">'YB',</span> <span class="pre">'YB2',</span> <span class="pre">'YB3',</span> <span class="pre">'ZN',</span> <span class="pre">'ZN2'}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.convert_ATOM_to_HETATM" title="Permalink to this definition"></a></dt>
+<dd><p>Convert <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> to <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> for HADDOCK3 supported <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../core/haddock.core.supported_molecules.html#haddock.core.supported_molecules.supported_HETATM" title="haddock.core.supported_molecules.supported_HETATM"><code class="xref py py-data docutils literal notranslate"><span class="pre">haddock.core.supported_molecules.supported_HETATM</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.convert_HETATM_to_ATOM">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_HETATM_to_ATOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HETATM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ATOM</span>&#160; <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.12)"><span class="pre">Container</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'A',</span> <span class="pre">'ACE',</span> <span class="pre">'ALA',</span> <span class="pre">'ALY',</span> <span class="pre">'ARG',</span> <span class="pre">'ASH',</span> <span class="pre">'ASN',</span> <span class="pre">'ASP',</span> <span class="pre">'C',</span> <span class="pre">'CFE',</span> <span class="pre">'CHX',</span> <span class="pre">'CSP',</span> <span class="pre">'CTN',</span> <span class="pre">'CYC',</span> <span class="pre">'CYF',</span> <span class="pre">'CYM',</span> <span class="pre">'CYS',</span> <span class="pre">'DA',</span> <span class="pre">'DC',</span> <span class="pre">'DDZ',</span> <span class="pre">'DG',</span> <span class="pre">'DJ',</span> <span class="pre">'DT',</span> <span class="pre">'DUM',</span> <span class="pre">'G',</span> <span class="pre">'GLH',</span> <span class="pre">'GLN',</span> <span class="pre">'GLU',</span> <span class="pre">'GLY',</span> <span class="pre">'HIS',</span> <span class="pre">'HLY',</span> <span class="pre">'HY3',</span> <span class="pre">'HYP',</span> <span class="pre">'ILE',</span> <span class="pre">'LEU',</span> <span class="pre">'LYS',</span> <span class="pre">'M3L',</span> <span class="pre">'MET',</span> <span class="pre">'MLY',</span> <span class="pre">'MLZ',</span> <span class="pre">'MSE',</span> <span class="pre">'NEP',</span> <span class="pre">'NME',</span> <span class="pre">'PHE',</span> <span class="pre">'PNS',</span> <span class="pre">'PRO',</span> <span class="pre">'PTR',</span> <span class="pre">'QSR',</span> <span class="pre">'SEC',</span> <span class="pre">'SEP',</span> <span class="pre">'SER',</span> <span class="pre">'SHA',</span> <span class="pre">'THR',</span> <span class="pre">'TOP',</span> <span class="pre">'TRP',</span> <span class="pre">'TYP',</span> <span class="pre">'TYR',</span> <span class="pre">'TYS',</span> <span class="pre">'U',</span> <span class="pre">'VAL'}</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.convert_HETATM_to_ATOM" title="Permalink to this definition"></a></dt>
+<dd><p>Convert <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> to <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> for HADDOCK3 supported <code class="docutils literal notranslate"><span class="pre">ATOM</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../core/haddock.core.supported_molecules.html#haddock.core.supported_molecules.supported_ATOM" title="haddock.core.supported_molecules.supported_ATOM"><code class="xref py py-data docutils literal notranslate"><span class="pre">haddock.core.supported_molecules.supported_ATOM</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.convert_record">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.12)"><span class="pre">Container</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#convert_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.convert_record" title="Permalink to this definition"></a></dt>
+<dd><p>Convert on record to another for specified residues.</p>
+<p>For example, replace <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> by <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> for specific residues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fhandler</strong> (<em>list-like</em>) – Contains lines of file.</p></li>
+<li><p><strong>record</strong> (<em>str</em>) – The PDB RECORD to match; for example, <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> or <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>.</p></li>
+<li><p><strong>other_record</strong> (<em>str</em>) – The PDB RECORD to replace with; for example, <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> or <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>.</p></li>
+<li><p><strong>residues</strong> (<em>list, tuple, or set</em>) – List of residues to replace the record.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.correct_equal_chain_segids">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">correct_equal_chain_segids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#correct_equal_chain_segids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.correct_equal_chain_segids" title="Permalink to this definition"></a></dt>
+<dd><p>Correct for repeated chainID in the input PDB files.</p>
+<p>Repeated chain IDs are replaced by an upper case character (<code class="docutils literal notranslate"><span class="pre">[A-Z]</span></code>)
+in order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>structures</strong> (<em>list of lists of str</em>) – The input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of lists of str</em> – The new structures.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.homogenize_chains">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">homogenize_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#homogenize_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.homogenize_chains" title="Permalink to this definition"></a></dt>
+<dd><p>Homogenize chainIDs within the same PDB.</p>
+<p>If there are multiple chain identifiers in the PDB file, make all
+them equal to the first one.</p>
+<p>ChainIDs are copied to segIDs afterwards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em> – The modified lines.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.models_should_have_the_same_labels">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">models_should_have_the_same_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#models_should_have_the_same_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.models_should_have_the_same_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm models have the same labels.</p>
+<p>In an ensemble of structures, where the PDB file has multiple MODELS,
+all models should have the same labels; hence the same number and
+typ of atoms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lines</strong> (<em>list of strings.</em>) – List containing the lines of the PDB file. Must NOT be a generator.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em> – The original <code class="docutils literal notranslate"><span class="pre">lines</span></code> in case no errors are found.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#haddock.gear.preprocessing.ModelsDifferError" title="haddock.gear.preprocessing.ModelsDifferError"><strong>ModelsDifferError</strong></a> – In case MODELS differ. Reports on which models differ.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.process_pdbs">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">process_pdbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputdata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_supported_residues</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#process_pdbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.process_pdbs" title="Permalink to this definition"></a></dt>
+<dd><p>Process PDB file contents for compatibility with HADDOCK3.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>inputdata</strong> (<em>list of (str, path, list of str [lines], file handler)</em>) – A <strong>flat</strong> list where in each index it can contain:</p>
+<ul class="simple">
+<li><p>file objects</p></li>
+<li><p>paths to files</p></li>
+<li><p>strings representing paths</p></li>
+<li><p>lists or tuples of lines</p></li>
+</ul>
+<p>The above types can be mixed in the input list.</p>
+<p>Files are read to lines in a list. Line separators are stripped.</p>
+<p>Do not provide nested lists with lists containing paths inside
+lists.</p>
+</li>
+<li><p><strong>dry</strong> (<em>bool</em>) – Perform a dry run. That is, does not change anything, and just
+report.</p></li>
+<li><p><strong>user_supported_residues</strong> (<em>list, tuple, or set</em>) – The new residues that are allowed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of (list of str)</em> – The corrected (processed) PDB content in the same order as
+<code class="docutils literal notranslate"><span class="pre">inputdata</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.remove_unsupported_atom">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'A',</span> <span class="pre">'ACE',</span> <span class="pre">'ALA',</span> <span class="pre">'ALY',</span> <span class="pre">'ARG',</span> <span class="pre">'ASH',</span> <span class="pre">'ASN',</span> <span class="pre">'ASP',</span> <span class="pre">'C',</span> <span class="pre">'CFE',</span> <span class="pre">'CHX',</span> <span class="pre">'CSP',</span> <span class="pre">'CTN',</span> <span class="pre">'CYC',</span> <span class="pre">'CYF',</span> <span class="pre">'CYM',</span> <span class="pre">'CYS',</span> <span class="pre">'DA',</span> <span class="pre">'DC',</span> <span class="pre">'DDZ',</span> <span class="pre">'DG',</span> <span class="pre">'DJ',</span> <span class="pre">'DT',</span> <span class="pre">'DUM',</span> <span class="pre">'G',</span> <span class="pre">'GLH',</span> <span class="pre">'GLN',</span> <span class="pre">'GLU',</span> <span class="pre">'GLY',</span> <span class="pre">'HIS',</span> <span class="pre">'HLY',</span> <span class="pre">'HY3',</span> <span class="pre">'HYP',</span> <span class="pre">'ILE',</span> <span class="pre">'LEU',</span> <span class="pre">'LYS',</span> <span class="pre">'M3L',</span> <span class="pre">'MET',</span> <span class="pre">'MLY',</span> <span class="pre">'MLZ',</span> <span class="pre">'MSE',</span> <span class="pre">'NEP',</span> <span class="pre">'NME',</span> <span class="pre">'PHE',</span> <span class="pre">'PNS',</span> <span class="pre">'PRO',</span> <span class="pre">'PTR',</span> <span class="pre">'QSR',</span> <span class="pre">'SEC',</span> <span class="pre">'SEP',</span> <span class="pre">'SER',</span> <span class="pre">'SHA',</span> <span class="pre">'THR',</span> <span class="pre">'TOP',</span> <span class="pre">'TRP',</span> <span class="pre">'TYP',</span> <span class="pre">'TYR',</span> <span class="pre">'TYS',</span> <span class="pre">'U',</span> <span class="pre">'VAL'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ATOM'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_atom" title="Permalink to this definition"></a></dt>
+<dd><p>Remove unsupported molecules in <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> lines.</p>
+<p>Uses <a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="haddock.gear.preprocessing.remove_unsupported_molecules"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_molecules()</span></code></a> by populating its
+<code class="docutils literal notranslate"><span class="pre">haddock3_define</span></code> and <code class="docutils literal notranslate"><span class="pre">line_startswith</span></code> parameters.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_hetatm" title="haddock.gear.preprocessing.remove_unsupported_hetatm"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_hetatm()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.remove_unsupported_hetatm">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_hetatm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'A2G',</span> <span class="pre">'ACD',</span> <span class="pre">'ACN',</span> <span class="pre">'ACT',</span> <span class="pre">'ADY',</span> <span class="pre">'AG',</span> <span class="pre">'AG1',</span> <span class="pre">'AL',</span> <span class="pre">'AL3',</span> <span class="pre">'AMN',</span> <span class="pre">'AR',</span> <span class="pre">'AS',</span> <span class="pre">'AU',</span> <span class="pre">'AU1',</span> <span class="pre">'AU3',</span> <span class="pre">'BDY',</span> <span class="pre">'BEN',</span> <span class="pre">'BGC',</span> <span class="pre">'BMA',</span> <span class="pre">'BR',</span> <span class="pre">'BR1',</span> <span class="pre">'BUT',</span> <span class="pre">'CA',</span> <span class="pre">'CA2',</span> <span class="pre">'CD',</span> <span class="pre">'CD2',</span> <span class="pre">'CHE',</span> <span class="pre">'CL',</span> <span class="pre">'CL1',</span> <span class="pre">'CO',</span> <span class="pre">'CO2',</span> <span class="pre">'CO3',</span> <span class="pre">'COH',</span> <span class="pre">'COM',</span> <span class="pre">'CR',</span> <span class="pre">'CR2',</span> <span class="pre">'CR3',</span> <span class="pre">'CS',</span> <span class="pre">'CS1',</span> <span class="pre">'CU',</span> <span class="pre">'CU1',</span> <span class="pre">'CU2',</span> <span class="pre">'CYA',</span> <span class="pre">'DFO',</span> <span class="pre">'DME',</span> <span class="pre">'DMS',</span> <span class="pre">'DOD',</span> <span class="pre">'EOL',</span> <span class="pre">'ETA',</span> <span class="pre">'ETH',</span> <span class="pre">'F',</span> <span class="pre">'F1',</span> <span class="pre">'FCA',</span> <span class="pre">'FCB',</span> <span class="pre">'FE',</span> <span class="pre">'FE2',</span> <span class="pre">'FE3',</span> <span class="pre">'FUC',</span> <span class="pre">'FUL',</span> <span class="pre">'GAL',</span> <span class="pre">'GLA',</span> <span class="pre">'GLC',</span> <span class="pre">'GXL',</span> <span class="pre">'HEB',</span> <span class="pre">'HEC',</span> <span class="pre">'HG',</span> <span class="pre">'HG1',</span> <span class="pre">'HG2',</span> <span class="pre">'HO',</span> <span class="pre">'HO3',</span> <span class="pre">'HOH',</span> <span class="pre">'I',</span> <span class="pre">'I1',</span> <span class="pre">'IMI',</span> <span class="pre">'IR',</span> <span class="pre">'IR3',</span> <span class="pre">'K',</span> <span class="pre">'K1',</span> <span class="pre">'KR',</span> <span class="pre">'LI1',</span> <span class="pre">'MAG',</span> <span class="pre">'MAN',</span> <span class="pre">'MER',</span> <span class="pre">'MG',</span> <span class="pre">'MG2',</span> <span class="pre">'MIY',</span> <span class="pre">'MN',</span> <span class="pre">'MN2',</span> <span class="pre">'MN3',</span> <span class="pre">'MO',</span> <span class="pre">'MO3',</span> <span class="pre">'NA',</span> <span class="pre">'NA1',</span> <span class="pre">'NAG',</span> <span class="pre">'NDG',</span> <span class="pre">'NGA',</span> <span class="pre">'NI',</span> <span class="pre">'NI2',</span> <span class="pre">'O2',</span> <span class="pre">'OS',</span> <span class="pre">'OS4',</span> <span class="pre">'PB',</span> <span class="pre">'PB2',</span> <span class="pre">'PHN',</span> <span class="pre">'PO4',</span> <span class="pre">'PT',</span> <span class="pre">'PT2',</span> <span class="pre">'RAM',</span> <span class="pre">'SIA',</span> <span class="pre">'SIB',</span> <span class="pre">'SO4',</span> <span class="pre">'SR',</span> <span class="pre">'SR2',</span> <span class="pre">'THS',</span> <span class="pre">'TIP',</span> <span class="pre">'TIP3',</span> <span class="pre">'U3',</span> <span class="pre">'U4',</span> <span class="pre">'URE',</span> <span class="pre">'V',</span> <span class="pre">'V2',</span> <span class="pre">'V3',</span> <span class="pre">'WAT',</span> <span class="pre">'WO4',</span> <span class="pre">'XE',</span> <span class="pre">'XYP',</span> <span class="pre">'YB',</span> <span class="pre">'YB2',</span> <span class="pre">'YB3',</span> <span class="pre">'ZN',</span> <span class="pre">'ZN2'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HETATM'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_hetatm" title="Permalink to this definition"></a></dt>
+<dd><p>Remove unsupported molecules in <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> lines.</p>
+<p>Uses <a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="haddock.gear.preprocessing.remove_unsupported_molecules"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_molecules()</span></code></a> by populating its
+<code class="docutils literal notranslate"><span class="pre">haddock3_define</span></code> and <code class="docutils literal notranslate"><span class="pre">line_startswith</span></code> parameters.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_atom" title="haddock.gear.preprocessing.remove_unsupported_atom"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_atom()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.remove_unsupported_molecules">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_molecules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">('ATOM',</span> <span class="pre">'HETATM')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#remove_unsupported_molecules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="Permalink to this definition"></a></dt>
+<dd><p>Remove HADDOCK3 unsupported molecules.</p>
+<p>This function is abstract and you need to provide the set of
+residues supported by HADDOCK3. See parameters.</p>
+<p>Residues not provided in <code class="docutils literal notranslate"><span class="pre">haddock3_defined</span></code> and <code class="docutils literal notranslate"><span class="pre">user_defined</span></code>
+are removed from the PDB lines.</p>
+<p>Other lines are yieled unmodified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lines</strong> (<em>list or list-like</em>) – Lines of the PDB file. This function will consumes lines over a
+<code class="docutils literal notranslate"><span class="pre">for</span></code> loop; mind it if you use a generator.</p></li>
+<li><p><strong>haddock3_defined</strong> (<em>set</em>) – Set of residues supported by HADDOCK3.
+Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>user_defined</strong> (<em>set</em>) – An additional set of allowed residues given by the user.
+Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>line_startswith</strong> (<em>tuple</em>) – The lines to consider. Defaults to <code class="docutils literal notranslate"><span class="pre">(&quot;ATOM&quot;,</span> <span class="pre">&quot;HETATM&quot;)</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>line</strong> (<em>str</em>) – Line-by-line.
+Lines for residues not supported are <em>not</em> yielded.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>Other functions use this function to create context.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_atom" title="haddock.gear.preprocessing.remove_unsupported_atom"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_atom()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_hetatm" title="haddock.gear.preprocessing.remove_unsupported_hetatm"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_hetatm()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HETATM_to_ATOM">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HETATM_to_ATOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#replace_HETATM_to_ATOM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.replace_HETATM_to_ATOM" title="Permalink to this definition"></a></dt>
+<dd><p>Replace record <cite>HETATM</cite> to <cite>ATOM</cite> for <cite>res</cite>.</p>
+<p>Do not alter other lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fhanlder</strong> (<em>file handler or list of lines</em>) – List-like of file lines. Consumes over a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop.</p></li>
+<li><p><strong>res</strong> (<em>str</em>) – Residue name to match for the substitution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Yield line-by-line.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HID_to_HIS">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HID_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HID_to_HIS" title="Permalink to this definition"></a></dt>
+<dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HID</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.replace_residue" title="haddock.gear.preprocessing.replace_residue"><code class="xref py py-func docutils literal notranslate"><span class="pre">replace_residue()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HIE_to_HIS">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HIE_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HIE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HIE_to_HIS" title="Permalink to this definition"></a></dt>
+<dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HIE</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.replace_residue" title="haddock.gear.preprocessing.replace_residue"><code class="xref py py-func docutils literal notranslate"><span class="pre">replace_residue()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HSD_to_HIS">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HSD_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HSD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HSD_to_HIS" title="Permalink to this definition"></a></dt>
+<dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HSD</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.replace_residue" title="haddock.gear.preprocessing.replace_residue"><code class="xref py py-func docutils literal notranslate"><span class="pre">replace_residue()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HSE_to_HIS">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HSE_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HSE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HSE_to_HIS" title="Permalink to this definition"></a></dt>
+<dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HSE</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.replace_residue" title="haddock.gear.preprocessing.replace_residue"><code class="xref py py-func docutils literal notranslate"><span class="pre">replace_residue()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_MSE_to_MET">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_MSE_to_MET</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MSE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MET'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.preprocessing.replace_MSE_to_MET" title="Permalink to this definition"></a></dt>
+<dd><p>Replace <code class="docutils literal notranslate"><span class="pre">MSE</span></code> to <code class="docutils literal notranslate"><span class="pre">MET</span></code>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.replace_residue" title="haddock.gear.preprocessing.replace_residue"><code class="xref py py-func docutils literal notranslate"><span class="pre">replace_residue()</span></code></a></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_residue">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_residue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#replace_residue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.replace_residue" title="Permalink to this definition"></a></dt>
+<dd><p>Replace residue by another and changes <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> to <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> if needed.</p>
+<p>Do not alter other lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fhanlder</strong> (<em>file handler or list of lines</em>) – List-like of file lines. Consumes over a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop.</p></li>
+<li><p><strong>resin</strong> (<em>str</em>) – Residue name to match for the substitution.</p></li>
+<li><p><strong>resout</strong> (<em>str</em>) – Name of the new residue. Renames <code class="docutils literal notranslate"><span class="pre">resin</span></code> to <code class="docutils literal notranslate"><span class="pre">resout</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Yield line-by-line.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.preprocessing.replace_HETATM_to_ATOM" title="haddock.gear.preprocessing.replace_HETATM_to_ATOM"><code class="xref py py-func docutils literal notranslate"><span class="pre">replace_HETATM_to_ATOM()</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pdb_rplresname</span></code> from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code></p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.preprocessing.solve_no_chainID_no_segID">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">solve_no_chainID_no_segID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#solve_no_chainID_no_segID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.solve_no_chainID_no_segID" title="Permalink to this definition"></a></dt>
+<dd><p>Solve inconsistencies with chainID and segID.</p>
+<p>If segID is non-existant, copy chainID over segID, and vice-versa.
+If none are present, adds an upper case char starting from A. This
+char is not repeated until the alphabet exhausts.
+If chainIDs and segIDs differ, copy chainIDs over segIDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lines</strong> (<em>list of str</em>) – The lines of a PDB file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list</em> – With new lines. Or the input ones if no modification was made.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.gear.prepare_run.html" class="btn btn-neutral float-left" title="Prepare run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.gear.restart_run.html" class="btn btn-neutral float-right" title="Restart run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

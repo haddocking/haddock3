@@ -1,0 +1,23 @@
+RMSD Clustering module
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.clustrmsd.clustrmsd
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.clustrmsd
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/clustrmsd.rst
+

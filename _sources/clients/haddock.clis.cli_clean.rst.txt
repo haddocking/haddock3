@@ -1,0 +1,7 @@
+Clean HADDOCK3 runs
+==============================
+
+.. automodule:: haddock.clis.cli_clean
+   :members:
+   :undoc-members:
+   :show-inheritance:

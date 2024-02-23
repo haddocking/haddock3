@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.clis.cli_cfg &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.clis.cli_cfg</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.clis.cli_cfg</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Extract the default configuration file for each module.</span>
+
+<span class="sd">By default presents the parameters from the three expertise levels:</span>
+<span class="sd">    `basic`, `intermediate`, and `guru`.</span>
+
+<span class="sd">Usage::</span>
+
+<span class="sd">    haddock3-cfg  # prints only the general parametes</span>
+<span class="sd">    haddock3-cfg -g  # same as above</span>
+<span class="sd">    haddock3-cfg -m MODULE  # prints only the module parameters</span>
+<span class="sd">    haddock3-cfg -m MODULE -l LEVEL</span>
+<span class="sd">    haddock3-cfg -m topoaa -l all</span>
+<span class="sd">    haddock3-cfg -m rigidbody -l all -g  # prints the module and the globals</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ArgumentParser</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">ExpertLevel</span><span class="p">,</span>
+    <span class="n">Namespace</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">modules_category</span>
+
+
+<span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+    <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;HADDOCK3 config retriever&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">,</span>
+    <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+    <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The module for which you want to retrieve the default configuration.&quot;</span><span class="p">,</span>
+    <span class="n">choices</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">modules_category</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="s2">&quot;-l&quot;</span><span class="p">,</span>
+    <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;explevel&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The expertise level of the parameters. Defaults to &quot;all&quot;.&#39;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+    <span class="n">choices</span><span class="o">=</span><span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,),</span>
+<span class="p">)</span>
+
+<span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="s2">&quot;-g&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--globals&quot;</span><span class="p">,</span>
+    <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;global_params&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Add also the optional module&#39;s general parameters.&quot;</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+    <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;--details&quot;</span><span class="p">,</span>
+    <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;details&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Add detailed parameter description found in &#39;long&#39;.&quot;</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_ap</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">ap</span>
+
+
+<span class="c1"># command-line client helper functions</span>
+<span class="c1"># load_args, cli, maincli</span>
+<div class="viewcode-block" id="load_args"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_cfg.html#haddock.clis.cli_cfg.load_args">[docs]</a><span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="cli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_cfg.html#haddock.clis.cli_cfg.cli">[docs]</a><span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
+
+    <span class="c1"># I didn&#39;t want to to have the `--globals` param as a negative parameter</span>
+    <span class="c1"># (&#39;store_false&#39;). However, `module` and `globals` can&#39;t both be false.</span>
+    <span class="c1"># In order for the commands below performing the same:</span>
+    <span class="c1">#</span>
+    <span class="c1"># haddock3-cfg</span>
+    <span class="c1"># haddock3-cfg -g</span>
+    <span class="c1">#</span>
+    <span class="c1"># we need this quick if statement. Which basically adjust the argparse to</span>
+    <span class="c1"># the default values in the main function.</span>
+    <span class="c1"># @joaomcteixeira</span>
+    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">global_params</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">cmd</span><span class="o">.</span><span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">global_params</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="maincli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_cfg.html#haddock.clis.cli_cfg.maincli">[docs]</a><span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
+    <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_cfg.html#haddock.clis.cli_cfg.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+    <span class="n">global_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the defaults in the form of a run configuration file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    module : str or None</span>
+<span class="sd">        The module name to extract the defaults from.</span>
+<span class="sd">        If ``None`` given, we expect ``global_params`` to be ``True``,</span>
+<span class="sd">        otherwise nothing will be printed.</span>
+
+<span class="sd">    explevel : str</span>
+<span class="sd">        Filter the parameters according to the expert level. Output all</span>
+<span class="sd">        parameters that belong to the referred level or below. Choices</span>
+<span class="sd">        are: all, easy, expert, and guru.</span>
+
+<span class="sd">    global_params : bool</span>
+<span class="sd">        Whether to add the module&#39;s general global parameter. If</span>
+<span class="sd">        ``True`` and ``module`` is ``None``, outputs only the general</span>
+<span class="sd">        parameters.</span>
+
+<span class="sd">    details : bool</span>
+<span class="sd">        Whether to add the &#39;long&#39; description of each parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">modules_defaults_path</span>
+    <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">yaml2cfg_text</span>
+    <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
+
+    <span class="n">new_config</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">global_params</span><span class="p">:</span>
+        <span class="n">general_cfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">modules_defaults_path</span><span class="p">)</span>
+        <span class="n">general_params_str</span> <span class="o">=</span> <span class="n">yaml2cfg_text</span><span class="p">(</span>
+            <span class="n">general_cfg</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">explevel</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+            <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;# The parameters below are optional parameters. &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;# They can either be used as global parameters or as part &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;# of the module&#39;s parameters&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">new_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">comment</span><span class="p">,</span>
+                <span class="n">general_params_str</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">module</span><span class="p">:</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;haddock&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;modules&quot;</span><span class="p">,</span>
+                <span class="n">modules_category</span><span class="p">[</span><span class="n">module</span><span class="p">],</span>
+                <span class="n">module</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">module_lib</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">module_lib</span><span class="o">.</span><span class="n">DEFAULT_CONFIG</span>
+
+        <span class="n">ycfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="n">module_config</span> <span class="o">=</span> <span class="n">yaml2cfg_text</span><span class="p">(</span><span class="n">ycfg</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">explevel</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">)</span>
+
+        <span class="n">new_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">new_config</span><span class="p">,</span> <span class="n">module_config</span><span class="p">))</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">new_config</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">maincli</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

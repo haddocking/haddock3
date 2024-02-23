@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAPRI Evaluation module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="haddock.modules.analysis.caprieval.capri module" href="haddock.modules.analysis.caprieval.capri.html" />
+    <link rel="prev" title="haddock.modules.analysis.alascan.scan module" href="haddock.modules.analysis.alascan.scan.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Analysis Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.alascan.html">Alanine Scanning module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">CAPRI Evaluation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustfcc.html">FCC Clustering module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustrmsd.html">RMSD Clustering module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.contactmap.html">Contact Map module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.ilrmsdmatrix.html">Interface Ligand RMSD Matrix calculation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.rmsdmatrix.html">RMSD Matrix calculation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.seletop.html">Selection of top models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.seletopclusts.html">Selection of top clusters module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#module-haddock.modules.analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Modules</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Analysis Modules</a></li>
+      <li class="breadcrumb-item active">CAPRI Evaluation module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/analysis/haddock.modules.analysis.caprieval.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="capri-evaluation-module">
+<h1>CAPRI Evaluation module<a class="headerlink" href="#capri-evaluation-module" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="haddock.modules.analysis.caprieval.capri.html">haddock.modules.analysis.caprieval.capri module</a></li>
+</ul>
+</div>
+</section>
+<section id="module-haddock.modules.analysis.caprieval">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.analysis.caprieval" title="Permalink to this heading"></a></h2>
+<p>Calculate CAPRI metrics.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.caprieval.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ignore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/analysis/caprieval/defaults.yaml')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">everything</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a></p>
+<p>HADDOCK3 module to calculate the CAPRI metrics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.confirm_installation">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm if contact executable is compiled.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'caprieval'</span></em><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="default-parameters">
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
+<section id="easy">
+<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
+<section id="alignment-method">
+<h4>alignment_method<a class="headerlink" href="#alignment-method" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘sequence’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Alignment method used to match the numbering.</div>
+<div class="line"><em>short description</em>: Which alignment method should be used to match the numbering.</div>
+<div class="line"><em>long description</em>: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results for structures that are too different, for that use</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="clt-threshold">
+<h4>clt_threshold<a class="headerlink" href="#clt-threshold" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 4</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Threshold (n) used for the average evaluation in the cluster-based output</div>
+<div class="line"><em>short description</em>: Threshold (n) used for the average evaluation in the cluster-based output.</div>
+<div class="line"><em>long description</em>: Threshold (n) used for the average evaluation in the cluster-based output.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="dockq">
+<h4>dockq<a class="headerlink" href="#dockq" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate DockQ</div>
+<div class="line"><em>short description</em>: Evaluate DockQ.</div>
+<div class="line"><em>long description</em>: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI criteria, a combination of i-RMSD, l-RMSD and FNAT value. For details check the DockQ publication <cite>DOI:10.1371/journal.pone.0161879</cite></div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="fnat">
+<h4>fnat<a class="headerlink" href="#fnat" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate FNAT</div>
+<div class="line"><em>short description</em>: Performs FNAT calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Fraction of Native Contacts. This evaluates how many contacts observed in the reference are present in the model. The distance cutoff used to define intermolecular contacts is defined by the fnat_cutoff parameter.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="fnat-cutoff">
+<h4>fnat_cutoff<a class="headerlink" href="#fnat-cutoff" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 5.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Distance cutoff (Å) used to define interface contacts.</div>
+<div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
+<div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ilrmsd">
+<h4>ilrmsd<a class="headerlink" href="#ilrmsd" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate I-L-RMSD</div>
+<div class="line"><em>short description</em>: Performs Interface Ligand RMSD calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms of the ligand (defined by the ligand_chains parameter).</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="irmsd">
+<h4>irmsd<a class="headerlink" href="#irmsd" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate I-RMSD</div>
+<div class="line"><em>short description</em>: Performs Interface RMSD calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Interface Root Mean Square Deviation. This calculate the RMSD of interface backbone atoms after fitting on the interface backbone atoms. The interface is idenfied based on intermolecular contacts shorter than the defined irmsd_cutoff.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="irmsd-cutoff">
+<h4>irmsd_cutoff<a class="headerlink" href="#irmsd-cutoff" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Distance cutoff (Å) used to define interface residues.</div>
+<div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.</div>
+<div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-chains">
+<h4>ligand_chains<a class="headerlink" href="#ligand-chains" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: [‘B’]</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: Ligand ChainIDs</div>
+<div class="line"><em>short description</em>: Ligand ChainIDs to be considered for the RMSD calculations.</div>
+<div class="line"><em>long description</em>: Ligand ChainIDs to be considered for the RMSD calculations. This determines which chains will be treated as the ligand for the L-RMSD and for I-L-RMSD.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="lovoalign-exec">
+<h4>lovoalign_exec<a class="headerlink" href="#lovoalign-exec" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Location (path) of the LovoAlign executable</div>
+<div class="line"><em>short description</em>: Location (path) of the LovoAlign executable.</div>
+<div class="line"><em>long description</em>: Location (path) of the LovoAlign executable.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="lrmsd">
+<h4>lrmsd<a class="headerlink" href="#lrmsd" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate L-RMSD</div>
+<div class="line"><em>short description</em>: Performs Ligand RMSD calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chains parameter). Superposition and RMSD calculations are done on backbone heavy atoms.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="receptor-chain">
+<h4>receptor_chain<a class="headerlink" href="#receptor-chain" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘A’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Receptor ChainID</div>
+<div class="line"><em>short description</em>: Receptor ChainID to be considered for the RMSD calculations.</div>
+<div class="line"><em>long description</em>: Receptor ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the receptor for the L-RMSD and for I-L-RMSD.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="reference-fname">
+<h4>reference_fname<a class="headerlink" href="#reference-fname" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Reference structure</div>
+<div class="line"><em>short description</em>: Structure to be used when calculating the CAPRI metrics.</div>
+<div class="line"><em>long description</em>: Reference tructure to be used when calculating the CAPRI metrics. If none is defined then the lowest scoring model is selected by default.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="sort-ascending">
+<h4>sort_ascending<a class="headerlink" href="#sort-ascending" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Sort in ascending order</div>
+<div class="line"><em>short description</em>: Sort in ascending order.</div>
+<div class="line"><em>long description</em>: Sort in ascending order.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="sortby">
+<h4>sortby<a class="headerlink" href="#sortby" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘score’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Sort the structures/clusters in the output file by this value</div>
+<div class="line"><em>short description</em>: Which value should be used to sort the output.</div>
+<div class="line"><em>long description</em>: Which value should be used to sort the output, the output table will be sorted accordingly.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.modules.analysis.alascan.scan.html" class="btn btn-neutral float-left" title="haddock.modules.analysis.alascan.scan module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.modules.analysis.caprieval.capri.html" class="btn btn-neutral float-right" title="haddock.modules.analysis.caprieval.capri module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

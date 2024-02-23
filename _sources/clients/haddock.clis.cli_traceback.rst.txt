@@ -1,0 +1,7 @@
+PDB Traceback client
+==================================
+
+.. automodule:: haddock.clis.cli_traceback
+   :members:
+   :undoc-members:
+   :show-inheritance:

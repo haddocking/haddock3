@@ -1,0 +1,7 @@
+Expandable parameters
+==========================================
+
+.. automodule:: haddock.gear.expandable_parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+HADDOCK3 MPI Run
+============================
+
+.. automodule:: haddock.clis.cli_mpi
+   :members:
+   :undoc-members:
+   :show-inheritance:

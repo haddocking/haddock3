@@ -1,0 +1,7 @@
+Generate restraints
+===================================
+
+.. automodule:: haddock.clis.cli_restraints
+   :members:
+   :undoc-members:
+   :show-inheritance:

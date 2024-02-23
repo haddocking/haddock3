@@ -1,7 +1,19 @@
 Topology Modules
-================
+================================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 1
 
-   topoaa
+   haddock.modules.topology.topoaa
+   haddock.modules.topology.topocg
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.topology
+   :members:
+   :undoc-members:
+   :show-inheritance:

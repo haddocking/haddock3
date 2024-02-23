@@ -1,0 +1,15 @@
+Selection of top models module
+========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.seletop
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/seletop.rst
+

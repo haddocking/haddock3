@@ -1,9 +1,20 @@
 Model Refinement Modules
-========================
+==================================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 1
 
-   flexref
-   emref
-   mdref
+   haddock.modules.refinement.emref
+   haddock.modules.refinement.flexref
+   haddock.modules.refinement.mdref
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.refinement
+   :members:
+   :undoc-members:
+   :show-inheritance:

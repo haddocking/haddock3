@@ -1,0 +1,7 @@
+Supported molecules
+========================================
+
+.. automodule:: haddock.core.supported_molecules
+   :members:
+   :undoc-members:
+   :show-inheritance:

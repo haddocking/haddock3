@@ -1,0 +1,7 @@
+YAML configs
+============================
+
+.. automodule:: haddock.gear.yaml2cfg
+   :members:
+   :undoc-members:
+   :show-inheritance:

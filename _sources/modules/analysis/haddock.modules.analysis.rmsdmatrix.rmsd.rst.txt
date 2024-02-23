@@ -1,0 +1,7 @@
+haddock.modules.analysis.rmsdmatrix.rmsd module
+===============================================
+
+.. automodule:: haddock.modules.analysis.rmsdmatrix.rmsd
+   :members:
+   :undoc-members:
+   :show-inheritance:

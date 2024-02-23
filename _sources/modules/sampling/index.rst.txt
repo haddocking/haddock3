@@ -1,9 +1,20 @@
 Sampling Modules
-================
+================================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 1
 
-   rigidbody
-   lightdock
-   gdock
+   haddock.modules.sampling.gdock
+   haddock.modules.sampling.lightdock
+   haddock.modules.sampling.rigidbody
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.sampling
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+Prepare run
+================================
+
+.. automodule:: haddock.gear.prepare_run
+   :members:
+   :undoc-members:
+   :show-inheritance:

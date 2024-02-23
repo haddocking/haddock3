@@ -1,12 +1,26 @@
 Analysis Modules
-================
+================================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 1
 
-   caprieval
-   clustfcc
-   clustrmsd
-   rmsdmatrix
-   seletop
-   seletopclusts
+   haddock.modules.analysis.alascan
+   haddock.modules.analysis.caprieval
+   haddock.modules.analysis.clustfcc
+   haddock.modules.analysis.clustrmsd
+   haddock.modules.analysis.contactmap
+   haddock.modules.analysis.ilrmsdmatrix
+   haddock.modules.analysis.rmsdmatrix
+   haddock.modules.analysis.seletop
+   haddock.modules.analysis.seletopclusts
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:

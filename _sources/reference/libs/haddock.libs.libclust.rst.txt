@@ -1,0 +1,7 @@
+libclust: functions related to clustering
+============================
+
+.. automodule:: haddock.libs.libclust
+   :members:
+   :undoc-members:
+   :show-inheritance:

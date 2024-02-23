@@ -1,0 +1,7 @@
+haddock.modules.analysis.alascan.scan module
+============================================
+
+.. automodule:: haddock.modules.analysis.alascan.scan
+   :members:
+   :undoc-members:
+   :show-inheritance:

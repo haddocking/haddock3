@@ -1,0 +1,10 @@
+haddock.modules.topology.topocg package
+=======================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.topology.topocg
+   :members:
+   :undoc-members:
+   :show-inheritance:

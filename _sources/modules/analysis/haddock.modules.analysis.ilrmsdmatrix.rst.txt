@@ -1,0 +1,23 @@
+Interface Ligand RMSD Matrix calculation module
+=============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.ilrmsdmatrix.ilrmsd
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.ilrmsdmatrix
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/ilrmsdmatrix.rst
+

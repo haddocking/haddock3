@@ -1,0 +1,7 @@
+libinteractive: functions related to interactive tasks
+==================================
+
+.. automodule:: haddock.libs.libinteractive
+   :members:
+   :undoc-members:
+   :show-inheritance:

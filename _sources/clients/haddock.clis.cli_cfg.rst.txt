@@ -1,0 +1,7 @@
+Retrieve config
+============================
+
+.. automodule:: haddock.clis.cli_cfg
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.clis.re.clustrmsd &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.clis.re.clustrmsd</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.clis.re.clustrmsd</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;haddock3-re clustrmsd subcommand.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">save</span> <span class="k">as</span> <span class="n">save_config</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_cluster_info</span><span class="p">,</span>
+    <span class="n">clustrmsd_tolerance_params</span><span class="p">,</span>
+    <span class="n">rank_clusters</span><span class="p">,</span>
+    <span class="n">write_structure_list</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libinteractive</span> <span class="kn">import</span> <span class="n">look_for_capri</span><span class="p">,</span> <span class="n">rewrite_capri_tables</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustrmsd.clustrmsd</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_clusters</span><span class="p">,</span>
+    <span class="n">iterate_min_population</span><span class="p">,</span>
+    <span class="n">write_clusters</span><span class="p">,</span>
+    <span class="n">write_clustrmsd_file</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="add_clustrmsd_arguments"><a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustrmsd.html#haddock.clis.re.clustrmsd.add_clustrmsd_arguments">[docs]</a><span class="k">def</span> <span class="nf">add_clustrmsd_arguments</span><span class="p">(</span><span class="n">clustrmsd_subcommand</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add arguments to the clustrmsd subcommand.&quot;&quot;&quot;</span>
+    <span class="n">clustrmsd_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;clustrmsd_dir&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The clustrmsd directory to recluster.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="n">clustrmsd_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--n_clusters&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;number of clusters to generate.&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="n">clustrmsd_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--clust_cutoff&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;clustering cutoff distance.&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="p">)</span>
+    
+    <span class="n">clustrmsd_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--min_population&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;minimum cluster population.&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">clustrmsd_subcommand</span></div>
+
+
+<div class="viewcode-block" id="reclustrmsd"><a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustrmsd.html#haddock.clis.re.clustrmsd.reclustrmsd">[docs]</a><span class="k">def</span> <span class="nf">reclustrmsd</span><span class="p">(</span>
+        <span class="n">clustrmsd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">n_clusters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">clust_cutoff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_population</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recluster the models in the clustrmsd directory.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clustrmsd_dir : str</span>
+<span class="sd">        Path to the clustrmsd directory.</span>
+<span class="sd">    </span>
+<span class="sd">    n_clusters : Union[bool, int]</span>
+<span class="sd">        Number of clusters to generate.</span>
+<span class="sd">    </span>
+<span class="sd">    clust_cutoff : Union[bool, float]</span>
+<span class="sd">        Clustering cutoff distance.</span>
+<span class="sd">    </span>
+<span class="sd">    min_population : Union[bool, int]</span>
+<span class="sd">        Cluster population min_population.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outdir : Path</span>
+<span class="sd">        Path to the interactive directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reclustering </span><span class="si">{</span><span class="n">clustrmsd_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">run_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">clustrmsd_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="c1"># create the interactive folder</span>
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">clustrmsd_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">INTERACTIVE_RE_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">outdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># create an io object</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">,</span> <span class="s2">&quot;io.json&quot;</span><span class="p">)</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">input</span>
+
+    <span class="c1"># load the original clustering parameters via json</span>
+    <span class="n">clustrmsd_params</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">,</span> <span class="s2">&quot;params.cfg&quot;</span><span class="p">))</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">clustrmsd_params</span><span class="p">[</span><span class="s1">&#39;final_cfg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">clustrmsd_params</span> <span class="o">=</span> <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s1">&#39;final_cfg&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Previous clustering parameters: </span><span class="si">{</span><span class="n">clustrmsd_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># setting previous tolerance, just in case no new parameters are given</span>
+    <span class="n">tolerance_param_name</span><span class="p">,</span> <span class="n">tolerance</span> <span class="o">=</span> <span class="n">clustrmsd_tolerance_params</span><span class="p">(</span>
+        <span class="n">clustrmsd_params</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># adjust the parameters</span>
+    <span class="k">if</span> <span class="n">n_clusters</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;n_clusters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_clusters</span>
+        <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;maxclust&quot;</span>
+        <span class="n">tolerance</span> <span class="o">=</span> <span class="n">n_clusters</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">clust_cutoff</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;clust_cutoff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clust_cutoff</span>
+            <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;distance&quot;</span>
+            <span class="n">tolerance</span> <span class="o">=</span> <span class="n">clust_cutoff</span>
+    
+    <span class="k">if</span> <span class="n">min_population</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Clustering with </span><span class="si">{</span><span class="n">tolerance_param_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;and criterion </span><span class="si">{</span><span class="n">clustrmsd_params</span><span class="p">[</span><span class="s1">&#39;criterion&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    
+    <span class="c1"># load the clustering dendrogram</span>
+    <span class="n">dendrogram</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">,</span> <span class="s2">&quot;dendrogram.txt&quot;</span><span class="p">))</span>
+
+    <span class="c1"># get the clusters</span>
+    <span class="n">cluster_arr</span> <span class="o">=</span> <span class="n">get_clusters</span><span class="p">(</span>
+        <span class="n">dendrogram</span><span class="p">,</span>
+        <span class="n">tolerance</span><span class="p">,</span>
+        <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;clusters </span><span class="si">{</span><span class="n">cluster_arr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s1">&#39;criterion&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;distance&quot;</span><span class="p">:</span>
+        <span class="n">cluster_arr</span><span class="p">,</span> <span class="n">min_population</span> <span class="o">=</span> <span class="n">iterate_min_population</span><span class="p">(</span>
+            <span class="n">cluster_arr</span><span class="p">,</span>
+            <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updated clustering parameters = </span><span class="si">{</span><span class="n">clustrmsd_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># processing the clusters</span>
+    <span class="n">unq_clusters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">)</span>  <span class="c1"># contains -1 (unclustered)</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unq_clusters</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;clusters = </span><span class="si">{</span><span class="n">clusters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">clt_dic</span><span class="p">,</span> <span class="n">cluster_centers</span> <span class="o">=</span> <span class="n">write_clusters</span><span class="p">(</span>
+        <span class="n">clusters</span><span class="p">,</span>
+        <span class="n">cluster_arr</span><span class="p">,</span>
+        <span class="n">models</span><span class="p">,</span>
+        <span class="n">out_filename</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;cluster.out&quot;</span><span class="p">),</span>
+        <span class="n">rmsd_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">centers</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+    <span class="n">score_dic</span><span class="p">,</span> <span class="n">sorted_score_dic</span> <span class="o">=</span> <span class="n">rank_clusters</span><span class="p">(</span>
+        <span class="n">clt_dic</span><span class="p">,</span>
+        <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+    
+    <span class="n">output_models</span> <span class="o">=</span> <span class="n">add_cluster_info</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">)</span>
+    
+    <span class="n">write_structure_list</span><span class="p">(</span>
+        <span class="n">models</span><span class="p">,</span>
+        <span class="n">output_models</span><span class="p">,</span>
+        <span class="n">out_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;clustrmsd.tsv&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+    
+    <span class="n">write_clustrmsd_file</span><span class="p">(</span>
+        <span class="n">clusters</span><span class="p">,</span>
+        <span class="n">clt_dic</span><span class="p">,</span>
+        <span class="n">cluster_centers</span><span class="p">,</span>
+        <span class="n">score_dic</span><span class="p">,</span>
+        <span class="n">sorted_score_dic</span><span class="p">,</span>
+        <span class="n">clustrmsd_params</span><span class="p">,</span>
+        <span class="n">output_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;clustrmsd.txt&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="c1"># save the io.json file</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+
+    <span class="c1"># save the updated parameters in a json file</span>
+    <span class="n">save_config</span><span class="p">(</span><span class="n">clustrmsd_params</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;params.cfg&quot;</span><span class="p">))</span>
+
+    <span class="c1"># analysis</span>
+    <span class="n">clustrmsd_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">clustrmsd_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">caprieval_folder</span> <span class="o">=</span> <span class="n">look_for_capri</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">clustrmsd_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">caprieval_folder</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Rewriting capri tables&quot;</span><span class="p">)</span>
+        <span class="n">rewrite_capri_tables</span><span class="p">(</span><span class="n">caprieval_folder</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outdir</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

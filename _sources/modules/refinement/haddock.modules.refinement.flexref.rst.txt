@@ -1,0 +1,15 @@
+Flexible refinement module
+==========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.refinement.flexref
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/flexref.rst
+

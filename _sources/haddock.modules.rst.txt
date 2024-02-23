@@ -1,0 +1,31 @@
+haddock.modules package
+=======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis
+   haddock.modules.extras
+   haddock.modules.refinement
+   haddock.modules.sampling
+   haddock.modules.scoring
+   haddock.modules.topology
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.base_cns_module
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules
+   :members:
+   :undoc-members:
+   :show-inheritance:

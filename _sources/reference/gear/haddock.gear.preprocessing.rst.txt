@@ -1,0 +1,7 @@
+PDB preprocessing
+=================================
+
+.. automodule:: haddock.gear.preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:

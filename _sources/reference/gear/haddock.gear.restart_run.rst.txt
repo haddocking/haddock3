@@ -1,0 +1,7 @@
+Restart run
+================================
+
+.. automodule:: haddock.gear.restart_run
+   :members:
+   :undoc-members:
+   :show-inheritance:

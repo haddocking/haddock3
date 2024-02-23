@@ -1,0 +1,23 @@
+RMSD Matrix calculation module
+===========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.rmsdmatrix.rmsd
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.rmsdmatrix
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/rmsdmatrix.rst
+

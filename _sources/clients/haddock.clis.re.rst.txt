@@ -1,0 +1,20 @@
+Interactive sucommands
+=======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.clis.re.clustfcc
+   haddock.clis.re.clustrmsd
+   haddock.clis.re.score
+
+Module contents
+---------------
+
+.. automodule:: haddock.clis.re
+   :members:
+   :undoc-members:
+   :show-inheritance:

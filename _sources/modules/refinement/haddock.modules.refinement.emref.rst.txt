@@ -1,0 +1,15 @@
+Energy Minimization refinement module
+========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.refinement.emref
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/emref.rst
+

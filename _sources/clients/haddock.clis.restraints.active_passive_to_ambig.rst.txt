@@ -1,0 +1,7 @@
+haddock.clis.restraints.active\_passive\_to\_ambig module
+=========================================================
+
+.. automodule:: haddock.clis.restraints.active_passive_to_ambig
+   :members:
+   :undoc-members:
+   :show-inheritance:

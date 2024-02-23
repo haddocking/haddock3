@@ -1,0 +1,15 @@
+Rigid body docking sampling module
+==========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.sampling.rigidbody
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/rigidbody.rst
+

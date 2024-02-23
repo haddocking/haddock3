@@ -1,0 +1,7 @@
+haddock.modules.analysis.clustrmsd.clustrmsd module
+===================================================
+
+.. automodule:: haddock.modules.analysis.clustrmsd.clustrmsd
+   :members:
+   :undoc-members:
+   :show-inheritance:

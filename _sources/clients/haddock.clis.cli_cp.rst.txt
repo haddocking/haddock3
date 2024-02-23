@@ -1,0 +1,7 @@
+Copy steps to new run
+===========================
+
+.. automodule:: haddock.clis.cli_cp
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+libutil: utility functions
+===========================
+
+.. automodule:: haddock.libs.libutil
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expandable parameters &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Start from copy" href="haddock.gear.extend_run.html" />
+    <link rel="prev" title="Configuration file I/O" href="haddock.gear.config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libs/haddock.libs.html">Libs Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="haddock.gear.html">Gear Reference</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="haddock.gear.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.clean_steps.html">Clean output from step folders</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.config.html">Configuration file I/O</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Expandable parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.extend_run.html">Start from copy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.greetings.html">Greetings messages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.haddockmodel.html">HADDOCK models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.parameters.html">Parameters helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.prepare_run.html">Prepare run</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.preprocessing.html">PDB preprocessing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.restart_run.html">Restart run</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.validations.html">Validations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.yaml2cfg.html">YAML configs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.gear.zerofill.html">Zero fill prefix</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.gear.html#module-haddock.gear">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
+          <li class="breadcrumb-item"><a href="haddock.gear.html">Gear Reference</a></li>
+      <li class="breadcrumb-item active">Expandable parameters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/gear/haddock.gear.expandable_parameters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.gear.expandable_parameters">
+<span id="expandable-parameters"></span><h1>Expandable parameters<a class="headerlink" href="#module-haddock.gear.expandable_parameters" title="Permalink to this heading"></a></h1>
+<p>Expandable parameter module.</p>
+<p>This module contains all logic for reading and preparing expandable parameters.</p>
+<p>Expandable parameters are parameters that follow a specific name structure.
+They can be repeated multiple times (in groups) in the user configuration file
+while being defined only once in the <cite>defaults.yaml</cite> files. For example, in the
+<cite>refinement.flexref</cite> module there are the parameters:</p>
+<ul class="simple">
+<li><p><cite>fle_sta_1_1</cite></p></li>
+<li><p><cite>fle_end_1_1</cite></p></li>
+</ul>
+<p>For these cases, you can also define in the user configuration file the
+following:</p>
+<ul class="simple">
+<li><p><cite>fle_sta_1_2</cite></p></li>
+<li><p><cite>fle_end_1_2</cite></p></li>
+</ul>
+<p>The above parameters will be accepted and used in the CNS modules. We
+say they are the second groupd of the <cite>fle1</cite> group. We explain in detail
+below.</p>
+<p>Currently, there are three types of expandable parameters:</p>
+<p>1 - Parameters following the name structure:</p>
+<ul class="simple">
+<li><p><cite>name_something_1</cite>,</p></li>
+<li><p><cite>name_something_else_1</cite></p></li>
+</ul>
+<p>These two parameters belong to the parameter name <cite>name</cite> and group <cite>1</cite>.
+The two parameters have the name <cite>something</cite> and <cite>something_else</cite>.
+Therefore, you could define also:</p>
+<ul class="simple">
+<li><p><cite>name_something_2</cite></p></li>
+<li><p><cite>name_something_else_2</cite></p></li>
+</ul>
+<p>Numbers are allowed as long as in combination with word characters, for
+example: <cite>name_something1_2</cite>, but not <cite>name_something_1_1</cite> because the
+latter is of the second type.</p>
+<p>2 - Parameters following the name structure:</p>
+<ul class="simple">
+<li><p><cite>name_something_X_Y</cite></p></li>
+<li><p><cite>name_else_X_Y</cite></p></li>
+</ul>
+<p>In these cases, the parameter name is <cite>nameX</cite>, where <cite>X</cite> is an integer.
+<cite>Y</cite> is the number of the group, and <cite>something</cite> and <cite>else</cite> are the name
+of the parameters. Taking example:</p>
+<ul class="simple">
+<li><p><cite>fle_sta_1_1</cite></p></li>
+<li><p><cite>fle_end_1_1</cite></p></li>
+</ul>
+<p>The parameter name is <cite>fle1</cite> and the parameters belonging to the groups
+are <cite>sta</cite> and <cite>end</cite>, and the group is either <cite>1</cite>.</p>
+<p>3 - The simplest parameters in the form of:</p>
+<ul class="simple">
+<li><p><cite>param_1</cite></p></li>
+</ul>
+<p>In these cases, you can define <cite>param_2</cite>, <cite>param_3</cite>, etc, in the user
+configuration file despite those are not defined in the <cite>defaults.yaml</cite>.
+However, because <cite>&lt;name&gt;_&lt;integer&gt;</cite> is too much of a simple rule, we
+need to define in this module which parameters are actualy expandable.
+If you are developing here look for the <cite>type_simplest_ep</cite> variable.</p>
+<ol class="arabic simple" start="4">
+<li><p>Parameters that are expandable to the max number of molecules:</p></li>
+</ol>
+<p>Those are the parameters starting with <cite>mol</cite>. For example:
+<cite>mol_fix_origin_1</cite>, which refers to the <cite>fix_origin</cite> parameter for
+molecule 1. These parameters are allowed to expand only to the maximum
+of input molecules, and at most to the max number of molecules allowed.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.belongs_to_multiple_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">belongs_to_multiple_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_parts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#belongs_to_multiple_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.belongs_to_multiple_index" title="Permalink to this definition"></a></dt>
+<dd><p>Assert param belong to multiple index group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param_parts</strong> (<em>list of str</em>) – The parameter name parts after <cite>str.split(“_”)</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>boolean</em> – True if the parameter name follows the rules of multiple index
+expandable parameters.</p>
+<p>Rules:
+- param names have more than 4 parts
+- the last part is a digit
+- the part before last is a digit</p>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.belongs_to_single_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">belongs_to_single_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_parts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#belongs_to_single_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.belongs_to_single_index" title="Permalink to this definition"></a></dt>
+<dd><p>Assert param belong to single index group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param_parts</strong> (<em>list of str</em>) – The parameter name parts after <cite>str.split(“_”)</cite>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p><em>boolean</em> – True if the parameter name follows the rules of single index
+expandable parameters.</p>
+<p>Rules:
+- param names have more than 2 parts
+- the last part is a digit
+- the part before last is not a digit</p>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.extract_multiple_index_params">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">extract_multiple_index_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#extract_multiple_index_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.extract_multiple_index_params" title="Permalink to this definition"></a></dt>
+<dd><p>Extract the parameters belonging to a group.</p>
+<p>See also: <cite>belongs_to_multiple_index</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span> <span class="o">=</span> <span class="n">extract_multiple_index_params</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span><span class="p">({</span><span class="s2">&quot;param_some_1&quot;</span><span class="p">,</span> <span class="s2">&quot;param_other_1&quot;</span><span class="p">,</span> <span class="s2">&quot;param2&quot;</span><span class="p">,</span> <span class="s2">&quot;ppp_ooo&quot;</span><span class="p">},</span> <span class="s2">&quot;param&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+<span class="go">    set()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;param_some_2&quot;, &quot;param_other_2&quot;},</span>
+<span class="go">    &quot;param&quot;, &quot;2&quot;)</span>
+<span class="go">    set()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="go">    &quot;param&quot;, &quot;1&quot;)</span>
+<span class="go">    {&quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="go">    &quot;par&quot;, &quot;2&quot;)</span>
+<span class="go">    set()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="go">    &quot;por&quot;, &quot;2&quot;)</span>
+<span class="go">    set()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_config</strong> (<em>dict, or dict.keys(), or similar</em>) – The user configuration file - parameter keys should be parameter
+names.</p></li>
+<li><p><strong>param_name</strong> (<em>str</em>) – The parameter name of the group to select. For example: <cite>c3sym</cite>.</p></li>
+<li><p><strong>group_idx</strong> (<em>str</em>) – The number of the group: “1”, “2”, “3”, etc. Only that group
+number will be selected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set of strings</em> – A set with the selected parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.extract_single_index_params">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">extract_single_index_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#extract_single_index_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.extract_single_index_params" title="Permalink to this definition"></a></dt>
+<dd><p>Extract the parameters belonging to a group.</p>
+<p>Descriminates between parameters of other expandable groups.
+See: <cite>belongs_to_single_index</cite>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ES</span> <span class="o">=</span> <span class="n">extract_single_index_params</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ES</span><span class="p">({</span><span class="s2">&quot;param_some_1&quot;</span><span class="p">,</span> <span class="s2">&quot;param_other_1&quot;</span><span class="p">,</span> <span class="s2">&quot;param2&quot;</span><span class="p">,</span> <span class="s2">&quot;ppp_ooo&quot;</span><span class="p">},</span> <span class="s2">&quot;param&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ES</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;param_some_2&quot;, &quot;param_other_2&quot;},</span>
+<span class="go">    &quot;param&quot;, &quot;2&quot;)</span>
+<span class="go">    {&quot;param_some_2&quot;, &quot;param_other_2&quot;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ES</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="go">    &quot;param&quot;, &quot;1&quot;)</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ES</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="go">    &quot;par&quot;, &quot;2&quot;)</span>
+<span class="go">    set()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ES</span><span class="p">(</span>
+<span class="go">    {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="go">    &quot;por&quot;, &quot;2&quot;)</span>
+<span class="go">    set()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_config</strong> (<em>dict, or dict.keys(), or similar</em>) – The user configuration file - parameter keys should be parameter
+names.</p></li>
+<li><p><strong>param_name</strong> (<em>str</em>) – The parameter name of the group to select. For example: <cite>c3sym</cite>.</p></li>
+<li><p><strong>group_idx</strong> (<em>str</em>) – The number of the group: “1”, “2”, “3”, etc. Only that group
+number will be selected.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set of strings</em> – A set with the selected parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.get_mol_parameters">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">get_mol_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#get_mol_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.get_mol_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Identify expandable <cite>mol</cite> parameters.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.get_multiple_index_groups">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">get_multiple_index_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config:</span> <span class="pre">~typing.MutableMapping[str,</span> <span class="pre">~typing.Any],</span> <span class="pre">*,</span> <span class="pre">belongs_to_group:</span> <span class="pre">~typing.Callable[[~typing.Sequence[str]],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">belongs_to_multiple_index&gt;,</span> <span class="pre">make_param_name:</span> <span class="pre">~typing.Callable[[~typing.Sequence[str]],</span> <span class="pre">tuple[str,</span> <span class="pre">str]]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">make_param_name_multiple_index&gt;,</span> <span class="pre">rejoin_parts:</span> <span class="pre">~typing.Callable[[~typing.Sequence[str]],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">rejoin_parts_multiple_index&gt;,</span> <span class="pre">minimum:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">reference:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.expandable_parameters.get_multiple_index_groups" title="Permalink to this definition"></a></dt>
+<dd><p>Get parameter blocks with multiple indexes.</p>
+<p>These blocks of params apply, for example, to different molecules.
+That’s why they have two looping indexes: one for the molecule and
+other for the group.</p>
+<p>This block of parameters follow the rule:</p>
+<p>&lt;param&gt;_&lt;something&gt;_&lt;N&gt;_&lt;G&gt;</p>
+<p>Where the actual param name is <cite>paramN</cite>, where <cite>N</cite> is an integer.</p>
+<p>&lt;something&gt; be can any combination of alphanumeric chars and
+underscores.</p>
+<p>&lt;G&gt; is the number of the group, the will be incremented as we
+expand.</p>
+<p>These belong to the same parameter (<cite>param1</cite>) of the group <cite>1</cite>:</p>
+<ul class="simple">
+<li><p>param_something_1_1</p></li>
+<li><p>param_something2_1_1</p></li>
+<li><p>param_something_else_1_1</p></li>
+<li><p>param_something4_1</p></li>
+</ul>
+<p>You could expand these with:</p>
+<ul class="simple">
+<li><p>param_something_1_2</p></li>
+<li><p>param_something2_1_2</p></li>
+<li><p>param_something_else_1_2</p></li>
+<li><p>param_something4_2</p></li>
+</ul>
+<p>When used to read the modules’ default configuration we expect the
+&lt;digit&gt; to be only “_1”. But having &lt;digit&gt; allows to identify
+blocks from the user configuration.</p>
+<p>Returns a dictionary in the form of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="s2">&quot;param1&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">):</span> <span class="p">{</span>
+    <span class="s2">&quot;something1&quot;</span><span class="p">,</span> <span class="s2">&quot;something2&quot;</span><span class="p">,</span> <span class="s2">&quot;something_else&quot;</span><span class="p">,</span> <span class="s2">&quot;something4&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em>) – Where keys are the parameter names. The values are not important.</p></li>
+<li><p><strong>minimum</strong> (<em>int</em>) – Consider only the groups with at least <cite>minimum</cite> parameters.</p></li>
+<li><p><strong>reference</strong> (<em>bool</em>) – Whether reading a default config file or not. If true, only
+groups ending with “1” will be considered. This avoids capturing
+parameters for molecules, such as “mol_fix_origin_1”,
+“mol_fix_origin_2”, etc.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dictionary</strong> (<em>{(tuple): dict}</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.get_single_index_groups">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">get_single_index_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">config:</span> <span class="pre">~typing.MutableMapping[str,</span> <span class="pre">~typing.Any],</span> <span class="pre">*,</span> <span class="pre">belongs_to_group:</span> <span class="pre">~typing.Callable[[~typing.Sequence[str]],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">belongs_to_single_index&gt;,</span> <span class="pre">make_param_name:</span> <span class="pre">~typing.Callable[[~typing.Sequence[str]],</span> <span class="pre">tuple[str,</span> <span class="pre">str]]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">make_param_name_single_index&gt;,</span> <span class="pre">rejoin_parts:</span> <span class="pre">~typing.Callable[[~typing.Sequence[str]],</span> <span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">rejoin_parts_single_index&gt;,</span> <span class="pre">minimum:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">reference:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.expandable_parameters.get_single_index_groups" title="Permalink to this definition"></a></dt>
+<dd><p>Get single indexed blocks from a configuration.</p>
+<p>Block parameters follow the rule &lt;preffix&gt;_&lt;something&gt;_&lt;group&gt;.</p>
+<p>These belong to the same parameter (<cite>param</cite>) of the group <cite>1</cite>:</p>
+<ul class="simple">
+<li><p>param_something1_1</p></li>
+<li><p>param_something2_1</p></li>
+<li><p>param_something_else_1</p></li>
+<li><p>param_something4_1</p></li>
+</ul>
+<p>You could expand these with:</p>
+<ul class="simple">
+<li><p>param_something1_2</p></li>
+<li><p>param_something2_2</p></li>
+<li><p>param_something_else_2</p></li>
+<li><p>param_something4_2</p></li>
+</ul>
+<p>When used to read the modules’ default configuration we expect the
+&lt;group&gt; to be only “_1”. But having &lt;group&gt; allows to identify
+blocks from the user configuration. See <cite>reference</cite> parameter.</p>
+<p>When we execute this function, we want to know:</p>
+<ul class="simple">
+<li><p>param, the parameter name preffix</p></li>
+<li><p>how many parameters exist of the block (<cite>something1</cite>, <cite>something2</cite>, …)</p></li>
+<li><p>_1, defines the number of the block</p></li>
+</ul>
+<p>Returns a dictionary in the form of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="p">(</span><span class="s2">&quot;param&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">):</span> <span class="p">{</span>
+        <span class="s2">&quot;something1&quot;</span><span class="p">,</span> <span class="s2">&quot;something2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;something_else&quot;</span><span class="p">,</span> <span class="s2">&quot;something4&quot;</span>
+        <span class="p">},</span>
+    <span class="p">(</span><span class="s2">&quot;otherparam&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">):</span> <span class="p">{</span><span class="s2">&quot;somename&quot;</span><span class="p">,</span> <span class="s2">&quot;othername&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dictionary</em>) – Where keys are the parameter names. The values are not important.</p></li>
+<li><p><strong>minimum</strong> (<em>int</em>) – Consider only the groups with at least <cite>minimum</cite> parameters.</p></li>
+<li><p><strong>reference</strong> (<em>bool</em>) – Whether reading a default config file or not. If true, only
+groups ending with “1” will be considered. This avoids capturing
+parameters for molecules, such as “mol_fix_origin_1”,
+“mol_fix_origin_2”, etc.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dictionary - {tuple</strong> (<em>dict}</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.get_trail_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">get_trail_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#get_trail_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.get_trail_index" title="Permalink to this definition"></a></dt>
+<dd><p>Get the trail index if underscored.</p>
+<p class="rubric">Examples</p>
+<p>has_trail_index(‘some_parameter_1’)
+&gt;&gt;&gt; ‘1’</p>
+<p>has_trail_index(‘some_parameter1’)
+&gt;&gt;&gt; None</p>
+<p>has_trail_index(‘some_parameter_1_1’)
+&gt;&gt;&gt; ‘1’</p>
+<p>has_trail_index(‘some_parameter_1-1’)
+&gt;&gt;&gt; None</p>
+<p>has_trail_index(‘some_parameter’)
+&gt;&gt;&gt; None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>str</em>) – A parameter name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str or None</em> – The trail index if exist. <code class="docutils literal notranslate"><span class="pre">None</span></code> if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.is_mol_parameter">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">is_mol_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#is_mol_parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.is_mol_parameter" title="Permalink to this definition"></a></dt>
+<dd><p>Identify if a parameter is a <cite>mol</cite> parameter.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.make_param_name_multiple_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">make_param_name_multiple_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_parts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.SupportsAddT" title="haddock.core.typing.SupportsAddT"><span class="pre">SupportsAddT</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.SupportsAddT" title="haddock.core.typing.SupportsAddT"><span class="pre">SupportsAddT</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.SupportsAddT" title="haddock.core.typing.SupportsAddT"><span class="pre">SupportsAddT</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#make_param_name_multiple_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.make_param_name_multiple_index" title="Permalink to this definition"></a></dt>
+<dd><p>Make the key name from param parts.</p>
+<p>For example, (“param”, “tag”, “2”, “1”) -&gt; (“param2”, “1”).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.make_param_name_single_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">make_param_name_single_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_parts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.AnyT" title="haddock.core.typing.AnyT"><span class="pre">AnyT</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.AnyT" title="haddock.core.typing.AnyT"><span class="pre">AnyT</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.AnyT" title="haddock.core.typing.AnyT"><span class="pre">AnyT</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#make_param_name_single_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.make_param_name_single_index" title="Permalink to this definition"></a></dt>
+<dd><p>Make the key name from param parts.</p>
+<p>For example, (“param”, “tag”, “1”) -&gt; (“param”, “1”).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.populate_mol_parameters_in_module">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">populate_mol_parameters_in_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_mols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#populate_mol_parameters_in_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.populate_mol_parameters_in_module" title="Permalink to this definition"></a></dt>
+<dd><p>Populate parameters dictionary with the needed molecule <cite>mol_</cite> parameters.</p>
+<p>The <cite>mol_</cite> prefixed parameters is a subclass of the expandable parameters.</p>
+<p>See <a class="reference internal" href="#module-haddock.gear.expandable_parameters" title="haddock.gear.expandable_parameters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">haddock.gear.expandable_parameters</span></code></a>.</p>
+<p>Modules require these parameters to be repeated for the number of input
+molecules.</p>
+<p>This function adds <cite>mol_</cite> parameters to the user input parameters,
+one per each <cite>molecule</cite> and for those which a values has not been
+added yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>modules_params</strong> (<em>dict</em>) – A dictionary of parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>None</em> – Alter the dictionary in place.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.read_mol_parameters">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">read_mol_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_mols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#read_mol_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.read_mol_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Read the mol parameters in the user_config following expectations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_config</strong> (<em>dict</em>) – The user configuration dictionary.</p></li>
+<li><p><strong>default_groups</strong> (<em>dict or set.</em>) – The mol parameters present in the default configuration file for
+the specific module. These are defined by <cite>get_mol_parameters</cite>.</p></li>
+<li><p><strong>max_mols</strong> (<em>int</em>) – HADDOCK3 has a limit in the number of different molecules it
+accepts for a calculation. Expandable parameters affecting molecules
+should not be allowed to go beyond that number. Defaults to
+<cite>core.default.max_molecules_allowed</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em> – The allowed parameters according to the default config and the
+max allowed molecules.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.read_multiple_idx_groups_user_config">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">read_multiple_idx_groups_user_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">user_config:</span> <span class="pre">~typing.Iterable[str],</span> <span class="pre">default_groups:</span> <span class="pre">dict[tuple[str,</span> <span class="pre">str],</span> <span class="pre">typing.Any],</span> <span class="pre">*,</span> <span class="pre">get_user_groups:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">dict[tuple[str,</span> <span class="pre">str],</span> <span class="pre">typing.Any]]</span> <span class="pre">=</span> <span class="pre">functools.partial(&lt;function</span> <span class="pre">_get_groups&gt;,</span> <span class="pre">belongs_to_group=&lt;function</span> <span class="pre">belongs_to_multiple_index&gt;,</span> <span class="pre">make_param_name=&lt;function</span> <span class="pre">make_param_name_multiple_index&gt;,</span> <span class="pre">rejoin_parts=&lt;function</span> <span class="pre">rejoin_parts_multiple_index&gt;),</span> <span class="pre">extract_params:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">set[str]]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">extract_multiple_index_params&gt;,</span> <span class="pre">_emsg_no_group:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&quot;The</span> <span class="pre">parameter</span> <span class="pre">block</span> <span class="pre">'{}_*_{}_*'</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">valid</span> <span class="pre">expandable</span> <span class="pre">parameter.&quot;,</span> <span class="pre">_emsg_unexpected_params:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&quot;These</span> <span class="pre">parameters</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">belong</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">block</span> <span class="pre">'{}_*_{}_*':</span> <span class="pre">{!r}.&quot;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.expandable_parameters.read_multiple_idx_groups_user_config" title="Permalink to this definition"></a></dt>
+<dd><p>Read multiple indexed groups in user config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_config</strong> (<em>dict</em>) – The user configuration dictionary.</p></li>
+<li><p><strong>default_groups</strong> (<em>dict</em>) – The groups present in the default configuration file for the
+specific module. This is the dictionary created by
+<cite>get_multiple_index_groups</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em> – A set with the new parameters in the user configuration file
+that are acceptable according to the expandable rules.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.read_simplest_expandable">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">read_simplest_expandable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expparams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#read_simplest_expandable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.read_simplest_expandable" title="Permalink to this definition"></a></dt>
+<dd><p>Read expandable parameters from config file of the type <cite>param_1</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expparams</strong> (<em>dict, dict.keys, set, or alike</em>) – The parameter names that should be considered as expandable.
+Usually, this is a module subdictionary of <cite>type_simplest_ep</cite>.</p></li>
+<li><p><strong>config</strong> (<em>dict, dict.keys, set, or alike</em>) – The user configuration file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set of str</em> – The parameters in <cite>config</cite> that comply with <cite>expparams</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.read_single_idx_groups_user_config">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">read_single_idx_groups_user_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">user_config:</span> <span class="pre">~typing.Iterable[str],</span> <span class="pre">default_groups:</span> <span class="pre">dict[tuple[str,</span> <span class="pre">str],</span> <span class="pre">typing.Any],</span> <span class="pre">*,</span> <span class="pre">get_user_groups:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">dict[tuple[str,</span> <span class="pre">str],</span> <span class="pre">typing.Any]]</span> <span class="pre">=</span> <span class="pre">functools.partial(&lt;function</span> <span class="pre">_get_groups&gt;,</span> <span class="pre">belongs_to_group=&lt;function</span> <span class="pre">belongs_to_single_index&gt;,</span> <span class="pre">make_param_name=&lt;function</span> <span class="pre">make_param_name_single_index&gt;,</span> <span class="pre">rejoin_parts=&lt;function</span> <span class="pre">rejoin_parts_single_index&gt;),</span> <span class="pre">extract_params:</span> <span class="pre">~typing.Callable[[...],</span> <span class="pre">set[str]]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">extract_single_index_params&gt;,</span> <span class="pre">_emsg_no_group:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&quot;The</span> <span class="pre">parameter</span> <span class="pre">block</span> <span class="pre">'{}_*_{}'</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">valid</span> <span class="pre">expandable</span> <span class="pre">parameter.&quot;,</span> <span class="pre">_emsg_unexpected_params:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">&quot;These</span> <span class="pre">parameters</span> <span class="pre">do</span> <span class="pre">not</span> <span class="pre">belong</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">block</span> <span class="pre">'{}_*_{}':</span> <span class="pre">{!r}.&quot;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#haddock.gear.expandable_parameters.read_single_idx_groups_user_config" title="Permalink to this definition"></a></dt>
+<dd><p>Read single indexed groups in user config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_config</strong> (<em>dict</em>) – The user configuration dictionary.</p></li>
+<li><p><strong>default_groups</strong> (<em>dict</em>) – The groups present in the default configuration file for the
+specific module. This is the dictionary created by,
+<cite>get_single_index_groups</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>set</em> – A set with the new parameters in the user configuration file
+that are acceptable according to the expandable rules.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.rejoin_parts_multiple_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">rejoin_parts_multiple_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_parts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#rejoin_parts_multiple_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.rejoin_parts_multiple_index" title="Permalink to this definition"></a></dt>
+<dd><p>Join parameter name parts.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.rejoin_parts_single_index">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">rejoin_parts_single_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_parts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#rejoin_parts_single_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.rejoin_parts_single_index" title="Permalink to this definition"></a></dt>
+<dd><p>Join parameter name parts.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.remove_ghost_groups">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">remove_ghost_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#remove_ghost_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.remove_ghost_groups" title="Permalink to this definition"></a></dt>
+<dd><p>Remove ghost groups from dictionary.</p>
+<p>Ghost groups are parameters that are defined in the defaults
+in a manner that they look they are already expanded. For example:</p>
+<ul class="simple">
+<li><p>mol_shape_1</p></li>
+<li><p>mol_shape_2</p></li>
+<li><p>mol_shape_3</p></li>
+<li><p>mol_fix_origin_1</p></li>
+<li><p>mol_fix_origin_2</p></li>
+<li><p>mol_fix_origin_3</p></li>
+</ul>
+<p>These integer suffix refer to the input molecules and not to
+expandable groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>groups</strong> (<em>dict</em>) – A dictionary containing the groups. For example as those created
+by <cite>get_single_index_groups</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.expandable_parameters.remove_trail_idx">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.expandable_parameters.</span></span><span class="sig-name descname"><span class="pre">remove_trail_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/expandable_parameters.html#remove_trail_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.expandable_parameters.remove_trail_idx" title="Permalink to this definition"></a></dt>
+<dd><p>Remove the trailing integer from a parameter.</p>
+<p>If trail is defined by an underscore “_”.</p>
+<p class="rubric">Examples</p>
+<p>remove_trail_idx(‘some_parameter_1’)
+&gt;&gt;&gt; ‘some_parameter’</p>
+<p>remove_trail_idx(‘some_parameter’)
+&gt;&gt;&gt; ‘some_parameter’</p>
+<p>remove_trail_idx(‘parameter’)
+&gt;&gt;&gt; ‘parameter’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>param</strong> (<em>str</em>) – A parameter name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.gear.config.html" class="btn btn-neutral float-left" title="Configuration file I/O" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.gear.extend_run.html" class="btn btn-neutral float-right" title="Start from copy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

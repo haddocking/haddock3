@@ -1,0 +1,23 @@
+Alanine Scanning module
+========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.alascan.scan
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.alascan
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/alascan.rst
+

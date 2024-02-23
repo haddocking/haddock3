@@ -1,0 +1,7 @@
+libsubprocess: subprocess execution functions
+=================================
+
+.. automodule:: haddock.libs.libsubprocess
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+Configuration file I/O
+==========================
+
+.. automodule:: haddock.gear.config
+   :members:
+   :undoc-members:
+   :show-inheritance:

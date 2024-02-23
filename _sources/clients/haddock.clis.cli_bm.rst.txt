@@ -1,0 +1,7 @@
+Benchmark Client
+===========================
+
+.. automodule:: haddock.clis.cli_bm
+   :members:
+   :undoc-members:
+   :show-inheritance:

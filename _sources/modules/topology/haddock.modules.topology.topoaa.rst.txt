@@ -1,0 +1,15 @@
+All-atom topology module
+=======================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.topology.topoaa
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/topoaa.rst
+

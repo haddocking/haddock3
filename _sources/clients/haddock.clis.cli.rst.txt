@@ -1,0 +1,7 @@
+Run HADDOCK3
+=======================
+
+.. automodule:: haddock.clis.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:

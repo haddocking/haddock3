@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.gear.haddockmodel &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.gear.haddockmodel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.gear.haddockmodel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Represent an Haddock model.&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
+
+
+<div class="viewcode-block" id="HaddockModel"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.haddockmodel.html#haddock.gear.haddockmodel.HaddockModel">[docs]</a><span class="k">class</span> <span class="nc">HaddockModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent HADDOCK model.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdb_f</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_energies</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_load_energies</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="n">energy_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;REMARK&#39;</span><span class="p">):</span>
+                    <span class="c1"># TODO: use regex to do this</span>
+                    <span class="k">if</span> <span class="s1">&#39;energies&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">energy_values</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
+                            <span class="nb">float</span><span class="p">,</span>
+                            <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                            <span class="p">)</span>
+                        <span class="n">total</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">improper</span><span class="p">,</span> <span class="n">dihe</span><span class="p">,</span> <span class="n">vdw</span><span class="p">,</span> <span class="n">elec</span><span class="p">,</span> <span class="n">air</span><span class="p">,</span> <span class="n">cdih</span><span class="p">,</span> <span class="n">coup</span><span class="p">,</span> <span class="n">rdcs</span><span class="p">,</span> <span class="n">vean</span><span class="p">,</span> <span class="n">dani</span><span class="p">,</span> <span class="n">xpcs</span><span class="p">,</span> <span class="n">rg</span> <span class="o">=</span> <span class="n">energy_values</span>  <span class="c1"># noqa: E501</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;bonds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bonds</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;angles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">angles</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;improper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">improper</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;dihe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dihe</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;vdw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vdw</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;elec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elec</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;air&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">air</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;cdih&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdih</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;coup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coup</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;rdcs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdcs</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;vean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vean</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;dani&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dani</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;xpcs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpcs</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;rg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rg</span>
+                    <span class="k">if</span> <span class="s1">&#39;buried surface area&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">bsa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;bsa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bsa</span>
+                    <span class="k">if</span> <span class="s1">&#39;Desolvation energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">desolv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;desolv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desolv</span>
+                    <span class="k">if</span> <span class="s1">&#39;Symmetry energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;sym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span>
+
+        <span class="k">return</span> <span class="n">energy_dic</span>
+
+<div class="viewcode-block" id="HaddockModel.calc_haddock_score"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.haddockmodel.html#haddock.gear.haddockmodel.HaddockModel.calc_haddock_score">[docs]</a>    <span class="k">def</span> <span class="nf">calc_haddock_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">weights</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the haddock score based on the weights and energies.&quot;&quot;&quot;</span>
+        <span class="n">weighted_terms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">component_id</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="n">component_id</span><span class="p">]</span>
+            <span class="n">weighted_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+
+        <span class="c1"># the haddock score is simply the sum of the weighted terms</span>
+        <span class="n">haddock_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighted_terms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">haddock_score</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

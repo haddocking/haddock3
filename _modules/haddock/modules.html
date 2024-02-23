@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.modules</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 modules.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_IO_FILE</span><span class="p">,</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
+<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Container</span><span class="p">,</span>
+    <span class="n">FilePath</span><span class="p">,</span>
+    <span class="n">Generator</span><span class="p">,</span>
+    <span class="n">Literal</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">ParamDict</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.gear</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.clean_steps</span> <span class="kn">import</span> <span class="n">clean_output</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.parameters</span> <span class="kn">import</span> <span class="n">config_mandatory_general_parameters</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libhpc</span> <span class="kn">import</span> <span class="n">HPCScheduler</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">folder_exists</span><span class="p">,</span> <span class="n">working_directory</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libmpi</span> <span class="kn">import</span> <span class="n">MPIScheduler</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">Scheduler</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libtimer</span> <span class="kn">import</span> <span class="n">log_time</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">recursive_dict_update</span>
+
+
+<span class="n">modules_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="n">_folder_match_regex</span> <span class="o">=</span> <span class="s2">&quot;[a-zA-Z]*/&quot;</span>
+<span class="n">modules_category</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">module</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">category</span><span class="o">.</span><span class="n">name</span>
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">modules_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">_folder_match_regex</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">category</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">_folder_match_regex</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Indexes each module in its specific category. Keys are Paths to the module,</span>
+<span class="sd">values are their categories. Categories are the modules parent folders.&quot;&quot;&quot;</span>
+
+<span class="n">modules_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">modules_category</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="n">category_hierarchy</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;topology&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sampling&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;refinement&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;scoring&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;analysis&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;extras&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="c1"># this dictionary defines non-mandatory general parameters that can be defined</span>
+<span class="c1"># as global parameters thus affect all modules, or, instead, can be defined per</span>
+<span class="c1"># module where the module definition overwrites global definition. Not all</span>
+<span class="c1"># modules will use these parameters. It is the responsibility of the module to</span>
+<span class="c1"># extract the parameters it needs.</span>
+<span class="c1"># the config file is in modules/defaults.cfg</span>
+<span class="n">non_mandatory_general_parameters_defaults</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">modules_defaults_path</span><span class="p">)</span>  <span class="c1"># noqa : E501</span>
+
+<span class="n">config_readers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;.yaml&quot;</span><span class="p">:</span> <span class="n">read_from_yaml_config</span><span class="p">,</span>
+    <span class="s2">&quot;.cfg&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="n">_step_folder_regex</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s2">&quot;[0-9]+_&quot;</span> <span class="o">+</span> <span class="n">mod_name</span>
+    <span class="k">for</span> <span class="n">mod_name</span> <span class="ow">in</span> <span class="n">modules_category</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="p">)</span>
+<span class="n">step_folder_regex</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_step_folder_regex</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">String for regular expression to match module folders in a run directory.</span>
+
+<span class="sd">It will match folders with a numeric prefix followed by underscore (&quot;_&quot;)</span>
+<span class="sd">followed by the name of a module.</span>
+
+<span class="sd">Example: https://regex101.com/r/roHls9/1</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">step_folder_regex_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">step_folder_regex</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Compiled regular expression from :py:const:`step_folder_regex`.</span>
+
+<span class="sd">It will match folders with a numeric prefix followed by underscore (&quot;_&quot;)</span>
+<span class="sd">followed by the name of a module.</span>
+
+<span class="sd">Example: https://regex101.com/r/roHls9/1</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">_not_valid_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">emsg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;The configuration file extension is not supported. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Supported types are </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_readers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+
+
+<div class="viewcode-block" id="BaseHaddockModule"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule">[docs]</a><span class="k">class</span> <span class="nc">BaseHaddockModule</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module&#39;s base class.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">params_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        HADDOCK3 modules base class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict or path to HADDOCK3 configuration file</span>
+<span class="sd">            A dictionary or a path to a HADDOCK3 configuration file</span>
+<span class="sd">            containing the initial module parameters. Usually this is</span>
+<span class="sd">            defined by the default params.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_previous_io</span><span class="p">()</span>
+
+        <span class="c1"># instantiate module&#39;s parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_origignal_config_file</span> <span class="o">=</span> <span class="n">params_fname</span>
+        <span class="k">with</span> <span class="n">_not_valid_config</span><span class="p">():</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">params_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_original_params</span> <span class="o">=</span> <span class="n">config_readers</span><span class="p">[</span><span class="n">extension</span><span class="p">](</span><span class="n">params_fname</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span> <span class="n">ParamDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="o">=</span><span class="n">params_fname</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configuration parameters.&quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+
+<div class="viewcode-block" id="BaseHaddockModule.reset_params"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.reset_params">[docs]</a>    <span class="k">def</span> <span class="nf">reset_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset parameters to the ones used to instantiate the class.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_original_params</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.update_params"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">update_from_cfg_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the modules parameters.</span>
+
+<span class="sd">        Add/update to the current modules parameters the ones given in</span>
+<span class="sd">        the function call. If you want to enterily replace the modules</span>
+<span class="sd">        parameters to their default values use the `reset_params()`</span>
+<span class="sd">        method.</span>
+
+<span class="sd">        Update takes places recursively, that is, nested dictionaries</span>
+<span class="sd">        will be updated accordingly.</span>
+
+<span class="sd">        To update the current config with the parameters defined in an</span>
+<span class="sd">        HADDOCK3 configuration file use the `update_from_cfg_file`</span>
+<span class="sd">        parameter.</span>
+
+<span class="sd">        To update from a JSON file, first load the JSON into a</span>
+<span class="sd">        dictionary and unpack the dictionary to the function call.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; m.update_params(param1=value1, param2=value2)</span>
+
+<span class="sd">        &gt;&gt;&gt; m.update_params(**param_dict)</span>
+
+<span class="sd">        &gt;&gt;&gt; m.update_params(update_from_cfg_file=path_to_file)</span>
+
+<span class="sd">        # if you wish to start from scratch</span>
+<span class="sd">        &gt;&gt;&gt; m.reset_params()</span>
+<span class="sd">        &gt;&gt;&gt; m.update_params(...)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">update_from_cfg_file</span> <span class="ow">and</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;You can not provide both `update_from_cfg_file` &quot;</span>
+                <span class="s2">&quot;and key arguments.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">update_from_cfg_file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">_not_valid_config</span><span class="p">():</span>
+                <span class="n">extension</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">config_readers</span><span class="p">[</span><span class="n">extension</span><span class="p">](</span><span class="n">update_from_cfg_file</span><span class="p">)</span>
+
+        <span class="c1"># the updating order is relevant</span>
+        <span class="n">_n</span> <span class="o">=</span> <span class="n">recursive_dict_update</span><span class="p">(</span>
+            <span class="n">non_mandatory_general_parameters_defaults</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">recursive_dict_update</span><span class="p">(</span><span class="n">_n</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fill_emptypaths</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_confirm_fnames_exist</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.save_config"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.save_config">[docs]</a>    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save current parameters to a HADDOCK3 config file.&quot;&quot;&quot;</span>
+        <span class="c1"># creates this dictionary for the config to have the module name</span>
+        <span class="c1"># key in brackets, for example:</span>
+        <span class="c1">#</span>
+        <span class="c1"># [topoaa]</span>
+        <span class="c1"># ...</span>
+        <span class="n">ignore</span> <span class="o">=</span> <span class="n">config_mandatory_general_parameters</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+            <span class="n">non_mandatory_general_parameters_defaults</span>
+        <span class="p">)</span>  <span class="c1"># noqa: 501</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ignore</span><span class="p">):</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">params</span><span class="p">},</span> <span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.add_parent_to_paths"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.add_parent_to_paths">[docs]</a>    <span class="k">def</span> <span class="nf">add_parent_to_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add parent path to paths.&quot;&quot;&quot;</span>
+        <span class="c1"># convert paths to relative by appending parent</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="BaseHaddockModule.run"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the module.&quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] module&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_parent_to_paths</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">working_directory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] finished.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.clean_output"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.clean_output">[docs]</a>    <span class="k">def</span> <span class="nf">clean_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean module output folder.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :py:func:`haddock.gear.clean_steps.clean_output`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">log_time</span><span class="p">(</span><span class="s2">&quot;cleaning output files took&quot;</span><span class="p">):</span>
+            <span class="n">clean_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.confirm_installation"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Confirm the third-party software needed for the module is installed.</span>
+
+<span class="sd">        HADDOCK3&#39;s own modules should just return.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.export_io_models"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.export_io_models">[docs]</a>    <span class="k">def</span> <span class="nf">export_io_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faulty_tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export input/output to the ModuleIO interface.</span>
+
+<span class="sd">        Modules that do not perform any operation on PDB files should have</span>
+<span class="sd">         input = output.</span>
+
+<span class="sd">        This function implements a common interface for all modules.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        faulty_tolerance : int, default 0</span>
+<span class="sd">            The percentage of missing output allowed. If 20 is given,</span>
+<span class="sd">            raises an error if 20% of the expected output is missing (not</span>
+<span class="sd">            saved to disk).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">]]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="s2">&quot;`self.output_models` cannot be empty.&quot;</span>
+        <span class="n">io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+        <span class="c1"># add the input models</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="c1"># add the output models</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
+        <span class="n">faulty</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">check_faulty</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">faulty</span> <span class="o">&gt;</span> <span class="n">faulty_tolerance</span><span class="p">:</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">faulty</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% of output was not generated for this module &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;and tolerance was set to </span><span class="si">{</span><span class="n">faulty_tolerance</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%.&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.finish_with_error"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.finish_with_error">[docs]</a>    <span class="k">def</span> <span class="nf">finish_with_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish with error message.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reason</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">reason</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_load_previous_io</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">filename</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">MODULE_IO_FILE</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleIO</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_of_input_molecules</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">ModuleIO</span><span class="p">()</span>
+
+        <span class="n">io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+        <span class="n">previous_io</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_path</span><span class="p">(),</span> <span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">previous_io</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">previous_io</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_of_input_molecules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">io</span>
+
+<div class="viewcode-block" id="BaseHaddockModule.previous_path"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.previous_path">[docs]</a>    <span class="k">def</span> <span class="nf">previous_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Give the path from the previous calculation.&quot;&quot;&quot;</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># return Path(previous[self.order - 1])</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_step_folder</span><span class="p">(</span><span class="n">previous</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.last_step_folder"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.last_step_folder">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">last_step_folder</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve last step folder.&quot;&quot;&quot;</span>
+        <span class="n">with_ind</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">folder</span> <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">index</span>
+            <span class="p">]</span>
+        <span class="n">nb_with_ind</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">with_ind</span><span class="p">)</span>
+        <span class="c1"># No matching index</span>
+        <span class="k">if</span> <span class="n">nb_with_ind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        <span class="c1"># Only one matching index</span>
+        <span class="k">elif</span> <span class="n">nb_with_ind</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">with_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Case of multiple matching index</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">with_ind</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">INTERACTIVE_RE_SUFFIX</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">folder</span>
+            <span class="k">return</span> <span class="n">with_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="BaseHaddockModule.log"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log a message with a common header.</span>
+
+<span class="sd">        Currently the header is the [MODULE NAME] in square brackets.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            The log message.</span>
+
+<span class="sd">        level : str</span>
+<span class="sd">            The level log: &#39;debug&#39;, &#39;info&#39;, ...</span>
+<span class="sd">            Defaults to &#39;info&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">level</span><span class="p">)(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_confirm_fnames_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fill_emptypaths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill empty paths.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">EmptyPath</span><span class="p">()</span></div>
+
+
+<span class="n">EngineMode</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;mpi&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_engine"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.get_engine">[docs]</a><span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">partial</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">HPCScheduler</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">MPIScheduler</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an engine to run the jobs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mode : str</span>
+<span class="sd">        The type of engine to create</span>
+
+<span class="sd">    params : dict</span>
+<span class="sd">        A dictionary containing parameters for the engine.</span>
+<span class="sd">        `get_engine` will retrieve from `params` only those parameters</span>
+<span class="sd">        needed and ignore the others.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># a bit of a factory pattern here</span>
+    <span class="c1"># this might end up in another module but for now its fine here</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+            <span class="n">HPCScheduler</span><span class="p">,</span>
+            <span class="n">target_queue</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;queue&quot;</span><span class="p">],</span>
+            <span class="n">queue_limit</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;queue_limit&quot;</span><span class="p">],</span>
+            <span class="n">concat</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;concat&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+            <span class="n">Scheduler</span><span class="p">,</span>
+            <span class="n">ncores</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">],</span>
+            <span class="n">max_cpus</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_cpus&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;mpi&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">MPIScheduler</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">available_engines</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;mpi&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Scheduler `mode` </span><span class="si">{</span><span class="n">mode</span><span class="si">!r}</span><span class="s2"> not recognized. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available options are </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">available_engines</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_module_steps_folders"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.get_module_steps_folders">[docs]</a><span class="k">def</span> <span class="nf">get_module_steps_folders</span><span class="p">(</span>
+        <span class="n">folder</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">modules</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Container</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a sorted list of the step folders in a running directory.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    Consider the folder structure:</span>
+
+<span class="sd">    run_dir/</span>
+<span class="sd">        0_topoaa/</span>
+<span class="sd">        1_rigidbody/</span>
+<span class="sd">        2_caprieval/</span>
+<span class="sd">        3_bad_module_name/</span>
+<span class="sd">        data/</span>
+
+<span class="sd">    &gt;&gt;&gt; get_module_steps_folders(&quot;run_dir&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; [&quot;0_topoaa&quot;, &quot;1_rigidbody&quot;, &quot;2_caprieval&quot;]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    folder : str or Path</span>
+<span class="sd">        Path to the run directory, or to the folder containing the step</span>
+<span class="sd">        folders.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str</span>
+<span class="sd">        List containing strings with the names of the step folders.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">())</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folders</span> <span class="k">if</span> <span class="n">step_folder_regex_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">f</span><span class="p">)),</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">modules</span><span class="p">:</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">st</span>
+            <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">steps</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">,</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">modules_names</span><span class="p">,</span>
+                <span class="p">])</span>
+            <span class="p">]</span>
+    <span class="k">return</span> <span class="n">steps</span></div>
+
+
+<div class="viewcode-block" id="is_step_folder"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.is_step_folder">[docs]</a><span class="k">def</span> <span class="nf">is_step_folder</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assess whether a folder is a possible step folder.</span>
+
+<span class="sd">    The folder is considered a step folder if has a zero or positive</span>
+<span class="sd">    integer index followed by a name of a module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str or pathlib.Path</span>
+<span class="sd">        The path to the folder.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Whether the folder is a step folder or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">folder_exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">main_folder_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">main_folder_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">modules_category</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

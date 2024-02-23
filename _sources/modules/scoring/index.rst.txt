@@ -1,8 +1,19 @@
 Scoring Modules
-===============
+===============================
+
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 1
 
-   emscoring
-   mdscoring
+   haddock.modules.scoring.emscoring
+   haddock.modules.scoring.mdscoring
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.scoring
+   :members:
+   :undoc-members:
+   :show-inheritance:

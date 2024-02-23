@@ -1,0 +1,7 @@
+liblog: Logging helping functions
+==========================
+
+.. automodule:: haddock.libs.liblog
+   :members:
+   :undoc-members:
+   :show-inheritance:

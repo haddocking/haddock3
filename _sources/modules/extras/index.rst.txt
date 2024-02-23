@@ -1,12 +1,18 @@
-Extra modules
-=============
+Extra Modules
+==============================
 
-.. automodule:: haddock.modules.extras
-
-List of available extra modules
--------------------------------
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 1
 
-   exit
+   haddock.modules.extras.exit
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.extras
+   :members:
+   :undoc-members:
+   :show-inheritance:

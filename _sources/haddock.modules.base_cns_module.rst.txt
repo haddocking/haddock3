@@ -1,0 +1,7 @@
+haddock.modules.base\_cns\_module module
+========================================
+
+.. automodule:: haddock.modules.base_cns_module
+   :members:
+   :undoc-members:
+   :show-inheritance:

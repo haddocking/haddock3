@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.clis.cli_traceback &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.clis.cli_traceback</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.clis.cli_traceback</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Traces back PDB files from a HADDOCK run directory.</span>
+
+<span class="sd">Given an input run directory, haddock3-traceback traces back each model to the</span>
+<span class="sd">initial input molecules used, providing the rank of each intermediate model.</span>
+
+<span class="sd">USAGE::</span>
+
+<span class="sd">    haddock3-traceback -r &lt;run_dir&gt;</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.libs</span> <span class="kn">import</span> <span class="n">libcli</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
+
+
+<span class="n">TRACK_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;traceback&quot;</span>  <span class="c1"># name of the traceback folder</span>
+
+
+<div class="viewcode-block" id="get_steps_without_pdbs"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.get_steps_without_pdbs">[docs]</a><span class="k">def</span> <span class="nf">get_steps_without_pdbs</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">all_steps</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the modules that do not produce PDB files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_dir : str or pathlib.Path</span>
+<span class="sd">        Path to the run directory.</span>
+<span class="sd">    </span>
+<span class="sd">    all_steps : list</span>
+<span class="sd">        List of all the steps in the run directory.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    steps_without_pdbs : list</span>
+<span class="sd">        List of steps that did not produce PDB files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">steps_without_pdbs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">all_steps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;topoaa&quot;</span><span class="p">):</span>
+            <span class="n">steps_without_pdbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="n">pdbs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">step_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.pdb*&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdbs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">steps_without_pdbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">steps_without_pdbs</span></div>
+
+
+<div class="viewcode-block" id="get_ori_names"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.get_ori_names">[docs]</a><span class="k">def</span> <span class="nf">get_ori_names</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pdbfile</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">max_topo_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the original name(s) of the PDB file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Step number.</span>
+<span class="sd">    pdbfile : PDBFile</span>
+<span class="sd">        PDBFile object.</span>
+<span class="sd">    max_topo_len : int</span>
+<span class="sd">        Maximum length of the topologies found so far.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ori_names : list</span>
+<span class="sd">        List of original names.</span>
+<span class="sd">    max_topo_len : int</span>
+<span class="sd">        Maximum length of the topologies found so far.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># not the first step, ori_name should be defined</span>
+        <span class="n">ori_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">ori_name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># first step, we get topology files instead of ori_name</span>
+        <span class="c1"># topology can either be a list of topologies or a single</span>
+        <span class="c1"># topology</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">ori_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span><span class="o">.</span><span class="n">file_name</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">pdbfile</span><span class="o">.</span><span class="n">topology</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_topo_len</span><span class="p">:</span>
+                <span class="n">max_topo_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">topology</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ori_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">file_name</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+            <span class="n">max_topo_len</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">ori_names</span><span class="p">,</span> <span class="n">max_topo_len</span></div>
+
+
+<div class="viewcode-block" id="traceback_dataframe"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.traceback_dataframe">[docs]</a><span class="k">def</span> <span class="nf">traceback_dataframe</span><span class="p">(</span>
+    <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">rank_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">max_topo_len</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create traceback dataframe by combining together ranks and data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_dict : dict</span>
+<span class="sd">        Dictionary containing the data to be traced back.</span>
+<span class="sd">    rank_dict : dict</span>
+<span class="sd">        Dictionary containing the ranks of the data to be traced back.</span>
+<span class="sd">    sel_step : list</span>
+<span class="sd">        List of selected steps.</span>
+<span class="sd">    max_topo_len : int</span>
+<span class="sd">        Maximum length of the topologies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df_ord : pandas.DataFrame</span>
+<span class="sd">        Dataframe containing the traceback data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get last step of the workflow</span>
+    <span class="n">last_step</span> <span class="o">=</span> <span class="n">sel_step</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># data dict to dataframe</span>
+    <span class="n">df_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+    <span class="n">df_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># assign columns</span>
+    <span class="n">data_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)]</span>
+    <span class="n">data_cols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;00_topo</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_topo_len</span><span class="p">)])</span>
+    <span class="n">df_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data_cols</span>
+
+    <span class="c1"># same for the rank_dict</span>
+    <span class="n">df_ranks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">rank_dict</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+    <span class="n">df_ranks</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ranks_col</span> <span class="o">=</span> <span class="p">[</span><span class="n">last_step</span><span class="p">]</span>  <span class="c1"># the key to merge the dataframes</span>
+    <span class="n">ranks_col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">el</span><span class="si">}</span><span class="s2">_rank&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)])</span>
+    <span class="n">df_ranks</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">ranks_col</span>
+
+    <span class="c1"># merging the data and ranks dataframes</span>
+    <span class="n">df_merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span> <span class="n">df_ranks</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">last_step</span><span class="p">)</span>
+    <span class="n">ordered_cols</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df_merged</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">df_ord</span> <span class="o">=</span> <span class="n">df_merged</span><span class="p">[</span><span class="n">ordered_cols</span><span class="p">]</span>
+    <span class="c1"># last thing: substituting unk records with - in the last step</span>
+    <span class="n">unk_records</span> <span class="o">=</span> <span class="n">df_ord</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;unk&quot;</span><span class="p">)</span>
+    <span class="n">df_ord</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">unk_records</span><span class="p">,</span> <span class="n">last_step</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="k">return</span> <span class="n">df_ord</span></div>
+
+
+<span class="c1"># Command line interface parser</span>
+<span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+    <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;haddock3-traceback&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">,</span>
+    <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">libcli</span><span class="o">.</span><span class="n">add_rundir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_args"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.load_args">[docs]</a><span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="cli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.cli">[docs]</a><span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
+    <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="n">cmd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="maincli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.maincli">[docs]</a><span class="k">def</span> <span class="nf">maincli</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
+    <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analyse CLI.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_dir : str or Path</span>
+<span class="sd">        Path to the original run directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running haddock3-traceback on </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Reading steps</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading input run directory&quot;</span><span class="p">)</span>
+    <span class="c1"># get the module folders from the run_dir input</span>
+    <span class="n">all_steps</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">))</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All_steps: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_steps</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">ana_modules</span> <span class="o">=</span> <span class="n">get_steps_without_pdbs</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">all_steps</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modules not to be analysed: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ana_modules</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">sel_step</span> <span class="o">=</span> <span class="p">[</span><span class="n">st</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">all_steps</span> <span class="k">if</span> <span class="n">st</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ana_modules</span><span class="p">]</span>
+    <span class="c1"># check if there are steps to traceback</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No steps to trace back. Exiting.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Steps to trace back: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># creating traceback folder</span>
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">TRACK_FOLDER</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created directory: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">outdir</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">outdir</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
+
+    <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">rank_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">unk_idx</span><span class="p">,</span> <span class="n">max_topo_len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="c1"># this cycle goes through the steps in reverse order</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tracing back step </span><span class="si">{</span><span class="n">sel_step</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># correcting names in the dictionary. The ori_name must be complemented</span>
+        <span class="c1"># with the step folder name</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;../</span><span class="si">{</span><span class="n">sel_step</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)</span> <span class="o">-</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># how many steps have we gone back?</span>
+        <span class="c1"># loading the .json file</span>
+        <span class="n">json_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="s2">&quot;io.json&quot;</span><span class="p">)</span>
+        <span class="n">io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_path</span><span class="p">)</span>
+        <span class="c1"># list all the values in the data_dict</span>
+        <span class="n">ls_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+        <span class="c1"># getting and sorting the ranks for the current step folder</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">pdbfile</span> <span class="ow">in</span> <span class="n">io</span><span class="o">.</span><span class="n">output</span><span class="p">]</span>
+        <span class="n">ranks_argsort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
+
+        <span class="c1"># iterating through the pdbfiles to fill data_dict and rank_dict</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pdbfile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">output</span><span class="p">):</span>
+            <span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ranks_argsort</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="c1"># getting the original names</span>
+            <span class="n">ori_names</span><span class="p">,</span> <span class="n">max_topo_len</span> <span class="o">=</span> <span class="n">get_ori_names</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">pdbfile</span><span class="p">,</span> <span class="n">max_topo_len</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ls_values</span><span class="p">:</span>
+                    <span class="c1"># this is the first step in which the pdbfile appears.</span>
+                    <span class="c1"># This means that it was discarded for the subsequent steps</span>
+                    <span class="c1"># We need to add the pdbfile to the data_dict</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;unk</span><span class="si">{</span><span class="n">unk_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">))</span>
+                    <span class="n">rank_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delta</span><span class="p">)]</span>
+                    <span class="n">unk_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># we&#39;ve already seen this pdb before.</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">ls_values</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">))</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">idx</span> <span class="o">//</span> <span class="n">delta</span><span class="p">]</span>
+
+                <span class="c1"># assignment</span>
+                <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">ori_names</span><span class="p">:</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+                <span class="n">rank_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># last step of the workflow</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">on</span> <span class="k">for</span> <span class="n">on</span> <span class="ow">in</span> <span class="n">ori_names</span><span class="p">]</span>
+                <span class="n">rank_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">rank</span><span class="p">]</span>
+
+        <span class="c1"># print(f&quot;rank_dict {rank_dict}&quot;)</span>
+        <span class="c1"># print(f&quot;data_dict {data_dict}, maxtopo {max_topo_len}&quot;)</span>
+
+    <span class="c1"># stripping away relative paths</span>
+    <span class="n">final_data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">final_data_dict</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="n">final_rank_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">rank_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">final_rank_dict</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="c1"># dumping the data into a dataframe</span>
+    <span class="n">df_output</span> <span class="o">=</span> <span class="n">traceback_dataframe</span><span class="p">(</span>
+        <span class="n">final_data_dict</span><span class="p">,</span> <span class="n">final_rank_dict</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">,</span> <span class="n">max_topo_len</span>
+    <span class="p">)</span>
+    <span class="c1"># dumping the dataframe</span>
+    <span class="n">track_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">TRACK_FOLDER</span><span class="p">,</span> <span class="s2">&quot;traceback.tsv&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Output dataframe </span><span class="si">{</span><span class="n">track_filename</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="sa">f</span><span class="s2">&quot;created with shape </span><span class="si">{</span><span class="n">df_output</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">df_output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">track_filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">maincli</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

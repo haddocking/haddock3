@@ -1,0 +1,15 @@
+Water refinement module
+========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.refinement.mdref
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/mdref.rst
+

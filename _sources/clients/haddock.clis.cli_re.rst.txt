@@ -1,0 +1,7 @@
+Interactive run client
+===========================
+
+.. automodule:: haddock.clis.cli_re
+   :members:
+   :undoc-members:
+   :show-inheritance:

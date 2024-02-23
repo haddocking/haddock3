@@ -1,0 +1,7 @@
+haddock.clis.re.clustrmsd module
+================================
+
+.. automodule:: haddock.clis.re.clustrmsd
+   :members:
+   :undoc-members:
+   :show-inheritance:

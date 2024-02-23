@@ -1,0 +1,7 @@
+haddock.modules.analysis.clustfcc.clustfcc module
+=================================================
+
+.. automodule:: haddock.modules.analysis.clustfcc.clustfcc
+   :members:
+   :undoc-members:
+   :show-inheritance:

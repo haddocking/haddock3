@@ -1,0 +1,7 @@
+haddock
+=======
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock

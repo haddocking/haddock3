@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.core.typing &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.core.typing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.core.typing</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Useful type aliases and type variables for type-hints support.</span>
+
+<span class="sd">Visit [PEP 484 Type Hints](https://peps.python.org/pep-0484/) for more help.</span>
+
+<span class="sd">Variables endswith `T` are TypeVars for generic function signatures.</span>
+<span class="sd">They are defined to</span>
+
+<span class="sd">    - accept constraint types(Any type when no type is given)</span>
+<span class="sd">    - accept any subclass by using keyword `bound`</span>
+<span class="sd">    - be parameter of Generic and subclass of Generic,</span>
+<span class="sd">      espacially for invariant Collections(list,sequence and so on).</span>
+<span class="sd">    - show more than once in generic functions to indicates that</span>
+<span class="sd">      these types are exactly same.</span>
+
+<span class="sd">Don&#39;t import other classes, type aliases or type variables defined</span>
+<span class="sd">in `haddock` into this module.</span>
+<span class="sd">This may lead to circular import problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">FileHandler</span><span class="p">,</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">StreamHandler</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Container</span><span class="p">,</span>
+    <span class="n">Generator</span><span class="p">,</span>
+    <span class="n">Generic</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
+    <span class="n">Literal</span><span class="p">,</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+    <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Protocol</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+    <span class="n">Sized</span><span class="p">,</span>
+    <span class="n">SupportsInt</span><span class="p">,</span>
+    <span class="n">TextIO</span><span class="p">,</span>
+    <span class="n">Type</span><span class="p">,</span>
+    <span class="n">TypedDict</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">runtime_checkable</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">float64</span>
+<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">pandas.core.groupby.generic</span> <span class="kn">import</span> <span class="n">DataFrameGroupBy</span>
+<span class="kn">from</span> <span class="nn">plotly.graph_objects</span> <span class="kn">import</span> <span class="n">Figure</span>
+
+
+<span class="n">AnyT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;AnyT&#39;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Arbitrary type for generic function signatures.&quot;&quot;&quot;</span>
+
+<span class="n">PT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;PT&#39;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Arbitrary parameter type for generic `Callable` signatures.</span>
+
+<span class="sd">For py3.11+, `ParamSpec` and `Concatenate` may be more explict</span>
+<span class="sd">while making signatures longer.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Literals</span>
+<span class="n">ImgFormat</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;webp&quot;</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Supported image formats by plotly.&quot;&quot;&quot;</span>
+
+<span class="n">ExpertLevel</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;easy&quot;</span><span class="p">,</span> <span class="s2">&quot;expert&quot;</span><span class="p">,</span> <span class="s2">&quot;guru&quot;</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;The expertise level of the parameters.`hidden` not inclued.&quot;&quot;&quot;</span>
+
+<span class="n">LogLevel</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># Protocols</span>
+<div class="viewcode-block" id="SupportsAdd"><a class="viewcode-back" href="../../../reference/core/haddock.core.typing.html#haddock.core.typing.SupportsAdd">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsAdd</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An ABC with one abstract method __add__.</span>
+<span class="sd">    </span>
+<span class="sd">    Can be used in `isinstance` and `issubclass`.</span>
+
+<span class="sd">    Assuming that the operands and the result&#39;s types</span>
+<span class="sd">    are same for most common situations.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; isinstance(int, SupportsAdd)</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">AnyT</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">AnyT</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyT</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+<span class="n">SupportsAddT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;SupportsAddT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">SupportsAdd</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;TypeVar of SupportsAdd for Generic type check.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="SupportsRun"><a class="viewcode-back" href="../../../reference/core/haddock.core.typing.html#haddock.core.typing.SupportsRun">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">SupportsRun</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An ABC with one abstract method run().</span>
+<span class="sd">    </span>
+<span class="sd">    Can be used in `isinstance` and `issubclass`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; from multiprocessing import Process</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(Process, SupportsRun)</span>
+<span class="sd">    True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+<div class="viewcode-block" id="SupportsRun.run"><a class="viewcode-back" href="../../../reference/core/haddock.core.typing.html#haddock.core.typing.SupportsRun.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do something.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+
+<span class="n">SupportsRunT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;SupportsRunT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">SupportsRun</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;TypeVar of SupportsRun for Generic type check.&quot;&quot;&quot;</span>
+
+<span class="c1"># other type alias and type variables</span>
+<span class="n">NDFloat</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">float64</span><span class="p">]</span>
+
+<span class="n">FilePath</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+
+<span class="n">FilePathT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;FilePathT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">FilePath</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generic type variable for file paths.</span>
+
+<span class="sd">If the first annotated variable is str,</span>
+<span class="sd">the second annotated variable will be str instead of Path,vice versa.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">LineIterSource</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">FilePath</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;An Object who can generate lines in some way.&quot;&quot;&quot;</span>
+
+<span class="n">ParamMap</span> <span class="o">=</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A mutable mapping object contains parameters generated from config</span>
+<span class="sd">files or functions.</span>
+
+<span class="sd">The keys are always `str`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">ParamMapT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ParamMapT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">ParamMap</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generic type of `MutableMapping[str, Any]` for generic function sigunature.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">ParamDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A dict contains parameters generated from config files or functions.</span>
+
+<span class="sd">The keys are always `str`.</span>
+
+<span class="sd">Can be called like `dict` and returns a python `dict`.</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+
+<span class="sd">&gt;&gt;&gt; ParamDict(a=1) == {&#39;a&#39;:1}</span>
+<span class="sd">True</span>
+
+<span class="sd">&gt;&gt;&gt; ParamDict({&#39;a&#39;:1}) == {&#39;a&#39;:1}</span>
+<span class="sd">True</span>
+
+<span class="sd">&gt;&gt;&gt; ParamDict().setdefault(&#39;a&#39;, 1)</span>
+<span class="sd">1</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">ParamDictT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ParamDictT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">ParamDict</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generic type of `dict[str, Any]` for generic function sigunature.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">ModuleParams</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;A dict contains modules&#39; parameters.&quot;&quot;&quot;</span>
+
+<span class="n">AtomsDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A dict contains all kinds of residues&#39; atom type infomations</span>
+<span class="sd">(including non-standard residue and atom type).</span>
+
+<span class="sd">Key is residue name, value is a list of the residue&#39;s atom types.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">StreamHandlerT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;StreamHandlerT&#39;</span><span class="p">,</span>
+                         <span class="n">bound</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">StreamHandler</span><span class="p">,</span> <span class="n">FileHandler</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

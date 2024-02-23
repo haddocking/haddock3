@@ -1,0 +1,7 @@
+HADDOCK models
+================================
+
+.. automodule:: haddock.gear.haddockmodel
+   :members:
+   :undoc-members:
+   :show-inheritance:

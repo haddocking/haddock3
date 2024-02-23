@@ -1,0 +1,7 @@
+haddock.clis.restraints.passive\_from\_active module
+====================================================
+
+.. automodule:: haddock.clis.restraints.passive_from_active
+   :members:
+   :undoc-members:
+   :show-inheritance:

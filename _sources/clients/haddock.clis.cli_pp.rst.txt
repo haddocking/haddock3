@@ -1,0 +1,7 @@
+PDB preprocessing client
+===========================
+
+.. automodule:: haddock.clis.cli_pp
+   :members:
+   :undoc-members:
+   :show-inheritance:

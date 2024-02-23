@@ -1,0 +1,15 @@
+Selection of top clusters module
+==============================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.seletopclusts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/seletopclusts.rst
+

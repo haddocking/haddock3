@@ -1,0 +1,7 @@
+CNS paths definitions
+==============================
+
+.. automodule:: haddock.core.cns_paths
+   :members:
+   :undoc-members:
+   :show-inheritance:

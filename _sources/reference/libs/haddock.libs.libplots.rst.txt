@@ -1,0 +1,7 @@
+libplots: plotting functionalities
+============================
+
+.. automodule:: haddock.libs.libplots
+   :members:
+   :undoc-members:
+   :show-inheritance:

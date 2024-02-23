@@ -1,0 +1,7 @@
+libparallel: multiprocessing helping functions
+===============================
+
+.. automodule:: haddock.libs.libparallel
+   :members:
+   :undoc-members:
+   :show-inheritance:

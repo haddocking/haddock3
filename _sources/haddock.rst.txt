@@ -1,0 +1,22 @@
+haddock package
+===============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.clis
+   haddock.core
+   haddock.gear
+   haddock.libs
+   haddock.modules
+
+Module contents
+---------------
+
+.. automodule:: haddock
+   :members:
+   :undoc-members:
+   :show-inheritance:

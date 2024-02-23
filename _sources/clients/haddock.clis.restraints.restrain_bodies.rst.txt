@@ -1,0 +1,7 @@
+haddock.clis.restraints.restrain\_bodies module
+===============================================
+
+.. automodule:: haddock.clis.restraints.restrain_bodies
+   :members:
+   :undoc-members:
+   :show-inheritance:

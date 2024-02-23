@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.gear.preprocessing &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.gear.preprocessing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.gear.preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># TODO:</span>
+<span class="c1"># 1. single_ions may contain PO4 - verify</span>
+<span class="c1"># 2. the single_ions_elements map seems not needed</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Process input PDB files to ensure compatibility with HADDOCK3.</span>
+
+<span class="sd">This module checks and modifies PDB files for compatibility with</span>
+<span class="sd">HADDOCK3. There are three types of checks/modifications:</span>
+
+<span class="sd">1. Performed to each PDB line-by-line, in a equal fashion of ``pdb-tools``.</span>
+<span class="sd">   In fact, this step mostly uses the ``pdb-tools`` package.</span>
+<span class="sd">2. Performed on each PDB as a whole.</span>
+<span class="sd">3. Performed on all PDBs together.</span>
+
+<span class="sd">Main functions</span>
+<span class="sd">--------------</span>
+
+<span class="sd">* :py:func:`process_pdbs`</span>
+<span class="sd">* :py:func:`read_additional_residues`</span>
+
+<span class="sd">Corrections performed on 1)</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">The following actions are perfomed sequentially over all PDBs:</span>
+
+<span class="sd">#. from ``pdb-tools``: ``pdb_keepcoord``</span>
+<span class="sd">#. from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``</span>
+<span class="sd">#. from ``pdb-toos``: ``pdb_element``</span>
+<span class="sd">#. from ``pdb-tools``: ``pdb_selaltloc``</span>
+<span class="sd">#. from ``pdb-tools``: ``pdb_pdb_occ`` with ``occupancy=1.00``</span>
+<span class="sd">#. replace ``MSE`` to ``MET``</span>
+<span class="sd">#. replace ``HSD`` to ``HIS``</span>
+<span class="sd">#. replace ``HSE`` to ``HIS``</span>
+<span class="sd">#. replace ``HID`` to ``HIS``</span>
+<span class="sd">#. replace ``HIE`` to ``HIS``</span>
+<span class="sd">#. add_charges_to_ions, see :py:func:`add_charges_to_ions`</span>
+<span class="sd">#. convert ``ATOM`` to ``HETATM`` for those atoms that should be ``HETATM``.</span>
+<span class="sd">   Considers the additional residues provided by the user.</span>
+<span class="sd">   See :py:func:`convert_ATOM_to_HETATM`.</span>
+<span class="sd">#. convert ``HETATM`` to ``ATOM`` for those atoms that should be ``ATOM``,</span>
+<span class="sd">#. from ``pdb-toos``: ``pdb_fixinsert``, with ``option_list=[]``.</span>
+<span class="sd">#. remove unsupported ``HETATM``. Considers residues provided by the user.</span>
+<span class="sd">#. remove unsupported ``ATOM``. Considers residues provided by the user.</span>
+<span class="sd">#. from ``pdb-tools``: ``pdb_reatom``, start from ``1``.</span>
+<span class="sd">#. from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``</span>
+
+<span class="sd">Corrections performed on 2)</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">The following actions are performed sequentially for each PDB:</span>
+
+<span class="sd">* :py:func:`models_should_have_the_same_labels`</span>
+<span class="sd">* :py:func:`solve_no_chainID_no_segID`</span>
+<span class="sd">* :py:func:`homogenize_chains`</span>
+
+<span class="sd">Read the documentation of the above functions for details what they do.</span>
+
+<span class="sd">Corrections performed on 3)</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">The following actions are performed to all PDBs together:</span>
+
+<span class="sd">* :py:func:`correct_equal_chain_segids`</span>
+
+<span class="sd">Read the documentation of the above functions for details what they do.</span>
+
+<span class="sd">When it happens</span>
+<span class="sd">---------------</span>
+
+<span class="sd">The PDB processing step is performed by default when reading the input</span>
+<span class="sd">molecules and copying them to the `data/` folder inside the run</span>
+<span class="sd">directory. When PDBs are processed, a copy of the original input PDBs is</span>
+<span class="sd">also stored in the `data/` folder.</span>
+
+<span class="sd">To deactivate this initial PDB processing, set ``skip_preprocess = False``</span>
+<span class="sd">in the general parameters of the configuration file.</span>
+
+<span class="sd">Additional information</span>
+<span class="sd">----------------------</span>
+
+<span class="sd">If you are a developer and want to read more about the history of this</span>
+<span class="sd">preprocessing module, visit:</span>
+
+<span class="sd">https://github.com/haddocking/haddock3/projects/16</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">pdbtools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">pdb_chain</span><span class="p">,</span>
+    <span class="n">pdb_chainxseg</span><span class="p">,</span>
+    <span class="n">pdb_element</span><span class="p">,</span>
+    <span class="n">pdb_fixinsert</span><span class="p">,</span>
+    <span class="n">pdb_keepcoord</span><span class="p">,</span>
+    <span class="n">pdb_occ</span><span class="p">,</span>
+    <span class="n">pdb_reatom</span><span class="p">,</span>
+    <span class="n">pdb_rplresname</span><span class="p">,</span>
+    <span class="n">pdb_segxchain</span><span class="p">,</span>
+    <span class="n">pdb_selaltloc</span><span class="p">,</span>
+    <span class="n">pdb_shiftres</span><span class="p">,</span>
+    <span class="n">pdb_tidy</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">HaddockError</span>
+<span class="kn">from</span> <span class="nn">haddock.core.supported_molecules</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">supported_ATOM</span><span class="p">,</span>
+    <span class="n">supported_HETATM</span><span class="p">,</span>
+    <span class="n">supported_non_ions</span><span class="p">,</span>
+    <span class="n">supported_single_ions_atoms_map</span><span class="p">,</span>
+    <span class="n">supported_single_ions_resnames_map</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Container</span><span class="p">,</span>
+    <span class="n">Generator</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">LineIterSource</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">chainf</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_lines</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libpdb</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">format_atom_name</span><span class="p">,</span>
+    <span class="n">read_chainids</span><span class="p">,</span>
+    <span class="n">read_segids</span><span class="p">,</span>
+    <span class="n">slc_charge</span><span class="p">,</span>
+    <span class="n">slc_element</span><span class="p">,</span>
+    <span class="n">slc_name</span><span class="p">,</span>
+    <span class="n">slc_resname</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># defines chain letters for chain and seg IDs</span>
+<span class="n">_ascii_letters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span>
+<span class="n">_CHAINS</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">_ascii_letters</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ModelsDifferError"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.ModelsDifferError">[docs]</a><span class="k">class</span> <span class="nc">ModelsDifferError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;MODELS of the PDB differ in atom labels.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="k">def</span> <span class="nf">_report</span><span class="p">(</span><span class="n">log_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add report functionality to the function (decorator).</span>
+
+<span class="sd">    Functions decorated with `_report` log the difference between the</span>
+<span class="sd">    input and the output. Decorated functions gain an additional boolean</span>
+<span class="sd">    parameter `report` to activate or deactivate the report</span>
+<span class="sd">    functionality; defaults to ``False``.</span>
+
+<span class="sd">    Note that a generator decorated with ``_report`` no longer behaves</span>
+<span class="sd">    as a generator if ``report=True`` is given. Instead, it returns a</span>
+<span class="sd">    list from the exhausted generator.</span>
+
+<span class="sd">    **Important:** Do NOT use ``_report`` with infinite generators,</span>
+<span class="sd">    such as ``itertools.cycle``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span>
+            <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">report</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
+                <span class="n">in_lines</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">in_lines</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+                <span class="c1"># Here we could use sets to increase speed, but for the size</span>
+                <span class="c1"># of the systems, we can actually use lists and get a sorted</span>
+                <span class="c1"># result by default. I tried using difflib from STD but it is</span>
+                <span class="c1"># just too slow.</span>
+
+                <span class="c1"># _ is line</span>
+                <span class="n">additions</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_lines</span><span class="p">]</span>
+                <span class="n">deletions</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">in_lines</span> <span class="k">if</span> <span class="n">_</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+                <span class="n">la</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">additions</span><span class="p">)</span>
+                <span class="n">ld</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">deletions</span><span class="p">)</span>
+
+                <span class="n">add_lines</span> <span class="o">=</span> <span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;+ </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">additions</span><span class="p">)</span>
+                <span class="n">del_lines</span> <span class="o">=</span> <span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">deletions</span><span class="p">)</span>
+
+                <span class="n">log_msg_</span> <span class="o">=</span> <span class="n">log_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">*</span><span class="n">kwargs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="n">extended_log</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">log_msg_</span><span class="si">}</span><span class="s2">] + </span><span class="si">{</span><span class="n">la</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">ld</span><span class="si">}</span><span class="s2"> lines&quot;</span><span class="p">,</span>
+                    <span class="n">add_lines</span><span class="p">,</span>
+                    <span class="n">del_lines</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extended_log</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">result</span>
+
+            <span class="c1"># If report=False, maintain the original behaviour</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorator</span>
+
+
+<span class="k">def</span> <span class="nf">_open_or_give</span><span class="p">(</span><span class="n">inputdata</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">LineIterSource</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adapt input to the functions.</span>
+
+<span class="sd">    Used in py:func:`process_pdbs`.</span>
+
+<span class="sd">    Homogenizes input by:</span>
+
+<span class="sd">    * removing new line characters at the end of the line</span>
+<span class="sd">    * removing empty lines</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inputdata : list</span>
+<span class="sd">        A **flat** list where in each index it can contain:</span>
+
+<span class="sd">        * file objects</span>
+<span class="sd">        * paths to files</span>
+<span class="sd">        * strings representing paths</span>
+<span class="sd">        * lists or tuples of lines</span>
+
+<span class="sd">        The above types can be mixed in the input list.</span>
+
+<span class="sd">        Files are read to lines in a list. Line separators are stripped.</span>
+
+<span class="sd">        Do not provide nested lists with lists containing paths inside</span>
+<span class="sd">        lists.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of list of strings</span>
+<span class="sd">        Each sublist has the contents of the input in the same order.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        In any other circumstances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_line</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ignore empty lines.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">linesep</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">line</span><span class="p">]</span>
+
+    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idata</span> <span class="ow">in</span> <span class="n">inputdata</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">idata</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">linesep</span><span class="p">)))</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOBase</span><span class="p">):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">idata</span><span class="o">.</span><span class="n">readlines</span><span class="p">()))</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idata</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_line</span><span class="p">(</span><span class="n">idata</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">emsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unexpected type in `inputdata`: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">idata</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lines</span>
+
+
+<span class="nd">@read_lines</span>
+<span class="k">def</span> <span class="nf">read_additional_residues</span><span class="p">(</span>
+    <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read additional residues listed in a ``*.top`` filename.</span>
+
+<span class="sd">    Expects new residues to be defined as::</span>
+
+<span class="sd">        RESIdue XXX</span>
+<span class="sd">        RESI XXX</span>
+<span class="sd">        residue XXX</span>
+
+<span class="sd">    where, XXX is the new residue name. Does not read ATOM or charge</span>
+<span class="sd">    information. Reads only the residue name.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Read directly the file:</span>
+
+<span class="sd">    &gt;&gt;&gt; read_additional_residues(fpath)</span>
+
+<span class="sd">    Read the lines instead:</span>
+
+<span class="sd">    &gt;&gt;&gt; lines = Path(fpath).read_text().split(os.linesep)</span>
+<span class="sd">    &gt;&gt;&gt; read_additional_residues.original(lines)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : str or pathlib.Path</span>
+<span class="sd">        The path to the file.</span>
+
+<span class="sd">    lines : list of lines</span>
+<span class="sd">        You can also use this function in the form of</span>
+<span class="sd">        ``read_additional_residues.original(...)`` and directly give it</span>
+<span class="sd">        a list containing the lines of the file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple with the new identified residues names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># https://regex101.com/r/1H44kO/1</span>
+    <span class="n">res_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(RESIdue|residue|RESI) ([A-Z0-9]{1,3}).*$&quot;</span><span class="p">)</span>
+    <span class="n">residues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">res_regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">residues</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="process_pdbs"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.process_pdbs">[docs]</a><span class="k">def</span> <span class="nf">process_pdbs</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">inputdata</span><span class="p">:</span> <span class="n">LineIterSource</span><span class="p">,</span>
+    <span class="n">dry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">user_supported_residues</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process PDB file contents for compatibility with HADDOCK3.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inputdata : list of (str, path, list of str [lines], file handler)</span>
+
+<span class="sd">        A **flat** list where in each index it can contain:</span>
+
+<span class="sd">        * file objects</span>
+<span class="sd">        * paths to files</span>
+<span class="sd">        * strings representing paths</span>
+<span class="sd">        * lists or tuples of lines</span>
+
+<span class="sd">        The above types can be mixed in the input list.</span>
+
+<span class="sd">        Files are read to lines in a list. Line separators are stripped.</span>
+
+<span class="sd">        Do not provide nested lists with lists containing paths inside</span>
+<span class="sd">        lists.</span>
+
+<span class="sd">    dry : bool</span>
+<span class="sd">        Perform a dry run. That is, does not change anything, and just</span>
+<span class="sd">        report.</span>
+
+<span class="sd">    user_supported_residues : list, tuple, or set</span>
+<span class="sd">        The new residues that are allowed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of (list of str)</span>
+<span class="sd">        The corrected (processed) PDB content in the same order as</span>
+<span class="sd">        ``inputdata``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">structures</span> <span class="o">=</span> <span class="n">_open_or_give</span><span class="p">(</span><span class="n">inputdata</span><span class="p">)</span>
+
+    <span class="c1"># these are the processing or checking functions that should (if needed)</span>
+    <span class="c1"># modify the input PDB and return the corrected lines.</span>
+    <span class="c1"># Follows the same style as for pdb-tools.</span>
+    <span class="c1"># these functions yield line-by-line.</span>
+    <span class="n">line_by_line_processing_steps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">wrep_pdb_keepcoord</span><span class="p">,</span>  <span class="c1"># also discards ANISOU</span>
+        <span class="c1"># tidy is important before some other corrections</span>
+        <span class="n">wrep_pdb_tidy_strict</span><span class="p">,</span>
+        <span class="n">wrep_pdb_element</span><span class="p">,</span>
+        <span class="n">wrep_pdb_selaltloc</span><span class="p">,</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">wrep_pdb_occ</span><span class="p">,</span> <span class="n">occupancy</span><span class="o">=</span><span class="mf">1.00</span><span class="p">),</span>
+        <span class="n">replace_MSE_to_MET</span><span class="p">,</span>
+        <span class="n">replace_HSD_to_HIS</span><span class="p">,</span>
+        <span class="n">replace_HSE_to_HIS</span><span class="p">,</span>
+        <span class="n">replace_HID_to_HIS</span><span class="p">,</span>
+        <span class="n">replace_HIE_to_HIS</span><span class="p">,</span>
+        <span class="n">add_charges_to_ions</span><span class="p">,</span>
+        <span class="n">partial</span><span class="p">(</span>
+            <span class="n">convert_ATOM_to_HETATM</span><span class="p">,</span>
+            <span class="n">residues</span><span class="o">=</span><span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+                <span class="n">supported_HETATM</span><span class="p">,</span>
+                <span class="n">user_supported_residues</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(),</span>
+            <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">convert_HETATM_to_ATOM</span><span class="p">,</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">wrep_pdb_fixinsert</span><span class="p">,</span> <span class="n">option_list</span><span class="o">=</span><span class="p">[]),</span>
+        <span class="c1">#####</span>
+        <span class="n">partial</span><span class="p">(</span>
+            <span class="n">remove_unsupported_hetatm</span><span class="p">,</span> <span class="n">user_defined</span><span class="o">=</span><span class="n">user_supported_residues</span>
+        <span class="p">),</span>  <span class="c1"># noqa: E501</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">remove_unsupported_atom</span><span class="p">),</span>
+        <span class="c1">####</span>
+        <span class="c1"># partial(wrep_pdb_shiftres, shifting_factor=0),</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">wrep_pdb_reatom</span><span class="p">,</span> <span class="n">starting_value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">wrep_pdb_tidy</span><span class="p">,</span>
+        <span class="c1">###</span>
+        <span class="n">wrep_rstrip</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># these functions take the whole PDB content, evaluate it, and</span>
+    <span class="c1"># modify it if needed.</span>
+    <span class="n">whole_pdb_processing_steps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">models_should_have_the_same_labels</span><span class="p">,</span>
+        <span class="n">solve_no_chainID_no_segID</span><span class="p">,</span>
+        <span class="n">homogenize_chains</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># these functions take all structures combined, evulate them</span>
+    <span class="c1"># togehter, and modify them if needed.</span>
+    <span class="n">processed_combined_steps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">correct_equal_chain_segids</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># START THE ACTUAL PROCESSING</span>
+
+    <span class="c1"># individual processing (line-by-line)</span>
+    <span class="n">result_1</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">chainf</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="o">*</span><span class="n">line_by_line_processing_steps</span><span class="p">,</span> <span class="n">report</span><span class="o">=</span><span class="n">dry</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">structures</span>
+    <span class="p">]</span>
+
+    <span class="c1"># whole structure processing</span>
+    <span class="n">result_2</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">chainf</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="o">*</span><span class="n">whole_pdb_processing_steps</span><span class="p">,</span> <span class="n">report</span><span class="o">=</span><span class="n">dry</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">result_1</span>
+    <span class="p">]</span>
+
+    <span class="c1"># combined processing</span>
+    <span class="n">final_result</span> <span class="o">=</span> <span class="n">chainf</span><span class="p">(</span><span class="n">result_2</span><span class="p">,</span> <span class="o">*</span><span class="n">processed_combined_steps</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">final_result</span></div>
+
+
+<span class="c1"># Functions operating line-by-line</span>
+
+<span class="c1"># make pdb-tools reportable</span>
+<span class="n">wrep_pdb_chain</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_chain&quot;</span><span class="p">)(</span><span class="n">pdb_chain</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_chainxseg</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pbd_segxchain&quot;</span><span class="p">)(</span><span class="n">pdb_chainxseg</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_element</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_element&quot;</span><span class="p">)(</span><span class="n">pdb_element</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_fixinsert</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_fixinsert&quot;</span><span class="p">)(</span><span class="n">pdb_fixinsert</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_keepcoord</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_keepcoord&quot;</span><span class="p">)(</span><span class="n">pdb_keepcoord</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_occ</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_occ&quot;</span><span class="p">)(</span><span class="n">pdb_occ</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_reatom</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_reatom&quot;</span><span class="p">)(</span><span class="n">pdb_reatom</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_shiftres</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_shiftres&quot;</span><span class="p">)(</span><span class="n">pdb_shiftres</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_rplresname</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_rplresname&quot;</span><span class="p">)(</span><span class="n">pdb_rplresname</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_segxchain</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_segxchain&quot;</span><span class="p">)(</span><span class="n">pdb_segxchain</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_selaltloc</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_selaltloc&quot;</span><span class="p">)(</span><span class="n">pdb_selaltloc</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_tidy</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_tidy&quot;</span><span class="p">)(</span><span class="n">pdb_tidy</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+<span class="n">wrep_pdb_tidy_strict</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;pdb_tidy&quot;</span><span class="p">)(</span><span class="n">partial</span><span class="p">(</span><span class="n">pdb_tidy</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="n">wrep_rstrip</span> <span class="o">=</span> <span class="n">_report</span><span class="p">(</span><span class="s2">&quot;str.rstrip&quot;</span><span class="p">)(</span>
+    <span class="n">partial</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">linesep</span><span class="p">))</span>
+<span class="p">)</span>  <span class="c1"># noqa: E501</span>
+
+
+<div class="viewcode-block" id="replace_HETATM_to_ATOM"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_HETATM_to_ATOM">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replacing HETATM to ATOM for residue </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">replace_HETATM_to_ATOM</span><span class="p">(</span>
+    <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">res</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace record `HETATM` to `ATOM` for `res`.</span>
+
+<span class="sd">    Do not alter other lines.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fhanlder : file handler or list of lines</span>
+<span class="sd">        List-like of file lines. Consumes over a ``for`` loop.</span>
+
+<span class="sd">    res : str</span>
+<span class="sd">        Residue name to match for the substitution.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    str</span>
+<span class="sd">        Yield line-by-line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fhandler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;HETATM&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;ATOM  &quot;</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">line</span></div>
+
+
+<div class="viewcode-block" id="replace_residue"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_residue">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replace residue ATOM/HETATM </span><span class="si">{!r}</span><span class="s2"> to ATOM </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">replace_residue</span><span class="p">(</span>
+    <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resin</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resout</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace residue by another and changes ``HETATM`` to ``ATOM`` if needed.</span>
+
+<span class="sd">    Do not alter other lines.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fhanlder : file handler or list of lines</span>
+<span class="sd">        List-like of file lines. Consumes over a ``for`` loop.</span>
+
+<span class="sd">    resin : str</span>
+<span class="sd">        Residue name to match for the substitution.</span>
+
+<span class="sd">    resout : str</span>
+<span class="sd">        Name of the new residue. Renames ``resin`` to ``resout``.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    str</span>
+<span class="sd">        Yield line-by-line.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    * :py:func:`replace_HETATM_to_ATOM`</span>
+<span class="sd">    * ``pdb_rplresname`` from ``pdb-tools``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">replace_HETATM_to_ATOM</span><span class="p">(</span><span class="n">fhandler</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="n">resin</span><span class="p">)</span>
+    <span class="k">yield from</span> <span class="n">pdb_rplresname</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">name_from</span><span class="o">=</span><span class="n">resin</span><span class="p">,</span> <span class="n">name_to</span><span class="o">=</span><span class="n">resout</span><span class="p">)</span></div>
+
+
+<span class="n">replace_MSE_to_MET</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">replace_residue</span><span class="p">,</span> <span class="n">resin</span><span class="o">=</span><span class="s2">&quot;MSE&quot;</span><span class="p">,</span> <span class="n">resout</span><span class="o">=</span><span class="s2">&quot;MET&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Replace ``MSE`` to ``MET``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`replace_residue`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">replace_HSD_to_HIS</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">replace_residue</span><span class="p">,</span> <span class="n">resin</span><span class="o">=</span><span class="s2">&quot;HSD&quot;</span><span class="p">,</span> <span class="n">resout</span><span class="o">=</span><span class="s2">&quot;HIS&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Replace ``HSD`` to ``HIS``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`replace_residue`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">replace_HSE_to_HIS</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">replace_residue</span><span class="p">,</span> <span class="n">resin</span><span class="o">=</span><span class="s2">&quot;HSE&quot;</span><span class="p">,</span> <span class="n">resout</span><span class="o">=</span><span class="s2">&quot;HIS&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Replace ``HSE`` to ``HIS``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`replace_residue`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">replace_HID_to_HIS</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">replace_residue</span><span class="p">,</span> <span class="n">resin</span><span class="o">=</span><span class="s2">&quot;HID&quot;</span><span class="p">,</span> <span class="n">resout</span><span class="o">=</span><span class="s2">&quot;HIS&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Replace ``HID`` to ``HIS``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`replace_residue`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">replace_HIE_to_HIS</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">replace_residue</span><span class="p">,</span> <span class="n">resin</span><span class="o">=</span><span class="s2">&quot;HIE&quot;</span><span class="p">,</span> <span class="n">resout</span><span class="o">=</span><span class="s2">&quot;HIS&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Replace ``HIE`` to ``HIS``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`replace_residue`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="remove_unsupported_molecules"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.remove_unsupported_molecules">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Remove unsupported molecules&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">remove_unsupported_molecules</span><span class="p">(</span>
+    <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">haddock3_defined</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">user_defined</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">line_startswith</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove HADDOCK3 unsupported molecules.</span>
+
+<span class="sd">    This function is abstract and you need to provide the set of</span>
+<span class="sd">    residues supported by HADDOCK3. See parameters.</span>
+
+<span class="sd">    Residues not provided in ``haddock3_defined`` and ``user_defined``</span>
+<span class="sd">    are removed from the PDB lines.</span>
+
+<span class="sd">    Other lines are yieled unmodified.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lines : list or list-like</span>
+<span class="sd">        Lines of the PDB file. This function will consumes lines over a</span>
+<span class="sd">        ``for`` loop; mind it if you use a generator.</span>
+
+<span class="sd">    haddock3_defined : set</span>
+<span class="sd">        Set of residues supported by HADDOCK3.</span>
+<span class="sd">        Defaults to ``None``.</span>
+
+<span class="sd">    user_defined : set</span>
+<span class="sd">        An additional set of allowed residues given by the user.</span>
+<span class="sd">        Defaults to ``None``.</span>
+
+<span class="sd">    line_startswith : tuple</span>
+<span class="sd">        The lines to consider. Defaults to ``(&quot;ATOM&quot;, &quot;HETATM&quot;)``.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    line : str</span>
+<span class="sd">        Line-by-line.</span>
+<span class="sd">        Lines for residues not supported are *not* yielded.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Other functions use this function to create context.</span>
+
+<span class="sd">    * :py:func:`remove_unsupported_atom`</span>
+<span class="sd">    * :py:func:`remove_unsupported_hetatm`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user_defined</span> <span class="o">=</span> <span class="n">user_defined</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">haddock3_defined</span> <span class="o">=</span> <span class="n">haddock3_defined</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">allowed</span> <span class="o">=</span> <span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">haddock3_defined</span><span class="p">,</span> <span class="n">user_defined</span><span class="p">)</span>
+
+    <span class="c1"># find a way to report this</span>
+    <span class="n">not_allowed_found</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">line_startswith</span><span class="p">):</span>
+            <span class="n">residue</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">allowed</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">line</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">not_allowed_found</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+                <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">line</span>
+
+    <span class="k">return</span></div>
+
+
+<span class="n">remove_unsupported_hetatm</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">remove_unsupported_molecules</span><span class="p">,</span>
+    <span class="n">haddock3_defined</span><span class="o">=</span><span class="n">supported_HETATM</span><span class="p">,</span>
+    <span class="n">line_startswith</span><span class="o">=</span><span class="s2">&quot;HETATM&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Remove unsupported molecules in ``HETATM`` lines.</span>
+
+<span class="sd">Uses :py:func:`remove_unsupported_molecules` by populating its</span>
+<span class="sd">``haddock3_define`` and ``line_startswith`` parameters.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`remove_unsupported_atom`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">remove_unsupported_atom</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">remove_unsupported_molecules</span><span class="p">,</span>
+    <span class="n">haddock3_defined</span><span class="o">=</span><span class="n">supported_ATOM</span><span class="p">,</span>
+    <span class="n">line_startswith</span><span class="o">=</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Remove unsupported molecules in ``ATOM`` lines.</span>
+
+<span class="sd">Uses :py:func:`remove_unsupported_molecules` by populating its</span>
+<span class="sd">``haddock3_define`` and ``line_startswith`` parameters.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:func:`remove_unsupported_hetatm`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="add_charges_to_ions"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.add_charges_to_ions">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Add charges to ions.&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add_charges_to_ions</span><span class="p">(</span><span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add charges to ions according to HADDOCK3 specifications.</span>
+
+<span class="sd">    1. Check if charge is correctly defined in residue name.</span>
+<span class="sd">       If so, yield the line with correct residue name and charge at the</span>
+<span class="sd">       end.</span>
+<span class="sd">    2. Check if charge is correctly defined in atom name.</span>
+<span class="sd">    3. Create charge from element. This might need manual edit in case</span>
+<span class="sd">       the atom as an unconventional charge.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fhandler : file-hanlder, list, or list-like</span>
+<span class="sd">        Lines of the PDB file. This function will consumes lines over a</span>
+<span class="sd">        ``for`` loop; mind it if you use a generator.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    line : str</span>
+<span class="sd">        Line-by-line: modified ion lines and any other line.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># list of functions that correct ion entries</span>
+    <span class="c1"># by order of preference in case a preference is not found.</span>
+    <span class="c1"># see further</span>
+    <span class="n">ion_correction_cases</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_process_ion_case_atom</span><span class="p">,</span>
+        <span class="n">_process_ion_case_resname</span><span class="p">,</span>
+        <span class="n">_process_ion_case_element_charge</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fhandler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;ANISOU&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">)):</span>
+            <span class="c1"># get values</span>
+            <span class="n">atom</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_name</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 4 chars</span>
+            <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 3 chars</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_element</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 2 chars</span>
+            <span class="n">charge</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_charge</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 2 chars</span>
+
+            <span class="k">if</span> <span class="n">resname</span> <span class="ow">in</span> <span class="n">supported_non_ions</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">line</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Which of the above fields has information on the charge?</span>
+            <span class="c1"># If more than one have information on the charge, we give</span>
+            <span class="c1"># the preference to the atom, resname, and then charge</span>
+            <span class="n">func_to_apply</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">func_to_apply</span> <span class="o">=</span> <span class="n">_process_ion_case_atom</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">resname</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">func_to_apply</span> <span class="o">=</span> <span class="n">_process_ion_case_resname</span>  <span class="c1"># type: ignore</span>
+            <span class="k">elif</span> <span class="n">element</span> <span class="ow">and</span> <span class="n">charge</span> <span class="ow">and</span> <span class="n">charge</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">func_to_apply</span> <span class="o">=</span> <span class="n">_process_ion_case_element_charge</span>  <span class="c1"># type: ignore</span>
+
+            <span class="k">if</span> <span class="n">func_to_apply</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">func_to_apply</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+            <span class="c1"># in case none of the fields has information on the charge,</span>
+            <span class="c1"># applies the process functions by giving preference to the</span>
+            <span class="c1"># residue names.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">ion_correction_cases</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">yield</span> <span class="n">func</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="c1"># test the next function</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">break</span>  <span class="c1"># done</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">line</span>  <span class="c1"># lines that do not concern to ions</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">line</span>  <span class="c1"># lines that are not atoms</span></div>
+
+
+<span class="k">def</span> <span class="nf">_process_ion_case_resname</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process ion information based on resnames.</span>
+
+<span class="sd">    case 1: charge is correctly defined in resname, for example, ZN2.</span>
+<span class="sd">    In this case, ignore other fields and write ion information from</span>
+<span class="sd">    scratch even if it&#39;s already correct.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 3 chars</span>
+    <span class="n">new_atom</span> <span class="o">=</span> <span class="n">supported_single_ions_resnames_map</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">new_element</span> <span class="o">=</span> <span class="n">supported_single_ions_resnames_map</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">charge</span> <span class="o">=</span> <span class="n">new_atom</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_atom</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;  &quot;</span>
+
+    <span class="n">new_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">line</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">format_atom_name</span><span class="p">(</span><span class="n">new_atom</span><span class="p">,</span> <span class="n">new_element</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">resname</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">76</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">new_element</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">charge</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_line</span>
+
+
+<span class="k">def</span> <span class="nf">_process_ion_case_atom</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process ion information based on atom names.</span>
+
+<span class="sd">    case 2: charge is correctly defined in atom name ignore other fields</span>
+<span class="sd">    and write them from scratch even if they are already correct.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">element</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_element</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 2 chars</span>
+    <span class="k">if</span> <span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+        <span class="c1"># element C can have atom name CA which conflicts carbon alpha</span>
+        <span class="c1"># and calcium</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element is &#39;C&#39;, does not apply to this case.&quot;</span><span class="p">)</span>
+
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_name</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 4 chars</span>
+    <span class="n">new_resname</span> <span class="o">=</span> <span class="n">supported_single_ions_atoms_map</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span><span class="o">.</span><span class="n">resname</span>
+    <span class="n">new_element</span> <span class="o">=</span> <span class="n">supported_single_ions_atoms_map</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">charge</span> <span class="o">=</span> <span class="n">atom</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;  &quot;</span>
+
+    <span class="n">new_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">line</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">format_atom_name</span><span class="p">(</span><span class="n">atom</span><span class="p">,</span> <span class="n">new_element</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">new_resname</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">76</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">new_element</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">charge</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_line</span>
+
+
+<span class="k">def</span> <span class="nf">_process_ion_case_element_charge</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process ion information based on element and charge.</span>
+
+<span class="sd">    case 3: charge is correctly defined in atom name ignore other fields</span>
+<span class="sd">    and write them from scratch even if they are already correct.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">element</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_element</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 2 chars</span>
+    <span class="n">charge</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_charge</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># max 2 chars</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">element</span> <span class="o">+</span> <span class="n">charge</span>
+    <span class="n">new_resname</span> <span class="o">=</span> <span class="n">supported_single_ions_atoms_map</span><span class="p">[</span><span class="n">atom</span><span class="p">]</span><span class="o">.</span><span class="n">resname</span>
+
+    <span class="n">new_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">line</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">format_atom_name</span><span class="p">(</span><span class="n">atom</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">new_resname</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">76</span><span class="p">]</span>
+        <span class="o">+</span> <span class="n">element</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">charge</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_line</span>
+
+
+<div class="viewcode-block" id="convert_record"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.convert_record">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Convert record: </span><span class="si">{!r}</span><span class="s2"> to </span><span class="si">{!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_record</span><span class="p">(</span>
+    <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">other_record</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">residues</span><span class="p">:</span> <span class="n">Container</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert on record to another for specified residues.</span>
+
+<span class="sd">    For example, replace ``ATOM`` by ``HETATM`` for specific residues.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fhandler : list-like</span>
+<span class="sd">        Contains lines of file.</span>
+
+<span class="sd">    record : str</span>
+<span class="sd">        The PDB RECORD to match; for example, ``ATOM`` or ``HETATM``.</span>
+
+<span class="sd">    other_record : str</span>
+<span class="sd">        The PDB RECORD to replace with; for example, ``ATOM`` or ``HETATM``.</span>
+
+<span class="sd">    residues : list, tuple, or set</span>
+<span class="sd">        List of residues to replace the record.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fhandler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">record</span><span class="p">):</span>
+            <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">resname</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">other_record</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+                <span class="k">continue</span>
+        <span class="k">yield</span> <span class="n">line</span></div>
+
+
+<span class="n">convert_ATOM_to_HETATM</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">convert_record</span><span class="p">,</span>
+    <span class="n">record</span><span class="o">=</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span>
+    <span class="n">other_record</span><span class="o">=</span><span class="s2">&quot;HETATM&quot;</span><span class="p">,</span>
+    <span class="n">residues</span><span class="o">=</span><span class="n">supported_HETATM</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Convert ``ATOM`` to ``HETATM`` for HADDOCK3 supported ``HETATM``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:data:`haddock.core.supported_molecules.supported_HETATM`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">convert_HETATM_to_ATOM</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">convert_record</span><span class="p">,</span>
+    <span class="n">record</span><span class="o">=</span><span class="s2">&quot;HETATM&quot;</span><span class="p">,</span>
+    <span class="n">other_record</span><span class="o">=</span><span class="s2">&quot;ATOM  &quot;</span><span class="p">,</span>
+    <span class="n">residues</span><span class="o">=</span><span class="n">supported_ATOM</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Convert ``HETATM`` to ``ATOM`` for HADDOCK3 supported ``ATOM``.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">* :py:data:`haddock.core.supported_molecules.supported_ATOM`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Functions operating in the whole PDB</span>
+
+
+<div class="viewcode-block" id="solve_no_chainID_no_segID"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.solve_no_chainID_no_segID">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Solving chain/seg ID issues.&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">solve_no_chainID_no_segID</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve inconsistencies with chainID and segID.</span>
+
+<span class="sd">    If segID is non-existant, copy chainID over segID, and vice-versa.</span>
+<span class="sd">    If none are present, adds an upper case char starting from A. This</span>
+<span class="sd">    char is not repeated until the alphabet exhausts.</span>
+<span class="sd">    If chainIDs and segIDs differ, copy chainIDs over segIDs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lines : list of str</span>
+<span class="sd">        The lines of a PDB file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        With new lines. Or the input ones if no modification was made.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chainids</span> <span class="o">=</span> <span class="n">read_chainids</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">segids</span> <span class="o">=</span> <span class="n">read_segids</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">chainids</span> <span class="ow">and</span> <span class="n">segids</span><span class="p">:</span>
+        <span class="n">new_lines</span> <span class="o">=</span> <span class="n">pdb_segxchain</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">chainids</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">segids</span><span class="p">:</span>
+        <span class="n">new_lines</span> <span class="o">=</span> <span class="n">pdb_chainxseg</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">chainids</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">segids</span><span class="p">:</span>
+        <span class="n">_chains</span> <span class="o">=</span> <span class="n">pdb_chain</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="nb">next</span><span class="p">(</span><span class="n">_CHAINS</span><span class="p">))</span>
+        <span class="n">new_lines</span> <span class="o">=</span> <span class="n">pdb_chainxseg</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">_chains</span><span class="p">)</span>
+
+    <span class="c1"># gives priority to chains</span>
+    <span class="k">elif</span> <span class="n">chainids</span> <span class="o">!=</span> <span class="n">segids</span><span class="p">:</span>
+        <span class="n">new_lines</span> <span class="o">=</span> <span class="n">pdb_chainxseg</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># nothing to do</span>
+        <span class="k">return</span> <span class="n">lines</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_lines</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: needs to become an option.</span>
+<span class="c1"># change chain ID and shift the residue of the other chains.</span>
+<span class="c1"># also needs to be sync with the restraints.</span>
+<span class="c1"># maybe not an automatic.. maybe used as a CLI</span>
+<span class="c1"># maybe is a place to have a CHECK instead of a autoprocess</span>
+<div class="viewcode-block" id="homogenize_chains"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.homogenize_chains">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Homogenizes chains&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">homogenize_chains</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Homogenize chainIDs within the same PDB.</span>
+
+<span class="sd">    If there are multiple chain identifiers in the PDB file, make all</span>
+<span class="sd">    them equal to the first one.</span>
+
+<span class="sd">    ChainIDs are copied to segIDs afterwards.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        The modified lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chainids</span> <span class="o">=</span> <span class="n">read_chainids</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chainids</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">chainf</span><span class="p">(</span>
+                <span class="n">lines</span><span class="p">,</span>
+                <span class="n">partial</span><span class="p">(</span><span class="n">pdb_chain</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="n">chainids</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="n">pdb_chainxseg</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">lines</span></div>
+
+
+<span class="c1"># Functions operating in all PDBs at once</span>
+
+
+<div class="viewcode-block" id="correct_equal_chain_segids"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.correct_equal_chain_segids">[docs]</a><span class="k">def</span> <span class="nf">correct_equal_chain_segids</span><span class="p">(</span><span class="n">structures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct for repeated chainID in the input PDB files.</span>
+
+<span class="sd">    Repeated chain IDs are replaced by an upper case character (``[A-Z]``)</span>
+<span class="sd">    in order.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    structures : list of lists of str</span>
+<span class="sd">        The input data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of lists of str</span>
+<span class="sd">        The new structures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_all_chains</span> <span class="o">=</span> <span class="p">(</span><span class="n">read_chainids</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">structures</span><span class="p">)</span>
+    <span class="c1"># set of all chain IDs present in the input PDBs</span>
+    <span class="n">all_chain_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">_all_chains</span><span class="p">))</span>
+
+    <span class="c1"># the remaining available chain characters are the A-Z minus the</span>
+    <span class="c1"># `all_chain_ids`</span>
+    <span class="n">remaining_chars</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">_ascii_letters</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">all_chain_ids</span><span class="p">)))</span>
+
+    <span class="n">chain_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_structures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">structures</span><span class="p">:</span>
+        <span class="n">new_lines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># read chain IDs from the structure</span>
+        <span class="n">chain_id</span> <span class="o">=</span> <span class="n">read_chainids</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+        <span class="c1"># if chain_id is repeated</span>
+        <span class="k">if</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">chain_ids</span><span class="p">:</span>
+            <span class="n">new_lines</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">chainf</span><span class="p">(</span>
+                    <span class="n">lines</span><span class="p">,</span>
+                    <span class="c1"># change the chain ID by a new one</span>
+                    <span class="n">partial</span><span class="p">(</span><span class="n">pdb_chain</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="nb">next</span><span class="p">(</span><span class="n">remaining_chars</span><span class="p">)),</span>
+                    <span class="c1"># applies chain ID to seg ID as well</span>
+                    <span class="n">pdb_chainxseg</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">chain_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chain_id</span><span class="p">)</span>
+
+        <span class="n">new_structures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_lines</span> <span class="ow">or</span> <span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_structures</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">structures</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Number of lines differ. This is a bug!&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_structures</span></div>
+
+
+<span class="c1"># this id bad</span>
+<div class="viewcode-block" id="models_should_have_the_same_labels"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.models_should_have_the_same_labels">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Check models are the same&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">models_should_have_the_same_labels</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Confirm models have the same labels.</span>
+
+<span class="sd">    In an ensemble of structures, where the PDB file has multiple MODELS,</span>
+<span class="sd">    all models should have the same labels; hence the same number and</span>
+<span class="sd">    typ of atoms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lines : list of strings.</span>
+<span class="sd">        List containing the lines of the PDB file. Must NOT be a generator.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        The original ``lines`` in case no errors are found.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ModelsDifferError</span>
+<span class="sd">        In case MODELS differ. Reports on which models differ.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># searchers for the first MODEL line. If found, break the loop</span>
+    <span class="c1"># and continue to the rest of the function.</span>
+    <span class="c1">#</span>
+    <span class="c1"># if not found, return the same input lines.</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MODEL&quot;</span><span class="p">):</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">lines</span>
+
+    <span class="c1"># captures all the models</span>
+    <span class="n">models</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">new_model</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">new_model_id</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MODEL&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">new_model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">models</span><span class="p">[</span><span class="n">new_model_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_model</span><span class="p">)</span>
+                <span class="n">new_model</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">new_model_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">14</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">)):</span>
+            <span class="n">new_model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">27</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">models</span><span class="p">[</span><span class="n">new_model_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_model</span><span class="p">)</span>
+        <span class="n">new_model</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="c1"># check if all MODELS are equal, performing all vs all comparison</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">first_key</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">model_num</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">if</span> <span class="n">models</span><span class="p">[</span><span class="n">model_num</span><span class="p">]</span> <span class="o">!=</span> <span class="n">models</span><span class="p">[</span><span class="n">first_key</span><span class="p">]:</span>
+            <span class="n">emsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Labels in MODEL </span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2"> differ from MODEL </span><span class="si">{</span><span class="n">first_key</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">raise</span> <span class="n">ModelsDifferError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lines</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.analysis.clustrmsd &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../haddock.html">haddock</a></li>
+          <li class="breadcrumb-item"><a href="../../modules.html">haddock.modules</a></li>
+          <li class="breadcrumb-item"><a href="../analysis.html">haddock.modules.analysis</a></li>
+      <li class="breadcrumb-item active">haddock.modules.analysis.clustrmsd</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules.analysis.clustrmsd</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">RMSD clustering module.</span>
+
+<span class="sd">This module takes in input the RMSD matrix calculated in the previous step and</span>
+<span class="sd">performs a hierarchical clustering procedure on it, leveraging `scipy routines`_</span>
+<span class="sd">for this purpose.</span>
+
+<span class="sd">Essentially, the procedure amounts at lumping the input models in a</span>
+<span class="sd">progressively coarser hierarchy of clusters, called the dendrogram.</span>
+
+<span class="sd">Four parameters can be defined in this context:</span>
+
+<span class="sd">* `linkage`: governs the way clusters are merged together in the creation of</span>
+<span class="sd">  the dendrogram</span>
+<span class="sd">* `criterion`: defines the prescription to cut the dendrogram and obtain the</span>
+<span class="sd">  desired clusters</span>
+<span class="sd">* `n_clusters`: number of desired clusters (if `criterion` is `maxclust`).</span>
+<span class="sd">* `clust_cutoff`: value of distance that separates distinct clusters (if `criterion` is</span>
+<span class="sd">  ``distance``)</span>
+<span class="sd">* `min_population` : analogously to the `clustfcc` module, it is the minimum number</span>
+<span class="sd">  of models that should be present in a cluster to consider it. If criterion is</span>
+<span class="sd">    `maxclust`, the value is ignored.</span>
+
+<span class="sd">This module passes the path to the RMSD matrix is to the next step of the</span>
+<span class="sd">workflow through the `rmsd_matrix.json` file, thus allowing to execute several</span>
+<span class="sd">`clustrmsd` modules (possibly with different parameters) on the same RMSD</span>
+<span class="sd">matrix.</span>
+
+<span class="sd">.. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html</span>
+<span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_cluster_info</span><span class="p">,</span>
+    <span class="n">clustrmsd_tolerance_params</span><span class="p">,</span>
+    <span class="n">rank_clusters</span><span class="p">,</span>
+    <span class="n">write_structure_list</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustrmsd.clustrmsd</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_clusters</span><span class="p">,</span>
+    <span class="n">get_dendrogram</span><span class="p">,</span>
+    <span class="n">iterate_min_population</span><span class="p">,</span>
+    <span class="n">read_matrix</span><span class="p">,</span>
+    <span class="n">write_clusters</span><span class="p">,</span>
+    <span class="n">write_clustrmsd_file</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.clustrmsd.html#haddock.modules.analysis.clustrmsd.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for clustering with RMSD.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+            <span class="n">initial_params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">matrix_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_previous_io</span><span class="p">(</span><span class="s2">&quot;rmsd_matrix.json&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.clustrmsd.html#haddock.modules.analysis.clustrmsd.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if contact executable is compiled.&quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+        <span class="c1"># Get the models generated in previous step</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">()</span>
+
+        <span class="c1"># Cluster</span>
+        <span class="n">rmsd_matrix</span> <span class="o">=</span> <span class="n">read_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_json</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># loading parameters</span>
+        <span class="n">min_population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span>
+
+        <span class="c1"># getting clusters_list</span>
+        <span class="n">dendrogram</span> <span class="o">=</span> <span class="n">get_dendrogram</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;linkage&quot;</span><span class="p">])</span>
+
+        <span class="c1"># adjust the parameters</span>
+        <span class="n">tolerance_param_name</span><span class="p">,</span> <span class="n">tolerance</span> <span class="o">=</span> <span class="n">clustrmsd_tolerance_params</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+            <span class="p">)</span>
+        
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Clustering with </span><span class="si">{</span><span class="n">tolerance_param_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;and criterion </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;criterion&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        
+        <span class="n">cluster_arr</span> <span class="o">=</span> <span class="n">get_clusters</span><span class="p">(</span>
+            <span class="n">dendrogram</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># when crit == distance, apply clustering min_population</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;criterion&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;distance&quot;</span><span class="p">:</span>
+            <span class="n">cluster_arr</span><span class="p">,</span> <span class="n">min_population</span> <span class="o">=</span> <span class="n">iterate_min_population</span><span class="p">(</span>
+                <span class="n">cluster_arr</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+
+        <span class="c1"># print clusters</span>
+        <span class="n">unq_clusters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">)</span>  <span class="c1"># contains -1 (unclustered)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unq_clusters</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;clusters = </span><span class="si">{</span><span class="n">clusters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="n">out_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;cluster.out&#39;</span><span class="p">)</span>
+        <span class="n">clt_dic</span><span class="p">,</span> <span class="n">cluster_centers</span> <span class="o">=</span> <span class="n">write_clusters</span><span class="p">(</span>
+            <span class="n">clusters</span><span class="p">,</span>
+            <span class="n">cluster_arr</span><span class="p">,</span>
+            <span class="n">models</span><span class="p">,</span>
+            <span class="n">rmsd_matrix</span><span class="p">,</span>
+            <span class="n">out_filename</span><span class="p">,</span>
+            <span class="n">centers</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ranking clusters</span>
+        <span class="n">score_dic</span><span class="p">,</span> <span class="n">sorted_score_dic</span> <span class="o">=</span> <span class="n">rank_clusters</span><span class="p">(</span>
+            <span class="n">clt_dic</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">add_cluster_info</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">)</span>
+        
+        <span class="c1"># Write unclustered structures</span>
+        <span class="n">write_structure_list</span><span class="p">(</span>
+            <span class="n">models</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span>
+            <span class="n">out_fname</span><span class="o">=</span><span class="s2">&quot;clustrmsd.tsv&quot;</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># type: ignore</span>
+        
+        <span class="n">write_clustrmsd_file</span><span class="p">(</span>
+            <span class="n">clusters</span><span class="p">,</span>
+            <span class="n">clt_dic</span><span class="p">,</span>
+            <span class="n">cluster_centers</span><span class="p">,</span>
+            <span class="n">score_dic</span><span class="p">,</span>
+            <span class="n">sorted_score_dic</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span>
+        <span class="c1"># sending matrix to next step of the workflow</span>
+        <span class="n">matrix_io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+        <span class="n">matrix_io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_json</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">matrix_io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;rmsd_matrix.json&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

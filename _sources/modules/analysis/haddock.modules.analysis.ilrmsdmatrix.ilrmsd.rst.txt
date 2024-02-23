@@ -1,0 +1,7 @@
+haddock.modules.analysis.ilrmsdmatrix.ilrmsd module
+===================================================
+
+.. automodule:: haddock.modules.analysis.ilrmsdmatrix.ilrmsd
+   :members:
+   :undoc-members:
+   :show-inheritance:

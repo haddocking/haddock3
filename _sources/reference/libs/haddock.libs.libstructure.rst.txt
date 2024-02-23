@@ -1,0 +1,7 @@
+libstructure: functions related to structures
+================================
+
+.. automodule:: haddock.libs.libstructure
+   :members:
+   :undoc-members:
+   :show-inheritance:

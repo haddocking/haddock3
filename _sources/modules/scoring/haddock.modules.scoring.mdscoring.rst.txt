@@ -1,0 +1,15 @@
+Molecular Dynamics scoring module
+=========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.scoring.mdscoring
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/mdscoring.rst
+

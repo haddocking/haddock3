@@ -1,0 +1,7 @@
+Benchmark Daemon
+============================
+
+.. automodule:: haddock.clis.cli_dmn
+   :members:
+   :undoc-members:
+   :show-inheritance:

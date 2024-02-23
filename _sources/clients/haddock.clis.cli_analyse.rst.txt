@@ -1,0 +1,7 @@
+Analysis client
+================================
+
+.. automodule:: haddock.clis.cli_analyse
+   :members:
+   :undoc-members:
+   :show-inheritance:

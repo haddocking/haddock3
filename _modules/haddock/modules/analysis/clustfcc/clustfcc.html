@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.analysis.clustfcc.clustfcc &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../../haddock.html">haddock</a></li>
+          <li class="breadcrumb-item"><a href="../../../modules.html">haddock.modules</a></li>
+          <li class="breadcrumb-item"><a href="../../analysis.html">haddock.modules.analysis</a></li>
+          <li class="breadcrumb-item"><a href="../clustfcc.html">haddock.modules.analysis.clustfcc</a></li>
+      <li class="breadcrumb-item active">haddock.modules.analysis.clustfcc.clustfcc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules.analysis.clustfcc.clustfcc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;FCC clustering.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">fcc.scripts</span> <span class="kn">import</span> <span class="n">cluster_fcc</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+
+
+<div class="viewcode-block" id="iterate_clustering"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.iterate_clustering">[docs]</a><span class="k">def</span> <span class="nf">iterate_clustering</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">min_population_param</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iterate over the clustering process until a cluster is found.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pool : fcc.Pool</span>
+<span class="sd">        The pool object containing the fcc matrix.</span>
+<span class="sd">    </span>
+<span class="sd">    min_population_param : int</span>
+<span class="sd">        The min_population parameter to start the clustering process.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clusters : list</span>
+<span class="sd">        A list of clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    min_population : int</span>
+<span class="sd">        The min_population used to obtain the clusters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster_check</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">cluster_check</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">min_population</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_population_param</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Clustering with min_population=</span><span class="si">{</span><span class="n">min_population</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">clusters</span> <span class="o">=</span> <span class="n">cluster_fcc</span><span class="o">.</span><span class="n">cluster_elements</span><span class="p">(</span>
+                <span class="n">pool</span><span class="p">,</span>
+                <span class="n">threshold</span><span class="o">=</span><span class="n">min_population</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">clusters</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;[WARNING] No cluster was found, decreasing min_population!&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cluster_check</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># pass the actual min_population back to the param dict</span>
+                <span class="c1">#  because it will be used in the detailed output</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cluster_check</span><span class="p">:</span>
+            <span class="c1"># No cluster was obtained in any min_population</span>
+            <span class="n">cluster_check</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">min_population</span></div>
+
+
+<div class="viewcode-block" id="write_clusters"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.write_clusters">[docs]</a><span class="k">def</span> <span class="nf">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">out_filename</span><span class="o">=</span><span class="s2">&quot;cluster.out&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write the clusters to the cluster.out file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clusters : list</span>
+<span class="sd">        A list of clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    out_filename : str, optional</span>
+<span class="sd">        The name of the output file. The default is &quot;cluster.out&quot;.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># write the classic output file for compatibility reasons</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Saving output to </span><span class="si">{</span><span class="n">out_filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">cluster_out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_filename</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cluster_out</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">cluster_fcc</span><span class="o">.</span><span class="n">output_clusters</span><span class="p">(</span><span class="n">fh</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_cluster_centers"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.get_cluster_centers">[docs]</a><span class="k">def</span> <span class="nf">get_cluster_centers</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">models_to_cluster</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the cluster centers and the cluster dictionary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clusters : list</span>
+<span class="sd">        A list of clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    models_to_cluster : list</span>
+<span class="sd">        A list of models to cluster.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clt_dic : dict</span>
+<span class="sd">        A dictionary containing the clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    clt_centers : dict</span>
+<span class="sd">        A dictionary containing the cluster centers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clt_dic</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">clt_centers</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># iterate over the clusters</span>
+    <span class="k">for</span> <span class="n">clt</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+        <span class="n">cluster_id</span> <span class="o">=</span> <span class="n">clt</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">cluster_center_id</span> <span class="o">=</span> <span class="n">clt</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">name</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">cluster_center_pdb</span> <span class="o">=</span> <span class="n">models_to_cluster</span><span class="p">[</span><span class="n">cluster_center_id</span><span class="p">]</span>
+
+        <span class="n">clt_dic</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">clt_centers</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_center_pdb</span>
+        <span class="n">clt_dic</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cluster_center_pdb</span><span class="p">)</span>
+        <span class="c1"># iterate over the models in the cluster</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">clt</span><span class="o">.</span><span class="n">members</span><span class="p">:</span>
+            <span class="n">model_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">model_pdb</span> <span class="o">=</span> <span class="n">models_to_cluster</span><span class="p">[</span><span class="n">model_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">clt_dic</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_pdb</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">clt_centers</span></div>
+
+
+<div class="viewcode-block" id="write_clustfcc_file"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.write_clustfcc_file">[docs]</a><span class="k">def</span> <span class="nf">write_clustfcc_file</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">clt_centers</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">output_fname</span><span class="o">=</span><span class="s1">&#39;clustfcc.txt&#39;</span><span class="p">):</span>  <span class="c1"># noqa: E501</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write the clustfcc.txt file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clusters : list</span>
+<span class="sd">        A list of clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    clt_centers : dict</span>
+<span class="sd">        A dictionary containing the cluster centers.</span>
+<span class="sd">    </span>
+<span class="sd">    clt_dic : dict</span>
+<span class="sd">        A dictionary containing the clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    params : dict</span>
+<span class="sd">        A dictionary containing the clustering parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    sorted_score_dic : list</span>
+<span class="sd">        A list of sorted scores.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Prepare clustfcc.txt</span>
+    <span class="n">output_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;### clustfcc output ###</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Clustering parameters </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="s2">&quot;&gt; contact_distance_cutoff=&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;contact_distance_cutoff&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">A&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;&gt; clust_cutoff=</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;clust_cutoff&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&gt; min_population=</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;&gt; strictness=</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;strictness&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="s2">&quot;Note: Models marked with * represent the center of the cluster&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;-----------------------------------------------</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;Total # of clusters: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">for</span> <span class="n">cluster_rank</span><span class="p">,</span> <span class="n">_e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">cluster_id</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_e</span>
+        <span class="n">center_pdb</span> <span class="o">=</span> <span class="n">clt_centers</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span>
+        <span class="n">model_score_l</span> <span class="o">=</span> <span class="p">[(</span><span class="n">e</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clt_dic</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]]</span>
+        <span class="n">model_score_l</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="c1"># subset_score_l = [e[0] for e in model_score_l][:min_population]</span>
+        <span class="n">subset_score_l</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">model_score_l</span><span class="p">]</span>
+        <span class="n">subset_score_l</span> <span class="o">=</span> <span class="n">subset_score_l</span><span class="p">[:</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]]</span>
+        <span class="n">top_mean_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">subset_score_l</span><span class="p">)</span>
+        <span class="n">top_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">subset_score_l</span><span class="p">)</span>
+        <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;-----------------------------------------------&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Cluster </span><span class="si">{</span><span class="n">cluster_rank</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="n">cluster_id</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">model_score_l</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;top</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_avg_score = </span><span class="si">{</span><span class="n">top_mean_score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;+-</span><span class="si">{</span><span class="n">top_std</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">output_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+        <span class="n">output_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;clt_rank</span><span class="se">\t</span><span class="s1">model_name</span><span class="se">\t</span><span class="s1">score</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">model_ranking</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model_score_l</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">score</span><span class="p">,</span> <span class="n">pdb</span> <span class="o">=</span> <span class="n">element</span>
+            <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span> <span class="o">==</span> <span class="n">center_pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">:</span>
+                <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_ranking</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="se">\t</span><span class="s2">*&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_ranking</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">output_str</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="s2">&quot;-----------------------------------------------&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Saving detailed output to clustfcc.txt&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_fh</span><span class="p">:</span>
+        <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_str</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

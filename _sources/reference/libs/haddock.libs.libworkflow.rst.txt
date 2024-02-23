@@ -1,0 +1,7 @@
+libworkflow: workflow functions
+===============================
+
+.. automodule:: haddock.libs.libworkflow
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,23 @@
+FCC Clustering module
+=========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.clustfcc.clustfcc
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.clustfcc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/clustfcc.rst
+

@@ -1,0 +1,7 @@
+Unpack HADDOCK3 run
+===============================
+
+.. automodule:: haddock.clis.cli_unpack
+   :members:
+   :undoc-members:
+   :show-inheritance:

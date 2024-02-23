@@ -1,0 +1,15 @@
+LightDock sampling module
+==========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.sampling.lightdock
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/lightdock.rst
+

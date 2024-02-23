@@ -1,0 +1,15 @@
+Energy Minimization scoring module
+=========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.scoring.emscoring
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/emscoring.rst
+

@@ -1,0 +1,7 @@
+haddock.clis.re.clustfcc module
+===============================
+
+.. automodule:: haddock.clis.re.clustfcc
+   :members:
+   :undoc-members:
+   :show-inheritance:

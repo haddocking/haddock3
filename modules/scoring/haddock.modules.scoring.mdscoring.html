@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Molecular Dynamics scoring module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Analysis Modules" href="../analysis/index.html" />
+    <link rel="prev" title="Energy Minimization scoring module" href="haddock.modules.scoring.emscoring.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Scoring Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.scoring.emscoring.html">Energy Minimization scoring module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Molecular Dynamics scoring module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#module-haddock.modules.scoring">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Modules</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Scoring Modules</a></li>
+      <li class="breadcrumb-item active">Molecular Dynamics scoring module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/scoring/haddock.modules.scoring.mdscoring.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="molecular-dynamics-scoring-module">
+<h1>Molecular Dynamics scoring module<a class="headerlink" href="#molecular-dynamics-scoring-module" title="Permalink to this heading"></a></h1>
+<section id="module-haddock.modules.scoring.mdscoring">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.scoring.mdscoring" title="Permalink to this heading"></a></h2>
+<p>MD scoring module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.scoring.mdscoring.HaddockModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.mdscoring.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/scoring/mdscoring/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/scoring/mdscoring.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.mdscoring.HaddockModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="index.html#haddock.modules.scoring.ScoringModule" title="haddock.modules.scoring.ScoringModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScoringModule</span></code></a></p>
+<p>HADDOCK3 module to perform energy minimization scoring.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.scoring.mdscoring.HaddockModule.confirm_installation">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/scoring/mdscoring.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.mdscoring.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm module is installed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.modules.scoring.mdscoring.HaddockModule.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mdscoring'</span></em><a class="headerlink" href="#haddock.modules.scoring.mdscoring.HaddockModule.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="default-parameters">
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
+<section id="easy">
+<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
+<section id="dnarest-on">
+<h4>dnarest_on<a class="headerlink" href="#dnarest-on" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Restrain the DNA conformation</div>
+<div class="line"><em>short description</em>: Automatically creates restraints to maintain the conformation of DNA/RNA</div>
+<div class="line"><em>long description</em>: This option allows to restraint the conformation of nucleic acids based on the values from the input structures. The following restraints will be automatically defined: - single base planarity - sugar pucker - phosphate backbone diherdral angle restraints - Watson-Crick base pairing</div>
+<div class="line"><em>group</em>: other restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="elecflag">
+<h4>elecflag<a class="headerlink" href="#elecflag" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Include electrostatics energy</div>
+<div class="line"><em>short description</em>: Include electrostatics energy during the calculations.</div>
+<div class="line"><em>long description</em>: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="error-dih">
+<h4>error_dih<a class="headerlink" href="#error-dih" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 10</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Force constant for backbone dihedral angle restraints</div>
+<div class="line"><em>short description</em>: Force constant for backbone dihedral angle restraints (ssdihed option)</div>
+<div class="line"><em>long description</em>: Force constant for backbone dihedral angle restraints (ssdihed option)</div>
+<div class="line"><em>group</em>: dihedral restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="solvent">
+<h4>solvent<a class="headerlink" href="#solvent" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘water’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Solvent</div>
+<div class="line"><em>short description</em>: Solvent to use during the short MD refinement</div>
+<div class="line"><em>long description</em>: Solvent to use during the short MD refinement. Water and DMSO are supported. A solvent shelll is generated by shifting pre-equilibrated boxes around the complex. For water an 8A water shell is generated and for DMSO a 12.5A shell. For DMSO,</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ssdihed">
+<h4>ssdihed<a class="headerlink" href="#ssdihed" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘none’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Define automatically backbone dihedral angle restraints</div>
+<div class="line"><em>short description</em>: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.</div>
+<div class="line"><em>long description</em>: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions. The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from the measured angle in the input structure, and the error bound defined by the error_dih parameter. Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.</div>
+<div class="line"><em>group</em>: dihedral restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+<section id="expert">
+<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this heading"></a></h3>
+<section id="contactairs">
+<h4>contactairs<a class="headerlink" href="#contactairs" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Contact restraints</div>
+<div class="line"><em>short description</em>: Contact restraints between molecules</div>
+<div class="line"><em>long description</em>: Contact restraints between molecules. These are defined as ambiguous distance restraint between each residue of a molecule and all residues of the other molecules with 5A from that residue. This can be used to restraint the contacts between the interfaces. Note that this can generate a large number of ambiguous restraints and slow down the computations</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="dielec">
+<h4>dielec<a class="headerlink" href="#dielec" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘cdie’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
+<div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
+<div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="dihedflag">
+<h4>dihedflag<a class="headerlink" href="#dihedflag" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: No title yet</div>
+<div class="line"><em>short description</em>: No short description yet</div>
+<div class="line"><em>long description</em>: No long description yet</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="epsilon">
+<h4>epsilon<a class="headerlink" href="#epsilon" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Dielectric constant</div>
+<div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="individualize">
+<h4>individualize<a class="headerlink" href="#individualize" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Individualise models</div>
+<div class="line"><em>short description</em>: Treat each model in the PDB ensemble as a separate entity.</div>
+<div class="line"><em>long description</em>: Treat each model in the PDB ensemble as a separate entity. This means that for each a separate topology file will be generated. The models in the ensemble can thus correspond to different molecules.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="kcont">
+<h4>kcont<a class="headerlink" href="#kcont" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Contact restraints force constant</div>
+<div class="line"><em>short description</em>: Force constant applied to the contact restraints.</div>
+<div class="line"><em>long description</em>: Force constant applied to the contact restraints.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ligand-param-fname">
+<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand parameter file</div>
+<div class="line"><em>short description</em>: Ligand parameter file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ligand-top-fname">
+<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand topology file</div>
+<div class="line"><em>short description</em>: Ligand topology file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions…) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nemsteps">
+<h4>nemsteps<a class="headerlink" href="#nemsteps" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 200</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of EM steps</div>
+<div class="line"><em>short description</em>: Number of energy minimisation steps to perform.</div>
+<div class="line"><em>long description</em>: Number of energy minimisation steps to perform in the various EM stages of this refinement protocol. Note that the effective number might be smaller if the minimisation converges earlier.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="tolerance">
+<h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 5</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-bsa">
+<h4>w_bsa<a class="headerlink" href="#w-bsa" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the buried surface area term</div>
+<div class="line"><em>short description</em>: Weight of the buried surface area term in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-cdih">
+<h4>w_cdih<a class="headerlink" href="#w-cdih" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the dihedral angle restraint energy</div>
+<div class="line"><em>short description</em>: Weight of the dihedral angle restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-desolv">
+<h4>w_desolv<a class="headerlink" href="#w-desolv" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the desolvation energy term</div>
+<div class="line"><em>short description</em>: Weight of the desolvation energy term in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-elec">
+<h4>w_elec<a class="headerlink" href="#w-elec" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.2</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the intermolecular electrostatic energy</div>
+<div class="line"><em>short description</em>: Weight of the intermolecular electrostatic energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-vdw">
+<h4>w_vdw<a class="headerlink" href="#w-vdw" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the intermolecular van der Waals energy</div>
+<div class="line"><em>short description</em>: Weight of the intermolecular van der Waals energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="watercoolsteps">
+<h4>watercoolsteps<a class="headerlink" href="#watercoolsteps" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 500</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of MD steps for the cooling</div>
+<div class="line"><em>short description</em>: Number of MD steps for the cooling phase.</div>
+<div class="line"><em>long description</em>: Number of MD steps for the cooling phase. The cooling consists of three successive short molecular dynamics simluations at 300, 200 and 100 Kelvin.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="waterheatsteps">
+<h4>waterheatsteps<a class="headerlink" href="#waterheatsteps" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 100</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of MD steps for the heating</div>
+<div class="line"><em>short description</em>: Number of MD steps for the heating phase.</div>
+<div class="line"><em>long description</em>: Number of MD steps for the heating phase. The heating consists of three successive short molecular dynamics simluations at 100, 200 and 300 Kelvin.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="watersteps">
+<h4>watersteps<a class="headerlink" href="#watersteps" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1250</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of MD steps at 300K.</div>
+<div class="line"><em>short description</em>: Number of MD steps for 300K simulation.</div>
+<div class="line"><em>long description</em>: Number of MD steps for 300K simulation. This is the sampling state of the refinement.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+<section id="guru">
+<h3>Guru<a class="headerlink" href="#guru" title="Permalink to this heading"></a></h3>
+<section id="iniseed">
+<h4>iniseed<a class="headerlink" href="#iniseed" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 917</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Random seed</div>
+<div class="line"><em>short description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>long description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="keepwater">
+<h4>keepwater<a class="headerlink" href="#keepwater" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Write water molecules to output file</div>
+<div class="line"><em>short description</em>: Write water molecules if present to the output file.</div>
+<div class="line"><em>long description</em>: Write water molecules if present to the output file.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="log-level">
+<h4>log_level<a class="headerlink" href="#log-level" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘quiet’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
+<div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="timestep">
+<h4>timestep<a class="headerlink" href="#timestep" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.002</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: MD integrating time step</div>
+<div class="line"><em>short description</em>: Integration time step for the molecular dynamics.</div>
+<div class="line"><em>long description</em>: Integration time step for the molecular dynamics.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.modules.scoring.emscoring.html" class="btn btn-neutral float-left" title="Energy Minimization scoring module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../analysis/index.html" class="btn btn-neutral float-right" title="Analysis Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

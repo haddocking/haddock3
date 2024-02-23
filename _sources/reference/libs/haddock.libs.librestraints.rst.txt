@@ -1,0 +1,7 @@
+librestraints: functions related to restraints
+=================================
+
+.. automodule:: haddock.libs.librestraints
+   :members:
+   :undoc-members:
+   :show-inheritance:

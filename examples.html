@@ -1,130 +1,57 @@
-
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Workflow Examples &mdash; haddock3 3.0.0 documentation</title>
-  
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
 
   
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="_static/css/theme.min.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.min.css" type="text/css" />
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Advanced features" href="tutorials/index.html" />
     <link rel="prev" title="Usage" href="USAGE.html" /> 
-
 </head>
 
-<body>
-    <header>
-        <div class="container">
-            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
-            <a class="site-title" href="index.html">
-                haddock3
-            </a>
-        </div>
-    </header>
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-
-<div class="breadcrumbs-outer hidden-xs-down">
-    <div class="container">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="breadcrumbs">
-    
-      <li><a href="index.html">Docs</a></li>
-        
-      <li>Workflow Examples</li>
-    
-    
-      <li class="breadcrumbs-aside">
-        
-            
-            <a href="_sources/examples.md.txt" rel="nofollow"> View page source</a>
           
-        
-      </li>
-    
-  </ul>
-</div>
-    </div>
-</div>
-    <div class="main-outer">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-lg-3 site-nav">
-                    
+          
+          <a href="index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
 <div role="search">
-    <form class="search" action="search.html" method="get">
-        <div class="icon-input">
-            <input type="text" name="q" placeholder="Search" />
-            <span class="icon-search"></span>
-        </div>
-        <input type="submit" value="Go" class="d-hidden" />
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-    </form>
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-                    <div class="site-nav-tree">
-                        
-                            
-                            
-                                <ul class="current">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">A brief introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="INSTALL.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#clone-this-repository">1. Clone this repository:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#install-the-haddock3-package-and-command-line-clients">3. Install the HADDOCK3 package and command line clients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4. Make a CNS binary shortcut to the expected path:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#keep-your-installation-up-to-date">5. Keep your installation up to date</a></li>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="USAGE.html#run-haddock3">Run HADDOCK3</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Workflow Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docking-protein-dna">docking-protein-dna</a></li>
@@ -138,65 +65,41 @@
 <li class="toctree-l2"><a class="reference internal" href="#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="clients/index.html">Command-line interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="clients/clihd3.html">Run HADDOCK3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/clicfg.html">Retrieve config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/cliscore.html">Calculate score</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/clipp.html">PDB preprocessing client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/cliclean.html">Clean HADDOCK3 runs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/climpi.html">HADDOCK3 MPI Run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/clibm.html">Benchmark Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/clidmn.html">Benchmark Daemon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="clients/clianalyse.html">Analysis client</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/topology/index.html">Topology Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/sampling/index.html">Sampling Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/refinement/index.html">Model Refinement Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/scoring/index.html">Scoring Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/analysis/index.html">Analysis Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#general-default-parameters">General Default parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="testing/integration_tests.html">Running integration tests manually</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#contributing-new-code">1. Contributing new code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Library Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference/core/index.html">Core Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/libs/index.html">Libs Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/gear/index.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Library Reference</a></li>
 </ul>
 
-                            
-                        
-                    </div>
-                </div>
-                <div class="col-12 col-lg-9">
-                    <div class="document">
-                        
-                            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Workflow Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="workflow-examples">
-<h1>Workflow Examples<a class="headerlink" href="#workflow-examples" title="Permalink to this heading">¶</a></h1>
+<h1>Workflow Examples<a class="headerlink" href="#workflow-examples" title="Permalink to this heading"></a></h1>
 <p>The HADDOCK3 <code class="docutils literal notranslate"><span class="pre">examples/</span></code> directory contains various subdirectories and config files
 corresponding to different types of complexes, scenarios and data.</p>
 <ol class="arabic simple">
@@ -218,7 +121,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 </ul>
 <p>The following examples are currently provided:</p>
 <section id="docking-antibogy-antigen">
-<h2>docking-antibogy-antigen<a class="headerlink" href="#docking-antibogy-antigen" title="Permalink to this heading">¶</a></h2>
+<h2>docking-antibogy-antigen<a class="headerlink" href="#docking-antibogy-antigen" title="Permalink to this heading"></a></h2>
 <p>An antibody-antigen docking example making use only of the knowledge of the hypervariables (HV) loops on the antibody to guide the docking. This is the same complex used in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/">HADDOCK2.4 webserver tutorial</a>; refer to it for more details. Three different ways of using the knowledge of the HV loop residues are illustrated:</p>
 <ul class="simple">
 <li><p><strong>CDR-accessible</strong>: using ambiguous distance restraints (AIRs) between the HV loop residues and the solvent-accessible residues of the antigen. Those are defined in the <code class="docutils literal notranslate"><span class="pre">ambig.tbl</span></code> file provided in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory</p></li>
@@ -235,7 +138,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-dna">
-<h2>docking-protein-dna<a class="headerlink" href="#docking-protein-dna" title="Permalink to this heading">¶</a></h2>
+<h2>docking-protein-dna<a class="headerlink" href="#docking-protein-dna" title="Permalink to this heading"></a></h2>
 <p>A protein-DNA docking example making use of rather specific protein-DNA distance restraints defined in the <code class="docutils literal notranslate"><span class="pre">ambig.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory.</p>
 <p>Three different protocols/workflows are illustrated:</p>
 <ol class="arabic simple">
@@ -247,13 +150,13 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p><strong>Note</strong> the modified electrostatic treatment for DNA (<code class="docutils literal notranslate"><span class="pre">cdie</span></code> and <code class="docutils literal notranslate"><span class="pre">epsilon=78</span></code>) and the automatic definition of DNA restraints to maintain the double helix (<code class="docutils literal notranslate"><span class="pre">dnarest_on=true</span></code>).</p>
 </section>
 <section id="docking-protein-homotrimer">
-<h2>docking-protein-homotrimer<a class="headerlink" href="#docking-protein-homotrimer" title="Permalink to this heading">¶</a></h2>
+<h2>docking-protein-homotrimer<a class="headerlink" href="#docking-protein-homotrimer" title="Permalink to this heading"></a></h2>
 <p>A protein homotrimer with C3 symmetry docking example making use of bioinformatics interface predictions from our <a class="reference external" href="https://wenmr.science.uu.nl/whiscy/">Whiscy webserver</a> defined in the <code class="docutils literal notranslate"><span class="pre">1qu9_whiscy_air.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory. Note that this is a bound docking example since the protein monomers used for docking are taken from the crystal structure of the homotrimer. The workflow does however perform a flexible refinement of the models, which might lead to deviations from the bound conformation.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">docking-protein-homotrimer-full.cfg</span></code> workflow consists of the generation of 2000 rigidbody docking models, selection of top200 and flexible refinement + EM of those. C3 and non-crystallographic (NCS) symmetry restraints are defined to guide the docking.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-ligand">
-<h2>docking-protein-ligand<a class="headerlink" href="#docking-protein-ligand" title="Permalink to this heading">¶</a></h2>
+<h2>docking-protein-ligand<a class="headerlink" href="#docking-protein-ligand" title="Permalink to this heading"></a></h2>
 <p>A protein-ligand docking example making use of the knowledge of the binding site on the protein to guide the docking.</p>
 <p>As explained in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-binding-sites/">protein-ligand HADDOCK2.4 tutorial</a>, in the rigidbody docking phase all residues of the binding site are defined as active to draw the ligand into it (the corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">ambig-active-rigidbody.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). For the flexible refinement only the ligand is defined as active and the binding site as passive to allow the ligand to explore the binding site (the corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">ambig-passive.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory).</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">docking-protein-ligand-full.cfg</span></code> workflow consists of the generation of 1000 rigidbody docking models, selection of top200 and flexible refinement of those.</p>
@@ -261,7 +164,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-ligand-shape">
-<h2>docking-protein-ligand-shape<a class="headerlink" href="#docking-protein-ligand-shape" title="Permalink to this heading">¶</a></h2>
+<h2>docking-protein-ligand-shape<a class="headerlink" href="#docking-protein-ligand-shape" title="Permalink to this heading"></a></h2>
 <p>A protein-ligand docking example making use of the knowledge of a template ligand (a ligand similar to the ligand we want to dock and bind to the same receptor). The template ligand information is used in the form of shape consisting of dummy beads and positioned within the binding site to which distance restraints are defined. More details about the method and the performance of the protocol when benchmarked on a fully unbound dataset
 can be seen in our freely available <a class="reference external" href="https://pubs.acs.org/doi/full/10.1021/acs.jcim.1c00796">paper on JCIM</a>.</p>
 <p>As explained in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/shape-small-molecule/">shape small molecule HADDOCK2.4 tutorial</a>, during the docking and refinement the protein and the shape are kept in their original positions (see the <code class="docutils literal notranslate"><span class="pre">mol_fix_origin_X</span></code> parameters in the config file) and ambiguous distance restraints between the ligand and the shape beads are defined. (The corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">shape-restraints-from-shape-1.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). This is effectively a three body docking. For the ligand an ensemble of 10 different conformations is provided as starting point for the docking (<code class="docutils literal notranslate"><span class="pre">ligand-ensemble.pdb</span></code> in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). Please refer to our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/shape-small-molecule/">shape small molecule tutorial</a> for information on how to generate such an ensemble.</p>
@@ -270,7 +173,7 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-peptide">
-<h2>docking-protein-peptide<a class="headerlink" href="#docking-protein-peptide" title="Permalink to this heading">¶</a></h2>
+<h2>docking-protein-peptide<a class="headerlink" href="#docking-protein-peptide" title="Permalink to this heading"></a></h2>
 <p>The protein-peptide docking example makes use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">ambig.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). This example follows the protocol described in our protein-peptide docking article (<a class="reference external" href="https://dx.plos.org/10.1371/journal.pone.0058769">Trellet et. al. PLoS ONE 8, e58769 (2013)</a>). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were built using PyMol (instructions on how to do that can be found <a class="reference external" href="https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system">here</a>).</p>
 <p>Three different workflows are illustrated:</p>
 <ol class="arabic simple">
@@ -282,7 +185,7 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-protein">
-<h2>docking-protein-protein<a class="headerlink" href="#docking-protein-protein" title="Permalink to this heading">¶</a></h2>
+<h2>docking-protein-protein<a class="headerlink" href="#docking-protein-protein" title="Permalink to this heading"></a></h2>
 <p>The protein-protein docking example makes use of the NMR chemical shift perturbation data providing information on the residues of binding site to guide the docking. The NMR-identified residues are defined as active with their surface neighbors as passive (the corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">e2a-hpr_air.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). This system is the same as described in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-protein-protein-basic/">HADDOCK2.4 basic protein-protein docking tutorial</a>. For the second molecule (HPR), an ensemble of 10 conformations (taken from the NMR solution structure of this protein) is used as starting point for the docking. Refer to above tutorial for more details about the system and restraints.</p>
 <p>Three different workflows are illustrated:</p>
 <ol class="arabic simple">
@@ -294,13 +197,13 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="refine-complex">
-<h2>refine-complex<a class="headerlink" href="#refine-complex" title="Permalink to this heading">¶</a></h2>
+<h2>refine-complex<a class="headerlink" href="#refine-complex" title="Permalink to this heading"></a></h2>
 <p>This example illustrates the refinement of a complex. In that case the molecules are kept in their original positions and the complex is subjected to a short flexible refinement in explicit solvent with the <code class="docutils literal notranslate"><span class="pre">mdref</span></code> module. The same complex as for the <code class="docutils literal notranslate"><span class="pre">docking-protein-protein</span></code> example is used. The molecules are defined separately in the config file (and could consist each of an ensemble, provided the two ensembles have exactly the same number of models).</p>
 <p>In this example all parameters are left to their default settings, except for manually defining the histidines’ protonation states and setting the <code class="docutils literal notranslate"><span class="pre">sampling_factor</span></code> to 10, which means that from each starting complex 10 models will be generated with different random seeds for initiating the molecular dynamics phase.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at the end to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="scoring">
-<h2>scoring<a class="headerlink" href="#scoring" title="Permalink to this heading">¶</a></h2>
+<h2>scoring<a class="headerlink" href="#scoring" title="Permalink to this heading"></a></h2>
 <p>This example illustrates the use of HADDOCK3 for scoring purposes. In contrast to HADDOCK2.4, HADDOCK3 can score a heterogenous set of complexes within one run/workflow. In this example, four different types of complexes are scored within the same workflow:</p>
 <ul class="simple">
 <li><p>an ensemble of 5 models taken from CAPRI Target161</p></li>
@@ -316,7 +219,7 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The model listings with their associated HADDOCK scores can be found in a <code class="docutils literal notranslate"><span class="pre">.tsv</span></code> file in the stage 01 directory of the respective runs.</p>
 </section>
 <section id="docking-multiple-ambig">
-<h2>docking-multiple-ambig<a class="headerlink" href="#docking-multiple-ambig" title="Permalink to this heading">¶</a></h2>
+<h2>docking-multiple-ambig<a class="headerlink" href="#docking-multiple-ambig" title="Permalink to this heading"></a></h2>
 <p>This example shows how to use HADDOCK3 when several restraint files are available. The example is built upon the results obtained running <a class="reference external" href="https://github.com/haddocking/arctic3d">arctic3d</a> on two proteins forming the complex <code class="docutils literal notranslate"><span class="pre">2GAF</span></code>. The presence of multiple interfaces in both structures allows to define several <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> ambiguous restraint files to be used in the calculations. At first, these files must be compressed in a <code class="docutils literal notranslate"><span class="pre">.tbl.tgz</span></code> archive. During the workflow, the HADDOCK3 machinery unzips the archive and evenly assigns each <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> file to a number of models to be generated. Even if only one sixth of the restraint files contain reasonable information on the interface, HADDOCK3 is still able to retrieve good docking models in the best-scoring positions.</p>
 <p><strong>Note</strong> how the information about restraint files is propagated during the workflow (<code class="docutils literal notranslate"><span class="pre">previous_ambig</span> <span class="pre">=</span> <span class="pre">true</span></code> for <code class="docutils literal notranslate"><span class="pre">flexref</span></code> and <code class="docutils literal notranslate"><span class="pre">emref</span></code> modules), so that each model is always refined with its corresponding <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> file.</p>
 <p>Importantly, in the <code class="docutils literal notranslate"><span class="pre">docking-multiple-tbls-clt-full.cfg</span></code> example the clustering is performed right after the <code class="docutils literal notranslate"><span class="pre">rigidbody</span></code> module, so as to lump together solutions resulting from the application of different sets of restraints.</p>
@@ -325,39 +228,36 @@ can be seen in our freely available <a class="reference external" href="https://
 </section>
 
 
-                        
-                    </div>
-                </div>
-            </div>
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="USAGE.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tutorials/index.html" class="btn btn-neutral float-right" title="Advanced features" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
-    </div>    
-
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'3.0.0',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/sphinx_highlight.js"></script>
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-    <div class="footer" role="contentinfo">
-        <div class="container">
-            &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 23, 2024.
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
-        </div>
-    </div>  
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
 </body>
 </html>

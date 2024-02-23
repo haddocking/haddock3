@@ -1,0 +1,7 @@
+Greetings messages
+=============================
+
+.. automodule:: haddock.gear.greetings
+   :members:
+   :undoc-members:
+   :show-inheritance:

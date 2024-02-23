@@ -1,0 +1,7 @@
+typing
+==========================
+
+.. automodule:: haddock.core.typing
+   :members:
+   :undoc-members:
+   :show-inheritance:

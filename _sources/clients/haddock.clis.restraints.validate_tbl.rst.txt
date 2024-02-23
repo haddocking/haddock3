@@ -1,0 +1,7 @@
+haddock.clis.restraints.validate\_tbl module
+============================================
+
+.. automodule:: haddock.clis.restraints.validate_tbl
+   :members:
+   :undoc-members:
+   :show-inheritance:

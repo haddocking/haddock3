@@ -1,0 +1,7 @@
+libtimer: timing functions
+============================
+
+.. automodule:: haddock.libs.libtimer
+   :members:
+   :undoc-members:
+   :show-inheritance:

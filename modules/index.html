@@ -1,258 +1,616 @@
-
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Modules &mdash; haddock3 3.0.0 documentation</title>
-  
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
 
   
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="../_static/css/theme.min.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.min.css" type="text/css" />
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Topology Modules" href="topology/index.html" />
-    <link rel="prev" title="Analysis client" href="../clients/clianalyse.html" /> 
-
+    <link rel="prev" title="Unpack HADDOCK3 run" href="../clients/haddock.clis.cli_unpack.html" /> 
 </head>
 
-<body>
-    <header>
-        <div class="container">
-            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
-            <a class="site-title" href="../index.html">
-                haddock3
-            </a>
-        </div>
-    </header>
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-
-<div class="breadcrumbs-outer hidden-xs-down">
-    <div class="container">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a></li>
-        
-      <li>Modules</li>
-    
-    
-      <li class="breadcrumbs-aside">
-        
-            
-            <a href="../_sources/modules/index.rst.txt" rel="nofollow"> View page source</a>
           
-        
-      </li>
-    
-  </ul>
-</div>
-    </div>
-</div>
-    <div class="main-outer">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-lg-3 site-nav">
-                    
+          
+          <a href="../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
 <div role="search">
-    <form class="search" action="../search.html" method="get">
-        <div class="icon-input">
-            <input type="text" name="q" placeholder="Search" />
-            <span class="icon-search"></span>
-        </div>
-        <input type="submit" value="Go" class="d-hidden" />
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-    </form>
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-                    <div class="site-nav-tree">
-                        
-                            
-                            
-                                <ul class="current">
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">A brief introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#clone-this-repository">1. Clone this repository:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3. Install the HADDOCK3 package and command line clients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4. Make a CNS binary shortcut to the expected path:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#keep-your-installation-up-to-date">5. Keep your installation up to date</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-protein-dna">docking-protein-dna</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-protein-protein">docking-protein-protein</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#refine-complex">refine-complex</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#scoring">scoring</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Command-line interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clihd3.html">Run HADDOCK3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clicfg.html">Retrieve config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/cliscore.html">Calculate score</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clipp.html">PDB preprocessing client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/climpi.html">HADDOCK3 MPI Run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clibm.html">Benchmark Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clidmn.html">Benchmark Daemon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../clients/clianalyse.html">Analysis client</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="topology/index.html">Topology Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sampling/index.html">Sampling Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="refinement/index.html">Model Refinement Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis/index.html">Analysis Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parent-code-for-modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#general-default-parameters">General Default parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extras/index.html">Extra Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-haddock.modules">Parent code for modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.BaseHaddockModule"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.add_parent_to_paths"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.add_parent_to_paths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.clean_output"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.clean_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.confirm_installation"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.confirm_installation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.export_io_models"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.export_io_models()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.finish_with_error"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.finish_with_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.last_step_folder"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.last_step_folder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.log"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.params"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.previous_path"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.previous_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.reset_params"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.reset_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.run"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.save_config"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.save_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.BaseHaddockModule.update_params"><code class="docutils literal notranslate"><span class="pre">BaseHaddockModule.update_params()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../testing/integration_tests.html">Running integration tests manually</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.get_engine"><code class="docutils literal notranslate"><span class="pre">get_engine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.get_module_steps_folders"><code class="docutils literal notranslate"><span class="pre">get_module_steps_folders()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.is_step_folder"><code class="docutils literal notranslate"><span class="pre">is_step_folder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.modules_category"><code class="docutils literal notranslate"><span class="pre">modules_category</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.step_folder_regex"><code class="docutils literal notranslate"><span class="pre">step_folder_regex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.step_folder_regex_re"><code class="docutils literal notranslate"><span class="pre">step_folder_regex_re</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../contributing.html#contributing-new-code">1. Contributing new code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-haddock.modules.base_cns_module">Parent code for CNS modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.add_parent_to_paths"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.add_parent_to_paths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.clean_output"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.clean_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.confirm_installation"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.confirm_installation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.default_envvars"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.default_envvars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.export_io_models"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.export_io_models()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.finish_with_error"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.finish_with_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.get_ambig_fnames()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.last_step_folder"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.last_step_folder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.log"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.make_self_contained"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.make_self_contained()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.params"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.previous_path"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.previous_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.reset_params"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.reset_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.run"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.save_config"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.save_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.save_envvars"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.save_envvars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.modules.base_cns_module.BaseCNSModule.update_params"><code class="docutils literal notranslate"><span class="pre">BaseCNSModule.update_params()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#general-default-parameters">General Default parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#easy">Easy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#batch-type">batch_type</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clean">clean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cns-exec">cns_exec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#concat">concat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mode">mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ncores">ncores</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#queue">queue</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#queue-limit">queue_limit</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#expert">Expert</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#max-cpus">max_cpus</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#guru">Guru</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#self-contained">self_contained</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../reference/core/index.html">Core Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/libs/index.html">Libs Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference/gear/index.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
 </ul>
 
-                            
-                        
-                    </div>
-                </div>
-                <div class="col-12 col-lg-9">
-                    <div class="document">
-                        
-                            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this heading">¶</a></h1>
+<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this heading"></a></h1>
 <p>HADDOCK3 allows users to compose modular simulation workflows. Workflows are
 composed in <em>steps</em>, and each step is a HADDOCK3 module. There are modules for
 <strong>sampling</strong>, <strong>refinement</strong>, <strong>analysis</strong>, etc.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="topology/index.html">Topology Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="topology/topoaa.html">All-atom topology module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology/index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology/index.html#module-haddock.modules.topology">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sampling/index.html">Sampling Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sampling/rigidbody.html">Default parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sampling/lightdock.html">LightDock sampling module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sampling/gdock.html">Gdock sampling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling/index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampling/index.html#module-haddock.modules.sampling">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="refinement/index.html">Model Refinement Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="refinement/flexref.html">Flexible Refinement module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="refinement/emref.html">Energy Minimization Refinement module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="refinement/mdref.html">Water Refinement module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refinement/index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="refinement/index.html#module-haddock.modules.refinement">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="scoring/index.html">Scoring Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="scoring/emscoring.html">EM Scoring module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scoring/mdscoring.html">MD Scoring module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scoring/index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scoring/index.html#module-haddock.modules.scoring">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="analysis/index.html">Analysis Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="analysis/caprieval.html">CAPRI evaluation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis/clustfcc.html">Cluster FCC Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis/clustrmsd.html">RMSD clustering module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis/rmsdmatrix.html">RMSD matrix calculation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis/seletop.html">Select Top Models module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis/seletopclusts.html">Select Top Clusters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis/index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis/index.html#module-haddock.modules.analysis">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="extras/index.html">Extra modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="extras/index.html#list-of-available-extra-modules">List of available extra modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extras/index.html">Extra Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extras/index.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extras/index.html#module-haddock.modules.extras">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<section id="parent-code-for-modules">
-<h2>Parent code for modules<a class="headerlink" href="#parent-code-for-modules" title="Permalink to this heading">¶</a></h2>
+<section id="module-haddock.modules">
+<span id="parent-code-for-modules"></span><h2>Parent code for modules<a class="headerlink" href="#module-haddock.modules" title="Permalink to this heading"></a></h2>
+<p>HADDOCK3 modules.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">BaseHaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>HADDOCK3 module’s base class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.add_parent_to_paths">
+<span class="sig-name descname"><span class="pre">add_parent_to_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.add_parent_to_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.add_parent_to_paths" title="Permalink to this definition"></a></dt>
+<dd><p>Add parent path to paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.clean_output">
+<span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.clean_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.clean_output" title="Permalink to this definition"></a></dt>
+<dd><p>Clean module output folder.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../reference/gear/haddock.gear.clean_steps.html#haddock.gear.clean_steps.clean_output" title="haddock.gear.clean_steps.clean_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.clean_steps.clean_output()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.confirm_installation">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm the third-party software needed for the module is installed.</p>
+<p>HADDOCK3’s own modules should just return.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.export_io_models">
+<span class="sig-name descname"><span class="pre">export_io_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.export_io_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.export_io_models" title="Permalink to this definition"></a></dt>
+<dd><p>Export input/output to the ModuleIO interface.</p>
+<dl class="simple">
+<dt>Modules that do not perform any operation on PDB files should have</dt><dd><p>input = output.</p>
+</dd>
+</dl>
+<p>This function implements a common interface for all modules.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>faulty_tolerance</strong> (<em>int, default 0</em>) – The percentage of missing output allowed. If 20 is given,
+raises an error if 20% of the expected output is missing (not
+saved to disk).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.finish_with_error">
+<span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><span class="pre">object</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.finish_with_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.finish_with_error" title="Permalink to this definition"></a></dt>
+<dd><p>Finish with error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.last_step_folder">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">last_step_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.last_step_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.last_step_folder" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve last step folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.log" title="Permalink to this definition"></a></dt>
+<dd><p>Log a message with a common header.</p>
+<p>Currently the header is the [MODULE NAME] in square brackets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<em>str</em>) – The log message.</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – The level log: ‘debug’, ‘info’, …
+Defaults to ‘info’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.params">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#haddock.modules.BaseHaddockModule.params" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.previous_path">
+<span class="sig-name descname"><span class="pre">previous_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.previous_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.previous_path" title="Permalink to this definition"></a></dt>
+<dd><p>Give the path from the previous calculation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.reset_params">
+<span class="sig-name descname"><span class="pre">reset_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.reset_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.reset_params" title="Permalink to this definition"></a></dt>
+<dd><p>Reset parameters to the ones used to instantiate the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.save_config" title="Permalink to this definition"></a></dt>
+<dd><p>Save current parameters to a HADDOCK3 config file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.BaseHaddockModule.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_from_cfg_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#BaseHaddockModule.update_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.BaseHaddockModule.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>Update the modules parameters.</p>
+<p>Add/update to the current modules parameters the ones given in
+the function call. If you want to enterily replace the modules
+parameters to their default values use the <cite>reset_params()</cite>
+method.</p>
+<p>Update takes places recursively, that is, nested dictionaries
+will be updated accordingly.</p>
+<p>To update the current config with the parameters defined in an
+HADDOCK3 configuration file use the <cite>update_from_cfg_file</cite>
+parameter.</p>
+<p>To update from a JSON file, first load the JSON into a
+dictionary and unpack the dictionary to the function call.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">param1</span><span class="o">=</span><span class="n">value1</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="n">value2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="o">=</span><span class="n">path_to_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p># if you wish to start from scratch
+&gt;&gt;&gt; m.reset_params()
+&gt;&gt;&gt; m.update_params(…)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.modules.get_engine">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">get_engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">partial</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCScheduler" title="haddock.libs.libhpc.HPCScheduler"><span class="pre">HPCScheduler</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.Scheduler" title="haddock.libs.libparallel.Scheduler"><span class="pre">Scheduler</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../reference/libs/haddock.libs.libmpi.html#haddock.libs.libmpi.MPIScheduler" title="haddock.libs.libmpi.MPIScheduler"><span class="pre">MPIScheduler</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/modules.html#get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.get_engine" title="Permalink to this definition"></a></dt>
+<dd><p>Create an engine to run the jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> (<em>str</em>) – The type of engine to create</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – A dictionary containing parameters for the engine.
+<cite>get_engine</cite> will retrieve from <cite>params</cite> only those parameters
+needed and ignore the others.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.modules.get_module_steps_folders">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">get_module_steps_folders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">modules</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.12)"><span class="pre">Container</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/modules.html#get_module_steps_folders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.get_module_steps_folders" title="Permalink to this definition"></a></dt>
+<dd><p>Return a sorted list of the step folders in a running directory.</p>
+<p class="rubric">Example</p>
+<p>Consider the folder structure:</p>
+<dl class="simple">
+<dt>run_dir/</dt><dd><p>0_topoaa/
+1_rigidbody/
+2_caprieval/
+3_bad_module_name/
+data/</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_module_steps_folders</span><span class="p">(</span><span class="s2">&quot;run_dir&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="s2">&quot;0_topoaa&quot;</span><span class="p">,</span> <span class="s2">&quot;1_rigidbody&quot;</span><span class="p">,</span> <span class="s2">&quot;2_caprieval&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>folder</strong> (<em>str or Path</em>) – Path to the run directory, or to the folder containing the step
+folders.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>list of str</em> – List containing strings with the names of the step folders.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.modules.is_step_folder">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">is_step_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules.html#is_step_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.is_step_folder" title="Permalink to this definition"></a></dt>
+<dd><p>Assess whether a folder is a possible step folder.</p>
+<p>The folder is considered a step folder if has a zero or positive
+integer index followed by a name of a module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str or pathlib.Path</em>) – The path to the folder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bool</em> – Whether the folder is a step folder or not.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="haddock.modules.modules_category">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">modules_category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'alascan':</span> <span class="pre">'analysis',</span> <span class="pre">'caprieval':</span> <span class="pre">'analysis',</span> <span class="pre">'clustfcc':</span> <span class="pre">'analysis',</span> <span class="pre">'clustrmsd':</span> <span class="pre">'analysis',</span> <span class="pre">'contactmap':</span> <span class="pre">'analysis',</span> <span class="pre">'emref':</span> <span class="pre">'refinement',</span> <span class="pre">'emscoring':</span> <span class="pre">'scoring',</span> <span class="pre">'exit':</span> <span class="pre">'extras',</span> <span class="pre">'flexref':</span> <span class="pre">'refinement',</span> <span class="pre">'gdock':</span> <span class="pre">'sampling',</span> <span class="pre">'ilrmsdmatrix':</span> <span class="pre">'analysis',</span> <span class="pre">'lightdock':</span> <span class="pre">'sampling',</span> <span class="pre">'mdref':</span> <span class="pre">'refinement',</span> <span class="pre">'mdscoring':</span> <span class="pre">'scoring',</span> <span class="pre">'rigidbody':</span> <span class="pre">'sampling',</span> <span class="pre">'rmsdmatrix':</span> <span class="pre">'analysis',</span> <span class="pre">'seletop':</span> <span class="pre">'analysis',</span> <span class="pre">'seletopclusts':</span> <span class="pre">'analysis',</span> <span class="pre">'topoaa':</span> <span class="pre">'topology',</span> <span class="pre">'topocg':</span> <span class="pre">'topology'}</span></em><a class="headerlink" href="#haddock.modules.modules_category" title="Permalink to this definition"></a></dt>
+<dd><p>Indexes each module in its specific category. Keys are Paths to the module,
+values are their categories. Categories are the modules parent folders.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="haddock.modules.step_folder_regex">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">step_folder_regex</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'([0-9]+_emscoring|[0-9]+_mdscoring|[0-9]+_ilrmsdmatrix|[0-9]+_contactmap|[0-9]+_clustfcc|[0-9]+_rmsdmatrix|[0-9]+_seletopclusts|[0-9]+_clustrmsd|[0-9]+_caprieval|[0-9]+_alascan|[0-9]+_seletop|[0-9]+_emref|[0-9]+_mdref|[0-9]+_flexref|[0-9]+_topocg|[0-9]+_topoaa|[0-9]+_exit|[0-9]+_rigidbody|[0-9]+_gdock|[0-9]+_lightdock)'</span></em><a class="headerlink" href="#haddock.modules.step_folder_regex" title="Permalink to this definition"></a></dt>
+<dd><p>String for regular expression to match module folders in a run directory.</p>
+<p>It will match folders with a numeric prefix followed by underscore (“_”)
+followed by the name of a module.</p>
+<p>Example: <a class="reference external" href="https://regex101.com/r/roHls9/1">https://regex101.com/r/roHls9/1</a></p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="haddock.modules.step_folder_regex_re">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">step_folder_regex_re</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('([0-9]+_emscoring|[0-9]+_mdscoring|[0-9]+_ilrmsdmatrix|[0-9]+_contactmap|[0-9]+_clustfcc|[0-9]+_rmsdmatrix|[0-9]+_seletopclusts|[0-9]+_clustrmsd|[0-9]+_caprieval|[0-9]+_alascan|[0-9]+_seletop|[0-9]+_)</span></em><a class="headerlink" href="#haddock.modules.step_folder_regex_re" title="Permalink to this definition"></a></dt>
+<dd><p>Compiled regular expression from <a class="reference internal" href="#haddock.modules.step_folder_regex" title="haddock.modules.step_folder_regex"><code class="xref py py-const docutils literal notranslate"><span class="pre">step_folder_regex</span></code></a>.</p>
+<p>It will match folders with a numeric prefix followed by underscore (“_”)
+followed by the name of a module.</p>
+<p>Example: <a class="reference external" href="https://regex101.com/r/roHls9/1">https://regex101.com/r/roHls9/1</a></p>
+</dd></dl>
+
 </section>
-<section id="parent-code-for-cns-modules">
-<h2>Parent code for CNS modules<a class="headerlink" href="#parent-code-for-cns-modules" title="Permalink to this heading">¶</a></h2>
+<section id="module-haddock.modules.base_cns_module">
+<span id="parent-code-for-cns-modules"></span><h2>Parent code for CNS modules<a class="headerlink" href="#module-haddock.modules.base_cns_module" title="Permalink to this heading"></a></h2>
+<p>Functionalities related to CNS modules.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.base_cns_module.</span></span><span class="sig-name descname"><span class="pre">BaseCNSModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cns_script</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules/base_cns_module.html#BaseCNSModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a></p>
+<p>Operation module for CNS.</p>
+<p>Contains additional functionalities excusive for CNS modules.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.add_parent_to_paths">
+<span class="sig-name descname"><span class="pre">add_parent_to_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.add_parent_to_paths" title="Permalink to this definition"></a></dt>
+<dd><p>Add parent path to paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.clean_output">
+<span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.clean_output" title="Permalink to this definition"></a></dt>
+<dd><p>Clean module output folder.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../reference/gear/haddock.gear.clean_steps.html#haddock.gear.clean_steps.clean_output" title="haddock.gear.clean_steps.clean_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.clean_steps.clean_output()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.confirm_installation">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm the third-party software needed for the module is installed.</p>
+<p>HADDOCK3’s own modules should just return.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.default_envvars">
+<span class="sig-name descname"><span class="pre">default_envvars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/modules/base_cns_module.html#BaseCNSModule.default_envvars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.default_envvars" title="Permalink to this definition"></a></dt>
+<dd><p>Return default env vars updated to <cite>envvars</cite> (if given).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.export_io_models">
+<span class="sig-name descname"><span class="pre">export_io_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.export_io_models" title="Permalink to this definition"></a></dt>
+<dd><p>Export input/output to the ModuleIO interface.</p>
+<dl class="simple">
+<dt>Modules that do not perform any operation on PDB files should have</dt><dd><p>input = output.</p>
+</dd>
+</dl>
+<p>This function implements a common interface for all modules.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>faulty_tolerance</strong> (<em>int, default 0</em>) – The percentage of missing output allowed. If 20 is given,
+raises an error if 20% of the expected output is missing (not
+saved to disk).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.finish_with_error">
+<span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><span class="pre">object</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.finish_with_error" title="Permalink to this definition"></a></dt>
+<dd><p>Finish with error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames">
+<span class="sig-name descname"><span class="pre">get_ambig_fnames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prev_ambig_fnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.12)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><span class="pre">NoneType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.12)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules/base_cns_module.html#BaseCNSModule.get_ambig_fnames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames" title="Permalink to this definition"></a></dt>
+<dd><p>Get the correct ambiguous restraint names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prev_ambig_fnames</strong> (<em>list</em>) – list of ambig_fname files encoded in previous models</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ambig_fnames</strong> (<em>list or None</em>) – list of ambig_fname files to be used by the CNS module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.last_step_folder">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">last_step_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.last_step_folder" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieve last step folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.log" title="Permalink to this definition"></a></dt>
+<dd><p>Log a message with a common header.</p>
+<p>Currently the header is the [MODULE NAME] in square brackets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<em>str</em>) – The log message.</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – The level log: ‘debug’, ‘info’, …
+Defaults to ‘info’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.make_self_contained">
+<span class="sig-name descname"><span class="pre">make_self_contained</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules/base_cns_module.html#BaseCNSModule.make_self_contained"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.make_self_contained" title="Permalink to this definition"></a></dt>
+<dd><p>Create folders to make run self-contained.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.params">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.params" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.previous_path">
+<span class="sig-name descname"><span class="pre">previous_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.previous_path" title="Permalink to this definition"></a></dt>
+<dd><p>Give the path from the previous calculation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.reset_params">
+<span class="sig-name descname"><span class="pre">reset_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.reset_params" title="Permalink to this definition"></a></dt>
+<dd><p>Reset parameters to the ones used to instantiate the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules/base_cns_module.html#BaseCNSModule.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.save_config" title="Permalink to this definition"></a></dt>
+<dd><p>Save current parameters to a HADDOCK3 config file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.save_envvars">
+<span class="sig-name descname"><span class="pre">save_envvars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'envvars'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/modules/base_cns_module.html#BaseCNSModule.save_envvars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.save_envvars" title="Permalink to this definition"></a></dt>
+<dd><p>Save envvars needed for CNS to a file in the module’s folder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.base_cns_module.BaseCNSModule.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_from_cfg_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#haddock.modules.base_cns_module.BaseCNSModule.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>Update the modules parameters.</p>
+<p>Add/update to the current modules parameters the ones given in
+the function call. If you want to enterily replace the modules
+parameters to their default values use the <cite>reset_params()</cite>
+method.</p>
+<p>Update takes places recursively, that is, nested dictionaries
+will be updated accordingly.</p>
+<p>To update the current config with the parameters defined in an
+HADDOCK3 configuration file use the <cite>update_from_cfg_file</cite>
+parameter.</p>
+<p>To update from a JSON file, first load the JSON into a
+dictionary and unpack the dictionary to the function call.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">param1</span><span class="o">=</span><span class="n">value1</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="n">value2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="o">=</span><span class="n">path_to_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p># if you wish to start from scratch
+&gt;&gt;&gt; m.reset_params()
+&gt;&gt;&gt; m.update_params(…)</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="general-default-parameters">
-<h2>General Default parameters<a class="headerlink" href="#general-default-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>General Default parameters<a class="headerlink" href="#general-default-parameters" title="Permalink to this heading"></a></h2>
 <p>General default parameters can be defined in the main section of the
 configuration file, but can also be defined for each individual module (step).
 In the later case, overriding the general definition.</p>
 <section id="easy">
-<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading">¶</a></h3>
+<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
 <section id="batch-type">
-<h4>batch_type<a class="headerlink" href="#batch-type" title="Permalink to this heading">¶</a></h4>
+<h4>batch_type<a class="headerlink" href="#batch-type" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘slurm’</div>
 <div class="line"><em>type</em>: string</div>
@@ -264,7 +622,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="clean">
-<h4>clean<a class="headerlink" href="#clean" title="Permalink to this heading">¶</a></h4>
+<h4>clean<a class="headerlink" href="#clean" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -276,7 +634,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="cns-exec">
-<h4>cns_exec<a class="headerlink" href="#cns-exec" title="Permalink to this heading">¶</a></h4>
+<h4>cns_exec<a class="headerlink" href="#cns-exec" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -288,7 +646,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="concat">
-<h4>concat<a class="headerlink" href="#concat" title="Permalink to this heading">¶</a></h4>
+<h4>concat<a class="headerlink" href="#concat" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -300,7 +658,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="mode">
-<h4>mode<a class="headerlink" href="#mode" title="Permalink to this heading">¶</a></h4>
+<h4>mode<a class="headerlink" href="#mode" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘local’</div>
 <div class="line"><em>type</em>: string</div>
@@ -312,7 +670,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="ncores">
-<h4>ncores<a class="headerlink" href="#ncores" title="Permalink to this heading">¶</a></h4>
+<h4>ncores<a class="headerlink" href="#ncores" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
@@ -324,7 +682,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="queue">
-<h4>queue<a class="headerlink" href="#queue" title="Permalink to this heading">¶</a></h4>
+<h4>queue<a class="headerlink" href="#queue" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -336,7 +694,7 @@ In the later case, overriding the general definition.</p>
 </div>
 </section>
 <section id="queue-limit">
-<h4>queue_limit<a class="headerlink" href="#queue-limit" title="Permalink to this heading">¶</a></h4>
+<h4>queue_limit<a class="headerlink" href="#queue-limit" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 100</div>
 <div class="line"><em>type</em>: integer</div>
@@ -349,9 +707,9 @@ In the later case, overriding the general definition.</p>
 </section>
 </section>
 <section id="expert">
-<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this heading">¶</a></h3>
+<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this heading"></a></h3>
 <section id="max-cpus">
-<h4>max_cpus<a class="headerlink" href="#max-cpus" title="Permalink to this heading">¶</a></h4>
+<h4>max_cpus<a class="headerlink" href="#max-cpus" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -364,9 +722,9 @@ In the later case, overriding the general definition.</p>
 </section>
 </section>
 <section id="guru">
-<h3>Guru<a class="headerlink" href="#guru" title="Permalink to this heading">¶</a></h3>
+<h3>Guru<a class="headerlink" href="#guru" title="Permalink to this heading"></a></h3>
 <section id="self-contained">
-<h4>self_contained<a class="headerlink" href="#self-contained" title="Permalink to this heading">¶</a></h4>
+<h4>self_contained<a class="headerlink" href="#self-contained" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -382,39 +740,36 @@ In the later case, overriding the general definition.</p>
 </section>
 
 
-                        
-                    </div>
-                </div>
-            </div>
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../clients/haddock.clis.cli_unpack.html" class="btn btn-neutral float-left" title="Unpack HADDOCK3 run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="topology/index.html" class="btn btn-neutral float-right" title="Topology Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
-    </div>    
-
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'3.0.0',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
-    <div class="footer" role="contentinfo">
-        <div class="container">
-            &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 23, 2024.
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
-        </div>
-    </div>  
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
 </body>
 </html>

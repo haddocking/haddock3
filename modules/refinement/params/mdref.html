@@ -1,202 +1,93 @@
-
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Easy &mdash; haddock3 3.0.0 documentation</title>
-  
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
 
   
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
-  <link rel="stylesheet" href="../../../_static/css/theme.min.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.min.css" type="text/css" />
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-
 </head>
 
-<body>
-    <header>
-        <div class="container">
-            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
-            <a class="site-title" href="../../../index.html">
-                haddock3
-            </a>
-        </div>
-    </header>
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-
-<div class="breadcrumbs-outer hidden-xs-down">
-    <div class="container">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="breadcrumbs">
-    
-      <li><a href="../../../index.html">Docs</a></li>
-        
-      <li>Easy</li>
-    
-    
-      <li class="breadcrumbs-aside">
-        
-            
-            <a href="../../../_sources/modules/refinement/params/mdref.rst.txt" rel="nofollow"> View page source</a>
           
-        
-      </li>
-    
-  </ul>
-</div>
-    </div>
-</div>
-    <div class="main-outer">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-lg-3 site-nav">
-                    
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
 <div role="search">
-    <form class="search" action="../../../search.html" method="get">
-        <div class="icon-input">
-            <input type="text" name="q" placeholder="Search" />
-            <span class="icon-search"></span>
-        </div>
-        <input type="submit" value="Go" class="d-hidden" />
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-    </form>
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-                    <div class="site-nav-tree">
-                        
-                            
-                            
-                                <ul>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#clone-this-repository">1. Clone this repository:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3. Install the HADDOCK3 package and command line clients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4. Make a CNS binary shortcut to the expected path:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#keep-your-installation-up-to-date">5. Keep your installation up to date</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-dna">docking-protein-dna</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#refine-complex">refine-complex</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#scoring">scoring</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clihd3.html">Run HADDOCK3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clicfg.html">Retrieve config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliscore.html">Calculate score</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clipp.html">PDB preprocessing client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../topology/index.html">Topology Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../sampling/index.html">Sampling Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../index.html">Model Refinement Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scoring/index.html">Scoring Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../analysis/index.html">Analysis Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../index.html#parent-code-for-modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../index.html#general-default-parameters">General Default parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../testing/integration_tests.html">Running integration tests manually</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#contributing-new-code">1. Contributing new code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../reference/core/index.html">Core Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../reference/libs/index.html">Libs Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../reference/gear/index.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
 </ul>
 
-                            
-                        
-                    </div>
-                </div>
-                <div class="col-12 col-lg-9">
-                    <div class="document">
-                        
-                            
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Easy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modules/refinement/params/mdref.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="easy">
-<h1>Easy<a class="headerlink" href="#easy" title="Permalink to this heading">¶</a></h1>
+<h1>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h1>
 <section id="ambig-fname">
-<h2>ambig_fname<a class="headerlink" href="#ambig-fname" title="Permalink to this heading">¶</a></h2>
+<h2>ambig_fname<a class="headerlink" href="#ambig-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -208,7 +99,7 @@
 </div>
 </section>
 <section id="dihe-fname">
-<h2>dihe_fname<a class="headerlink" href="#dihe-fname" title="Permalink to this heading">¶</a></h2>
+<h2>dihe_fname<a class="headerlink" href="#dihe-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -220,7 +111,7 @@
 </div>
 </section>
 <section id="dihedrals-on">
-<h2>dihedrals_on<a class="headerlink" href="#dihedrals-on" title="Permalink to this heading">¶</a></h2>
+<h2>dihedrals_on<a class="headerlink" href="#dihedrals-on" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -232,7 +123,7 @@
 </div>
 </section>
 <section id="dnarest-on">
-<h2>dnarest_on<a class="headerlink" href="#dnarest-on" title="Permalink to this heading">¶</a></h2>
+<h2>dnarest_on<a class="headerlink" href="#dnarest-on" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -244,7 +135,7 @@
 </div>
 </section>
 <section id="elecflag">
-<h2>elecflag<a class="headerlink" href="#elecflag" title="Permalink to this heading">¶</a></h2>
+<h2>elecflag<a class="headerlink" href="#elecflag" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -256,7 +147,7 @@
 </div>
 </section>
 <section id="error-dih">
-<h2>error_dih<a class="headerlink" href="#error-dih" title="Permalink to this heading">¶</a></h2>
+<h2>error_dih<a class="headerlink" href="#error-dih" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
@@ -268,7 +159,7 @@
 </div>
 </section>
 <section id="hbond-fname">
-<h2>hbond_fname<a class="headerlink" href="#hbond-fname" title="Permalink to this heading">¶</a></h2>
+<h2>hbond_fname<a class="headerlink" href="#hbond-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -280,7 +171,7 @@
 </div>
 </section>
 <section id="mol-shape-1">
-<h2>mol_shape_1<a class="headerlink" href="#mol-shape-1" title="Permalink to this heading">¶</a></h2>
+<h2>mol_shape_1<a class="headerlink" href="#mol-shape-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -292,7 +183,7 @@
 </div>
 </section>
 <section id="solvent">
-<h2>solvent<a class="headerlink" href="#solvent" title="Permalink to this heading">¶</a></h2>
+<h2>solvent<a class="headerlink" href="#solvent" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘water’</div>
 <div class="line"><em>type</em>: string</div>
@@ -304,7 +195,7 @@
 </div>
 </section>
 <section id="ssdihed">
-<h2>ssdihed<a class="headerlink" href="#ssdihed" title="Permalink to this heading">¶</a></h2>
+<h2>ssdihed<a class="headerlink" href="#ssdihed" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘none’</div>
 <div class="line"><em>type</em>: string</div>
@@ -316,7 +207,7 @@
 </div>
 </section>
 <section id="unambig-fname">
-<h2>unambig_fname<a class="headerlink" href="#unambig-fname" title="Permalink to this heading">¶</a></h2>
+<h2>unambig_fname<a class="headerlink" href="#unambig-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -329,9 +220,9 @@
 </section>
 </section>
 <section id="expert">
-<h1>Expert<a class="headerlink" href="#expert" title="Permalink to this heading">¶</a></h1>
+<h1>Expert<a class="headerlink" href="#expert" title="Permalink to this heading"></a></h1>
 <section id="amb-scale">
-<h2>amb_scale<a class="headerlink" href="#amb-scale" title="Permalink to this heading">¶</a></h2>
+<h2>amb_scale<a class="headerlink" href="#amb-scale" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
@@ -343,7 +234,7 @@
 </div>
 </section>
 <section id="c2sym-end1-1">
-<h2>c2sym_end1_1<a class="headerlink" href="#c2sym-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c2sym_end1_1<a class="headerlink" href="#c2sym-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -355,7 +246,7 @@
 </div>
 </section>
 <section id="c2sym-end2-1">
-<h2>c2sym_end2_1<a class="headerlink" href="#c2sym-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c2sym_end2_1<a class="headerlink" href="#c2sym-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -367,7 +258,7 @@
 </div>
 </section>
 <section id="c2sym-seg1-1">
-<h2>c2sym_seg1_1<a class="headerlink" href="#c2sym-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c2sym_seg1_1<a class="headerlink" href="#c2sym-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -379,7 +270,7 @@
 </div>
 </section>
 <section id="c2sym-seg2-1">
-<h2>c2sym_seg2_1<a class="headerlink" href="#c2sym-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c2sym_seg2_1<a class="headerlink" href="#c2sym-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -391,7 +282,7 @@
 </div>
 </section>
 <section id="c2sym-sta1-1">
-<h2>c2sym_sta1_1<a class="headerlink" href="#c2sym-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c2sym_sta1_1<a class="headerlink" href="#c2sym-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -403,7 +294,7 @@
 </div>
 </section>
 <section id="c2sym-sta2-1">
-<h2>c2sym_sta2_1<a class="headerlink" href="#c2sym-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c2sym_sta2_1<a class="headerlink" href="#c2sym-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -415,7 +306,7 @@
 </div>
 </section>
 <section id="c3sym-end1-1">
-<h2>c3sym_end1_1<a class="headerlink" href="#c3sym-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_end1_1<a class="headerlink" href="#c3sym-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -427,7 +318,7 @@
 </div>
 </section>
 <section id="c3sym-end2-1">
-<h2>c3sym_end2_1<a class="headerlink" href="#c3sym-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_end2_1<a class="headerlink" href="#c3sym-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -439,7 +330,7 @@
 </div>
 </section>
 <section id="c3sym-end3-1">
-<h2>c3sym_end3_1<a class="headerlink" href="#c3sym-end3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_end3_1<a class="headerlink" href="#c3sym-end3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -451,7 +342,7 @@
 </div>
 </section>
 <section id="c3sym-seg1-1">
-<h2>c3sym_seg1_1<a class="headerlink" href="#c3sym-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_seg1_1<a class="headerlink" href="#c3sym-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -463,7 +354,7 @@
 </div>
 </section>
 <section id="c3sym-seg2-1">
-<h2>c3sym_seg2_1<a class="headerlink" href="#c3sym-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_seg2_1<a class="headerlink" href="#c3sym-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -475,7 +366,7 @@
 </div>
 </section>
 <section id="c3sym-seg3-1">
-<h2>c3sym_seg3_1<a class="headerlink" href="#c3sym-seg3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_seg3_1<a class="headerlink" href="#c3sym-seg3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -487,7 +378,7 @@
 </div>
 </section>
 <section id="c3sym-sta1-1">
-<h2>c3sym_sta1_1<a class="headerlink" href="#c3sym-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_sta1_1<a class="headerlink" href="#c3sym-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -499,7 +390,7 @@
 </div>
 </section>
 <section id="c3sym-sta2-1">
-<h2>c3sym_sta2_1<a class="headerlink" href="#c3sym-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_sta2_1<a class="headerlink" href="#c3sym-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -511,7 +402,7 @@
 </div>
 </section>
 <section id="c3sym-sta3-1">
-<h2>c3sym_sta3_1<a class="headerlink" href="#c3sym-sta3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c3sym_sta3_1<a class="headerlink" href="#c3sym-sta3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -523,7 +414,7 @@
 </div>
 </section>
 <section id="c4sym-end1-1">
-<h2>c4sym_end1_1<a class="headerlink" href="#c4sym-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_end1_1<a class="headerlink" href="#c4sym-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -535,7 +426,7 @@
 </div>
 </section>
 <section id="c4sym-end2-1">
-<h2>c4sym_end2_1<a class="headerlink" href="#c4sym-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_end2_1<a class="headerlink" href="#c4sym-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -547,7 +438,7 @@
 </div>
 </section>
 <section id="c4sym-end3-1">
-<h2>c4sym_end3_1<a class="headerlink" href="#c4sym-end3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_end3_1<a class="headerlink" href="#c4sym-end3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -559,7 +450,7 @@
 </div>
 </section>
 <section id="c4sym-end4-1">
-<h2>c4sym_end4_1<a class="headerlink" href="#c4sym-end4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_end4_1<a class="headerlink" href="#c4sym-end4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -571,7 +462,7 @@
 </div>
 </section>
 <section id="c4sym-seg1-1">
-<h2>c4sym_seg1_1<a class="headerlink" href="#c4sym-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_seg1_1<a class="headerlink" href="#c4sym-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -583,7 +474,7 @@
 </div>
 </section>
 <section id="c4sym-seg2-1">
-<h2>c4sym_seg2_1<a class="headerlink" href="#c4sym-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_seg2_1<a class="headerlink" href="#c4sym-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -595,7 +486,7 @@
 </div>
 </section>
 <section id="c4sym-seg3-1">
-<h2>c4sym_seg3_1<a class="headerlink" href="#c4sym-seg3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_seg3_1<a class="headerlink" href="#c4sym-seg3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -607,7 +498,7 @@
 </div>
 </section>
 <section id="c4sym-seg4-1">
-<h2>c4sym_seg4_1<a class="headerlink" href="#c4sym-seg4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_seg4_1<a class="headerlink" href="#c4sym-seg4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -619,7 +510,7 @@
 </div>
 </section>
 <section id="c4sym-sta1-1">
-<h2>c4sym_sta1_1<a class="headerlink" href="#c4sym-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_sta1_1<a class="headerlink" href="#c4sym-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -631,7 +522,7 @@
 </div>
 </section>
 <section id="c4sym-sta2-1">
-<h2>c4sym_sta2_1<a class="headerlink" href="#c4sym-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_sta2_1<a class="headerlink" href="#c4sym-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -643,7 +534,7 @@
 </div>
 </section>
 <section id="c4sym-sta3-1">
-<h2>c4sym_sta3_1<a class="headerlink" href="#c4sym-sta3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_sta3_1<a class="headerlink" href="#c4sym-sta3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -655,7 +546,7 @@
 </div>
 </section>
 <section id="c4sym-sta4-1">
-<h2>c4sym_sta4_1<a class="headerlink" href="#c4sym-sta4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c4sym_sta4_1<a class="headerlink" href="#c4sym-sta4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -667,7 +558,7 @@
 </div>
 </section>
 <section id="c5sym-end1-1">
-<h2>c5sym_end1_1<a class="headerlink" href="#c5sym-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_end1_1<a class="headerlink" href="#c5sym-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -679,7 +570,7 @@
 </div>
 </section>
 <section id="c5sym-end2-1">
-<h2>c5sym_end2_1<a class="headerlink" href="#c5sym-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_end2_1<a class="headerlink" href="#c5sym-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -691,7 +582,7 @@
 </div>
 </section>
 <section id="c5sym-end3-1">
-<h2>c5sym_end3_1<a class="headerlink" href="#c5sym-end3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_end3_1<a class="headerlink" href="#c5sym-end3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -703,7 +594,7 @@
 </div>
 </section>
 <section id="c5sym-end4-1">
-<h2>c5sym_end4_1<a class="headerlink" href="#c5sym-end4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_end4_1<a class="headerlink" href="#c5sym-end4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -715,7 +606,7 @@
 </div>
 </section>
 <section id="c5sym-end5-1">
-<h2>c5sym_end5_1<a class="headerlink" href="#c5sym-end5-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_end5_1<a class="headerlink" href="#c5sym-end5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -727,7 +618,7 @@
 </div>
 </section>
 <section id="c5sym-seg1-1">
-<h2>c5sym_seg1_1<a class="headerlink" href="#c5sym-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_seg1_1<a class="headerlink" href="#c5sym-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -739,7 +630,7 @@
 </div>
 </section>
 <section id="c5sym-seg2-1">
-<h2>c5sym_seg2_1<a class="headerlink" href="#c5sym-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_seg2_1<a class="headerlink" href="#c5sym-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -751,7 +642,7 @@
 </div>
 </section>
 <section id="c5sym-seg3-1">
-<h2>c5sym_seg3_1<a class="headerlink" href="#c5sym-seg3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_seg3_1<a class="headerlink" href="#c5sym-seg3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -763,7 +654,7 @@
 </div>
 </section>
 <section id="c5sym-seg4-1">
-<h2>c5sym_seg4_1<a class="headerlink" href="#c5sym-seg4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_seg4_1<a class="headerlink" href="#c5sym-seg4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -775,7 +666,7 @@
 </div>
 </section>
 <section id="c5sym-seg5-1">
-<h2>c5sym_seg5_1<a class="headerlink" href="#c5sym-seg5-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_seg5_1<a class="headerlink" href="#c5sym-seg5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -787,7 +678,7 @@
 </div>
 </section>
 <section id="c5sym-sta1-1">
-<h2>c5sym_sta1_1<a class="headerlink" href="#c5sym-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_sta1_1<a class="headerlink" href="#c5sym-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -799,7 +690,7 @@
 </div>
 </section>
 <section id="c5sym-sta2-1">
-<h2>c5sym_sta2_1<a class="headerlink" href="#c5sym-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_sta2_1<a class="headerlink" href="#c5sym-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -811,7 +702,7 @@
 </div>
 </section>
 <section id="c5sym-sta3-1">
-<h2>c5sym_sta3_1<a class="headerlink" href="#c5sym-sta3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_sta3_1<a class="headerlink" href="#c5sym-sta3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -823,7 +714,7 @@
 </div>
 </section>
 <section id="c5sym-sta4-1">
-<h2>c5sym_sta4_1<a class="headerlink" href="#c5sym-sta4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_sta4_1<a class="headerlink" href="#c5sym-sta4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -835,7 +726,7 @@
 </div>
 </section>
 <section id="c5sym-sta5-1">
-<h2>c5sym_sta5_1<a class="headerlink" href="#c5sym-sta5-1" title="Permalink to this heading">¶</a></h2>
+<h2>c5sym_sta5_1<a class="headerlink" href="#c5sym-sta5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -847,7 +738,7 @@
 </div>
 </section>
 <section id="c6sym-end1-1">
-<h2>c6sym_end1_1<a class="headerlink" href="#c6sym-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_end1_1<a class="headerlink" href="#c6sym-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -859,7 +750,7 @@
 </div>
 </section>
 <section id="c6sym-end2-1">
-<h2>c6sym_end2_1<a class="headerlink" href="#c6sym-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_end2_1<a class="headerlink" href="#c6sym-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -871,7 +762,7 @@
 </div>
 </section>
 <section id="c6sym-end3-1">
-<h2>c6sym_end3_1<a class="headerlink" href="#c6sym-end3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_end3_1<a class="headerlink" href="#c6sym-end3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -883,7 +774,7 @@
 </div>
 </section>
 <section id="c6sym-end4-1">
-<h2>c6sym_end4_1<a class="headerlink" href="#c6sym-end4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_end4_1<a class="headerlink" href="#c6sym-end4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -895,7 +786,7 @@
 </div>
 </section>
 <section id="c6sym-end5-1">
-<h2>c6sym_end5_1<a class="headerlink" href="#c6sym-end5-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_end5_1<a class="headerlink" href="#c6sym-end5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -907,7 +798,7 @@
 </div>
 </section>
 <section id="c6sym-end6-1">
-<h2>c6sym_end6_1<a class="headerlink" href="#c6sym-end6-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_end6_1<a class="headerlink" href="#c6sym-end6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -919,7 +810,7 @@
 </div>
 </section>
 <section id="c6sym-seg1-1">
-<h2>c6sym_seg1_1<a class="headerlink" href="#c6sym-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_seg1_1<a class="headerlink" href="#c6sym-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -931,7 +822,7 @@
 </div>
 </section>
 <section id="c6sym-seg2-1">
-<h2>c6sym_seg2_1<a class="headerlink" href="#c6sym-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_seg2_1<a class="headerlink" href="#c6sym-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -943,7 +834,7 @@
 </div>
 </section>
 <section id="c6sym-seg3-1">
-<h2>c6sym_seg3_1<a class="headerlink" href="#c6sym-seg3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_seg3_1<a class="headerlink" href="#c6sym-seg3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -955,7 +846,7 @@
 </div>
 </section>
 <section id="c6sym-seg4-1">
-<h2>c6sym_seg4_1<a class="headerlink" href="#c6sym-seg4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_seg4_1<a class="headerlink" href="#c6sym-seg4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -967,7 +858,7 @@
 </div>
 </section>
 <section id="c6sym-seg5-1">
-<h2>c6sym_seg5_1<a class="headerlink" href="#c6sym-seg5-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_seg5_1<a class="headerlink" href="#c6sym-seg5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -979,7 +870,7 @@
 </div>
 </section>
 <section id="c6sym-seg6-1">
-<h2>c6sym_seg6_1<a class="headerlink" href="#c6sym-seg6-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_seg6_1<a class="headerlink" href="#c6sym-seg6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -991,7 +882,7 @@
 </div>
 </section>
 <section id="c6sym-sta1-1">
-<h2>c6sym_sta1_1<a class="headerlink" href="#c6sym-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_sta1_1<a class="headerlink" href="#c6sym-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1003,7 +894,7 @@
 </div>
 </section>
 <section id="c6sym-sta2-1">
-<h2>c6sym_sta2_1<a class="headerlink" href="#c6sym-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_sta2_1<a class="headerlink" href="#c6sym-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1015,7 +906,7 @@
 </div>
 </section>
 <section id="c6sym-sta3-1">
-<h2>c6sym_sta3_1<a class="headerlink" href="#c6sym-sta3-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_sta3_1<a class="headerlink" href="#c6sym-sta3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1027,7 +918,7 @@
 </div>
 </section>
 <section id="c6sym-sta4-1">
-<h2>c6sym_sta4_1<a class="headerlink" href="#c6sym-sta4-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_sta4_1<a class="headerlink" href="#c6sym-sta4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1039,7 +930,7 @@
 </div>
 </section>
 <section id="c6sym-sta5-1">
-<h2>c6sym_sta5_1<a class="headerlink" href="#c6sym-sta5-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_sta5_1<a class="headerlink" href="#c6sym-sta5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1051,7 +942,7 @@
 </div>
 </section>
 <section id="c6sym-sta6-1">
-<h2>c6sym_sta6_1<a class="headerlink" href="#c6sym-sta6-1" title="Permalink to this heading">¶</a></h2>
+<h2>c6sym_sta6_1<a class="headerlink" href="#c6sym-sta6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1063,7 +954,7 @@
 </div>
 </section>
 <section id="cmrest">
-<h2>cmrest<a class="headerlink" href="#cmrest" title="Permalink to this heading">¶</a></h2>
+<h2>cmrest<a class="headerlink" href="#cmrest" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1075,7 +966,7 @@
 </div>
 </section>
 <section id="cmtight">
-<h2>cmtight<a class="headerlink" href="#cmtight" title="Permalink to this heading">¶</a></h2>
+<h2>cmtight<a class="headerlink" href="#cmtight" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1087,7 +978,7 @@
 </div>
 </section>
 <section id="contactairs">
-<h2>contactairs<a class="headerlink" href="#contactairs" title="Permalink to this heading">¶</a></h2>
+<h2>contactairs<a class="headerlink" href="#contactairs" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1099,7 +990,7 @@
 </div>
 </section>
 <section id="dielec">
-<h2>dielec<a class="headerlink" href="#dielec" title="Permalink to this heading">¶</a></h2>
+<h2>dielec<a class="headerlink" href="#dielec" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘cdie’</div>
 <div class="line"><em>type</em>: string</div>
@@ -1111,7 +1002,7 @@
 </div>
 </section>
 <section id="dihedflag">
-<h2>dihedflag<a class="headerlink" href="#dihedflag" title="Permalink to this heading">¶</a></h2>
+<h2>dihedflag<a class="headerlink" href="#dihedflag" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1123,7 +1014,7 @@
 </div>
 </section>
 <section id="dihedrals-scale">
-<h2>dihedrals_scale<a class="headerlink" href="#dihedrals-scale" title="Permalink to this heading">¶</a></h2>
+<h2>dihedrals_scale<a class="headerlink" href="#dihedrals-scale" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 200</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1135,7 +1026,7 @@
 </div>
 </section>
 <section id="epsilon">
-<h2>epsilon<a class="headerlink" href="#epsilon" title="Permalink to this heading">¶</a></h2>
+<h2>epsilon<a class="headerlink" href="#epsilon" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1147,7 +1038,7 @@
 </div>
 </section>
 <section id="fle-end-10-1">
-<h2>fle_end_10_1<a class="headerlink" href="#fle-end-10-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_10_1<a class="headerlink" href="#fle-end-10-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1159,7 +1050,7 @@
 </div>
 </section>
 <section id="fle-end-11-1">
-<h2>fle_end_11_1<a class="headerlink" href="#fle-end-11-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_11_1<a class="headerlink" href="#fle-end-11-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1171,7 +1062,7 @@
 </div>
 </section>
 <section id="fle-end-12-1">
-<h2>fle_end_12_1<a class="headerlink" href="#fle-end-12-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_12_1<a class="headerlink" href="#fle-end-12-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1183,7 +1074,7 @@
 </div>
 </section>
 <section id="fle-end-13-1">
-<h2>fle_end_13_1<a class="headerlink" href="#fle-end-13-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_13_1<a class="headerlink" href="#fle-end-13-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1195,7 +1086,7 @@
 </div>
 </section>
 <section id="fle-end-14-1">
-<h2>fle_end_14_1<a class="headerlink" href="#fle-end-14-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_14_1<a class="headerlink" href="#fle-end-14-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1207,7 +1098,7 @@
 </div>
 </section>
 <section id="fle-end-15-1">
-<h2>fle_end_15_1<a class="headerlink" href="#fle-end-15-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_15_1<a class="headerlink" href="#fle-end-15-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1219,7 +1110,7 @@
 </div>
 </section>
 <section id="fle-end-16-1">
-<h2>fle_end_16_1<a class="headerlink" href="#fle-end-16-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_16_1<a class="headerlink" href="#fle-end-16-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1231,7 +1122,7 @@
 </div>
 </section>
 <section id="fle-end-17-1">
-<h2>fle_end_17_1<a class="headerlink" href="#fle-end-17-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_17_1<a class="headerlink" href="#fle-end-17-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1243,7 +1134,7 @@
 </div>
 </section>
 <section id="fle-end-18-1">
-<h2>fle_end_18_1<a class="headerlink" href="#fle-end-18-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_18_1<a class="headerlink" href="#fle-end-18-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1255,7 +1146,7 @@
 </div>
 </section>
 <section id="fle-end-19-1">
-<h2>fle_end_19_1<a class="headerlink" href="#fle-end-19-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_19_1<a class="headerlink" href="#fle-end-19-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1267,7 +1158,7 @@
 </div>
 </section>
 <section id="fle-end-1-1">
-<h2>fle_end_1_1<a class="headerlink" href="#fle-end-1-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_1_1<a class="headerlink" href="#fle-end-1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1279,7 +1170,7 @@
 </div>
 </section>
 <section id="fle-end-20-1">
-<h2>fle_end_20_1<a class="headerlink" href="#fle-end-20-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_20_1<a class="headerlink" href="#fle-end-20-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1291,7 +1182,7 @@
 </div>
 </section>
 <section id="fle-end-2-1">
-<h2>fle_end_2_1<a class="headerlink" href="#fle-end-2-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_2_1<a class="headerlink" href="#fle-end-2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1303,7 +1194,7 @@
 </div>
 </section>
 <section id="fle-end-3-1">
-<h2>fle_end_3_1<a class="headerlink" href="#fle-end-3-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_3_1<a class="headerlink" href="#fle-end-3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1315,7 +1206,7 @@
 </div>
 </section>
 <section id="fle-end-4-1">
-<h2>fle_end_4_1<a class="headerlink" href="#fle-end-4-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_4_1<a class="headerlink" href="#fle-end-4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1327,7 +1218,7 @@
 </div>
 </section>
 <section id="fle-end-5-1">
-<h2>fle_end_5_1<a class="headerlink" href="#fle-end-5-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_5_1<a class="headerlink" href="#fle-end-5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1339,7 +1230,7 @@
 </div>
 </section>
 <section id="fle-end-6-1">
-<h2>fle_end_6_1<a class="headerlink" href="#fle-end-6-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_6_1<a class="headerlink" href="#fle-end-6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1351,7 +1242,7 @@
 </div>
 </section>
 <section id="fle-end-7-1">
-<h2>fle_end_7_1<a class="headerlink" href="#fle-end-7-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_7_1<a class="headerlink" href="#fle-end-7-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1363,7 +1254,7 @@
 </div>
 </section>
 <section id="fle-end-8-1">
-<h2>fle_end_8_1<a class="headerlink" href="#fle-end-8-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_8_1<a class="headerlink" href="#fle-end-8-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1375,7 +1266,7 @@
 </div>
 </section>
 <section id="fle-end-9-1">
-<h2>fle_end_9_1<a class="headerlink" href="#fle-end-9-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_end_9_1<a class="headerlink" href="#fle-end-9-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1387,7 +1278,7 @@
 </div>
 </section>
 <section id="fle-sta-10-1">
-<h2>fle_sta_10_1<a class="headerlink" href="#fle-sta-10-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_10_1<a class="headerlink" href="#fle-sta-10-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1399,7 +1290,7 @@
 </div>
 </section>
 <section id="fle-sta-11-1">
-<h2>fle_sta_11_1<a class="headerlink" href="#fle-sta-11-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_11_1<a class="headerlink" href="#fle-sta-11-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1411,7 +1302,7 @@
 </div>
 </section>
 <section id="fle-sta-12-1">
-<h2>fle_sta_12_1<a class="headerlink" href="#fle-sta-12-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_12_1<a class="headerlink" href="#fle-sta-12-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1423,7 +1314,7 @@
 </div>
 </section>
 <section id="fle-sta-13-1">
-<h2>fle_sta_13_1<a class="headerlink" href="#fle-sta-13-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_13_1<a class="headerlink" href="#fle-sta-13-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1435,7 +1326,7 @@
 </div>
 </section>
 <section id="fle-sta-14-1">
-<h2>fle_sta_14_1<a class="headerlink" href="#fle-sta-14-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_14_1<a class="headerlink" href="#fle-sta-14-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1447,7 +1338,7 @@
 </div>
 </section>
 <section id="fle-sta-15-1">
-<h2>fle_sta_15_1<a class="headerlink" href="#fle-sta-15-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_15_1<a class="headerlink" href="#fle-sta-15-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1459,7 +1350,7 @@
 </div>
 </section>
 <section id="fle-sta-16-1">
-<h2>fle_sta_16_1<a class="headerlink" href="#fle-sta-16-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_16_1<a class="headerlink" href="#fle-sta-16-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1471,7 +1362,7 @@
 </div>
 </section>
 <section id="fle-sta-17-1">
-<h2>fle_sta_17_1<a class="headerlink" href="#fle-sta-17-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_17_1<a class="headerlink" href="#fle-sta-17-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1483,7 +1374,7 @@
 </div>
 </section>
 <section id="fle-sta-18-1">
-<h2>fle_sta_18_1<a class="headerlink" href="#fle-sta-18-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_18_1<a class="headerlink" href="#fle-sta-18-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1495,7 +1386,7 @@
 </div>
 </section>
 <section id="fle-sta-19-1">
-<h2>fle_sta_19_1<a class="headerlink" href="#fle-sta-19-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_19_1<a class="headerlink" href="#fle-sta-19-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1507,7 +1398,7 @@
 </div>
 </section>
 <section id="fle-sta-1-1">
-<h2>fle_sta_1_1<a class="headerlink" href="#fle-sta-1-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_1_1<a class="headerlink" href="#fle-sta-1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1519,7 +1410,7 @@
 </div>
 </section>
 <section id="fle-sta-20-1">
-<h2>fle_sta_20_1<a class="headerlink" href="#fle-sta-20-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_20_1<a class="headerlink" href="#fle-sta-20-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1531,7 +1422,7 @@
 </div>
 </section>
 <section id="fle-sta-2-1">
-<h2>fle_sta_2_1<a class="headerlink" href="#fle-sta-2-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_2_1<a class="headerlink" href="#fle-sta-2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1543,7 +1434,7 @@
 </div>
 </section>
 <section id="fle-sta-3-1">
-<h2>fle_sta_3_1<a class="headerlink" href="#fle-sta-3-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_3_1<a class="headerlink" href="#fle-sta-3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1555,7 +1446,7 @@
 </div>
 </section>
 <section id="fle-sta-4-1">
-<h2>fle_sta_4_1<a class="headerlink" href="#fle-sta-4-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_4_1<a class="headerlink" href="#fle-sta-4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1567,7 +1458,7 @@
 </div>
 </section>
 <section id="fle-sta-5-1">
-<h2>fle_sta_5_1<a class="headerlink" href="#fle-sta-5-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_5_1<a class="headerlink" href="#fle-sta-5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1579,7 +1470,7 @@
 </div>
 </section>
 <section id="fle-sta-6-1">
-<h2>fle_sta_6_1<a class="headerlink" href="#fle-sta-6-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_6_1<a class="headerlink" href="#fle-sta-6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1591,7 +1482,7 @@
 </div>
 </section>
 <section id="fle-sta-7-1">
-<h2>fle_sta_7_1<a class="headerlink" href="#fle-sta-7-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_7_1<a class="headerlink" href="#fle-sta-7-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1603,7 +1494,7 @@
 </div>
 </section>
 <section id="fle-sta-8-1">
-<h2>fle_sta_8_1<a class="headerlink" href="#fle-sta-8-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_8_1<a class="headerlink" href="#fle-sta-8-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1615,7 +1506,7 @@
 </div>
 </section>
 <section id="fle-sta-9-1">
-<h2>fle_sta_9_1<a class="headerlink" href="#fle-sta-9-1" title="Permalink to this heading">¶</a></h2>
+<h2>fle_sta_9_1<a class="headerlink" href="#fle-sta-9-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1627,7 +1518,7 @@
 </div>
 </section>
 <section id="hbond-scale">
-<h2>hbond_scale<a class="headerlink" href="#hbond-scale" title="Permalink to this heading">¶</a></h2>
+<h2>hbond_scale<a class="headerlink" href="#hbond-scale" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1639,7 +1530,7 @@
 </div>
 </section>
 <section id="kcm">
-<h2>kcm<a class="headerlink" href="#kcm" title="Permalink to this heading">¶</a></h2>
+<h2>kcm<a class="headerlink" href="#kcm" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1651,7 +1542,7 @@
 </div>
 </section>
 <section id="kcont">
-<h2>kcont<a class="headerlink" href="#kcont" title="Permalink to this heading">¶</a></h2>
+<h2>kcont<a class="headerlink" href="#kcont" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1663,7 +1554,7 @@
 </div>
 </section>
 <section id="kncs">
-<h2>kncs<a class="headerlink" href="#kncs" title="Permalink to this heading">¶</a></h2>
+<h2>kncs<a class="headerlink" href="#kncs" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1675,7 +1566,7 @@
 </div>
 </section>
 <section id="ksym">
-<h2>ksym<a class="headerlink" href="#ksym" title="Permalink to this heading">¶</a></h2>
+<h2>ksym<a class="headerlink" href="#ksym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 10.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1687,7 +1578,7 @@
 </div>
 </section>
 <section id="ligand-param-fname">
-<h2>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading">¶</a></h2>
+<h2>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -1699,7 +1590,7 @@
 </div>
 </section>
 <section id="ligand-top-fname">
-<h2>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading">¶</a></h2>
+<h2>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -1711,7 +1602,7 @@
 </div>
 </section>
 <section id="max-nmodels">
-<h2>max_nmodels<a class="headerlink" href="#max-nmodels" title="Permalink to this heading">¶</a></h2>
+<h2>max_nmodels<a class="headerlink" href="#max-nmodels" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 10000</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1723,7 +1614,7 @@
 </div>
 </section>
 <section id="mol-fix-origin-1">
-<h2>mol_fix_origin_1<a class="headerlink" href="#mol-fix-origin-1" title="Permalink to this heading">¶</a></h2>
+<h2>mol_fix_origin_1<a class="headerlink" href="#mol-fix-origin-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1735,7 +1626,7 @@
 </div>
 </section>
 <section id="ncs-end1-1">
-<h2>ncs_end1_1<a class="headerlink" href="#ncs-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_end1_1<a class="headerlink" href="#ncs-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1747,7 +1638,7 @@
 </div>
 </section>
 <section id="ncs-end2-1">
-<h2>ncs_end2_1<a class="headerlink" href="#ncs-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_end2_1<a class="headerlink" href="#ncs-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1759,7 +1650,7 @@
 </div>
 </section>
 <section id="ncs-on">
-<h2>ncs_on<a class="headerlink" href="#ncs-on" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_on<a class="headerlink" href="#ncs-on" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1771,7 +1662,7 @@
 </div>
 </section>
 <section id="ncs-seg1-1">
-<h2>ncs_seg1_1<a class="headerlink" href="#ncs-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_seg1_1<a class="headerlink" href="#ncs-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -1783,7 +1674,7 @@
 </div>
 </section>
 <section id="ncs-seg2-1">
-<h2>ncs_seg2_1<a class="headerlink" href="#ncs-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_seg2_1<a class="headerlink" href="#ncs-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -1795,7 +1686,7 @@
 </div>
 </section>
 <section id="ncs-sta1-1">
-<h2>ncs_sta1_1<a class="headerlink" href="#ncs-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_sta1_1<a class="headerlink" href="#ncs-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1807,7 +1698,7 @@
 </div>
 </section>
 <section id="ncs-sta2-1">
-<h2>ncs_sta2_1<a class="headerlink" href="#ncs-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>ncs_sta2_1<a class="headerlink" href="#ncs-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1819,7 +1710,7 @@
 </div>
 </section>
 <section id="nemsteps">
-<h2>nemsteps<a class="headerlink" href="#nemsteps" title="Permalink to this heading">¶</a></h2>
+<h2>nemsteps<a class="headerlink" href="#nemsteps" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 200</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1831,7 +1722,7 @@
 </div>
 </section>
 <section id="nfle1">
-<h2>nfle1<a class="headerlink" href="#nfle1" title="Permalink to this heading">¶</a></h2>
+<h2>nfle1<a class="headerlink" href="#nfle1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1843,7 +1734,7 @@
 </div>
 </section>
 <section id="nfle10">
-<h2>nfle10<a class="headerlink" href="#nfle10" title="Permalink to this heading">¶</a></h2>
+<h2>nfle10<a class="headerlink" href="#nfle10" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1855,7 +1746,7 @@
 </div>
 </section>
 <section id="nfle11">
-<h2>nfle11<a class="headerlink" href="#nfle11" title="Permalink to this heading">¶</a></h2>
+<h2>nfle11<a class="headerlink" href="#nfle11" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1867,7 +1758,7 @@
 </div>
 </section>
 <section id="nfle12">
-<h2>nfle12<a class="headerlink" href="#nfle12" title="Permalink to this heading">¶</a></h2>
+<h2>nfle12<a class="headerlink" href="#nfle12" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1879,7 +1770,7 @@
 </div>
 </section>
 <section id="nfle13">
-<h2>nfle13<a class="headerlink" href="#nfle13" title="Permalink to this heading">¶</a></h2>
+<h2>nfle13<a class="headerlink" href="#nfle13" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1891,7 +1782,7 @@
 </div>
 </section>
 <section id="nfle14">
-<h2>nfle14<a class="headerlink" href="#nfle14" title="Permalink to this heading">¶</a></h2>
+<h2>nfle14<a class="headerlink" href="#nfle14" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1903,7 +1794,7 @@
 </div>
 </section>
 <section id="nfle15">
-<h2>nfle15<a class="headerlink" href="#nfle15" title="Permalink to this heading">¶</a></h2>
+<h2>nfle15<a class="headerlink" href="#nfle15" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1915,7 +1806,7 @@
 </div>
 </section>
 <section id="nfle16">
-<h2>nfle16<a class="headerlink" href="#nfle16" title="Permalink to this heading">¶</a></h2>
+<h2>nfle16<a class="headerlink" href="#nfle16" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1927,7 +1818,7 @@
 </div>
 </section>
 <section id="nfle17">
-<h2>nfle17<a class="headerlink" href="#nfle17" title="Permalink to this heading">¶</a></h2>
+<h2>nfle17<a class="headerlink" href="#nfle17" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1939,7 +1830,7 @@
 </div>
 </section>
 <section id="nfle18">
-<h2>nfle18<a class="headerlink" href="#nfle18" title="Permalink to this heading">¶</a></h2>
+<h2>nfle18<a class="headerlink" href="#nfle18" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1951,7 +1842,7 @@
 </div>
 </section>
 <section id="nfle19">
-<h2>nfle19<a class="headerlink" href="#nfle19" title="Permalink to this heading">¶</a></h2>
+<h2>nfle19<a class="headerlink" href="#nfle19" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1963,7 +1854,7 @@
 </div>
 </section>
 <section id="nfle2">
-<h2>nfle2<a class="headerlink" href="#nfle2" title="Permalink to this heading">¶</a></h2>
+<h2>nfle2<a class="headerlink" href="#nfle2" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1975,7 +1866,7 @@
 </div>
 </section>
 <section id="nfle20">
-<h2>nfle20<a class="headerlink" href="#nfle20" title="Permalink to this heading">¶</a></h2>
+<h2>nfle20<a class="headerlink" href="#nfle20" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1987,7 +1878,7 @@
 </div>
 </section>
 <section id="nfle3">
-<h2>nfle3<a class="headerlink" href="#nfle3" title="Permalink to this heading">¶</a></h2>
+<h2>nfle3<a class="headerlink" href="#nfle3" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1999,7 +1890,7 @@
 </div>
 </section>
 <section id="nfle4">
-<h2>nfle4<a class="headerlink" href="#nfle4" title="Permalink to this heading">¶</a></h2>
+<h2>nfle4<a class="headerlink" href="#nfle4" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2011,7 +1902,7 @@
 </div>
 </section>
 <section id="nfle5">
-<h2>nfle5<a class="headerlink" href="#nfle5" title="Permalink to this heading">¶</a></h2>
+<h2>nfle5<a class="headerlink" href="#nfle5" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2023,7 +1914,7 @@
 </div>
 </section>
 <section id="nfle6">
-<h2>nfle6<a class="headerlink" href="#nfle6" title="Permalink to this heading">¶</a></h2>
+<h2>nfle6<a class="headerlink" href="#nfle6" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2035,7 +1926,7 @@
 </div>
 </section>
 <section id="nfle7">
-<h2>nfle7<a class="headerlink" href="#nfle7" title="Permalink to this heading">¶</a></h2>
+<h2>nfle7<a class="headerlink" href="#nfle7" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2047,7 +1938,7 @@
 </div>
 </section>
 <section id="nfle8">
-<h2>nfle8<a class="headerlink" href="#nfle8" title="Permalink to this heading">¶</a></h2>
+<h2>nfle8<a class="headerlink" href="#nfle8" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2059,7 +1950,7 @@
 </div>
 </section>
 <section id="nfle9">
-<h2>nfle9<a class="headerlink" href="#nfle9" title="Permalink to this heading">¶</a></h2>
+<h2>nfle9<a class="headerlink" href="#nfle9" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2071,7 +1962,7 @@
 </div>
 </section>
 <section id="npart">
-<h2>npart<a class="headerlink" href="#npart" title="Permalink to this heading">¶</a></h2>
+<h2>npart<a class="headerlink" href="#npart" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 2</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2083,7 +1974,7 @@
 </div>
 </section>
 <section id="nseg1">
-<h2>nseg1<a class="headerlink" href="#nseg1" title="Permalink to this heading">¶</a></h2>
+<h2>nseg1<a class="headerlink" href="#nseg1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2095,7 +1986,7 @@
 </div>
 </section>
 <section id="nseg10">
-<h2>nseg10<a class="headerlink" href="#nseg10" title="Permalink to this heading">¶</a></h2>
+<h2>nseg10<a class="headerlink" href="#nseg10" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2107,7 +1998,7 @@
 </div>
 </section>
 <section id="nseg11">
-<h2>nseg11<a class="headerlink" href="#nseg11" title="Permalink to this heading">¶</a></h2>
+<h2>nseg11<a class="headerlink" href="#nseg11" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2119,7 +2010,7 @@
 </div>
 </section>
 <section id="nseg12">
-<h2>nseg12<a class="headerlink" href="#nseg12" title="Permalink to this heading">¶</a></h2>
+<h2>nseg12<a class="headerlink" href="#nseg12" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2131,7 +2022,7 @@
 </div>
 </section>
 <section id="nseg13">
-<h2>nseg13<a class="headerlink" href="#nseg13" title="Permalink to this heading">¶</a></h2>
+<h2>nseg13<a class="headerlink" href="#nseg13" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2143,7 +2034,7 @@
 </div>
 </section>
 <section id="nseg14">
-<h2>nseg14<a class="headerlink" href="#nseg14" title="Permalink to this heading">¶</a></h2>
+<h2>nseg14<a class="headerlink" href="#nseg14" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2155,7 +2046,7 @@
 </div>
 </section>
 <section id="nseg15">
-<h2>nseg15<a class="headerlink" href="#nseg15" title="Permalink to this heading">¶</a></h2>
+<h2>nseg15<a class="headerlink" href="#nseg15" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2167,7 +2058,7 @@
 </div>
 </section>
 <section id="nseg16">
-<h2>nseg16<a class="headerlink" href="#nseg16" title="Permalink to this heading">¶</a></h2>
+<h2>nseg16<a class="headerlink" href="#nseg16" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2179,7 +2070,7 @@
 </div>
 </section>
 <section id="nseg17">
-<h2>nseg17<a class="headerlink" href="#nseg17" title="Permalink to this heading">¶</a></h2>
+<h2>nseg17<a class="headerlink" href="#nseg17" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2191,7 +2082,7 @@
 </div>
 </section>
 <section id="nseg18">
-<h2>nseg18<a class="headerlink" href="#nseg18" title="Permalink to this heading">¶</a></h2>
+<h2>nseg18<a class="headerlink" href="#nseg18" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2203,7 +2094,7 @@
 </div>
 </section>
 <section id="nseg19">
-<h2>nseg19<a class="headerlink" href="#nseg19" title="Permalink to this heading">¶</a></h2>
+<h2>nseg19<a class="headerlink" href="#nseg19" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2215,7 +2106,7 @@
 </div>
 </section>
 <section id="nseg2">
-<h2>nseg2<a class="headerlink" href="#nseg2" title="Permalink to this heading">¶</a></h2>
+<h2>nseg2<a class="headerlink" href="#nseg2" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2227,7 +2118,7 @@
 </div>
 </section>
 <section id="nseg20">
-<h2>nseg20<a class="headerlink" href="#nseg20" title="Permalink to this heading">¶</a></h2>
+<h2>nseg20<a class="headerlink" href="#nseg20" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2239,7 +2130,7 @@
 </div>
 </section>
 <section id="nseg3">
-<h2>nseg3<a class="headerlink" href="#nseg3" title="Permalink to this heading">¶</a></h2>
+<h2>nseg3<a class="headerlink" href="#nseg3" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2251,7 +2142,7 @@
 </div>
 </section>
 <section id="nseg4">
-<h2>nseg4<a class="headerlink" href="#nseg4" title="Permalink to this heading">¶</a></h2>
+<h2>nseg4<a class="headerlink" href="#nseg4" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2263,7 +2154,7 @@
 </div>
 </section>
 <section id="nseg5">
-<h2>nseg5<a class="headerlink" href="#nseg5" title="Permalink to this heading">¶</a></h2>
+<h2>nseg5<a class="headerlink" href="#nseg5" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2275,7 +2166,7 @@
 </div>
 </section>
 <section id="nseg6">
-<h2>nseg6<a class="headerlink" href="#nseg6" title="Permalink to this heading">¶</a></h2>
+<h2>nseg6<a class="headerlink" href="#nseg6" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2287,7 +2178,7 @@
 </div>
 </section>
 <section id="nseg7">
-<h2>nseg7<a class="headerlink" href="#nseg7" title="Permalink to this heading">¶</a></h2>
+<h2>nseg7<a class="headerlink" href="#nseg7" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2299,7 +2190,7 @@
 </div>
 </section>
 <section id="nseg8">
-<h2>nseg8<a class="headerlink" href="#nseg8" title="Permalink to this heading">¶</a></h2>
+<h2>nseg8<a class="headerlink" href="#nseg8" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2311,7 +2202,7 @@
 </div>
 </section>
 <section id="nseg9">
-<h2>nseg9<a class="headerlink" href="#nseg9" title="Permalink to this heading">¶</a></h2>
+<h2>nseg9<a class="headerlink" href="#nseg9" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2323,7 +2214,7 @@
 </div>
 </section>
 <section id="numc2sym">
-<h2>numc2sym<a class="headerlink" href="#numc2sym" title="Permalink to this heading">¶</a></h2>
+<h2>numc2sym<a class="headerlink" href="#numc2sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2335,7 +2226,7 @@
 </div>
 </section>
 <section id="numc3sym">
-<h2>numc3sym<a class="headerlink" href="#numc3sym" title="Permalink to this heading">¶</a></h2>
+<h2>numc3sym<a class="headerlink" href="#numc3sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2347,7 +2238,7 @@
 </div>
 </section>
 <section id="numc4sym">
-<h2>numc4sym<a class="headerlink" href="#numc4sym" title="Permalink to this heading">¶</a></h2>
+<h2>numc4sym<a class="headerlink" href="#numc4sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2359,7 +2250,7 @@
 </div>
 </section>
 <section id="numc5sym">
-<h2>numc5sym<a class="headerlink" href="#numc5sym" title="Permalink to this heading">¶</a></h2>
+<h2>numc5sym<a class="headerlink" href="#numc5sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2371,7 +2262,7 @@
 </div>
 </section>
 <section id="numc6sym">
-<h2>numc6sym<a class="headerlink" href="#numc6sym" title="Permalink to this heading">¶</a></h2>
+<h2>numc6sym<a class="headerlink" href="#numc6sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2383,7 +2274,7 @@
 </div>
 </section>
 <section id="numncs">
-<h2>numncs<a class="headerlink" href="#numncs" title="Permalink to this heading">¶</a></h2>
+<h2>numncs<a class="headerlink" href="#numncs" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2395,7 +2286,7 @@
 </div>
 </section>
 <section id="nums3sym">
-<h2>nums3sym<a class="headerlink" href="#nums3sym" title="Permalink to this heading">¶</a></h2>
+<h2>nums3sym<a class="headerlink" href="#nums3sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2407,7 +2298,7 @@
 </div>
 </section>
 <section id="previous-ambig">
-<h2>previous_ambig<a class="headerlink" href="#previous-ambig" title="Permalink to this heading">¶</a></h2>
+<h2>previous_ambig<a class="headerlink" href="#previous-ambig" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2419,7 +2310,7 @@
 </div>
 </section>
 <section id="randremoval">
-<h2>randremoval<a class="headerlink" href="#randremoval" title="Permalink to this heading">¶</a></h2>
+<h2>randremoval<a class="headerlink" href="#randremoval" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2431,7 +2322,7 @@
 </div>
 </section>
 <section id="s3sym-end1-1">
-<h2>s3sym_end1_1<a class="headerlink" href="#s3sym-end1-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_end1_1<a class="headerlink" href="#s3sym-end1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2443,7 +2334,7 @@
 </div>
 </section>
 <section id="s3sym-end2-1">
-<h2>s3sym_end2_1<a class="headerlink" href="#s3sym-end2-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_end2_1<a class="headerlink" href="#s3sym-end2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2455,7 +2346,7 @@
 </div>
 </section>
 <section id="s3sym-end3-1">
-<h2>s3sym_end3_1<a class="headerlink" href="#s3sym-end3-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_end3_1<a class="headerlink" href="#s3sym-end3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2467,7 +2358,7 @@
 </div>
 </section>
 <section id="s3sym-seg1-1">
-<h2>s3sym_seg1_1<a class="headerlink" href="#s3sym-seg1-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_seg1_1<a class="headerlink" href="#s3sym-seg1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2479,7 +2370,7 @@
 </div>
 </section>
 <section id="s3sym-seg2-1">
-<h2>s3sym_seg2_1<a class="headerlink" href="#s3sym-seg2-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_seg2_1<a class="headerlink" href="#s3sym-seg2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2491,7 +2382,7 @@
 </div>
 </section>
 <section id="s3sym-seg3-1">
-<h2>s3sym_seg3_1<a class="headerlink" href="#s3sym-seg3-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_seg3_1<a class="headerlink" href="#s3sym-seg3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2503,7 +2394,7 @@
 </div>
 </section>
 <section id="s3sym-sta1-1">
-<h2>s3sym_sta1_1<a class="headerlink" href="#s3sym-sta1-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_sta1_1<a class="headerlink" href="#s3sym-sta1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2515,7 +2406,7 @@
 </div>
 </section>
 <section id="s3sym-sta2-1">
-<h2>s3sym_sta2_1<a class="headerlink" href="#s3sym-sta2-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_sta2_1<a class="headerlink" href="#s3sym-sta2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2527,7 +2418,7 @@
 </div>
 </section>
 <section id="s3sym-sta3-1">
-<h2>s3sym_sta3_1<a class="headerlink" href="#s3sym-sta3-1" title="Permalink to this heading">¶</a></h2>
+<h2>s3sym_sta3_1<a class="headerlink" href="#s3sym-sta3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2539,7 +2430,7 @@
 </div>
 </section>
 <section id="sampling-factor">
-<h2>sampling_factor<a class="headerlink" href="#sampling-factor" title="Permalink to this heading">¶</a></h2>
+<h2>sampling_factor<a class="headerlink" href="#sampling-factor" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2551,7 +2442,7 @@
 </div>
 </section>
 <section id="seg-end-10-1">
-<h2>seg_end_10_1<a class="headerlink" href="#seg-end-10-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_10_1<a class="headerlink" href="#seg-end-10-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2563,7 +2454,7 @@
 </div>
 </section>
 <section id="seg-end-11-1">
-<h2>seg_end_11_1<a class="headerlink" href="#seg-end-11-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_11_1<a class="headerlink" href="#seg-end-11-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2575,7 +2466,7 @@
 </div>
 </section>
 <section id="seg-end-12-1">
-<h2>seg_end_12_1<a class="headerlink" href="#seg-end-12-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_12_1<a class="headerlink" href="#seg-end-12-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2587,7 +2478,7 @@
 </div>
 </section>
 <section id="seg-end-13-1">
-<h2>seg_end_13_1<a class="headerlink" href="#seg-end-13-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_13_1<a class="headerlink" href="#seg-end-13-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2599,7 +2490,7 @@
 </div>
 </section>
 <section id="seg-end-14-1">
-<h2>seg_end_14_1<a class="headerlink" href="#seg-end-14-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_14_1<a class="headerlink" href="#seg-end-14-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2611,7 +2502,7 @@
 </div>
 </section>
 <section id="seg-end-15-1">
-<h2>seg_end_15_1<a class="headerlink" href="#seg-end-15-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_15_1<a class="headerlink" href="#seg-end-15-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2623,7 +2514,7 @@
 </div>
 </section>
 <section id="seg-end-16-1">
-<h2>seg_end_16_1<a class="headerlink" href="#seg-end-16-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_16_1<a class="headerlink" href="#seg-end-16-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2635,7 +2526,7 @@
 </div>
 </section>
 <section id="seg-end-17-1">
-<h2>seg_end_17_1<a class="headerlink" href="#seg-end-17-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_17_1<a class="headerlink" href="#seg-end-17-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2647,7 +2538,7 @@
 </div>
 </section>
 <section id="seg-end-18-1">
-<h2>seg_end_18_1<a class="headerlink" href="#seg-end-18-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_18_1<a class="headerlink" href="#seg-end-18-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2659,7 +2550,7 @@
 </div>
 </section>
 <section id="seg-end-19-1">
-<h2>seg_end_19_1<a class="headerlink" href="#seg-end-19-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_19_1<a class="headerlink" href="#seg-end-19-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2671,7 +2562,7 @@
 </div>
 </section>
 <section id="seg-end-1-1">
-<h2>seg_end_1_1<a class="headerlink" href="#seg-end-1-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_1_1<a class="headerlink" href="#seg-end-1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2683,7 +2574,7 @@
 </div>
 </section>
 <section id="seg-end-20-1">
-<h2>seg_end_20_1<a class="headerlink" href="#seg-end-20-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_20_1<a class="headerlink" href="#seg-end-20-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2695,7 +2586,7 @@
 </div>
 </section>
 <section id="seg-end-2-1">
-<h2>seg_end_2_1<a class="headerlink" href="#seg-end-2-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_2_1<a class="headerlink" href="#seg-end-2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2707,7 +2598,7 @@
 </div>
 </section>
 <section id="seg-end-3-1">
-<h2>seg_end_3_1<a class="headerlink" href="#seg-end-3-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_3_1<a class="headerlink" href="#seg-end-3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2719,7 +2610,7 @@
 </div>
 </section>
 <section id="seg-end-4-1">
-<h2>seg_end_4_1<a class="headerlink" href="#seg-end-4-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_4_1<a class="headerlink" href="#seg-end-4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2731,7 +2622,7 @@
 </div>
 </section>
 <section id="seg-end-5-1">
-<h2>seg_end_5_1<a class="headerlink" href="#seg-end-5-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_5_1<a class="headerlink" href="#seg-end-5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2743,7 +2634,7 @@
 </div>
 </section>
 <section id="seg-end-6-1">
-<h2>seg_end_6_1<a class="headerlink" href="#seg-end-6-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_6_1<a class="headerlink" href="#seg-end-6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2755,7 +2646,7 @@
 </div>
 </section>
 <section id="seg-end-7-1">
-<h2>seg_end_7_1<a class="headerlink" href="#seg-end-7-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_7_1<a class="headerlink" href="#seg-end-7-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2767,7 +2658,7 @@
 </div>
 </section>
 <section id="seg-end-8-1">
-<h2>seg_end_8_1<a class="headerlink" href="#seg-end-8-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_8_1<a class="headerlink" href="#seg-end-8-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2779,7 +2670,7 @@
 </div>
 </section>
 <section id="seg-end-9-1">
-<h2>seg_end_9_1<a class="headerlink" href="#seg-end-9-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_end_9_1<a class="headerlink" href="#seg-end-9-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2791,7 +2682,7 @@
 </div>
 </section>
 <section id="seg-sta-10-1">
-<h2>seg_sta_10_1<a class="headerlink" href="#seg-sta-10-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_10_1<a class="headerlink" href="#seg-sta-10-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2803,7 +2694,7 @@
 </div>
 </section>
 <section id="seg-sta-11-1">
-<h2>seg_sta_11_1<a class="headerlink" href="#seg-sta-11-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_11_1<a class="headerlink" href="#seg-sta-11-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2815,7 +2706,7 @@
 </div>
 </section>
 <section id="seg-sta-12-1">
-<h2>seg_sta_12_1<a class="headerlink" href="#seg-sta-12-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_12_1<a class="headerlink" href="#seg-sta-12-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2827,7 +2718,7 @@
 </div>
 </section>
 <section id="seg-sta-13-1">
-<h2>seg_sta_13_1<a class="headerlink" href="#seg-sta-13-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_13_1<a class="headerlink" href="#seg-sta-13-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2839,7 +2730,7 @@
 </div>
 </section>
 <section id="seg-sta-14-1">
-<h2>seg_sta_14_1<a class="headerlink" href="#seg-sta-14-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_14_1<a class="headerlink" href="#seg-sta-14-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2851,7 +2742,7 @@
 </div>
 </section>
 <section id="seg-sta-15-1">
-<h2>seg_sta_15_1<a class="headerlink" href="#seg-sta-15-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_15_1<a class="headerlink" href="#seg-sta-15-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2863,7 +2754,7 @@
 </div>
 </section>
 <section id="seg-sta-16-1">
-<h2>seg_sta_16_1<a class="headerlink" href="#seg-sta-16-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_16_1<a class="headerlink" href="#seg-sta-16-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2875,7 +2766,7 @@
 </div>
 </section>
 <section id="seg-sta-17-1">
-<h2>seg_sta_17_1<a class="headerlink" href="#seg-sta-17-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_17_1<a class="headerlink" href="#seg-sta-17-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2887,7 +2778,7 @@
 </div>
 </section>
 <section id="seg-sta-18-1">
-<h2>seg_sta_18_1<a class="headerlink" href="#seg-sta-18-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_18_1<a class="headerlink" href="#seg-sta-18-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2899,7 +2790,7 @@
 </div>
 </section>
 <section id="seg-sta-19-1">
-<h2>seg_sta_19_1<a class="headerlink" href="#seg-sta-19-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_19_1<a class="headerlink" href="#seg-sta-19-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2911,7 +2802,7 @@
 </div>
 </section>
 <section id="seg-sta-1-1">
-<h2>seg_sta_1_1<a class="headerlink" href="#seg-sta-1-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_1_1<a class="headerlink" href="#seg-sta-1-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2923,7 +2814,7 @@
 </div>
 </section>
 <section id="seg-sta-20-1">
-<h2>seg_sta_20_1<a class="headerlink" href="#seg-sta-20-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_20_1<a class="headerlink" href="#seg-sta-20-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2935,7 +2826,7 @@
 </div>
 </section>
 <section id="seg-sta-2-1">
-<h2>seg_sta_2_1<a class="headerlink" href="#seg-sta-2-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_2_1<a class="headerlink" href="#seg-sta-2-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2947,7 +2838,7 @@
 </div>
 </section>
 <section id="seg-sta-3-1">
-<h2>seg_sta_3_1<a class="headerlink" href="#seg-sta-3-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_3_1<a class="headerlink" href="#seg-sta-3-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2959,7 +2850,7 @@
 </div>
 </section>
 <section id="seg-sta-4-1">
-<h2>seg_sta_4_1<a class="headerlink" href="#seg-sta-4-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_4_1<a class="headerlink" href="#seg-sta-4-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2971,7 +2862,7 @@
 </div>
 </section>
 <section id="seg-sta-5-1">
-<h2>seg_sta_5_1<a class="headerlink" href="#seg-sta-5-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_5_1<a class="headerlink" href="#seg-sta-5-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2983,7 +2874,7 @@
 </div>
 </section>
 <section id="seg-sta-6-1">
-<h2>seg_sta_6_1<a class="headerlink" href="#seg-sta-6-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_6_1<a class="headerlink" href="#seg-sta-6-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2995,7 +2886,7 @@
 </div>
 </section>
 <section id="seg-sta-7-1">
-<h2>seg_sta_7_1<a class="headerlink" href="#seg-sta-7-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_7_1<a class="headerlink" href="#seg-sta-7-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3007,7 +2898,7 @@
 </div>
 </section>
 <section id="seg-sta-8-1">
-<h2>seg_sta_8_1<a class="headerlink" href="#seg-sta-8-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_8_1<a class="headerlink" href="#seg-sta-8-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3019,7 +2910,7 @@
 </div>
 </section>
 <section id="seg-sta-9-1">
-<h2>seg_sta_9_1<a class="headerlink" href="#seg-sta-9-1" title="Permalink to this heading">¶</a></h2>
+<h2>seg_sta_9_1<a class="headerlink" href="#seg-sta-9-1" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3031,7 +2922,7 @@
 </div>
 </section>
 <section id="sym-on">
-<h2>sym_on<a class="headerlink" href="#sym-on" title="Permalink to this heading">¶</a></h2>
+<h2>sym_on<a class="headerlink" href="#sym-on" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -3043,7 +2934,7 @@
 </div>
 </section>
 <section id="symtbl-fname">
-<h2>symtbl_fname<a class="headerlink" href="#symtbl-fname" title="Permalink to this heading">¶</a></h2>
+<h2>symtbl_fname<a class="headerlink" href="#symtbl-fname" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -3055,7 +2946,7 @@
 </div>
 </section>
 <section id="tolerance">
-<h2>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading">¶</a></h2>
+<h2>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 5</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3067,7 +2958,7 @@
 </div>
 </section>
 <section id="unamb-scale">
-<h2>unamb_scale<a class="headerlink" href="#unamb-scale" title="Permalink to this heading">¶</a></h2>
+<h2>unamb_scale<a class="headerlink" href="#unamb-scale" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3079,7 +2970,7 @@
 </div>
 </section>
 <section id="w-air">
-<h2>w_air<a class="headerlink" href="#w-air" title="Permalink to this heading">¶</a></h2>
+<h2>w_air<a class="headerlink" href="#w-air" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.1</div>
 <div class="line"><em>type</em>: float</div>
@@ -3091,7 +2982,7 @@
 </div>
 </section>
 <section id="w-bsa">
-<h2>w_bsa<a class="headerlink" href="#w-bsa" title="Permalink to this heading">¶</a></h2>
+<h2>w_bsa<a class="headerlink" href="#w-bsa" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -3103,7 +2994,7 @@
 </div>
 </section>
 <section id="w-cdih">
-<h2>w_cdih<a class="headerlink" href="#w-cdih" title="Permalink to this heading">¶</a></h2>
+<h2>w_cdih<a class="headerlink" href="#w-cdih" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -3115,7 +3006,7 @@
 </div>
 </section>
 <section id="w-desolv">
-<h2>w_desolv<a class="headerlink" href="#w-desolv" title="Permalink to this heading">¶</a></h2>
+<h2>w_desolv<a class="headerlink" href="#w-desolv" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -3127,7 +3018,7 @@
 </div>
 </section>
 <section id="w-elec">
-<h2>w_elec<a class="headerlink" href="#w-elec" title="Permalink to this heading">¶</a></h2>
+<h2>w_elec<a class="headerlink" href="#w-elec" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.2</div>
 <div class="line"><em>type</em>: float</div>
@@ -3139,7 +3030,7 @@
 </div>
 </section>
 <section id="w-sym">
-<h2>w_sym<a class="headerlink" href="#w-sym" title="Permalink to this heading">¶</a></h2>
+<h2>w_sym<a class="headerlink" href="#w-sym" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.1</div>
 <div class="line"><em>type</em>: float</div>
@@ -3151,7 +3042,7 @@
 </div>
 </section>
 <section id="w-vdw">
-<h2>w_vdw<a class="headerlink" href="#w-vdw" title="Permalink to this heading">¶</a></h2>
+<h2>w_vdw<a class="headerlink" href="#w-vdw" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -3163,7 +3054,7 @@
 </div>
 </section>
 <section id="watercoolsteps">
-<h2>watercoolsteps<a class="headerlink" href="#watercoolsteps" title="Permalink to this heading">¶</a></h2>
+<h2>watercoolsteps<a class="headerlink" href="#watercoolsteps" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 500</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3175,7 +3066,7 @@
 </div>
 </section>
 <section id="waterheatsteps">
-<h2>waterheatsteps<a class="headerlink" href="#waterheatsteps" title="Permalink to this heading">¶</a></h2>
+<h2>waterheatsteps<a class="headerlink" href="#waterheatsteps" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 100</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3187,7 +3078,7 @@
 </div>
 </section>
 <section id="watersteps">
-<h2>watersteps<a class="headerlink" href="#watersteps" title="Permalink to this heading">¶</a></h2>
+<h2>watersteps<a class="headerlink" href="#watersteps" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 1250</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3200,9 +3091,9 @@
 </section>
 </section>
 <section id="guru">
-<h1>Guru<a class="headerlink" href="#guru" title="Permalink to this heading">¶</a></h1>
+<h1>Guru<a class="headerlink" href="#guru" title="Permalink to this heading"></a></h1>
 <section id="iniseed">
-<h2>iniseed<a class="headerlink" href="#iniseed" title="Permalink to this heading">¶</a></h2>
+<h2>iniseed<a class="headerlink" href="#iniseed" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 917</div>
 <div class="line"><em>type</em>: integer</div>
@@ -3214,7 +3105,7 @@
 </div>
 </section>
 <section id="keepwater">
-<h2>keepwater<a class="headerlink" href="#keepwater" title="Permalink to this heading">¶</a></h2>
+<h2>keepwater<a class="headerlink" href="#keepwater" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -3226,7 +3117,7 @@
 </div>
 </section>
 <section id="log-level">
-<h2>log_level<a class="headerlink" href="#log-level" title="Permalink to this heading">¶</a></h2>
+<h2>log_level<a class="headerlink" href="#log-level" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘quiet’</div>
 <div class="line"><em>type</em>: string</div>
@@ -3238,7 +3129,7 @@
 </div>
 </section>
 <section id="timestep">
-<h2>timestep<a class="headerlink" href="#timestep" title="Permalink to this heading">¶</a></h2>
+<h2>timestep<a class="headerlink" href="#timestep" title="Permalink to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.002</div>
 <div class="line"><em>type</em>: float</div>
@@ -3252,39 +3143,33 @@
 </section>
 
 
-                        
-                    </div>
-                </div>
-            </div>
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Feb 23, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
-    </div>    
-
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../',
-            VERSION:'3.0.0',
-            LANGUAGE:'en',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/sphinx_highlight.js"></script>
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-  
-    <div class="footer" role="contentinfo">
-        <div class="container">
-            &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 23, 2024.
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
-        </div>
-    </div>  
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
 </body>
 </html>

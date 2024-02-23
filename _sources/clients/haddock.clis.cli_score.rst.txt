@@ -1,0 +1,7 @@
+Calculate score
+==============================
+
+.. automodule:: haddock.clis.cli_score
+   :members:
+   :undoc-members:
+   :show-inheritance:

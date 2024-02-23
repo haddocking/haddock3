@@ -1,0 +1,23 @@
+Contact Map module
+===========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.contactmap.contmap
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.contactmap
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/contactmap.rst
+

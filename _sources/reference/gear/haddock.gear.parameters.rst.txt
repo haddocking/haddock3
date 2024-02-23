@@ -1,0 +1,7 @@
+Parameters helper
+==============================
+
+.. automodule:: haddock.gear.parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:

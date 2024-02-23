@@ -1,0 +1,7 @@
+haddock.clis.re.score module
+============================
+
+.. automodule:: haddock.clis.re.score
+   :members:
+   :undoc-members:
+   :show-inheritance:

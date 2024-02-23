@@ -37,7 +37,7 @@ from haddock import log
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
-    plot_cluster_matrix
+    plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
     )
@@ -104,14 +104,14 @@ class HaddockModule(BaseHaddockModule):
         cluster_arr = get_clusters(
             dendrogram,
             tolerance,
-            self.params["criterion"]
+            self.params["criterion"],
             )
 
         # when crit == distance, apply clustering min_population
         if self.params['criterion'] == "distance":
             cluster_arr, min_population = iterate_min_population(
                 cluster_arr,
-                self.params['min_population']
+                self.params['min_population'],
                 )
             self.params['min_population'] = min_population
 
@@ -127,7 +127,7 @@ class HaddockModule(BaseHaddockModule):
             models,
             rmsd_matrix,
             out_filename,
-            centers=True
+            centers=True,
             )
 
         # ranking clusters

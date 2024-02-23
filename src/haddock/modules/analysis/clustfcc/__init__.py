@@ -16,6 +16,7 @@ from haddock.modules import BaseHaddockModule, read_from_yaml_config
 from haddock.modules.analysis.clustfcc.clustfcc import (
     get_cluster_centers,
     iterate_clustering,
+    plot_cluster_matrix,
     write_clusters,
     write_clustfcc_file,
     )
@@ -174,7 +175,7 @@ class HaddockModule(BaseHaddockModule):
             # Obtain final models indices
             final_order_idx, labels = [], []
             for pdb in self.output_models:
-                final_order_idx.append(models_to_cluster.index(pdb))
+                final_order_idx.append(models_to_clust.index(pdb))
                 labels.append(pdb.file_name.replace('.pdb', ''))
             # Define output filename
             html_matrix_basepath = 'fccmatrix'

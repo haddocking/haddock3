@@ -862,7 +862,7 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
         structs_df['id'] = structs_df['model'].str.extract(r'(\d+).pdb')
         return structs_df
 
-    clusters_df, structs_df = create_other_cluster(clusters_df, structs_df, max_clusters=10)
+    clusters_df, structs_df = create_other_cluster(clusters_df, structs_df, max_clusters=11)
 
     clusters_df = clean_capri_table(clusters_df)
     structs_df = find_best_struct(structs_df, max_best_structs=4)
@@ -1024,7 +1024,7 @@ def _generate_clustered_table_html(
 
     caption = ''
     if df['cluster_id'].isin(['Other']).any():
-        caption = 'The "Other" cluster is not a real cluster it contains all structures that are not in the top 9 clusters.'
+        caption = 'The "Other" cluster is not a real cluster it contains all structures that are not in the top 10 clusters.'
 
     return f"""
             <div id="{table_id}"></div>

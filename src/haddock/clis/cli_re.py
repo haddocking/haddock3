@@ -5,10 +5,9 @@ import argparse
 import sys
 import os
 
-from haddock.re.clustfcc import add_clustfcc_arguments, reclustfcc
-from haddock.re.clustrmsd import add_clustrmsd_arguments, reclustrmsd
-from haddock.re.score import add_rescore_arguments, rescore
-from haddock.core.defaults import INTERACTIVE_RE_SUFFIX as ANA_FOLDER
+from haddock.clis.re.clustfcc import add_clustfcc_arguments, reclustfcc
+from haddock.clis.re.clustrmsd import add_clustrmsd_arguments, reclustrmsd
+from haddock.clis.re.score import add_rescore_arguments, rescore
 
 # Command line interface parser
 ap = argparse.ArgumentParser(

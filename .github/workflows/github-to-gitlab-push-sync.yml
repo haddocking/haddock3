@@ -2,21 +2,22 @@ name: build
 
 on:
   push:
-    # run only against tags
     tags:
+      - '*'
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    name: Git Repo Sync
+    name: sync to codehub
+
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: 'main'
-        fetch-depth: 0
-    - uses: haddocking/haddock3@main
-      with:
-        target-url: 'https://codehub.hlrs.de/coes/bioexcel/haddock3.git'
-        target-username: ${{ secrets.ACCESS_TOKEN_NAME }}
-        target-token: ${{ secrets.ACCESS_TOKEN }}
-        
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: cniethammer/git-repo-sync@cb1067d118c0c209bcded585b5c78e581bb0dfec
+        with:
+          target-url: https://codehub.hlrs.de/coes/bioexcel/haddock3.git
+          target-username: ${{ secrets.ACCESS_TOKEN_NAME }}
+          target-token: ${{ secrets.ACCESS_TOKEN }}

@@ -7,6 +7,7 @@ from haddock import FCC_path, log
 from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
+    plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
     )
@@ -16,7 +17,6 @@ from haddock.modules import BaseHaddockModule, read_from_yaml_config
 from haddock.modules.analysis.clustfcc.clustfcc import (
     get_cluster_centers,
     iterate_clustering,
-    plot_cluster_matrix,
     write_clusters,
     write_clustfcc_file,
     )

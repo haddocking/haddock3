@@ -32,6 +32,15 @@ make
 cd -
 ```
 
+Then, follow the same logic to install the [fast-rmsdmatrix] source code
+
+```bash
+cd src/fast-rmsdmatrix/src
+chmod u+x Makefile
+make fast-rmsdmatrix
+cd -
+```
+
 By the end of the above commands, you should be back to the **haddock3**
 main folder.
 

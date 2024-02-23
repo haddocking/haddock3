@@ -32,7 +32,7 @@ from haddock.core.typing import (
     Union,
     SupportsRun,
     )
-from haddock.libs.libplots import heatmap_plotly
+from haddock.libs.libplots import heatmap_plotly, fig_to_html
 
 
 ###############################
@@ -2111,7 +2111,12 @@ def make_chordchart(
     # Add legend(s)
     add_chordchart_legends(fig)
     # Write it as html file
-    fig.write_html(output_fpath)
+    fig_to_html(
+        fig,
+        output_fpath,
+        figure_height=fig_size,
+        figure_width=fig_size,
+        )
     return output_fpath
 
 
@@ -2142,6 +2147,23 @@ def add_chordchart_legends(fig: go.Figure) -> None:
                     },
                 )
             )
+    # Add unknown interaction type
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            legendgroup="connect_color",
+            legendgrouptitle_text="Interaction types",
+            showlegend=True,
+            name="Unknown",
+            mode="lines",
+            marker={
+                "color": to_rgba_color_string((111, 111, 111), 0.75),
+                "size": 10,
+                "symbol": "line-ew-open",
+                },
+            )
+        )
 
     # Add aa types legend
     for aa, rgba_color in RESIDUES_COLORS.items():
@@ -2181,6 +2203,23 @@ def add_chordchart_legends(fig: go.Figure) -> None:
                     },
                 )
             )
+    # Add unknown type
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            legendgroup="aa_color",
+            legendgrouptitle_text="Residues/Bases",
+            showlegend=True,
+            name="Unknown",
+            mode="lines",
+            marker={
+                "color": to_rgba_color_string((111, 111, 111), 0.75),
+                "size": 10,
+                "symbol": "line-ew-open",
+                },
+            )
+        )
 
 
 def tsv_to_chordchart(

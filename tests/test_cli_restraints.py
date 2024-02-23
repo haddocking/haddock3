@@ -3,10 +3,10 @@ from pathlib import Path
 import pytest
 import tempfile
 
-from haddock.restraints.active_passive_to_ambig import actpass_to_ambig, parse_actpass_file
-from haddock.restraints.validate_tbl import validate_tbl
-from haddock.restraints.passive_from_active import passive_from_active
-from haddock.restraints.restrain_bodies import restrain_bodies
+from haddock.clis.restraints.active_passive_to_ambig import actpass_to_ambig, parse_actpass_file
+from haddock.clis.restraints.validate_tbl import validate_tbl
+from haddock.clis.restraints.passive_from_active import passive_from_active
+from haddock.clis.restraints.restrain_bodies import restrain_bodies
 
 from . import golden_data
 from tests.test_module_caprieval import protdna_input_list

@@ -17,7 +17,7 @@ contact_distance_cutoff:
   long: Cutoff distance between two atoms for contact detection. By default 5.0 Angstroms.
   group: analysis
   explevel: easy
-fraction_cutoff:
+clust_cutoff:
   default: 0.60
   type: float
   min: 0.00
@@ -28,7 +28,7 @@ fraction_cutoff:
   long: Minimum fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the `fraction_cutoff` parameter cannot belong to the same cluster.
   group: analysis
   explevel: easy
-threshold:
+min_population:
   default: 4
   type: integer
   min: 1

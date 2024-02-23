@@ -20,10 +20,10 @@ For the list of arguments for a given task, run::
 import argparse
 import sys
 
-from haddock.restraints.restrain_bodies import add_restrain_bodies_arguments, restrain_bodies
-from haddock.restraints.passive_from_active import add_pass_from_act_arguments, passive_from_active
-from haddock.restraints.validate_tbl import add_validate_tbl_arguments, validate_tbl
-from haddock.restraints.active_passive_to_ambig import add_actpass_to_ambig_arguments, actpass_to_ambig
+from haddock.clis.restraints.restrain_bodies import add_restrain_bodies_arguments, restrain_bodies
+from haddock.clis.restraints.passive_from_active import add_pass_from_act_arguments, passive_from_active
+from haddock.clis.restraints.validate_tbl import add_validate_tbl_arguments, validate_tbl
+from haddock.clis.restraints.active_passive_to_ambig import add_actpass_to_ambig_arguments, actpass_to_ambig
 
 
 # Command line interface parser

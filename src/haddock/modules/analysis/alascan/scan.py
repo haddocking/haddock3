@@ -181,12 +181,14 @@ def get_score_string(pdb_f, run_dir):
 
 def calc_score(pdb_f, run_dir):
     """Calculate the score of a model.
+
     Parameters
     ----------
     pdb_f : str
         Path to the pdb file.
     run_dir : str
         Path to the run directory.
+    
     Returns
     -------
     score : float

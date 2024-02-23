@@ -100,7 +100,7 @@ def main(run_dir: FilePath, ncores: Optional[int] = 1, dec_all: bool = False) ->
 
     See Also
     --------
-    :py:module:`haddock.gear.clean_steps`
+    `haddock.gear.clean_steps`
     """
     # anti-pattern to speed up CLI initiation
     from pathlib import Path

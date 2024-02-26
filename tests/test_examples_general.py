@@ -9,6 +9,19 @@ from pathlib import Path
 import pytest
 
 from haddock.gear.config import load as read_config
+from haddock.gear.prepare_run import (
+    ALL_POSSIBLE_GENERAL_PARAMETERS,
+    identify_modules,
+    validate_module_names_are_not_misspelled,
+    validate_parameters_are_not_misspelled,
+    validate_modules_params
+)
+
+from haddock.gear.parameters import config_optional_general_parameters_dict
+
+from haddock.libs.libutil import recursive_dict_update, remove_dict_keys
+
+from haddock.modules import non_mandatory_general_parameters_defaults
 
 
 examples_path = Path(
@@ -55,3 +68,35 @@ def test_integration_examples():
     spec2.loader.exec_module(mod2)
 
     assert mod1.examples == mod2.examples
+
+
+def test_validate_cfg_files():
+    """Test all the examples configuration files are valid."""
+    for cfg_file in examples_cfg_files:
+        if cfg_file.name == "params.cfg":
+            # skip the params.cfg files as they might be part of old runs
+            continue
+        config_files = read_config(cfg_file)
+        # update default non-mandatory parameters with user params
+        params = recursive_dict_update(
+            config_optional_general_parameters_dict, config_files["final_cfg"]
+        )
+
+        params = recursive_dict_update(
+            non_mandatory_general_parameters_defaults,
+            params,
+        )
+
+        validate_module_names_are_not_misspelled(params)
+
+        # separate general from modules' parameters
+        _modules_keys = identify_modules(params)
+        general_params = remove_dict_keys(params, _modules_keys)
+        modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+        validate_parameters_are_not_misspelled(
+            general_params,
+            reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
+        )
+
+        validate_modules_params(modules_params, 20)

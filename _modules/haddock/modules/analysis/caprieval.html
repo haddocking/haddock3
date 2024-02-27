@@ -87,7 +87,31 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.caprieval</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Calculate CAPRI metrics.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Calculate CAPRI metrics for the input models.</span>
+
+<span class="sd">By default the following metrics are calculated:</span>
+
+<span class="sd">- FNAT (fraction of native contacts), namely the fraction of</span>
+<span class="sd">    intermolecular contacts in the docked complex that are also</span>
+<span class="sd">    present in the reference complex.</span>
+<span class="sd">- IRMSD (interface root mean square deviation), namely the RMSD</span>
+<span class="sd">    of the interface of the docked complex with respect</span>
+<span class="sd">    to the reference complex.</span>
+<span class="sd">- LRMSD (ligand root mean square deviation), namely the RMSD of the</span>
+<span class="sd">    ligand of the docked complex with respect to the</span>
+<span class="sd">    reference complex upon superposition of the receptor.</span>
+<span class="sd">- DOCKQ, a measure of the quality of the docked model obtained</span>
+<span class="sd">    by combining FNAT, IRMSD and LRMSD (see </span>
+<span class="sd">    Basu and Wallner 2016,  11 (8), e0161879).</span>
+<span class="sd">- ILRMSD (interface ligand root mean square deviation), the RMSD of the</span>
+<span class="sd">    ligand of the docked complex with respect to the reference complex</span>
+<span class="sd">    upon superposition of the interface of the receptor.</span>
+
+<span class="sd">The following files are generated:</span>
+
+<span class="sd">- **capri_ss.tsv**: a table with the CAPRI metrics for each model.</span>
+<span class="sd">- **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span>

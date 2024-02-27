@@ -87,7 +87,17 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.alascan</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for alanine scan.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for alanine scan.</span>
+
+<span class="sd">This module is responsible for the alanine scan analysis of the models</span>
+<span class="sd">generated in the previous step of the workflow. For each model, the module</span>
+<span class="sd">will mutate the interface residues and calculate the energy differences</span>
+<span class="sd">between the wild type and the mutant, thus providing a measure of the impact</span>
+<span class="sd">of such mutation.</span>
+
+<span class="sd">If cluster information is available, the module will also calculate the</span>
+<span class="sd">average energy difference for each cluster of models.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>

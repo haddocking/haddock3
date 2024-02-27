@@ -107,6 +107,7 @@
 <div class="line"><em>default</em>: ‘cdie’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
+<div class="line"><em>choices</em>: [‘cdie’, ‘rdie’]</div>
 <div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
 <div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
 <div class="line"><em>group</em>: force field</div>
@@ -131,6 +132,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Dielectric constant</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 78</div>
 <div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>group</em>: force field</div>
@@ -179,6 +182,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of EM steps</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of energy minimisation steps to perform.</div>
 <div class="line"><em>long description</em>: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -191,6 +196,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 99</div>
 <div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>group</em>: module</div>
@@ -203,6 +210,8 @@
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the buried surface area term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the buried surface area term in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -215,6 +224,8 @@
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the dihedral angle restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the dihedral angle restraints energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -227,6 +238,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the desolvation energy term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the desolvation energy term in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -239,6 +252,8 @@
 <div class="line"><em>default</em>: 0.2</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the intermolecular electrostatic energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the intermolecular electrostatic energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -251,6 +266,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the intermolecular van der Waals energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the intermolecular van der Waals energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -266,6 +283,7 @@
 <div class="line"><em>default</em>: ‘quiet’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>choices</em>: [‘verbose’, ‘normal’, ‘quiet’]</div>
 <div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
 <div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet)</div>
 <div class="line"><em>group</em>: module</div>

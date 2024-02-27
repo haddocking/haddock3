@@ -24,6 +24,7 @@ dielec
 | *default*: 'cdie'
 | *type*: string
 | *title*: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+| *choices*: ['cdie', 'rdie']
 | *short description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
 | *long description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r
 | *group*: force field
@@ -46,6 +47,8 @@ epsilon
 | *default*: 1.0
 | *type*: float
 | *title*: Dielectric constant
+| *min*: 1
+| *max*: 78
 | *short description*: Dielectric constant for the electrostatic Coulomb energy term.
 | *long description*: Dielectric constant for the electrostatic Coulomb energy term.
 | *group*: force field
@@ -90,6 +93,8 @@ nemsteps
 | *default*: 50
 | *type*: integer
 | *title*: Number of EM steps
+| *min*: 1
+| *max*: 10000
 | *short description*: Number of energy minimisation steps to perform.
 | *long description*: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.
 | *group*: sampling
@@ -101,6 +106,8 @@ tolerance
 | *default*: 0
 | *type*: integer
 | *title*: Failure tolerance percentage
+| *min*: 0
+| *max*: 99
 | *short description*: Percentage of allowed failures for a module to successfully complete
 | *long description*: Percentage of allowed failures for a module to successfully complete
 | *group*: module
@@ -112,6 +119,8 @@ w_bsa
 | *default*: 0.0
 | *type*: float
 | *title*: Weight of the buried surface area term
+| *min*: -9999
+| *max*: 9999
 | *short description*: Weight of the buried surface area term in the scoring function
 | *long description*: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.
 | *group*: scoring
@@ -123,6 +132,8 @@ w_cdih
 | *default*: 0.0
 | *type*: float
 | *title*: Weight of the dihedral angle restraint energy
+| *min*: 0
+| *max*: 9999
 | *short description*: Weight of the dihedral angle restraints energy in the scoring function
 | *long description*: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.
 | *group*: scoring
@@ -134,6 +145,8 @@ w_desolv
 | *default*: 1.0
 | *type*: float
 | *title*: Weight of the desolvation energy term
+| *min*: -9999
+| *max*: 9999
 | *short description*: Weight of the desolvation energy term in the scoring function
 | *long description*: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.
 | *group*: scoring
@@ -145,6 +158,8 @@ w_elec
 | *default*: 0.2
 | *type*: float
 | *title*: Weight of the intermolecular electrostatic energy
+| *min*: -9999
+| *max*: 9999
 | *short description*: Weight of the intermolecular electrostatic energy in the scoring function
 | *long description*: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.
 | *group*: scoring
@@ -156,6 +171,8 @@ w_vdw
 | *default*: 1.0
 | *type*: float
 | *title*: Weight of the intermolecular van der Waals energy
+| *min*: -9999
+| *max*: 9999
 | *short description*: Weight of the intermolecular van der Waals energy in the scoring function
 | *long description*: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.
 | *group*: scoring
@@ -171,6 +188,7 @@ log_level
 | *default*: 'quiet'
 | *type*: string
 | *title*: Log level verbosity for CNS
+| *choices*: ['verbose', 'normal', 'quiet']
 | *short description*: Set the log level verbosity for CNS
 | *long description*: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet)
 | *group*: module

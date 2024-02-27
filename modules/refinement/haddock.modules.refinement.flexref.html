@@ -202,6 +202,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Force constant for backbone dihedral angle restraints</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Force constant for backbone dihedral angle restraints (ssdihed option)</div>
 <div class="line"><em>long description</em>: Force constant for backbone dihedral angle restraints (ssdihed option)</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -238,6 +240,8 @@
 <div class="line"><em>default</em>: 0.001</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: End rigid-body MD intermolecular interactions scaling factor.</div>
+<div class="line"><em>min</em>: 1e-05</div>
+<div class="line"><em>max</em>: 1</div>
 <div class="line"><em>short description</em>: End scaling factor for intermolecular interactions in the first cooling stage.</div>
 <div class="line"><em>long description</em>: End scaling factor applied to intermolecular interactions during the first cooling stage of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>:</div>
@@ -250,6 +254,7 @@
 <div class="line"><em>default</em>: ‘none’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Define automatically backbone dihedral angle restraints</div>
+<div class="line"><em>choices</em>: [‘none’, ‘all’, ‘alpha’, ‘alphabeta’]</div>
 <div class="line"><em>short description</em>: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.</div>
 <div class="line"><em>long description</em>: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions. The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from the measured angle in the input structure, and the error bound defined by the error_dih parameter. Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -277,6 +282,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: First cooling SA force constant for ambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -289,6 +296,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Second cooling SA force constant for ambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in ambig_fname during the second cooling phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in ambig_fname during the second cooling phase of the simulatd annealing protocol. Side-chains at the interface are treated as flexible and any region defined in fully flexible segments as fully flexible (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -301,6 +310,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Third cooling SA force constant for ambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in ambig_fname during the third cooling phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in ambig_fname during the third cooling phase of the simulatd annealing protocol. Side-chains and backbone at the interface are treated as flexible and any region defined in fully flexible segments as fully flexible (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -313,6 +324,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for ambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in ambig_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in ambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -325,6 +338,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first C2 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first C2 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -337,6 +352,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second C2 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second C2 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -373,6 +390,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first C2 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first C2 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -385,6 +404,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second C2 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second C2 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -397,6 +418,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first C3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first C3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -409,6 +432,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second C3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second C3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -421,6 +446,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the third C3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the third C3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -469,6 +496,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first C3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first C3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -481,6 +510,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second C3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second C3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -493,6 +524,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the third C3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the third C3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -505,6 +538,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -517,6 +552,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -529,6 +566,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the third C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the third C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -541,6 +580,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the fourth C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the fourth C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -601,6 +642,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -613,6 +656,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -625,6 +670,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the third C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the third C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -637,6 +684,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the fourth C4 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the fourth C4 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -649,6 +698,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -661,6 +712,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -673,6 +726,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the third C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the third C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -685,6 +740,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the fourth C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the fourth C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -697,6 +754,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the fifth C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the fifth C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -769,6 +828,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -781,6 +842,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -793,6 +856,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the third C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the third C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -805,6 +870,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the fourth C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the fourth C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -817,6 +884,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the fifth C5 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the fifth C5 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -829,6 +898,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -841,6 +912,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -853,6 +926,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the third C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the third C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -865,6 +940,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the fourth C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the fourth C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -877,6 +954,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the fifth C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the fifth C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -889,6 +968,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the sixth C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the sixth C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -973,6 +1054,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -985,6 +1068,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -997,6 +1082,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the third C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the third C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1009,6 +1096,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the fourth C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the fourth C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1021,6 +1110,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the fifth C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the fifth C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1033,6 +1124,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the sixth C6 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the sixth C6 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1081,6 +1174,7 @@
 <div class="line"><em>default</em>: ‘rdie’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
+<div class="line"><em>choices</em>: [‘cdie’, ‘rdie’]</div>
 <div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
 <div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
 <div class="line"><em>group</em>: force field</div>
@@ -1105,6 +1199,8 @@
 <div class="line"><em>default</em>: 5</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: First cooling SA force constant for dihedral angle restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: First cooling SA force constant for dihedral angle restraints read from dihe_fname.</div>
 <div class="line"><em>long description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname during the first cooling phase of the simulatd annealing protocol.</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -1117,6 +1213,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Second cooling SA force constant for dihedral angle restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Second cooling SA force constant for dihedral angle restraints read from dihe_fname.</div>
 <div class="line"><em>long description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname during the second cooling phase of the simulatd annealing protocol.</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -1129,6 +1227,8 @@
 <div class="line"><em>default</em>: 200</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Third cooling SA force constant for dihedral angle restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Third cooling SA force constant for dihedral angle restraints read from dihe_fname.</div>
 <div class="line"><em>long description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname during the third cooling phase of the simulatd annealing protocol.</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -1141,6 +1241,8 @@
 <div class="line"><em>default</em>: 5</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for dihedral angle restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Hot phase SA force constant for dihedral angle restraints read from dihe_fname.</div>
 <div class="line"><em>long description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname during the initial hot phase of the simulatd annealing protocol.</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -1153,6 +1255,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Dielectric constant</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 78</div>
 <div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>group</em>: force field</div>
@@ -1165,6 +1269,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1177,6 +1283,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1189,6 +1297,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1201,6 +1311,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1213,6 +1325,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1225,6 +1339,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1237,6 +1353,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1249,6 +1367,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1261,6 +1381,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1273,6 +1395,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1285,6 +1409,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1297,6 +1423,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1309,6 +1437,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1321,6 +1451,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1333,6 +1465,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1345,6 +1479,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1357,6 +1493,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1369,6 +1507,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1381,6 +1521,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1393,6 +1535,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1405,6 +1549,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1417,6 +1563,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1429,6 +1577,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1441,6 +1591,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1453,6 +1605,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1465,6 +1619,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1477,6 +1633,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1489,6 +1647,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1501,6 +1661,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1513,6 +1675,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1525,6 +1689,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1537,6 +1703,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1549,6 +1717,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1561,6 +1731,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1573,6 +1745,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1585,6 +1759,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1597,6 +1773,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1609,6 +1787,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1621,6 +1801,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1633,6 +1815,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1645,6 +1829,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for hydrogen bond restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -1657,6 +1843,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for hydrogen bond restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -1669,6 +1857,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for hydrogen bond restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -1681,6 +1871,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for hbond distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -1693,6 +1885,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Center of mass restraints force constant</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the center of mass restraints</div>
 <div class="line"><em>long description</em>: Force constant applied to the center of mass restraints</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -1705,6 +1899,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Contact restraints force constant</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the contact restraints.</div>
 <div class="line"><em>long description</em>: Force constant applied to the contact restraints.</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -1717,6 +1913,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Force constant for non-crystallographic restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant for non-crystallographic restraints</div>
 <div class="line"><em>long description</em>: Force constant for non-crystallographic restraints</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1729,6 +1927,8 @@
 <div class="line"><em>default</em>: 10.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Force constant for symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant for symmetry restraints</div>
 <div class="line"><em>long description</em>: Force constant for symmetry restraints</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1765,6 +1965,8 @@
 <div class="line"><em>default</em>: 10000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Maximum number of models to refine</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 50000</div>
 <div class="line"><em>short description</em>: This paramater controls the maximum number of models to refine.</div>
 <div class="line"><em>long description</em>: This paramater controls the maximum number of models to refine.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1777,6 +1979,8 @@
 <div class="line"><em>default</em>: 500</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: First cooling phase SA MD steps</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of MD steps for the first cooling phase of the SA.</div>
 <div class="line"><em>long description</em>: Number of MD steps for the first cooling phase of rigid body dynamics of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1789,6 +1993,8 @@
 <div class="line"><em>default</em>: 1000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Second cooling phase SA MD steps</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of MD steps for the second cooling phase of the SA.</div>
 <div class="line"><em>long description</em>: Number of MD steps for the second cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1801,6 +2007,8 @@
 <div class="line"><em>default</em>: 1000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Third cooling phase SA MD steps</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of MD steps for the third cooling phase of the SA.</div>
 <div class="line"><em>long description</em>: Number of MD steps for the third cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains and backbone at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1813,6 +2021,8 @@
 <div class="line"><em>default</em>: 500</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA MD steps</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of MD steps for the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Number of MD steps for the hot phase rigid body dynamics of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1837,6 +2047,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first NCS segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first NCS segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1849,6 +2061,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second NCS segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second NCS segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1897,6 +2111,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first NCS segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first NCS segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1909,6 +2125,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second NCS segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second NCS segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -1921,6 +2139,8 @@
 <div class="line"><em>default</em>: 200</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of EM steps</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of energy minimisation steps to perform.</div>
 <div class="line"><em>long description</em>: Number of energy minimisation steps to perform in the various EM stages of this refinement protocol. Note that the effective number might be smaller if the minimisation converges earlier.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1933,6 +2153,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1945,6 +2167,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1957,6 +2181,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1969,6 +2195,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1981,6 +2209,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -1993,6 +2223,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2005,6 +2237,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2017,6 +2251,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2029,6 +2265,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2041,6 +2279,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2053,6 +2293,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2065,6 +2307,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2077,6 +2321,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2089,6 +2335,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2101,6 +2349,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2113,6 +2363,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2125,6 +2377,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2137,6 +2391,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2149,6 +2405,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2161,6 +2419,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of fully flexible segments</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
 <div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2173,6 +2433,8 @@
 <div class="line"><em>default</em>: 2</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number partitions for ambiguous restraints</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 20</div>
 <div class="line"><em>short description</em>: Number of sets into which to randomly partition the ambiguous restraints.</div>
 <div class="line"><em>long description</em>: Number of sets into which to randomly partition the ambiguous restraints. The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -2185,6 +2447,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2197,6 +2461,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2209,6 +2475,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2221,6 +2489,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2233,6 +2503,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2245,6 +2517,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2257,6 +2531,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2269,6 +2545,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2281,6 +2559,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2293,6 +2573,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2305,6 +2587,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2317,6 +2601,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2329,6 +2615,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2341,6 +2629,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2353,6 +2643,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2365,6 +2657,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2377,6 +2671,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2389,6 +2685,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2401,6 +2699,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2413,6 +2713,8 @@
 <div class="line"><em>default</em>: -1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2425,6 +2727,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of C2 symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 40</div>
 <div class="line"><em>short description</em>: Defines the number of C2 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of C2 symmetry restraints. For each, a pair of segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2437,6 +2741,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of C3 symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10</div>
 <div class="line"><em>short description</em>: Defines the number of C3 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of C3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2449,6 +2755,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of C4 symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10</div>
 <div class="line"><em>short description</em>: Defines the number of C4 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of C4 symmetry restraints. For each, four segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2461,6 +2769,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of C5 symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10</div>
 <div class="line"><em>short description</em>: Defines the number of C5 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of C5 symmetry restraints. For each, five segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2473,6 +2783,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of C6 symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10</div>
 <div class="line"><em>short description</em>: Defines the number of C6 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2485,6 +2797,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of non-crystallographic symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 100</div>
 <div class="line"><em>short description</em>: Number of non-crystallographic symmetry restraints (NCS).</div>
 <div class="line"><em>long description</em>: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined. Note that those must contain exactly the same residues/atom combinations.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2497,6 +2811,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of S3 symmetry restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10</div>
 <div class="line"><em>short description</em>: Defines the number of S3 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2533,6 +2849,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the first S3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the first S3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2545,6 +2863,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the second S3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the second S3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2557,6 +2877,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of last residue in the third S3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of last residue in the third S3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2605,6 +2927,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the first S3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the first S3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2617,6 +2941,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the second S3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the second S3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2629,6 +2955,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number of first residue in the third S3 symmetry segment</div>
 <div class="line"><em>long description</em>: Residue number of first residue in the third S3 symmetry segment</div>
 <div class="line"><em>group</em>: symmetry</div>
@@ -2641,6 +2969,8 @@
 <div class="line"><em>default</em>: 1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Sampling factor for each starting model</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 500</div>
 <div class="line"><em>short description</em>: This paramater controls how many times a model will be refined.</div>
 <div class="line"><em>long description</em>: This paramater controls how many times a model will be refined.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -2653,6 +2983,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2665,6 +2997,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2677,6 +3011,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2689,6 +3025,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2701,6 +3039,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2713,6 +3053,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2725,6 +3067,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2737,6 +3081,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2749,6 +3095,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2761,6 +3109,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2773,6 +3123,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2785,6 +3137,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2797,6 +3151,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2809,6 +3165,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2821,6 +3179,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2833,6 +3193,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2845,6 +3207,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2857,6 +3221,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2869,6 +3235,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2881,6 +3249,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2893,6 +3263,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2905,6 +3277,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2917,6 +3291,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2929,6 +3305,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2941,6 +3319,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2953,6 +3333,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2965,6 +3347,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2977,6 +3361,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -2989,6 +3375,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3001,6 +3389,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3013,6 +3403,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3025,6 +3417,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3037,6 +3431,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3049,6 +3445,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3061,6 +3459,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3073,6 +3473,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3085,6 +3487,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3097,6 +3501,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3109,6 +3515,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3121,6 +3529,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
@@ -3157,6 +3567,8 @@
 <div class="line"><em>default</em>: 5</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 99</div>
 <div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>group</em>: module</div>
@@ -3169,6 +3581,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for unambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in unambig_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -3181,6 +3595,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for unambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in ambig_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -3193,6 +3609,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for unambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in unambig_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -3205,6 +3623,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Hot phase SA force constant for unambiguous distance restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in unambig_fname during the hot phase of the SA.</div>
 <div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).</div>
 <div class="line"><em>group</em>: distance restraints</div>
@@ -3217,6 +3637,8 @@
 <div class="line"><em>default</em>: 0.1</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the distance restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the distance restraints energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3229,6 +3651,8 @@
 <div class="line"><em>default</em>: -0.01</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the buried surface area term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the buried surface area term in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3241,6 +3665,8 @@
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the dihedral angle restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the dihedral angle restraints energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3253,6 +3679,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the desolvation energy term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the desolvation energy term in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3265,6 +3693,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the intermolecular electrostatic energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the intermolecular electrostatic energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the MD refinement.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3277,6 +3707,8 @@
 <div class="line"><em>default</em>: 0.1</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the symmetry restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the symmetry restraints energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the symmetry restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3289,6 +3721,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the intermolecular van der Waals energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the intermolecular van der Waals energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the MD refinement.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -3304,6 +3738,8 @@
 <div class="line"><em>default</em>: 917</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Random seed</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999999999999999</div>
 <div class="line"><em>short description</em>: Random seed used in CNS to initialize the random seed function</div>
 <div class="line"><em>long description</em>: Random seed used in CNS to initialize the random seed function</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3328,6 +3764,7 @@
 <div class="line"><em>default</em>: ‘quiet’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>choices</em>: [‘verbose’, ‘normal’, ‘quiet’]</div>
 <div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
 <div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).</div>
 <div class="line"><em>group</em>: module</div>
@@ -3352,6 +3789,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: End intermolecular interactions scaling factor for the 2nd cooling phase.</div>
+<div class="line"><em>min</em>: 1e-05</div>
+<div class="line"><em>max</em>: 1</div>
 <div class="line"><em>short description</em>: End scaling factor for intermolecular interactions in the second MD cooling SA stage.</div>
 <div class="line"><em>long description</em>: End scaling factor applied to intermolecular interactions during the second torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which side-chains at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3364,6 +3803,8 @@
 <div class="line"><em>default</em>: 0.001</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Initial intermolecular interactions scaling factor for the 2nd cooling phase.</div>
+<div class="line"><em>min</em>: 1e-05</div>
+<div class="line"><em>max</em>: 1</div>
 <div class="line"><em>short description</em>: Initial scaling factor for intermolecular interactions in the second MD cooling SA stage.</div>
 <div class="line"><em>long description</em>: Initial scaling factor applied to intermolecular interactions during the second torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which side-chains at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3376,6 +3817,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: End intermolecular interactions scaling factor for the 3rd cooling phase.</div>
+<div class="line"><em>min</em>: 1e-05</div>
+<div class="line"><em>max</em>: 1</div>
 <div class="line"><em>short description</em>: End scaling factor for intermolecular interactions in the third MD cooling SA stage.</div>
 <div class="line"><em>long description</em>: End scaling factor applied to intermolecular interactions during the third and final torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which both side-chains and backbone at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3388,6 +3831,8 @@
 <div class="line"><em>default</em>: 0.05</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Initial intermolecular interactions scaling factor for the 3rd cooling phase.</div>
+<div class="line"><em>min</em>: 1e-05</div>
+<div class="line"><em>max</em>: 1</div>
 <div class="line"><em>short description</em>: Initial scaling factor for intermolecular interactions in the third MD cooling SA stage.</div>
 <div class="line"><em>long description</em>: Initial scaling factor applied to intermolecular interactions during the third and final torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which both side-chains and backbone at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3400,6 +3845,8 @@
 <div class="line"><em>default</em>: 0.001</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Initial rigid-body MD intermolecular interactions scaling factor.</div>
+<div class="line"><em>min</em>: 1e-05</div>
+<div class="line"><em>max</em>: 1</div>
 <div class="line"><em>short description</em>: Initial scaling factor for intermolecular interactions in the first two SA stages</div>
 <div class="line"><em>long description</em>: Initial scaling factor applied to intermolecular interactions during the first rigid-body molecular dynamics stage and at the start of the first cooling stage of the of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3412,6 +3859,8 @@
 <div class="line"><em>default</em>: 8</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Scaling factor for the integration time step.</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 10</div>
 <div class="line"><em>short description</em>: Initial scaling factor for the integration time step of the hot phase SA.</div>
 <div class="line"><em>long description</em>: Scaling factor applied at the start of the simulated annealing protocol to the timestep using during torsion angle molecular dynamics. This factor is automatically reduced during the SA protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3424,6 +3873,8 @@
 <div class="line"><em>default</em>: 500</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End temperature for the 1st cooling phase</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: End temperature for the first rigid-body MD cooling phase in Kelvin.</div>
 <div class="line"><em>long description</em>: End temperature in Kelvin for the first rigid-body molecular dynamic cooling phase of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3436,6 +3887,8 @@
 <div class="line"><em>default</em>: 2000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Start temperature for the 1st cooling phase</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 5000</div>
 <div class="line"><em>short description</em>: Starting temperature for the first rigid-body MD cooling phase in Kelvin.</div>
 <div class="line"><em>long description</em>: Starting temperature in Kelvin for the first rigid-body molecular dynamic cooling phase of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3448,6 +3901,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End temperature for the 2nd cooling phase</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: End temperature for the second MD cooling phase in Kelvin.</div>
 <div class="line"><em>long description</em>: End temperature in Kelvin for the second torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3460,6 +3915,8 @@
 <div class="line"><em>default</em>: 1000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Start temperature for the 2nd cooling phase</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 2000</div>
 <div class="line"><em>short description</em>: Starting temperature for the second MD cooling phase in Kelvin.</div>
 <div class="line"><em>long description</em>: Starting temperature in Kelvin for the second torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3472,6 +3929,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: End temperature for the 3rd cooling phase</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: End temperature for the third  MD cooling phase in Kelvin.</div>
 <div class="line"><em>long description</em>: End temperature in Kelvin for the third and final torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains and backbone at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3484,6 +3943,8 @@
 <div class="line"><em>default</em>: 1000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Start temperature for the 3rd cooling phase</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Starting temperature for the third  MD cooling phase in Kelvin.</div>
 <div class="line"><em>long description</em>: Starting temperature in Kelvin for the third and final torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains and backbone at the interface are treated as flexible.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3496,6 +3957,8 @@
 <div class="line"><em>default</em>: 2000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Initial rigid-body MD temperature</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 5000</div>
 <div class="line"><em>short description</em>: Temperature for the initial rigid-body MD phase in Kelvin.</div>
 <div class="line"><em>long description</em>: Temperature in Kelvin for the initial rigid-body molecular dynamic phase of the simulated annealing protocol.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -3508,6 +3971,8 @@
 <div class="line"><em>default</em>: 0.002</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: MD integrating time step</div>
+<div class="line"><em>min</em>: 0.0005</div>
+<div class="line"><em>max</em>: 0.004</div>
 <div class="line"><em>short description</em>: Integration time step for the torsion angle molecular dynamics.</div>
 <div class="line"><em>long description</em>: Integration time step for the torsion angle molecular dynamics.</div>
 <div class="line"><em>group</em>: sampling</div>

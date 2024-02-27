@@ -127,6 +127,13 @@
 <section id="module-haddock.modules.analysis.alascan">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.analysis.alascan" title="Permalink to this heading"></a></h2>
 <p>HADDOCK3 module for alanine scan.</p>
+<p>This module is responsible for the alanine scan analysis of the models
+generated in the previous step of the workflow. For each model, the module
+will mutate the interface residues and calculate the energy differences
+between the wild type and the mutant, thus providing a measure of the impact
+of such mutation.</p>
+<p>If cluster information is available, the module will also calculate the
+average energy difference for each cluster of models.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.analysis.alascan.HaddockModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.alascan.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ignore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/analysis/alascan/defaults.yaml')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">everything</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/alascan.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.alascan.HaddockModule" title="Permalink to this definition"></a></dt>
@@ -156,6 +163,8 @@
 <div class="line"><em>default</em>: 5.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Distance cutoff (Å) used to define interface contacts.</div>
+<div class="line"><em>min</em>: 1.0</div>
+<div class="line"><em>max</em>: 20.0</div>
 <div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
 <div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -192,6 +201,7 @@
 <div class="line"><em>default</em>: ‘ALA’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Residue to be used for the scanning</div>
+<div class="line"><em>choices</em>: [‘ALA’, ‘ARG’, ‘ASN’, ‘ASP’, ‘CYS’, ‘GLN’, ‘GLU’, ‘GLY’, ‘HIS’, ‘ILE’, ‘LEU’, ‘LYS’, ‘MET’, ‘PHE’, ‘PRO’, ‘SER’, ‘THR’, ‘TRP’, ‘TYR’, ‘VAL’, ‘ALY’, ‘ASH’, ‘CFE’, ‘CSP’, ‘CYC’, ‘CYF’, ‘CYM’, ‘DDZ’, ‘GLH’, ‘HLY’, ‘HY3’, ‘HYP’, ‘M3L’, ‘MLY’, ‘MLZ’, ‘MSE’, ‘NEP’, ‘PNS’, ‘PTR’, ‘SEP’, ‘TOP’, ‘TYP’, ‘TYS’]</div>
 <div class="line"><em>short description</em>: Residue to be used for the scanning. The default is alanine.</div>
 <div class="line"><em>long description</em>: Residue to be used for the scanning. The default is alanine. Use bigger residues at your own risk.</div>
 <div class="line"><em>group</em>: analysis</div>

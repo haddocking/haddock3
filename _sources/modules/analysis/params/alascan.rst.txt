@@ -9,6 +9,8 @@ int_cutoff
 | *default*: 5.0
 | *type*: float
 | *title*: Distance cutoff (Å) used to define interface contacts.
+| *min*: 1.0
+| *max*: 20.0
 | *short description*: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
 | *long description*: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
 | *group*: analysis
@@ -42,6 +44,7 @@ scan_residue
 | *default*: 'ALA'
 | *type*: string
 | *title*: Residue to be used for the scanning
+| *choices*: ['ALA', 'ARG', 'ASN', 'ASP', 'CYS', 'GLN', 'GLU', 'GLY', 'HIS', 'ILE', 'LEU', 'LYS', 'MET', 'PHE', 'PRO', 'SER', 'THR', 'TRP', 'TYR', 'VAL', 'ALY', 'ASH', 'CFE', 'CSP', 'CYC', 'CYF', 'CYM', 'DDZ', 'GLH', 'HLY', 'HY3', 'HYP', 'M3L', 'MLY', 'MLZ', 'MSE', 'NEP', 'PNS', 'PTR', 'SEP', 'TOP', 'TYP', 'TYS']
 | *short description*: Residue to be used for the scanning. The default is alanine.
 | *long description*: Residue to be used for the scanning. The default is alanine. Use bigger residues at your own risk.
 | *group*: analysis

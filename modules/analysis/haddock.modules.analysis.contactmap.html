@@ -156,6 +156,8 @@
 <div class="line"><em>default</em>: 9.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Ca-Ca distance defining a contact.</div>
+<div class="line"><em>min</em>: 4.0</div>
+<div class="line"><em>max</em>: 1000.0</div>
 <div class="line"><em>short description</em>: Distance between Ca atoms of two residues defining a contact.</div>
 <div class="line"><em>long description</em>: Distance between Ca atoms of two residues defining a contact.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -168,6 +170,7 @@
 <div class="line"><em>default</em>: ‘shortest-dist’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Type of data to be used in the chordchart.</div>
+<div class="line"><em>choices</em>: [‘ca-ca-dist’, ‘shortest-dist’]</div>
 <div class="line"><em>short description</em>: Type of data to be used in the chordchart.</div>
 <div class="line"><em>long description</em>: ca-ca-dist and shortest-dist are averages distances observed in cluster.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -180,6 +183,7 @@
 <div class="line"><em>default</em>: ‘shortest-cont-ratio’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Type of data to be used in the heatmap.</div>
+<div class="line"><em>choices</em>: [‘ca-ca-dist’, ‘ca-ca-cont-ratio’, ‘shortest-dist’, ‘shortest-cont-ratio’]</div>
 <div class="line"><em>short description</em>: Type of data to be used in the heatmap.</div>
 <div class="line"><em>long description</em>: ca-ca-dist and shortest-dist are averages distances observed in cluster. While ca-ca-cont-ratio and shortest-cont-ratio are ratio of the distances to be observed under their respective thresholds.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -192,6 +196,7 @@
 <div class="line"><em>default</em>: ‘Greys’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Color ramp used to color heatmap.</div>
+<div class="line"><em>choices</em>: [‘Greys’, ‘Purples’, ‘BuPu’, ‘Blues’, ‘BuGn’, ‘Greens’, ‘deep’, ‘tempo’, ‘algae’, ‘dense’, ‘amp’]</div>
 <div class="line"><em>short description</em>: Color ramp used to color heatmap.</div>
 <div class="line"><em>long description</em>: Color ramp used to color heatmap. Please refer to <cite>plotly builtin-colorscales</cite> for more information</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -228,6 +233,8 @@
 <div class="line"><em>default</em>: 4.5</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Distance defining a contact between two residues.</div>
+<div class="line"><em>min</em>: 2.0</div>
+<div class="line"><em>max</em>: 1000.0</div>
 <div class="line"><em>short description</em>: Shortest distance between any atom of two residues defining a contact.</div>
 <div class="line"><em>long description</em>: Shortest distance between any atom of two residues defining a contact.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -255,6 +262,8 @@
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of unclustered models to analyse.</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 100</div>
 <div class="line"><em>short description</em>: Number of unclustered models to analyse.</div>
 <div class="line"><em>long description</em>: Top <cite>X</cite> unclustered models to analyse. Models are sorted based on their score (if accessible) and only a subset defined by this variable are analysed. If no score available, a random set of <cite>topX</cite> models are analysed.</div>
 <div class="line"><em>group</em>: sample</div>

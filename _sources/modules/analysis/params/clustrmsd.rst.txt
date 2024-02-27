@@ -9,6 +9,8 @@ clust_cutoff
 | *default*: 7.5
 | *type*: float
 | *title*: Clustering cutoff distance
+| *min*: 1
+| *max*: 9999
 | *short description*: Value of cutoff cophenetic distance.
 | *long description*: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.
 | *group*: analysis
@@ -20,6 +22,8 @@ min_population
 | *default*: 4
 | *type*: integer
 | *title*: Clustering population threshold
+| *min*: 1
+| *max*: 9999
 | *short description*: Threshold employed to exclude clusters with less than this number of members. By default 4.
 | *long description*: Threshold employed to exclude clusters with less than this number of members. By default 4. When criterion is maxclust, this value is ignored.
 | *group*: analysis
@@ -31,6 +35,8 @@ n_clusters
 | *default*: 4
 | *type*: integer
 | *title*: Number of clusters
+| *min*: 1
+| *max*: 9999
 | *short description*: Number of clusters to be formed
 | *long description*: Number of clusters to be formed. When criterion is distance, this value is ignored.
 | *group*: analysis
@@ -46,6 +52,7 @@ criterion
 | *default*: 'distance'
 | *type*: string
 | *title*: Criterion for fcluster
+| *choices*: ['distance', 'maxclust']
 | *short description*: Criterion to be used to cut the dendrogram
 | *long description*: if criterion is maxclust, the dendrogram is cut when a certain number of clusters is formed. If criterion is distance, the dendrogram will be cut based on the value of the cophenetic distance
 | *group*: analysis
@@ -57,6 +64,7 @@ linkage
 | *default*: 'average'
 | *type*: string
 | *title*: Linkage type
+| *choices*: ['average', 'centroid', 'complete', 'median', 'single', 'ward', 'weighted']
 | *short description*: How to lump together clusters in hierarchical clustering
 | *long description*: check out the full description at https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html
 | *group*: analysis

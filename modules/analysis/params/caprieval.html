@@ -92,6 +92,7 @@
 <div class="line"><em>default</em>: ‘sequence’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Alignment method used to match the numbering.</div>
+<div class="line"><em>choices</em>: [‘structure’, ‘sequence’]</div>
 <div class="line"><em>short description</em>: Which alignment method should be used to match the numbering.</div>
 <div class="line"><em>long description</em>: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results for structures that are too different, for that use</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -104,6 +105,8 @@
 <div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Threshold (n) used for the average evaluation in the cluster-based output</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: Threshold (n) used for the average evaluation in the cluster-based output.</div>
 <div class="line"><em>long description</em>: Threshold (n) used for the average evaluation in the cluster-based output.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -140,6 +143,8 @@
 <div class="line"><em>default</em>: 5.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Distance cutoff (Å) used to define interface contacts.</div>
+<div class="line"><em>min</em>: 3.0</div>
+<div class="line"><em>max</em>: 20.0</div>
 <div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
 <div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -176,6 +181,8 @@
 <div class="line"><em>default</em>: 10.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Distance cutoff (Å) used to define interface residues.</div>
+<div class="line"><em>min</em>: 3.0</div>
+<div class="line"><em>max</em>: 20.0</div>
 <div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.</div>
 <div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.</div>
 <div class="line"><em>group</em>: analysis</div>
@@ -260,6 +267,7 @@
 <div class="line"><em>default</em>: ‘score’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Sort the structures/clusters in the output file by this value</div>
+<div class="line"><em>choices</em>: [‘score’, ‘irmsd’, ‘lrmsd’, ‘ilrmsd’, ‘fnat’, ‘dockq’]</div>
 <div class="line"><em>short description</em>: Which value should be used to sort the output.</div>
 <div class="line"><em>long description</em>: Which value should be used to sort the output, the output table will be sorted accordingly.</div>
 <div class="line"><em>group</em>: analysis</div>

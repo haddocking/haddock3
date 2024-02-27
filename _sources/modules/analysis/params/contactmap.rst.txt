@@ -9,6 +9,8 @@ ca_ca_dist_threshold
 | *default*: 9.0
 | *type*: float
 | *title*: Ca-Ca distance defining a contact.
+| *min*: 4.0
+| *max*: 1000.0
 | *short description*: Distance between Ca atoms of two residues defining a contact.
 | *long description*: Distance between Ca atoms of two residues defining a contact.
 | *group*: analysis
@@ -20,6 +22,7 @@ chordchart_datatype
 | *default*: 'shortest-dist'
 | *type*: string
 | *title*: Type of data to be used in the chordchart.
+| *choices*: ['ca-ca-dist', 'shortest-dist']
 | *short description*: Type of data to be used in the chordchart.
 | *long description*: ca-ca-dist and shortest-dist are averages distances observed in cluster.
 | *group*: analysis
@@ -31,6 +34,7 @@ cluster_heatmap_datatype
 | *default*: 'shortest-cont-ratio'
 | *type*: string
 | *title*: Type of data to be used in the heatmap.
+| *choices*: ['ca-ca-dist', 'ca-ca-cont-ratio', 'shortest-dist', 'shortest-cont-ratio']
 | *short description*: Type of data to be used in the heatmap.
 | *long description*: ca-ca-dist and shortest-dist are averages distances observed in cluster. While ca-ca-cont-ratio and shortest-cont-ratio are ratio of the distances to be observed under their respective thresholds.
 | *group*: analysis
@@ -42,6 +46,7 @@ color_ramp
 | *default*: 'Greys'
 | *type*: string
 | *title*: Color ramp used to color heatmap.
+| *choices*: ['Greys', 'Purples', 'BuPu', 'Blues', 'BuGn', 'Greens', 'deep', 'tempo', 'algae', 'dense', 'amp']
 | *short description*: Color ramp used to color heatmap.
 | *long description*: Color ramp used to color heatmap. Please refer to `plotly builtin-colorscales` for more information
 | *group*: analysis
@@ -75,6 +80,8 @@ shortest_dist_threshold
 | *default*: 4.5
 | *type*: float
 | *title*: Distance defining a contact between two residues.
+| *min*: 2.0
+| *max*: 1000.0
 | *short description*: Shortest distance between any atom of two residues defining a contact.
 | *long description*: Shortest distance between any atom of two residues defining a contact.
 | *group*: analysis
@@ -101,6 +108,8 @@ topX
 | *default*: 10
 | *type*: integer
 | *title*: Number of unclustered models to analyse.
+| *min*: 1
+| *max*: 100
 | *short description*: Number of unclustered models to analyse.
 | *long description*: Top `X` unclustered models to analyse. Models are sorted based on their score (if accessible) and only a subset defined by this variable are analysed. If no score available, a random set of `topX` models are analysed.
 | *group*: sample

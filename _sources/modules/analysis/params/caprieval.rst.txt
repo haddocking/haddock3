@@ -9,6 +9,7 @@ alignment_method
 | *default*: 'sequence'
 | *type*: string
 | *title*: Alignment method used to match the numbering.
+| *choices*: ['structure', 'sequence']
 | *short description*: Which alignment method should be used to match the numbering.
 | *long description*: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results for structures that are too different, for that use
 | *group*: analysis
@@ -20,6 +21,8 @@ clt_threshold
 | *default*: 4
 | *type*: integer
 | *title*: Threshold (n) used for the average evaluation in the cluster-based output
+| *min*: 1
+| *max*: 1000
 | *short description*: Threshold (n) used for the average evaluation in the cluster-based output.
 | *long description*: Threshold (n) used for the average evaluation in the cluster-based output.
 | *group*: analysis
@@ -53,6 +56,8 @@ fnat_cutoff
 | *default*: 5.0
 | *type*: float
 | *title*: Distance cutoff (Å) used to define interface contacts.
+| *min*: 3.0
+| *max*: 20.0
 | *short description*: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
 | *long description*: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
 | *group*: analysis
@@ -86,6 +91,8 @@ irmsd_cutoff
 | *default*: 10.0
 | *type*: float
 | *title*: Distance cutoff (Å) used to define interface residues.
+| *min*: 3.0
+| *max*: 20.0
 | *short description*: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.
 | *long description*: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.
 | *group*: analysis
@@ -163,6 +170,7 @@ sortby
 | *default*: 'score'
 | *type*: string
 | *title*: Sort the structures/clusters in the output file by this value
+| *choices*: ['score', 'irmsd', 'lrmsd', 'ilrmsd', 'fnat', 'dockq']
 | *short description*: Which value should be used to sort the output.
 | *long description*: Which value should be used to sort the output, the output table will be sorted accordingly.
 | *group*: analysis

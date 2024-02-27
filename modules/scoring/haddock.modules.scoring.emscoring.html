@@ -112,6 +112,8 @@
 <section id="module-haddock.modules.scoring.emscoring">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.scoring.emscoring" title="Permalink to this heading"></a></h2>
 <p>EM scoring module.</p>
+<p>This module performs energy minimization and scoring of the models generated
+in the previous step of the workflow. No restraints are applied during this step.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.scoring.emscoring.HaddockModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.emscoring.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/scoring/emscoring/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/scoring/emscoring.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.emscoring.HaddockModule" title="Permalink to this definition"></a></dt>
@@ -156,6 +158,7 @@
 <div class="line"><em>default</em>: ‘cdie’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
+<div class="line"><em>choices</em>: [‘cdie’, ‘rdie’]</div>
 <div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
 <div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
 <div class="line"><em>group</em>: force field</div>
@@ -180,6 +183,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Dielectric constant</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 78</div>
 <div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>group</em>: force field</div>
@@ -228,6 +233,8 @@
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of EM steps</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 10000</div>
 <div class="line"><em>short description</em>: Number of energy minimisation steps to perform.</div>
 <div class="line"><em>long description</em>: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -240,6 +247,8 @@
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 99</div>
 <div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>group</em>: module</div>
@@ -252,6 +261,8 @@
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the buried surface area term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the buried surface area term in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -264,6 +275,8 @@
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the dihedral angle restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the dihedral angle restraints energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -276,6 +289,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the desolvation energy term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the desolvation energy term in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -288,6 +303,8 @@
 <div class="line"><em>default</em>: 0.2</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the intermolecular electrostatic energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the intermolecular electrostatic energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -300,6 +317,8 @@
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Weight of the intermolecular van der Waals energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Weight of the intermolecular van der Waals energy in the scoring function</div>
 <div class="line"><em>long description</em>: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.</div>
 <div class="line"><em>group</em>: scoring</div>
@@ -315,6 +334,7 @@
 <div class="line"><em>default</em>: ‘quiet’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>choices</em>: [‘verbose’, ‘normal’, ‘quiet’]</div>
 <div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
 <div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet)</div>
 <div class="line"><em>group</em>: module</div>

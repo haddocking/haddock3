@@ -9,6 +9,8 @@ glowworms
 | *default*: 200
 | *type*: integer
 | *title*: No title yet
+| *min*: -9999
+| *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
 | *group*: 
@@ -130,6 +132,8 @@ steps
 | *default*: 100
 | *type*: integer
 | *title*: No title yet
+| *min*: -9999
+| *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
 | *group*: 
@@ -141,6 +145,8 @@ swarms
 | *default*: 400
 | *type*: integer
 | *title*: No title yet
+| *min*: -9999
+| *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
 | *group*: 
@@ -152,6 +158,8 @@ top
 | *default*: 10
 | *type*: integer
 | *title*: No title yet
+| *min*: -9999
+| *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
 | *group*: 

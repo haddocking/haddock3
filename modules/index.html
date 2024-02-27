@@ -615,6 +615,7 @@ In the later case, overriding the general definition.</p>
 <div class="line"><em>default</em>: ‘slurm’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Batch system</div>
+<div class="line"><em>choices</em>: [‘slurm’, ‘torque’]</div>
 <div class="line"><em>short description</em>: Type of batch system running on your server</div>
 <div class="line"><em>long description</em>: Type of batch system running on your server. Only slurm and torque are supported at this time</div>
 <div class="line"><em>group</em>: execution</div>
@@ -651,6 +652,8 @@ In the later case, overriding the general definition.</p>
 <div class="line"><em>default</em>: 1</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of models to produce per job.</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Multiple models can be calculated within one job</div>
 <div class="line"><em>long description</em>: This defines the number of models that will be generated within on job script. This allows to concatenate the generation of models into one script. In that way jobs might run longer in the batch system and reduce the load on the scheduler.</div>
 <div class="line"><em>group</em>: execution</div>
@@ -663,6 +666,7 @@ In the later case, overriding the general definition.</p>
 <div class="line"><em>default</em>: ‘local’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Mode of execution</div>
+<div class="line"><em>choices</em>: [‘local’, ‘batch’]</div>
 <div class="line"><em>short description</em>: Mode of execution of the jobs, either local or using a batch system.</div>
 <div class="line"><em>long description</em>: Mode of execution of the jobs, either local or using a batch system. Currently slurm and torque are supported. For the batch mode the queue command must be specified in the queue parameter.</div>
 <div class="line"><em>group</em>: execution</div>
@@ -675,6 +679,8 @@ In the later case, overriding the general definition.</p>
 <div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of CPU cores</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 500</div>
 <div class="line"><em>short description</em>: Number of CPU cores to use for the CNS calculations. It is truncated to max available CPUs  minus 1.</div>
 <div class="line"><em>long description</em>: Number of CPU cores to use for the CNS calculations. This will define the number of concurrent jobs being executed. Note that is truncated to the total number of available CPUs minus 1.</div>
 <div class="line"><em>group</em>: execution</div>
@@ -699,6 +705,8 @@ In the later case, overriding the general definition.</p>
 <div class="line"><em>default</em>: 100</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of jobs to submit to the batch system</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Number of jobs to submit to the batch system</div>
 <div class="line"><em>long description</em>: This parameter controls the number of jobs that will be submitted to the batch system. In combination with the concat parameter this allow to limit the load on the queueing system and also make sure jobs remain in the queue for some time (if concat &gt; 1) to avoid high system loads on the batch system.</div>
 <div class="line"><em>group</em>: execution</div>

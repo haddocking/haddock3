@@ -35,6 +35,8 @@ max_models
 | *default*: 5000
 | *type*: integer
 | *title*: Maximum number of models
+| *min*: 1
+| *max*: 20000
 | *short description*: Maximum number of models to be considered when calculating the matrix.
 | *long description*: Maximum number of models to be considered when calculating the matrix. If the number of models in the input file is larger than this number, the execution will be aborted.
 | *group*: analysis

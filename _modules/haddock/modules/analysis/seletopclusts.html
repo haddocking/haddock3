@@ -87,7 +87,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.seletopclusts</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Select a top cluster module.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Select models from the top clusters.</span>
+
+<span class="sd">This module selects a number of models from a number of clusters. The</span>
+<span class="sd">selection is based on the score of the models within the clusters.</span>
+
+<span class="sd">In the standard HADDOCK analysis the top 4 models of the top 10 clusters</span>
+<span class="sd">are shown. In case seletopclusts is run after a sampling module, we can</span>
+<span class="sd">keep a few models from all the clusters to have more diversity in at the</span>
+<span class="sd">refinement stage.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>

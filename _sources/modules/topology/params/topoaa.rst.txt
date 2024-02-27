@@ -40,6 +40,8 @@ mol1.hisd_1
 | *default*: nan
 | *type*: integer
 | *title*: HISD residue number
+| *min*: -9999
+| *max*: 9999
 | *short description*: Residue number of the Histidine to be defined as HISD
 | *long description*: Residue number of the Histidine to be defined as HISD
 | *group*: molecule
@@ -51,6 +53,8 @@ mol1.hise_1
 | *default*: nan
 | *type*: integer
 | *title*: HISE residue number
+| *min*: -9999
+| *max*: 9999
 | *short description*: Residue number of the Histidine to be defined as HISE
 | *long description*: Residue number of the Histidine to be defined as HISE
 | *group*: molecule
@@ -62,6 +66,8 @@ mol1.nhisd
 | *default*: 0
 | *type*: integer
 | *title*: Number of HISD residue
+| *min*: 0
+| *max*: 9999
 | *short description*: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
 | *long description*: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed. Note that HIS is interpreted as a charged Histidine)
 | *group*: molecule
@@ -73,6 +79,8 @@ mol1.nhise
 | *default*: 0
 | *type*: integer
 | *title*: Number of HISE residue
+| *min*: 0
+| *max*: 9999
 | *short description*: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
 | *long description*: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed. Note that HIS is interpreted as a charged Histidine)
 | *group*: molecule
@@ -132,6 +140,8 @@ tolerance
 | *default*: 0
 | *type*: integer
 | *title*: Failure tolerance percentage
+| *min*: 0
+| *max*: 99
 | *short description*: Percentage of allowed failures for a module to successfully complete
 | *long description*: Percentage of allowed failures for a module to successfully complete
 | *group*: module
@@ -147,6 +157,8 @@ iniseed
 | *default*: 917
 | *type*: integer
 | *title*: Random seed
+| *min*: 0
+| *max*: 9999999999999999
 | *short description*: Random seed used in CNS to initialize the random seed function
 | *long description*: Random seed used in CNS to initialize the random seed function
 | *group*: molecule
@@ -158,6 +170,7 @@ log_level
 | *default*: 'quiet'
 | *type*: string
 | *title*: Log level verbosity for CNS
+| *choices*: ['verbose', 'normal', 'quiet']
 | *short description*: Set the log level verbosity for CNS
 | *long description*: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
 | *group*: module

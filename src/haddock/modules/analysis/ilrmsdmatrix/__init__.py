@@ -1,22 +1,19 @@
 """
 ilRMSD matrix module.
 
-This module calculates of the interface-ligand RMSD (ilRMSD) matrix between all
- the models generated in the previous step.
+This module calculates of the interface-ligand RMSD (ilRMSD) matrix between all 
+the models generated in the previous step.
 
 As all the pairwise ilRMSD calculations are independent, the module distributes
 them over all the available cores in an optimal way.
 
 Once created, the ilRMSD matrix is saved in text form in the current
- `ilrmsdmatrix` folder. The path to this file is then shared with the following
- step of the workflow by means of the json file `rmsd_matrix.json`.
+`ilrmsdmatrix` folder. The path to this file is then shared with the following 
+step of the workflow by means of the json file `rmsd_matrix.json`.
 
-The module accepts one parameters in input, namely:
-* `max_models` (default = 10000)
-
-IMPORTANT: the module assumes coherent numbering for all the receptor and
- ligand chains, as no alignment is performed. The user must ensure that the
- numbering is coherent.
+IMPORTANT: the module assumes coherent numbering for all the receptor and ligand chains,
+as no alignment is performed. The user must ensure that the
+numbering is coherent.
 """
 import os
 from pathlib import Path

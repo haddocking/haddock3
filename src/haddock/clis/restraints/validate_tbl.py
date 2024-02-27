@@ -1,6 +1,7 @@
 """haddock3-restraints validate_tbl subcommand.
 
 The validate_tbl subcommand validates an input TBL file.
+
 Usage:
     haddock3-restraints validate_tbl <tbl_file> [--silent] [--quick]
 """

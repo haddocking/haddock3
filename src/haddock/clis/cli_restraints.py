@@ -3,7 +3,7 @@ HADDOCK3 CLI for restraints-related tasks.
 
 DISCLAIMER: these scripts have been ported from old code and are not
 optimized for code quality and performance. They are provided as a convenience
- for the user.
+for the user.
 
 USAGE::
 

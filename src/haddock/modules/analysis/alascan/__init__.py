@@ -1,4 +1,14 @@
-"""HADDOCK3 module for alanine scan."""
+"""HADDOCK3 module for alanine scan.
+
+This module is responsible for the alanine scan analysis of the models
+generated in the previous step of the workflow. For each model, the module
+will mutate the interface residues and calculate the energy differences
+between the wild type and the mutant, thus providing a measure of the impact
+of such mutation.
+
+If cluster information is available, the module will also calculate the
+average energy difference for each cluster of models.
+"""
 from pathlib import Path
 
 from haddock import log

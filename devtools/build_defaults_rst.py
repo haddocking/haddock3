@@ -399,15 +399,21 @@ def do_text(name: str, param: ParamMap, level: str) -> str:
         f'{name}',
         f'{level * len(name)}',
         '',
-        f'| *default*: {param["default"]!r}',
-        f'| *type*: {param["type"]}',
-        f'| *title*: {param["title"]}',
-        f'| *short description*: {param["short"]}',
-        f'| *long description*: {param["long"]}',
-        f'| *group*: {param.get("group", "No group assigned")}',
-        f'| *explevel*: {param["explevel"]}',
-        '',
-        ]
+    ]
+    text.append(f'| *default*: {param["default"]!r}')
+    text.append(f'| *type*: {param["type"]}')
+    text.append(f'| *title*: {param["title"]}')
+    
+    # choices, min, max are not always present
+    for key in ["choices", "min", "max"]:
+        if key in param:
+            text.append(f'| *{key}*: {param[key]}')
+    
+    text.append(f'| *short description*: {param["short"]}')
+    text.append(f'| *long description*: {param["long"]}')
+    text.append(f'| *group*: {param.get("group", "No group assigned")}')
+    text.append(f'| *explevel*: {param["explevel"]}')
+    text.append('')
 
     return os.linesep.join(text)
 

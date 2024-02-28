@@ -19,7 +19,7 @@ Four parameters can be defined in this context:
   ``distance``)
 * `min_population` : analogously to the `clustfcc` module, it is the minimum number
   of models that should be present in a cluster to consider it. If criterion is
-    `maxclust`, the value is ignored.
+  `maxclust`, the value is ignored.
 
 This module passes the path to the RMSD matrix is to the next step of the
 workflow through the `rmsd_matrix.json` file, thus allowing to execute several

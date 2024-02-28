@@ -1,4 +1,10 @@
-"""Cluster modules with FCC."""
+"""Cluster modules with FCC.
+
+The module takes the models generated in the previous step and calculates the
+contacts between them. Then, the module calculates the FCC matrix and clusters
+the models based on the calculated contacts.
+
+For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*"""
 import os
 from pathlib import Path
 

@@ -2,7 +2,7 @@
 
 The restrain_bodies subcommand creates distance restraints to lock several 
 chains together. Useful to avoid unnatural flexibility or movement due to
- sequence/numbering gaps.
+sequence/numbering gaps.
 
 Usage::
 	

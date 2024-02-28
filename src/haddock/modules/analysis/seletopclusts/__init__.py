@@ -1,4 +1,13 @@
-"""Select a top cluster module."""
+"""Select models from the top clusters.
+
+This module selects a number of models from a number of clusters. The
+selection is based on the score of the models within the clusters.
+
+In the standard HADDOCK analysis the top 4 models of the top 10 clusters
+are shown. In case seletopclusts is run after a sampling module, we can
+keep a few models from all the clusters to have more diversity in at the
+refinement stage.
+"""
 import math
 import os
 from pathlib import Path

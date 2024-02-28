@@ -403,7 +403,7 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     configs : dict
         Dictionnary holding the various configuration files
         ['raw_input, 'cleaned_input', 'loaded_cleaned_input',
-         'final_cfg', 'enhanced_haddock_params']
+        'final_cfg', 'enhanced_haddock_params']
     datadir : str or :py:class:`libpath.Path`
         Directory where to write the configuration.
 

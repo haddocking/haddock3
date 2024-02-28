@@ -22,7 +22,6 @@ class RMSDJob(BaseJob):
             os.fspath(self.input),
             ' '.join(map(str, self.args)),  # empty string if no args
             ])
-        print(f"executing command {self.cmd}")
         return
 
 

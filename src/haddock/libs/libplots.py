@@ -1165,7 +1165,12 @@ def heatmap_plotly(
     # Place X axis on top
     fig.update_xaxes(side="top")
     # Save figure as html file
-    fig.write_html(output_fname)
+    fig_to_html(
+        fig,
+        output_fname,
+        figure_height=2000,
+        figure_width=2000,
+        )
     return output_fname
 
   
@@ -1189,7 +1194,8 @@ def make_alascan_plot(df, clt_id, scan_res="ALA"):
     log.info(f"Generating {scan_res} scanning plot {plot_name}")
 
     # create figure
-    fig = go.Figure(layout={"width": 2000, "height": 1000})
+    width, height = 2000, 1000
+    fig = go.Figure(layout={"width": width, "height": height})
     # add traces
     fig.add_trace(
         go.Bar(
@@ -1247,7 +1253,46 @@ def make_alascan_plot(df, clt_id, scan_res="ALA"):
         )
     for n in range(df.shape[0] - 1):
         fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
-    # save html
-    html_output_filename = f"{plot_name}.html"
-    fig.write_html(html_output_filename)
+    # Write it
+    fig_to_html(
+        fig,
+        f"{plot_name}.html",
+        figure_height=height,
+        figure_width=width,
+        )
 
+
+def fig_to_html(
+        fig: Figure,
+        fpath: Union[str, Path],
+        plot_id: int = 1,
+        figure_height: int = 800,
+        figure_width: int = 1000,
+        ) -> None:
+    """Workaround plotly html file generation
+
+    Parameters
+    ----------
+    json_content : str
+        plotly json content
+    
+    plot_id : int
+        plot id to be used in the html content
+    
+    figure_height : int
+        figure height (in pixels)
+    
+    figure_width : int
+        figure width (in pixels)
+    """
+    # Convert to json
+    json_content = fig.to_json()
+    # Create custom html file
+    html_content = create_html(
+        json_content,
+        plot_id=plot_id,
+        figure_height=figure_height,
+        figure_width=figure_width,
+        )
+    # Write it
+    Path(fpath).write_text(html_content)

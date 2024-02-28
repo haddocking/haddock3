@@ -43,6 +43,18 @@ from . import golden_data
 # Define pytest fixtures #
 ##########################
 @pytest.fixture
+def contactmap_output_ext():
+    """List of generated files suffixes."""
+    return (
+        'contacts.tsv',
+        'heatmap.html',
+        'chordchart.html',
+        'interchain_contacts.tsv',
+        'heavyatoms_interchain_contacts.tsv',
+        )
+
+
+@pytest.fixture
 def pdbline():
     return "ATOM     28  O   GLU A  21      11.097   3.208   5.136  1.00"
 
@@ -107,7 +119,7 @@ def params() -> dict:
         "single_model_analysis": False,
         "topX": 10,
         "generate_heatmap": True,
-        "cluster_heatmap_datatype": 'shortest-cont-ratio',
+        "cluster_heatmap_datatype": 'shortest-cont-probability',
         "generate_chordchart": True,
         "chordchart_datatype": 'shortest-dist',
         }
@@ -167,19 +179,19 @@ def dist_matrix():
 @pytest.fixture
 def intertype_matrix():
     return np.array([
-        ['self-self', 'polar-pos_charged', 'polar-apolar',
-         'polar-apolar', 'polar-apolar', 'polar-neg_charged'],
-        ['polar-pos_charged', 'self-self', 'pos_charged-apolar',
-         'pos_charged-apolar', 'pos_charged-apolar',
-         'pos_charged-neg_charged'],
-        ['polar-apolar', 'pos_charged-apolar', 'self-self',
-         'apolar-apolar', 'apolar-apolar', 'apolar-neg_charged'],
-        ['polar-apolar', 'pos_charged-apolar', 'apolar-apolar',
-         'self-self', 'apolar-apolar', 'apolar-neg_charged'],
-        ['polar-apolar', 'pos_charged-apolar', 'apolar-apolar',
-         'apolar-apolar', 'self-self', 'apolar-neg_charged'],
-        ['polar-neg_charged', 'pos_charged-neg_charged', 'apolar-neg_charged',
-         'apolar-neg_charged', 'apolar-neg_charged', 'self-self'],
+        ['self-self', 'polar-positive', 'polar-apolar',
+         'polar-apolar', 'polar-apolar', 'polar-negative'],
+        ['polar-positive', 'self-self', 'positive-apolar',
+         'positive-apolar', 'positive-apolar',
+         'positive-negative'],
+        ['polar-apolar', 'positive-apolar', 'self-self',
+         'apolar-apolar', 'apolar-apolar', 'apolar-negative'],
+        ['polar-apolar', 'positive-apolar', 'apolar-apolar',
+         'self-self', 'apolar-apolar', 'apolar-negative'],
+        ['polar-apolar', 'positive-apolar', 'apolar-apolar',
+         'apolar-apolar', 'self-self', 'apolar-negative'],
+        ['polar-negative', 'positive-negative', 'apolar-negative',
+         'apolar-negative', 'apolar-negative', 'self-self'],
         ])
 
 
@@ -297,22 +309,23 @@ def test_contactmap_run_iter_errors(contactmap, cluster_input_iter, mocker):
 #####################################################
 # Testing of Classes and function within contmap.py #
 #####################################################
-def test_single_model(protprot_contactmap):
+def test_single_model(protprot_contactmap, contactmap_output_ext):
     """Test ContactsMap run function."""
     contacts_dt = protprot_contactmap.run()
     # check return variable
-    assert type(contacts_dt) == list
+    assert type(contacts_dt) == tuple
+    assert type(contacts_dt[0]) == list
+    assert type(contacts_dt[1]) == list
     # check generated output files
     output_bp = protprot_contactmap.output
-    assert os.path.exists(f'{output_bp}_contacts.tsv') is True
-    assert Path(f'{output_bp}_contacts.tsv').stat().st_size != 0
-    assert os.path.exists(f'{output_bp}_heatmap.html') is True
-    assert Path(f'{output_bp}_heatmap.html').stat().st_size != 0
-    Path(f'{output_bp}_contacts.tsv').unlink(missing_ok=False)
-    Path(f'{output_bp}_heatmap.html').unlink(missing_ok=False)
+    for output_ext in contactmap_output_ext:
+        fpath = f'{output_bp}_{output_ext}'
+        assert os.path.exists(fpath) is True
+        assert Path(fpath).stat().st_size != 0
+        Path(fpath).unlink(missing_ok=False)
 
 
-def test_clustercontactmap_run(clustercontactmap):
+def test_clustercontactmap_run(clustercontactmap, contactmap_output_ext):
     """Test ClusteredContactMap run function."""
     # run object
     clustercontactmap.run()
@@ -320,12 +333,11 @@ def test_clustercontactmap_run(clustercontactmap):
     assert clustercontactmap.terminated is True
     # check outputs
     output_bp = clustercontactmap.output
-    assert os.path.exists(f'{output_bp}_contacts.tsv') is True
-    assert Path(f'{output_bp}_contacts.tsv').stat().st_size != 0
-    assert os.path.exists(f'{output_bp}_heatmap.html') is True
-    assert Path(f'{output_bp}_heatmap.html').stat().st_size != 0
-    Path(f'{output_bp}_contacts.tsv').unlink(missing_ok=False)
-    Path(f'{output_bp}_heatmap.html').unlink(missing_ok=False)
+    for output_ext in contactmap_output_ext:
+        fpath = f'{output_bp}_{output_ext}'
+        assert os.path.exists(fpath) is True
+        assert Path(fpath).stat().st_size != 0
+        Path(fpath).unlink(missing_ok=False)
 
 
 def test_write_res_contacts(res_res_contacts):
@@ -394,7 +406,10 @@ def test_min_dist(ref_dist_matrix):
 def test_no_reverse_coloscale():
     """Test non reversed color scale."""
     colorscale = 'color'
-    new_colorscale = datakey_to_colorscale('ratio', color_scale=colorscale)
+    new_colorscale = datakey_to_colorscale(
+        'probability',
+        color_scale=colorscale,
+        )
     assert new_colorscale == colorscale
 
 

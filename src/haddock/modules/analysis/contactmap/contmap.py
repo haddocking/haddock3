@@ -4,6 +4,9 @@ Chord diagram functions were adapted from:
 https://plotly.com/python/v3/filled-chord-diagram/
 """
 
+
+import os
+import glob
 from pathlib import Path
 
 import numpy as np
@@ -21,8 +24,15 @@ from haddock.libs.libpdb import (
     slc_y,
     slc_z,
     )
-from haddock.core.typing import Any, NDFloat, NDArray, Optional, Union
-from haddock.libs.libplots import heatmap_plotly
+from haddock.core.typing import (
+    Any,
+    NDFloat,
+    NDArray,
+    Optional,
+    Union,
+    SupportsRun,
+    )
+from haddock.libs.libplots import heatmap_plotly, fig_to_html
 
 
 ###############################
@@ -50,6 +60,19 @@ RESIDUE_POLARITY = {
     "LYS": "positive",
     "ARG": "positive",
     }
+DNA_RNA_POLARITY = {
+    "A": "negative",
+    "DA": "negative",
+    "T": "negative",
+    "DT": "negative",
+    "U": "negative",
+    "DU": "negative",
+    "C": "negative",
+    "DC": "negative",
+    "G": "negative",
+    "DG": "negative",
+    }
+RESIDUE_POLARITY.update(DNA_RNA_POLARITY)
 
 PI = np.pi
 
@@ -67,11 +90,13 @@ CONNECT_COLORS = {
     "positive-positive": (255, 127, 0),
     }
 # Also add reversed keys order
-reversed_keys_dict = {'-'.join(k.split('-')[::-1]): v
-                      for k, v in CONNECT_COLORS.items()}
-CONNECT_COLORS.update(reversed_keys_dict)
+REVERSED_CONNECT_COLORS_KEYS = {
+    '-'.join(k.split('-')[::-1]): v
+    for k, v in CONNECT_COLORS.items()
+    }
+CONNECT_COLORS.update(REVERSED_CONNECT_COLORS_KEYS)
 
-# Colors for each residue
+# Colors for each amino-acids
 RESIDUES_COLORS = {
     "CYS": "rgba(229, 255, 204, 0.80)",
     "MET": "rgba(229, 255, 204, 0.80)",
@@ -95,7 +120,24 @@ RESIDUES_COLORS = {
     "ARG": "rgba(0, 0, 255, 0.80)",
     }
 
-# Chain colors ( in +- pymol order )
+# Colors for DNA / RNA
+# Note: Based on WebLogo color scheme
+DNARNA_COLORS = {
+    "A": "rgba(51, 204, 51, 0.80)",
+    "T": "rgba(204, 0, 0, 0.80)",
+    "U": "rgba(204, 0, 0, 0.80)",
+    "C": "rgba(51, 102, 255, 0.80)",
+    "G": "rgba(255, 163, 26, 0.80)",
+    }
+FULL_DNARNA_COLORS = {f"D{k}": rgba for k, rgba in DNARNA_COLORS.items()}
+
+# Combine all of them
+AA_DNA_RNA_COLORS = {}
+AA_DNA_RNA_COLORS.update(RESIDUES_COLORS)
+AA_DNA_RNA_COLORS.update(DNARNA_COLORS)
+AA_DNA_RNA_COLORS.update(FULL_DNARNA_COLORS)
+
+# Chain colors
 CHAIN_COLORS = [
     'rgba(51, 255, 51, 0.85)',
     'rgba(51, 153, 255, 0.85)',
@@ -113,13 +155,41 @@ CHAIN_COLORS = CHAIN_COLORS[::-1]
 ##################
 # Define classes #
 ##################
+class ContactsMapJob(SupportsRun):
+    """A Job dedicated to the running of contact maps objects."""
+
+    def __init__(
+            self,
+            output,
+            params,
+            name,
+            contact_obj,
+            ):
+        super(ContactsMapJob, self).__init__()
+        self.params = params
+        self.output = output
+        self.name = name
+        self.contact_obj = contact_obj
+
+    def run(self):
+        """Run this ContactMap Object Job."""
+        self.contact_obj.run()
+        return
+
+
 class ContactsMap():
     """ContactMap analysis for single structure."""
 
-    def __init__(self, model: Path, output: Path, params: dict) -> None:
+    def __init__(
+            self,
+            model: Path,
+            output: Path,
+            params: dict,
+            ) -> None:
         self.model = model
         self.output = output
         self.params = params
+        self.files: dict[str, Union[str, Path]] = {}
 
     def run(self):
         """Process analysis of contacts of a PDB structure."""
@@ -131,10 +201,12 @@ class ContactsMap():
         full_dist_matrix = compute_distance_matrix(all_coords)
 
         res_res_contacts = []
+        all_heavy_interchain_contacts = []
         # First loop over residues
         for ri, reskey_1 in enumerate(resid_keys):
-            # Second loop over residues
+            # Second loop over residues (half matrix only)
             for _rj, reskey_2 in enumerate(resid_keys[ri + 1:], start=ri + 1):
+                # Extract data
                 contact_dt = gen_contact_dt(
                     full_dist_matrix,
                     resid_dt,
@@ -143,171 +215,70 @@ class ContactsMap():
                     )
                 res_res_contacts.append(contact_dt)
 
+                # Extract interchain heavy atoms data
+                if reskey_2.split('-')[0] == reskey_1.split('-')[0]:
+                    continue
+                heavy_atoms_contacts = extract_heavyatom_contacts(
+                    full_dist_matrix,
+                    resid_dt,
+                    reskey_1,
+                    reskey_2,
+                    contact_distance=self.params['shortest_dist_threshold'],
+                    )
+                all_heavy_interchain_contacts += heavy_atoms_contacts
+
         # generate outputs for single models
         if self.params['single_model_analysis']:
-
-            # write contacts
-            header = ['res1', 'res2']
-            header += [
-                v for v in sorted(res_res_contacts[0])
-                if v not in header
-                ]
-            fpath = write_res_contacts(
-                res_res_contacts,
-                header,
-                f'{self.output}_contacts.tsv',
+            self.generate_output(
+                res_res_contacts, all_heavy_interchain_contacts,
                 )
-            log.info(f'Generated contacts file: {fpath}')
 
-            # Genreate corresponding heatmap
-            if self.params['generate_heatmap']:
-                heatmap = tsv_to_heatmap(
-                    fpath,
-                    data_key='ca-ca-dist',
-                    contact_threshold=self.params['ca_ca_dist_threshold'],
-                    colorscale=self.params['color_ramp'],
-                    output_fname=f'{self.output}_heatmap.html',
-                    )
-                log.info(f'Generated single model heatmap file: {heatmap}')
-
-            # Generate corresponding chord chart
-            if self.params['generate_chordchart']:
-                # find theshold type
-                if self.params['chordchart_datatype'] == 'ca-ca-dist':
-                    threshold = self.params['ca_ca_dist_threshold']
-                else:
-                    threshold = self.params['shortest_dist_threshold']
-                chordp = tsv_to_chordchart(
-                    fpath,
-                    data_key=self.params['chordchart_datatype'],
-                    contact_threshold=threshold,
-                    output_fname=f'{self.output}_chordchart.html',
-                    filter_intermolecular_contacts=True,
-                    title="",
-                    )
-                log.info(f'Generated single model chordchart file: {chordp}')
-
-        return res_res_contacts
-
-
-class ClusteredContactMap():
-    """ContactMap analysis for set of clustered structures."""
-
-    def __init__(
+        return res_res_contacts, all_heavy_interchain_contacts
+    
+    def generate_output(
             self,
-            models: list[Path],
-            output: Path,
-            params: dict,
+            res_res_contacts: list[dict],
+            all_heavy_interchain_contacts: list[dict],
             ) -> None:
-        self.models = models
-        self.output = output
-        self.params = params
-        self.terminated = False
+        """Generate several outputs based on contacts.
 
-    def run(self):
-        """Process analysis of contacts of a set of PDB structures."""
-        # initiate holding variables
-        clusters_contacts = {}
-        keys_list = []
-        # loop over models/structures
-        for pdb_path in self.models:
-            # initiate object
-            contact_map_obj = ContactsMap(
-                pdb_path,
-                f'{self.output}_{pdb_path.stem}',
-                self.params,
-                )
-            # Run it
-            pdb_contacts = contact_map_obj.run()
-            # Parse outputs
-            for cont in pdb_contacts:
-                # Check key
-                combined_key = f'{cont["res2"]}/{cont["res1"]}'
-                if combined_key not in clusters_contacts.keys():
-                    combined_key = f'{cont["res1"]}/{cont["res2"]}'
-                    if combined_key not in clusters_contacts.keys():
-                        keys_list.append(combined_key)
-                        clusters_contacts[combined_key] = {
-                            k: []
-                            for k in cont.keys()
-                            if k not in ["res1", "res2"]
-                            }
-                # Add data
-                for dtk in clusters_contacts[combined_key].keys():
-                    clusters_contacts[combined_key][dtk].append(cont[dtk])
-
-        combined_clusters_list = []
-        # Loop over ordered keys
-        for combined_key in keys_list:
-            # point data
-            res1, res2 = combined_key.split('/')
-            dt = clusters_contacts[combined_key]
-
-            # Compute averages Ca-Ca distances
-            avg_ca_ca_dist = np.mean(dt['ca-ca-dist'])
-            # Compute number of time the cluster members holds a value under threshold
-            ca_ca_above_thresh = [
-                v for v in dt['ca-ca-dist']
-                if v <= self.params['ca_ca_dist_threshold']
-                ]
-            ca_ca_cont_ratio = len(ca_ca_above_thresh) / len(dt['ca-ca-dist'])
-
-            # Compute averages for shortest distances
-            avg_shortest = np.mean(dt['shortest-dist'])
-            # Generate list of shortest distances observed between two residues
-            short_ab_t = [
-                v for v in dt['shortest-dist']
-                if v <= self.params['shortest_dist_threshold']
-                ]
-            # Compute number of time the cluster members holds a value under threshold
-            shortest_cont_ratio = len(short_ab_t) / len(dt['shortest-dist'])
-
-            # Find most representative contact type
-            cont_ts = list(set(dt['contact-type']))
-            # Decreasing sorting of cluster contact types and pick highest one
-            cont_t = sorted(
-                cont_ts,
-                key=lambda k: cont_ts.count(k),
-                reverse=True,
-                )[0]
-            # Compute ratio for this contact type to be found
-            cont_t_ratio = cont_ts.count(cont_t) / len(dt['contact-type'])
-
-            # Hold summary data for cluster
-            combined_clusters_list.append({
-                'res1': res1,
-                'res2': res2,
-                'ca-ca-dist': round(avg_ca_ca_dist, 1),
-                'ca-ca-cont-ratio': round(ca_ca_cont_ratio, 2),
-                'shortest-dist': round(avg_shortest, 1),
-                'shortest-cont-ratio': round(shortest_cont_ratio, 2),
-                'contact-type': cont_t,
-                'contact-type-ratio': round(cont_t_ratio, 2),
-                })
-        
-        # write contacts
+        Parameters
+        ----------
+        res_res_contacts : list[dict]
+            List of residue-residue contacts
+        all_heavy_interchain_contacts : list[dict]
+            List of heavy atoms interchain contacts
+        """
+        # write contacts tsv files
         header = ['res1', 'res2']
         header += [
-            v for v in sorted(combined_clusters_list[0])
+            v for v in sorted(res_res_contacts[0])
             if v not in header
             ]
         fpath = write_res_contacts(
-            combined_clusters_list,
+            res_res_contacts,
             header,
             f'{self.output}_contacts.tsv',
+            interchain_data={
+                'path': f'{self.output}_interchain_contacts.tsv',
+                'data_key': 'ca-ca-dist',
+                'contact_threshold': self.params['ca_ca_dist_threshold'],
+                }
             )
         log.info(f'Generated contacts file: {fpath}')
+        self.files['res-res-contacts'] = fpath
 
-        # Generate corresponding heatmap
+        # Genreate corresponding heatmap
         if self.params['generate_heatmap']:
-            heatmap_path = tsv_to_heatmap(
+            heatmap = tsv_to_heatmap(
                 fpath,
-                data_key=self.params['cluster_heatmap_datatype'],
-                contact_threshold=1,
+                data_key='ca-ca-dist',
+                contact_threshold=self.params['ca_ca_dist_threshold'],
                 colorscale=self.params['color_ramp'],
                 output_fname=f'{self.output}_heatmap.html',
                 )
-            log.info(f'Generated cluster contacts heatmap: {heatmap_path}')
+            log.info(f'Generated single model heatmap file: {heatmap}')
+            self.files['res-res-contactmap'] = heatmap
 
         # Generate corresponding chord chart
         if self.params['generate_chordchart']:
@@ -322,11 +293,326 @@ class ClusteredContactMap():
                 contact_threshold=threshold,
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
-                title="",
+                title=Path(self.output).stem.replace('_', ' '),
+                )
+            log.info(f'Generated single model chordchart file: {chordp}')
+            self.files['res-res-chordchart'] = chordp
+
+        # Write interchain heavy atoms contacts tsv file
+        header2 = ['atom1', 'atom2', 'dist']
+        fpath2 = write_res_contacts(
+            all_heavy_interchain_contacts,
+            header2,
+            f'{self.output}_heavyatoms_interchain_contacts.tsv',
+            )
+        log.info(f'Generated contacts file: {fpath2}')
+        self.files['atom-atom-interchain-contacts'] = fpath2
+
+
+class ClusteredContactMap():
+    """ContactMap analysis for set of clustered structures."""
+
+    def __init__(
+            self,
+            models: list[Path],
+            output: Path,
+            params: dict,
+            ) -> None:
+        self.models = models
+        self.output = output
+        self.params = params
+        self.files: dict[str, Union[str, Path]] = {}
+        self.terminated = False
+
+    @staticmethod
+    def aggregate_contacts(
+            contacts_holder: dict,
+            contact_keys: list[str],
+            contacts: list[dict],
+            key1: str,
+            key2: str,
+            ) -> None:
+        """Aggregate single models data belonging to a cluster.
+
+        Parameters
+        ----------
+        contacts_holder : dict
+            Dictionnary holding list of contact data
+        contact_keys : list[str]
+            Order of the keys to access the dictionnary
+        contacts : list[dict]
+            Singel model contact data.
+        key1 : str
+            Name of the key to access first entry in data.
+        key2 : str
+            Name of the key to access second entry in data.
+        """
+        # Parse outputs to aggregate contacts in `clusters_contacts`
+        for cont in contacts:
+            # Check key
+            combined_key = f'{cont[key2]}/{cont[key1]}'  # resversed
+            if combined_key not in contacts_holder.keys():
+                combined_key = f'{cont[key1]}/{cont[key2]}'  # normal
+                if combined_key not in contacts_holder.keys():
+                    # Add key order
+                    contact_keys.append(combined_key)
+                    # Initiate key
+                    contacts_holder[combined_key] = {
+                        k: []
+                        for k in cont.keys()
+                        if k not in [key1, key2]
+                        }
+            # Add data
+            for dtk in contacts_holder[combined_key].keys():
+                contacts_holder[combined_key][dtk].append(cont[dtk])
+
+    def run(self):
+        """Process analysis of contacts of a set of PDB structures."""
+        # initiate holding variables
+        clusters_contacts = {}  # Residue-residue contacts
+        resres_keys_list = []  # Ordered residue-residue contacts keys
+        clusters_heavyatm_contacts = {}  # Interchain atom-atom contacts
+        atat_keys_list = []  # Ordered interchain atom-atom contacts keys
+
+        # loop over models/structures
+        for pdb_path in self.models:
+            # initiate object
+            contact_map_obj = ContactsMap(
+                pdb_path,
+                f'{self.output}_{pdb_path.stem}',
+                self.params,
+                )
+            # Run it
+            pdb_contacts, interchain_heavy_contacts = contact_map_obj.run()
+
+            # Parse outputs to aggregate contacts in `clusters_contacts`
+            self.aggregate_contacts(
+                clusters_contacts, resres_keys_list,
+                pdb_contacts,
+                "res1", "res2",
+                )
+
+            # Parse outputs for heavy atoms contacts
+            self.aggregate_contacts(
+                clusters_heavyatm_contacts, atat_keys_list,
+                interchain_heavy_contacts,
+                "atom1", "atom2",
+                )
+
+        # Initiate heavy atoms contact cluster aggrated data
+        heavy_atm_clust_list = []
+        for atatk in atat_keys_list:
+            at1, at2 = atatk.split('/')
+            # point corresponding list of distances
+            h_dists = clusters_heavyatm_contacts[atatk]['dist']
+            # Summerize it
+            heavy_atm_clust_list.append({
+                "atom1": at1,
+                "atom2": at2,
+                "nb_dists": len(h_dists),
+                "avg_dist": round(np.mean(h_dists), 2),
+                "std_dist": round(np.std(h_dists), 2),
+                })
+        # write contacts
+        header = ['atom1', 'atom2']
+        header += [
+            v for v in sorted(heavy_atm_clust_list[0])
+            if v not in header
+            ]
+        hfpath = write_res_contacts(
+            heavy_atm_clust_list,
+            header,
+            f'{self.output}_heavyatoms_interchain_contacts.tsv',
+            )
+        log.info(f'Generated heavy atoms interchain contacts file: {hfpath}')
+        
+        # Initiate cluster aggregated data holder
+        combined_clusters_list = []
+        # Loop over ordered keys
+        for combined_key in resres_keys_list:
+            # point data
+            dt = clusters_contacts[combined_key]
+
+            # Compute averages Ca-Ca distances
+            avg_ca_ca_dist = np.mean(dt['ca-ca-dist'])
+            # Compute nb. times cluster members holds a value under threshold
+            ca_ca_under_thresh = [
+                v for v in dt['ca-ca-dist']
+                if v <= self.params['ca_ca_dist_threshold']
+                ]
+            nb_under = len(ca_ca_under_thresh)
+            # Compute probability
+            ca_ca_cont_probability = nb_under / len(dt['ca-ca-dist'])
+
+            # Compute averages for shortest distances
+            avg_shortest = np.mean(dt['shortest-dist'])
+            # Generate list of shortest distances observed between two residues
+            short_under_threshold = [
+                v for v in dt['shortest-dist']
+                if v <= self.params['shortest_dist_threshold']
+                ]
+            short_nb_und = len(short_under_threshold)
+            # Compute nb. time the cluster members holds a value under threshold
+            short_cont_proba = short_nb_und / len(dt['shortest-dist'])
+
+            # Find most representative contact type
+            cont_ts = list(set(dt['contact-type']))
+            # Decreasing sorting of cluster contact types and pick highest one
+            cont_t = sorted(
+                cont_ts,
+                key=lambda k: cont_ts.count(k),
+                reverse=True,
+                )[0]
+            # Compute probability for this contact type to be found
+            cont_t_probability = cont_ts.count(cont_t) / len(dt['contact-type'])
+
+            # Split key to recover resiudes names
+            res1, res2 = combined_key.split('/')
+
+            # Hold summary data for cluster
+            combined_clusters_list.append({
+                'res1': res1,
+                'res2': res2,
+                'ca-ca-dist': round(avg_ca_ca_dist, 1),
+                'ca-ca-cont-probability': round(ca_ca_cont_probability, 2),
+                'shortest-dist': round(avg_shortest, 1),
+                'shortest-cont-probability': round(short_cont_proba, 2),
+                'contact-type': cont_t,
+                'contact-type-probability': round(cont_t_probability, 2),
+                })
+        
+        # write contacts
+        header = ['res1', 'res2']
+        header += [
+            v for v in sorted(combined_clusters_list[0])
+            if v not in header
+            ]
+        fpath = write_res_contacts(
+            combined_clusters_list,
+            header,
+            f'{self.output}_contacts.tsv',
+            interchain_data={
+                'path': f'{self.output}_interchain_contacts.tsv',
+                'data_key': 'ca-ca-dist',
+                'contact_threshold': self.params['ca_ca_dist_threshold'],
+                }
+            )
+        log.info(f'Generated contacts file: {fpath}')
+        self.files['res-res-contacts'] = fpath
+        self.files['atom-atom-interchain-contacts'] = f'{self.output}_interchain_contacts.tsv'  # noqa : E501
+
+        # Generate corresponding heatmap
+        if self.params['generate_heatmap']:
+            heatmap_path = tsv_to_heatmap(
+                fpath,
+                data_key=self.params['cluster_heatmap_datatype'],
+                contact_threshold=1,
+                colorscale=self.params['color_ramp'],
+                output_fname=f'{self.output}_heatmap.html',
+                )
+            log.info(f'Generated cluster contacts heatmap: {heatmap_path}')
+            self.files['res-res-contactmap'] = heatmap_path
+
+        # Generate corresponding chord chart
+        if self.params['generate_chordchart']:
+            # find theshold type
+            if self.params['chordchart_datatype'] == 'ca-ca-dist':
+                threshold = self.params['ca_ca_dist_threshold']
+            else:
+                threshold = self.params['shortest_dist_threshold']
+            chordp = tsv_to_chordchart(
+                fpath,
+                data_key=self.params['chordchart_datatype'],
+                contact_threshold=threshold,
+                output_fname=f'{self.output}_chordchart.html',
+                filter_intermolecular_contacts=True,
+                title=Path(self.output).stem.replace('_', ' '),
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
+            self.files['res-res-chordchart'] = chordp
 
         self.terminated = True
+
+
+def make_contactmap_report(
+        contactmap_jobs: list[ContactsMapJob],
+        outputpath: Union[str, Path],
+        ) -> Union[str, Path]:
+    """Generate a HTML navigation page holding all generated files.
+
+    Parameters
+    ----------
+    contact_jobs : list[Union[ClusteredContactMap, ContactsMap]]
+        All the terminated jobs
+    outputpath : Union[str, Path]
+        Output filepath where to write the report.
+
+    Returns
+    -------
+    outputpath: Union[str, Path]
+        Path to the generated report.
+    """
+    ordered_files = []
+    # Loop over terminated jobs
+    for job in contactmap_jobs:
+        basepath = f"{job.output}_"
+        # Gather all files generated by this job
+        job_files = glob.glob(f"{basepath}*")
+
+        # Sort them by file extension
+        ext_names: dict[str, Union[str, Path]] = {}
+        for fpath in job_files:
+            _fname, ext = os.path.splitext(fpath)
+            if ext not in ext_names.keys():
+                ext_names[ext] = []
+            ext_names[ext].append(fpath)
+        # Sort each keys filepaths
+        for ext in ext_names.keys():
+            ext_names[ext] = sorted(
+                ext_names[ext],
+                key=lambda k: k.replace(basepath, ""),
+                )
+        # Get final list order
+        sorted_jobfiles = [
+            fpath
+            for ext in sorted(ext_names)
+            for fpath in ext_names[ext]
+            ]
+
+        # Initiate html links holding list
+        job_list: list[str] = []
+        # Loop over generated files
+        for fpath in sorted_jobfiles:
+            # Generate html link
+            shortname = fpath.replace(basepath, "")
+            html_string = f'<a href="{fpath}" target="_blank">{shortname}</a>'
+            job_list.append(html_string)
+        # Combine all links in one string
+        job_list_combined = ', '.join(job_list)
+        # Create final string
+        job_access = f"<b>{job.name}:</b> {job_list_combined}"
+        # Hold that guy
+        ordered_files.append(job_access)
+
+    # Combine all jobs outputs as a list
+    all_access = '</li>\n            <li>'.join(ordered_files)
+    # Generate small html file
+    htmldt = f"""
+    <div id="contactmap_report">
+        <ul>
+            <li>
+            {all_access}
+            </li>
+        </ul>
+    </div>
+"""
+
+    # Write it
+    with open(outputpath, 'w') as reportout:
+        reportout.write(htmldt)
+    log.info(f'Generated report file: {outputpath}')
+    # Return generate outputfilepath
+    return outputpath
 
 
 def get_clusters_sets(models: list[PDBFile]) -> dict:
@@ -499,6 +785,7 @@ def get_ordered_coords(
             resdt = {
                 'atoms_indices': [],
                 'resname': resname,
+                'atoms_order': pdb_chains[chainid][resid]['atoms_order'],
                 }
             # Loop over atoms of this residue
             for atname in pdb_chains[chainid][resid]['atoms_order']:
@@ -507,7 +794,7 @@ def get_ordered_coords(
                 # index of a CA
                 if atname == 'CA':
                     resdt['CA'] = i
-                # Point atome cooct_submatrixrdinate
+                # Point atome submatrix coordinates index
                 all_coords.append(pdb_chains[chainid][resid]['atoms'][atname])
                 # increment atom index
                 i += 1
@@ -617,6 +904,58 @@ def gen_contact_dt(
     return cont_dt
 
 
+def extract_heavyatom_contacts(
+        matrix: NDFloat,
+        resdt: dict,
+        res1_key: str,
+        res2_key: str,
+        contact_distance: float = 4.5,
+        ) -> list[dict[str, Union[float, str]]]:
+    """Generate contacts data.
+
+    Parameters
+    ----------
+    matrix : NDFloat
+        The distance matrix.
+    resdt : dict
+        Residues data with atom indices as returned by `get_ordered_coords()`.
+    res1_key : str
+        First residue of interest.
+    res2_key : str
+        Second residue of interest.
+    contact_distance : float
+        Distance defining a contact.
+
+    Return
+    ------
+    all_contacts : list[dict[str, Union[float, str]]]
+        List holding contact data
+    """
+    all_contacts: list[dict[str, Union[float, str]]] = []
+    # point data for first residue
+    res1_indices = resdt[res1_key]['atoms_indices']
+    res1_atnames = resdt[res1_key]['atoms_order']
+    # point data for second residue
+    res2_indices = resdt[res2_key]['atoms_indices']
+    res2_atnames = resdt[res2_key]['atoms_order']
+    # Loop over res1 atoms / indices
+    for r1_atname, r1_atindex in zip(res1_atnames, res1_indices):
+        # Loop over res2 atoms / indices
+        for r2_atname, r2_atindex in zip(res2_atnames, res2_indices):
+            # Point corresponding distance in matrix
+            r1_r2_dist = matrix[r1_atindex, r2_atindex]
+            # Check if distance <= threshold
+            if r1_r2_dist <= contact_distance:
+                # Hold data
+                contactdt = {
+                    'atom1': f'{res1_key}-{r1_atname}',
+                    'atom2': f'{res2_key}-{r2_atname}',
+                    'dist': r1_r2_dist,
+                    }
+                all_contacts.append(contactdt)
+    return all_contacts
+
+
 def get_cont_type(resn1: str, resn2: str) -> str:
     """Generate polarity key between two residues.
 
@@ -634,8 +973,8 @@ def get_cont_type(resn1: str, resn2: str) -> str:
     """
     pol_keys: list[str] = []
     for resn in [resn1, resn2]:
-        if resn in RESIDUE_POLARITY.keys():
-            pol_keys.append(RESIDUE_POLARITY[resn])
+        if resn.strip() in RESIDUE_POLARITY.keys():
+            pol_keys.append(RESIDUE_POLARITY[resn.strip()])
         else:
             pol_keys.append('unknow')
     pol_key = '-'.join(pol_keys)
@@ -650,8 +989,9 @@ def min_dist(matrix: NDFloat) -> float:
 def write_res_contacts(
         res_res_contacts: list[dict],
         header: list[str],
-        path: Path,
+        path: Union[Path, str],
         sep: str = '\t',
+        interchain_data: Union[bool, dict] = None,
         ) -> Path:
     """Write a tsv file based on residues-residues contacts data.
 
@@ -671,22 +1011,45 @@ def write_res_contacts(
     path : Path
         Path to the generated file.
     """
-    # define readme data type content
+    # define README data type content
     dttype_info = {
         'res1': 'Chain-Resname-ResID key identifying first residue',
         'res2': 'Chain-Resname-ResID key identifying second residue',
         'ca-ca-dist': 'observed distances between the two Ca',
-        'ca-ca-cont-ratio': 'ratio of times the ca-ca-dist was observed under threshold',  # noqa : E501
+        'ca-ca-cont-probability': 'probability to observe ca-ca-dist under threshold in cluster',  # noqa : E501
         'shortest-dist': 'observed shortest distance between the two residues',
-        'shortest-cont-ratio': 'ratio of times the shortest distance was observed under threshold',  # noqa : E501
+        'shortest-cont-probability': 'probability to observe the shortest distance under threshold in cluster',  # noqa : E501
         'contact-type': 'type of contacts between the two residues',
-        'contact-type-ratio': 'ratio of times the type of contacts between the two residues is observed',  # noqa : E501
+        'contact-type-probability': 'probability of times the type of contacts between the two residues is observed',  # noqa : E501
+        'atom1': 'Chain-Resname-ResID-Atome key identifying first atom',
+        'atom2': 'Chain-Resname-ResID-Atome key identifying second atom',
+        'dist': 'Observed distance between two atoms',
+        'nb_dists': "Total number of observed distances",
+        'avg_dist': "Cluster average distance",
+        'std_dist': "Cluster standard deviation distance",
         }
 
+    # Check for inter chain contacts
+    gen_interchain_tsv: bool = False
+    if interchain_data and type(interchain_data) == dict:
+        expected_keys = ('path', 'contact_threshold', 'data_key', )
+        if all([k in interchain_data.keys() for k in expected_keys]):
+            gen_interchain_tsv = True
+            interchain_tsvdt: list[list[str]] = [header]
+        else:
+            raise KeyError
+
     # initiate file content
-    tsvdt = [header]
+    tsvdt: list[list[str]] = [header]
     for res_res_cont in res_res_contacts:
         tsvdt.append([str(res_res_cont[h]) for h in header])
+        if gen_interchain_tsv:
+            chain1 = res_res_cont['res1'].split('-')[0]
+            chain2 = res_res_cont['res2'].split('-')[0]
+            if chain1 != chain2:
+                dist = res_res_cont[interchain_data['data_key']]
+                if dist < interchain_data['contact_threshold']:
+                    interchain_tsvdt.append(tsvdt[-1])
     tsv_str = '\n'.join([sep.join(_) for _ in tsvdt])
 
     # generate commented lines to be placed on top of file
@@ -704,6 +1067,19 @@ def write_res_contacts(
         tsvout.write('\n'.join(readme))
         tsvout.write(tsv_str)
 
+    # Write inter chain file
+    if gen_interchain_tsv:
+        # Modify readme
+        readme[1] = readme[1].replace(
+            'contacts half-matrix',
+            'interchain contacts',
+            )
+        # Write file
+        with open(interchain_data['path'], 'w') as f:
+            f.write('\n'.join(readme))
+            # Write data string
+            f.write('\n'.join([sep.join(_) for _ in interchain_tsvdt]))
+
     return path
 
 
@@ -714,7 +1090,7 @@ def tsv_to_heatmap(
         contact_threshold: float = 7.5,
         colorscale: str = 'Greys',
         output_fname: Union[Path, str] = 'contacts.html',
-        ) -> None:
+        ) -> Union[Path, str]:
     """Read a tsv file and generate a heatmap from it.
 
     Paramters
@@ -730,6 +1106,11 @@ def tsv_to_heatmap(
          any value above it will be set to this value.
     output_fname : Path
         Path to the generated graph.
+
+    Return
+    ------
+    output_filepath : Union[Path, str]
+        Path to the generated file.
     """
     half_matrix: list[float] = []
     labels: list[str] = []
@@ -766,8 +1147,8 @@ def tsv_to_heatmap(
 
     # set data label
     color_scale = datakey_to_colorscale(data_key, color_scale=colorscale)
-    if 'ratio' in data_key:
-        data_label = 'ratio'
+    if 'probability' in data_key:
+        data_label = 'probability'
         np.fill_diagonal(matrix, 1)
     else:
         data_label = 'distance'
@@ -798,12 +1179,12 @@ def datakey_to_colorscale(data_key: str, color_scale: str = 'Greys') -> str:
     color_scale : str
         Possibly the reverse name of the color_scale.
     """
-    return f'{color_scale}_r' if 'ratio' not in data_key else color_scale
+    return f'{color_scale}_r' if 'probability' not in data_key else color_scale
 
 
-#############
-# Start of the chord chart functions
-#############
+######################################
+# Start of the chord chart functions #
+######################################
 def moduloAB(val: float, lb: float, ub: float) -> float:
     """Map a real number onto the unit circle.
 
@@ -863,7 +1244,10 @@ def check_square_matrix(data_matrix: NDArray) -> int:
     return nb_rows
 
 
-def get_ideogram_ends(ideogram_len: NDFloat, gap: float) -> list[tuple[float, float]]:
+def get_ideogram_ends(
+        ideogram_len: NDFloat,
+        gap: float,
+        ) -> list[tuple[float, float]]:
     """Generate ideogram ends.
 
     Paramaters
@@ -1151,10 +1535,11 @@ def make_layout(
         title=title,
         xaxis=axis,
         yaxis=axis,
-        showlegend=False,
-        width=plot_size,
+        showlegend=True,  # Important to show legend
+        # legend={'font': {'size': 10}},  # Lower font size
+        width=plot_size + 150,  # +150 to accomodate legend / keep circle round
         height=plot_size,
-        margin=dict(t=25, b=25, l=25, r=25),
+        margin={"t": 25, "b": 25, "l": 25, "r": 25},
         hovermode='closest',
         shapes=layout_shapes,
         )
@@ -1432,10 +1817,10 @@ def to_color_weight(
     """
     # Scale dist into minimum
     dist = max(distance, min_dist)
-    # Compute ratio
-    ratio_dist = (dist - min_dist) / (max_dist - min_dist)
+    # Compute probability
+    probability_dist = (dist - min_dist) / (max_dist - min_dist)
     # Obtain corresponding weight
-    weight = ((min_weight - max_weight) * ratio_dist) + max_weight
+    weight = ((min_weight - max_weight) * probability_dist) + max_weight
     # Return rounded value of weight
     return round(weight, 2)
 
@@ -1455,7 +1840,7 @@ def to_rgba_color_string(
 
     Returns
     -------
-    str
+    rgba_color : str
         The html like rgba colors. e.g.: 'rgba(123, 123, 123, 0.5)'
     """
     colors_str = ",".join([str(v) for v in connect_color])
@@ -1553,7 +1938,6 @@ def make_chordchart(
     ribbon_info: list[go.Scatter] = []
     # Loop over entries
     for k, label1 in enumerate(labels):
-
         sigma = idx_sort[k]
         sigma_inv = invPerm(sigma)
         # Half matrix loop to avoid duplicates
@@ -1567,8 +1951,8 @@ def make_chordchart(
                 connect_color = CONNECT_COLORS[interttype_matrix[k][j]]
             except KeyError:
                 connect_color = (123, 123, 123)
-            color_weith = to_color_weight(dist_matrix[k][j], 9.5)
-            rgba_color = to_rgba_color_string(connect_color, color_weith)
+            color_weight = to_color_weight(dist_matrix[k][j], 9.5)
+            rgba_color = to_rgba_color_string(connect_color, color_weight)
 
             # Point ribbons data
             side1 = ribbon_ends[k][sigma_inv[j]]
@@ -1600,6 +1984,7 @@ def make_chordchart(
                         marker={"size": 0.5, "color": rgba_color},
                         text=text,
                         hoverinfo='text',
+                        showlegend=False,
                         )
                     )
             # Note: must reverse these arc ends to avoid twisted ribbon
@@ -1625,7 +2010,7 @@ def make_chordchart(
 
         # Point corresponding color
         try:
-            rescolor = RESIDUES_COLORS[resname]
+            rescolor = AA_DNA_RNA_COLORS[resname.strip()]
         except KeyError:
             rescolor = 'rgba(123, 123, 123, 0.7)'
 
@@ -1650,6 +2035,7 @@ def make_chordchart(
                     },
                 text=text_info,
                 hoverinfo='text',
+                showlegend=False,
                 )
             )
 
@@ -1689,6 +2075,7 @@ def make_chordchart(
                     },
                 text=f'Chain {chainid}',
                 hoverinfo='text',
+                showlegend=False,
                 )
             )
 
@@ -1721,9 +2108,118 @@ def make_chordchart(
     fig.update_layout(
         plot_bgcolor='white',
         )
+    # Add legend(s)
+    add_chordchart_legends(fig)
     # Write it as html file
-    fig.write_html(output_fpath)
+    fig_to_html(
+        fig,
+        output_fpath,
+        figure_height=fig_size,
+        figure_width=fig_size,
+        )
     return output_fpath
+
+
+def add_chordchart_legends(fig: go.Figure) -> None:
+    """Add custom legend to chordchart.
+
+    Parameters
+    ----------
+    fig : go.Figure
+        A plotly figure.
+    """
+    # Add connection types legends
+    for key_key, color in REVERSED_CONNECT_COLORS_KEYS.items():
+        # Create dummy traces
+        fig.add_trace(
+            go.Scatter(
+                x=[None],
+                y=[None],
+                legendgroup="connect_color",
+                legendgrouptitle_text="Interaction types",
+                showlegend=True,
+                name=key_key.replace('-', '&#8621;'),
+                mode="lines",
+                marker={
+                    "color": to_rgba_color_string(color, 0.75),
+                    "size": 10,
+                    "symbol": "line-ew-open",
+                    },
+                )
+            )
+    # Add unknown interaction type
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            legendgroup="connect_color",
+            legendgrouptitle_text="Interaction types",
+            showlegend=True,
+            name="Unknown",
+            mode="lines",
+            marker={
+                "color": to_rgba_color_string((111, 111, 111), 0.75),
+                "size": 10,
+                "symbol": "line-ew-open",
+                },
+            )
+        )
+
+    # Add aa types legend
+    for aa, rgba_color in RESIDUES_COLORS.items():
+        # Create dummy traces
+        fig.add_trace(
+            go.Scatter(
+                x=[None],
+                y=[None],
+                legendgroup="aa_color",
+                legendgrouptitle_text="Residues/Bases",
+                showlegend=True,
+                name=aa,
+                mode="lines",
+                marker={
+                    "color": rgba_color,
+                    "size": 10,
+                    "symbol": "line-ew-open",
+                    },
+                )
+            )
+    # Add nucleobases legend
+    for na, rgba_color in DNARNA_COLORS.items():
+        # Create dummy traces
+        fig.add_trace(
+            go.Scatter(
+                x=[None],
+                y=[None],
+                legendgroup="aa_color",
+                legendgrouptitle_text="Residues/Bases",
+                showlegend=True,
+                name=na,
+                mode="lines",
+                marker={
+                    "color": rgba_color,
+                    "size": 10,
+                    "symbol": "line-ew-open",
+                    },
+                )
+            )
+    # Add unknown type
+    fig.add_trace(
+        go.Scatter(
+            x=[None],
+            y=[None],
+            legendgroup="aa_color",
+            legendgrouptitle_text="Residues/Bases",
+            showlegend=True,
+            name="Unknown",
+            mode="lines",
+            marker={
+                "color": to_rgba_color_string((111, 111, 111), 0.75),
+                "size": 10,
+                "symbol": "line-ew-open",
+                },
+            )
+        )
 
 
 def tsv_to_chordchart(
@@ -1734,7 +2230,7 @@ def tsv_to_chordchart(
         filter_intermolecular_contacts: bool = True,
         output_fname: Union[Path, str] = 'contacts_chordchart.html',
         title: str = 'Chord diagram',
-        ) -> None:
+        ) -> Union[Path, str]:
     """Read a tsv file and generate a chord diagram from it.
 
     Paramters
@@ -1750,6 +2246,8 @@ def tsv_to_chordchart(
          any value above it will be set to this value.
     output_fname : Union[Path, str]
         Path where to generate the graph.
+    title : str
+        Title to give to the Chord diagram
 
     Return
     ------

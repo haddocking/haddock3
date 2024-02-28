@@ -215,10 +215,11 @@ class HaddockModule(BaseHaddockModule):
             tot_npairs,
             ncores)
         
-            
+        rec_traj_filename = "traj_rec.xyz"
+        lig_traj_filename = "traj_lig.xyz"
         prev_keys = []
-        with open("traj_rec.xyz", "w") as rec_traj_xyz:
-            with open("traj_lig.xyz", "w") as lig_traj_xyz:
+        with open(rec_traj_filename, "w") as rec_traj_xyz:
+            with open(lig_traj_filename, "w") as lig_traj_xyz:
                 for mod in models:
                     atoms = {}
                     atoms.update(get_atoms(mod))
@@ -254,7 +255,7 @@ class HaddockModule(BaseHaddockModule):
             job_f = Path(output_name)
             # init RMSDJob
             job = RMSDJob(
-                "traj_rec.xyz",
+                rec_traj_filename,
                 output_name,
                 rmsdmatrix_executable,
                 f"{core} ",
@@ -263,7 +264,7 @@ class HaddockModule(BaseHaddockModule):
                 f"{mod_structs[core]}",
                 f"{len(models)}",
                 f"{n_rec_atoms}",
-                "traj_lig.xyz",
+                lig_traj_filename,
                 f"{n_lig_atoms}",
                 )
             ilrmsd_jobs.append(job)
@@ -296,6 +297,9 @@ class HaddockModule(BaseHaddockModule):
             path=Path("."),
             ncores=ncores
             )
+        # Delete the trajectory files
+        os.remove(rec_traj_filename)
+        os.remove(lig_traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models

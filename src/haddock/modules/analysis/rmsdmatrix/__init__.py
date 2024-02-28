@@ -129,7 +129,8 @@ class HaddockModule(BaseHaddockModule):
         # create prev_keys to check if the keys of the ref_coord_dic
         # are the same for all the models
         prev_keys : list[str] = []
-        with open("traj.xyz", "w") as traj_xyz:
+        traj_filename = "traj.xyz"
+        with open(traj_filename, "w") as traj_xyz:
             for mod in models:
                 atoms = {}
                 atoms.update(get_atoms(mod))
@@ -163,7 +164,7 @@ class HaddockModule(BaseHaddockModule):
             output_name = Path("rmsd_" + str(core) + ".out")
             # init RMSDJobFast
             job = RMSDJob(
-                "traj.xyz",
+                traj_filename,
                 output_name,
                 rmsdmatrix_executable,
                 f"{core}",
@@ -205,6 +206,8 @@ class HaddockModule(BaseHaddockModule):
             path=Path("."),
             ncores=ncores
             )
+        # Delete the trajectory file
+        os.remove(traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models

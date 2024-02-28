@@ -31,12 +31,12 @@ chordchart_datatype
 cluster_heatmap_datatype
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-| *default*: 'shortest-cont-ratio'
+| *default*: 'shortest-cont-probability'
 | *type*: string
 | *title*: Type of data to be used in the heatmap.
-| *choices*: ['ca-ca-dist', 'ca-ca-cont-ratio', 'shortest-dist', 'shortest-cont-ratio']
+| *choices*: ['ca-ca-dist', 'ca-ca-cont-probability', 'shortest-dist', 'shortest-cont-probability']
 | *short description*: Type of data to be used in the heatmap.
-| *long description*: ca-ca-dist and shortest-dist are averages distances observed in cluster. While ca-ca-cont-ratio and shortest-cont-ratio are ratio of the distances to be observed under their respective thresholds.
+| *long description*: ca-ca-dist & shortest-dist are averages distances observed in cluster. ca-ca-cont-probability & shortest-cont-probability are probability of the distances to be observed under their respective thresholds.
 | *group*: analysis
 | *explevel*: easy
 

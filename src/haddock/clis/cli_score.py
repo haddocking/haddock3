@@ -172,7 +172,7 @@ def main(
             sys.exit(
                 f"* ERROR * Parameter {param!r} is not a "
                 f"valid `emscoring` parameter.{os.linesep}"
-                f"Valid emscoring parameters are: {list(default_emscoring.keys())}"
+                f"Valid emscoring parameters are: {', '.join(sorted(default_emscoring))}"
                 )
         if value != default_emscoring[param]:
             print(

@@ -166,12 +166,12 @@ class HaddockModule(BaseHaddockModule):
                 traj_filename,
                 output_name,
                 rmsdmatrix_executable,
-                f"{core}",
-                f"{npairs[core]}",
-                f"{ref_structs[core]}",
-                f"{mod_structs[core]}",
-                f"{len(models)}",
-                f"{n_atoms}",
+                core,
+                npairs[core],
+                ref_structs[core],
+                mod_structs[core],
+                len(models),
+                n_atoms,
                 )
             rmsd_jobs.append(job)
 

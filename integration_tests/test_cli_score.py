@@ -40,7 +40,7 @@ def test_cli_score():
         with redirect_stdout(f):
             cli_score.main(pdb_f, tmpdir, full=True, keep_all=False, **kwargs_dict)
         out = f.getvalue().split(os.linesep)
-        print(out)
+        
         assert out[0].startswith("* ATTENTION * Value (False) of parameter elecflag different from default")
         assert out[1].startswith("* ATTENTION * Value (2.0) of parameter epsilon different from default")
         assert out[2].startswith("* ATTENTION * Value (100) of parameter nemsteps different from default")

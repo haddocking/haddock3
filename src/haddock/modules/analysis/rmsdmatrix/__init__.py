@@ -30,7 +30,7 @@ from pathlib import Path
 import os
 
 from haddock import log, RMSD_path
-from haddock.core.typing import Any, FilePath
+from haddock.core.typing import Any, AtomsDict, FilePath
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libutil import parse_ncores

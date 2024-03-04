@@ -24,6 +24,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log, RMSD_path
+from haddock.core.typing import AtomsDict
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
@@ -36,6 +37,7 @@ from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     ContactJob,
     )
 from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher, RMSDJob
+
 
 
 RECIPE_PATH = Path(__file__).resolve().parent

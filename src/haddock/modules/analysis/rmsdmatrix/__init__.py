@@ -132,8 +132,7 @@ class HaddockModule(BaseHaddockModule):
         traj_filename = "traj.xyz"
         with open(traj_filename, "w") as traj_xyz:
             for mod in models:
-                atoms = {}
-                atoms.update(get_atoms(mod))
+                atoms: AtomsDict = get_atoms(mod)
                 
                 filter_resdic = {
                     key[-1]: value for key, value

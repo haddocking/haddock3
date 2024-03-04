@@ -221,8 +221,7 @@ class HaddockModule(BaseHaddockModule):
         with open(rec_traj_filename, "w") as rec_traj_xyz:
             with open(lig_traj_filename, "w") as lig_traj_xyz:
                 for mod in models:
-                    atoms = {}
-                    atoms.update(get_atoms(mod))
+                    atoms: AtomsDict = get_atoms(mod)
                     ref_coord_dic, _ = load_coords(
                     mod, atoms, res_resdic
                     )

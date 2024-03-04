@@ -53,7 +53,7 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls) -> None:
-        """Confirm if FCC is installed and available."""
+        """Confirm if fast-rmsdmatrix is installed and available."""
         dcfg = read_from_yaml_config(DEFAULT_CONFIG)
         exec_path = Path(RMSD_path, dcfg["executable"])
 

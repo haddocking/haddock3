@@ -239,9 +239,9 @@ class HaddockModule(BaseHaddockModule):
                     n_lig_atoms = len(lig_coords)
                     rec_traj_xyz.write(f"{n_rec_atoms}{os.linesep}{os.linesep}")
                     lig_traj_xyz.write(f"{n_lig_atoms}{os.linesep}{os.linesep}")
-                    for k, v in rec_coords.items():
+                    for v in rec_coords.values():
                         rec_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                    for k, v in lig_coords.items():
+                    for v in lig_coords.values():
                         lig_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
                     
                     prev_keys = ref_coord_dic.keys()

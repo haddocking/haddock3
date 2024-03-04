@@ -1168,12 +1168,23 @@ def heatmap_plotly(
         )
     # Place X axis on top
     fig.update_xaxes(side="top")
+
+    # Compute pixels
+    nb_entries = matrix.shape[0]
+    scaled_log = int(np.log(nb_entries)) * 200
+    lower_bound = max(scaled_log, 1000)
+    uppder_bound = min(lower_bound, 2000)
+    # Set hight and width
+    height = uppder_bound
+    # Increment width for legend space
+    width = height + 70
+
     # Save figure as html file
     export_plotly_figure(
         fig,
         output_fname,
-        figure_height=2000,
-        figure_width=2000,
+        figure_height=height,
+        figure_width=width,
         )
 
     return output_fname

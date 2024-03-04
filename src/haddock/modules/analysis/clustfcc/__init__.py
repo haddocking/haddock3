@@ -184,7 +184,7 @@ class HaddockModule(BaseHaddockModule):
                 final_order_idx.append(models_to_clust.index(pdb))
                 labels.append(pdb.file_name.replace('.pdb', ''))
             # Define output filename
-            html_matrix_basepath = 'fccmatrix'
+            html_matrix_basepath = 'fcc_matrix'
             # Plot matrix
             html_matrixpath = plot_cluster_matrix(
                 fcc_matrix_f,

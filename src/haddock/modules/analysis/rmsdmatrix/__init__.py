@@ -129,7 +129,7 @@ class HaddockModule(BaseHaddockModule):
         # create prev_keys to check if the keys of the ref_coord_dic
         # are the same for all the models
         prev_keys : list[str] = []
-        traj_filename = "traj.xyz"
+        traj_filename = Path("traj.xyz")
         with open(traj_filename, "w") as traj_xyz:
             for mod in models:
                 atoms: AtomsDict = get_atoms(mod)
@@ -206,7 +206,8 @@ class HaddockModule(BaseHaddockModule):
             ncores=ncores
             )
         # Delete the trajectory file
-        os.remove(traj_filename)
+        if traj_filename.exists():
+            os.unlink(traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models

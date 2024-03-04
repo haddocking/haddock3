@@ -217,8 +217,8 @@ class HaddockModule(BaseHaddockModule):
             tot_npairs,
             ncores)
         
-        rec_traj_filename = "traj_rec.xyz"
-        lig_traj_filename = "traj_lig.xyz"
+        rec_traj_filename = Path("traj_rec.xyz")
+        lig_traj_filename = Path("traj_lig.xyz")
         prev_keys = []
         with open(rec_traj_filename, "w") as rec_traj_xyz:
             with open(lig_traj_filename, "w") as lig_traj_xyz:
@@ -299,8 +299,10 @@ class HaddockModule(BaseHaddockModule):
             ncores=ncores
             )
         # Delete the trajectory files
-        os.remove(rec_traj_filename)
-        os.remove(lig_traj_filename)
+        if rec_traj_filename.exists():
+            os.unlink(rec_traj_filename)
+        if lig_traj_filename.exists():
+            os.unlink(lig_traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models

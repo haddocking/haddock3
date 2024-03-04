@@ -1,19 +1,19 @@
 """
 ilRMSD matrix module.
 
-This module calculates of the interface-ligand RMSD (ilRMSD) matrix between all 
+This module calculates of the interface-ligand RMSD (ilRMSD) matrix between all
 the models generated in the previous step.
 
 As all the pairwise ilRMSD calculations are independent, the module distributes
 them over all the available cores in an optimal way.
 
 Once created, the ilRMSD matrix is saved in text form in the current
-`ilrmsdmatrix` folder. The path to this file is then shared with the following 
+`ilrmsdmatrix` folder. The path to this file is then shared with the following
 step of the workflow by means of the json file `rmsd_matrix.json`.
 
-IMPORTANT: the module assumes coherent numbering for all the receptor and ligand chains,
-as no alignment is performed. The user must ensure that the
-numbering is coherent.
+IMPORTANT: the module assumes coherent numbering for all the receptor and ligand
+chains, as no alignment is performed. The user must ensure that the numbering
+is coherent.
 """
 import os
 from pathlib import Path
@@ -22,7 +22,7 @@ import numpy as np
 
 from haddock import log
 from haddock.libs.libontology import ModuleIO, RMSDFile
-from haddock.libs.libparallel import Scheduler, get_index_list
+from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
@@ -140,7 +140,7 @@ class HaddockModule(BaseHaddockModule):
         
         if nmodels > self.params['max_models']:
             # too many input models : ilRMSD matrix would be too big => Abort!
-            raise Exception(f"Too many models ({nmodels} > {self.params['max_models']}) for ilRMSD matrix calculation")
+            raise Exception(f"Too many models ({nmodels} > {self.params['max_models']}) for ilRMSD matrix calculation")  # noqa : E501
 
         # Find the common residues making contacts for the receptor and ligand.
         index_list = get_index_list(nmodels, ncores)

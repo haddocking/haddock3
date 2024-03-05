@@ -23,7 +23,7 @@ Go to the **haddock3** directory
 cd haddock3
 ```
 
-and type the following commands to first install the [FCC]() source code provided
+and type the following commands to first install the [FCC](https://github.com/haddocking/fcc) source code provided
 
 ```bash
 cd src/fcc/src
@@ -32,7 +32,7 @@ make
 cd -
 ```
 
-Then, follow the same logic to install the [fast-rmsdmatrix] source code
+Then, follow the same logic to install the [fast-rmsdmatrix](https://github.com/mgiulini/fast-rmsdmatrix) source code
 
 ```bash
 cd src/fast-rmsdmatrix/src

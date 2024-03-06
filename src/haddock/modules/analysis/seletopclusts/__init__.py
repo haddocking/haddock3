@@ -57,7 +57,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Make model selection
         selected_models, _notes = select_top_clusts_models(
-            self.params["method"],
+            self.params["sortby"],
             models_to_select,
             self.params["top_cluster"],
             self.params["top_models"],

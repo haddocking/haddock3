@@ -28,6 +28,6 @@ method:
     - size
   title: Method used to define `best cluster`.
   short: Best cluster can be defined based either on cluster models scores, or on cluster size. By default, 'score' is selected.
-  long: For cluster models scores, models scores are averaged giving the cluster rank and clusters are ordered according to their rank. For clustering by cluster size, biggest cluster size corresponds to higher rank. By default, 'score' is selected.
+  long: if the selection is done by 'score' the average score of the top (4) models of each cluster is used to define the cluster rank. When clustering by 'size', a bigger cluster size corresponds to a higher rank. By default, 'score' is selected.
   group: analysis
   explevel: easy

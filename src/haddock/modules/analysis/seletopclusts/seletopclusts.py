@@ -8,7 +8,7 @@ from haddock.libs.libontology import PDBFile
 
 
 def select_top_clusts_models(
-        x: str,
+        sortby: str,
         models_to_select: list[PDBFile],
         top_clusters: int,
         top_models: Union[int, float],
@@ -17,7 +17,7 @@ def select_top_clusts_models(
 
     Parameters
     ----------
-    x : str
+    sortby : str
         How to order clusters: by `score` or by `size`.
     models_to_select : list[PDBFile]
         List of input models on which selection must be performed.
@@ -37,7 +37,7 @@ def select_top_clusts_models(
     by_clusters = map_clusters_models(models_to_select)
 
     # Get cluster order
-    if x == "size":
+    if sortby == "size":
         cluster_rankings = size_clust_order(by_clusters)
     else:
         cluster_rankings = rank_clust_order(by_clusters)

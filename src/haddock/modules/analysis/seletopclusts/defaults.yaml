@@ -18,7 +18,7 @@ top_models:
   long: Number of best-ranked models to select per cluster. By default, 10 models are selected. If one expects to find many clusters (e.g., in the case of vague restraints), this number can be reduced to speed up the protocol. Instead, if few clusters are expected (very specific and localized restraints) this number can be increased.
   group: analysis
   explevel: easy
-method:
+sortby:
   default: score
   type: string
   minchars: 2

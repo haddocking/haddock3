@@ -2,11 +2,14 @@
 from pathlib import Path
 import pytest
 import tempfile
+import os
+import logging
 
 from haddock.clis.restraints.active_passive_to_ambig import actpass_to_ambig, parse_actpass_file
 from haddock.clis.restraints.validate_tbl import validate_tbl
 from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.clis.restraints.restrain_bodies import restrain_bodies
+from haddock.clis.restraints.calc_accessibility import calc_accessibility
 
 from . import golden_data
 from tests.test_module_caprieval import protdna_input_list
@@ -26,12 +29,6 @@ def example_tbl_file():
 
 @pytest.fixture
 def example_pdb_file():
-    """Provide example pdb filename."""
-    return Path(golden_data, "protein.pdb")
-
-
-@pytest.fixture
-def example_protdna_file():
     """Provide example pdb filename."""
     return Path(golden_data, "protein.pdb")
 
@@ -118,3 +115,16 @@ def test_restrain_bodies_exclude(protdna_input_list, capsys):
     captured = capsys.readouterr()
     out_lines = captured.out.split("\n")
     assert out_lines[0] == "assign (segid B and resi 6 and name P) (segid B and resi 35 and name P) 15.187 0.0 0.0"
+
+def test_calc_accessibility(protdna_input_list, caplog):
+    """Test calc_accessibility function."""
+    caplog.set_level(logging.INFO)
+    calc_accessibility(str(protdna_input_list[0].rel_path))
+    assert caplog.messages[-2].endswith("Chain A - -1,0,1,7,8,11,12,13,14,16,18,19,22,23,25,27,36,37,38,40,41,43,46,47,50,53,55,57,61")
+    assert caplog.messages[-1].endswith("Chain B - 2,3,4,5,6,7,8,9,10,11,28,29,30,31,32,33,34,35,36,37,38")
+    # now let's change the cutoff
+    caplog.clear()
+    calc_accessibility(str(protdna_input_list[0].rel_path), cutoff=0.9)
+    assert caplog.messages[-2].endswith("Chain A - 14,25,53")
+    # DNA accessibility does not change with a higher cutoff!
+    assert caplog.messages[-1].endswith("Chain B - 2,3,4,5,6,7,8,9,10,11,28,29,30,31,32,33,34,35,36,37,38")

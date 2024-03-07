@@ -318,11 +318,11 @@ def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_na
         path to the zipped file
     """
     capri_df = read_capri_table(capri_filename, comment="#")
-    gb_cluster = capri_df.groupby("cluster-id")
+    gb_cluster = capri_df.groupby("cluster_id")
     for cl_id, cl_df in gb_cluster:
         if cl_id in cluster_ranking.keys():
             if cl_id != "-":
-                structs = cl_df.loc[cl_df["model-cluster-ranking"] <= 4][["model", "model-cluster-ranking"]]
+                structs = cl_df.loc[cl_df["model-cluster_ranking"] <= 4][["model", "model-cluster_ranking"]]
             else:
                 structs = cl_df.loc[cl_df["caprieval_rank"] <= 10][["model", "caprieval_rank"]]
             structs.columns = ["model", "rank"]

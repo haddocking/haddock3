@@ -29,7 +29,7 @@ def handle_ss_file(
     """
     # now we want to calculate mean and std dev of the scores on df_ss
     # first groupby score
-    df_ss_grouped = df_ss.groupby("cluster-ranking")
+    df_ss_grouped = df_ss.groupby("cluster_ranking")
     # sort the dataframe by score
     df_ss.sort_values(by=["score"], inplace=True)
     # calculate the mean and standard deviation of the first 4 elements
@@ -43,10 +43,10 @@ def handle_ss_file(
     # get the index that sorts the array by the first column
     clt_ranks = np.argsort(new_values[:, 0])
     # adjust clustering values if there are clusters
-    if list(np.unique(df_ss["cluster-id"])) != ["-"]:
-        df_ss['model-cluster-ranking'] = df_ss.groupby('cluster-id')['score'].rank(ascending=True).astype(int)  # noqa : E501
-        # assign to the values of cluster-ranking the corresponding clt_ranks
-        df_ss["cluster-ranking"] = df_ss["cluster-ranking"].apply(lambda x: clt_ranks[x - 1] + 1)  # noqa : E501
+    if list(np.unique(df_ss["cluster_id"])) != ["-"]:
+        df_ss['model-cluster_ranking'] = df_ss.groupby('cluster_id')['score'].rank(ascending=True).astype(int)  # noqa : E501
+        # assign to the values of cluster_ranking the corresponding clt_ranks
+        df_ss["cluster_ranking"] = df_ss["cluster_ranking"].apply(lambda x: clt_ranks[x - 1] + 1)  # noqa : E501
     # assign to the column caprieval_rank the index of the dataframe
     df_ss.index = range(1, len(df_ss) + 1)
     df_ss["caprieval_rank"] = df_ss.index
@@ -82,13 +82,13 @@ def rewrite_capri_tables(
             f"../{model.path.split('/')[-1]}/{model.file_name}"
             for model in clt_dic[cl]
             ]
-        # all the models should now have the cluster-id field
-        df_ss.loc[df_ss['model'].isin(models), 'cluster-id'] = cl
+        # all the models should now have the cluster_id field
+        df_ss.loc[df_ss['model'].isin(models), 'cluster_id'] = cl
     
     # delete all the models that are not in the clusters
-    df_ss = df_ss[df_ss['cluster-id'] != "-"]
-    # assign cluster-ranking to cluster-id (aka random assignment)
-    df_ss['cluster-ranking'] = df_ss['cluster-id']
+    df_ss = df_ss[df_ss['cluster_id'] != "-"]
+    # assign cluster_ranking to cluster_id (aka random assignment)
+    df_ss['cluster_ranking'] = df_ss['cluster_id']
     # handle ss file
     df_ss, clt_ranks, _new_values = handle_ss_file(df_ss)
     
@@ -154,7 +154,7 @@ def handle_clt_file(df_ss, clt_ranks):
     """
     capri_keys = ["score", "irmsd", "fnat", "lrmsd", "dockq"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
-    df_ss_grouped = df_ss.groupby("cluster-id")
+    df_ss_grouped = df_ss.groupby("cluster_id")
     # loop over df_ss_grouped
     cl_data = []
     for i, clt_id in enumerate(df_ss_grouped):

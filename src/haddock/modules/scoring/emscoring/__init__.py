@@ -1,4 +1,8 @@
-"""EM scoring module."""
+"""EM scoring module.
+
+This module performs energy minimization and scoring of the models generated
+in the previous step of the workflow. No restraints are applied during this step.
+"""
 from pathlib import Path
 
 from haddock.core.typing import FilePath

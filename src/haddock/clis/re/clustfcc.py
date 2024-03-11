@@ -99,6 +99,9 @@ def reclustfcc(
     filename = Path(clustfcc_dir, "io.json")
     io.load(filename)
     models = io.input
+    # copying io.json to the new directory
+    import shutil
+    shutil.copy(filename, Path(outdir, "io.json"))
 
     # load the original clustering parameters via json
     clustfcc_params = read_config(Path(clustfcc_dir, "params.cfg"))

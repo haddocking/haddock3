@@ -216,7 +216,9 @@ REL_ASA = {
     }
 
 
-def get_accessibility(pdb_f):
+def get_accessibility(
+        pdb_f: Union[Path, str]
+        ) -> dict[str, dict[int, dict[str, float]]]:
     """Compute per-residue accessibility values.
     
     Calls `FreeSASA <https://freesasa.github.io/>`_ using its Python API
@@ -229,7 +231,7 @@ def get_accessibility(pdb_f):
     
     Return
     ------
-    resid_access : dict[str, list[int]]
+    resid_access : dict[str, dict[int, dict[str, float]]]
         Dictionary containing a list of accessible residues for each chain(s).
     """
     naccess_unsupported_aa = ['HEC', 'TIP', 'ACE', 'THP', 'HEB', 'CTN']
@@ -240,7 +242,12 @@ def get_accessibility(pdb_f):
         logging.error("calc_accessibility requires the 'freesasa' Python API")
         raise ImportError(err)
 
-    asa_data, rsa_data, rel_main_chain, rel_side_chain = {}, {}, {}, {}
+    # Initiate data holders
+    asa_data: dict[tuple[str, str, int, str], float] = {}
+    rsa_data: dict[tuple[str, str, int], float] = {}
+    rel_main_chain: dict[tuple[str, str, int], float] = {}
+    rel_side_chain: dict[tuple[str, str, int], float] = {}
+    # Point relative asa data
     _rsa = REL_ASA['total']
     _rsa_bb = REL_ASA['bb']
     _rsa_sc = REL_ASA['sc']
@@ -312,7 +319,7 @@ def get_accessibility(pdb_f):
         for res_uid, asa in rel_side_chain.items()
         )
     # We format to fit the pipeline
-    resid_access = {}
+    resid_access: dict[str, dict[int, dict[str, float]]] = {}
     for res_uid, access in rel_main_chain.items():
         chain = res_uid[0]
         # resname = res_uid[1]
@@ -329,7 +336,10 @@ def get_accessibility(pdb_f):
     return resid_access
 
 
-def apply_cutoff(access_data: dict, cutoff: float) -> dict[str, list[int]]:
+def apply_cutoff(
+        access_data: dict[str, dict[int, dict[str, float]]],
+        cutoff: float,
+        ) -> dict[str, list[int]]:
     """Apply a cutoff to the sidechain relative accessibility."""
     logging.info(f'Applying cutoff to side_chain_rel - {cutoff}')
     # saving the results in a dictionary

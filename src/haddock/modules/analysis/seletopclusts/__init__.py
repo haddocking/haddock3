@@ -44,6 +44,7 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute the module's protocol."""
+        # Check parameters validity
         if self.params["top_models"] <= 0:
             _msg = "top_models must be either > 0 or nan."
             self.finish_with_error(_msg)
@@ -54,6 +55,14 @@ class HaddockModule(BaseHaddockModule):
 
         # Retrieve list of previous models
         models_to_select = self.previous_io.retrieve_models()
+
+        # Check if cluster info is accessible
+        if any([mdl.clt_rank is None for mdl in models_to_select]):
+            _msg = (
+                "Impossible to obtain cluster information. Please consider "
+                "running a clustering method prior to this module."
+                )
+            self.finish_with_error(_msg)
 
         # Make model selection
         selected_models, _notes = select_top_clusts_models(

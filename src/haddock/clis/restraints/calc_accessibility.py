@@ -8,7 +8,7 @@ Nucleic acids bases are considered to be always accessible.
 Usage:
     haddock3-restraints calc_accessibility
         <input_pdb_file>            Path to a PDB file to analyse
-        [-c <cutoff>]               Relative accessibility cutoff
+        [-c <cutoff>]               Relative side-chain accessibility cutoff
         [--log_level <log_level>]   DEBUG, INFO, WARNING, ERROR, or CRITICAL
         [--export_to_actpass]       Flag to export accessible resiudes
 """
@@ -216,7 +216,7 @@ REL_ASA = {
     }
 
 
-def get_accessibility(pdb_f: Union[Path, str]) -> dict[str, list[int]]:
+def get_accessibility(pdb_f):
     """Compute per-residue accessibility values.
     
     Calls `FreeSASA <https://freesasa.github.io/>`_ using its Python API
@@ -312,7 +312,7 @@ def get_accessibility(pdb_f: Union[Path, str]) -> dict[str, list[int]]:
         for res_uid, asa in rel_side_chain.items()
         )
     # We format to fit the pipeline
-    resid_access: dict[str, list[int]] = {}
+    resid_access = {}
     for res_uid, access in rel_main_chain.items():
         chain = res_uid[0]
         # resname = res_uid[1]
@@ -352,7 +352,7 @@ def apply_cutoff(access_data: dict, cutoff: float) -> dict[str, list[int]]:
 def export_passive(
         result_dict: dict[str, list[int]],
         prefix: str = '',
-        ):
+        ) -> None:
     """Export the exposed residues as passive to an actpass file."""
     for chain in result_dict:
         filename = Path(f"{prefix}passive_{chain}.actpass")
@@ -368,11 +368,11 @@ def export_passive(
 
 
 def calc_accessibility(
-        input_pdb_file,
+        input_pdb_file: Union[Path, str],
         cutoff: float = 0.4,
         log_level: str = "INFO",
         export_to_actpass: bool = False,
-        ):
+        ) -> None:
     """Calculate the accessibility of the side chains and apply a cutoff.
     
     Parameters

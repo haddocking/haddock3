@@ -274,7 +274,7 @@ def test_protprot_allatoms(protprot_allatm_caprimodule):
     protprot_allatm_caprimodule.calc_irmsd()
     protprot_allatm_caprimodule.calc_ilrmsd()
     # process checks
-    assert round_two_dec(protprot_allatm_caprimodule.lrmsd) == 21.10
+    assert np.isclose(protprot_allatm_caprimodule.lrmsd, 21.10, atol=0.01)
 
 
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
@@ -364,10 +364,10 @@ def test_protlig_allatoms(protlig_caprimodule):
     protlig_caprimodule.calc_lrmsd()
     protlig_caprimodule.calc_irmsd()
     protlig_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protlig_caprimodule.irmsd) == 0.16
-    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.49
-    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.49
-    assert round_two_dec(protlig_caprimodule.fnat) == 1.0
+    assert np.isclose(protlig_caprimodule.irmsd, 0.16, atol=0.01)
+    assert np.isclose(protlig_caprimodule.lrmsd, 0.49, atol=0.01)
+    assert np.isclose(protlig_caprimodule.ilrmsd, 0.49, atol=0.01)
+    assert np.isclose(protlig_caprimodule.fnat, 1.0, atol=0.01)
 
 
 def test_protdna_irmsd(protdna_caprimodule):

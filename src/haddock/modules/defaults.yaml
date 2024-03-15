@@ -123,3 +123,15 @@ clean:
     clients.
   group: 'clean'
   explevel: easy
+offline:
+  default: false
+  type: boolean
+  title: Remove any web calls.
+  short: Completely isolate the haddock3 run & results from internet.
+  long: For interactive plots, we are using the plotly library. It can be 
+    embedded as a link to the plotly.js library and fetched from the web,
+    or directly copied on the html files AT THE COST OF ~3Mb per file.
+    Setting this parameter to `true` will add the javascript library in 
+    generated files, therefore completely isolating haddock3 from any web call.
+  group: 'execution'
+  explevel: easy

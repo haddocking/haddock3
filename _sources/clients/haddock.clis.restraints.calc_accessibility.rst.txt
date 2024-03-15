@@ -1,0 +1,7 @@
+haddock.clis.restraints.calc\_accessibility module
+==================================================
+
+.. automodule:: haddock.clis.restraints.calc_accessibility
+   :members:
+   :undoc-members:
+   :show-inheritance:

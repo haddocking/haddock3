@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.clis.restraints.calc_accessibility module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="haddock.clis.restraints.passive_from_active module" href="haddock.clis.restraints.passive_from_active.html" />
+    <link rel="prev" title="haddock.clis.restraints.active_passive_to_ambig module" href="haddock.clis.restraints.active_passive_to_ambig.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="haddock.clis.html">Command-line interfaces</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="haddock.clis.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.re.html">Interactive sucommands</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="haddock.clis.restraints.html">Restraints-related subcommands</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="haddock.clis.restraints.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.clis.restraints.html#module-haddock.clis.restraints">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#module-haddock.clis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="haddock.clis.html">Command-line interfaces</a></li>
+          <li class="breadcrumb-item"><a href="haddock.clis.restraints.html">Restraints-related subcommands</a></li>
+      <li class="breadcrumb-item active">haddock.clis.restraints.calc_accessibility module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/clients/haddock.clis.restraints.calc_accessibility.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.clis.restraints.calc_accessibility">
+<span id="haddock-clis-restraints-calc-accessibility-module"></span><h1>haddock.clis.restraints.calc_accessibility module<a class="headerlink" href="#module-haddock.clis.restraints.calc_accessibility" title="Permalink to this heading"></a></h1>
+<p>haddock3-restraints calc_accessibility subcommand.</p>
+<p>Given a pdb file, it will calculate the relative accessibility of
+the side chains and return a list of surface exposed residues.</p>
+<p>Nucleic acids bases are considered to be always accessible.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><dl class="simple">
+<dt>haddock3-restraints calc_accessibility</dt><dd><p>&lt;input_pdb_file&gt;            Path to a PDB file to analyse
+[-c &lt;cutoff&gt;]               Relative side-chain accessibility cutoff
+[–log_level &lt;log_level&gt;]   DEBUG, INFO, WARNING, ERROR, or CRITICAL
+[–export_to_actpass]       Flag to export accessible resiudes</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.calc_accessibility.add_calc_accessibility_arguments">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.calc_accessibility.</span></span><span class="sig-name descname"><span class="pre">add_calc_accessibility_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calc_accessibility_subcommand</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/clis/restraints/calc_accessibility.html#add_calc_accessibility_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.calc_accessibility.add_calc_accessibility_arguments" title="Permalink to this definition"></a></dt>
+<dd><p>Add arguments to the calc_accessibility subcommand.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.calc_accessibility.apply_cutoff">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.calc_accessibility.</span></span><span class="sig-name descname"><span class="pre">apply_cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">access_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/clis/restraints/calc_accessibility.html#apply_cutoff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.calc_accessibility.apply_cutoff" title="Permalink to this definition"></a></dt>
+<dd><p>Apply a cutoff to the sidechain relative accessibility.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.calc_accessibility.calc_accessibility">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.calc_accessibility.</span></span><span class="sig-name descname"><span class="pre">calc_accessibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdb_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_to_actpass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/restraints/calc_accessibility.html#calc_accessibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.calc_accessibility.calc_accessibility" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the accessibility of the side chains and apply a cutoff.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_pdb_file</strong> (<em>str</em>) – Path to the PDB file.</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – Relative cutoff for sidechain accessibility, default = 0.4</p></li>
+<li><p><strong>log_level</strong> (<em>str</em>) – Logging level.</p></li>
+<li><p><strong>export_to_actpass</strong> (<em>bool</em>) – Export the exposed residues as passive to an actpass file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.calc_accessibility.export_passive">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.calc_accessibility.</span></span><span class="sig-name descname"><span class="pre">export_passive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/restraints/calc_accessibility.html#export_passive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.calc_accessibility.export_passive" title="Permalink to this definition"></a></dt>
+<dd><p>Export the exposed residues as passive to an actpass file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.calc_accessibility.get_accessibility">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.calc_accessibility.</span></span><span class="sig-name descname"><span class="pre">get_accessibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/clis/restraints/calc_accessibility.html#get_accessibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.calc_accessibility.get_accessibility" title="Permalink to this definition"></a></dt>
+<dd><p>Compute per-residue accessibility values.</p>
+<p>Calls <a class="reference external" href="https://freesasa.github.io/">FreeSASA</a> using its Python API
+and returns per-residue accessibility values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pdb_f</strong> (<em>Union[Path, str]</em>) – Path to the PDB file of interest.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>resid_access</strong> (<em>dict[str, dict[int, dict[str, float]]]</em>) – Dictionary containing a list of accessible residues for each chain(s).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.clis.restraints.active_passive_to_ambig.html" class="btn btn-neutral float-left" title="haddock.clis.restraints.active_passive_to_ambig module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.clis.restraints.passive_from_active.html" class="btn btn-neutral float-right" title="haddock.clis.restraints.passive_from_active module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Mar 15, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

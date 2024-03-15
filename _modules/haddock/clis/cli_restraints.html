@@ -111,6 +111,7 @@
 <span class="kn">from</span> <span class="nn">haddock.clis.restraints.passive_from_active</span> <span class="kn">import</span> <span class="n">add_pass_from_act_arguments</span><span class="p">,</span> <span class="n">passive_from_active</span>
 <span class="kn">from</span> <span class="nn">haddock.clis.restraints.validate_tbl</span> <span class="kn">import</span> <span class="n">add_validate_tbl_arguments</span><span class="p">,</span> <span class="n">validate_tbl</span>
 <span class="kn">from</span> <span class="nn">haddock.clis.restraints.active_passive_to_ambig</span> <span class="kn">import</span> <span class="n">add_actpass_to_ambig_arguments</span><span class="p">,</span> <span class="n">actpass_to_ambig</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.calc_accessibility</span> <span class="kn">import</span> <span class="n">add_calc_accessibility_arguments</span><span class="p">,</span> <span class="n">calc_accessibility</span>
 
 
 <span class="c1"># Command line interface parser</span>
@@ -144,6 +145,10 @@
 <span class="n">actpass_to_ambig_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">actpass_to_ambig</span><span class="p">)</span>
 <span class="n">actpass_to_ambig_subcommand</span> <span class="o">=</span> <span class="n">add_actpass_to_ambig_arguments</span><span class="p">(</span><span class="n">actpass_to_ambig_subcommand</span><span class="p">)</span>
 
+<span class="c1"># calc_accessibility subcommand</span>
+<span class="n">calc_accessibility_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;calc_accessibility&#39;</span><span class="p">)</span>
+<span class="n">calc_accessibility_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">calc_accessibility</span><span class="p">)</span>
+<span class="n">calc_accessibility_subcommand</span> <span class="o">=</span> <span class="n">add_calc_accessibility_arguments</span><span class="p">(</span><span class="n">calc_accessibility_subcommand</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_ap</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">ap</span>
@@ -174,7 +179,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 07, 2024.
+      <span class="lastupdated">Last updated on Mar 15, 2024.
       </span></p>
   </div>
 

@@ -2,14 +2,16 @@
 from copy import deepcopy
 from pathlib import Path
 
-from haddock.core.typing import Any, FilePath, Union
+from haddock.core.typing import Any, FilePath, SupportsRunT
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.contactmap.contmap import (
     ContactsMap,
+    ContactsMapJob,
     ClusteredContactMap,
     get_clusters_sets,
+    make_contactmap_report,
     topX_models,
     )
 
@@ -51,7 +53,7 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(e)
 
         # Initiate holder of all jobs to be run by the `Scheduler`
-        contact_jobs: list[Union[ContactsMap, ClusteredContactMap]] = []
+        contact_jobs: list[SupportsRunT] = []
         # Obtain clusters
         clusters_sets = get_clusters_sets(models)
         # Loop over clusters
@@ -68,27 +70,44 @@ class HaddockModule(BaseHaddockModule):
                 # Loop over models to analyse
                 for model in top_models:
                     modelfname = Path(model.file_name).stem
-                    contmap_object = ContactsMap(
-                        Path(model.rel_path),
+                    # Create a job object
+                    contmap_job = ContactsMapJob(
                         Path(f"Unclustered_contmap_{modelfname}"),
                         single_models_params,
+                        modelfname,
+                        # Create a contact map object
+                        ContactsMap(
+                            Path(model.rel_path),
+                            Path(f"Unclustered_contmap_{modelfname}"),
+                            single_models_params,
+                            ),
                         )
-                    contact_jobs.append(contmap_object)
+                    contact_jobs.append(contmap_job)
 
             # For clustered models
             else:
-                contmap_object = ClusteredContactMap(
-                    [Path(model.rel_path) for model in clt_models],
+                # Create a job object
+                contmap_job = ContactsMapJob(
                     Path(f"cluster{clustid}_contmap"),
                     self.params,
+                    f"Cluster_{clustid}",
+                    # Create a contact map object
+                    ClusteredContactMap(
+                        [Path(model.rel_path) for model in clt_models],
+                        Path(f"cluster{clustid}_contmap"),
+                        self.params,
+                        ),
                     )
-                contact_jobs.append(contmap_object)
-        
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
+                contact_jobs.append(contmap_job)
 
+        # Find execution engine
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
         engine = Engine(contact_jobs)
         engine.run()
+
+        # Generate report
+        make_contactmap_report(contact_jobs, "ContactMapReport.html")
 
         # Send models to the next step, no operation is done on them
         self.output_models = models

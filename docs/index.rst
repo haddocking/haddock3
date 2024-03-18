@@ -19,7 +19,7 @@ Content
    USAGE
    examples
    tutorials/index
-   clients/index
+   clients/haddock.clis
    modules/index
    testing/index
    contributing

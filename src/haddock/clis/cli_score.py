@@ -26,14 +26,14 @@ from haddock.core.typing import (
     Callable,
     FilePath,
     Namespace,
-)
+    )
 from haddock.libs.libcli import _ParamsToDict
 
 
 ap = argparse.ArgumentParser(
     prog="haddock3-score",
     description=__doc__,
-)
+    )
 
 ap.add_argument("pdb_file", help="Input PDB file")
 
@@ -49,26 +49,26 @@ ap.add_argument(
     "--full",
     action="store_true",
     help="Print all energy components",
-)
+    )
 
 ap.add_argument(
     "--outputpdb",
     action="store_true",
     help="Save the output PDB file (minimized structure)",
-)
+    )
 
 ap.add_argument(
     "--outputpsf",
     action="store_true",
     help="Save the output PSF file (topology)",
-)
+    )
 
 ap.add_argument(
     "-k" "--keep-all",
     dest="keep_all",
     action="store_true",
     help="Keep the whole run folder.",
-)
+    )
 
 ap.add_argument(
     "-p",
@@ -82,7 +82,7 @@ ap.add_argument(
     action=_ParamsToDict,
     default={},
     nargs="*",
-)
+    )
 
 
 def _ap() -> ArgumentParser:
@@ -143,6 +143,7 @@ def main(
         Any additional arguments that will be passed to the ``emscoring``
         module.
     """
+    import os
     import logging
     import shutil
     from contextlib import suppress
@@ -169,8 +170,10 @@ def main(
     for param, value in kwargs.items():
         if param not in default_emscoring:
             sys.exit(
-                f"* ERROR * Parameter {param!r} is not a valid `emscoring` parameter"
-            )  # noqa:E501
+                f"* ERROR * Parameter {param!r} is not a "
+                f"valid `emscoring` parameter.{os.linesep}"
+                f"Valid emscoring parameters are: {', '.join(sorted(default_emscoring))}"
+                )
         if value != default_emscoring[param]:
             print(
                 f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})"
@@ -178,14 +181,21 @@ def main(
             # get the type of default value
             default_type = type(default_emscoring[param])
             # convert the value to the same type
-            value = default_type(value)
+            if default_type == bool:
+                if value.lower() not in ["true", "false"]:
+                    sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
+                value = value.lower() == "true"
+            else:
+                value = default_type(value)
             ems_dict[param] = value
             n_warnings += 1
-
     if n_warnings != 0:
         print(
-            "* ATTENTION * Non-default parameter values were used. They should be properly reported if the output data are used for publication."
-        )  # noqa:E501
+            "* ATTENTION * Non-default parameter values were used. "
+            "They should be properly reported if the output "
+            "data are used for publication."
+            )
+        print(f"used emscoring parameters: {ems_dict}")
 
     # create run directory
     run_dir = Path(run_dir)
@@ -234,39 +244,45 @@ def main(
         + ems_dict["w_desolv"] * desolv
         + ems_dict["w_air"] * air
         + ems_dict["w_bsa"] * bsa
-    )
+        )
 
     print(
-        f"""> HADDOCK-score = ({ems_dict['w_vdw']} * vdw) + ({ems_dict['w_elec']} * elec) + ({ems_dict['w_desolv']} * desolv) + ({ems_dict['w_air']} * air) + ({ems_dict['w_bsa']} * bsa)"""
-    )  # noqa: E501
+        "> HADDOCK-score ="
+        f" ({ems_dict['w_vdw']} * vdw)"
+        f" + ({ems_dict['w_elec']} * elec)"
+        f" + ({ems_dict['w_desolv']} * desolv)"
+        f" + ({ems_dict['w_air']} * air)"
+        f" + ({ems_dict['w_bsa']} * bsa)"
+        )
     print(f"> HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
 
     if full:
         print(f"> vdw={vdw},elec={elec},desolv={desolv},air={air},bsa={bsa}")
 
     if outputpdb:
-        outputpdb_name = Path(f"{input_pdb.name}_hs.pdb")
+        outputpdb_name = Path(f"{input_pdb.stem}_hs.pdb")
         print(f"> writing {outputpdb_name}")
         shutil.copy(
             Path(run_dir, "1_emscoring", "emscoring_1.pdb"),
             outputpdb_name,
-        )
+            )
 
     if outputpsf:
-        outputpsf_name = Path(f"{input_pdb.name}_hs.psf")
+        outputpsf_name = Path(f"{input_pdb.stem}_hs.psf")
         print(f"> writing {outputpsf_name}")
         shutil.copy(
-            Path(run_dir, "0_topoaa", f"{input_pdb.name}_haddock.psf"),
+            Path(run_dir, "0_topoaa", f"{input_pdb_copy.stem}_haddock.psf"),
             outputpsf_name,
-        )
+            )
 
     if not keep_all:
         shutil.rmtree(run_dir)
     else:
         print(
-            'The folder where the calculations where performed was kept. See '
-            f'folder: {run_dir}'
+            'The folder where the calculations were performed was kept.'
+            f' See folder: {run_dir}'
             )
+
 
 if __name__ == "__main__":
     sys.exit(maincli())  # type: ignore

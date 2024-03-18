@@ -11,11 +11,108 @@ temporary just to create the HTML files for the documentation.
 import os
 from collections.abc import Mapping
 from pathlib import Path
+import shutil
 
 from haddock import haddock3_repository_path, haddock3_source_path
 from haddock.core.typing import ParamMap
 from haddock.libs.libio import read_from_yaml
 
+MODULE_TITLE_DICT = {
+    "topoaa": "All-atom topology module",
+    "rigidbody": "Rigid body docking sampling module",
+    "lightdock": "LightDock sampling module",
+    "gdock": "Gdock sampling module",
+    "flexref": "Flexible refinement module",
+    "mdref": "Water refinement module",
+    "emref": "Energy Minimization refinement module",
+    "mdscoring": "Molecular Dynamics scoring module",
+    "emscoring": "Energy Minimization scoring module",
+    "clustfcc": "FCC Clustering module",
+    "caprieval": "CAPRI Evaluation module",
+    "contactmap": "Contact Map module",
+    "clustrmsd": "RMSD Clustering module",
+    "rmsdmatrix": "RMSD Matrix calculation module",
+    "seletop": "Selection of top models module",
+    "seletopclusts": "Selection of top clusters module",
+    "alascan": "Alanine Scanning module",
+    "ilrmsdmatrix": "Interface Ligand RMSD Matrix calculation module",
+    "exit": "Exit module",
+}
+
+CATEGORY_TITLE_DICT = {
+    "analysis": "Analysis Modules",
+    "extras": "Extra Modules",
+    "refinement": "Model Refinement Modules",
+    "sampling": "Sampling Modules",
+    "scoring": "Scoring Modules",
+    "topology": "Topology Modules",
+}
+
+REFERENCE_TITLE_DICT = {
+    "core": "Core Reference",
+    "gear": "Gear Reference",
+    "libs": "Libs Reference",
+    "gear.clean_steps": "Clean output from step folders",
+    "gear.config": "Configuration file I/O",
+    "gear.expandable_parameters": "Expandable parameters",
+    "gear.extend_run": "Start from copy",
+    "gear.greetings": "Greetings messages",
+    "gear.haddockmodel": "HADDOCK models",
+    "gear.parameters": "Parameters helper",
+    "gear.prepare_run": "Prepare run",
+    "gear.preprocessing": "PDB preprocessing",
+    "gear.restart_run": "Restart run",
+    "gear.validations": "Validations",
+    "gear.yaml2cfg": "YAML configs",
+    "gear.zerofill": "Zero fill prefix",
+    "libs.libalign": "libalign: sequence and structural alignments",
+    "libs.libcli": "libcli: functions helping clients",
+    "libs.libclust": "libclust: functions related to clustering",
+    "libs.libcns": "libcns: creating CNS files",
+    "libs.libfunc": "libfunc: functional-programming helping tools",
+    "libs.libhpc": "libhpc: HPC execution functions",
+    "libs.libinteractive": "libinteractive: functions related to interactive tasks",
+    "libs.libio": "libio: I/O helping functions",
+    "libs.liblog": "liblog: Logging helping functions",
+    "libs.libmath": "libmath: Math helping functions",
+    "libs.libmpi": "libmpi: MPI execution functions",
+    "libs.libontology": "libontology: module communication",
+    "libs.libparallel": "libparallel: multiprocessing helping functions",
+    "libs.libpdb": "libpdb: PDB helping functions",
+    "libs.libplots": "libplots: plotting functionalities",
+    "libs.librestraints": "librestraints: functions related to restraints",
+    "libs.libstructure": "libstructure: functions related to structures",
+    "libs.libsubprocess": "libsubprocess: subprocess execution functions",
+    "libs.libtimer": "libtimer: timing functions",
+    "libs.libutil": "libutil: utility functions",
+    "libs.libworkflow": "libworkflow: workflow functions",
+    "core.cns_paths": "CNS paths definitions",
+    "core.defaults": "Defaults definitions",
+    "core.exceptions": "Exceptions",
+    "core.supported_molecules": "Supported molecules",
+    "core.typing": "typing",
+    "mandatory_parameters.rst": "Mandatory Parameters",
+}
+
+CLI_TITLE_DICT = {
+    "clis": "Command-line interfaces",
+    "clis.cli": "Run HADDOCK3",
+    "clis.cli_analyse": "Analysis client",
+    "clis.cli_bm": "Benchmark Client",
+    "clis.cli_cfg": "Retrieve config",
+    "clis.cli_clean": "Clean HADDOCK3 runs",
+    "clis.cli_cp": "Copy steps to new run",
+    "clis.cli_dmn": "Benchmark Daemon",
+    "clis.cli_mpi": "HADDOCK3 MPI Run",
+    "clis.cli_pp": "PDB preprocessing client",
+    "clis.cli_re": "Interactive run client",
+    "clis.cli_restraints": "Generate restraints",
+    "clis.cli_score": "Calculate score",
+    "clis.cli_traceback": "PDB Traceback client",
+    "clis.cli_unpack": "Unpack HADDOCK3 run",
+    "clis.re": "Interactive sucommands",
+    "clis.restraints": "Restraints-related subcommands",
+}
 
 class HeadingController:
     """
@@ -57,6 +154,117 @@ class HeadingController:
 HEADING = HeadingController()
 
 
+def change_title(rst_file: Path, title: str) -> None:
+    """
+    Change the title of the rst file.
+    
+    Parameters
+    ----------
+    rst_file : Path
+        Path to the rst file.
+    title : str
+        New title.
+    """
+    with open(rst_file, 'r') as fin:
+        lines = fin.readlines()
+    with open(rst_file, 'w') as fout:
+        for ln, line in enumerate(lines):
+            if ln == 0:
+                line = title + os.linesep
+            else:
+                line = line
+            fout.write(line)
+
+def process_category_file(category: str) -> None:
+    """
+    Process the category file.
+
+    Parameters
+    ----------
+    category : str
+        Category name.
+    """
+    category_rst = Path(
+                haddock3_repository_path,
+                'docs',
+                f"haddock.modules.{category}.rst"
+                )
+    target_path = Path(
+        haddock3_repository_path,
+        'docs',
+        'modules',
+        category
+        )
+    # make category folder if it does not exist
+    target_path.mkdir(exist_ok=True)
+    target_rst = Path(target_path, "index.rst")
+    shutil.move(category_rst, target_rst)
+    # change title
+    if category in CATEGORY_TITLE_DICT:
+        title = CATEGORY_TITLE_DICT[category]
+        change_title(target_rst, title)
+
+
+def process_module_file(category: str, module_name: str) -> None:
+    """
+    Process the module file.
+
+    Parameters
+    ----------
+    category : str
+        Category name.
+    module_name : str
+        Module name.
+    """
+    module_rst = Path(
+        haddock3_repository_path,
+        'docs',
+        f"haddock.modules.{category}.{module_name}.rst"
+        )
+    target_rst = Path(
+        haddock3_repository_path,
+        'docs',
+        'modules',
+        category,
+        module_rst.name
+        )
+    shutil.move(module_rst, target_rst)
+    # does the submodule exist?
+    submodule_gen = Path(haddock3_repository_path, 'docs').glob(f"haddock.modules.{category}.{module_name}.*.rst")
+    submodule_list = list(submodule_gen)
+    if len(submodule_list) != 0:
+        
+        submodule_name = submodule_list[0]
+    
+        submodule_rst = Path(
+            haddock3_repository_path,
+            'docs',
+            submodule_name
+        )
+    
+        submodule_target_rst = Path(
+            haddock3_repository_path,
+            'docs',
+            'modules',
+            category,
+            submodule_rst.name
+            )
+        shutil.move(submodule_rst, submodule_target_rst)
+    
+    with open(target_rst, 'a') as fout:
+        fout.write(
+            f"{os.linesep}Default Parameters{os.linesep}"
+            f"---------------{os.linesep}"
+            f'.. include:: params/{module_name}.rst'
+            + os.linesep
+            + os.linesep
+            )
+    # change title
+    if module_name in MODULE_TITLE_DICT:
+        title = MODULE_TITLE_DICT[module_name]
+        change_title(target_rst, title)
+
+
 # prepare YAML markdown files
 def main() -> None:
     """
@@ -72,6 +280,7 @@ def main() -> None:
     pattern = Path('modules', '*', '*', '*.yaml')
     configs = haddock3_source_path.glob(str(pattern))
 
+    processed_categories = []
     # create RST pages for all modules' configuration files.
     for config in configs:
         if "_template" in str(config):
@@ -84,6 +293,13 @@ def main() -> None:
         # ignore empty modules - currently topocg for example
         if len(params) == 0:
             continue
+
+        # if the category has not been processed yet, copy the category file
+        if category not in processed_categories:
+
+            process_category_file(category)
+            
+            processed_categories.append(category)
 
         HEADING.reset()
         HEADING.increase()
@@ -101,6 +317,9 @@ def main() -> None:
         with open(Path(params_folder, f'{module_name}.rst'), 'w') as fout:
             fout.write(text)
 
+        # copy the RST file to the new_docs/source/params folder
+        process_module_file(category, module_name)
+
     # Generate general default parameters RST page
     HEADING.reset()
     HEADING.increase()
@@ -117,6 +336,21 @@ def main() -> None:
     with open(params_file, 'w') as fout:
         fout.write(text)
 
+    # now libs, gear and core
+    for folder in ("libs", "gear", "core"):
+        # make directory if it does not exist
+        target_path = Path(haddock3_repository_path, 'docs', 'reference', folder)
+        target_path.mkdir(exist_ok=True)
+        # collect rst files
+        rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.{folder}.*rst")
+        for rst_file in rst_files:
+            target_rst = Path(target_path, rst_file.name)
+            shutil.move(rst_file, target_rst)
+            title_key = ".".join(rst_file.name.split(".")[1:-1])
+            if title_key in REFERENCE_TITLE_DICT:
+                title = REFERENCE_TITLE_DICT[title_key]
+                change_title(target_rst, title)
+    
     # Generate mandatory parameters RST page
     HEADING.reset()
     mandatory_defaults = Path(haddock3_source_path, 'core', 'mandatory.yaml')
@@ -140,6 +374,24 @@ def main() -> None:
         fout.write('====================' + os.linesep)
         fout.write(text)
 
+    # now the command-line interfaces
+    clients_folder = Path(haddock3_repository_path, 'docs', 'clients')
+    clients_folder.mkdir(exist_ok=True)
+
+    cli_rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.clis.*rst")
+    for cli_rst_file in cli_rst_files:
+        target_rst = Path(
+            haddock3_repository_path,
+            'docs',
+            'clients',
+            cli_rst_file.name
+            )
+        shutil.move(cli_rst_file, target_rst)
+        title_key = ".".join(cli_rst_file.name.split(".")[1:-1])
+        if title_key in CLI_TITLE_DICT:
+            title = CLI_TITLE_DICT[title_key]
+            change_title(target_rst, title)
+
 
 def do_text(name: str, param: ParamMap, level: str) -> str:
     """Create text from parameter dictionary."""
@@ -147,15 +399,21 @@ def do_text(name: str, param: ParamMap, level: str) -> str:
         f'{name}',
         f'{level * len(name)}',
         '',
-        f'| *default*: {param["default"]!r}',
-        f'| *type*: {param["type"]}',
-        f'| *title*: {param["title"]}',
-        f'| *short description*: {param["short"]}',
-        f'| *long description*: {param["long"]}',
-        f'| *group*: {param.get("group", "No group assigned")}',
-        f'| *explevel*: {param["explevel"]}',
-        '',
-        ]
+    ]
+    text.append(f'| *default*: {param["default"]!r}')
+    text.append(f'| *type*: {param["type"]}')
+    text.append(f'| *title*: {param["title"]}')
+    
+    # choices, min, max are not always present
+    for key in ["choices", "min", "max"]:
+        if key in param:
+            text.append(f'| *{key}*: {param[key]}')
+    
+    text.append(f'| *short description*: {param["short"]}')
+    text.append(f'| *long description*: {param["long"]}')
+    text.append(f'| *group*: {param.get("group", "No group assigned")}')
+    text.append(f'| *explevel*: {param["explevel"]}')
+    text.append('')
 
     return os.linesep.join(text)
 

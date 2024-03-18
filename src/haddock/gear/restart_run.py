@@ -2,7 +2,6 @@
 from argparse import ArgumentParser, ArgumentTypeError
 from functools import partial
 from pathlib import Path
-from typing import Optional
 
 from haddock.libs.libutil import non_negative_int, remove_folder
 from haddock.modules import get_module_steps_folders
@@ -29,7 +28,7 @@ def add_restart_arg(parser: ArgumentParser) -> None:
         )
 
 
-def remove_folders_after_number(run_dir: Path, num: Optional[int]) -> None:
+def remove_folders_after_number(run_dir: Path, num: int) -> None:
     """
     Remove calculation folder after (included) a given number.
 
@@ -57,6 +56,12 @@ def remove_folders_after_number(run_dir: Path, num: Optional[int]) -> None:
     """
     num = _arg_non_neg_int(num)
     previous = get_module_steps_folders(run_dir.resolve())
-    for folder in previous[num:]:
-        remove_folder(Path(run_dir, folder))
+    # Filters step folders based on their indices
+    from_num_folders = [
+        folder for folder in previous
+        if int(folder.split('_')[0]) >= num
+        ]
+    # Loop over folders to remove
+    for torm_folder in from_num_folders:
+        remove_folder(Path(run_dir, torm_folder))
     return

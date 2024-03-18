@@ -1,20 +1,53 @@
-"""Calculate CAPRI metrics."""
+"""Calculate CAPRI metrics for the input models.
+
+By default the following metrics are calculated:
+
+- FNAT (fraction of native contacts), namely the fraction of
+    intermolecular contacts in the docked complex that are also
+    present in the reference complex.
+- IRMSD (interface root mean square deviation), namely the RMSD
+    of the interface of the docked complex with respect
+    to the reference complex.
+- LRMSD (ligand root mean square deviation), namely the RMSD of the
+    ligand of the docked complex with respect to the
+    reference complex upon superposition of the receptor.
+- DOCKQ, a measure of the quality of the docked model obtained
+    by combining FNAT, IRMSD and LRMSD (see 
+    Basu and Wallner 2016,  11 (8), e0161879).
+- ILRMSD (interface ligand root mean square deviation), the RMSD of the
+    ligand of the docked complex with respect to the reference complex
+    upon superposition of the interface of the receptor.
+
+The following files are generated:
+
+- **capri_ss.tsv**: a table with the CAPRI metrics for each model.
+- **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).
+"""
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, get_module_steps_folders
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
+
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
     merge_data,
     rearrange_ss_capri_output,
+    save_scoring_weights,
     )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+
+CNS_MODULES = ["rigidbody",
+               "flexref",
+               "emscoring",
+               "mdscoring",
+               "mdref",
+               "emref"]
 
 
 class HaddockModule(BaseHaddockModule):
@@ -45,6 +78,27 @@ class HaddockModule(BaseHaddockModule):
         models = self.previous_io.retrieve_models(
             individualize=True
             )
+        
+        # dump previously used weights
+        sel_steps = get_module_steps_folders(Path(".."))
+
+        # get the previous CNS step
+        cns_step = None
+        mod = len(sel_steps) - 2
+        while mod > -1:
+            st_name = sel_steps[mod].split("_")[1]
+            if st_name in CNS_MODULES:
+                cns_step = sel_steps[mod]
+                break
+            mod -= 1
+        
+        if cns_step:
+            self.log(f"Found previous CNS step: {cns_step}")
+            scoring_params_fname = save_scoring_weights(cns_step)
+            self.log(f"Saved scoring weights to: {scoring_params_fname}")
+        else:
+            self.log("No previous CNS step found. Cannot save scoring weights.")
+
         # Sort by score to find the "best"
         models.sort()
         best_model_fname = Path(models[0].rel_path)
@@ -59,7 +113,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
-        #  we can handle scenarios in wich the models are hetergoneous
+        #  we can handle scenarios in which the models are hetergoneous
         #  for example during CAPRI scoring
         jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):

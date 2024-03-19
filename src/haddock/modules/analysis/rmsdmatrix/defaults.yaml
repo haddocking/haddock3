@@ -23,13 +23,3 @@ resdic_:
     identifier.
   group: analysis
   explevel: easy
-executable:
-  default: src/fast-rmsdmatrix
-  type: string
-  minchars: 1
-  maxchars: 100
-  title: Path to the executable
-  short: Path to the executable
-  long: Path to the executable
-  group: analysis
-  explevel: expert

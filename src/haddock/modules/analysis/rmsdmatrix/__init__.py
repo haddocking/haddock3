@@ -48,6 +48,7 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+EXEC_PATH = Path(RMSD_path, "src/fast-rmsdmatrix")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -64,14 +65,13 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls) -> None:
         """Confirm if fast-rmsdmatrix is installed and available."""
-        dcfg = read_from_yaml_config(DEFAULT_CONFIG)
-        exec_path = Path(RMSD_path, dcfg["executable"])
 
-        if not os.access(exec_path, mode=os.F_OK):
-            raise Exception(f"Required {str(exec_path)} file does not exist.")
+        if not os.access(EXEC_PATH, mode=os.F_OK):
+            raise Exception(f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
+                            "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md")
 
-        if not os.access(exec_path, mode=os.X_OK):
-            raise Exception(f"Required {str(exec_path)} file is not executable")
+        if not os.access(EXEC_PATH, mode=os.X_OK):
+            raise Exception(f"Required {str(EXEC_PATH)} file is not executable")
 
         return
 
@@ -101,8 +101,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-        rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
-
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
@@ -165,7 +163,7 @@ class HaddockModule(BaseHaddockModule):
             job = RMSDJob(
                 traj_filename,
                 output_name,
-                rmsdmatrix_executable,
+                EXEC_PATH,
                 core,
                 npairs[core],
                 ref_structs[core],

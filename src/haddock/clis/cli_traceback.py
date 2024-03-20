@@ -268,11 +268,19 @@ def main(run_dir):
     df_output = traceback_dataframe(
         final_data_dict, final_rank_dict, sel_step, max_topo_len
     )
+
+    # sort dataframe by the last rank
+    last_col = sel_step[-1] + "_rank"
+    df_last = df_output[df_output[last_col] != "-"]
+    df_unranked = df_output[df_output[last_col] == "-"]
+    sorted_df_last = df_last.sort_values(by=last_col)
+    df_output = pd.concat([sorted_df_last, df_unranked])
+
     # dumping the dataframe
     track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
     log.info(
         f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
-    )
+    )    
     df_output.to_csv(track_filename, sep="\t", index=False)
     return
 

@@ -12,7 +12,6 @@ import datetime
 sys.path.insert(0, os.path.abspath('..'))
 
 mock_modules = [
-    'Bio',
     'Bio.Align',
     'Bio.Seq',
     'biopython',
@@ -20,14 +19,12 @@ mock_modules = [
     'fccpy.contacts',
     'jsonpickle',
     'mpi4py',
-#    'numpy',
     'pdbtools',
     'pdbtools.pdb_segxchain',
     'pdbtools.pdb_splitchain',
     'pdbtools.pdb_splitmodel',
     'pdbtools.pdb_tidy',
     'pyyaml',
-#    'scipy',
     'scipy.cluster',
     'scipy.cluster.hierarchy',
     'toml',

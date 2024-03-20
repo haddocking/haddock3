@@ -1,4 +1,28 @@
-"""Calculate CAPRI metrics."""
+"""Calculate CAPRI metrics for the input models.
+
+By default the following metrics are calculated:
+
+- FNAT (fraction of native contacts), namely the fraction of
+    intermolecular contacts in the docked complex that are also
+    present in the reference complex.
+- IRMSD (interface root mean square deviation), namely the RMSD
+    of the interface of the docked complex with respect
+    to the reference complex.
+- LRMSD (ligand root mean square deviation), namely the RMSD of the
+    ligand of the docked complex with respect to the
+    reference complex upon superposition of the receptor.
+- DOCKQ, a measure of the quality of the docked model obtained
+    by combining FNAT, IRMSD and LRMSD (see 
+    Basu and Wallner 2016,  11 (8), e0161879).
+- ILRMSD (interface ligand root mean square deviation), the RMSD of the
+    ligand of the docked complex with respect to the reference complex
+    upon superposition of the interface of the receptor.
+
+The following files are generated:
+
+- **capri_ss.tsv**: a table with the CAPRI metrics for each model.
+- **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).
+"""
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath

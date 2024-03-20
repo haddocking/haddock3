@@ -3,7 +3,7 @@ HADDOCK3 CLI for restraints-related tasks.
 
 DISCLAIMER: these scripts have been ported from old code and are not
 optimized for code quality and performance. They are provided as a convenience
- for the user.
+for the user.
 
 USAGE::
 
@@ -24,6 +24,7 @@ from haddock.clis.restraints.restrain_bodies import add_restrain_bodies_argument
 from haddock.clis.restraints.passive_from_active import add_pass_from_act_arguments, passive_from_active
 from haddock.clis.restraints.validate_tbl import add_validate_tbl_arguments, validate_tbl
 from haddock.clis.restraints.active_passive_to_ambig import add_actpass_to_ambig_arguments, actpass_to_ambig
+from haddock.clis.restraints.calc_accessibility import add_calc_accessibility_arguments, calc_accessibility
 
 
 # Command line interface parser
@@ -57,6 +58,10 @@ actpass_to_ambig_subcommand = subparsers.add_parser('active_passive_to_ambig')
 actpass_to_ambig_subcommand.set_defaults(func=actpass_to_ambig)
 actpass_to_ambig_subcommand = add_actpass_to_ambig_arguments(actpass_to_ambig_subcommand)
 
+# calc_accessibility subcommand
+calc_accessibility_subcommand = subparsers.add_parser('calc_accessibility')
+calc_accessibility_subcommand.set_defaults(func=calc_accessibility)
+calc_accessibility_subcommand = add_calc_accessibility_arguments(calc_accessibility_subcommand)
 
 def _ap():
     return ap

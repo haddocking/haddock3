@@ -165,6 +165,7 @@ def loads(cfg_str: str) -> ParamDict:
     -------
     all_configs : dict
         A dictionary holding all the configuration file steps:
+        
         - 'raw_input': Original input file as provided by user.
         - 'cleaned_input': Regex cleaned input file.
         - 'loaded_cleaned_input': Dict of toml loaded cleaned input.

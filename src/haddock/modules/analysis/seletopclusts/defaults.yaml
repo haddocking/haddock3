@@ -18,3 +18,16 @@ top_models:
   long: Number of best-ranked models to select per cluster. By default, 10 models are selected. If one expects to find many clusters (e.g., in the case of vague restraints), this number can be reduced to speed up the protocol. Instead, if few clusters are expected (very specific and localized restraints) this number can be increased.
   group: analysis
   explevel: easy
+sortby:
+  default: score
+  type: string
+  minchars: 2
+  maxchars: 15
+  choice:
+    - score
+    - size
+  title: Method used to define `best cluster`.
+  short: Best cluster can be defined based either on cluster models scores, or on cluster size. By default, 'score' is selected.
+  long: if the selection is done by 'score' the average score of the top (4) models of each cluster is used to define the cluster rank. When clustering by 'size', a bigger cluster size corresponds to a higher rank. By default, 'score' is selected.
+  group: analysis
+  explevel: easy

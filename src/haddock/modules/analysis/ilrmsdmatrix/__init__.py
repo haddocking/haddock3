@@ -229,9 +229,8 @@ class HaddockModule(BaseHaddockModule):
                     if prev_keys != []:
                         if ref_coord_dic.keys() != prev_keys:
                             self.finish_with_error(
-                                "The keys of the ref_coord_dic are not the "
-                                "same for all the models. Please check the "
-                                "input models."
+                                "Input atoms are not the same for all the models.
+                                "Please check the input ensemble."
                                 )
                     # write receptor coords
                     rec_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] == self.params["receptor_chain"]}

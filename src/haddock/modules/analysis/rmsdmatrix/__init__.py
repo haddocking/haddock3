@@ -143,8 +143,8 @@ class HaddockModule(BaseHaddockModule):
                 if prev_keys != []:
                     if ref_coord_dic.keys() != prev_keys:
                         self.finish_with_error(
-                            "The atoms are not the same for all the models."
-                            "Please check the input models."
+                            "Input atoms are not the same for all the models.
+                            "Please check the input ensemble."
                             )
                 n_atoms = len(ref_coord_dic)
                 # write xyz coords

@@ -184,13 +184,22 @@ def test_load_coords():
     assert observed_chain_ranges == expected_chain_ranges
 
 
-def test_error_load_coords():
-    """Test the chain-matching error with an uncompatible resdic."""
-    filter_resdic = {'A': [1, 2, 3, 4, 5]}  # protein has only chain B
+def test_wrong_filtered_resid_error_load_coords():
+    """Test the residue matching error with an uncompatible resdic."""
+    filter_resdic_wrongres = {'B': [7, 8, 9]}  # protein has only residues 1-5
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
     with pytest.raises(ALIGNError):
-        load_coords(pdb_f, atoms, filter_resdic)
+        load_coords(pdb_f, atoms, filter_resdic=filter_resdic_wrongres)
+
+
+def test_wrong_filtered_chain_error_load_coords():
+    """Test the chain matching error with an uncompatible resdic."""
+    filter_resdic_wrongchain = {'A': [1, 2, 3]}  # protein has only chain B
+    pdb_f = Path(golden_data, "protein.pdb")
+    atoms = get_atoms(pdb_f)
+    with pytest.raises(ALIGNError):
+        load_coords(pdb_f, atoms, filter_resdic=filter_resdic_wrongchain)
 
 
 def test_get_atoms():

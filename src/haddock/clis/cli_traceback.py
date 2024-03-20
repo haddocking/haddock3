@@ -280,7 +280,7 @@ def main(run_dir):
     track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
     log.info(
         f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
-    )    
+    )
     df_output.to_csv(track_filename, sep="\t", index=False)
     return
 

@@ -19,6 +19,7 @@ toppar_path = Path(haddock3_source_path, "cns", "toppar")
 modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
+RMSD_path = Path(haddock3_source_path.parent, 'fast-rmsdmatrix')
 
 config_expert_levels = ("easy", "expert", "guru")
 # yaml parameters with this `explevel` should be ignored when reading the yaml

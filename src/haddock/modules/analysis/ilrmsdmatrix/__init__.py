@@ -20,24 +20,26 @@ from pathlib import Path
 
 import numpy as np
 
-from haddock import log
+from haddock import log, RMSD_path
+from haddock.core.typing import AtomsDict
+from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import ModuleIO, RMSDFile
-from haddock.libs.libparallel import Scheduler, get_index_list
+from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, read_from_yaml_config
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     Contact,
     ContactJob,
-    ilRMSD,
-    ilRMSDJob,
     )
-from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher
+from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher, RMSDJob
+
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+EXEC_PATH = Path(RMSD_path, "src/fast-rmsdmatrix")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -50,8 +52,16 @@ class HaddockModule(BaseHaddockModule):
         super().__init__(order, path, init_params)
 
     @classmethod
-    def confirm_installation(cls):
-        """Confirm if contact executable is compiled."""
+    def confirm_installation(cls) -> None:
+        """Confirm if fast-rmsdmatrix is installed and available."""
+
+        if not os.access(EXEC_PATH, mode=os.F_OK):
+            raise Exception(f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
+                            "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md")
+
+        if not os.access(EXEC_PATH, mode=os.X_OK):
+            raise Exception(f"Required {str(EXEC_PATH)} file is not executable")
+
         return
 
     @staticmethod
@@ -202,29 +212,56 @@ class HaddockModule(BaseHaddockModule):
             nmodels,
             tot_npairs,
             ncores)
-
-        # Calculate the ilrmsd for each set of models
-        ilrmsd_jobs = []
-        self.log(f"running ilRmsd Jobs with {ncores} cores")
+        
+        rec_traj_filename = Path("traj_rec.xyz")
+        lig_traj_filename = Path("traj_lig.xyz")
+        prev_keys = []
+        with open(rec_traj_filename, "w") as rec_traj_xyz:
+            with open(lig_traj_filename, "w") as lig_traj_xyz:
+                for mod in models:
+                    atoms: AtomsDict = get_atoms(mod)
+                    ref_coord_dic, _ = load_coords(
+                    mod, atoms, res_resdic
+                    )
+                    if prev_keys != []:
+                        if ref_coord_dic.keys() != prev_keys:
+                            self.finish_with_error(
+                                "Input atoms are not the same for all the models."
+                                "Please check the input ensemble."
+                                )
+                    # write receptor coords
+                    rec_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] == self.params["receptor_chain"]}
+                    lig_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] in self.params["ligand_chains"]}
+                    n_rec_atoms = len(rec_coords)
+                    n_lig_atoms = len(lig_coords)
+                    rec_traj_xyz.write(f"{n_rec_atoms}{os.linesep}{os.linesep}")
+                    lig_traj_xyz.write(f"{n_lig_atoms}{os.linesep}{os.linesep}")
+                    for v in rec_coords.values():
+                        rec_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                    for v in lig_coords.values():
+                        lig_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                    
+                    prev_keys = ref_coord_dic.keys()
+        
+        # Calculate the rmsd for each set of models
+        ilrmsd_jobs: list[RMSDJob] = []
+        self.log(f"running RmsdFast Jobs with {ncores} cores")
         for core in range(ncores):
-            output_name = "ilrmsd_" + str(core) + ".matrix"
-            ilrmsd_obj = ilRMSD(
-                models,
+            output_name = Path("ilrmsd_" + str(core) + ".out")
+            job_f = Path(output_name)
+            # init RMSDJob
+            job = RMSDJob(
+                rec_traj_filename,
+                output_name,
+                EXEC_PATH,
                 core,
                 npairs[core],
                 ref_structs[core],
                 mod_structs[core],
-                res_resdic,
-                output_name,
-                path=Path("."),
-                params=self.params
-                )
-            job_f = Path(output_name)
-            # init RMSDJob
-            job = ilRMSDJob(
-                job_f,
-                self.params,
-                ilrmsd_obj
+                len(models),
+                n_rec_atoms,
+                lig_traj_filename,
+                n_lig_atoms,
                 )
             ilrmsd_jobs.append(job)
 
@@ -253,9 +290,14 @@ class HaddockModule(BaseHaddockModule):
         output_name = "ilrmsd.matrix"
         self._rearrange_output(
             output_name,
-            path=ilrmsd_obj.path,
+            path=Path("."),
             ncores=ncores
             )
+        # Delete the trajectory files
+        if rec_traj_filename.exists():
+            os.unlink(rec_traj_filename)
+        if lig_traj_filename.exists():
+            os.unlink(lig_traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models

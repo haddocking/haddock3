@@ -42,6 +42,11 @@ jobs:
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true
           cd -
+          cd src/fast-rmsdmatrix/src
+          chmod u+x Makefile
+          make fast-rmsdmatrix
+          cd -
+
 
       - name: types
         run: tox -e types
@@ -87,6 +92,10 @@ jobs:
           cd src/fcc/src
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true
+          cd -
+          cd src/fast-rmsdmatrix/src
+          chmod u+x Makefile
+          make fast-rmsdmatrix
           cd -
 
       - name: install integration dependencies

@@ -27,19 +27,20 @@ to 4 of chain B for the alignment and RMSD calculation.
 """
 import contextlib
 from pathlib import Path
+import os
 
-from haddock import log
-from haddock.core.typing import Any, FilePath
+from haddock import log, RMSD_path
+from haddock.core.typing import Any, AtomsDict, FilePath
+from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libutil import parse_ncores
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, read_from_yaml_config
 from haddock.modules import get_engine
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
     get_analysis_exec_mode,
     )
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
-    RMSD,
     RMSDJob,
     rmsd_dispatcher,
     )
@@ -47,6 +48,7 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+EXEC_PATH = Path(RMSD_path, "src/fast-rmsdmatrix")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -62,7 +64,15 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls) -> None:
-        """Confirm if contact executable is compiled."""
+        """Confirm if fast-rmsdmatrix is installed and available."""
+
+        if not os.access(EXEC_PATH, mode=os.F_OK):
+            raise Exception(f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
+                            "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md")
+
+        if not os.access(EXEC_PATH, mode=os.X_OK):
+            raise Exception(f"Required {str(EXEC_PATH)} file is not executable")
+
         return
 
     def _rearrange_output(self, output_name: FilePath, path: FilePath,
@@ -113,28 +123,53 @@ class HaddockModule(BaseHaddockModule):
             nmodels,
             tot_npairs,
             ncores)
-
+            
+        # create prev_keys to check if the keys of the ref_coord_dic
+        # are the same for all the models
+        prev_keys : list[str] = []
+        traj_filename = Path("traj.xyz")
+        with open(traj_filename, "w") as traj_xyz:
+            for mod in models:
+                atoms: AtomsDict = get_atoms(mod)
+                
+                filter_resdic = {
+                    key[-1]: value for key, value
+                    in self.params.items()
+                    if key.startswith("resdic")
+                }
+                ref_coord_dic, _ = load_coords(
+                mod, atoms, filter_resdic
+                )
+                if prev_keys != []:
+                    if ref_coord_dic.keys() != prev_keys:
+                        self.finish_with_error(
+                            "Input atoms are not the same for all the models."
+                            "Please check the input ensemble."
+                            )
+                n_atoms = len(ref_coord_dic)
+                # write xyz coords
+                traj_xyz.write(f"{n_atoms}{os.linesep}{os.linesep}")
+                for k, v in ref_coord_dic.items():
+                    traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                
+                prev_keys = ref_coord_dic.keys()
+        
         # Calculate the rmsd for each set of models
         rmsd_jobs: list[RMSDJob] = []
-        self.log(f"running Rmsd Jobs with {ncores} cores")
+        self.log(f"running RmsdFast Jobs with {ncores} cores")
         for core in range(ncores):
-            output_name = "rmsd_" + str(core) + ".matrix"
-            rmsd_obj = RMSD(
-                models,
+            output_name = Path("rmsd_" + str(core) + ".out")
+            # init RMSDJobFast
+            job = RMSDJob(
+                traj_filename,
+                output_name,
+                EXEC_PATH,
                 core,
                 npairs[core],
                 ref_structs[core],
                 mod_structs[core],
-                output_name,
-                path=Path("."),
-                params=self.params
-                )
-            job_f = Path(output_name)
-            # init RMSDJob
-            job = RMSDJob(
-                job_f,
-                self.params,
-                rmsd_obj
+                len(models),
+                n_atoms,
                 )
             rmsd_jobs.append(job)
 
@@ -162,12 +197,15 @@ class HaddockModule(BaseHaddockModule):
                                    f" {not_found}")
 
         # Post-processing : single file
-        output_name = "rmsd.matrix"
+        final_output_name = "rmsd.matrix"
         self._rearrange_output(
-            output_name,
-            path=rmsd_obj.path,
+            final_output_name,
+            path=Path("."),
             ncores=ncores
             )
+        # Delete the trajectory file
+        if traj_filename.exists():
+            os.unlink(traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models
@@ -175,7 +213,7 @@ class HaddockModule(BaseHaddockModule):
         # Sending matrix path to the next step of the workflow
         matrix_io = ModuleIO()
         rmsd_matrix_file = RMSDFile(
-            output_name,
+            final_output_name,
             npairs=tot_npairs
             )
         matrix_io.add(rmsd_matrix_file)

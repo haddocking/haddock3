@@ -9,7 +9,6 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
 from haddock.modules.analysis.rmsdmatrix import HaddockModule
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
-    RMSD,
     RMSDJob,
     get_pair,
     rmsd_dispatcher,
@@ -107,70 +106,3 @@ def test_overall_rmsd(input_protdna_models):
     os.unlink(Path("rmsd.matrix"))
     os.unlink(Path("rmsd_matrix.json"))
     os.unlink(Path("io.json"))
-
-
-def test_RMSD_class(input_protdna_models):
-    """Test focusing on the RMSD class."""
-    params = {}
-    rmsd_obj = RMSD(
-        input_protdna_models,
-        core=0,
-        npairs=1,
-        start_ref=0,
-        start_mod=1,
-        output_name="rmsd_0.matrix",
-        path=Path("."),
-        params=params
-        )
-    rmsd_obj.run()
-
-    expected_data = np.array([[1, 2, 2.257]])
-
-    np.testing.assert_allclose(rmsd_obj.data, expected_data, atol=0.001)
-
-
-def test_RMSD_filter_resdic(input_protdna_models):
-    """Test filter_resdic."""
-    params = {"resdic_A": [1, 2, 3], "resdic_B": [4, 5, 6]}
-
-    # this test only considers the initialisation of the object
-    rmsd_obj = RMSD(
-        input_protdna_models,
-        core=0,
-        npairs=1,
-        start_ref=0,
-        start_mod=1,
-        output_name="rmsd_0.matrix",
-        path=Path("."),
-        params=params
-        )
-
-    expected_resdic = {"A": [1, 2, 3], "B": [4, 5, 6]}
-
-    assert rmsd_obj.filter_resdic == expected_resdic
-
-
-def test_RMSDJob(input_protdna_models):
-    """Test the RMSD job."""
-    rmsd_obj = RMSD(
-        input_protdna_models,
-        core=0,
-        npairs=1,
-        start_ref=0,
-        start_mod=1,
-        output_name="rmsd_0.matrix",
-        path=Path("."),
-        )
-
-    job_f = "fake_rmsd.job"
-    params = {}
-
-    job = RMSDJob(
-        job_f,
-        params,
-        rmsd_obj
-        )
-    
-    assert job.rmsd_obj == rmsd_obj
-
-    assert job.output == job_f

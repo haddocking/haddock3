@@ -301,11 +301,11 @@
 <span class="sd">            ilRMSD value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">ref</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">ref</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span>
         <span class="p">)</span>
         
         <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">mod</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">mod</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span>
         <span class="p">)</span>
         <span class="c1"># calculating ilRMSD</span>
         <span class="c1"># find atoms present in both interfaces</span>
@@ -381,9 +381,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">mod</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="ilRMSD.output"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="p">):</span>
+<div class="viewcode-block" id="ilRMSD.output"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write down the RMSD matrix.&quot;&quot;&quot;</span>
         <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">)</span>
         <span class="c1"># check if there are very low values in the RMSD vector. This means</span>
@@ -423,7 +421,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 15, 2024.
+      <span class="lastupdated">Last updated on Mar 20, 2024.
       </span></p>
   </div>
 

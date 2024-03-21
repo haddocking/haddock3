@@ -211,11 +211,11 @@ class ilRMSD:
             ilRMSD value
         """
         ref_coord_dic, _ = load_coords(
-            self.model_list[ref], self.atoms, self.filter_resdic
+            self.model_list[ref], self.atoms, filter_resdic=self.filter_resdic
         )
         
         mod_coord_dic, _ = load_coords(
-            self.model_list[mod], self.atoms, self.filter_resdic
+            self.model_list[mod], self.atoms, filter_resdic=self.filter_resdic
         )
         # calculating ilRMSD
         # find atoms present in both interfaces
@@ -291,9 +291,7 @@ class ilRMSD:
             else:
                 mod += 1
 
-    def output(
-            self,
-            ):
+    def output(self):
         """Write down the RMSD matrix."""
         output_fname = Path(self.path, self.output_name)
         # check if there are very low values in the RMSD vector. This means

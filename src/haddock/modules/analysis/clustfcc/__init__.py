@@ -4,7 +4,9 @@ The module takes the models generated in the previous step and calculates the
 contacts between them. Then, the module calculates the FCC matrix and clusters
 the models based on the calculated contacts.
 
-For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*"""
+For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*
+"""  # noqa: E501
+
 import os
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from haddock import FCC_path, log
 from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
+    get_cluster_matrix_plot_clt_dt,
     plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
@@ -179,10 +182,47 @@ class HaddockModule(BaseHaddockModule):
         # Draw the matrix
         if self.params['plot_matrix']:
             # Obtain final models indices
-            final_order_idx, labels = [], []
+            final_order_idx, labels, cluster_ids = [], [], []
             for pdb in self.output_models:
                 final_order_idx.append(models_to_clust.index(pdb))
                 labels.append(pdb.file_name.replace('.pdb', ''))
+                cluster_ids.append(pdb.clt_id)
+            # Get custom cluster data
+            matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+                cluster_ids
+                )
+            # # Set custom data
+            # matrix_cluster_dt = [
+            #     [[clix, cliy] for clix in cluster_ids]
+            #     for cliy in cluster_ids
+            #     ]
+            # # Build delineation lines
+            # del_ind = -0.5
+            # del_posi = []
+            # current_clid = cluster_ids[0]
+            # for clid in cluster_ids:
+            #     if clid != current_clid:
+            #         del_posi.append(del_ind)
+            #         current_clid = clid
+            #     del_ind += 1
+            # cluster_limits = [
+            #     {
+            #         "x0": delpos,
+            #         "x1": delpos,
+            #         "y0": -0.5,
+            #         "y1": len(labels) - 0.5,
+            #         }
+            #     for delpos in del_posi
+            #     ] + [
+            #         {
+            #         "y0": delpos,
+            #         "y1": delpos,
+            #         "x0": -0.5,
+            #         "x1": len(labels) - 0.5,
+            #         }
+            #     for delpos in del_posi
+            #     ]
+
             # Define output filename
             html_matrix_basepath = 'fcc_matrix'
             # Plot matrix
@@ -193,6 +233,8 @@ class HaddockModule(BaseHaddockModule):
                 dttype='FCC',
                 diag_fill=1,
                 output_fname=html_matrix_basepath,
+                matrix_cluster_dt=matrix_cluster_dt,
+                cluster_limits=cluster_limits,
                 )
             log.info(f"Plotting matrix in {html_matrixpath}")
 

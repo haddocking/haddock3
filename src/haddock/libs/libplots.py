@@ -1133,6 +1133,9 @@ def heatmap_plotly(
         color_scale: str = 'Greys_r',
         title: Optional[str] = None,
         output_fname: Path = Path('contacts.html'),
+        hovertemplate: Optional[str] = None,
+        customdata: Optional[list[list[Any]]] = None,
+        delineation_traces: Optional[list[dict[str, float]]] = None,
         ) -> Path:
     """Generate a `plotly heatmap` based on matrix content.
 
@@ -1152,12 +1155,19 @@ def heatmap_plotly(
         Title of the figure.
     output_fname : Path
         Path to the output filename to generate.
+    hovertemplate: Optional[str]
+        Custrom string used to format data for hover annotation in plotly.
+    customdata: Optional[list[list[list[int]]]]
+        A matrix of cluster ids, used for extra hover annotation in plotly.
+    delineation_traces: Optional[list[dict[str, float]]]
+        A list of dict enabling to draw lines separating cluster ids.
 
     Return
     ------
     output_fname : Path
         Path to the generated filename
     """
+    # Generate heatmap trace
     fig = px.imshow(
         matrix,
         labels=labels,
@@ -1168,6 +1178,23 @@ def heatmap_plotly(
         )
     # Place X axis on top
     fig.update_xaxes(side="top")
+    fig.update_traces(
+        hovertemplate=hovertemplate,
+        customdata=customdata,
+        )
+    # Add delineation traces
+    if delineation_traces:
+        # Loop over lines
+        for trace in delineation_traces:
+            # Draw them
+            fig.add_shape(
+                type="line",
+                line={"dash": "5px"},
+                x0=trace["x0"],
+                x1=trace["x1"],
+                y0=trace["y0"],
+                y1=trace["y1"],
+            )
 
     # Compute pixels
     nb_entries = matrix.shape[0]

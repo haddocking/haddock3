@@ -37,6 +37,7 @@ from haddock import log
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
+    get_cluster_matrix_plot_clt_dt,
     plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
@@ -157,10 +158,15 @@ class HaddockModule(BaseHaddockModule):
         # Draw the matrix
         if self.params['plot_matrix']:
             # Obtain final models indices
-            final_order_idx, labels = [], []
+            final_order_idx, labels, cluster_ids = [], [], []
             for pdb in self.output_models:
                 final_order_idx.append(models.index(pdb))
                 labels.append(pdb.file_name.replace('.pdb', ''))
+                cluster_ids.append(pdb.clt_id)
+            # Get custom cluster data
+            matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+                cluster_ids
+                )
 
             # Define output filename
             html_matrix_basepath = 'rmsd_matrix'
@@ -173,6 +179,8 @@ class HaddockModule(BaseHaddockModule):
                 reverse=True,
                 diag_fill=0,
                 output_fname=html_matrix_basepath,
+                matrix_cluster_dt=matrix_cluster_dt,
+                cluster_limits=cluster_limits,
                 )
             log.info(f"Plotting matrix in {html_matrixpath}")
 

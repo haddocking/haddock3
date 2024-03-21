@@ -12,7 +12,7 @@ import os
 from pathlib import Path
 
 from haddock import log
-from haddock.core.typing import FilePath, Union, ParamDictT
+from haddock.core.typing import FilePath, Union, ParamDictT, Optional
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libplots import heatmap_plotly
 
@@ -68,6 +68,8 @@ def plot_cluster_matrix(
         color_scale: str = "Blues",
         reverse: bool = False,
         output_fname: Union[str, Path, FilePath] = 'clust_matrix',
+        matrix_cluster_dt: Optional[list[list[list[int]]]] = None,
+        cluster_limits: Optional[list[dict[str, float]]] = None,
         ) -> str:
     """Plot a plotly heatmap of a matrix file.
 
@@ -87,6 +89,10 @@ def plot_cluster_matrix(
         Should the color scale be reversed ?, by default False
     output_fname : Union[str, Path, FilePath], optional
         Name of the output file to generate, by default 'clust_matrix.html'
+    matrix_cluster_dt: Optional[list[list[list[int]]]]
+        A matrix of cluster ids, used for extra hover annotation in plotly.
+    cluster_limits: Optional[list[dict[str, float]]]
+        A list of dict enabling to draw lines separating cluster ids.
 
     Return
     ------
@@ -127,6 +133,22 @@ def plot_cluster_matrix(
         else:
             color_scale += '_r'
 
+    # Define hovering tempalte string
+    if matrix_cluster_dt:
+        hovertemplate = (
+            f'                                {dttype}: %{{z}} <br>'
+            f' Model1: %{{x}}    ClusterID: %{{customdata[0]}} <br>'
+            f' Model2: %{{y}}    ClusterID: %{{customdata[1]}} '
+            '<extra></extra>'
+            )
+    else:
+        hovertemplate = (
+            f'                       {dttype}: %{{z}} <br>'
+            f' Model1: %{{x}} <br>'
+            f' Model2: %{{y}} '
+            '<extra></extra>'
+            )
+
     # Generate file extension ~ matrix size
     ext = 'html' if len(final_order_idx) <= MAX_NB_ENTRY_HTML_MATRIX else 'png'
     output_fname_ext = f"{output_fname}.{ext}"
@@ -139,11 +161,66 @@ def plot_cluster_matrix(
         color_scale=color_scale,
         title=f"{dttype} clustering matrix",
         output_fname=output_fname_ext,
+        hovertemplate=hovertemplate,
+        customdata=matrix_cluster_dt,
+        delineation_traces=cluster_limits,
         )
     # Return generated filepath
     return output_fname_ext
 
-  
+
+def get_cluster_matrix_plot_clt_dt(
+        cluster_ids: list[int],
+        ) -> tuple[list[list[list[int]]], list[dict[str, float]]]:
+    """Generate cluster matrix data for plotly.
+
+    Parameters
+    ----------
+    cluster_ids : list[int]
+        List containing ordered cluster ids.
+
+    Returns
+    -------
+    matrix_cluster_dt: list[list[list[int]]]
+        A matrix of cluster ids, used for plotly.
+    
+    cluster_limits: list[dict[str, float]]]
+        Boundaries to draw lines between clusters with plotly.
+    """
+    # Set custom data
+    matrix_cluster_dt = [
+        [[clix, cliy] for clix in cluster_ids]
+        for cliy in cluster_ids
+        ]
+    # Build delineation lines
+    del_ind = -0.5
+    del_posi = []
+    current_clid = cluster_ids[0]
+    for clid in cluster_ids:
+        if clid != current_clid:
+            del_posi.append(del_ind)
+            current_clid = clid
+        del_ind += 1
+    cluster_limits = [
+        {
+            "x0": delpos,
+            "x1": delpos,
+            "y0": -0.5,
+            "y1": len(cluster_ids) - 0.5,
+            }
+        for delpos in del_posi
+        ] + [
+            {
+                "y0": delpos,
+                "y1": delpos,
+                "x0": -0.5,
+                "x1": len(cluster_ids) - 0.5,
+                }
+            for delpos in del_posi
+        ]
+    return matrix_cluster_dt, cluster_limits
+
+
 def rank_clusters(clt_dic, threshold):
     """
     Rank the clusters by their average score.

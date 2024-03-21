@@ -31,7 +31,16 @@ from haddock import log
 from haddock.core.typing import AtomsDict, FilePath, Literal, NDFloat, Optional
 from haddock.libs.libio import pdb_path_exists
 from haddock.libs.libontology import PDBFile, PDBPath
-from haddock.libs.libpdb import split_by_chain
+from haddock.libs.libpdb import (
+    split_by_chain,
+    slc_name,
+    slc_resname,
+    slc_chainid,
+    slc_resseq,
+    slc_x,
+    slc_y,
+    slc_z,
+    )
 
 
 RES_TO_BE_IGNORED = ["SHA", "WAT"]
@@ -438,24 +447,23 @@ def load_coords(
     """
     coord_dic: CoordsDict = {}
     chain_dic: ResDict = {}
-    idx = 0
+    idx: int = 0
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     with open(pdb_f, "r") as fh:
         for line in fh.readlines():
             if line.startswith("ATOM"):
-                atom_name = line[12:16].strip()
-                resname = line[17:20].strip()
+                atom_name = line[slc_name].strip()
+                resname = line[slc_resname].strip()
                 if resname in RES_TO_BE_IGNORED:
                     continue
+                chain = line[slc_chainid]
                 if model2ref_chain_dict:
-                    chain = model2ref_chain_dict[line[21]]
-                else:
-                    chain = line[21]
-                resnum = int(line[22:26])
-                x = float(line[30:38])
-                y = float(line[38:46])
-                z = float(line[46:54])
+                    chain = model2ref_chain_dict[chain]
+                resnum = int(line[slc_resseq])
+                x = float(line[slc_x])
+                y = float(line[slc_y])
+                z = float(line[slc_z])
                 coords = np.asarray([x, y, z])
                 if numbering_dic and model2ref_chain_dict:
                     try:
@@ -474,14 +482,21 @@ def load_coords(
                     identifier = (chain, resnum, atom_name)
                 if atom_name not in atoms[resname]:
                     continue
-                if chain not in chain_dic:
-                    chain_dic[chain] = []
+                # Create empty chain entries
+                if chain not in chain_dic.keys():
+                    if filter_resdic:
+                        if chain in filter_resdic.keys():
+                            chain_dic[chain] = []
+                    else:
+                        chain_dic[chain] = []
+                # Check if must eventually filter this entry
                 if filter_resdic:
                     # Only retrieve coordinates from the filter_resdic
-                    if chain in filter_resdic and resnum in filter_resdic[chain]:
-                        coord_dic[identifier] = coords
-                        chain_dic[chain].append(idx)
-                        idx += 1
+                    if chain in filter_resdic.keys():
+                        if resnum in filter_resdic[chain]:
+                            coord_dic[identifier] = coords
+                            chain_dic[chain].append(idx)
+                            idx += 1
                 else:
                     # retrieve everything
                     coord_dic[identifier] = coords
@@ -668,9 +683,9 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
     with open(pdb_f) as fh:
         for line in fh.readlines():
             if line.startswith("ATOM"):
-                res_num = int(line[22:26])
-                res_name = line[17:20].strip()
-                chain = line[21]
+                res_num = int(line[slc_resseq])
+                res_name = line[slc_resname].strip()
+                chain = line[slc_chainid]
                 if res_name in RES_TO_BE_IGNORED:
                     continue
                 try:

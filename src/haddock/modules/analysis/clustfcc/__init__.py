@@ -191,37 +191,6 @@ class HaddockModule(BaseHaddockModule):
             matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
                 cluster_ids
                 )
-            # # Set custom data
-            # matrix_cluster_dt = [
-            #     [[clix, cliy] for clix in cluster_ids]
-            #     for cliy in cluster_ids
-            #     ]
-            # # Build delineation lines
-            # del_ind = -0.5
-            # del_posi = []
-            # current_clid = cluster_ids[0]
-            # for clid in cluster_ids:
-            #     if clid != current_clid:
-            #         del_posi.append(del_ind)
-            #         current_clid = clid
-            #     del_ind += 1
-            # cluster_limits = [
-            #     {
-            #         "x0": delpos,
-            #         "x1": delpos,
-            #         "y0": -0.5,
-            #         "y1": len(labels) - 0.5,
-            #         }
-            #     for delpos in del_posi
-            #     ] + [
-            #         {
-            #         "y0": delpos,
-            #         "y1": delpos,
-            #         "x0": -0.5,
-            #         "x1": len(labels) - 0.5,
-            #         }
-            #     for delpos in del_posi
-            #     ]
 
             # Define output filename
             html_matrix_basepath = 'fcc_matrix'

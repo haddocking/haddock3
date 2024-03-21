@@ -9,6 +9,31 @@ from haddock import log
 from haddock.libs.libontology import RMSDFile
 
 
+def get_matrix_path(rmsd_matrix: RMSDFile) -> Path:
+    """From an RMSDFile object returns the rmsd matrix path.
+
+    Parameters
+    ----------
+    rmsd_matrix : :obj:`RMSDFile`
+        RMSDFile object with the path to the RMSD matrix.
+
+    Returns
+    -------
+    matrix_fpath : Path
+        Path to the RMSD matrix
+
+    Raises
+    ------
+    TypeError
+        If input rmsd_matrix is not of type RMSDFile
+    """
+    if not isinstance(rmsd_matrix, RMSDFile):
+        err = f"{type(rmsd_matrix)} is not a RMSDFile object."
+        raise TypeError(err)
+    matrix_fpath = Path(rmsd_matrix.path, rmsd_matrix.file_name)
+    return matrix_fpath
+
+
 def write_clusters(clusters, cluster_arr, models, rmsd_matrix, out_filename="cluster.out", centers=False):  # noqa: E501
     """
     Write the clusters to a file.
@@ -77,10 +102,7 @@ def read_matrix(rmsd_matrix: RMSDFile) -> np.ndarray:
     matrix : :obj:`numpy.ndarray`
         Numpy array with the RMSD matrix.
     """
-    if not isinstance(rmsd_matrix, RMSDFile):
-        err = f"{type(rmsd_matrix)} is not a RMSDFile object."
-        raise TypeError(err)
-    filename = Path(rmsd_matrix.path, rmsd_matrix.file_name)
+    filename = get_matrix_path(rmsd_matrix)
     # count lines
     nlines = sum(1 for line in open(filename))
     log.info(f"input rmsd matrix has {nlines} entries")
@@ -103,7 +125,7 @@ def read_matrix(rmsd_matrix: RMSDFile) -> np.ndarray:
             else:
                 matrix[[c]] = float(data[2])
                 c += 1
-    return matrix
+    return np.array(matrix)
 
 
 def get_dendrogram(rmsd_matrix, linkage_type):

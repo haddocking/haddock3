@@ -28,10 +28,10 @@ def output_models():
 
 
 def test_mdscoring_output(output_models):
-    """Test emscoring expected output."""
+    """Test mdscoring expected output."""
     mds_module = HaddockModule(
         order=1,
-        path=Path("1_emscoring"),
+        path=Path("1_mdscoring"),
         initial_params=mdscoring_pars
         )
     # original names

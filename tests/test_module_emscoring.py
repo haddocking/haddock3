@@ -35,10 +35,10 @@ def test_emscoring_output(output_models):
         initial_params=emscoring_pars
         )
     # original names
-    ems_module.output_models = output_models
+    ems_module.scoring_models = output_models
     for mod in range(len(output_models)):
         ori_name = "original_name_" + str(mod) + ".pdb"
-        ems_module.output_models[mod].ori_name = ori_name
+        ems_module.scoring_models[mod].ori_name = ori_name
     # creating output
     output_fname = Path("emscoring.tsv")
     ems_module.output(output_fname)
@@ -47,8 +47,8 @@ def test_emscoring_output(output_models):
     # expected output
     expected_outf_l = [
         ["structure", "original_name", "md5", "score"],
-        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "-28.0"],
-        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "42.0"]]
+        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "-28.00"],
+        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "42.00"]]
         
     assert observed_outf_l == expected_outf_l
 

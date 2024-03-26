@@ -35,10 +35,10 @@ def test_mdscoring_output(output_models):
         initial_params=mdscoring_pars
         )
     # original names
-    mds_module.output_models = output_models
+    mds_module.scoring_models = output_models
     for mod in range(len(output_models)):
         ori_name = "original_name_" + str(mod) + ".pdb"
-        mds_module.output_models[mod].ori_name = ori_name
+        mds_module.scoring_models[mod].ori_name = ori_name
     # creating output
     output_fname = Path("mdscoring.tsv")
     mds_module.output(output_fname)
@@ -47,8 +47,8 @@ def test_mdscoring_output(output_models):
     # expected output
     expected_outf_l = [
         ["structure", "original_name", "md5", "score"],
-        ["protprot_complex_2.pdb", "original_name_1.pdb", "None", "28.0"],
-        ["protprot_complex_1.pdb", "original_name_0.pdb", "None", "42.0"]]
+        ["protprot_complex_2.pdb", "original_name_1.pdb", "None", "28.00"],
+        ["protprot_complex_1.pdb", "original_name_0.pdb", "None", "42.00"]]
         
     assert observed_outf_l == expected_outf_l
 

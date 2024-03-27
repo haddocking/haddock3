@@ -414,7 +414,7 @@ def main(
     return restraints_tbl, plans_pdb
 
 
-gen_z_surfrace_restraints = main
+gen_z_surface_restraints = main
 
 
 ############################
@@ -436,7 +436,7 @@ if __name__ == "__main__":
         datefmt='%d/%m/%Y %H:%M:%S',
         )
     # Launch main
-    restraints, plan_s = gen_z_surfrace_restraints(
+    restraints, plan_s = gen_z_surface_restraints(
         args['residues'],
         residues=args['residues'],
         output=args['output'],

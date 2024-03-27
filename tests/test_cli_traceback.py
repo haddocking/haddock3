@@ -60,8 +60,8 @@ def test_main(rigid_json, flexref_json):
     exp_tr = [["00_topo1", "00_topo2", "1_rigidbody", "1_rigidbody_rank", "4_flexref", "4_flexref_rank"],  # noqa: E501
               ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_3.pdb", "1", "flexref_1.pdb", "1"],  # noqa: E501
               ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_1.pdb", "2", "flexref_2.pdb", "2"],  # noqa: E501
-              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_2.pdb", "4", "-", "-"],  # noqa: E501
-              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_4.pdb", "3", "-", "-"]]  # noqa: E501
+              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_4.pdb", "3", "-", "-"],  # noqa: E501
+              ["4G6K_fv_haddock.psf", "4I1B-matched_haddock.psf", "rigidbody_2.pdb", "4", "-", "-"]]  # noqa: E501
     exp_tr_df = pd.DataFrame(exp_tr[1:], columns=exp_tr[0])
 
     assert obs_tr.columns.tolist() == exp_tr_df.columns.tolist()

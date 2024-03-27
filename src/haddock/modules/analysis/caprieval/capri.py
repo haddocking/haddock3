@@ -608,7 +608,7 @@ class CAPRI:
         reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             PDB file of the model to have its atoms identified
         full : bool
-            If False, only back-bone atoms will be retrieved, else all atoms
+            If False, only backbone atoms will be retrieved, otherwise all atoms
 
         Returns
         -------

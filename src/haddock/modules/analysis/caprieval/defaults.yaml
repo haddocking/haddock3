@@ -180,6 +180,6 @@ allatoms:
   title: Atoms to be considered during the analysis.
   short: Atoms to be considered during the analysis.
   long: Atoms to be considered during the analysis. If false (default), only
-        back-bone atoms will be considered, else all heavy-atoms.
+        backbone atoms will be considered, otherwise all the heavy-atoms.
   group: analysis
   explevel: easy

@@ -13,9 +13,8 @@ Usage:
 
 import logging
 import os
-from pathlib import Path
 
-from haddock.core.typing import Union, Optional, Generator
+from haddock.core.typing import Optional, Generator
 
 
 # As this script is a subcommand of the `haddock3-restraints` cli,
@@ -231,10 +230,11 @@ if __name__ == "__main__":
         format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
         datefmt='%d/%m/%Y %H:%M:%S',
         )
+    # Run main function
     plan_s = gen_bead_plans(
         spacing=args['spacing'],
         x_size=args['x_size'],
         y_size=args['y_size'],
         z_coords=args['z_coords'],
         )
-    print(plan_s)
+    print(plan_s)  # noqa : T201

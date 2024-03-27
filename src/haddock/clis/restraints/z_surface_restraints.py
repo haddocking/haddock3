@@ -13,14 +13,19 @@ Usage:
         --y-size   <size_in_y_dim>
 
 e.g:
-haddock3-restraints z-surface-restraints --pdb mystructure.pdb --residues 1,2,3 7,8,9 --spacing 40 --x-size 200 --y-size 200 --output myZrestaints
+haddock3-restraints z-surface-restraints
+  --pdb mystructure.pdb
+  --residues 1,2,3 7,8,9
+  --spacing 40
+  --x-size 200
+  --y-size 200
+  --output myZrestaints
 """
 
 
 import logging
 import os
 from pathlib import Path
-from scipy.spatial.distance import pdist
 from haddock.core.typing import Union, Optional
 from haddock.clis.restraints.z_surfaces import gen_bead_plans
 from haddock.libs.librestraints import read_structure, calc_euclidean
@@ -136,7 +141,7 @@ def load_selected_resiudes_coords(
 def compute_barycenter(
         resi_coords: list[tuple[float, float, float]],
         ) -> tuple[float, float, float]:
-    """Compute center of mass of multiple resiudes coordinates
+    """Compute center of mass of multiple resiudes coordinates.
 
     Parameters
     ----------
@@ -258,7 +263,7 @@ def gen_z_restraints(
         rest_dist: float = 7.5,
         z_padding: float = 1.0,
         ) -> str:
-    """_summary_
+    """Generate set of z ambiguous restraints according to residue selections.
 
     Parameters
     ----------
@@ -328,6 +333,24 @@ def output_data(
         plans: str,
         output: Optional[Union[str, Path]] = None,
         ) -> tuple[str, str]:
+    """Write output files.
+
+    Parameters
+    ----------
+    restraints : str
+        String containing the ambiguous restraints.
+    plans : str
+        String containing shape beads coordinates as PDB file.
+    output : Optional[Union[str, Path]], optional
+        Base output path, by default None
+
+    Returns
+    -------
+    restraints_fpath: str
+        Path to the generated AIRs.
+    beadplans_fpath : str
+        Path to the generated PDB file containing beads.
+    """
     # Define base output path if not given
     if not output:
         output = 'Zrestraints'
@@ -339,6 +362,7 @@ def output_data(
     beadplans_fpath = f"{output}_beads.pdb"
     with open(beadplans_fpath, 'w') as filout:
         filout.write(plans)
+    # Return filepaths
     return restraints_fpath, beadplans_fpath
 
 
@@ -350,14 +374,14 @@ def main(
         x_size: float = 200,
         y_size: float = 200,
         ) -> tuple[str, str]:
-    """_summary_
+    """Generate both z-restraints and z-surface beads from residue selection.
 
     Parameters
     ----------
     pdb : Union[str, Path]
         Path to the PDB file to be parsed.
     residues : list[str]
-        List of strings containing coma separated resiudes indices, by default None
+        List of strings containing coma separated resids, by default None
     spacing : float, optional
         Spacing (in Angstrom) between beads in same dimension, by default 40
     x_size : float, optional

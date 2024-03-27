@@ -253,8 +253,8 @@ def get_z_coords(
 
 
 def gen_z_restraints(
-        res_select,
-        selection_z,
+        res_select: dict[str, list[int]],
+        selection_z: dict[str, float],
         rest_dist: float = 7.5,
         z_padding: float = 1.0,
         ) -> str:
@@ -289,10 +289,8 @@ def gen_z_restraints(
         residues = res_select[select]
         z_coord = selection_z[select]
         # Add comment
-        restraints.append(
-            f"! z restraints for {select}: "
-            f"{",".join([str(r) for r in residues])}"
-            )
+        list_residues = ",".join([str(r) for r in residues])
+        restraints.append(f"! z restraints for {select}: {list_residues}")
         # Loop over residues selection
         for resid in residues:
             # Compute lower/greater than z-coord

@@ -15,7 +15,7 @@ import logging
 import os
 from pathlib import Path
 
-from haddock.core.typing import Union, Optional
+from haddock.core.typing import Union, Optional, Generator
 
 
 # As this script is a subcommand of the `haddock3-restraints` cli,
@@ -154,7 +154,7 @@ def bead_plan(
     return plan, resindex
 
 
-def step_coords(size: float, spacing: float):
+def step_coords(size: float, spacing: float) -> Generator[float]:
     """Generate set of evenly spaced coordinates between of defined size.
 
     Parameters

@@ -139,6 +139,40 @@ def traceback_dataframe(
     df_ord.loc[unk_records, last_step] = "-"
     return df_ord
 
+def order_traceback_df(df_output, sel_step):
+    """
+    Order the traceback dataframe. Each step is ordered by rank.
+
+    Parameters
+    ----------
+    df_output : pandas.DataFrame
+        Dataframe containing the traceback data.
+    
+    sel_step : list
+        List of selected steps.
+    
+    Returns
+    -------
+    df_output : pandas.DataFrame
+        Dataframe containing the ordered traceback data.
+    """
+    # loop over sel_step in reverse order
+    sorted_list = []
+    indexes = []
+    for n in range(len(sel_step) - 1, -1, -1):
+        rank_col = sel_step[n] + "_rank"
+        # take only models with a rank
+        df_last = df_output[df_output[rank_col] != "-"]
+        # remove from df_last the indexes that are already in the dataframe
+        df_last = df_last[~df_last.index.isin(indexes)]
+        # sorting the dataframe by rank
+        sorted_df_last = df_last.sort_values(by=rank_col)
+        sorted_list.append(sorted_df_last)
+        # concat the current indexes with the previous ones
+        indexes = sorted_df_last.index.tolist() + indexes
+    df_output = pd.concat(sorted_list)
+    return df_output
+
 
 # Command line interface parser
 ap = argparse.ArgumentParser(
@@ -234,20 +268,22 @@ def main(run_dir):
                     # this is the first step in which the pdbfile appears.
                     # This means that it was discarded for the subsequent steps
                     # We need to add the pdbfile to the data_dict
-                    key = f"unk{unk_idx}"
-                    data_dict[key] = ["-" for el in range(delta - 1)]
-                    data_dict[key].append(str(pdbfile.rel_path))
-                    rank_dict[key] = ["-" for el in range(delta)]
+                    keys = [f"unk{unk_idx}"]
+                    data_dict[keys[0]] = ["-" for el in range(delta - 1)]
+                    data_dict[keys[0]].append(str(pdbfile.rel_path))
+                    rank_dict[keys[0]] = ["-" for el in range(delta)]
                     unk_idx += 1
                 else:
                     # we've already seen this pdb before.
-                    idx = ls_values.index(str(pdbfile.rel_path))
-                    key = list(data_dict.keys())[idx // delta]
+                    idxs = [i for i, el in enumerate(ls_values) if el==str(pdbfile.rel_path)]
+                    keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
 
                 # assignment
                 for el in ori_names:
-                    data_dict[key].append(el)
-                rank_dict[key].append(rank)
+                    for key in keys:
+                        data_dict[key].append(el)
+                for key in keys:
+                    rank_dict[key].append(rank)
             else:  # last step of the workflow
                 data_dict[str(pdbfile.rel_path)] = [on for on in ori_names]
                 rank_dict[str(pdbfile.rel_path)] = [rank]
@@ -269,13 +305,8 @@ def main(run_dir):
         final_data_dict, final_rank_dict, sel_step, max_topo_len
     )
 
-    # sort dataframe by the last rank
-    last_col = sel_step[-1] + "_rank"
-    df_last = df_output[df_output[last_col] != "-"]
-    df_unranked = df_output[df_output[last_col] == "-"]
-    sorted_df_last = df_last.sort_values(by=last_col)
-    df_output = pd.concat([sorted_df_last, df_unranked])
-
+    # ordering the dataframe
+    df_output = order_traceback_df(df_output, sel_step)
     # dumping the dataframe
     track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
     log.info(

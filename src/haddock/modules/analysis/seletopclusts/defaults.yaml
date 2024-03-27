@@ -21,7 +21,7 @@ top_models:
 offline:
   default: false
   type: boolean
-  title: Remove any web calls.
+  title: Isolate haddock3 from internet.
   short: Completely isolate the haddock3 run & results from internet.
   long: For interactive plots, we are using the plotly library. It can be 
     embedded as a link to the plotly.js library and fetched from the web,

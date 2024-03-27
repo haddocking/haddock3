@@ -126,7 +126,7 @@ class HaddockModule(BaseCNSModule):
 
                 # Create a model for the expected output
                 model = PDBFile(
-                    output_pdb_fname, path=self.path, restr_fname=ambig_fname
+                    output_pdb_fname, path=".", restr_fname=ambig_fname
                 )
                 model.topology = [e.topology for e in combination]
                 self.output_models.append(model)

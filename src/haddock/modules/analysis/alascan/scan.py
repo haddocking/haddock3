@@ -343,7 +343,15 @@ def alascan_cluster_analysis(models):
 
 
 def generate_alascan_output(models, path):
-    """Generate the alascan output files."""
+    """Generate the alascan output files.
+    
+    Parameters
+    ----------
+    models : list
+        List of models.
+    path : str
+        Path to the run directory.
+    """
     models_to_export = []
     for model in models:
         name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
@@ -358,7 +366,7 @@ def generate_alascan_output(models, path):
         model.file_name = name
         model.full_name = name
         model.rel_path = Path('..', Path(path).name, name)
-        model.path = str(Path(path).resolve())
+        model.path = str(Path(".").resolve())
         models_to_export.append(model)
     return models_to_export
 

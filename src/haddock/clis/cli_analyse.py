@@ -27,6 +27,8 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.clis.cli_unpack import main as haddock3_unpack
+from haddock.clis.cli_clean import main as haddock3_clean
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import (
     Any,
@@ -54,6 +56,7 @@ from haddock.libs.libplots import (
 )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
+from haddock import modules_defaults_path
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
@@ -208,7 +211,7 @@ def maincli() -> None:
     cli(ap, main)
 
 
-def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> None:
+def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cleaned: bool) -> None:
     """
     Run the caprieval analysis.
 
@@ -225,6 +228,11 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> No
     io = ModuleIO()
     filename = Path("..", f"{step}/io.json")
     io.load(filename)
+    # unpack the files if they are compressed
+    if is_cleaned:
+        default_general_params = read_from_yaml_config(modules_defaults_path)
+        path_to_unpack = io.output[0].path
+        haddock3_unpack(path_to_unpack, ncores=default_general_params["ncores"])
     # create capri
     caprieval_module = HaddockModule(
         order=1,
@@ -236,6 +244,9 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> No
     caprieval_module.previous_io = io
     # run capri module
     caprieval_module._run()
+    # compress files if they should be compressed
+    if is_cleaned:
+        haddock3_clean(path_to_unpack, ncores=default_general_params["ncores"])
 
 
 def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
@@ -417,7 +428,7 @@ def analyse_step(
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if run_capri == True:
-        run_capri_analysis(step, run_dir, capri_dict)
+        run_capri_analysis(step, run_dir, capri_dict, is_cleaned)
 
     log.info("CAPRI files identified")
     # plotting

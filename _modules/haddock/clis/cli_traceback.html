@@ -226,6 +226,40 @@
     <span class="n">df_ord</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">unk_records</span><span class="p">,</span> <span class="n">last_step</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
     <span class="k">return</span> <span class="n">df_ord</span></div>
 
+<div class="viewcode-block" id="order_traceback_df"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.order_traceback_df">[docs]</a><span class="k">def</span> <span class="nf">order_traceback_df</span><span class="p">(</span><span class="n">df_output</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Order the traceback dataframe. Each step is ordered by rank.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df_output : pandas.DataFrame</span>
+<span class="sd">        Dataframe containing the traceback data.</span>
+<span class="sd">    </span>
+<span class="sd">    sel_step : list</span>
+<span class="sd">        List of selected steps.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df_output : pandas.DataFrame</span>
+<span class="sd">        Dataframe containing the ordered traceback data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># loop over sel_step in reverse order</span>
+    <span class="n">sorted_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">indexes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sel_step</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">rank_col</span> <span class="o">=</span> <span class="n">sel_step</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_rank&quot;</span>
+        <span class="c1"># take only models with a rank</span>
+        <span class="n">df_last</span> <span class="o">=</span> <span class="n">df_output</span><span class="p">[</span><span class="n">df_output</span><span class="p">[</span><span class="n">rank_col</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">]</span>
+        <span class="c1"># remove from df_last the indexes that are already in the dataframe</span>
+        <span class="n">df_last</span> <span class="o">=</span> <span class="n">df_last</span><span class="p">[</span><span class="o">~</span><span class="n">df_last</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">indexes</span><span class="p">)]</span>
+        <span class="c1"># sorting the dataframe by rank</span>
+        <span class="n">sorted_df_last</span> <span class="o">=</span> <span class="n">df_last</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">rank_col</span><span class="p">)</span>
+        <span class="n">sorted_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sorted_df_last</span><span class="p">)</span>
+        <span class="c1"># concat the current indexes with the previous ones</span>
+        <span class="n">indexes</span> <span class="o">=</span> <span class="n">sorted_df_last</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">indexes</span>
+    <span class="n">df_output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">sorted_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_output</span></div>
+
 
 <span class="c1"># Command line interface parser</span>
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
@@ -321,20 +355,22 @@
                     <span class="c1"># this is the first step in which the pdbfile appears.</span>
                     <span class="c1"># This means that it was discarded for the subsequent steps</span>
                     <span class="c1"># We need to add the pdbfile to the data_dict</span>
-                    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;unk</span><span class="si">{</span><span class="n">unk_idx</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
-                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">))</span>
-                    <span class="n">rank_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delta</span><span class="p">)]</span>
+                    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;unk</span><span class="si">{</span><span class="n">unk_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">))</span>
+                    <span class="n">rank_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">delta</span><span class="p">)]</span>
                     <span class="n">unk_idx</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># we&#39;ve already seen this pdb before.</span>
-                    <span class="n">idx</span> <span class="o">=</span> <span class="n">ls_values</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">))</span>
-                    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">idx</span> <span class="o">//</span> <span class="n">delta</span><span class="p">]</span>
+                    <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ls_values</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span><span class="o">==</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)]</span>
+                    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">idx</span> <span class="o">//</span> <span class="n">delta</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
 
                 <span class="c1"># assignment</span>
                 <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">ori_names</span><span class="p">:</span>
-                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
-                <span class="n">rank_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                        <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                    <span class="n">rank_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># last step of the workflow</span>
                 <span class="n">data_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">on</span> <span class="k">for</span> <span class="n">on</span> <span class="ow">in</span> <span class="n">ori_names</span><span class="p">]</span>
                 <span class="n">rank_dict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pdbfile</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">rank</span><span class="p">]</span>
@@ -355,6 +391,9 @@
     <span class="n">df_output</span> <span class="o">=</span> <span class="n">traceback_dataframe</span><span class="p">(</span>
         <span class="n">final_data_dict</span><span class="p">,</span> <span class="n">final_rank_dict</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">,</span> <span class="n">max_topo_len</span>
     <span class="p">)</span>
+
+    <span class="c1"># ordering the dataframe</span>
+    <span class="n">df_output</span> <span class="o">=</span> <span class="n">order_traceback_df</span><span class="p">(</span><span class="n">df_output</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">)</span>
     <span class="c1"># dumping the dataframe</span>
     <span class="n">track_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">TRACK_FOLDER</span><span class="p">,</span> <span class="s2">&quot;traceback.tsv&quot;</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -376,7 +415,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 20, 2024.
+      <span class="lastupdated">Last updated on Mar 27, 2024.
       </span></p>
   </div>
 

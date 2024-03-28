@@ -30,7 +30,6 @@ from haddock.libs.librestraints import (
     passive_from_active_and_surface,
 )
 
-
 app = FastAPI(root_path="/restraints")
 
 # TODO add rate limit with slowapi package
@@ -121,7 +120,7 @@ class RestrainBodiesRequest(BaseModel):
 
 
 @app.post("/restrain_bodies", response_class=PlainTextResponse)
-def restrain_bodies(request: RestrainBodiesRequest):
+def restrain_bodies(request: RestrainBodiesRequest) -> str:
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(b64decode(request.structure))
 

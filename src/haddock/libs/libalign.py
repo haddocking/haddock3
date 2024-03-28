@@ -543,6 +543,10 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     ----------
     pdb : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
         PDB file to have its atoms identified
+    full : bool
+        Weather or not to take `full` atoms into consideration.
+        If False, only main-chain atoms retrieved.
+        If True, all heavy atoms retrieved.
 
     Returns
     -------

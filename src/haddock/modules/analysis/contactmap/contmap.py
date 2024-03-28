@@ -276,6 +276,7 @@ class ContactsMap():
                 contact_threshold=self.params['ca_ca_dist_threshold'],
                 colorscale=self.params['color_ramp'],
                 output_fname=f'{self.output}_heatmap.html',
+                offline=self.params["offline"],
                 )
             log.info(f'Generated single model heatmap file: {heatmap}')
             self.files['res-res-contactmap'] = heatmap
@@ -294,6 +295,7 @@ class ContactsMap():
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
                 title=Path(self.output).stem.replace('_', ' '),
+                offline=self.params["offline"],
                 )
             log.info(f'Generated single model chordchart file: {chordp}')
             self.files['res-res-chordchart'] = chordp
@@ -509,6 +511,7 @@ class ClusteredContactMap():
                 contact_threshold=1,
                 colorscale=self.params['color_ramp'],
                 output_fname=f'{self.output}_heatmap.html',
+                offline=self.params["offline"],
                 )
             log.info(f'Generated cluster contacts heatmap: {heatmap_path}')
             self.files['res-res-contactmap'] = heatmap_path
@@ -527,6 +530,7 @@ class ClusteredContactMap():
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
                 title=Path(self.output).stem.replace('_', ' '),
+                offline=self.params["offline"],
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
             self.files['res-res-chordchart'] = chordp
@@ -1090,6 +1094,7 @@ def tsv_to_heatmap(
         contact_threshold: float = 7.5,
         colorscale: str = 'Greys',
         output_fname: Union[Path, str] = 'contacts.html',
+        offline: bool = False,
         ) -> Union[Path, str]:
     """Read a tsv file and generate a heatmap from it.
 
@@ -1161,6 +1166,7 @@ def tsv_to_heatmap(
         ylabels=labels,
         color_scale=color_scale,
         output_fname=output_fname,
+        offline=offline,
         )
 
     return output_filepath
@@ -1881,6 +1887,7 @@ def make_chordchart(
         gap: float = 2 * PI * 0.005,
         output_fpath: Union[str, Path] = 'chordchart.html',
         title: str = 'Chord diagram',
+        offline: bool = False,
         ) -> Union[str, Path]:
     """Generate a plotly chordchart graph.
 
@@ -2116,6 +2123,7 @@ def make_chordchart(
         output_fpath,
         figure_height=fig_size,
         figure_width=fig_size,
+        offline=offline,
         )
     return output_fpath
 
@@ -2230,6 +2238,7 @@ def tsv_to_chordchart(
         filter_intermolecular_contacts: bool = True,
         output_fname: Union[Path, str] = 'contacts_chordchart.html',
         title: str = 'Chord diagram',
+        offline: bool = False,
         ) -> Union[Path, str]:
     """Read a tsv file and generate a chord diagram from it.
 
@@ -2342,6 +2351,7 @@ def tsv_to_chordchart(
         sublabels,
         output_fpath=output_fname,
         title=title,
+        offline=offline,
         )
     
     return chord_chart_fpath

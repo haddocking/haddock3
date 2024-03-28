@@ -52,10 +52,11 @@ class HaddockModule(BaseHaddockModule):
         except AttributeError as e:
             self.finish_with_error(e)
 
-        # Initiate holder of all jobs to be run by the `Scheduler`
-        contact_jobs: list[SupportsRunT] = []
         # Obtain clusters
         clusters_sets = get_clusters_sets(models)
+
+        # Initiate holder of all jobs to be run by the `Scheduler`
+        contact_jobs: list[SupportsRunT] = []
         # Loop over clusters
         for clustid, clt_models in clusters_sets.items():
             # In case of unclustered models

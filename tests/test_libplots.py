@@ -221,6 +221,7 @@ def example_df_scan_clt():
     example_df_scan_clt = pd.DataFrame(example_clt_data, columns=columns)
     yield example_df_scan_clt
 
+
 def test_make_alascan_plot(example_df_scan_clt):
     """Test make_alascan_plot."""
     make_alascan_plot(example_df_scan_clt, clt_id="-")
@@ -231,6 +232,12 @@ def test_make_alascan_plot(example_df_scan_clt):
 def test_plotly_cdn_url():
     """Test to obtain plotly cdn url function."""
     from plotly.io._utils import plotly_cdn_url
-
     plotly_cdn_full_url = plotly_cdn_url()
     assert type(plotly_cdn_full_url) == str
+
+
+def test_plotly_offline():
+    """Test to obtain plotly self contained javascript."""
+    from plotly.offline.offline import get_plotlyjs
+    plotly_self_contained = get_plotlyjs()
+    assert type(plotly_self_contained) == str

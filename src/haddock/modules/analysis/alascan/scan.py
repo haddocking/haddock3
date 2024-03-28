@@ -363,7 +363,7 @@ def generate_alascan_output(models, path):
     return models_to_export
 
 
-def create_alascan_plots(clt_alascan, scan_residue):
+def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     """Create the alascan plots."""
     for clt_id in clt_alascan:
         scan_clt_filename = f"scan_clt_{clt_id}.csv"
@@ -380,7 +380,8 @@ def create_alascan_plots(clt_alascan, scan_residue):
             make_alascan_plot(
                 df_scan_clt,
                 clt_id,
-                scan_residue
+                scan_residue,
+                offline=offline,
                 )
         except Exception as e:
             log.warning(

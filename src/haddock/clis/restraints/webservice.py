@@ -3,8 +3,12 @@
 Webservice needs fastapi and uvicorn Python packages.
 
 To run use:
+
 uvicorn --port 5000 haddock.clis.restraints.webservice:app
+
+Swagger UI at http://127.0.0.1:5000/docs
 """
+
 from base64 import b64decode
 import io
 import tempfile
@@ -14,19 +18,34 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from starlette.responses import PlainTextResponse
 
-from haddock.clis.restraints.passive_from_active import passive_from_active
-from haddock.libs.librestraints import active_passive_to_ambig
+from haddock.clis.restraints.calc_accessibility import (
+    apply_cutoff,
+    get_accessibility,
+)
+from haddock.clis.restraints.restrain_bodies import (
+    restrain_bodies as restrain_bodies_raw,
+)
+from haddock.libs.librestraints import (
+    active_passive_to_ambig,
+    passive_from_active_and_surface,
+)
 
 
-app = FastAPI()
+app = FastAPI(root_path="/restraints")
 
 # TODO add rate limit with slowapi package
 # TODO if on Internet should have some authz
 
 
 class PassiveFromActiveRequest(BaseModel):
-    structure: str = Field(description="The structure file as base64 encoded string.")
-    active: list[int] = Field(description="List of active restraints.")
+    structure: str = Field(
+        description="The structure file as base64 encoded string.",
+        contentMediaType="text/plain",
+        contentEncoding="base64",
+    )
+    active: list[int] = Field(
+        description="List of active restraints.", examples=[[1, 2, 3]]
+    )
     chain: str = Field(default="A", description="The chain identifier.")
     surface: list[int] = Field(default=[], description="List of surface restraints.")
 
@@ -41,30 +60,30 @@ def calculate_passive_from_active(
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(b64decode(request.structure))
 
-        output = io.StringIO()
-        with redirect_stdout(output):
-            passive_from_active(
-                structure=structure_file.name,
-                active_list=",".join(map(str, request.active)),
-                chain_id=request.chain,
-                surface_list=",".join(map(str, request.surface)),
-            )
-        passive_as_string = output.getvalue()
-        return passive_as_string.strip().split(" ")
+        passive = passive_from_active_and_surface(
+            structure=structure_file.name,
+            active=request.active,
+            chain_id=request.chain,
+            surface=request.surface,
+        )
+        return passive
 
 
 class ActPassToAmbigRequest(BaseModel):
     active1: list[int] = Field(
-        description="List of active residues for the first model."
+        description="List of active residues for the first model.", examples=[[1, 2, 3]]
     )
     active2: list[int] = Field(
-        description="List of active residues for the second model."
+        description="List of active residues for the second model.",
+        examples=[[4, 5, 6]],
     )
     passive1: list[int] = Field(
-        description="List of passive residues for the first model."
+        description="List of passive residues for the first model.",
+        examples=[[7, 8, 9]],
     )
     passive2: list[int] = Field(
-        description="List of passive residues for the second model."
+        description="List of passive residues for the second model.",
+        examples=[[10, 11, 12]],
     )
     segid1: str = Field(default="A", description="Segid to use for the first model.")
     segid2: str = Field(default="B", description="Segid to use for the second model.")
@@ -86,3 +105,55 @@ def calculate_actpass_to_ambig(
         )
     ambig = output.getvalue()
     return ambig.strip()
+
+
+class RestrainBodiesRequest(BaseModel):
+    structure: str = Field(
+        description="The structure file as base64 encoded string.",
+        contentMediaType="text/plain",
+        contentEncoding="base64",
+    )
+    exclude: list[str] = Field(
+        default=[],
+        description="Chains to exclude from the calculation.",
+        examples=[["B"]],
+    )
+
+
+@app.post("/restrain_bodies", response_class=PlainTextResponse)
+def restrain_bodies(request: RestrainBodiesRequest):
+    with tempfile.NamedTemporaryFile() as structure_file:
+        structure_file.write(b64decode(request.structure))
+
+        output = io.StringIO()
+        with redirect_stdout(output):
+            restrain_bodies_raw(
+                structure=structure_file.name,
+                exclude=request.exclude,
+            )
+        tbl = output.getvalue()
+        return tbl.strip()
+
+
+class CalcAccessibilityRequest(BaseModel):
+    structure: str = Field(
+        description="The structure file as base64 encoded string.",
+        contentMediaType="text/plain",
+        contentEncoding="base64",
+    )
+    cutoff: float = Field(
+        description="Relative cutoff for sidechain accessibility.", examples=[0.4]
+    )
+
+
+@app.post("/calc_accessibility")
+def calculate_accessibility(
+    request: CalcAccessibilityRequest,
+) -> dict[str, list[int]]:
+    with tempfile.NamedTemporaryFile() as structure_file:
+        structure_file.write(b64decode(request.structure))
+
+        access_dic = get_accessibility(structure_file.name)
+        # Filter residues based on accessibility cutoff
+        result_dict = apply_cutoff(access_dic, request.cutoff)
+        return result_dict

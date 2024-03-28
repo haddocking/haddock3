@@ -1,37 +1,21 @@
+"""Webservice for the haddock3 restraints module.
+
+Webservice needs fastapi and uvicorn Python packages.
+
+To run use:
+uvicorn --port 5000 haddock.clis.restraints.webservice:app
+"""
 from base64 import b64decode
 import io
 import tempfile
 from contextlib import redirect_stdout
-from typing import Annotated, Union
 
-from fastapi import FastAPI, Form, UploadFile
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from starlette.responses import PlainTextResponse
-from uvicorn import run
 
 from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.libs.librestraints import active_passive_to_ambig
-
-
-"""
-Webservice needs fastapi, python-multipart and uvicorn Python packages.
-"""
-
-
-def add_webservice_arguments(webservice_subcommand):
-    webservice_subcommand.add_argument(
-        "--host",
-        help="Host for the webservice. Default is loopback.",
-        default="127.0.0.1",
-    )
-    webservice_subcommand.add_argument(
-        "-p",
-        "--port",
-        help="Port to run the webservice on. Default is 5000.",
-        default=5000,
-        type=int,
-    )
-    return webservice_subcommand
 
 
 app = FastAPI()
@@ -102,8 +86,3 @@ def calculate_actpass_to_ambig(
         )
     ambig = output.getvalue()
     return ambig.strip()
-
-
-def webservice(host, port):
-    """Run the haddock3 restraints webservice."""
-    run(app, port=port, host=host, log_level="debug")

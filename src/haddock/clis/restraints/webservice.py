@@ -7,6 +7,9 @@ To run use:
 uvicorn --port 5000 haddock.clis.restraints.webservice:app
 
 Swagger UI at http://127.0.0.1:5000/docs
+
+To base64 encode a file use:
+base64 -w 0 file.txt
 """
 
 from base64 import b64decode
@@ -14,7 +17,7 @@ import io
 import tempfile
 from contextlib import redirect_stdout
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 from starlette.responses import PlainTextResponse
 
@@ -27,7 +30,9 @@ from haddock.clis.restraints.restrain_bodies import (
 )
 from haddock.libs.librestraints import (
     active_passive_to_ambig,
-    passive_from_active_and_surface,
+    check_parenthesis,
+    passive_from_active_raw,
+    validate_tbldata,
 )
 
 app = FastAPI(root_path="/restraints")
@@ -59,7 +64,7 @@ def calculate_passive_from_active(
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(b64decode(request.structure))
 
-        passive = passive_from_active_and_surface(
+        passive = passive_from_active_raw(
             structure=structure_file.name,
             active=request.active,
             chain_id=request.chain,
@@ -156,3 +161,34 @@ def calculate_accessibility(
         # Filter residues based on accessibility cutoff
         result_dict = apply_cutoff(access_dic, request.cutoff)
         return result_dict
+
+
+class ValidateTblRequest(BaseModel):
+    tbl: str = Field(
+        description="The TBL file as base64 encoded string.",
+        contentMediaType="text/plain",
+        contentEncoding="base64",
+    )
+    pcs: bool = Field(
+        default=False,
+        description="Flag to indicate if the TBL file is in PCS mode.",
+    )
+    quick: bool = Field(
+        default=False,
+        description="Check global formatting before going line by line (opening/closing parenthesis and quotation marks.",
+    )
+
+
+@app.post("/validate_tbl", response_class=PlainTextResponse)
+def validate_tbl(
+    request: ValidateTblRequest,
+) -> str:
+    tbl = b64decode(request.tbl).decode("utf-8")
+    try:
+        if request.quick:
+            check_parenthesis(tbl)
+        return validate_tbldata(tbl, request.pcs)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+        ) from e

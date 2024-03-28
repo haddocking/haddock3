@@ -64,13 +64,18 @@ def calculate_passive_from_active(
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(b64decode(request.structure))
 
-        passive = passive_from_active_raw(
-            structure=structure_file.name,
-            active=request.active,
-            chain_id=request.chain,
-            surface=request.surface,
-        )
-        return passive
+        try:
+            passive = passive_from_active_raw(
+                structure=structure_file.name,
+                active=request.active,
+                chain_id=request.chain,
+                surface=request.surface,
+            )
+            return passive
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+            ) from e
 
 
 class ActPassToAmbigRequest(BaseModel):

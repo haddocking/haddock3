@@ -445,3 +445,11 @@ log_level:
     messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
   group: module
   explevel: guru
+export:
+  default: true
+  type: boolean
+  title: Export the scored models to the next step
+  short: Export the HADDOCK-modified scored models to the next step
+  long: Export the HADDOCK-modified scored models to the next step. If False, the input models will be passed to the next model. This is useful when you want to score the same set of models with different scoring modules (e.g. consensus scoring).
+  group: module
+  explevel: easy

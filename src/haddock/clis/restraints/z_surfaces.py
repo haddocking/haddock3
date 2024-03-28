@@ -153,7 +153,32 @@ def bead_plan(
     return plan, resindex
 
 
-def step_coords(size: float, spacing: float) -> Generator[float]:
+def step_coords(_size: float, _spacing: float) -> Generator[float, None, None]:
+    """Generate set of evenly spaced coordinates between of defined size.
+
+    Parameters
+    ----------
+    size : float
+        Size (in Angstrom) to be sampled
+    spacing : float
+        Spacing between each coordinate
+
+    Return
+    ------
+    Generator[float, None, None]
+        1D coodinate of current position.
+    """
+    # Convert to absolute value
+    size = abs(_size)
+    spacing = abs(_spacing)
+    # Check if size is indeed greater than spacing
+    if spacing > size:
+        logging.error("Size must be greater than spacing!")
+        raise ValueError
+    return _step_coords(size, spacing)
+
+
+def _step_coords(size: float, spacing: float) -> Generator[float, None, None]:
     """Generate set of evenly spaced coordinates between of defined size.
 
     Parameters
@@ -171,7 +196,7 @@ def step_coords(size: float, spacing: float) -> Generator[float]:
     # Define initial position
     coord = - (size / 2)
     # Define oversized position
-    oversized = (size / 2) + spacing
+    oversized = (size + spacing) / 2
     # Loop until oversized
     while coord <= oversized:
         yield coord
@@ -215,6 +240,8 @@ def shape_bead(
     return bead
 
 
+main = gen_bead_plans
+
 if __name__ == "__main__":
     import argparse
     # Command line interface parser
@@ -231,7 +258,7 @@ if __name__ == "__main__":
         datefmt='%d/%m/%Y %H:%M:%S',
         )
     # Run main function
-    plan_s = gen_bead_plans(
+    plan_s = main(
         spacing=args['spacing'],
         x_size=args['x_size'],
         y_size=args['y_size'],

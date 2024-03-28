@@ -211,7 +211,7 @@ def get_z_coords(
     """
     # Default when less than 1 selection was made
     if select_coords == {}:
-        return {"z": 0}
+        return {"z_1": 0}
     elif len(select_coords.keys()) == 1:
         return {s: 0 for s in select_coords.keys()}
 

@@ -313,7 +313,7 @@ def gen_z_restraints(
                     "assign "
                     f"(resid {resid:>7d} and name CA and segid A) "
                     f"(name SHA and attr z gt {gt_coord:>-8.2f}) "
-                    "{rest_dist:.1f} {rest_dist:.1f} 0.0"
+                    f"{rest_dist:.1f} {rest_dist:.1f} 0.0"
                     )
             else:
                 rest = (
@@ -321,7 +321,7 @@ def gen_z_restraints(
                     f"(resid {resid:>7d} and name CA and segid A) "
                     f"(name SHA and attr z lt {lt_coord:>-8.2f} "
                     f"and attr z gt {gt_coord:>-8.2f}) "
-                    "{rest_dist:.1f} {rest_dist:.1f} 0.0"
+                    f"{rest_dist:.1f} {rest_dist:.1f} 0.0"
                     )
             restraints.append(rest)
     all_restraints = os.linesep.join(restraints)
@@ -366,6 +366,14 @@ def output_data(
     return restraints_fpath, beadplans_fpath
 
 
+def setup_logging(log_level: str = "INFO"):
+    logging.basicConfig(
+        log_level=log_level,
+        format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
+        datefmt='%d/%m/%Y %H:%M:%S',
+        )
+
+
 def main(
         pdb: Union[str, Path],
         residues: Optional[list[str]] = None,
@@ -373,6 +381,7 @@ def main(
         spacing: float = 40,
         x_size: float = 200,
         y_size: float = 200,
+        log_level: str = "INFO",
         ) -> tuple[str, str]:
     """Generate both z-restraints and z-surface beads from residue selection.
 
@@ -394,6 +403,7 @@ def main(
     tuple[Union[str, Path], Union[str, Path]]
         _description_
     """
+    #setup_logging(log_level=log_level)
     # Load residue selection
     res_select = load_selections(residues)
     # Load corresponding coordinates
@@ -414,7 +424,7 @@ def main(
     return restraints_tbl, plans_pdb
 
 
-gen_z_surfrace_restraints = main
+gen_z_surface_restraints = main
 
 
 ############################
@@ -430,17 +440,13 @@ if __name__ == "__main__":
         )
     add_z_surf_restraints_arguments(ap)
     args = vars(ap.parse_args())
-    logging.basicConfig(
-        level=args['log_level'],
-        format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
-        datefmt='%d/%m/%Y %H:%M:%S',
-        )
     # Launch main
-    restraints, plan_s = gen_z_surfrace_restraints(
+    restraints, plan_s = gen_z_surface_restraints(
         args['residues'],
         residues=args['residues'],
         output=args['output'],
         spacing=args['spacing'],
         x_size=args['x_size'],
         y_size=args['y_size'],
+        log_level=args['log_level'],
         )

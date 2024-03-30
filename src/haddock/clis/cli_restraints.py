@@ -25,6 +25,10 @@ from haddock.clis.restraints.passive_from_active import add_pass_from_act_argume
 from haddock.clis.restraints.validate_tbl import add_validate_tbl_arguments, validate_tbl
 from haddock.clis.restraints.active_passive_to_ambig import add_actpass_to_ambig_arguments, actpass_to_ambig
 from haddock.clis.restraints.calc_accessibility import add_calc_accessibility_arguments, calc_accessibility
+from haddock.clis.restraints.z_surface_restraints import (
+    add_z_surf_restraints_arguments,
+    gen_z_surface_restraints,
+    )
 
 
 # Command line interface parser
@@ -62,6 +66,12 @@ actpass_to_ambig_subcommand = add_actpass_to_ambig_arguments(actpass_to_ambig_su
 calc_accessibility_subcommand = subparsers.add_parser('calc_accessibility')
 calc_accessibility_subcommand.set_defaults(func=calc_accessibility)
 calc_accessibility_subcommand = add_calc_accessibility_arguments(calc_accessibility_subcommand)
+
+# z_surface_restraints subcommand
+z_surface_restraints_subcommand = subparsers.add_parser('z_surface_restraints')
+z_surface_restraints_subcommand.set_defaults(func=gen_z_surface_restraints)
+z_surface_restraints_subcommand = add_z_surf_restraints_arguments(z_surface_restraints_subcommand)
+
 
 def _ap():
     return ap

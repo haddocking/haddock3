@@ -68,11 +68,20 @@ def add_z_plan_arguments(z_plan_subcommand):
     return z_plan_subcommand
 
 
+def setup_logging(log_level: str = "INFO"):
+    logging.basicConfig(
+        log_level=log_level,
+        format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
+        datefmt='%d/%m/%Y %H:%M:%S',
+        )
+
+
 def gen_bead_plans(
         spacing: float = 40,
         x_size: float = 200,
         y_size: float = 200,
         z_coords: Optional[list[float]] = None,
+        log_level: str = "INFO",
         ) -> str:
     """Generate multiple bead plans.
 
@@ -92,6 +101,7 @@ def gen_bead_plans(
     bead_plans : str
         A PDB file containing multiple plans.
     """
+    #setup_logging(log_level=log_level)
     # Presets
     bead_plans: str = ''
     resindex: int = 0
@@ -252,16 +262,12 @@ if __name__ == "__main__":
         )
     add_z_plan_arguments(ap)
     args = vars(ap.parse_args())
-    logging.basicConfig(
-        level=args['log_level'],
-        format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
-        datefmt='%d/%m/%Y %H:%M:%S',
-        )
     # Run main function
     plan_s = main(
         spacing=args['spacing'],
         x_size=args['x_size'],
         y_size=args['y_size'],
         z_coords=args['z_coords'],
+        log_level=args['log_level'],
         )
     print(plan_s)  # noqa : T201

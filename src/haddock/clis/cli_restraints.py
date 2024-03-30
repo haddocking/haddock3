@@ -29,6 +29,10 @@ from haddock.clis.restraints.z_surface_restraints import (
     add_z_surf_restraints_arguments,
     gen_z_surface_restraints,
     )
+from haddock.clis.restraints.z_surfaces import (
+    add_z_plan_arguments,
+    gen_bead_plans,
+    )
 
 
 # Command line interface parser
@@ -66,6 +70,11 @@ actpass_to_ambig_subcommand = add_actpass_to_ambig_arguments(actpass_to_ambig_su
 calc_accessibility_subcommand = subparsers.add_parser('calc_accessibility')
 calc_accessibility_subcommand.set_defaults(func=calc_accessibility)
 calc_accessibility_subcommand = add_calc_accessibility_arguments(calc_accessibility_subcommand)
+
+# gen_z_surface subcommand
+gen_z_surface_subcommand = subparsers.add_parser('gen_z_surface')
+gen_z_surface_subcommand.set_defaults(func=gen_bead_plans)
+gen_z_surface_subcommand = add_z_plan_arguments(gen_z_surface_subcommand)
 
 # z_surface_restraints subcommand
 z_surface_restraints_subcommand = subparsers.add_parser('z_surface_restraints')

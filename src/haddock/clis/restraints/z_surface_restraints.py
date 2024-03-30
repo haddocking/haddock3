@@ -181,10 +181,24 @@ def load_selections(residues_lists: list[str]) -> dict[str, list[int]]:
     selections: dict[str, list[int]]
         Dictionary of resiudes indices.
     """
-    selections = {
-        f"selection_{listid}": [int(resid) for resid in resiudes.split(',')]
-        for listid, resiudes in enumerate(residues_lists, start=1)
-        }
+    selections: dict[str, list[int]] = {}
+    for listid, str_resiudes in enumerate(residues_lists, start=1):
+        resid_indices: list[int] = []
+        selection_key = f"selection_{listid}"
+        for strresid in str_resiudes.split(','):
+            try:
+                resid = int(strresid)
+            except Exception as e:
+                print(e)
+                msg = f"Could not cast residue {strresid} from {selection_key}"
+                print(msg)
+            else:
+                resid_indices.append(resid)
+        if resid_indices == []:
+            err_msg = f"Not considering {selection_key} as it is empty !"
+            print(err_msg)
+        else:
+            selections[selection_key] = resid_indices
     return selections
 
 
@@ -441,7 +455,7 @@ if __name__ == "__main__":
     add_z_surf_restraints_arguments(ap)
     args = vars(ap.parse_args())
     # Launch main
-    restraints, plan_s = gen_z_surface_restraints(
+    restraints_fpath, plan_s_fpath = gen_z_surface_restraints(
         args['residues'],
         residues=args['residues'],
         output=args['output'],
@@ -450,3 +464,4 @@ if __name__ == "__main__":
         y_size=args['y_size'],
         log_level=args['log_level'],
         )
+    print(restraints_fpath, plan_s_fpath)

@@ -188,15 +188,14 @@ def load_selections(residues_lists: list[str]) -> dict[str, list[int]]:
         for strresid in str_resiudes.split(','):
             try:
                 resid = int(strresid)
-            except Exception as e:
-                print(e)
+            except Exception as _e:
                 msg = f"Could not cast residue {strresid} from {selection_key}"
-                print(msg)
+                logging.warn(msg)
             else:
                 resid_indices.append(resid)
         if resid_indices == []:
             err_msg = f"Not considering {selection_key} as it is empty !"
-            print(err_msg)
+            logging.error(err_msg)
         else:
             selections[selection_key] = resid_indices
     return selections
@@ -380,9 +379,10 @@ def output_data(
     return restraints_fpath, beadplans_fpath
 
 
-def setup_logging(log_level: str = "INFO"):
+def setup_logging(log_level: str = "INFO") -> None:
+    """Set log level and format."""
     logging.basicConfig(
-        log_level=log_level,
+        level=log_level,
         format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
         datefmt='%d/%m/%Y %H:%M:%S',
         )
@@ -464,4 +464,5 @@ if __name__ == "__main__":
         y_size=args['y_size'],
         log_level=args['log_level'],
         )
-    print(restraints_fpath, plan_s_fpath)
+    logging.info(restraints_fpath)
+    logging.info(plan_s_fpath)

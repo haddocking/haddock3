@@ -198,7 +198,9 @@ def test_shape_bead_valid_pdb_format():
 def test_load_selections():
     """Test residue selection loading."""
     loaded = load_selections(["1,2,3", "4,5,6"])
-    assert list(loaded.values()) == [[1,2,3], [4,5,6]]
+    assert list(loaded.values()) == [[1, 2, 3], [4, 5, 6]]
+    loaded = load_selections(["1,2,3", "4,5,a"])
+    assert list(loaded.values()) == [[1, 2, 3], [4, 5]]
 
 
 def test_compute_barycenter():
@@ -214,8 +216,8 @@ def test_load_selected_resiudes_coords(example_pdb_file):
     select_coords = load_selected_resiudes_coords(
         example_pdb_file,
         {
-            "select_1":[1],
-            "select_2":[2, 3],
+            "select_1": [1],
+            "select_2": [2, 3],
             },
         )
     assert select_coords["select_1"][0] == (3.439, 7.910, -11.913)

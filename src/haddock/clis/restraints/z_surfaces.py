@@ -68,9 +68,10 @@ def add_z_plan_arguments(z_plan_subcommand):
     return z_plan_subcommand
 
 
-def setup_logging(log_level: str = "INFO"):
+def setup_logging(log_level: str = "INFO") -> None:
+    """Set log level and format."""
     logging.basicConfig(
-        log_level=log_level,
+        level=log_level,
         format='%(asctime)s L%(lineno)d %(levelname)s - %(message)s',
         datefmt='%d/%m/%Y %H:%M:%S',
         )

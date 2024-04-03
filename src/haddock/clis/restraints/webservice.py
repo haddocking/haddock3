@@ -35,7 +35,7 @@ from haddock.libs.librestraints import (
     validate_tbldata,
 )
 
-app = FastAPI(root_path="/restraints")
+app = FastAPI()
 
 # TODO add rate limit with slowapi package
 # TODO if on Internet should have some authz

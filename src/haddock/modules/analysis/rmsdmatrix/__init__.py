@@ -33,8 +33,9 @@ from haddock import log, RMSD_path
 from haddock.core.typing import Any, AtomsDict, FilePath
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import ModuleIO, RMSDFile
+from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
-from haddock.modules import BaseHaddockModule, read_from_yaml_config
+from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
@@ -43,6 +44,8 @@ from haddock.modules.analysis import (
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSDJob,
     rmsd_dispatcher,
+    XYZWriter,
+    XYZWriterJob
     )
 
 
@@ -91,6 +94,46 @@ class HaddockModule(BaseHaddockModule):
         log.info("Completed reconstruction of rmsd files.")
         log.info(f"{output_fname} created.")
 
+    def _rearrange_xyz_files(self, output_name: FilePath, path: FilePath,
+                             ncores: int) -> None:
+        """Combine different xyz outputs in a single file."""
+        output_fname = Path(path, output_name)
+        self.log(f"rearranging output files into {output_fname}")
+        # Combine files
+        with open(output_fname, 'w') as out_file:
+            for core in range(ncores):
+                tmp_file = Path(path, "traj_" + str(core) + ".xyz")
+                with open(tmp_file) as infile:
+                    out_file.write(infile.read())
+                log.debug(f"File number {core} written")
+                tmp_file.unlink()
+        log.info("Completed reconstruction of xyz files.")
+        log.info(f"{output_fname} created.")
+
+    def check_common_atoms(self, common_keys, coord_keys_lengths):
+        # checking the common atoms
+        n_atoms = len(common_keys) #common atoms
+        max_n_atoms = max(coord_keys_lengths)
+        perc = (n_atoms / max_n_atoms) * 100
+        if perc == 100.0:
+            log.info("All the models share the same atoms.")
+        elif perc > self.params["atom_similarity"] and perc < 100.0:
+            # if it's between 0.9 and 1, it's likely that the models share the same atoms
+            # but still the user may want to see a warning
+            log.warning(
+                "Not all the atoms are common to all the models."
+                f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) higher than allowed ({self.params['atom_similarity']:.2f}%)."
+                )
+        else:
+            # common keys are less than 90% of the previous keys
+            # something is likely wrong
+            self.finish_with_error(
+                "Input atoms are not the same for all the models."
+                f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) lower than allowed ({self.params['atom_similarity']:.2f}%)."
+                " Please check the input ensemble."
+                )
+        return n_atoms
+
     def update_params(self, *args: Any, **kwargs: Any) -> None:
         """Update parameters."""
         super().update_params(*args, **kwargs)
@@ -123,36 +166,61 @@ class HaddockModule(BaseHaddockModule):
             nmodels,
             tot_npairs,
             ncores)
-            
+        # index_list for the jobs with linear scaling
+        ncores_linear = parse_ncores(n=self.params['ncores'], njobs=len(models))
+        index_list = get_index_list(nmodels, ncores_linear)
         # create prev_keys to check if the keys of the ref_coord_dic
         # are the same for all the models
-        prev_keys : list[str] = []
+        common_keys : list[str] = []
         traj_filename = Path("traj.xyz")
-        with open(traj_filename, "w") as traj_xyz:
-            for mod in models:
-                atoms: AtomsDict = get_atoms(mod)
-                
-                filter_resdic = {
-                    key[-1]: value for key, value
-                    in self.params.items()
-                    if key.startswith("resdic")
-                }
-                ref_coord_dic, _ = load_coords(
-                mod, atoms, filter_resdic
+        coord_keys_lengths = []
+
+        filter_resdic = {
+            key[-1]: value for key, value
+            in self.params.items()
+            if key.startswith("resdic")
+        }
+        
+        # find common keys
+        for mod in models:
+            atoms: AtomsDict = get_atoms(mod)
+            
+            ref_coord_dic, _ = load_coords(
+            mod, atoms, filter_resdic
+            )
+            coord_keys_lengths.append(len(ref_coord_dic.keys()))
+            if common_keys != []:
+                common_keys = set(ref_coord_dic.keys()).intersection(common_keys)
+            else:
+                common_keys = ref_coord_dic.keys()
+        
+        # check common atoms
+        n_atoms = self.check_common_atoms(common_keys, coord_keys_lengths)
+        
+        
+        for core in range(ncores_linear):
+            output_name = Path("traj_" + str(core) + ".xyz")
+            # init RMSDJobFast
+            xyzwriter_obj = XYZWriter(
+                model_list=models[index_list[core]:index_list[core + 1]],
+                output_name=output_name,
+                core=core,
+                path=Path("."),
+                n_atoms=n_atoms,
+                common_keys=common_keys,
+                filter_resdic=filter_resdic,
                 )
-                if prev_keys != []:
-                    if ref_coord_dic.keys() != prev_keys:
-                        self.finish_with_error(
-                            "Input atoms are not the same for all the models."
-                            "Please check the input ensemble."
-                            )
-                n_atoms = len(ref_coord_dic)
-                # write xyz coords
-                traj_xyz.write(f"{n_atoms}{os.linesep}{os.linesep}")
-                for k, v in ref_coord_dic.items():
-                    traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                
-                prev_keys = ref_coord_dic.keys()
+            #job_f = output_name
+            job = XYZWriterJob(
+                xyzwriter_obj,
+                )
+            job.run()
+        
+        self._rearrange_xyz_files(
+            traj_filename,
+            path=Path("."),
+            ncores=ncores_linear
+            )
         
         # Calculate the rmsd for each set of models
         rmsd_jobs: list[RMSDJob] = []

@@ -3,6 +3,8 @@ import os
 import numpy as np
 
 from haddock import log
+from haddock.core.typing import AtomsDict
+from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libsubprocess import BaseJob
 
 
@@ -59,3 +61,62 @@ def rmsd_dispatcher(nmodels: int, tot_npairs: int,
         start_structures.append(pair[0])
         end_structures.append(pair[1])
     return npairs, start_structures, end_structures
+
+class XYZWriterJob:
+    """A Job dedicated to the fast retrieval of receptor contacts."""
+
+    def __init__(
+            self,
+            xyzwriter_obj):
+
+        log.info(f"core {xyzwriter_obj.core}, initialising XYZWriter...")
+        self.xyzwriter_obj = xyzwriter_obj
+        log.info(f"core {xyzwriter_obj.core}, XYZWriter initialised")
+
+    def run(self):
+        """Run this XYZWriterJob."""
+        log.info(f"core {self.xyzwriter_obj.core}, running XYZWriter...")
+        self.xyzwriter_obj.run()
+        return
+    
+class XYZWriter:
+    """XYZWriter class."""
+
+    def __init__(
+            self,
+            model_list,
+            output_name,
+            core,
+            path,
+            n_atoms,
+            common_keys,
+            filter_resdic,
+            ):
+        """Initialise Contact class."""
+        self.model_list = model_list
+        self.output_name = output_name
+        self.core = core
+        self.path = path
+        self.n_atoms = n_atoms
+        self.common_keys = common_keys
+        self.filter_resdic = filter_resdic
+        
+    def run(self):
+        """write xyz coordinates."""
+        with open(self.output_name, "w") as traj_xyz:
+            for mod in self.model_list:
+                atoms: AtomsDict = get_atoms(mod)
+
+                ref_coord_dic, _ = load_coords(
+                mod, atoms, self.filter_resdic
+                )
+                # now we filter the dictionary with the common keys
+                common_coord_dic = {k: v for k, v in ref_coord_dic.items() if k in self.common_keys}  
+                # write xyz coords
+                traj_xyz.write(f"{self.n_atoms}{os.linesep}{os.linesep}")
+                #for k, v in common_coord_dic.items():
+                #     traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                for k in self.common_keys:
+                    v = common_coord_dic[k]
+                    at_string = ''.join([str(el) for el in k])
+                    traj_xyz.write(f"{at_string} {v[0]} {v[1]} {v[2]}{os.linesep}")

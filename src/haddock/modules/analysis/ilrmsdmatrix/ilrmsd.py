@@ -27,8 +27,8 @@ class ContactJob:
         log.info(f"core {contact_obj.core}, Contact initialised")
 
     def run(self):
-        """Run this RMSDJob."""
-        log.info(f"core {self.contact_obj.core}, running ilRMSD...")
+        """Run this ContactJob."""
+        log.info(f"core {self.contact_obj.core}, running Contact...")
         self.contact_obj.run()
         self.contact_obj.output()
         return

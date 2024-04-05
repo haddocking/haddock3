@@ -28,6 +28,7 @@ atom_similarity:
   type: float
   min: 10.0
   max: 100.0
+  precision: 3
   title: Required atom similarity
   short: Required similarity (in %) between the number of atoms in the input models.
   long: Required similarity (in %) between the number of atoms in the input models. If the similarity is higher than this value, the RMSD calculation is performed on the common atoms. Otherwise, the calculation is stopped. The lower the value the looser the checks.

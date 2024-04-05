@@ -1320,4 +1320,4 @@ def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
             " Please check the input ensemble."
             )
         raise ALIGNError(_err_msg)
-    return n_atoms, common_keys
+    return n_atoms, list(common_keys)

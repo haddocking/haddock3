@@ -93,12 +93,13 @@ class HaddockModule(BaseHaddockModule):
                 tmp_file.unlink()
         log.info("Completed reconstruction of rmsd files.")
         log.info(f"{output_fname} created.")
+        
 
     def _rearrange_xyz_files(self, output_name: FilePath, path: FilePath,
                              ncores: int) -> None:
         """Combine different xyz outputs in a single file."""
         output_fname = Path(path, output_name)
-        self.log(f"rearranging output files into {output_fname}")
+        self.log(f"rearranging xyz files into {output_fname}")
         # Combine files
         with open(output_fname, 'w') as out_file:
             for core in range(ncores):
@@ -109,6 +110,7 @@ class HaddockModule(BaseHaddockModule):
                 tmp_file.unlink()
         log.info("Completed reconstruction of xyz files.")
         log.info(f"{output_fname} created.")
+        
 
     def check_common_atoms(self, common_keys, coord_keys_lengths):
         # checking the common atoms
@@ -183,7 +185,7 @@ class HaddockModule(BaseHaddockModule):
         
         # find common keys
         for mod in models:
-            atoms: AtomsDict = get_atoms(mod)
+            atoms: AtomsDict = get_atoms(mod, self.params["allatoms"])
             
             ref_coord_dic, _ = load_coords(
             mod, atoms, filter_resdic
@@ -197,7 +199,7 @@ class HaddockModule(BaseHaddockModule):
         # check common atoms
         n_atoms = self.check_common_atoms(common_keys, coord_keys_lengths)
         
-        
+        xyzwriter_jobs: list[XYZWriterJob] = []
         for core in range(ncores_linear):
             output_name = Path("traj_" + str(core) + ".xyz")
             # init RMSDJobFast
@@ -209,13 +211,20 @@ class HaddockModule(BaseHaddockModule):
                 n_atoms=n_atoms,
                 common_keys=common_keys,
                 filter_resdic=filter_resdic,
+                allatoms=self.params["allatoms"],
                 )
             #job_f = output_name
             job = XYZWriterJob(
                 xyzwriter_obj,
                 )
-            job.run()
+            xyzwriter_jobs.append(job)
         
+        # run jobs
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(xyzwriter_jobs)
+        engine.run()
+
         self._rearrange_xyz_files(
             traj_filename,
             path=Path("."),
@@ -240,10 +249,7 @@ class HaddockModule(BaseHaddockModule):
                 n_atoms,
                 )
             rmsd_jobs.append(job)
-
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
-
-        Engine = get_engine(exec_mode, self.params)
+        
         engine = Engine(rmsd_jobs)
         engine.run()
 

@@ -63,15 +63,14 @@ def rmsd_dispatcher(nmodels: int, tot_npairs: int,
     return npairs, start_structures, end_structures
 
 class XYZWriterJob:
-    """A Job dedicated to the fast retrieval of receptor contacts."""
+    """A Job dedicated to the parallel writing of xyz files."""
 
     def __init__(
             self,
             xyzwriter_obj):
-
-        log.info(f"core {xyzwriter_obj.core}, initialising XYZWriter...")
+        """Initialise XYZWriterJob."""
         self.xyzwriter_obj = xyzwriter_obj
-        log.info(f"core {xyzwriter_obj.core}, XYZWriter initialised")
+        self.output = xyzwriter_obj.output_name
 
     def run(self):
         """Run this XYZWriterJob."""
@@ -91,6 +90,7 @@ class XYZWriter:
             n_atoms,
             common_keys,
             filter_resdic,
+            allatoms=False,
             ):
         """Initialise Contact class."""
         self.model_list = model_list
@@ -100,23 +100,24 @@ class XYZWriter:
         self.n_atoms = n_atoms
         self.common_keys = common_keys
         self.filter_resdic = filter_resdic
+        self.allatoms = allatoms
         
     def run(self):
         """write xyz coordinates."""
         with open(self.output_name, "w") as traj_xyz:
             for mod in self.model_list:
-                atoms: AtomsDict = get_atoms(mod)
+                atoms: AtomsDict = get_atoms(mod, self.allatoms)
 
                 ref_coord_dic, _ = load_coords(
                 mod, atoms, self.filter_resdic
                 )
                 # now we filter the dictionary with the common keys
                 common_coord_dic = {k: v for k, v in ref_coord_dic.items() if k in self.common_keys}  
-                # write xyz coords
+                # write header
                 traj_xyz.write(f"{self.n_atoms}{os.linesep}{os.linesep}")
-                #for k, v in common_coord_dic.items():
-                #     traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                # write the coordinates
                 for k in self.common_keys:
                     v = common_coord_dic[k]
                     at_string = ''.join([str(el) for el in k])
                     traj_xyz.write(f"{at_string} {v[0]} {v[1]} {v[2]}{os.linesep}")
+

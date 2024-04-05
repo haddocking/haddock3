@@ -1,25 +1,32 @@
 """Webservice for the haddock3 restraints module.
 
-Webservice needs fastapi and uvicorn Python packages.
+Exposes the haddock3-restraints CLI subcommands as a RESTful webservice.
+Also includes endpoint for PDB preprocessing.
 
-To run use:
+Run with:
 
 uvicorn --port 5000 haddock.clis.restraints.webservice:app
 
-Swagger UI at http://127.0.0.1:5000/docs
-
-To base64 encode a file use:
-base64 -w 0 file.txt
+The Swagger UI is running at http://127.0.0.1:5000/docs .
 """
 
 from base64 import b64decode
+import gzip
 import io
 import tempfile
 from contextlib import redirect_stdout
+from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import Body, FastAPI, File, HTTPException, Query, UploadFile, status
+from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel, Field
 from starlette.responses import PlainTextResponse
+from pdbtools.pdb_selchain import select_chain
+from pdbtools.pdb_chain import alter_chain
+from pdbtools.pdb_fixinsert import fix_insertions
+from pdbtools.pdb_selaltloc import select_by_occupancy
+from pdbtools.pdb_reres import renumber_residues
+from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.clis.restraints.calc_accessibility import (
     apply_cutoff,
@@ -36,6 +43,7 @@ from haddock.libs.librestraints import (
 )
 
 app = FastAPI()
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # TODO add rate limit with slowapi package
 # TODO if on Internet should have some authz
@@ -54,7 +62,7 @@ class PassiveFromActiveRequest(BaseModel):
     surface: list[int] = Field(default=[], description="List of surface restraints.")
 
 
-@app.post("/passive_from_active")
+@app.post("/passive_from_active", tags=["restraints"])
 def calculate_passive_from_active(
     request: PassiveFromActiveRequest,
 ) -> list[int]:
@@ -94,11 +102,15 @@ class ActPassToAmbigRequest(BaseModel):
         description="List of passive residues for the second model.",
         examples=[[10, 11, 12]],
     )
-    segid1: str = Field(default="A", description="Segid to use for the first model.")
-    segid2: str = Field(default="B", description="Segid to use for the second model.")
+    segid1: str = Field(
+        default="A", description="Segid to use for the first model.", max_length=1
+    )
+    segid2: str = Field(
+        default="B", description="Segid to use for the second model.", max_length=1
+    )
 
 
-@app.post("/actpass_to_ambig", response_class=PlainTextResponse)
+@app.post("/actpass_to_ambig", response_class=PlainTextResponse, tags=["restraints"])
 def calculate_actpass_to_ambig(
     request: ActPassToAmbigRequest,
 ) -> str:
@@ -129,7 +141,7 @@ class RestrainBodiesRequest(BaseModel):
     )
 
 
-@app.post("/restrain_bodies", response_class=PlainTextResponse)
+@app.post("/restrain_bodies", response_class=PlainTextResponse, tags=["restraints"])
 def restrain_bodies(request: RestrainBodiesRequest) -> str:
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(b64decode(request.structure))
@@ -155,7 +167,7 @@ class CalcAccessibilityRequest(BaseModel):
     )
 
 
-@app.post("/calc_accessibility")
+@app.post("/calc_accessibility", tags=["restraints"])
 def calculate_accessibility(
     request: CalcAccessibilityRequest,
 ) -> dict[str, list[int]]:
@@ -184,7 +196,7 @@ class ValidateTblRequest(BaseModel):
     )
 
 
-@app.post("/validate_tbl", response_class=PlainTextResponse)
+@app.post("/validate_tbl", response_class=PlainTextResponse, tags=["restraints"])
 def validate_tbl(
     request: ValidateTblRequest,
 ) -> str:
@@ -197,3 +209,39 @@ def validate_tbl(
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
         ) from e
+
+
+@app.post("/preprocess_pdb", response_class=PlainTextResponse, tags=["pdb"])
+def preprocess_pdb(
+    pdb: Annotated[
+        UploadFile,
+        File(description="Gzip compressed PDB file to process"),
+    ],
+    from_chain: str = Query(description="Chains to keep", example="A", max_length=1),
+    to_chain: str = Query(
+        description="New chain identifier", example="A", max_length=1
+    ),
+) -> str:
+    """Preprocess a PDB file.
+
+    Runs the following [pdbtools](http://www.bonvinlab.org/pdb-tools/) pipeline:
+
+    ```shell
+    cat pdb | pdb_tidy -strict | pdb_selchain -<from_chain> | pdb_chain -<to_chain> | pdb_fixinsert | pdb_selaltloc | pdb_tidy -strict
+    ```
+
+    """
+    if pdb.content_type not in {"application/gzip", "application/x-gzip"}:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="PDB file must be gzip compressed.",
+        )
+    with gzip.open(pdb.file, "rb") as f:
+        lines = f.read().decode("utf-8").splitlines()
+    lines = list(tidy_pdbfile(lines, strict=True))
+    lines = list(select_chain(lines, from_chain))
+    lines = list(alter_chain(lines, to_chain))
+    lines = list(fix_insertions(lines, []))
+    lines = list(select_by_occupancy(lines))
+    lines = list(tidy_pdbfile(lines, strict=True))
+    return "".join(lines)

@@ -22,11 +22,11 @@ import numpy as np
 
 from haddock import log, RMSD_path
 from haddock.core.typing import AtomsDict
-from haddock.libs.libalign import get_atoms, load_coords
+from haddock.libs.libalign import rearrange_xyz_files, check_common_atoms
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
-from haddock.modules import BaseHaddockModule, read_from_yaml_config
+from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
@@ -34,7 +34,10 @@ from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     ContactJob,
     )
 from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher, RMSDJob
-
+from haddock.modules.analysis.rmsdmatrix.rmsd import (
+    XYZWriter,
+    XYZWriterJob,
+    )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -176,7 +179,6 @@ class HaddockModule(BaseHaddockModule):
             contact_jobs.append(job)
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
-
         Engine = get_engine(exec_mode, self.params)
         contact_engine = Engine(contact_jobs)
         contact_engine.run()
@@ -205,6 +207,82 @@ class HaddockModule(BaseHaddockModule):
             ncores=ncores
             )
         
+        rec_traj_filename = Path("traj_rec.xyz")
+        lig_traj_filename = Path("traj_lig.xyz")
+
+        res_resdic_rec = {k:res_resdic[k] for k in res_resdic if k[0] == self.params["receptor_chain"]}
+        # ligand_chains is a list of chains
+        res_resdic_lig = {k:res_resdic[k] for k in self.params["ligand_chains"]}
+
+        n_atoms_rec, common_keys_rec = check_common_atoms(
+            models,
+            res_resdic_rec,
+            self.params["allatoms"],
+            self.params["atom_similarity"]
+            )
+        
+        n_atoms_lig, common_keys_lig = check_common_atoms(
+            models,
+            res_resdic_lig,
+            self.params["allatoms"],
+            self.params["atom_similarity"]
+            )
+        
+        xyzwriter_jobs: list[XYZWriterJob] = []
+        for core in range(ncores):
+            output_name_rec = Path("traj_rec_" + str(core) + ".xyz")
+            # init XYZWriter
+            xyzwriter_obj_rec = XYZWriter(
+                model_list=models[index_list[core]:index_list[core + 1]],
+                output_name=output_name_rec,
+                core=core,
+                path=Path("."),
+                n_atoms=n_atoms_rec,
+                common_keys=common_keys_rec,
+                filter_resdic=res_resdic_rec,
+                allatoms=self.params["allatoms"],
+                )
+            # job_rec
+            job_rec = XYZWriterJob(
+                xyzwriter_obj_rec,
+                )
+            
+            xyzwriter_jobs.append(job_rec)
+
+            output_name_lig = Path("traj_lig_" + str(core) + ".xyz")
+            # init XYZWriter
+            xyzwriter_obj_lig = XYZWriter(
+                model_list=models[index_list[core]:index_list[core + 1]],
+                output_name=output_name_lig,
+                core=core,
+                path=Path("."),
+                n_atoms=n_atoms_lig,
+                common_keys=common_keys_lig,
+                filter_resdic=res_resdic_lig,
+                allatoms=self.params["allatoms"],
+                )
+            # job_lig
+            job_lig = XYZWriterJob(
+                xyzwriter_obj_lig,
+                )
+            xyzwriter_jobs.append(job_lig)
+        
+        # run jobs
+        engine = Engine(xyzwriter_jobs)
+        engine.run()
+
+        rearrange_xyz_files(
+            rec_traj_filename,
+            path=Path("."),
+            ncores=ncores
+            )
+        rearrange_xyz_files(
+            lig_traj_filename,
+            path=Path("."),
+            ncores=ncores
+            )
+
+        # Parallelisation : optimal dispatching of models
         tot_npairs = nmodels * (nmodels - 1) // 2
         ncores = parse_ncores(n=self.params['ncores'], njobs=tot_npairs)
         log.info(f"total number of pairs {tot_npairs}")
@@ -212,37 +290,7 @@ class HaddockModule(BaseHaddockModule):
             nmodels,
             tot_npairs,
             ncores)
-        
-        rec_traj_filename = Path("traj_rec.xyz")
-        lig_traj_filename = Path("traj_lig.xyz")
-        prev_keys = []
-        with open(rec_traj_filename, "w") as rec_traj_xyz:
-            with open(lig_traj_filename, "w") as lig_traj_xyz:
-                for mod in models:
-                    atoms: AtomsDict = get_atoms(mod)
-                    ref_coord_dic, _ = load_coords(
-                    mod, atoms, res_resdic
-                    )
-                    if prev_keys != []:
-                        if ref_coord_dic.keys() != prev_keys:
-                            self.finish_with_error(
-                                "Input atoms are not the same for all the models."
-                                "Please check the input ensemble."
-                                )
-                    # write receptor coords
-                    rec_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] == self.params["receptor_chain"]}
-                    lig_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] in self.params["ligand_chains"]}
-                    n_rec_atoms = len(rec_coords)
-                    n_lig_atoms = len(lig_coords)
-                    rec_traj_xyz.write(f"{n_rec_atoms}{os.linesep}{os.linesep}")
-                    lig_traj_xyz.write(f"{n_lig_atoms}{os.linesep}{os.linesep}")
-                    for v in rec_coords.values():
-                        rec_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                    for v in lig_coords.values():
-                        lig_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                    
-                    prev_keys = ref_coord_dic.keys()
-        
+
         # Calculate the rmsd for each set of models
         ilrmsd_jobs: list[RMSDJob] = []
         self.log(f"running RmsdFast Jobs with {ncores} cores")
@@ -259,13 +307,12 @@ class HaddockModule(BaseHaddockModule):
                 ref_structs[core],
                 mod_structs[core],
                 len(models),
-                n_rec_atoms,
+                n_atoms_rec,
                 lig_traj_filename,
-                n_lig_atoms,
+                n_atoms_lig,
                 )
             ilrmsd_jobs.append(job)
 
-        Engine = get_engine(exec_mode, self.params)
         ilrmsd_engine = Engine(ilrmsd_jobs)
         ilrmsd_engine.run()
 

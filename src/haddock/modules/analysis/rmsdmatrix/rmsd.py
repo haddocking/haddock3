@@ -1,9 +1,10 @@
 """RMSD calculations."""
 import os
 import numpy as np
+from pathlib import Path
 
 from haddock import log
-from haddock.core.typing import AtomsDict
+from haddock.core.typing import AtomsDict, FilePath
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libsubprocess import BaseJob
 
@@ -120,4 +121,4 @@ class XYZWriter:
                     v = common_coord_dic[k]
                     at_string = ''.join([str(el) for el in k])
                     traj_xyz.write(f"{at_string} {v[0]} {v[1]} {v[2]}{os.linesep}")
-
+        return

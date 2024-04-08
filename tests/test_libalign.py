@@ -19,6 +19,7 @@ from haddock.libs.libalign import (
     load_coords,
     make_range,
     pdb2fastadic,
+    rearrange_xyz_files,
     )
 
 from . import golden_data
@@ -488,3 +489,25 @@ def test_check_common_atoms():
     models.append(Path(golden_data, "protein.pdb"))
     with pytest.raises(ALIGNError):
         n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)
+
+def test_rearrange_xyz_files():
+    """Test the rearrange_xyz_files function."""
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        ncores = 4
+        # Create a temporary directory with some files
+        for i in range(ncores):
+            with open(Path(tmpdirname, f"file_{i}.xyz"), "w") as f:
+                f.write(f"{i} 0 0 0\n")
+
+        # Test the function
+        rearrange_xyz_files("file.xyz", path=tmpdirname, ncores=ncores)
+        
+        # Check the files have been renamed
+        assert not Path(tmpdirname, "file_0.xyz").exists()
+        assert Path(tmpdirname, "file.xyz").exists()
+        # Check the content of the file
+        with open(Path(tmpdirname, "file.xyz"), "r") as f:
+            obs_content = f.read()
+        exp_content = os.linesep.join([f"{i} 0 0 0" for i in range(ncores)])
+        exp_content += os.linesep
+        assert obs_content == exp_content

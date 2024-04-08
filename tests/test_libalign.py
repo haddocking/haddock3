@@ -9,6 +9,7 @@ import pytest
 from haddock.libs.libalign import (
     ALIGNError,
     align_seq,
+    check_common_atoms,
     calc_rmsd,
     centroid,
     dump_as_izone,
@@ -471,3 +472,19 @@ def test_dump_as_izone():
             ]
         
         assert observed_izone == expected_izone
+
+
+def test_check_common_atoms():
+    """Test the identification of common atoms."""
+    ref = Path(golden_data, "protprot_complex_1.pdb")
+    mod = Path(golden_data, "protprot_complex_2.pdb")
+    models = [ref, mod]
+
+    n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)
+    assert n_atoms == 950
+    assert len(obs_common_keys) == 950
+    assert ('B', 74, 'N') in obs_common_keys
+
+    models.append(Path(golden_data, "protein.pdb"))
+    with pytest.raises(ALIGNError):
+        n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)

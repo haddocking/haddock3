@@ -8,6 +8,23 @@ Run with:
 uvicorn --port 5000 haddock.clis.restraints.webservice:app
 
 The Swagger UI is running at http://127.0.0.1:5000/docs .
+
+To upload a PDB file, the file needs to be gzipped and then base64 encoded.
+
+A base64 encoded gzipped PDB file can made with:
+
+```shell
+cat examples/data/2oob.pdb | gzip | base64 -w 0 > examples/data/2oob.pdb.gz.base64
+```
+
+Background for PDB file handling:
+
+To store a multiline string, like a pdb file, in JSON we need to encode it in base64.
+Base64 encoding make things 1.33 times bigger.
+A pdb is text which can be compressed a lot.
+To transfer less data we can compress the pdb with gzip before base64 encoding.
+For example the 2oob.pdb 74.8Kb becomes 101Kb when base64 encoded 
+while first gzip and then base64 encode it is 25.4Kb.
 """
 
 from base64 import b64decode
@@ -17,7 +34,12 @@ import tempfile
 from contextlib import redirect_stdout
 from typing import Annotated
 
-from fastapi import Body, FastAPI, File, HTTPException, Query, UploadFile, status
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    status,
+)
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel, Field
 from starlette.responses import PlainTextResponse
@@ -25,7 +47,6 @@ from pdbtools.pdb_selchain import select_chain
 from pdbtools.pdb_chain import alter_chain
 from pdbtools.pdb_fixinsert import fix_insertions
 from pdbtools.pdb_selaltloc import select_by_occupancy
-from pdbtools.pdb_reres import renumber_residues
 from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.clis.restraints.calc_accessibility import (
@@ -49,12 +70,33 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 # TODO if on Internet should have some authz
 
 
-class PassiveFromActiveRequest(BaseModel):
-    structure: str = Field(
-        description="The structure file as base64 encoded string.",
+def unpacked_structure(
+    structure: str,
+) -> bytes:
+    """gunzips a base64 encoded string.
+
+    Args:
+        structure: base64 encoded gzipped string.
+
+    Returns:
+        The gunzipped bytes.
+    """
+    decoded = b64decode(structure)
+    return gzip.decompress(decoded)
+
+
+Structure = Annotated[
+    str,
+    Field(
+        description="The structure file as a base64 encoded gzipped string.",
         contentMediaType="text/plain",
         contentEncoding="base64",
-    )
+    ),
+]
+
+
+class PassiveFromActiveRequest(BaseModel):
+    structure: Structure
     active: list[int] = Field(
         description="List of active restraints.", examples=[[1, 2, 3]]
     )
@@ -69,8 +111,10 @@ def calculate_passive_from_active(
     """
     Calculate active restraints to passive restraints.
     """
+    structure = unpacked_structure(request.structure)
+
     with tempfile.NamedTemporaryFile() as structure_file:
-        structure_file.write(b64decode(request.structure))
+        structure_file.write(structure)
 
         try:
             passive = passive_from_active_raw(
@@ -102,12 +146,8 @@ class ActPassToAmbigRequest(BaseModel):
         description="List of passive residues for the second model.",
         examples=[[10, 11, 12]],
     )
-    segid1: str = Field(
-        default="A", description="Segid to use for the first model.", max_length=1
-    )
-    segid2: str = Field(
-        default="B", description="Segid to use for the second model.", max_length=1
-    )
+    segid1: str = Field(default="A", description="Segid to use for the first model.")
+    segid2: str = Field(default="B", description="Segid to use for the second model.")
 
 
 @app.post("/actpass_to_ambig", response_class=PlainTextResponse, tags=["restraints"])
@@ -129,11 +169,7 @@ def calculate_actpass_to_ambig(
 
 
 class RestrainBodiesRequest(BaseModel):
-    structure: str = Field(
-        description="The structure file as base64 encoded string.",
-        contentMediaType="text/plain",
-        contentEncoding="base64",
-    )
+    structure: Structure
     exclude: list[str] = Field(
         default=[],
         description="Chains to exclude from the calculation.",
@@ -143,8 +179,9 @@ class RestrainBodiesRequest(BaseModel):
 
 @app.post("/restrain_bodies", response_class=PlainTextResponse, tags=["restraints"])
 def restrain_bodies(request: RestrainBodiesRequest) -> str:
+    structure = unpacked_structure(request.structure)
     with tempfile.NamedTemporaryFile() as structure_file:
-        structure_file.write(b64decode(request.structure))
+        structure_file.write(structure)
 
         output = io.StringIO()
         with redirect_stdout(output):
@@ -157,11 +194,7 @@ def restrain_bodies(request: RestrainBodiesRequest) -> str:
 
 
 class CalcAccessibilityRequest(BaseModel):
-    structure: str = Field(
-        description="The structure file as base64 encoded string.",
-        contentMediaType="text/plain",
-        contentEncoding="base64",
-    )
+    structure: Structure
     cutoff: float = Field(
         description="Relative cutoff for sidechain accessibility.", examples=[0.4]
     )
@@ -171,8 +204,10 @@ class CalcAccessibilityRequest(BaseModel):
 def calculate_accessibility(
     request: CalcAccessibilityRequest,
 ) -> dict[str, list[int]]:
+    structure = unpacked_structure(request.structure)
+
     with tempfile.NamedTemporaryFile() as structure_file:
-        structure_file.write(b64decode(request.structure))
+        structure_file.write(structure)
 
         access_dic = get_accessibility(structure_file.name)
         # Filter residues based on accessibility cutoff
@@ -180,12 +215,20 @@ def calculate_accessibility(
         return result_dict
 
 
+def unpacked_tbl(tbl: str) -> str:
+    return gzip.decompress(b64decode(tbl).decode("utf-8"))
+
+
 class ValidateTblRequest(BaseModel):
-    tbl: str = Field(
-        description="The TBL file as base64 encoded string.",
-        contentMediaType="text/plain",
-        contentEncoding="base64",
-    )
+    tbl: Annotated[
+        str,
+        Depends(unpacked_tbl),
+        Field(
+            description="The TBL file as base64 encoded gzipped string.",
+            contentMediaType="text/plain",
+            contentEncoding="base64",
+        ),
+    ]
     pcs: bool = Field(
         default=False,
         description="Flag to indicate if the TBL file is in PCS mode.",
@@ -200,28 +243,25 @@ class ValidateTblRequest(BaseModel):
 def validate_tbl(
     request: ValidateTblRequest,
 ) -> str:
-    tbl = b64decode(request.tbl).decode("utf-8")
+
     try:
         if request.quick:
-            check_parenthesis(tbl)
-        return validate_tbldata(tbl, request.pcs)
+            check_parenthesis(request.tbl)
+        return validate_tbldata(request.tbl, request.pcs)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
         ) from e
 
 
+class PDBPreprocessRequest(BaseModel):
+    structure: Structure
+    from_chain: str = Field(description="Chains to keep", examples=["A"])
+    to_chain: str = Field(description="New chain identifier", examples=["A"])
+
+
 @app.post("/preprocess_pdb", response_class=PlainTextResponse, tags=["pdb"])
-def preprocess_pdb(
-    pdb: Annotated[
-        UploadFile,
-        File(description="Gzip compressed PDB file to process"),
-    ],
-    from_chain: str = Query(description="Chains to keep", example="A", max_length=1),
-    to_chain: str = Query(
-        description="New chain identifier", example="A", max_length=1
-    ),
-) -> str:
+def preprocess_pdb(request: PDBPreprocessRequest) -> str:
     """Preprocess a PDB file.
 
     Runs the following [pdbtools](http://www.bonvinlab.org/pdb-tools/) pipeline:
@@ -231,16 +271,11 @@ def preprocess_pdb(
     ```
 
     """
-    if pdb.content_type not in {"application/gzip", "application/x-gzip"}:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="PDB file must be gzip compressed.",
-        )
-    with gzip.open(pdb.file, "rb") as f:
-        lines = f.read().decode("utf-8").splitlines()
+    structure = unpacked_structure(request.structure).decode("latin_1")
+    lines = structure.splitlines()
     lines = list(tidy_pdbfile(lines, strict=True))
-    lines = list(select_chain(lines, from_chain))
-    lines = list(alter_chain(lines, to_chain))
+    lines = list(select_chain(lines, request.from_chain))
+    lines = list(alter_chain(lines, request.to_chain))
     lines = list(fix_insertions(lines, []))
     lines = list(select_by_occupancy(lines))
     lines = list(tidy_pdbfile(lines, strict=True))

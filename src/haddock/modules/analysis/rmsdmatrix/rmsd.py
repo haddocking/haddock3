@@ -87,7 +87,6 @@ class XYZWriter:
             model_list,
             output_name,
             core,
-            path,
             n_atoms,
             common_keys,
             filter_resdic,
@@ -97,7 +96,6 @@ class XYZWriter:
         self.model_list = model_list
         self.output_name = output_name
         self.core = core
-        self.path = path
         self.n_atoms = n_atoms
         self.common_keys = common_keys
         self.filter_resdic = filter_resdic

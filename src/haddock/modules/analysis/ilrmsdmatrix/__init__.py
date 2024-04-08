@@ -236,7 +236,6 @@ class HaddockModule(BaseHaddockModule):
                 model_list=models[index_list[core]:index_list[core + 1]],
                 output_name=output_name_rec,
                 core=core,
-                path=Path("."),
                 n_atoms=n_atoms_rec,
                 common_keys=common_keys_rec,
                 filter_resdic=res_resdic_rec,

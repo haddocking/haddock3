@@ -145,7 +145,6 @@ class HaddockModule(BaseHaddockModule):
                 model_list=models[index_list[core]:index_list[core + 1]],
                 output_name=output_name,
                 core=core,
-                path=Path("."),
                 n_atoms=n_atoms,
                 common_keys=common_keys,
                 filter_resdic=filter_resdic,

@@ -209,10 +209,15 @@ def calculate_accessibility(
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(structure)
 
-        access_dic = get_accessibility(structure_file.name)
-        # Filter residues based on accessibility cutoff
-        result_dict = apply_cutoff(access_dic, request.cutoff)
-        return result_dict
+        try:
+            access_dic = get_accessibility(structure_file.name)
+            # Filter residues based on accessibility cutoff
+            result_dict = apply_cutoff(access_dic, request.cutoff)
+            return result_dict
+        except AssertionError as e:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+            ) from e
 
 
 def unpacked_tbl(tbl: str) -> str:

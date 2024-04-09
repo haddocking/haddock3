@@ -12,7 +12,9 @@ from haddock.modules import get_module_steps_folders
 def handle_ss_file(
         df_ss: pd.DataFrame,
         ) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
-    """Manage a caprieval ss data focused on 4 first elements per cluster.
+    """
+    Manage a caprieval capri_ss file focusing on 4 first elements
+    per cluster.
 
     Parameters
     ----------
@@ -23,16 +25,14 @@ def handle_ss_file(
     -------
     df_ss : pd.DataFrame
         The input dataframe
-    clt_ranks : pd.DataFrame
-        New cluster ranking
-    new_values : np.ndarray
-        New cluster values focused on the first 4 elements per cluster.
+    clt_ranks_dict : dict
+        Dictionary with the cluster ranks
     """
     # now we want to calculate mean and std dev of the scores on df_ss
-    # first groupby score
-    df_ss_grouped = df_ss.groupby("cluster_ranking")
-    # sort the dataframe by score
+    # first sort the dataframe by score
     df_ss.sort_values(by=["score"], inplace=True)
+    # groupby cluster_id
+    df_ss_grouped = df_ss.groupby("cluster_id")
     # calculate the mean and standard deviation of the first 4 elements
     # of each group
     new_values = np.zeros((len(df_ss_grouped), 3))
@@ -50,7 +50,7 @@ def handle_ss_file(
     if list(np.unique(df_ss["cluster_id"])) != ["-"]:
         df_ss['model-cluster_ranking'] = df_ss.groupby('cluster_id')['score'].rank(ascending=True).astype(int)  # noqa : E501
         # assign to the values of cluster_ranking the corresponding clt_ranks
-        df_ss["cluster_ranking"] = df_ss["cluster_ranking"].apply(lambda x: clt_ranks_dict[x])  # noqa : E501
+        df_ss["cluster_ranking"] = df_ss["cluster_id"].apply(lambda x: clt_ranks_dict[x])  # noqa : E501
     # assign to the column caprieval_rank the index of the dataframe
     df_ss.index = range(1, len(df_ss) + 1)
     df_ss["caprieval_rank"] = df_ss.index
@@ -151,7 +151,7 @@ def look_for_capri(run_dir: str, module_id: int) -> Union[Path, None]:
 
 
 def handle_clt_file(df_ss, clt_ranks_dict):
-    """Handle clt file.
+    """Handle capri.clt file.
 
     Parameters
     ----------

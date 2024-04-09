@@ -12,7 +12,6 @@ import tempfile
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.ilrmsdmatrix import DEFAULT_CONFIG as ilrmsd_pars
 from haddock.modules.analysis.ilrmsdmatrix import HaddockModule as IlrmsdmatrixModule
-from haddock.modules.analysis.ilrmsdmatrix import get_index_list
 from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     ContactJob,
     Contact,

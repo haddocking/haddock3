@@ -6,7 +6,7 @@ import sys
 from haddock import log
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import Union
-from haddock.libs.libinteractive import handle_ss_file
+from haddock.libs.libinteractive import handle_ss_file, handle_clt_file
 from haddock.libs.libplots import read_capri_table
 
 
@@ -118,25 +118,14 @@ def rescore(
     outdir.mkdir(exist_ok=True)
 
     # handle ss file first
-    df_ss, clt_ranks, new_values = handle_ss_file(df_ss)
+    df_ss, clt_ranks_dict = handle_ss_file(df_ss)
     capri_ss_file = Path(outdir, "capri_ss.tsv")
     log.info(f"Saving capri_ss file to {capri_ss_file}")
     df_ss.to_csv(capri_ss_file, sep="\t", index=False, float_format="%.3f")
 
-    # CLT file
-    if clt_ranks is not None:
-        df_clt = read_capri_table(capri_clt)
-        # it may not be ordered by cluster_rank
-        df_clt.sort_values(by=["cluster_rank"], inplace=True)
-        df_clt["score"] = new_values[:, 0]
-        df_clt["score_std"] = new_values[:, 1]
-        if df_clt["cluster_rank"].iloc[0] != "-":
-            df_clt["cluster_rank"] = clt_ranks + 1
-            df_clt["caprieval_rank"] = clt_ranks + 1
-        df_clt.sort_values(by=["cluster_rank"], inplace=True)
-        capri_clt_file = Path(outdir, "capri_clt.tsv")
-        log.info(f"Saving capri_clt file to {capri_clt_file}")
-        df_clt.to_csv(
+    df_clt = handle_clt_file(df_ss, clt_ranks_dict)
+    capri_clt_file = Path(outdir, "capri_clt.tsv")
+    df_clt.to_csv(
             capri_clt_file,
             sep="\t",
             index=False,

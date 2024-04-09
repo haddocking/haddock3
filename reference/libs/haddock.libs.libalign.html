@@ -245,6 +245,29 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libalign.check_common_atoms">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">check_common_atoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_resdic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allatoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_similarity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#check_common_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.check_common_atoms" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the models share the same atoms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>models</strong> (<em>list</em>) – list of models</p></li>
+<li><p><strong>filter_resdic</strong> (<em>dict</em>) – dictionary of residues to be loaded (one list per chain)</p></li>
+<li><p><strong>allatoms</strong> (<em>bool</em>) – use all the heavy atoms</p></li>
+<li><p><strong>atom_similarity</strong> (<em>float</em>) – minimum atom similarity required between models</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>n_atoms</strong> (<em>int</em>) – number of common atoms</p></li>
+<li><p><strong>common_keys</strong> (<em>list</em>) – list of common atom keys</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libalign.dump_as_izone">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">dump_as_izone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering_dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model2ref_chain_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#dump_as_izone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.dump_as_izone" title="Permalink to this definition"></a></dt>
 <dd><p>Dump the numbering dictionary as .izone.</p>
@@ -359,6 +382,21 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libalign.rearrange_xyz_files">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">rearrange_xyz_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#rearrange_xyz_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.rearrange_xyz_files" title="Permalink to this definition"></a></dt>
+<dd><p>Combine different xyz outputs in a single file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_name</strong> (<em>FilePath</em>) – output name</p></li>
+<li><p><strong>path</strong> (<em>FilePath</em>) – path to the output files</p></li>
+<li><p><strong>ncores</strong> (<em>int</em>) – number of cores</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libalign.sequence_alignment">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">sequence_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#sequence_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.sequence_alignment" title="Permalink to this definition"></a></dt>
 <dd><p>Perform a sequence alignment.</p>
@@ -409,7 +447,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 27, 2024.
+      <span class="lastupdated">Last updated on Apr 09, 2024.
       </span></p>
   </div>
 

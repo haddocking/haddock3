@@ -109,9 +109,11 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">RMSD_path</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">AtomsDict</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">rearrange_xyz_files</span><span class="p">,</span> <span class="n">check_common_atoms</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">RMSDFile</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">get_index_list</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">get_index_list</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">parse_ncores</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
@@ -119,14 +121,17 @@
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.ilrmsdmatrix.ilrmsd</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Contact</span><span class="p">,</span>
     <span class="n">ContactJob</span><span class="p">,</span>
-    <span class="n">ilRMSD</span><span class="p">,</span>
-    <span class="n">ilRMSDJob</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.rmsdmatrix</span> <span class="kn">import</span> <span class="n">rmsd_dispatcher</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.rmsdmatrix</span> <span class="kn">import</span> <span class="n">rmsd_dispatcher</span><span class="p">,</span> <span class="n">RMSDJob</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.rmsdmatrix.rmsd</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">XYZWriter</span><span class="p">,</span>
+    <span class="n">XYZWriterJob</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
+<span class="n">EXEC_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RMSD_path</span><span class="p">,</span> <span class="s2">&quot;src/fast-rmsdmatrix&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.html#haddock.modules.analysis.ilrmsdmatrix.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
@@ -139,8 +144,16 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">init_params</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.html#haddock.modules.analysis.ilrmsdmatrix.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if contact executable is compiled.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if fast-rmsdmatrix is installed and available.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">)</span><span class="si">}</span><span class="s2"> file does not exist.</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="s2">&quot;Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">)</span><span class="si">}</span><span class="s2"> file is not executable&quot;</span><span class="p">)</span>
+
         <span class="k">return</span></div>
 
     <span class="nd">@staticmethod</span>
@@ -255,7 +268,6 @@
             <span class="n">contact_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
         <span class="n">exec_mode</span> <span class="o">=</span> <span class="n">get_analysis_exec_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">])</span>
-
         <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">exec_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="n">contact_engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">contact_jobs</span><span class="p">)</span>
         <span class="n">contact_engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -284,6 +296,80 @@
             <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span>
             <span class="p">)</span>
         
+        <span class="n">rec_traj_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_rec.xyz&quot;</span><span class="p">)</span>
+        <span class="n">lig_traj_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_lig.xyz&quot;</span><span class="p">)</span>
+
+        <span class="n">res_resdic_rec</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res_resdic</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]}</span>
+        <span class="c1"># ligand_chains is a list of chains</span>
+        <span class="n">res_resdic_lig</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]}</span>
+
+        <span class="n">n_atoms_rec</span><span class="p">,</span> <span class="n">common_keys_rec</span> <span class="o">=</span> <span class="n">check_common_atoms</span><span class="p">(</span>
+            <span class="n">models</span><span class="p">,</span>
+            <span class="n">res_resdic_rec</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;allatoms&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;atom_similarity&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        
+        <span class="n">n_atoms_lig</span><span class="p">,</span> <span class="n">common_keys_lig</span> <span class="o">=</span> <span class="n">check_common_atoms</span><span class="p">(</span>
+            <span class="n">models</span><span class="p">,</span>
+            <span class="n">res_resdic_lig</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;allatoms&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;atom_similarity&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        
+        <span class="n">xyzwriter_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">XYZWriterJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
+            <span class="n">output_name_rec</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_rec_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.xyz&quot;</span><span class="p">)</span>
+            <span class="c1"># init XYZWriter</span>
+            <span class="n">xyzwriter_obj_rec</span> <span class="o">=</span> <span class="n">XYZWriter</span><span class="p">(</span>
+                <span class="n">model_list</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span><span class="p">]:</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span>
+                <span class="n">output_name</span><span class="o">=</span><span class="n">output_name_rec</span><span class="p">,</span>
+                <span class="n">core</span><span class="o">=</span><span class="n">core</span><span class="p">,</span>
+                <span class="n">n_atoms</span><span class="o">=</span><span class="n">n_atoms_rec</span><span class="p">,</span>
+                <span class="n">common_keys</span><span class="o">=</span><span class="n">common_keys_rec</span><span class="p">,</span>
+                <span class="n">filter_resdic</span><span class="o">=</span><span class="n">res_resdic_rec</span><span class="p">,</span>
+                <span class="n">allatoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;allatoms&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="c1"># job_rec</span>
+            <span class="n">job_rec</span> <span class="o">=</span> <span class="n">XYZWriterJob</span><span class="p">(</span>
+                <span class="n">xyzwriter_obj_rec</span><span class="p">,</span>
+                <span class="p">)</span>
+            
+            <span class="n">xyzwriter_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_rec</span><span class="p">)</span>
+
+            <span class="n">output_name_lig</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_lig_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.xyz&quot;</span><span class="p">)</span>
+            <span class="c1"># init XYZWriter</span>
+            <span class="n">xyzwriter_obj_lig</span> <span class="o">=</span> <span class="n">XYZWriter</span><span class="p">(</span>
+                <span class="n">model_list</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span><span class="p">]:</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span>
+                <span class="n">output_name</span><span class="o">=</span><span class="n">output_name_lig</span><span class="p">,</span>
+                <span class="n">core</span><span class="o">=</span><span class="n">core</span><span class="p">,</span>
+                <span class="n">n_atoms</span><span class="o">=</span><span class="n">n_atoms_lig</span><span class="p">,</span>
+                <span class="n">common_keys</span><span class="o">=</span><span class="n">common_keys_lig</span><span class="p">,</span>
+                <span class="n">filter_resdic</span><span class="o">=</span><span class="n">res_resdic_lig</span><span class="p">,</span>
+                <span class="n">allatoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;allatoms&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="c1"># job_lig</span>
+            <span class="n">job_lig</span> <span class="o">=</span> <span class="n">XYZWriterJob</span><span class="p">(</span>
+                <span class="n">xyzwriter_obj_lig</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">xyzwriter_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_lig</span><span class="p">)</span>
+        
+        <span class="c1"># run jobs</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">xyzwriter_jobs</span><span class="p">)</span>
+        <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="n">rearrange_xyz_files</span><span class="p">(</span>
+            <span class="n">rec_traj_filename</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
+            <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span>
+            <span class="p">)</span>
+        <span class="n">rearrange_xyz_files</span><span class="p">(</span>
+            <span class="n">lig_traj_filename</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
+            <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Parallelisation : optimal dispatching of models</span>
         <span class="n">tot_npairs</span> <span class="o">=</span> <span class="n">nmodels</span> <span class="o">*</span> <span class="p">(</span><span class="n">nmodels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
         <span class="n">ncores</span> <span class="o">=</span> <span class="n">parse_ncores</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ncores&#39;</span><span class="p">],</span> <span class="n">njobs</span><span class="o">=</span><span class="n">tot_npairs</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;total number of pairs </span><span class="si">{</span><span class="n">tot_npairs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -292,32 +378,28 @@
             <span class="n">tot_npairs</span><span class="p">,</span>
             <span class="n">ncores</span><span class="p">)</span>
 
-        <span class="c1"># Calculate the ilrmsd for each set of models</span>
-        <span class="n">ilrmsd_jobs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;running ilRmsd Jobs with </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> cores&quot;</span><span class="p">)</span>
+        <span class="c1"># Calculate the rmsd for each set of models</span>
+        <span class="n">ilrmsd_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RMSDJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;running RmsdFast Jobs with </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> cores&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
-            <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;ilrmsd_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.matrix&quot;</span>
-            <span class="n">ilrmsd_obj</span> <span class="o">=</span> <span class="n">ilRMSD</span><span class="p">(</span>
-                <span class="n">models</span><span class="p">,</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;ilrmsd_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.out&quot;</span><span class="p">)</span>
+            <span class="n">job_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+            <span class="c1"># init RMSDJob</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">RMSDJob</span><span class="p">(</span>
+                <span class="n">rec_traj_filename</span><span class="p">,</span>
+                <span class="n">output_name</span><span class="p">,</span>
+                <span class="n">EXEC_PATH</span><span class="p">,</span>
                 <span class="n">core</span><span class="p">,</span>
                 <span class="n">npairs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>
                 <span class="n">ref_structs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>
                 <span class="n">mod_structs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>
-                <span class="n">res_resdic</span><span class="p">,</span>
-                <span class="n">output_name</span><span class="p">,</span>
-                <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
-                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span>
-                <span class="p">)</span>
-            <span class="n">job_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
-            <span class="c1"># init RMSDJob</span>
-            <span class="n">job</span> <span class="o">=</span> <span class="n">ilRMSDJob</span><span class="p">(</span>
-                <span class="n">job_f</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                <span class="n">ilrmsd_obj</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">),</span>
+                <span class="n">n_atoms_rec</span><span class="p">,</span>
+                <span class="n">lig_traj_filename</span><span class="p">,</span>
+                <span class="n">n_atoms_lig</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">ilrmsd_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
-        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">exec_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="n">ilrmsd_engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">ilrmsd_jobs</span><span class="p">)</span>
         <span class="n">ilrmsd_engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
@@ -342,9 +424,14 @@
         <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;ilrmsd.matrix&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rearrange_output</span><span class="p">(</span>
             <span class="n">output_name</span><span class="p">,</span>
-            <span class="n">path</span><span class="o">=</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
             <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span>
             <span class="p">)</span>
+        <span class="c1"># Delete the trajectory files</span>
+        <span class="k">if</span> <span class="n">rec_traj_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">rec_traj_filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lig_traj_filename</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">lig_traj_filename</span><span class="p">)</span>
 
         <span class="c1"># Sending models to the next step of the workflow</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models</span>
@@ -367,7 +454,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 27, 2024.
+      <span class="lastupdated">Last updated on Apr 09, 2024.
       </span></p>
   </div>
 

@@ -1311,6 +1311,103 @@
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
                 <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">izone_str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rearrange_xyz_files"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.rearrange_xyz_files">[docs]</a><span class="k">def</span> <span class="nf">rearrange_xyz_files</span><span class="p">(</span><span class="n">output_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+                             <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine different xyz outputs in a single file.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_name : FilePath</span>
+<span class="sd">        output name</span>
+<span class="sd">    </span>
+<span class="sd">    path : FilePath</span>
+<span class="sd">        path to the output files</span>
+<span class="sd">    </span>
+<span class="sd">    ncores : int</span>
+<span class="sd">        number of cores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span>
+    <span class="c1"># take the name without the xyz extension</span>
+    <span class="n">output_fname_str</span> <span class="o">=</span> <span class="n">output_fname</span><span class="o">.</span><span class="n">stem</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rearranging xyz files into </span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Combine files</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
+            <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">output_fname_str</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.xyz&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+                <span class="n">out_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File number </span><span class="si">{</span><span class="n">core</span><span class="si">}</span><span class="s2"> written&quot;</span><span class="p">)</span>
+            <span class="n">tmp_file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Completed reconstruction of xyz files.&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2"> created.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_common_atoms"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_common_atoms">[docs]</a><span class="k">def</span> <span class="nf">check_common_atoms</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">,</span> <span class="n">atom_similarity</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the models share the same atoms.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    models : list</span>
+<span class="sd">        list of models</span>
+<span class="sd">    </span>
+<span class="sd">    filter_resdic : dict</span>
+<span class="sd">        dictionary of residues to be loaded (one list per chain)</span>
+<span class="sd">    </span>
+<span class="sd">    allatoms : bool</span>
+<span class="sd">        use all the heavy atoms</span>
+
+<span class="sd">    atom_similarity : float</span>
+<span class="sd">        minimum atom similarity required between models</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    n_atoms : int</span>
+<span class="sd">        number of common atoms</span>
+<span class="sd">    </span>
+<span class="sd">    common_keys : list</span>
+<span class="sd">        list of common atom keys</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># checking the common keys</span>
+    <span class="n">common_keys</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>    
+    <span class="n">coord_keys_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="n">atoms</span><span class="p">:</span> <span class="n">AtomsDict</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">)</span>
+        
+        <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
+        <span class="n">mod</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span>
+        <span class="p">)</span>
+        <span class="n">coord_keys_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">common_keys</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">common_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">common_keys</span> <span class="o">=</span> <span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="c1"># checking the common atoms</span>
+    <span class="n">n_atoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span> <span class="c1">#common atoms</span>
+    <span class="n">max_n_atoms</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">coord_keys_lengths</span><span class="p">)</span>
+    <span class="n">perc</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_atoms</span> <span class="o">/</span> <span class="n">max_n_atoms</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">if</span> <span class="n">perc</span> <span class="o">==</span> <span class="mf">100.0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All the models share the same atoms.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">perc</span> <span class="o">&gt;</span> <span class="n">atom_similarity</span> <span class="ow">and</span> <span class="n">perc</span> <span class="o">&lt;</span> <span class="mf">100.0</span><span class="p">:</span>
+        <span class="c1"># if it&#39;s between 0.9 and 1, it&#39;s likely that the models share the same atoms</span>
+        <span class="c1"># but still the user may want to see a warning</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Not all the atoms are common to all the models.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; Common atoms (</span><span class="si">{</span><span class="n">n_atoms</span><span class="si">}</span><span class="s2">) != max_n_atoms </span><span class="si">{</span><span class="n">max_n_atoms</span><span class="si">}</span><span class="s2">. Similarity (</span><span class="si">{</span><span class="n">perc</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%) higher than allowed (</span><span class="si">{</span><span class="n">atom_similarity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%).&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># common keys are less than 90% of the previous keys</span>
+        <span class="c1"># something is likely wrong</span>
+        <span class="n">_err_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Input atoms are not the same for all the models.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; Common atoms (</span><span class="si">{</span><span class="n">n_atoms</span><span class="si">}</span><span class="s2">) != max_n_atoms </span><span class="si">{</span><span class="n">max_n_atoms</span><span class="si">}</span><span class="s2">. Similarity (</span><span class="si">{</span><span class="n">perc</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%) lower than allowed (</span><span class="si">{</span><span class="n">atom_similarity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%).&quot;</span>
+            <span class="s2">&quot; Please check the input ensemble.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ALIGNError</span><span class="p">(</span><span class="n">_err_msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n_atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -1321,7 +1418,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 27, 2024.
+      <span class="lastupdated">Last updated on Apr 09, 2024.
       </span></p>
   </div>
 

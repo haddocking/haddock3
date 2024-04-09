@@ -96,12 +96,7 @@
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">calc_rmsd</span><span class="p">,</span>
-    <span class="n">centroid</span><span class="p">,</span>
     <span class="n">get_atoms</span><span class="p">,</span>
-    <span class="n">kabsch</span><span class="p">,</span>
-    <span class="n">load_coords</span><span class="p">,</span>
-    <span class="n">make_range</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval.capri</span> <span class="kn">import</span> <span class="n">load_contacts</span>
 
@@ -122,8 +117,8 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, Contact initialised&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ContactJob.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this RMSDJob.&quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running ilRMSD...&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this ContactJob.&quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running Contact...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">output</span><span class="p">()</span>
         <span class="k">return</span></div></div>
@@ -196,221 +191,6 @@
                 <span class="n">res_str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_lig_res</span><span class="p">])</span>
                 <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">res_str</span><span class="p">)</span>
                 <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
-        
-
-<div class="viewcode-block" id="ilRMSDJob"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSDJob">[docs]</a><span class="k">class</span> <span class="nc">ilRMSDJob</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Job dedicated to the fast rmsd calculation.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">output</span><span class="p">,</span>
-            <span class="n">params</span><span class="p">,</span>
-            <span class="n">ilrmsd_obj</span><span class="p">):</span>
-
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, initialising ilRMSD...&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, # of pairs : </span><span class="si">{</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">npairs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd_obj</span> <span class="o">=</span> <span class="n">ilrmsd_obj</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, ilRMSD initialised&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ilRMSDJob.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSDJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this RMSDJob.&quot;&quot;&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running ilRMSD...&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd_obj</span><span class="o">.</span><span class="n">output</span><span class="p">()</span>
-        <span class="k">return</span></div></div>
-
-
-<div class="viewcode-block" id="ilRMSD"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD">[docs]</a><span class="k">class</span> <span class="nc">ilRMSD</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;RMSD class.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">model_list</span><span class="p">,</span>
-            <span class="n">core</span><span class="p">,</span>
-            <span class="n">npairs</span><span class="p">,</span>
-            <span class="n">start_ref</span><span class="p">,</span>
-            <span class="n">start_mod</span><span class="p">,</span>
-            <span class="n">filter_resdic</span><span class="p">,</span>
-            <span class="n">output_name</span><span class="p">,</span>
-            <span class="n">path</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">params</span><span class="p">,</span>
-            <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialise RMSD class.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        model_list : list</span>
-<span class="sd">            List of models</span>
-
-<span class="sd">        core : int</span>
-<span class="sd">            index of the current core</span>
-
-<span class="sd">        npairs : int</span>
-<span class="sd">            the number of pairs of structures</span>
-
-<span class="sd">        start_ref : int</span>
-<span class="sd">            the index of the first reference structure</span>
-
-<span class="sd">        start_mod : int</span>
-<span class="sd">            the index of the first mobile structure. The class performs npairs</span>
-<span class="sd">            RMSD calculations starting from the pair (start_ref, start_mod)</span>
-
-<span class="sd">        output_name : str</span>
-<span class="sd">            name of the core-specific output file</span>
-
-<span class="sd">        path : pathlib.Path</span>
-<span class="sd">            path to the current directory</span>
-
-<span class="sd">        **params : dict</span>
-<span class="sd">            additional parameters</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span> <span class="o">=</span> <span class="n">model_list</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">core</span> <span class="o">=</span> <span class="n">core</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">npairs</span> <span class="o">=</span> <span class="n">npairs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_ref</span> <span class="o">=</span> <span class="n">start_ref</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_mod</span> <span class="o">=</span> <span class="n">start_mod</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">receptor_chain</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span> <span class="o">=</span> <span class="n">filter_resdic</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span> <span class="o">=</span> <span class="n">output_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model_list</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
-        <span class="c1"># data array</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">npairs</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-
-<div class="viewcode-block" id="ilRMSD.calc_ilrmsd"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.calc_ilrmsd">[docs]</a>    <span class="k">def</span> <span class="nf">calc_ilrmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">mod</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate ilRMSD.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        ref : int</span>
-<span class="sd">            index of the reference structure</span>
-<span class="sd">        </span>
-<span class="sd">        mod : int</span>
-<span class="sd">            index of the mobile structure</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        ilrmsd : float</span>
-<span class="sd">            ilRMSD value</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">ref</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span>
-        <span class="p">)</span>
-        
-        <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">[</span><span class="n">mod</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span>
-        <span class="p">)</span>
-        <span class="c1"># calculating ilRMSD</span>
-        <span class="c1"># find atoms present in both interfaces</span>
-        <span class="n">Q_int</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">P_int</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">common_keys</span> <span class="o">=</span> <span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">mod_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">common_keys</span><span class="p">):</span>
-            <span class="n">ref_xyz</span> <span class="o">=</span> <span class="n">ref_coord_dic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="n">mod_xyz</span> <span class="o">=</span> <span class="n">mod_coord_dic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="n">Q_int</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref_xyz</span><span class="p">)</span>
-            <span class="n">P_int</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod_xyz</span><span class="p">)</span>
-        <span class="n">Q_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Q_int</span><span class="p">)</span>
-        <span class="n">P_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">P_int</span><span class="p">)</span>
-
-        <span class="n">chain_ranges</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">segment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)):</span>
-            <span class="n">chain</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">segment</span>
-            <span class="k">if</span> <span class="n">chain</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chain_ranges</span><span class="p">:</span>
-                <span class="n">chain_ranges</span><span class="p">[</span><span class="n">chain</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">chain_ranges</span><span class="p">[</span><span class="n">chain</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="n">chain_ranges</span> <span class="o">=</span> <span class="n">make_range</span><span class="p">(</span><span class="n">chain_ranges</span><span class="p">)</span>
-        <span class="n">obs_chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain_ranges</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># observed chains</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough chains for calculating ilrmsd&quot;</span><span class="p">)</span>
-            <span class="n">ilrmsd</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">r_chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receptor_chain</span>
-            <span class="n">l_chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">obs_chains</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receptor_chain</span><span class="p">]</span>
-            <span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span> <span class="o">=</span> <span class="n">chain_ranges</span><span class="p">[</span><span class="n">r_chain</span><span class="p">]</span>
-            <span class="n">l_starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_ranges</span><span class="p">[</span><span class="n">l_chain</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">l_chain</span> <span class="ow">in</span> <span class="n">l_chains</span><span class="p">]</span>
-            <span class="n">l_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_ranges</span><span class="p">[</span><span class="n">l_chain</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">l_chain</span> <span class="ow">in</span> <span class="n">l_chains</span><span class="p">]</span>
-            <span class="c1"># put system at origin of the receptor interface</span>
-            <span class="n">Q_r_int</span> <span class="o">=</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">P_r_int</span> <span class="o">=</span> <span class="n">P_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">Q_int</span> <span class="o">=</span> <span class="n">Q_int</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">(</span><span class="n">Q_r_int</span><span class="p">)</span>
-            <span class="n">P_int</span> <span class="o">=</span> <span class="n">P_int</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">(</span><span class="n">P_r_int</span><span class="p">)</span>
-            <span class="c1"># put interfaces at the origin</span>
-            <span class="c1"># find the rotation that minimizes the receptor interface rmsd</span>
-            <span class="n">Q_r_int</span> <span class="o">=</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">P_r_int</span> <span class="o">=</span> <span class="n">P_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">U_int</span> <span class="o">=</span> <span class="n">kabsch</span><span class="p">(</span><span class="n">P_r_int</span><span class="p">,</span> <span class="n">Q_r_int</span><span class="p">)</span>
-            <span class="n">P_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">P_int</span><span class="p">,</span> <span class="n">U_int</span><span class="p">)</span>
-            
-            <span class="c1"># Identify ligand coords concatenating all the ligand chains</span>
-            <span class="n">Q_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-            <span class="n">P_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">l_st</span><span class="p">,</span> <span class="n">l_end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">l_starts</span><span class="p">,</span> <span class="n">l_ends</span><span class="p">):</span>
-                <span class="n">Q_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Q_l_int</span><span class="p">,</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">l_st</span><span class="p">:</span> <span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
-                <span class="n">P_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">P_l_int</span><span class="p">,</span> <span class="n">P_int</span><span class="p">[</span><span class="n">l_st</span><span class="p">:</span> <span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
-            <span class="c1"># # this will be the interface-ligand-rmsd</span>
-            <span class="n">ilrmsd</span> <span class="o">=</span> <span class="n">calc_rmsd</span><span class="p">(</span><span class="n">P_l_int</span><span class="p">,</span> <span class="n">Q_l_int</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">ilrmsd</span></div>
-
-<div class="viewcode-block" id="ilRMSD.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run calculations.&quot;&quot;&quot;</span>
-        <span class="c1"># initialising the number of pairs</span>
-        <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_ref</span>
-        <span class="n">mod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_mod</span>
-        <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">npairs</span><span class="p">):</span>
-            <span class="c1"># calculating RMSD</span>
-            <span class="n">ilrmsd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_ilrmsd</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">mod</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ilrmsd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">break</span>
-            <span class="c1"># saving output (adding one for consistency with clusterfcc)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">ilrmsd</span>
-            <span class="c1"># updating indices</span>
-            <span class="k">if</span> <span class="n">mod</span> <span class="o">==</span> <span class="p">(</span><span class="n">nmodels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">ref</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">mod</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">mod</span> <span class="o">+=</span> <span class="mi">1</span></div>
-
-<div class="viewcode-block" id="ilRMSD.output"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write down the RMSD matrix.&quot;&quot;&quot;</span>
-        <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">)</span>
-        <span class="c1"># check if there are very low values in the RMSD vector. This means</span>
-        <span class="c1"># that two (or more) almost identical models exist in the input.</span>
-        <span class="n">check_low_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">npairs</span><span class="p">),</span>
-            <span class="n">atol</span><span class="o">=</span><span class="mf">0.1</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">check_low_values</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">: low values of RMSD detected.&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_fh</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
-                <span class="n">data_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">data_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
-                <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="get_pair"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.get_pair">[docs]</a><span class="k">def</span> <span class="nf">get_pair</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the pair of structures given the 1D matrix index.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">nmodels</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="s2">&quot;get_pair cannot accept negative numbers&quot;</span>
-        <span class="n">err</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Input is </span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2"> , </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-    <span class="c1"># solve the second degree equation</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nmodels</span><span class="p">)</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">b</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">idx</span><span class="p">))</span> <span class="o">//</span> <span class="mi">2</span>
-    <span class="n">j</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
@@ -421,7 +201,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 27, 2024.
+      <span class="lastupdated">Last updated on Apr 09, 2024.
       </span></p>
   </div>
 

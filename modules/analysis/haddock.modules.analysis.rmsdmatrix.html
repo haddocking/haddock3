@@ -156,7 +156,7 @@ to 4 of chain B for the alignment and RMSD calculation.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.confirm_installation">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/rmsdmatrix.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
-<dd><p>Confirm if contact executable is compiled.</p>
+<dd><p>Confirm if fast-rmsdmatrix is installed and available.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -177,6 +177,32 @@ to 4 of chain B for the alignment and RMSD calculation.</p>
 <h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
 <section id="easy">
 <h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
+<section id="allatoms">
+<h4>allatoms<a class="headerlink" href="#allatoms" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Atoms to be considered during the analysis.</div>
+<div class="line"><em>short description</em>: Atoms to be considered during the analysis.</div>
+<div class="line"><em>long description</em>: Atoms to be considered during the analysis. If false (default), only backbone atoms will be considered, otherwise all the heavy-atoms.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="atom-similarity">
+<h4>atom_similarity<a class="headerlink" href="#atom-similarity" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 90.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Required atom similarity</div>
+<div class="line"><em>min</em>: 10.0</div>
+<div class="line"><em>max</em>: 100.0</div>
+<div class="line"><em>short description</em>: Required similarity (in %) between the number of atoms in the input models.</div>
+<div class="line"><em>long description</em>: Required similarity (in %) between the number of atoms in the input models. If the similarity is higher than this value, the RMSD calculation is performed on the common atoms. Otherwise, the calculation is stopped. The lower the value the looser the checks.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="max-models">
 <h4>max_models<a class="headerlink" href="#max-models" title="Permalink to this heading"></a></h4>
 <div class="line-block">
@@ -187,7 +213,7 @@ to 4 of chain B for the alignment and RMSD calculation.</p>
 <div class="line"><em>max</em>: 20000</div>
 <div class="line"><em>short description</em>: If the number of models exceeds max_models the execution is blocked</div>
 <div class="line"><em>long description</em>: If the number of models exceeds the few thousands, the calculation of the RMSD matrix is computationally demanding, especially in terms of CPU and disk space.</div>
-<div class="line"><em>group</em>:</div>
+<div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
@@ -199,7 +225,7 @@ to 4 of chain B for the alignment and RMSD calculation.</p>
 <div class="line"><em>title</em>: List of residues</div>
 <div class="line"><em>short description</em>: The residue numbers that should be used in the alignment and in the RMSD calculation.</div>
 <div class="line"><em>long description</em>: resdic_* is an expandable parameter. You can provide resdic_A, resdic_B, resdic_C, etc, where the last capital letter is the chain identifier.</div>
-<div class="line"><em>group</em>:</div>
+<div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
@@ -219,7 +245,7 @@ to 4 of chain B for the alignment and RMSD calculation.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 27, 2024.
+      <span class="lastupdated">Last updated on Apr 09, 2024.
       </span></p>
   </div>
 

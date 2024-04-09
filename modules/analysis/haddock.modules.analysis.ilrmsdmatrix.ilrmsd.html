@@ -145,62 +145,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ContactJob.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob.run" title="Permalink to this definition"></a></dt>
-<dd><p>Run this RMSDJob.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.get_pair">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.ilrmsdmatrix.ilrmsd.</span></span><span class="sig-name descname"><span class="pre">get_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nmodels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#get_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.get_pair" title="Permalink to this definition"></a></dt>
-<dd><p>Get the pair of structures given the 1D matrix index.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.ilrmsdmatrix.ilrmsd.</span></span><span class="sig-name descname"><span class="pre">ilRMSD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_mod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_resdic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ilRMSD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>RMSD class.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.calc_ilrmsd">
-<span class="sig-name descname"><span class="pre">calc_ilrmsd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ilRMSD.calc_ilrmsd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.calc_ilrmsd" title="Permalink to this definition"></a></dt>
-<dd><p>Calculate ilRMSD.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ref</strong> (<em>int</em>) – index of the reference structure</p></li>
-<li><p><strong>mod</strong> (<em>int</em>) – index of the mobile structure</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ilrmsd</strong> (<em>float</em>) – ilRMSD value</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.output">
-<span class="sig-name descname"><span class="pre">output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ilRMSD.output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.output" title="Permalink to this definition"></a></dt>
-<dd><p>Write down the RMSD matrix.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ilRMSD.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSD.run" title="Permalink to this definition"></a></dt>
-<dd><p>Run calculations.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSDJob">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.ilrmsdmatrix.ilrmsd.</span></span><span class="sig-name descname"><span class="pre">ilRMSDJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ilrmsd_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ilRMSDJob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSDJob" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A Job dedicated to the fast rmsd calculation.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSDJob.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/ilrmsdmatrix/ilrmsd.html#ilRMSDJob.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ilRMSDJob.run" title="Permalink to this definition"></a></dt>
-<dd><p>Run this RMSDJob.</p>
+<dd><p>Run this ContactJob.</p>
 </dd></dl>
 
 </dd></dl>
@@ -219,7 +164,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 27, 2024.
+      <span class="lastupdated">Last updated on Apr 09, 2024.
       </span></p>
   </div>
 

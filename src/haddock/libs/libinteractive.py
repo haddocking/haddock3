@@ -11,7 +11,7 @@ from haddock.modules import get_module_steps_folders
 
 def handle_ss_file(
         df_ss: pd.DataFrame,
-        ) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
+        ) -> tuple[pd.DataFrame, dict]:
     """
     Manage a caprieval capri_ss file focusing on 4 first elements
     per cluster.

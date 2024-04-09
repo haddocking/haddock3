@@ -125,15 +125,24 @@
 <span class="target" id="module-haddock.libs.libinteractive"></span><p>Set of functions related to haddock3 interactive rescoring <cite>haddock3-re</cite>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libinteractive.handle_clt_file">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libinteractive.</span></span><span class="sig-name descname"><span class="pre">handle_clt_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clt_ranks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libinteractive.html#handle_clt_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libinteractive.handle_clt_file" title="Permalink to this definition"></a></dt>
-<dd><p>Handle clt file.</p>
-<p>Reclustering modifies the cluster data, so capri_clt.tsv must be updated.</p>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libinteractive.</span></span><span class="sig-name descname"><span class="pre">handle_clt_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clt_ranks_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libinteractive.html#handle_clt_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libinteractive.handle_clt_file" title="Permalink to this definition"></a></dt>
+<dd><p>Handle capri.clt file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_ss</strong> (<em>pd.DataFrame</em>) – The caprieval ss data.</p></li>
+<li><p><strong>clt_ranks_dict</strong> (<em>dict</em>) – New cluster ranking dictionary.</p></li>
+<li><p><strong>Reclustering modifies the cluster data, so capri_clt.tsv must be updated.</strong></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libinteractive.handle_ss_file">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libinteractive.</span></span><span class="sig-name descname"><span class="pre">handle_ss_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_ss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libinteractive.html#handle_ss_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libinteractive.handle_ss_file" title="Permalink to this definition"></a></dt>
-<dd><p>Manage a caprieval ss data focused on 4 first elements per cluster.</p>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libinteractive.</span></span><span class="sig-name descname"><span class="pre">handle_ss_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_ss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libinteractive.html#handle_ss_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libinteractive.handle_ss_file" title="Permalink to this definition"></a></dt>
+<dd><p>Manage a caprieval capri_ss file focusing on 4 first elements
+per cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>df_ss</strong> (<em>pd.DataFrame</em>) – The caprieval ss data.</p>
@@ -141,8 +150,7 @@
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>df_ss</strong> (<em>pd.DataFrame</em>) – The input dataframe</p></li>
-<li><p><strong>clt_ranks</strong> (<em>pd.DataFrame</em>) – New cluster ranking</p></li>
-<li><p><strong>new_values</strong> (<em>np.ndarray</em>) – New cluster values focused on the first 4 elements per cluster.</p></li>
+<li><p><strong>clt_ranks_dict</strong> (<em>dict</em>) – Dictionary with the cluster ranks</p></li>
 </ul>
 </p>
 </dd>

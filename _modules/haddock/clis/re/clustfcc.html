@@ -88,7 +88,9 @@
 <span></span><span class="sd">&quot;&quot;&quot;haddock3-re clustfcc subcommand.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">fcc.scripts</span> <span class="kn">import</span> <span class="n">cluster_fcc</span>
+
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
@@ -186,6 +188,8 @@
     <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">clustfcc_dir</span><span class="p">,</span> <span class="s2">&quot;io.json&quot;</span><span class="p">)</span>
     <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">models</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">input</span>
+    <span class="c1"># copying io.json to the new directory</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;io.json&quot;</span><span class="p">))</span>
 
     <span class="c1"># load the original clustering parameters via json</span>
     <span class="n">clustfcc_params</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">clustfcc_dir</span><span class="p">,</span> <span class="s2">&quot;params.cfg&quot;</span><span class="p">))</span>

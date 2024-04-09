@@ -433,7 +433,15 @@
 
 
 <div class="viewcode-block" id="generate_alascan_output"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.generate_alascan_output">[docs]</a><span class="k">def</span> <span class="nf">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the alascan output files.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the alascan output files.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    models : list</span>
+<span class="sd">        List of models.</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to the run directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">models_to_export</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_alascan.pdb&quot;</span>
@@ -448,7 +456,7 @@
         <span class="n">model</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="n">model</span><span class="o">.</span><span class="n">full_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="n">model</span><span class="o">.</span><span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
         <span class="n">models_to_export</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">models_to_export</span></div>
 

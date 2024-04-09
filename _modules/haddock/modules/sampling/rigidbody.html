@@ -214,7 +214,7 @@
 
                 <span class="c1"># Create a model for the expected output</span>
                 <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span>
-                    <span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span>
+                    <span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span>
                 <span class="p">)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>

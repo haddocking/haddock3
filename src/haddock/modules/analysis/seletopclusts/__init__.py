@@ -105,7 +105,7 @@ class HaddockModule(BaseHaddockModule):
                 model.file_name = name
                 model.full_name = name
                 model.rel_path = Path('..', Path(self.path).name, name)
-                model.path = str(Path(self.path).resolve())
+                model.path = str(Path(".").resolve())
 
         self.output_models = models_to_export
         self.export_io_models()

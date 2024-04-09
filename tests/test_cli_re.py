@@ -52,6 +52,8 @@ def test_cli_rescore(weights_dict):
                 ]
             assert len(interactive_folder) == 1
             interactive_folder = Path(tmpdir, interactive_folder[0])
+
+            # check ss file
             capritable_path = Path(interactive_folder, "capri_ss.tsv")
             rescored_ss = read_capri_table(capritable_path)
             first_model = rescored_ss.iloc[0]
@@ -59,6 +61,14 @@ def test_cli_rescore(weights_dict):
             assert first_model["model"] == "../1_rigidbody/rigidbody_645.pdb"
             assert isclose(first_model["irmsd"], 2.621, atol=0.001)
             assert isclose(first_model["score"], -28.743, atol=0.001)
+
+            # check clt file
+            capriclt_path = Path(interactive_folder, "capri_clt.tsv")
+            rescored_clt = read_capri_table(capriclt_path)
+            first_cluster = rescored_clt.iloc[0]
+            assert first_cluster["cluster_id"] == 16
+            assert first_cluster["cluster_rank"] == 1
+            assert isclose(first_cluster["score"], -27.537, atol=0.001)
 
 
 def test_cli_reclustfcc():

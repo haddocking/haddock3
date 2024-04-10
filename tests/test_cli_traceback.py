@@ -43,43 +43,38 @@ def expected_traceback():
 
 def test_main(rigid_json, flexref_json, expected_traceback):
     """Test haddock3-traceback client."""
-    # build fake run_dir
-    run_dir = "example_dir"
-    step_dirs = [os.path.join(run_dir, "1_rigidbody"),
-                 os.path.join(run_dir, "4_flexref")]
-    
-    if os.path.isdir(run_dir):
-        shutil.rmtree(run_dir)
-    # Loop over directories to be created
-    for d in [run_dir, *step_dirs]:
-        os.mkdir(d)
-    shutil.copy(rigid_json, os.path.join(step_dirs[0], "io.json"))
-    shutil.copy(flexref_json, os.path.join(step_dirs[1], "io.json"))
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        # build fake run_dir
+        run_dir = Path(tmpdir, "example_dir")
+        step_dirs = [os.path.join(run_dir, "1_rigidbody"),
+                     os.path.join(run_dir, "4_flexref")]
 
-    # create fake, empty pdb files
-    for i in range(1, 5):
-        open(os.path.join(step_dirs[0], f"rigidbody_{i}.pdb"), "w").close()
-    for i in range(1, 3):
-        open(os.path.join(step_dirs[1], f"flexref_{i}.pdb"), "w").close()
-    
-    # run haddock3-traceback
-    main(run_dir)
+        # Loop over directories to be created
+        for d in [run_dir, *step_dirs]:
+            os.mkdir(d)
+        shutil.copy(rigid_json, os.path.join(step_dirs[0], "io.json"))
+        shutil.copy(flexref_json, os.path.join(step_dirs[1], "io.json"))
 
-    # check traceback folder exists
-    assert os.path.isdir(os.path.join(run_dir, "traceback"))
+        # create fake, empty pdb files
+        for i in range(1, 5):
+            open(os.path.join(step_dirs[0], f"rigidbody_{i}.pdb"), "w").close()
+        for i in range(1, 3):
+            open(os.path.join(step_dirs[1], f"flexref_{i}.pdb"), "w").close()
 
-    # check traceback files exist
-    tr_file = os.path.join(run_dir, "traceback", "traceback.tsv")
-    assert os.path.isfile(tr_file)
+        # run haddock3-traceback
+        main(run_dir)
 
-    obs_tr = pd.read_csv(tr_file, sep="\t", dtype=str)
-    
+        # check traceback folder exists
+        assert os.path.isdir(os.path.join(run_dir, "traceback"))
 
-    assert obs_tr.columns.tolist() == expected_traceback.columns.tolist()
-    assert obs_tr.equals(expected_traceback)
+        # check traceback files exist
+        tr_file = os.path.join(run_dir, "traceback", "traceback.tsv")
+        assert os.path.isfile(tr_file)
 
-    # clean up
-    shutil.rmtree(run_dir)
+        obs_tr = pd.read_csv(tr_file, sep="\t", dtype=str)
+
+        assert obs_tr.columns.tolist() == expected_traceback.columns.tolist()
+        assert obs_tr.equals(expected_traceback)
 
 
 def test_analysis():

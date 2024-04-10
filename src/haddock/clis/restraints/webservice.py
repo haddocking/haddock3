@@ -9,7 +9,7 @@ uvicorn --port 5000 haddock.clis.restraints.webservice:app
 
 The Swagger UI is running at http://127.0.0.1:5000/docs .
 
-To upload a PDB file, the file needs to be gzipped and then base64 encoded.
+To upload a PDB file, it needs to be gzipped and then base64 encoded.
 
 A base64 encoded gzipped PDB file can made with:
 
@@ -227,7 +227,6 @@ def unpacked_tbl(tbl: str) -> str:
 class ValidateTblRequest(BaseModel):
     tbl: Annotated[
         str,
-        Depends(unpacked_tbl),
         Field(
             description="The TBL file as base64 encoded gzipped string.",
             contentMediaType="text/plain",
@@ -248,11 +247,11 @@ class ValidateTblRequest(BaseModel):
 def validate_tbl(
     request: ValidateTblRequest,
 ) -> str:
-
+    tbl = unpacked_tbl(request.tbl)
     try:
         if request.quick:
-            check_parenthesis(request.tbl)
-        return validate_tbldata(request.tbl, request.pcs)
+            check_parenthesis(tbl)
+        return validate_tbldata(tbl, request.pcs)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)

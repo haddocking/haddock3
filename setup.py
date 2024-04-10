@@ -68,7 +68,7 @@ setup(
         'Protein docking',
         'Proteins',
         ],
-    python_requires='>=3.9, <3.11',
+    python_requires='>=3.9, <3.10',
     install_requires=[
         # not added on purpose
         ],

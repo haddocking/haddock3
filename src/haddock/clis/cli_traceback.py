@@ -140,6 +140,7 @@ def traceback_dataframe(
     df_ord.loc[unk_records, last_step] = "-"
     return df_ord
 
+
 def order_traceback_df(df_output, sel_step):
     """
     Order the traceback dataframe. Each step is ordered by rank.

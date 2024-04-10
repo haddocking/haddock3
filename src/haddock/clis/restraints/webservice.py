@@ -221,7 +221,7 @@ def calculate_accessibility(
 
 
 def unpacked_tbl(tbl: str) -> str:
-    return gzip.decompress(b64decode(tbl).decode("utf-8"))
+    return gzip.decompress(b64decode(tbl)).decode("utf-8")
 
 
 class ValidateTblRequest(BaseModel):

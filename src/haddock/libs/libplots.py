@@ -1216,7 +1216,6 @@ def heatmap_plotly(
         title: Optional[str] = None,
         output_fname: Path = HEATMAP_DEFAULT_PATH,
         offline: bool = False,
-        output_fname: Path = Path('contacts.html'),
         hovertemplate: Optional[str] = None,
         customdata: Optional[list[list[Any]]] = None,
         delineation_traces: Optional[list[dict[str, float]]] = None,

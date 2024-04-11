@@ -1190,8 +1190,8 @@ def tsv_to_heatmap(
             })
     # Generate hover template
     hovertemplate = (
-        ' %{x} &#8621; %{y} <br>'
-        f' Contact probability: %{{z}}'
+        ' %{y}   &#8621;   %{x} <br>'
+        f' Contact {data_label}: %{{z}}'
         '<extra></extra>'
         )
 

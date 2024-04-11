@@ -127,7 +127,7 @@ def create_html(
         html content
     """
     # Check if plotly javascript must be flushed in this file
-    if not offline:
+    if offline:
         plotlyjs = f'<script type="text/javascript">{get_plotlyjs()}</script>'
     else:
         plotlyjs = f'<script src="{plotly_cdn_url()}"></script>'
@@ -136,7 +136,7 @@ def create_html(
     html_content = f"""
     <div>
     <script type="text/javascript">window.PlotlyConfig = {{ MathJaxConfig: 'local' }};</script>
-    <script src="{plotlyjs}"></script>
+    {plotlyjs}
     <div id="plot{plot_id}" class="plotly-graph-div" style="height:{figure_height}px; width:{figure_width}px;">
     </div>
     <script id="data{plot_id}" type="application/json">

@@ -49,7 +49,7 @@ import json
 from haddock.gear.config import load as read_config
 
 
-def get_previous_cns_step(sel_steps: list) -> str:
+def get_previous_cns_step(sel_steps: list) -> Union[str, None]:
     """
     Get the previous CNS step.
 

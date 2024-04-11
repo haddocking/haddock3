@@ -15,6 +15,7 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.typing import (
+    Any,
     DataFrameGroupBy,
     Figure,
     FilePath,

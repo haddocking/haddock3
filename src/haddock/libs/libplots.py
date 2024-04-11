@@ -1361,3 +1361,44 @@ def fig_to_html(
         )
     # Write it
     Path(fpath).write_text(html_content)
+
+
+def make_traceback_plot(tr_subset, plot_filename):
+    """
+    Create a traceback barplot with the 40 best ranked models.
+
+    Parameters
+    ----------
+    tr_subset : pandas.DataFrame
+        DataFrame containing the top traceback results
+    plot_filename : Path
+        Path to the output filename to generate
+    """
+    rank_columns = tr_subset.columns[tr_subset.columns.str.endswith("rank")]
+    # for each row, plot a bar with the values of the rank columns
+    fig = px.bar(tr_subset, x="Model", y=rank_columns)
+    # vertical legend on the right with legend name 'Modules'
+    fig.update_layout(legend_orientation="v", legend_title="Modules")
+    # legend should have bigger font size
+    fig.update_layout(legend=dict(
+        title_font_size=24,
+        font_size=24,
+    ))
+    # y axis title 'Sum of Ranks'
+    fig.update_layout(yaxis_title="Sum of Ranks", xaxis_title="Models")
+    # bigger axis labels
+    fig.update_layout(
+        yaxis=dict(title_font_size=30, tickfont_size=16),
+        xaxis=dict(title_font_size=30, tickfont_size=16)
+        )
+    # bigger title
+    fig.update_layout(
+        title_text=f"Top ranked {tr_subset.shape[0]} Models",
+        title_font_size=30
+        )
+    fig_to_html(fig,
+                plot_filename,
+                figure_height=1200,
+                figure_width=2000
+                )
+    return plot_filename

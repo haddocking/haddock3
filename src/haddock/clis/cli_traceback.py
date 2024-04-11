@@ -20,6 +20,7 @@ from typing import Any
 from haddock import log
 from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
+from haddock.libs.libplots import make_traceback_plot
 from haddock.modules import get_module_steps_folders
 
 
@@ -139,6 +140,7 @@ def traceback_dataframe(
     df_ord.loc[unk_records, last_step] = "-"
     return df_ord
 
+
 def order_traceback_df(df_output, sel_step):
     """
     Order the traceback dataframe. Each step is ordered by rank.
@@ -174,6 +176,45 @@ def order_traceback_df(df_output, sel_step):
     return df_output
 
 
+def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.DataFrame:
+    """
+    Generate a subset the traceback dataframe with the top 40 models.
+
+    Parameters
+    ----------
+    traceback_df : pandas.DataFrame
+        Dataframe containing the traceback data.
+    
+    cons_filename : pathlib.Path
+        name of the consensus file.
+    
+    Returns
+    -------
+    rank_data_subset : pandas.DataFrame
+        Dataframe containing the subset of the traceback data.
+    """
+    red_traceback_df = traceback_df.head(40)
+    rank_data = red_traceback_df.filter(regex='rank$')
+    # get the last column: this will define the name of the models
+    last_column = red_traceback_df.columns[-2]
+    last_column_data = red_traceback_df[last_column]
+    # concat the ranks with the model name
+    rank_data = pd.concat([last_column_data, rank_data], axis=1)
+    # the rank of the last column must be defined
+    last_column_rank = last_column + "_rank"
+    rank_data_subset = rank_data[rank_data[last_column_rank] != '-']
+    rank_columns = rank_data_subset.columns[1:].tolist()
+    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(pd.to_numeric, errors='coerce')
+    rank_data_subset = rank_data_subset.sort_values(by=last_column_rank, ascending=True)
+    
+    # rename the columns
+    rank_data_subset.columns = ["Model"] + rank_columns
+    # sum the ranks
+    rank_data_subset["Sum-of-Ranks"] = rank_data_subset[rank_columns].sum(axis=1)
+    rank_data_subset.to_csv(cons_filename, index=False, sep="\t")
+    return rank_data_subset
+
+
 # Command line interface parser
 ap = argparse.ArgumentParser(
     prog="haddock3-traceback",
@@ -202,7 +243,7 @@ def maincli():
 
 def main(run_dir):
     """
-    Analyse CLI.
+    Traceback CLI.
 
     Parameters
     ----------
@@ -313,6 +354,14 @@ def main(run_dir):
         f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
     )
     df_output.to_csv(track_filename, sep="\t", index=False)
+
+    # taking (and writing) a subset of the dataframe
+    consensus_filename = Path(run_dir, TRACK_FOLDER, "consensus.tsv")
+    rank_data_subset = subset_traceback(df_output, consensus_filename)
+
+    # plotting the traceback dataframe
+    plot_filename = Path(run_dir, TRACK_FOLDER, "traceback.html")
+    make_traceback_plot(rank_data_subset, plot_filename)
     return
 
 

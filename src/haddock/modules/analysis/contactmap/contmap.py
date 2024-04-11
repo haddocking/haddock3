@@ -1170,8 +1170,7 @@ def tsv_to_heatmap(
     # Compute chains delineations positions
     del_posi = [0]
     for chainid in ordered_chains:
-        del_posi.append(chains_length[chainid])
-    del_posi.append(len(labels))    
+        del_posi.append(del_posi[-1] + chains_length[chainid])
     # Compute chains delineations lines
     chains_limits: list[dict[str, float]] = []
     for delpos in del_posi:
@@ -1189,6 +1188,12 @@ def tsv_to_heatmap(
             "x0": -0.5,
             "x1": len(labels) - 0.5,
             })
+    # Generate hover template
+    hovertemplate = (
+        ' %{x} &#8621; %{y} <br>'
+        f' Contact probability: %{{z}}'
+        '<extra></extra>'
+        )
 
     # Generate heatmap
     output_filepath = heatmap_plotly(
@@ -1200,6 +1205,7 @@ def tsv_to_heatmap(
         output_fname=output_fname,
         offline=offline,
         delineation_traces=chains_limits,
+        hovertemplate=hovertemplate,
         )
 
     return output_filepath

@@ -591,7 +591,10 @@
                 <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;markers&quot;</span><span class="p">,</span>
                 <span class="n">text</span><span class="o">=</span><span class="n">_build_hover_text</span><span class="p">(</span><span class="n">gb_other</span><span class="p">),</span>
                 <span class="n">legendgroup</span><span class="o">=</span><span class="s2">&quot;Other&quot;</span><span class="p">,</span>
-                <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;DarkSlateGrey&quot;</span><span class="p">)),</span>
+                <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+                    <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;DarkSlateGrey&quot;</span><span class="p">),</span>
+                    <span class="p">),</span>
                 <span class="n">hoverlabel</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
                     <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
                     <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
@@ -612,6 +615,7 @@
     <span class="n">html_content</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span><span class="n">json_content</span><span class="p">)</span>
     <span class="c1"># write html_content to px_fname</span>
     <span class="n">Path</span><span class="p">(</span><span class="n">px_fname</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
+
     <span class="c1"># create format boxplot if necessary</span>
     <span class="k">if</span> <span class="nb">format</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x_ax</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">y_ax</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
@@ -1213,9 +1217,12 @@
         <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">xlabels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ylabels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">color_scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Greys_r&#39;</span><span class="p">,</span>  <span class="c1"># Greys_r, gray</span>
+        <span class="n">color_scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Greys_r&#39;</span><span class="p">,</span>
         <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">output_fname</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;contacts.html&#39;</span><span class="p">),</span>
+        <span class="n">hovertemplate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">customdata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">delineation_traces</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a `plotly heatmap` based on matrix content.</span>
 
@@ -1235,12 +1242,19 @@
 <span class="sd">        Title of the figure.</span>
 <span class="sd">    output_fname : Path</span>
 <span class="sd">        Path to the output filename to generate.</span>
+<span class="sd">    hovertemplate: Optional[str]</span>
+<span class="sd">        Custrom string used to format data for hover annotation in plotly.</span>
+<span class="sd">    customdata: Optional[list[list[list[int]]]]</span>
+<span class="sd">        A matrix of cluster ids, used for extra hover annotation in plotly.</span>
+<span class="sd">    delineation_traces: Optional[list[dict[str, float]]]</span>
+<span class="sd">        A list of dict enabling to draw lines separating cluster ids.</span>
 
 <span class="sd">    Return</span>
 <span class="sd">    ------</span>
 <span class="sd">    output_fname : Path</span>
 <span class="sd">        Path to the generated filename</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Generate heatmap trace</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">,</span>
         <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
@@ -1251,15 +1265,64 @@
         <span class="p">)</span>
     <span class="c1"># Place X axis on top</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span>
+        <span class="n">hovertemplate</span><span class="o">=</span><span class="n">hovertemplate</span><span class="p">,</span>
+        <span class="n">customdata</span><span class="o">=</span><span class="n">customdata</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="c1"># Add delineation traces</span>
+    <span class="k">if</span> <span class="n">delineation_traces</span><span class="p">:</span>
+        <span class="c1"># Loop over lines</span>
+        <span class="k">for</span> <span class="n">trace</span> <span class="ow">in</span> <span class="n">delineation_traces</span><span class="p">:</span>
+            <span class="c1"># Draw them</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_shape</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;line&quot;</span><span class="p">,</span>
+                <span class="n">line</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;dash&quot;</span><span class="p">:</span> <span class="s2">&quot;5px&quot;</span><span class="p">},</span>
+                <span class="n">x0</span><span class="o">=</span><span class="n">trace</span><span class="p">[</span><span class="s2">&quot;x0&quot;</span><span class="p">],</span>
+                <span class="n">x1</span><span class="o">=</span><span class="n">trace</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">],</span>
+                <span class="n">y0</span><span class="o">=</span><span class="n">trace</span><span class="p">[</span><span class="s2">&quot;y0&quot;</span><span class="p">],</span>
+                <span class="n">y1</span><span class="o">=</span><span class="n">trace</span><span class="p">[</span><span class="s2">&quot;y1&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Compute pixels</span>
+    <span class="n">nb_entries</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">scaled_log</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nb_entries</span><span class="p">))</span> <span class="o">*</span> <span class="mi">200</span>
+    <span class="n">lower_bound</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">scaled_log</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">uppder_bound</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="c1"># Set hight and width</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">uppder_bound</span>
+    <span class="c1"># Increment width for legend space</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">height</span> <span class="o">+</span> <span class="mi">70</span>
+
     <span class="c1"># Save figure as html file</span>
-    <span class="n">fig_to_html</span><span class="p">(</span>
+    <span class="n">export_plotly_figure</span><span class="p">(</span>
         <span class="n">fig</span><span class="p">,</span>
         <span class="n">output_fname</span><span class="p">,</span>
-        <span class="n">figure_height</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
-        <span class="n">figure_width</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+        <span class="n">figure_height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+        <span class="n">figure_width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
         <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">output_fname</span></div>
 
+
+<div class="viewcode-block" id="export_plotly_figure"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.export_plotly_figure">[docs]</a><span class="k">def</span> <span class="nf">export_plotly_figure</span><span class="p">(</span>
+        <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span>
+        <span class="n">output_fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+        <span class="n">figure_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">figure_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Detect output file extension</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+    <span class="c1"># Check corresponding function</span>
+    <span class="k">if</span> <span class="s1">&#39;html&#39;</span> <span class="ow">in</span> <span class="n">suffix</span><span class="p">:</span>
+        <span class="n">fig_to_html</span><span class="p">(</span>
+            <span class="n">fig</span><span class="p">,</span>
+            <span class="n">output_fname</span><span class="p">,</span>
+            <span class="n">figure_height</span><span class="o">=</span><span class="n">figure_height</span><span class="p">,</span>
+            <span class="n">figure_width</span><span class="o">=</span><span class="n">figure_width</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;.webp&#39;</span><span class="p">,</span> <span class="s1">&#39;.svg&#39;</span><span class="p">,</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;.eps&#39;</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span></div>
+    
   
 <div class="viewcode-block" id="make_alascan_plot"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.make_alascan_plot">[docs]</a><span class="k">def</span> <span class="nf">make_alascan_plot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">clt_id</span><span class="p">,</span> <span class="n">scan_res</span><span class="o">=</span><span class="s2">&quot;ALA&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1340,10 +1403,12 @@
         <span class="p">)</span>
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">add_vline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-    <span class="c1"># Write it</span>
-    <span class="n">fig_to_html</span><span class="p">(</span>
+
+    <span class="c1"># save html</span>
+    <span class="n">html_output_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_name</span><span class="si">}</span><span class="s2">.html&quot;</span>
+    <span class="n">export_plotly_figure</span><span class="p">(</span>
         <span class="n">fig</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">plot_name</span><span class="si">}</span><span class="s2">.html&quot;</span><span class="p">,</span>
+        <span class="n">html_output_filename</span><span class="p">,</span>
         <span class="n">figure_height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
         <span class="n">figure_width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -1393,7 +1458,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 09, 2024.
+      <span class="lastupdated">Last updated on Apr 11, 2024.
       </span></p>
   </div>
 

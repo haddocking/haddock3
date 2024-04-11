@@ -192,6 +192,23 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.clustrmsd.get_matrix_path">
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.clustrmsd.clustrmsd.</span></span><span class="sig-name descname"><span class="pre">get_matrix_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rmsd_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.RMSDFile" title="haddock.libs.libontology.RMSDFile"><span class="pre">RMSDFile</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd/clustrmsd.html#get_matrix_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.clustrmsd.get_matrix_path" title="Permalink to this definition"></a></dt>
+<dd><p>From an RMSDFile object returns the rmsd matrix path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rmsd_matrix</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">RMSDFile</span></code>) – RMSDFile object with the path to the RMSD matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>matrix_fpath</strong> (<em>Path</em>) – Path to the RMSD matrix</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><strong>TypeError</strong></a> – If input rmsd_matrix is not of type RMSDFile</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.clustrmsd.iterate_min_population">
 <span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.clustrmsd.clustrmsd.</span></span><span class="sig-name descname"><span class="pre">iterate_min_population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_arr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_population</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd/clustrmsd.html#iterate_min_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.clustrmsd.iterate_min_population" title="Permalink to this definition"></a></dt>
 <dd><p>Find one valid valuster satisfying the min_population parameter.</p>
@@ -282,7 +299,7 @@ at least one valid cluster.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 09, 2024.
+      <span class="lastupdated">Last updated on Apr 11, 2024.
       </span></p>
   </div>
 

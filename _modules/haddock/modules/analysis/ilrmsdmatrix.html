@@ -90,19 +90,19 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">ilRMSD matrix module.</span>
 
-<span class="sd">This module calculates of the interface-ligand RMSD (ilRMSD) matrix between all </span>
+<span class="sd">This module calculates of the interface-ligand RMSD (ilRMSD) matrix between all</span>
 <span class="sd">the models generated in the previous step.</span>
 
 <span class="sd">As all the pairwise ilRMSD calculations are independent, the module distributes</span>
 <span class="sd">them over all the available cores in an optimal way.</span>
 
 <span class="sd">Once created, the ilRMSD matrix is saved in text form in the current</span>
-<span class="sd">`ilrmsdmatrix` folder. The path to this file is then shared with the following </span>
+<span class="sd">`ilrmsdmatrix` folder. The path to this file is then shared with the following</span>
 <span class="sd">step of the workflow by means of the json file `rmsd_matrix.json`.</span>
 
-<span class="sd">IMPORTANT: the module assumes coherent numbering for all the receptor and ligand chains,</span>
-<span class="sd">as no alignment is performed. The user must ensure that the</span>
-<span class="sd">numbering is coherent.</span>
+<span class="sd">IMPORTANT: the module assumes coherent numbering for all the receptor and ligand</span>
+<span class="sd">chains, as no alignment is performed. The user must ensure that the numbering</span>
+<span class="sd">is coherent.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -242,7 +242,7 @@
         
         <span class="k">if</span> <span class="n">nmodels</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]:</span>
             <span class="c1"># too many input models : ilRMSD matrix would be too big =&gt; Abort!</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Too many models (</span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) for ilRMSD matrix calculation&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Too many models (</span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) for ilRMSD matrix calculation&quot;</span><span class="p">)</span>  <span class="c1"># noqa : E501</span>
 
         <span class="c1"># Find the common residues making contacts for the receptor and ligand.</span>
         <span class="n">index_list</span> <span class="o">=</span> <span class="n">get_index_list</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">ncores</span><span class="p">)</span>
@@ -454,7 +454,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 09, 2024.
+      <span class="lastupdated">Last updated on Apr 11, 2024.
       </span></p>
   </div>
 

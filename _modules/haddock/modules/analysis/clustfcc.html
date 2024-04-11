@@ -93,7 +93,9 @@
 <span class="sd">contacts between them. Then, the module calculates the FCC matrix and clusters</span>
 <span class="sd">the models based on the calculated contacts.</span>
 
-<span class="sd">For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*&quot;&quot;&quot;</span>
+<span class="sd">For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*</span>
+<span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -102,6 +104,8 @@
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">add_cluster_info</span><span class="p">,</span>
+    <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">,</span>
+    <span class="n">plot_cluster_matrix</span><span class="p">,</span>
     <span class="n">rank_clusters</span><span class="p">,</span>
     <span class="n">write_structure_list</span><span class="p">,</span>
     <span class="p">)</span>
@@ -159,7 +163,7 @@
         <span class="n">contact_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">JobInputFirst</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models_to_clust</span><span class="p">:</span>
             <span class="n">pdb_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-            <span class="n">contact_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;.con&quot;</span><span class="p">))</span>
+            <span class="n">contact_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;.con&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore  # noqa : E501</span>
             <span class="n">job</span> <span class="o">=</span> <span class="n">JobInputFirst</span><span class="p">(</span>
                 <span class="n">pdb_f</span><span class="p">,</span>
                 <span class="n">contact_f</span><span class="p">,</span>
@@ -195,12 +199,14 @@
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating the FCC matrix&quot;</span><span class="p">)</span>
         <span class="n">parsed_contacts</span> <span class="o">=</span> <span class="n">calc_fcc_matrix</span><span class="o">.</span><span class="n">parse_contact_file</span><span class="p">(</span>
-            <span class="n">contact_file_l</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="n">contact_file_l</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># Imporant: matrix is a generator object, be careful with it</span>
         <span class="n">matrix</span> <span class="o">=</span> <span class="n">calc_fcc_matrix</span><span class="o">.</span><span class="n">calculate_pairwise_matrix</span><span class="p">(</span>
-            <span class="n">parsed_contacts</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="n">parsed_contacts</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="c1"># write the matrix to a file, so we can read it afterwards and don&#39;t</span>
@@ -211,7 +217,6 @@
                 <span class="n">data_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">data_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
                 <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1"># Cluster</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clustering...&quot;</span><span class="p">)</span>
@@ -263,6 +268,35 @@
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No clusters were found&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_clust</span>  <span class="c1"># type: ignore</span>
 
+        <span class="c1"># Draw the matrix</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;plot_matrix&#39;</span><span class="p">]:</span>
+            <span class="c1"># Obtain final models indices</span>
+            <span class="n">final_order_idx</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cluster_ids</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
+                <span class="n">final_order_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">models_to_clust</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pdb</span><span class="p">))</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+                <span class="n">cluster_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">clt_id</span><span class="p">)</span>
+            <span class="c1"># Get custom cluster data</span>
+            <span class="n">matrix_cluster_dt</span><span class="p">,</span> <span class="n">cluster_limits</span> <span class="o">=</span> <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span>
+                <span class="n">cluster_ids</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Define output filename</span>
+            <span class="n">html_matrix_basepath</span> <span class="o">=</span> <span class="s1">&#39;fcc_matrix&#39;</span>
+            <span class="c1"># Plot matrix</span>
+            <span class="n">html_matrixpath</span> <span class="o">=</span> <span class="n">plot_cluster_matrix</span><span class="p">(</span>
+                <span class="n">fcc_matrix_f</span><span class="p">,</span>
+                <span class="n">final_order_idx</span><span class="p">,</span>
+                <span class="n">labels</span><span class="p">,</span>
+                <span class="n">dttype</span><span class="o">=</span><span class="s1">&#39;FCC&#39;</span><span class="p">,</span>
+                <span class="n">diag_fill</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">output_fname</span><span class="o">=</span><span class="n">html_matrix_basepath</span><span class="p">,</span>
+                <span class="n">matrix_cluster_dt</span><span class="o">=</span><span class="n">matrix_cluster_dt</span><span class="p">,</span>
+                <span class="n">cluster_limits</span><span class="o">=</span><span class="n">cluster_limits</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plotting matrix in </span><span class="si">{</span><span class="n">html_matrixpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Export models for next module</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span></div>
 </pre></div>
 
@@ -274,7 +308,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 09, 2024.
+      <span class="lastupdated">Last updated on Apr 11, 2024.
       </span></p>
   </div>
 

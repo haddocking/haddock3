@@ -99,6 +99,31 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">RMSDFile</span>
 
 
+<div class="viewcode-block" id="get_matrix_path"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.get_matrix_path">[docs]</a><span class="k">def</span> <span class="nf">get_matrix_path</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">:</span> <span class="n">RMSDFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;From an RMSDFile object returns the rmsd matrix path.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rmsd_matrix : :obj:`RMSDFile`</span>
+<span class="sd">        RMSDFile object with the path to the RMSD matrix.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matrix_fpath : Path</span>
+<span class="sd">        Path to the RMSD matrix</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If input rmsd_matrix is not of type RMSDFile</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">RMSDFile</span><span class="p">):</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not a RMSDFile object.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+    <span class="n">matrix_fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">rmsd_matrix</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">matrix_fpath</span></div>
+
+
 <div class="viewcode-block" id="write_clusters"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.write_clusters">[docs]</a><span class="k">def</span> <span class="nf">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">cluster_arr</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">out_filename</span><span class="o">=</span><span class="s2">&quot;cluster.out&quot;</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># noqa: E501</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the clusters to a file.</span>
@@ -167,10 +192,7 @@
 <span class="sd">    matrix : :obj:`numpy.ndarray`</span>
 <span class="sd">        Numpy array with the RMSD matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">RMSDFile</span><span class="p">):</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not a RMSDFile object.&quot;</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">rmsd_matrix</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">get_matrix_path</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">)</span>
     <span class="c1"># count lines</span>
     <span class="n">nlines</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;input rmsd matrix has </span><span class="si">{</span><span class="n">nlines</span><span class="si">}</span><span class="s2"> entries&quot;</span><span class="p">)</span>
@@ -193,7 +215,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">matrix</span><span class="p">[[</span><span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
                 <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">matrix</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_dendrogram"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.get_dendrogram">[docs]</a><span class="k">def</span> <span class="nf">get_dendrogram</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">linkage_type</span><span class="p">):</span>
@@ -434,7 +456,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 09, 2024.
+      <span class="lastupdated">Last updated on Apr 11, 2024.
       </span></p>
   </div>
 

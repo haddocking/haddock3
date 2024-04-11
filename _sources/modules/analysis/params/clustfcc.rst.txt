@@ -42,6 +42,17 @@ min_population
 | *group*: analysis
 | *explevel*: easy
 
+plot_matrix
+~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Plot matrix of members
+| *short description*: Plot matrix of members. By default is false.
+| *long description*: Plot matrix of members. By default is false.
+| *group*: analysis
+| *explevel*: easy
+
 strictness
 ~~~~~~~~~~
 

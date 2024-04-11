@@ -1306,6 +1306,7 @@ def export_plotly_figure(
         output_fname: Union[str, Path],
         figure_height: int = 1000,
         figure_width: int = 1000,
+        offline: bool = False,
         ) -> None:
     # Detect output file extension
     suffix = Path(output_fname).suffix
@@ -1316,6 +1317,7 @@ def export_plotly_figure(
             output_fname,
             figure_height=figure_height,
             figure_width=figure_width,
+            offline=offline,
             )
     elif suffix in ('.png', '.jpeg', '.webp', '.svg', '.pdf', '.eps', ):
         fig.write_image(output_fname)

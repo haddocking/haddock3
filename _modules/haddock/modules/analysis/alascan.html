@@ -178,7 +178,11 @@
         <span class="n">clt_alascan</span> <span class="o">=</span> <span class="n">alascan_cluster_analysis</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
         <span class="c1"># now plot the data</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;plot&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">create_alascan_plots</span><span class="p">(</span><span class="n">clt_alascan</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scan_residue&quot;</span><span class="p">])</span>
+            <span class="n">create_alascan_plots</span><span class="p">(</span>
+                <span class="n">clt_alascan</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scan_residue&quot;</span><span class="p">],</span>
+                <span class="n">offline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;offline&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
         <span class="c1"># if output is true, write the models and export them</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">models_to_export</span> <span class="o">=</span> <span class="n">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>

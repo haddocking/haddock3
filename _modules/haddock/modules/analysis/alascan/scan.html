@@ -461,7 +461,7 @@
     <span class="k">return</span> <span class="n">models_to_export</span></div>
 
 
-<div class="viewcode-block" id="create_alascan_plots"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.create_alascan_plots">[docs]</a><span class="k">def</span> <span class="nf">create_alascan_plots</span><span class="p">(</span><span class="n">clt_alascan</span><span class="p">,</span> <span class="n">scan_residue</span><span class="p">):</span>
+<div class="viewcode-block" id="create_alascan_plots"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.create_alascan_plots">[docs]</a><span class="k">def</span> <span class="nf">create_alascan_plots</span><span class="p">(</span><span class="n">clt_alascan</span><span class="p">,</span> <span class="n">scan_residue</span><span class="p">,</span> <span class="n">offline</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the alascan plots.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">clt_id</span> <span class="ow">in</span> <span class="n">clt_alascan</span><span class="p">:</span>
         <span class="n">scan_clt_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">.csv&quot;</span>
@@ -478,7 +478,8 @@
             <span class="n">make_alascan_plot</span><span class="p">(</span>
                 <span class="n">df_scan_clt</span><span class="p">,</span>
                 <span class="n">clt_id</span><span class="p">,</span>
-                <span class="n">scan_residue</span>
+                <span class="n">scan_residue</span><span class="p">,</span>
+                <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>

@@ -118,6 +118,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#concat">concat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#mode">mode</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ncores">ncores</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#offline">offline</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#queue">queue</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#queue-limit">queue_limit</a></li>
 </ul>
@@ -683,6 +684,18 @@ In the later case, overriding the general definition.</p>
 <div class="line"><em>max</em>: 500</div>
 <div class="line"><em>short description</em>: Number of CPU cores to use for the CNS calculations. It is truncated to max available CPUs  minus 1.</div>
 <div class="line"><em>long description</em>: Number of CPU cores to use for the CNS calculations. This will define the number of concurrent jobs being executed. Note that is truncated to the total number of available CPUs minus 1.</div>
+<div class="line"><em>group</em>: execution</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="offline">
+<h4>offline<a class="headerlink" href="#offline" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Isolate haddock3 from internet.</div>
+<div class="line"><em>short description</em>: Completely isolate the haddock3 run &amp; results from internet.</div>
+<div class="line"><em>long description</em>: For interactive plots, we are using the plotly library. It can be embedded as a link to the plotly.js library and fetched from the web, or directly copied on the html files AT THE COST OF ~3Mb per file. Setting this parameter to <cite>true</cite> will add the javascript library in generated files, therefore completely isolating haddock3 from any web call.</div>
 <div class="line"><em>group</em>: execution</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>

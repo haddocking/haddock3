@@ -141,10 +141,11 @@
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
-        <span class="c1"># Initiate holder of all jobs to be run by the `Scheduler`</span>
-        <span class="n">contact_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SupportsRunT</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Obtain clusters</span>
         <span class="n">clusters_sets</span> <span class="o">=</span> <span class="n">get_clusters_sets</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+
+        <span class="c1"># Initiate holder of all jobs to be run by the `Scheduler`</span>
+        <span class="n">contact_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SupportsRunT</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Loop over clusters</span>
         <span class="k">for</span> <span class="n">clustid</span><span class="p">,</span> <span class="n">clt_models</span> <span class="ow">in</span> <span class="n">clusters_sets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="c1"># In case of unclustered models</span>

@@ -127,7 +127,7 @@ def create_html(
         html content
     """
     # Check if plotly javascript must be flushed in this file
-    if not offline:
+    if offline:
         plotlyjs = f'<script type="text/javascript">{get_plotlyjs()}</script>'
     else:
         plotlyjs = f'<script src="{plotly_cdn_url()}"></script>'

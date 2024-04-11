@@ -460,14 +460,22 @@ def load_coords(
             # Extract PDB line data
             atom_name = line[slc_name].strip()
             resname = line[slc_resname].strip()
+            # Skip entries to be ignored
+            if resname in RES_TO_BE_IGNORED:
+                continue
+            else:
+                if atom_name not in atoms[resname]:
+                    continue
+            # Continue parsing of the PDB line
             chain = line[slc_chainid]
-            if model2ref_chain_dict:
-                chain = model2ref_chain_dict[chain]
             resnum = int(line[slc_resseq])
             x = float(line[slc_x])
             y = float(line[slc_y])
             z = float(line[slc_z])
             coords = np.asarray([x, y, z])
+            # Remap chain name
+            if model2ref_chain_dict:
+                chain = model2ref_chain_dict[chain]
             if numbering_dic and model2ref_chain_dict:
                 try:
                     resnum = numbering_dic[chain][resnum]
@@ -479,9 +487,6 @@ def load_coords(
                     #     " was not matched!"
                     #     )
                     continue
-            # Filter entries to be ignored
-            if resname in RES_TO_BE_IGNORED or atom_name not in atoms[resname]:
-                continue
 
             # Create identifier tuple
             if add_resname is True:

@@ -77,6 +77,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_traceback.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_traceback.maincli"><code class="docutils literal notranslate"><span class="pre">maincli()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_traceback.order_traceback_df"><code class="docutils literal notranslate"><span class="pre">order_traceback_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_traceback.subset_traceback"><code class="docutils literal notranslate"><span class="pre">subset_traceback()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_traceback.traceback_dataframe"><code class="docutils literal notranslate"><span class="pre">traceback_dataframe()</span></code></a></li>
 </ul>
 </li>
@@ -181,7 +182,7 @@ initial input molecules used, providing the rank of each intermediate model.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_traceback.main">
 <span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_traceback.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/clis/cli_traceback.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_traceback.main" title="Permalink to this definition"></a></dt>
-<dd><p>Analyse CLI.</p>
+<dd><p>Traceback CLI.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>run_dir</strong> (<em>str or Path</em>) – Path to the original run directory.</p>
@@ -208,6 +209,23 @@ initial input molecules used, providing the rank of each intermediate model.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>df_output</strong> (<em>pandas.DataFrame</em>) – Dataframe containing the ordered traceback data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.cli_traceback.subset_traceback">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_traceback.</span></span><span class="sig-name descname"><span class="pre">subset_traceback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traceback_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cons_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_traceback.html#subset_traceback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_traceback.subset_traceback" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a subset the traceback dataframe with the top 40 models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>traceback_df</strong> (<em>pandas.DataFrame</em>) – Dataframe containing the traceback data.</p></li>
+<li><p><strong>cons_filename</strong> (<em>pathlib.Path</em>) – name of the consensus file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>rank_data_subset</strong> (<em>pandas.DataFrame</em>) – Dataframe containing the subset of the traceback data.</p>
 </dd>
 </dl>
 </dd></dl>

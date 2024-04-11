@@ -107,6 +107,7 @@
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.libs</span> <span class="kn">import</span> <span class="n">libcli</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libplots</span> <span class="kn">import</span> <span class="n">make_traceback_plot</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
 
 
@@ -226,6 +227,7 @@
     <span class="n">df_ord</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">unk_records</span><span class="p">,</span> <span class="n">last_step</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
     <span class="k">return</span> <span class="n">df_ord</span></div>
 
+
 <div class="viewcode-block" id="order_traceback_df"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.order_traceback_df">[docs]</a><span class="k">def</span> <span class="nf">order_traceback_df</span><span class="p">(</span><span class="n">df_output</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Order the traceback dataframe. Each step is ordered by rank.</span>
@@ -261,6 +263,45 @@
     <span class="k">return</span> <span class="n">df_output</span></div>
 
 
+<div class="viewcode-block" id="subset_traceback"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.subset_traceback">[docs]</a><span class="k">def</span> <span class="nf">subset_traceback</span><span class="p">(</span><span class="n">traceback_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cons_filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a subset the traceback dataframe with the top 40 models.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    traceback_df : pandas.DataFrame</span>
+<span class="sd">        Dataframe containing the traceback data.</span>
+<span class="sd">    </span>
+<span class="sd">    cons_filename : pathlib.Path</span>
+<span class="sd">        name of the consensus file.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rank_data_subset : pandas.DataFrame</span>
+<span class="sd">        Dataframe containing the subset of the traceback data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">red_traceback_df</span> <span class="o">=</span> <span class="n">traceback_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
+    <span class="n">rank_data</span> <span class="o">=</span> <span class="n">red_traceback_df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s1">&#39;rank$&#39;</span><span class="p">)</span>
+    <span class="c1"># get the last column: this will define the name of the models</span>
+    <span class="n">last_column</span> <span class="o">=</span> <span class="n">red_traceback_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">last_column_data</span> <span class="o">=</span> <span class="n">red_traceback_df</span><span class="p">[</span><span class="n">last_column</span><span class="p">]</span>
+    <span class="c1"># concat the ranks with the model name</span>
+    <span class="n">rank_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">last_column_data</span><span class="p">,</span> <span class="n">rank_data</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># the rank of the last column must be defined</span>
+    <span class="n">last_column_rank</span> <span class="o">=</span> <span class="n">last_column</span> <span class="o">+</span> <span class="s2">&quot;_rank&quot;</span>
+    <span class="n">rank_data_subset</span> <span class="o">=</span> <span class="n">rank_data</span><span class="p">[</span><span class="n">rank_data</span><span class="p">[</span><span class="n">last_column_rank</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;-&#39;</span><span class="p">]</span>
+    <span class="n">rank_columns</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">rank_data_subset</span><span class="p">[</span><span class="n">rank_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="p">[</span><span class="n">rank_columns</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+    <span class="n">rank_data_subset</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">last_column_rank</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># rename the columns</span>
+    <span class="n">rank_data_subset</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Model&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">rank_columns</span>
+    <span class="c1"># sum the ranks</span>
+    <span class="n">rank_data_subset</span><span class="p">[</span><span class="s2">&quot;Sum-of-Ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="p">[</span><span class="n">rank_columns</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">rank_data_subset</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">cons_filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rank_data_subset</span></div>
+
+
 <span class="c1"># Command line interface parser</span>
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
     <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;haddock3-traceback&quot;</span><span class="p">,</span>
@@ -289,7 +330,7 @@
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Analyse CLI.</span>
+<span class="sd">    Traceback CLI.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -400,6 +441,14 @@
         <span class="sa">f</span><span class="s2">&quot;Output dataframe </span><span class="si">{</span><span class="n">track_filename</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="sa">f</span><span class="s2">&quot;created with shape </span><span class="si">{</span><span class="n">df_output</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
     <span class="n">df_output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">track_filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># taking (and writing) a subset of the dataframe</span>
+    <span class="n">consensus_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">TRACK_FOLDER</span><span class="p">,</span> <span class="s2">&quot;consensus.tsv&quot;</span><span class="p">)</span>
+    <span class="n">rank_data_subset</span> <span class="o">=</span> <span class="n">subset_traceback</span><span class="p">(</span><span class="n">df_output</span><span class="p">,</span> <span class="n">consensus_filename</span><span class="p">)</span>
+
+    <span class="c1"># plotting the traceback dataframe</span>
+    <span class="n">plot_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">TRACK_FOLDER</span><span class="p">,</span> <span class="s2">&quot;traceback.html&quot;</span><span class="p">)</span>
+    <span class="n">make_traceback_plot</span><span class="p">(</span><span class="n">rank_data_subset</span><span class="p">,</span> <span class="n">plot_filename</span><span class="p">)</span>
     <span class="k">return</span></div>
 
 

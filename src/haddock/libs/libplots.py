@@ -529,7 +529,7 @@ def scatter_plot_plotly(
                 legendgroup="Other",
                 marker=dict(
                     color="white",
-                    line=dict(width=2, color="DarkSlateGrey")
+                    line=dict(width=2, color="DarkSlateGrey"),
                     ),
                 hoverlabel=dict(
                     bgcolor="white",
@@ -551,6 +551,7 @@ def scatter_plot_plotly(
     html_content = create_html(json_content, offline=offline)
     # write html_content to px_fname
     Path(px_fname).write_text(html_content)
+
     # create format boxplot if necessary
     if format:
         fig.write_image(f"{x_ax}_{y_ax}.{format}", scale=scale)
@@ -1211,10 +1212,14 @@ def heatmap_plotly(
         labels: Optional[dict] = None,
         xlabels: Optional[list] = None,
         ylabels: Optional[list] = None,
-        color_scale: str = 'Greys_r',  # Greys_r, gray
+        color_scale: str = 'Greys_r',
         title: Optional[str] = None,
         output_fname: Path = HEATMAP_DEFAULT_PATH,
         offline: bool = False,
+        output_fname: Path = Path('contacts.html'),
+        hovertemplate: Optional[str] = None,
+        customdata: Optional[list[list[Any]]] = None,
+        delineation_traces: Optional[list[dict[str, float]]] = None,
         ) -> Path:
     """Generate a `plotly heatmap` based on matrix content.
 
@@ -1234,12 +1239,19 @@ def heatmap_plotly(
         Title of the figure.
     output_fname : Path
         Path to the output filename to generate.
+    hovertemplate: Optional[str]
+        Custrom string used to format data for hover annotation in plotly.
+    customdata: Optional[list[list[list[int]]]]
+        A matrix of cluster ids, used for extra hover annotation in plotly.
+    delineation_traces: Optional[list[dict[str, float]]]
+        A list of dict enabling to draw lines separating cluster ids.
 
     Return
     ------
     output_fname : Path
         Path to the generated filename
     """
+    # Generate heatmap trace
     fig = px.imshow(
         matrix,
         labels=labels,
@@ -1250,16 +1262,65 @@ def heatmap_plotly(
         )
     # Place X axis on top
     fig.update_xaxes(side="top")
+    fig.update_traces(
+        hovertemplate=hovertemplate,
+        customdata=customdata,
+        )
+    # Add delineation traces
+    if delineation_traces:
+        # Loop over lines
+        for trace in delineation_traces:
+            # Draw them
+            fig.add_shape(
+                type="line",
+                line={"dash": "5px"},
+                x0=trace["x0"],
+                x1=trace["x1"],
+                y0=trace["y0"],
+                y1=trace["y1"],
+            )
+
+    # Compute pixels
+    nb_entries = matrix.shape[0]
+    scaled_log = int(np.log(nb_entries)) * 200
+    lower_bound = max(scaled_log, 1000)
+    uppder_bound = min(lower_bound, 2000)
+    # Set hight and width
+    height = uppder_bound
+    # Increment width for legend space
+    width = height + 70
+
     # Save figure as html file
-    fig_to_html(
+    export_plotly_figure(
         fig,
         output_fname,
-        figure_height=2000,
-        figure_width=2000,
         offline=offline,
+        figure_height=height,
+        figure_width=width,
         )
+
     return output_fname
 
+
+def export_plotly_figure(
+        fig: Figure,
+        output_fname: Union[str, Path],
+        figure_height: int = 1000,
+        figure_width: int = 1000,
+        ) -> None:
+    # Detect output file extension
+    suffix = Path(output_fname).suffix
+    # Check corresponding function
+    if 'html' in suffix:
+        fig_to_html(
+            fig,
+            output_fname,
+            figure_height=figure_height,
+            figure_width=figure_width,
+            )
+    elif suffix in ('.png', '.jpeg', '.webp', '.svg', '.pdf', '.eps', ):
+        fig.write_image(output_fname)
+    
   
 def make_alascan_plot(
         df: pd.DataFrame,
@@ -1345,10 +1406,12 @@ def make_alascan_plot(
         )
     for n in range(df.shape[0] - 1):
         fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
-    # Write it
-    fig_to_html(
+
+    # save html
+    html_output_filename = f"{plot_name}.html"
+    export_plotly_figure(
         fig,
-        f"{plot_name}.html",
+        html_output_filename,
         figure_height=height,
         figure_width=width,
         offline=offline,

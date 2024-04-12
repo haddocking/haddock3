@@ -11,6 +11,8 @@ from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
+    get_cluster_matrix_plot_clt_dt,
+    plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
     )
@@ -18,6 +20,7 @@ from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.libs.libontology import ModuleIO
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
+    get_matrix_path,
     iterate_min_population,
     write_clusters,
     write_clustrmsd_file,
@@ -54,6 +57,14 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
         required=False,
         type=int,
         )
+    
+    clustrmsd_subcommand.add_argument(
+        '-p',
+        "--plot_matrix",
+        help="Generate the a plot of the clusters.",
+        required=False,
+        action='store_false',
+        )
 
     return clustrmsd_subcommand
 
@@ -63,6 +74,7 @@ def reclustrmsd(
         n_clusters: Union[bool, int] = None,
         clust_cutoff: Union[bool, float] = None,
         min_population: Union[bool, int] = None,
+        plot_matrix: bool = True,
         ) -> Path:
     """
     Recluster the models in the clustrmsd directory.
@@ -80,6 +92,9 @@ def reclustrmsd(
     
     min_population : Union[bool, int]
         Cluster population min_population.
+    
+    plot_matrix : bool
+        Should the corresponding matrix plot be generated.
     
     Returns
     -------
@@ -124,6 +139,8 @@ def reclustrmsd(
     
     if min_population is not None:
         clustrmsd_params["min_population"] = min_population
+
+    clustrmsd_params["plot_matrix"] = plot_matrix
 
     log.info(
         f"Clustering with {tolerance_param_name} = {tolerance}, "
@@ -185,6 +202,34 @@ def reclustrmsd(
         clustrmsd_params,
         output_fname=Path(outdir, "clustrmsd.txt"),
         )
+    
+    # Draw the matrix
+    if clustrmsd_params["plot_matrix"]:
+        # Obtain final models indices
+        final_order_idx, labels, cluster_ids = [], [], []
+        for pdb in output_models:
+            final_order_idx.append(models.index(pdb))
+            labels.append(pdb.file_name.replace('.pdb', ''))
+            cluster_ids.append(pdb.clt_id)
+        # Get custom cluster data
+        matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+            cluster_ids
+            )
+        # Define output filename
+        html_matrix_basepath = 'rmsd_matrix'
+        # Plot matrix
+        html_matrixpath = plot_cluster_matrix(
+            get_matrix_path(io.matrix_json.input[0]),
+            final_order_idx,
+            labels,
+            dttype='RMSD(Å)',
+            reverse=True,
+            diag_fill=0,
+            output_fname=html_matrix_basepath,
+            matrix_cluster_dt=matrix_cluster_dt,
+            cluster_limits=cluster_limits,
+            )
+        log.info(f"Plotting matrix in {html_matrixpath}")
 
     # save the io.json file
     io.save(outdir)

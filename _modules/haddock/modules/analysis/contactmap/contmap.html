@@ -555,8 +555,6 @@
                 <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">cont_ts</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
                 <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># Compute probability for this contact type to be found</span>
-            <span class="n">cont_t_probability</span> <span class="o">=</span> <span class="n">cont_ts</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">cont_t</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">dt</span><span class="p">[</span><span class="s1">&#39;contact-type&#39;</span><span class="p">])</span>
 
             <span class="c1"># Split key to recover resiudes names</span>
             <span class="n">res1</span><span class="p">,</span> <span class="n">res2</span> <span class="o">=</span> <span class="n">combined_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
@@ -570,7 +568,6 @@
                 <span class="s1">&#39;shortest-dist&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">avg_shortest</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                 <span class="s1">&#39;shortest-cont-probability&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">short_cont_proba</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
                 <span class="s1">&#39;contact-type&#39;</span><span class="p">:</span> <span class="n">cont_t</span><span class="p">,</span>
-                <span class="s1">&#39;contact-type-probability&#39;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">cont_t_probability</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
                 <span class="p">})</span>
         
         <span class="c1"># write contacts</span>
@@ -1109,18 +1106,17 @@
     <span class="n">dttype_info</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;res1&#39;</span><span class="p">:</span> <span class="s1">&#39;Chain-Resname-ResID key identifying first residue&#39;</span><span class="p">,</span>
         <span class="s1">&#39;res2&#39;</span><span class="p">:</span> <span class="s1">&#39;Chain-Resname-ResID key identifying second residue&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ca-ca-dist&#39;</span><span class="p">:</span> <span class="s1">&#39;observed distances between the two Ca&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;ca-ca-cont-probability&#39;</span><span class="p">:</span> <span class="s1">&#39;probability to observe ca-ca-dist under threshold in cluster&#39;</span><span class="p">,</span>  <span class="c1"># noqa : E501</span>
-        <span class="s1">&#39;shortest-dist&#39;</span><span class="p">:</span> <span class="s1">&#39;observed shortest distance between the two residues&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;shortest-cont-probability&#39;</span><span class="p">:</span> <span class="s1">&#39;probability to observe the shortest distance under threshold in cluster&#39;</span><span class="p">,</span>  <span class="c1"># noqa : E501</span>
-        <span class="s1">&#39;contact-type&#39;</span><span class="p">:</span> <span class="s1">&#39;type of contacts between the two residues&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;contact-type-probability&#39;</span><span class="p">:</span> <span class="s1">&#39;probability of times the type of contacts between the two residues is observed&#39;</span><span class="p">,</span>  <span class="c1"># noqa : E501</span>
+        <span class="s1">&#39;ca-ca-dist&#39;</span><span class="p">:</span> <span class="s1">&#39;Observed distances between the two carbon alpha (Ca) atoms&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ca-ca-cont-probability&#39;</span><span class="p">:</span> <span class="s1">&#39;Fraction of times a contact is observed under the ca-ca-dist threshold over all analysed models of the same cluster&#39;</span><span class="p">,</span>  <span class="c1"># noqa : E501</span>
+        <span class="s1">&#39;shortest-dist&#39;</span><span class="p">:</span> <span class="s1">&#39;Observed shortest distance between the two residues&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;shortest-cont-probability&#39;</span><span class="p">:</span> <span class="s1">&#39;Fraction of times a contact is observed under the shortest-dist threshold over all analysed models of the same cluster&#39;</span><span class="p">,</span>  <span class="c1"># noqa : E501</span>
+        <span class="s1">&#39;contact-type&#39;</span><span class="p">:</span> <span class="s1">&#39;ResidueType - ResidueType contact name&#39;</span><span class="p">,</span>
         <span class="s1">&#39;atom1&#39;</span><span class="p">:</span> <span class="s1">&#39;Chain-Resname-ResID-Atome key identifying first atom&#39;</span><span class="p">,</span>
         <span class="s1">&#39;atom2&#39;</span><span class="p">:</span> <span class="s1">&#39;Chain-Resname-ResID-Atome key identifying second atom&#39;</span><span class="p">,</span>
         <span class="s1">&#39;dist&#39;</span><span class="p">:</span> <span class="s1">&#39;Observed distance between two atoms&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;nb_dists&#39;</span><span class="p">:</span> <span class="s2">&quot;Total number of observed distances&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;avg_dist&#39;</span><span class="p">:</span> <span class="s2">&quot;Cluster average distance&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;std_dist&#39;</span><span class="p">:</span> <span class="s2">&quot;Cluster standard deviation distance&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;nb_dists&#39;</span><span class="p">:</span> <span class="s1">&#39;Total number of observed distances&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;avg_dist&#39;</span><span class="p">:</span> <span class="s1">&#39;Cluster average distance&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;std_dist&#39;</span><span class="p">:</span> <span class="s1">&#39;Cluster distance standard deviation&#39;</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="c1"># Check for inter chain contacts</span>

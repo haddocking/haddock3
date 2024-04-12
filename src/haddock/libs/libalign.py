@@ -1224,3 +1224,100 @@ def dump_as_izone(fname, numbering_dic, model2ref_chain_dict=None):
                     f"{os.linesep}"
                     )
                 fh.write(izone_str)
+
+
+def rearrange_xyz_files(output_name: FilePath, path: FilePath,
+                             ncores: int) -> None:
+    """Combine different xyz outputs in a single file.
+    
+    Parameters
+    ----------
+    output_name : FilePath
+        output name
+    
+    path : FilePath
+        path to the output files
+    
+    ncores : int
+        number of cores
+    """
+    output_fname = Path(path, output_name)
+    # take the name without the xyz extension
+    output_fname_str = output_fname.stem
+    log.info(f"rearranging xyz files into {output_fname}")
+    # Combine files
+    with open(output_fname, 'w') as out_file:
+        for core in range(ncores):
+            tmp_file = Path(path, output_fname_str + "_" + str(core) + ".xyz")
+            with open(tmp_file) as infile:
+                out_file.write(infile.read())
+            log.debug(f"File number {core} written")
+            tmp_file.unlink()
+    log.info("Completed reconstruction of xyz files.")
+    log.info(f"{output_fname} created.")
+
+
+def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
+    """
+    Check if the models share the same atoms.
+
+    Parameters
+    ----------
+    models : list
+        list of models
+    
+    filter_resdic : dict
+        dictionary of residues to be loaded (one list per chain)
+    
+    allatoms : bool
+        use all the heavy atoms
+
+    atom_similarity : float
+        minimum atom similarity required between models
+
+    Returns
+    -------
+    n_atoms : int
+        number of common atoms
+    
+    common_keys : list
+        list of common atom keys
+    """
+    # checking the common keys
+    common_keys : list[str] = []    
+    coord_keys_lengths = []
+    for mod in models:
+        atoms: AtomsDict = get_atoms(mod, allatoms)
+        
+        ref_coord_dic, _ = load_coords(
+        mod, atoms, filter_resdic
+        )
+        coord_keys_lengths.append(len(ref_coord_dic.keys()))
+        if common_keys != []:
+            common_keys = set(ref_coord_dic.keys()).intersection(common_keys)
+        else:
+            common_keys = ref_coord_dic.keys()
+
+    # checking the common atoms
+    n_atoms = len(common_keys) #common atoms
+    max_n_atoms = max(coord_keys_lengths)
+    perc = (n_atoms / max_n_atoms) * 100
+    if perc == 100.0:
+        log.info("All the models share the same atoms.")
+    elif perc > atom_similarity and perc < 100.0:
+        # if it's between 0.9 and 1, it's likely that the models share the same atoms
+        # but still the user may want to see a warning
+        log.warning(
+            "Not all the atoms are common to all the models."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
+            )
+    else:
+        # common keys are less than 90% of the previous keys
+        # something is likely wrong
+        _err_msg = (
+            "Input atoms are not the same for all the models."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
+            " Please check the input ensemble."
+            )
+        raise ALIGNError(_err_msg)
+    return n_atoms, list(common_keys)

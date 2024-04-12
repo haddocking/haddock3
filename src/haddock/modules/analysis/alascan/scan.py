@@ -343,7 +343,15 @@ def alascan_cluster_analysis(models):
 
 
 def generate_alascan_output(models, path):
-    """Generate the alascan output files."""
+    """Generate the alascan output files.
+    
+    Parameters
+    ----------
+    models : list
+        List of models.
+    path : str
+        Path to the run directory.
+    """
     models_to_export = []
     for model in models:
         name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
@@ -358,12 +366,12 @@ def generate_alascan_output(models, path):
         model.file_name = name
         model.full_name = name
         model.rel_path = Path('..', Path(path).name, name)
-        model.path = str(Path(path).resolve())
+        model.path = str(Path(".").resolve())
         models_to_export.append(model)
     return models_to_export
 
 
-def create_alascan_plots(clt_alascan, scan_residue):
+def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     """Create the alascan plots."""
     for clt_id in clt_alascan:
         scan_clt_filename = f"scan_clt_{clt_id}.csv"
@@ -380,7 +388,8 @@ def create_alascan_plots(clt_alascan, scan_residue):
             make_alascan_plot(
                 df_scan_clt,
                 clt_id,
-                scan_residue
+                scan_residue,
+                offline=offline,
                 )
         except Exception as e:
             log.warning(

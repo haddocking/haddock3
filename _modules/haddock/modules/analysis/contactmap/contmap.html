@@ -1247,6 +1247,43 @@
         <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data_label</span> <span class="o">=</span> <span class="s1">&#39;distance&#39;</span>
+    
+    <span class="c1"># Compute chains length</span>
+    <span class="n">chains_length</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ordered_chains</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="n">chainid</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">chainid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chains_length</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">chains_length</span><span class="p">[</span><span class="n">chainid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">ordered_chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chainid</span><span class="p">)</span>
+        <span class="n">chains_length</span><span class="p">[</span><span class="n">chainid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># Compute chains delineations positions</span>
+    <span class="n">del_posi</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">chainid</span> <span class="ow">in</span> <span class="n">ordered_chains</span><span class="p">:</span>
+        <span class="n">del_posi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">del_posi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">chains_length</span><span class="p">[</span><span class="n">chainid</span><span class="p">])</span>
+    <span class="c1"># Compute chains delineations lines</span>
+    <span class="n">chains_limits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">delpos</span> <span class="ow">in</span> <span class="n">del_posi</span><span class="p">:</span>
+        <span class="c1"># Vertical lines</span>
+        <span class="n">chains_limits</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="n">delpos</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">delpos</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;y0&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;y1&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="p">})</span>
+        <span class="c1"># Horizontal lines</span>
+        <span class="n">chains_limits</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;y0&quot;</span><span class="p">:</span> <span class="n">delpos</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;y1&quot;</span><span class="p">:</span> <span class="n">delpos</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="p">})</span>
+    <span class="c1"># Generate hover template</span>
+    <span class="n">hovertemplate</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39; %</span><span class="si">{y}</span><span class="s1">   &amp;#8621;   %</span><span class="si">{x}</span><span class="s1"> &lt;br&gt;&#39;</span>
+        <span class="sa">f</span><span class="s1">&#39; Contact </span><span class="si">{</span><span class="n">data_label</span><span class="si">}</span><span class="s1">: %</span><span class="se">{{</span><span class="s1">z</span><span class="se">}}</span><span class="s1">&#39;</span>
+        <span class="s1">&#39;&lt;extra&gt;&lt;/extra&gt;&#39;</span>
+        <span class="p">)</span>
 
     <span class="c1"># Generate heatmap</span>
     <span class="n">output_filepath</span> <span class="o">=</span> <span class="n">heatmap_plotly</span><span class="p">(</span>
@@ -1257,6 +1294,8 @@
         <span class="n">color_scale</span><span class="o">=</span><span class="n">color_scale</span><span class="p">,</span>
         <span class="n">output_fname</span><span class="o">=</span><span class="n">output_fname</span><span class="p">,</span>
         <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
+        <span class="n">delineation_traces</span><span class="o">=</span><span class="n">chains_limits</span><span class="p">,</span>
+        <span class="n">hovertemplate</span><span class="o">=</span><span class="n">hovertemplate</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">output_filepath</span></div>
@@ -2455,7 +2494,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 11, 2024.
+      <span class="lastupdated">Last updated on Apr 12, 2024.
       </span></p>
   </div>
 

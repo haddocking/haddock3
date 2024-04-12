@@ -1020,7 +1020,7 @@ def write_res_contacts(
         'ca-ca-cont-probability': 'Fraction of times a contact is observed under the ca-ca-dist threshold over all analysed models of the same cluster',  # noqa : E501
         'shortest-dist': 'Observed shortest distance between the two residues',
         'shortest-cont-probability': 'Fraction of times a contact is observed under the shortest-dist threshold over all analysed models of the same cluster',  # noqa : E501
-        'contact-type': 'ResiudeType - ResiudeType contact name',
+        'contact-type': 'ResidueType - ResidueType contact name',
         'atom1': 'Chain-Resname-ResID-Atome key identifying first atom',
         'atom2': 'Chain-Resname-ResID-Atome key identifying second atom',
         'dist': 'Observed distance between two atoms',

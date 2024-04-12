@@ -1016,7 +1016,7 @@ def write_res_contacts(
     dttype_info = {
         'res1': 'Chain-Resname-ResID key identifying first residue',
         'res2': 'Chain-Resname-ResID key identifying second residue',
-        'ca-ca-dist': 'Observed distances between the two Ca',
+        'ca-ca-dist': 'Observed distances between the two carbon alpha (Ca) atoms',
         'ca-ca-cont-probability': 'Fraction of times a contact is observed under the ca-ca-dist threshold over all analysed models of the same cluster',  # noqa : E501
         'shortest-dist': 'Observed shortest distance between the two residues',
         'shortest-cont-probability': 'Fraction of times a contact is observed under the shortest-dist threshold over all analysed models of the same cluster',  # noqa : E501

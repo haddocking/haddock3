@@ -1157,6 +1157,43 @@ def tsv_to_heatmap(
         np.fill_diagonal(matrix, 1)
     else:
         data_label = 'distance'
+    
+    # Compute chains length
+    chains_length: dict[str, int] = {}
+    ordered_chains: list[str] = []
+    for label in labels:
+        chainid = label.split('-')[0]
+        if chainid not in chains_length.keys():
+            chains_length[chainid] = 0
+            ordered_chains.append(chainid)
+        chains_length[chainid] += 1
+    # Compute chains delineations positions
+    del_posi = [0]
+    for chainid in ordered_chains:
+        del_posi.append(del_posi[-1] + chains_length[chainid])
+    # Compute chains delineations lines
+    chains_limits: list[dict[str, float]] = []
+    for delpos in del_posi:
+        # Vertical lines
+        chains_limits.append({
+            "x0": delpos - 0.5,
+            "x1": delpos - 0.5,
+            "y0": -0.5,
+            "y1": len(labels) - 0.5,
+            })
+        # Horizontal lines
+        chains_limits.append({
+            "y0": delpos - 0.5,
+            "y1": delpos - 0.5,
+            "x0": -0.5,
+            "x1": len(labels) - 0.5,
+            })
+    # Generate hover template
+    hovertemplate = (
+        ' %{y}   &#8621;   %{x} <br>'
+        f' Contact {data_label}: %{{z}}'
+        '<extra></extra>'
+        )
 
     # Generate heatmap
     output_filepath = heatmap_plotly(
@@ -1167,6 +1204,8 @@ def tsv_to_heatmap(
         color_scale=color_scale,
         output_fname=output_fname,
         offline=offline,
+        delineation_traces=chains_limits,
+        hovertemplate=hovertemplate,
         )
 
     return output_filepath

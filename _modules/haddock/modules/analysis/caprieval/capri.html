@@ -102,6 +102,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">CNS_MODULES</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AtomsDict</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
@@ -124,10 +125,41 @@
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">write_dic_to_file</span><span class="p">,</span> <span class="n">write_nested_dic_to_file</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
+
 
 <span class="n">WEIGHTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;w_elec&quot;</span><span class="p">,</span> <span class="s2">&quot;w_vdw&quot;</span><span class="p">,</span> <span class="s2">&quot;w_desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;w_bsa&quot;</span><span class="p">,</span> <span class="s2">&quot;w_air&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
+
+
+<div class="viewcode-block" id="get_previous_cns_step"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.get_previous_cns_step">[docs]</a><span class="k">def</span> <span class="nf">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the previous CNS step.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_path : Path</span>
+<span class="sd">        Path to the run folder.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cns_step : str</span>
+<span class="sd">        Name of the CNS step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># just to be careful, remove steps with more than one underscore</span>
+    <span class="n">sel_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">sel_steps</span> <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># get the previous CNS step</span>
+    <span class="n">cns_step</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+    <span class="k">while</span> <span class="n">mod</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">st_name</span> <span class="o">=</span> <span class="n">sel_steps</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">st_name</span> <span class="ow">in</span> <span class="n">CNS_MODULES</span><span class="p">:</span>
+            <span class="n">cns_step</span> <span class="o">=</span> <span class="n">sel_steps</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span>
+            <span class="k">break</span>
+        <span class="n">mod</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">cns_step</span></div>
 
 
 <div class="viewcode-block" id="save_scoring_weights"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.save_scoring_weights">[docs]</a><span class="k">def</span> <span class="nf">save_scoring_weights</span><span class="p">(</span><span class="n">cns_step</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>

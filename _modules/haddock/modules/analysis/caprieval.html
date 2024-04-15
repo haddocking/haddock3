@@ -122,6 +122,7 @@
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval.capri</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CAPRI</span><span class="p">,</span>
     <span class="n">capri_cluster_analysis</span><span class="p">,</span>
+    <span class="n">get_previous_cns_step</span><span class="p">,</span>
     <span class="n">merge_data</span><span class="p">,</span>
     <span class="n">rearrange_ss_capri_output</span><span class="p">,</span>
     <span class="n">save_scoring_weights</span><span class="p">,</span>
@@ -130,13 +131,6 @@
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
-
-<span class="n">CNS_MODULES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rigidbody&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;flexref&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;emscoring&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;mdscoring&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;mdref&quot;</span><span class="p">,</span>
-               <span class="s2">&quot;emref&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.caprieval.html#haddock.modules.analysis.caprieval.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
@@ -170,16 +164,7 @@
         
         <span class="c1"># dump previously used weights</span>
         <span class="n">sel_steps</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">))</span>
-
-        <span class="c1"># get the previous CNS step</span>
-        <span class="n">cns_step</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">mod</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
-        <span class="k">while</span> <span class="n">mod</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">st_name</span> <span class="o">=</span> <span class="n">sel_steps</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">st_name</span> <span class="ow">in</span> <span class="n">CNS_MODULES</span><span class="p">:</span>
-                <span class="n">cns_step</span> <span class="o">=</span> <span class="n">sel_steps</span><span class="p">[</span><span class="n">mod</span><span class="p">]</span>
-                <span class="k">break</span>
-            <span class="n">mod</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">cns_step</span> <span class="o">=</span> <span class="n">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">cns_step</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found previous CNS step: </span><span class="si">{</span><span class="n">cns_step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

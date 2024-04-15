@@ -89,7 +89,11 @@ class HaddockModule(BaseHaddockModule):
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data
         if self.params["plot"] is True:
-            create_alascan_plots(clt_alascan, self.params["scan_residue"])
+            create_alascan_plots(
+                clt_alascan,
+                self.params["scan_residue"],
+                offline=self.params["offline"],
+                )
         # if output is true, write the models and export them
         if self.params["output"] is True:
             models_to_export = generate_alascan_output(models, self.path)

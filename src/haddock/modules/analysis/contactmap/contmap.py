@@ -276,6 +276,7 @@ class ContactsMap():
                 contact_threshold=self.params['ca_ca_dist_threshold'],
                 colorscale=self.params['color_ramp'],
                 output_fname=f'{self.output}_heatmap.html',
+                offline=self.params["offline"],
                 )
             log.info(f'Generated single model heatmap file: {heatmap}')
             self.files['res-res-contactmap'] = heatmap
@@ -294,6 +295,7 @@ class ContactsMap():
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
                 title=Path(self.output).stem.replace('_', ' '),
+                offline=self.params["offline"],
                 )
             log.info(f'Generated single model chordchart file: {chordp}')
             self.files['res-res-chordchart'] = chordp
@@ -463,8 +465,6 @@ class ClusteredContactMap():
                 key=lambda k: cont_ts.count(k),
                 reverse=True,
                 )[0]
-            # Compute probability for this contact type to be found
-            cont_t_probability = cont_ts.count(cont_t) / len(dt['contact-type'])
 
             # Split key to recover resiudes names
             res1, res2 = combined_key.split('/')
@@ -478,7 +478,6 @@ class ClusteredContactMap():
                 'shortest-dist': round(avg_shortest, 1),
                 'shortest-cont-probability': round(short_cont_proba, 2),
                 'contact-type': cont_t,
-                'contact-type-probability': round(cont_t_probability, 2),
                 })
         
         # write contacts
@@ -509,6 +508,7 @@ class ClusteredContactMap():
                 contact_threshold=1,
                 colorscale=self.params['color_ramp'],
                 output_fname=f'{self.output}_heatmap.html',
+                offline=self.params["offline"],
                 )
             log.info(f'Generated cluster contacts heatmap: {heatmap_path}')
             self.files['res-res-contactmap'] = heatmap_path
@@ -527,6 +527,7 @@ class ClusteredContactMap():
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
                 title=Path(self.output).stem.replace('_', ' '),
+                offline=self.params["offline"],
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
             self.files['res-res-chordchart'] = chordp
@@ -1015,18 +1016,17 @@ def write_res_contacts(
     dttype_info = {
         'res1': 'Chain-Resname-ResID key identifying first residue',
         'res2': 'Chain-Resname-ResID key identifying second residue',
-        'ca-ca-dist': 'observed distances between the two Ca',
-        'ca-ca-cont-probability': 'probability to observe ca-ca-dist under threshold in cluster',  # noqa : E501
-        'shortest-dist': 'observed shortest distance between the two residues',
-        'shortest-cont-probability': 'probability to observe the shortest distance under threshold in cluster',  # noqa : E501
-        'contact-type': 'type of contacts between the two residues',
-        'contact-type-probability': 'probability of times the type of contacts between the two residues is observed',  # noqa : E501
+        'ca-ca-dist': 'Observed distances between the two carbon alpha (Ca) atoms',
+        'ca-ca-cont-probability': 'Fraction of times a contact is observed under the ca-ca-dist threshold over all analysed models of the same cluster',  # noqa : E501
+        'shortest-dist': 'Observed shortest distance between the two residues',
+        'shortest-cont-probability': 'Fraction of times a contact is observed under the shortest-dist threshold over all analysed models of the same cluster',  # noqa : E501
+        'contact-type': 'ResidueType - ResidueType contact name',
         'atom1': 'Chain-Resname-ResID-Atome key identifying first atom',
         'atom2': 'Chain-Resname-ResID-Atome key identifying second atom',
         'dist': 'Observed distance between two atoms',
-        'nb_dists': "Total number of observed distances",
-        'avg_dist': "Cluster average distance",
-        'std_dist': "Cluster standard deviation distance",
+        'nb_dists': 'Total number of observed distances',
+        'avg_dist': 'Cluster average distance',
+        'std_dist': 'Cluster distance standard deviation',
         }
 
     # Check for inter chain contacts
@@ -1090,6 +1090,7 @@ def tsv_to_heatmap(
         contact_threshold: float = 7.5,
         colorscale: str = 'Greys',
         output_fname: Union[Path, str] = 'contacts.html',
+        offline: bool = False,
         ) -> Union[Path, str]:
     """Read a tsv file and generate a heatmap from it.
 
@@ -1152,6 +1153,43 @@ def tsv_to_heatmap(
         np.fill_diagonal(matrix, 1)
     else:
         data_label = 'distance'
+    
+    # Compute chains length
+    chains_length: dict[str, int] = {}
+    ordered_chains: list[str] = []
+    for label in labels:
+        chainid = label.split('-')[0]
+        if chainid not in chains_length.keys():
+            chains_length[chainid] = 0
+            ordered_chains.append(chainid)
+        chains_length[chainid] += 1
+    # Compute chains delineations positions
+    del_posi = [0]
+    for chainid in ordered_chains:
+        del_posi.append(del_posi[-1] + chains_length[chainid])
+    # Compute chains delineations lines
+    chains_limits: list[dict[str, float]] = []
+    for delpos in del_posi:
+        # Vertical lines
+        chains_limits.append({
+            "x0": delpos - 0.5,
+            "x1": delpos - 0.5,
+            "y0": -0.5,
+            "y1": len(labels) - 0.5,
+            })
+        # Horizontal lines
+        chains_limits.append({
+            "y0": delpos - 0.5,
+            "y1": delpos - 0.5,
+            "x0": -0.5,
+            "x1": len(labels) - 0.5,
+            })
+    # Generate hover template
+    hovertemplate = (
+        ' %{y}   &#8621;   %{x} <br>'
+        f' Contact {data_label}: %{{z}}'
+        '<extra></extra>'
+        )
 
     # Generate heatmap
     output_filepath = heatmap_plotly(
@@ -1161,6 +1199,9 @@ def tsv_to_heatmap(
         ylabels=labels,
         color_scale=color_scale,
         output_fname=output_fname,
+        offline=offline,
+        delineation_traces=chains_limits,
+        hovertemplate=hovertemplate,
         )
 
     return output_filepath
@@ -1881,6 +1922,7 @@ def make_chordchart(
         gap: float = 2 * PI * 0.005,
         output_fpath: Union[str, Path] = 'chordchart.html',
         title: str = 'Chord diagram',
+        offline: bool = False,
         ) -> Union[str, Path]:
     """Generate a plotly chordchart graph.
 
@@ -2116,6 +2158,7 @@ def make_chordchart(
         output_fpath,
         figure_height=fig_size,
         figure_width=fig_size,
+        offline=offline,
         )
     return output_fpath
 
@@ -2230,6 +2273,7 @@ def tsv_to_chordchart(
         filter_intermolecular_contacts: bool = True,
         output_fname: Union[Path, str] = 'contacts_chordchart.html',
         title: str = 'Chord diagram',
+        offline: bool = False,
         ) -> Union[Path, str]:
     """Read a tsv file and generate a chord diagram from it.
 
@@ -2342,6 +2386,7 @@ def tsv_to_chordchart(
         sublabels,
         output_fpath=output_fname,
         title=title,
+        offline=offline,
         )
     
     return chord_chart_fpath

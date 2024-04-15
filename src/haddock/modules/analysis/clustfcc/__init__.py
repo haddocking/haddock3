@@ -4,7 +4,9 @@ The module takes the models generated in the previous step and calculates the
 contacts between them. Then, the module calculates the FCC matrix and clusters
 the models based on the calculated contacts.
 
-For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*"""
+For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*
+"""  # noqa: E501
+
 import os
 from pathlib import Path
 
@@ -13,6 +15,8 @@ from haddock import FCC_path, log
 from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
+    get_cluster_matrix_plot_clt_dt,
+    plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
     )
@@ -70,7 +74,7 @@ class HaddockModule(BaseHaddockModule):
         contact_jobs: list[JobInputFirst] = []
         for model in models_to_clust:
             pdb_f = Path(model.rel_path)  # type: ignore
-            contact_f = Path(model.file_name.replace(".pdb", ".con"))
+            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore  # noqa : E501
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
@@ -106,12 +110,14 @@ class HaddockModule(BaseHaddockModule):
 
         log.info("Calculating the FCC matrix")
         parsed_contacts = calc_fcc_matrix.parse_contact_file(
-            contact_file_l, False
+            contact_file_l,
+            False,
             )
 
         # Imporant: matrix is a generator object, be careful with it
         matrix = calc_fcc_matrix.calculate_pairwise_matrix(
-            parsed_contacts, False
+            parsed_contacts,
+            False,
             )
 
         # write the matrix to a file, so we can read it afterwards and don't
@@ -122,7 +128,6 @@ class HaddockModule(BaseHaddockModule):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
                 data_str += os.linesep
                 fh.write(data_str)
-        fh.close()
 
         # Cluster
         log.info("Clustering...")
@@ -174,4 +179,33 @@ class HaddockModule(BaseHaddockModule):
             log.warning("No clusters were found")
             self.output_models = models_to_clust  # type: ignore
 
+        # Draw the matrix
+        if self.params['plot_matrix']:
+            # Obtain final models indices
+            final_order_idx, labels, cluster_ids = [], [], []
+            for pdb in self.output_models:
+                final_order_idx.append(models_to_clust.index(pdb))
+                labels.append(pdb.file_name.replace('.pdb', ''))
+                cluster_ids.append(pdb.clt_id)
+            # Get custom cluster data
+            matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+                cluster_ids
+                )
+
+            # Define output filename
+            html_matrix_basepath = 'fcc_matrix'
+            # Plot matrix
+            html_matrixpath = plot_cluster_matrix(
+                fcc_matrix_f,
+                final_order_idx,
+                labels,
+                dttype='FCC',
+                diag_fill=1,
+                output_fname=html_matrix_basepath,
+                matrix_cluster_dt=matrix_cluster_dt,
+                cluster_limits=cluster_limits,
+                )
+            log.info(f"Plotting matrix in {html_matrixpath}")
+
+        # Export models for next module
         self.export_io_models()

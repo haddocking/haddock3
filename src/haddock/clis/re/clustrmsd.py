@@ -1,13 +1,14 @@
 """haddock3-re clustrmsd subcommand."""
 from pathlib import Path
-
+import os
 import numpy as np
 
 from haddock import log
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
-from haddock.core.typing import Union
+from haddock.core.typing import Union, Optional
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
+from haddock.modules import get_module_steps_folders
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
@@ -59,11 +60,12 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
         )
     
     clustrmsd_subcommand.add_argument(
-        '-p',
+        "-p",
         "--plot_matrix",
         help="Generate the a plot of the clusters.",
         required=False,
-        action='store_false',
+        default=False,
+        action='store_true',
         )
 
     return clustrmsd_subcommand
@@ -205,31 +207,40 @@ def reclustrmsd(
     
     # Draw the matrix
     if clustrmsd_params["plot_matrix"]:
-        # Obtain final models indices
-        final_order_idx, labels, cluster_ids = [], [], []
-        for pdb in output_models:
-            final_order_idx.append(models.index(pdb))
-            labels.append(pdb.file_name.replace('.pdb', ''))
-            cluster_ids.append(pdb.clt_id)
-        # Get custom cluster data
-        matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
-            cluster_ids
-            )
-        # Define output filename
-        html_matrix_basepath = 'rmsd_matrix'
-        # Plot matrix
-        html_matrixpath = plot_cluster_matrix(
-            get_matrix_path(io.matrix_json.input[0]),
-            final_order_idx,
-            labels,
-            dttype='RMSD(Å)',
-            reverse=True,
-            diag_fill=0,
-            output_fname=html_matrix_basepath,
-            matrix_cluster_dt=matrix_cluster_dt,
-            cluster_limits=cluster_limits,
-            )
-        log.info(f"Plotting matrix in {html_matrixpath}")
+        if not (matrix_json_path := search_previousstep_matrix(clustrmsd_dir)):
+            log.warn(
+                "Could not find the rmsd matrix in previous step."
+                " Unable to produce a graph out of it!"
+                )
+        else:
+            log.info("Generating graphical representation of the clusters.")
+            matrix_io = ModuleIO()
+            matrix_io.load(matrix_json_path)
+            # Obtain final models indices
+            final_order_idx, labels, cluster_ids = [], [], []
+            for pdb in output_models:
+                final_order_idx.append(models.index(pdb))
+                labels.append(pdb.file_name.replace('.pdb', ''))
+                cluster_ids.append(pdb.clt_id)
+            # Get custom cluster data
+            matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+                cluster_ids
+                )
+            # Define output filename
+            html_matrix_basepath = Path(outdir, 'rmsd_matrix')
+            # Plot matrix
+            html_matrixpath = plot_cluster_matrix(
+                get_matrix_path(matrix_io.input[0]),
+                final_order_idx,
+                labels,
+                dttype='RMSD(Å)',
+                reverse=True,
+                diag_fill=0,
+                output_fname=html_matrix_basepath,
+                matrix_cluster_dt=matrix_cluster_dt,
+                cluster_limits=cluster_limits,
+                )
+            log.info(f"Plotting matrix in {html_matrixpath}")
 
     # save the io.json file
     io.save(outdir)
@@ -245,3 +256,34 @@ def reclustrmsd(
         rewrite_capri_tables(caprieval_folder, clt_dic, outdir)
 
     return outdir
+
+
+def search_previousstep_matrix(clustrmsd_dir: str) -> Optional[Path]:
+    """Retrieve the path of the previous step matrix_json file.
+
+    Parameters
+    ----------
+    clustrmsd_dir : str
+        Path to the clustrmsd directory.
+
+    Returns
+    -------
+    matrix_json : Optional[Path]
+        Path to the matrix_json file.
+    """
+    # Compute previous step index
+    previous_step_ind = int(str(Path(clustrmsd_dir).name).split('_')[0]) - 1
+    workflow_dir = Path(clustrmsd_dir).parent
+    # Try to get previous step directory name
+    try:
+        previous_steps = get_module_steps_folders(
+            workflow_dir,
+            [previous_step_ind],
+            )
+        previous_step = previous_steps[0]
+    except IndexError:
+        return None
+    else:
+        matrix_json = Path(workflow_dir, previous_step, "rmsd_matrix.json")
+        if matrix_json.exists():
+            return matrix_json

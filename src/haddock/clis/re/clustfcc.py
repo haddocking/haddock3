@@ -63,8 +63,8 @@ def add_clustfcc_arguments(clustfcc_subcommand):
         "--plot_matrix",
         help="Generate the a plot of the clusters.",
         required=False,
-        action='store_true',
         default=False,
+        action='store_true',
         )
     
     return clustfcc_subcommand
@@ -189,6 +189,7 @@ def reclustfcc(
 
     # Generate matrix plot
     if clustfcc_params["plot_matrix"]:
+        log.info("Generating graphical representation of the clusters.")
         # Obtain final models indices
         final_order_idx, labels, cluster_ids = [], [], []
         for pdb in output_models:
@@ -200,7 +201,7 @@ def reclustfcc(
             cluster_ids
             )
         # Define output filename
-        html_matrix_basepath = 'fcc_matrix'
+        html_matrix_basepath = Path(outdir, 'fcc_matrix')
         # Plot matrix
         html_matrixpath = plot_cluster_matrix(
             Path(clustfcc_dir, "fcc.matrix"),

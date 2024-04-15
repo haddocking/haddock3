@@ -547,14 +547,22 @@
             <span class="c1"># Extract PDB line data</span>
             <span class="n">atom_name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_name</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># Skip entries to be ignored</span>
+            <span class="k">if</span> <span class="n">resname</span> <span class="ow">in</span> <span class="n">RES_TO_BE_IGNORED</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">atom_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">[</span><span class="n">resname</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+            <span class="c1"># Continue parsing of the PDB line</span>
             <span class="n">chain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_chainid</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">model2ref_chain_dict</span><span class="p">:</span>
-                <span class="n">chain</span> <span class="o">=</span> <span class="n">model2ref_chain_dict</span><span class="p">[</span><span class="n">chain</span><span class="p">]</span>
             <span class="n">resnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">slc_resseq</span><span class="p">])</span>
             <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">slc_x</span><span class="p">])</span>
             <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">slc_y</span><span class="p">])</span>
             <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">slc_z</span><span class="p">])</span>
             <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+            <span class="c1"># Remap chain name</span>
+            <span class="k">if</span> <span class="n">model2ref_chain_dict</span><span class="p">:</span>
+                <span class="n">chain</span> <span class="o">=</span> <span class="n">model2ref_chain_dict</span><span class="p">[</span><span class="n">chain</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">numbering_dic</span> <span class="ow">and</span> <span class="n">model2ref_chain_dict</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">resnum</span> <span class="o">=</span> <span class="n">numbering_dic</span><span class="p">[</span><span class="n">chain</span><span class="p">][</span><span class="n">resnum</span><span class="p">]</span>
@@ -566,9 +574,6 @@
                     <span class="c1">#     &quot; was not matched!&quot;</span>
                     <span class="c1">#     )</span>
                     <span class="k">continue</span>
-            <span class="c1"># Filter entries to be ignored</span>
-            <span class="k">if</span> <span class="n">resname</span> <span class="ow">in</span> <span class="n">RES_TO_BE_IGNORED</span> <span class="ow">or</span> <span class="n">atom_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">[</span><span class="n">resname</span><span class="p">]:</span>
-                <span class="k">continue</span>
 
             <span class="c1"># Create identifier tuple</span>
             <span class="k">if</span> <span class="n">add_resname</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -1418,7 +1423,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 12, 2024.
+      <span class="lastupdated">Last updated on Apr 15, 2024.
       </span></p>
   </div>
 

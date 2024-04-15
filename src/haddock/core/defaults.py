@@ -37,6 +37,14 @@ RUNDIR = "run_dir"
 INTERACTIVE_RE_SUFFIX = "interactive"
 """Suffix added to interactive haddock3-re runs."""
 
+CNS_MODULES = ["rigidbody",
+               "flexref",
+               "emscoring",
+               "mdscoring",
+               "mdref",
+               "emref"]
+"""List of CNS modules available in HADDOCK3."""
+
 
 with open(Path(core_path, "mandatory.yaml"), 'r') as fin:
     _ycfg = yaml.safe_load(fin)

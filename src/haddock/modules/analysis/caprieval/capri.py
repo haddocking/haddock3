@@ -12,6 +12,7 @@ from scipy.spatial.distance import cdist
 from typing import Any
 
 from haddock import log
+from haddock.core.defaults import CNS_MODULES
 from haddock.core.typing import (
     AtomsDict,
     FilePath,
@@ -35,13 +36,6 @@ from haddock.libs.libalign import (
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.modules import get_module_steps_folders
-
-CNS_MODULES = ["rigidbody",
-               "flexref",
-               "emscoring",
-               "mdscoring",
-               "mdref",
-               "emref"]
 
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]

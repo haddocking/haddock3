@@ -9,7 +9,8 @@ uvicorn --port 5000 haddock.clis.restraints.webservice:app
 
 The Swagger UI is running at http://127.0.0.1:5000/docs .
 
-To upload a PDB file, it needs to be gzipped and then base64 encoded.
+To pass a PDB file in the JSON body of a request,
+it needs to be gzipped and then base64 encoded.
 
 A base64 encoded gzipped PDB file can made with:
 
@@ -27,27 +28,24 @@ For example the 2oob.pdb 74.8Kb becomes 101Kb when base64 encoded
 while first gzip and then base64 encode it is 25.4Kb.
 """
 
-from base64 import b64decode
 import gzip
 import io
 import tempfile
+from base64 import b64decode
 from contextlib import redirect_stdout
 from typing import Annotated
 
-from fastapi import (
-    Depends,
-    FastAPI,
-    HTTPException,
-    status,
-)
+from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.gzip import GZipMiddleware
-from pydantic import BaseModel, Field
-from starlette.responses import PlainTextResponse
-from pdbtools.pdb_selchain import select_chain
 from pdbtools.pdb_chain import alter_chain
 from pdbtools.pdb_fixinsert import fix_insertions
 from pdbtools.pdb_selaltloc import select_by_occupancy
+from pdbtools.pdb_selchain import select_chain
 from pdbtools.pdb_tidy import tidy_pdbfile
+from pdbtools.pdb_delhetatm import remove_hetatm
+from pdbtools.pdb_keepcoord import keep_coordinates
+from pydantic import BaseModel, Field
+from starlette.responses import PlainTextResponse
 
 from haddock.clis.restraints.calc_accessibility import (
     apply_cutoff,
@@ -63,12 +61,13 @@ from haddock.libs.librestraints import (
     validate_tbldata,
 )
 
+
 app = FastAPI()
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # TODO add rate limit with slowapi package
-# TODO if on Internet should have some authz
-
+# TODO if on Internet should have some authz and https
+# TODO run the functions in browser with pyscript, needs wheel for haddock3, likely slow
 
 def unpacked_structure(
     structure: str,
@@ -262,6 +261,8 @@ class PDBPreprocessRequest(BaseModel):
     structure: Structure
     from_chain: str = Field(description="Chains to keep", examples=["A"])
     to_chain: str = Field(description="New chain identifier", examples=["A"])
+    delhetatm: bool = Field(description="Delete HETATM records", examples=[True], default=False)
+    keepcoord: bool = Field(description="Remove all non-coordinate records", examples=[True], default=False)
 
 
 @app.post("/preprocess_pdb", response_class=PlainTextResponse, tags=["pdb"])
@@ -280,7 +281,11 @@ def preprocess_pdb(request: PDBPreprocessRequest) -> str:
     lines = list(tidy_pdbfile(lines, strict=True))
     lines = list(select_chain(lines, request.from_chain))
     lines = list(alter_chain(lines, request.to_chain))
+    if request.delhetatm:
+        lines = list(remove_hetatm(lines))
     lines = list(fix_insertions(lines, []))
+    if request.keepcoord:
+        lines = list(keep_coordinates(lines))
     lines = list(select_by_occupancy(lines))
     lines = list(tidy_pdbfile(lines, strict=True))
     return "".join(lines)

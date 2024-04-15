@@ -56,6 +56,7 @@ examples = (
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
     ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-protein-glycan-ilrmsd-test.cfg"),  # noqa: E203, E501
     ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
@@ -73,6 +74,7 @@ examples = (
     ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-ilrmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "contmap-test.cfg"),  # noqa: E203, E501
     )
 
 

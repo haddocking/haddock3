@@ -33,6 +33,7 @@ from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
+    get_previous_cns_step,
     merge_data,
     rearrange_ss_capri_output,
     save_scoring_weights,
@@ -41,13 +42,6 @@ from haddock.modules.analysis.caprieval.capri import (
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
-
-CNS_MODULES = ["rigidbody",
-               "flexref",
-               "emscoring",
-               "mdscoring",
-               "mdref",
-               "emref"]
 
 
 class HaddockModule(BaseHaddockModule):
@@ -81,16 +75,7 @@ class HaddockModule(BaseHaddockModule):
         
         # dump previously used weights
         sel_steps = get_module_steps_folders(Path(".."))
-
-        # get the previous CNS step
-        cns_step = None
-        mod = len(sel_steps) - 2
-        while mod > -1:
-            st_name = sel_steps[mod].split("_")[1]
-            if st_name in CNS_MODULES:
-                cns_step = sel_steps[mod]
-                break
-            mod -= 1
+        cns_step = get_previous_cns_step(sel_steps)
         
         if cns_step:
             self.log(f"Found previous CNS step: {cns_step}")

@@ -8,7 +8,7 @@ max_models:
   long: If the number of models exceeds the few thousands, the calculation of
     the RMSD matrix is computationally demanding, especially in terms of CPU
     and disk space.
-  group: ''
+  group: analysis
   explevel: easy
 resdic_:
   default: []
@@ -21,5 +21,25 @@ resdic_:
   long: resdic_* is an expandable parameter. You can provide resdic_A,
     resdic_B, resdic_C, etc, where the last capital letter is the chain
     identifier.
-  group: ''
+  group: analysis
+  explevel: easy
+atom_similarity:
+  default: 90.0
+  type: float
+  min: 10.0
+  max: 100.0
+  precision: 3
+  title: Required atom similarity
+  short: Required similarity (in %) between the number of atoms in the input models.
+  long: Required similarity (in %) between the number of atoms in the input models. If the similarity is higher than this value, the RMSD calculation is performed on the common atoms. Otherwise, the calculation is stopped. The lower the value the looser the checks.
+  group: analysis
+  explevel: easy
+allatoms:
+  default: false
+  type: boolean
+  title: Atoms to be considered during the analysis.
+  short: Atoms to be considered during the analysis.
+  long: Atoms to be considered during the analysis. If false (default), only
+        backbone atoms will be considered, otherwise all the heavy-atoms.
+  group: analysis
   explevel: easy

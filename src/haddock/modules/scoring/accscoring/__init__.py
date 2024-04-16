@@ -7,7 +7,7 @@ from pathlib import Path
 
 from haddock.core.typing import FilePath
 from haddock.modules import get_engine
-from haddock.modules.scoring import ScoringModule
+from haddock.modules import BaseHaddockModule
 from haddock.libs.libutil import parse_ncores
 from haddock.libs.libparallel import get_index_list
 from haddock.modules.scoring.accscoring.accscoring import (
@@ -23,7 +23,7 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
-class HaddockModule(ScoringModule):
+class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module to perform energy minimization scoring."""
 
     name = RECIPE_PATH.name
@@ -32,9 +32,7 @@ class HaddockModule(ScoringModule):
                  order: int,
                  path: Path,
                  initial_params: FilePath = DEFAULT_CONFIG) -> None:
-        cns_script = Path(RECIPE_PATH, "cns", "accscoring.cns")
-        super().__init__(order, path, initial_params, cns_script=cns_script)
-
+        super().__init__(order, path, initial_params)
 
     @classmethod
     def confirm_installation(cls) -> None:

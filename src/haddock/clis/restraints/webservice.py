@@ -275,6 +275,12 @@ def preprocess_pdb(request: PDBPreprocessRequest) -> str:
     cat pdb | pdb_tidy -strict | pdb_selchain -<from_chain> | pdb_chain -<to_chain> | pdb_fixinsert | pdb_selaltloc | pdb_tidy -strict
     ```
 
+    or with `delhetatm` and `keepcoord` set to true:
+
+    ```shell
+    cat pdb | pdb_tidy -strict | pdb_selchain -<from_chain> | pdb_chain -<to_chain> | pdb_delhetatm | pdb_fixinsert | pdb_keepcoord | pdb_selaltloc | pdb_tidy -strict
+    ```
+
     """
     structure = unpacked_structure(request.structure).decode("latin_1")
     lines = structure.splitlines()

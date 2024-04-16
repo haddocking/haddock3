@@ -475,6 +475,9 @@ def load_coords(
             coords = np.asarray([x, y, z])
             # Remap chain name
             if model2ref_chain_dict:
+                # Skip chain matching if not present in reference structure
+                if not chain in model2ref_chain_dict.keys():
+                    continue
                 chain = model2ref_chain_dict[chain]
             if numbering_dic and model2ref_chain_dict:
                 try:

@@ -563,23 +563,35 @@ class CAPRI:
             log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
             log.debug(f" cutoff: {fnat_cutoff}A")
-            self.calc_fnat(cutoff=fnat_cutoff)
+            try:
+                self.calc_fnat(cutoff=fnat_cutoff)
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
 
         if self.params["irmsd"]:
             log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
             log.debug(f" cutoff: {irmsd_cutoff}A")
-            self.calc_irmsd(cutoff=irmsd_cutoff)
+            try:
+                self.calc_irmsd(cutoff=irmsd_cutoff)
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
 
         if self.params["lrmsd"]:
             log.debug(f"id {self.identificator}, calculating L-RMSD")
-            self.calc_lrmsd()
+            try:
+                self.calc_lrmsd()
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
 
         if self.params["ilrmsd"]:
             log.debug(f"id {self.identificator}, calculating I-L-RMSD")
             ilrmsd_cutoff = self.params["irmsd_cutoff"]
             log.debug(f" cutoff: {ilrmsd_cutoff}A")
-            self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
+            try:
+                self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
 
         if self.params["dockq"]:
             log.debug(f"id {self.identificator}, calculating DockQ metric")

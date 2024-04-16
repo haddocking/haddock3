@@ -1,0 +1,38 @@
+#
+# Group scoring
+#
+cutoff:
+  default: 0.4
+  type: float
+  min: 0.0
+  max: 1.0
+  precision: 3
+  title: relative accessibility cutoff 
+  short: relative accessibility cutoff 
+  long: relative accessibility cutoff 
+  group: 'scoring'
+  explevel: easy
+resdic_buried_:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: List of residues supposed to be buried
+  short: List of residues supposed to be buried
+  long: resdic_buried_* is an expandable parameter. You can provide resdic_buried_A,
+    resdic_buried_B, resdic_buried_C, etc, where the last capital letter is the chain
+    identifier.
+  group: analysis
+  explevel: easy
+resdic_accessible_:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: List of residues supposed to be accessible
+  short: List of residues supposed to be accessible
+  long: resdic_* is an expandable parameter. You can provide resdic_accessible_A,
+    resdic_accessible_B, resdic_accessible_C, etc, where the last capital letter is the chain
+    identifier.
+  group: analysis
+  explevel: easy

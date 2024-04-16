@@ -1,0 +1,106 @@
+"""EM scoring module.
+
+This module performs energy minimization and scoring of the models generated
+in the previous step of the workflow. No restraints are applied during this step.
+"""
+from pathlib import Path
+
+from haddock.core.typing import FilePath
+from haddock.modules import get_engine
+from haddock.modules.scoring import ScoringModule
+from haddock.libs.libutil import parse_ncores
+from haddock.libs.libparallel import get_index_list
+from haddock.modules.scoring.accscoring.accscoring import (
+    AccScore,
+    AccScoreJob,
+    rearrange_output,
+)
+from haddock.modules.analysis import (
+    get_analysis_exec_mode,
+    )
+
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+
+
+class HaddockModule(ScoringModule):
+    """HADDOCK3 module to perform energy minimization scoring."""
+
+    name = RECIPE_PATH.name
+
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
+        cns_script = Path(RECIPE_PATH, "cns", "accscoring.cns")
+        super().__init__(order, path, initial_params, cns_script=cns_script)
+
+
+    @classmethod
+    def confirm_installation(cls) -> None:
+        """Confirm module is installed."""
+        return
+
+    def _run(self) -> None:
+        """Execute module."""
+
+        try:
+            models_to_score = self.previous_io.retrieve_models(
+                individualize=True
+                )
+        except Exception as e:
+            self.finish_with_error(e)
+
+        nmodels = len(models_to_score)
+        # index_list for the jobs with linear scaling
+        ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
+        index_list = get_index_list(nmodels, ncores)
+
+        # loading buried and accessible residue dictionaries
+        buried_resdic = {
+            key[-1]: value for key, value
+            in self.params.items()
+            if key.startswith("resdic_buried")
+            }
+        acc_resdic = {
+            key[-1]: value for key, value
+            in self.params.items()
+            if key.startswith("resdic_accessible")
+            }
+        
+        # initialize jobs
+        accscoring_jobs: list[AccScoreJob] = []
+        
+        for core in range(ncores):
+            output_name = Path("accscoring_" + str(core) + ".tsv")
+            accscore_obj = AccScore(
+                model_list=models_to_score[index_list[core]:index_list[core + 1]],
+                output_name=output_name,
+                core=core,
+                path=Path("."),
+                buried_resdic=buried_resdic,
+                acc_resdic=acc_resdic,
+                cutoff=self.params["cutoff"],
+                )
+            
+            job = AccScoreJob(
+                accscore_obj,
+            )
+            accscoring_jobs.append(job)
+        
+        # Run accscoring Jobs
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(accscoring_jobs)
+        engine.run()
+
+        # rearrange output
+        output_name = "accscoring.tsv"
+        accscoring_df = rearrange_output(
+            output_name,
+            path=Path("."),
+            ncores=ncores
+            )
+
+        self.output_models = models_to_score
+        self.export_io_models()

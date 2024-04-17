@@ -12,6 +12,7 @@ from scipy.spatial.distance import cdist
 from typing import Any
 
 from haddock import log
+from haddock.core.defaults import CNS_MODULES
 from haddock.core.typing import (
     AtomsDict,
     FilePath,
@@ -34,10 +35,41 @@ from haddock.libs.libalign import (
     )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
+from haddock.modules import get_module_steps_folders
+
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
 import json
 from haddock.gear.config import load as read_config
+
+
+def get_previous_cns_step(sel_steps: list) -> Union[str, None]:
+    """
+    Get the previous CNS step.
+
+    Parameters
+    ----------
+    run_path : Path
+        Path to the run folder.
+
+    Returns
+    -------
+    cns_step : str
+        Name of the CNS step.
+    """
+    # just to be careful, remove steps with more than one underscore
+    sel_steps = [step for step in sel_steps if step.count("_") == 1]
+    # get the previous CNS step
+    cns_step = None
+    mod = len(sel_steps) - 2
+    while mod > -1:
+        st_name = sel_steps[mod].split("_")[1]
+        if st_name in CNS_MODULES:
+            cns_step = sel_steps[mod]
+            break
+        mod -= 1
+
+    return cns_step
 
 
 def save_scoring_weights(cns_step: str) -> Path:

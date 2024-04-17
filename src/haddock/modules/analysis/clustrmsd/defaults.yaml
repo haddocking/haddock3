@@ -50,6 +50,14 @@ clust_cutoff:
   long: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.
   group: analysis
   explevel: easy
+plot_matrix:
+  default: false
+  type: boolean
+  title: Plot matrix of members
+  short: Plot matrix of members. By default is false.
+  long: Plot matrix of members. By default is false.
+  explevel: easy
+  group: analysis
 n_clusters:
   default: 4
   type: integer

@@ -230,14 +230,17 @@ class CAPRI:
             ref_coord_dic, _ = load_coords(
                 self.reference, self.atoms, ref_interface_resdic
                 )
-
-            mod_coord_dic, _ = load_coords(
-                self.model,
-                self.atoms,
-                ref_interface_resdic,
-                numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict=self.model2ref_chain_dict,
-                )
+            try:
+                mod_coord_dic, _ = load_coords(
+                    self.model,
+                    self.atoms,
+                    ref_interface_resdic,
+                    numbering_dic=self.model2ref_numbering,
+                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    )
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
+                return
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -269,13 +272,16 @@ class CAPRI:
     def calc_lrmsd(self) -> None:
         """Calculate the L-RMSD."""
         ref_coord_dic, _ = load_coords(self.reference, self.atoms)
-
-        mod_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            numbering_dic=self.model2ref_numbering,
-            model2ref_chain_dict=self.model2ref_chain_dict,
-            )
+        try:
+            mod_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
         Q = []
         P = []
@@ -376,14 +382,17 @@ class CAPRI:
         ref_int_coord_dic, _ = load_coords(
             self.reference, self.atoms, ref_interface_resdic
             )
-
-        mod_int_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            ref_interface_resdic,
-            numbering_dic=self.model2ref_numbering,
-            model2ref_chain_dict=self.model2ref_chain_dict,
-            )
+        try:
+            mod_int_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                ref_interface_resdic,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
         # write_coord_dic("ref.pdb", ref_int_coord_dic)
         # write_coord_dic("model.pdb", mod_int_coord_dic)
@@ -470,14 +479,18 @@ class CAPRI:
         """
         ref_contacts = load_contacts(self.reference, cutoff)
         if len(ref_contacts) != 0:
-            model_contacts = load_contacts(
-                self.model,
-                cutoff,
-                numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict=self.model2ref_chain_dict,
-                )
-            intersection = ref_contacts & model_contacts
-            self.fnat = len(intersection) / float(len(ref_contacts))
+            try:
+                model_contacts = load_contacts(
+                    self.model,
+                    cutoff,
+                    numbering_dic=self.model2ref_numbering,
+                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    )
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
+            else:
+                intersection = ref_contacts & model_contacts
+                self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
 
@@ -563,35 +576,23 @@ class CAPRI:
             log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
             log.debug(f" cutoff: {fnat_cutoff}A")
-            try:
-                self.calc_fnat(cutoff=fnat_cutoff)
-            except ALIGNError as alignerror:
-                log.warning(alignerror)
+            self.calc_fnat(cutoff=fnat_cutoff)
 
         if self.params["irmsd"]:
             log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
             log.debug(f" cutoff: {irmsd_cutoff}A")
-            try:
-                self.calc_irmsd(cutoff=irmsd_cutoff)
-            except ALIGNError as alignerror:
-                log.warning(alignerror)
+            self.calc_irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:
             log.debug(f"id {self.identificator}, calculating L-RMSD")
-            try:
-                self.calc_lrmsd()
-            except ALIGNError as alignerror:
-                log.warning(alignerror)
+            self.calc_lrmsd()
 
         if self.params["ilrmsd"]:
             log.debug(f"id {self.identificator}, calculating I-L-RMSD")
             ilrmsd_cutoff = self.params["irmsd_cutoff"]
             log.debug(f" cutoff: {ilrmsd_cutoff}A")
-            try:
-                self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
-            except ALIGNError as alignerror:
-                log.warning(alignerror)
+            self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
 
         if self.params["dockq"]:
             log.debug(f"id {self.identificator}, calculating DockQ metric")

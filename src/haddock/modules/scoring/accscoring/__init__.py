@@ -96,7 +96,7 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
 
         # rearrange output
-        output_name = "accscoring.tsv"
+        output_name = Path("accscoring.tsv")
         accscoring_df = rearrange_output(
             output_name,
             path=Path("."),

@@ -92,17 +92,21 @@
 <span class="sd">This module selects a number of models from a number of clusters. The</span>
 <span class="sd">selection is based on the score of the models within the clusters.</span>
 
-<span class="sd">In the standard HADDOCK analysis the top 4 models of the top 10 clusters</span>
+<span class="sd">In the standard HADDOCK analysis, the top 4 models of the top 10 clusters</span>
 <span class="sd">are shown. In case seletopclusts is run after a sampling module, we can</span>
-<span class="sd">keep a few models from all the clusters to have more diversity in at the</span>
-<span class="sd">refinement stage.</span>
+<span class="sd">keep a few models from all the clusters to have more diversity at the</span>
+<span class="sd">refinement stage(s).</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.seletopclusts.seletopclusts</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">select_top_clusts_models</span><span class="p">,</span>
+    <span class="n">write_selected_models</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -129,6 +133,7 @@
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the module&#39;s protocol.&quot;&quot;&quot;</span>
+        <span class="c1"># Check parameters validity</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_models&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;top_models must be either &gt; 0 or nan.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
@@ -137,66 +142,38 @@
             <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;top_cluster must be an integer.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
 
+        <span class="c1"># Retrieve list of previous models</span>
         <span class="n">models_to_select</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">()</span>
 
-        <span class="c1"># how many models should we output?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">target_rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">clt_rank</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">models_to_select</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_rankings</span><span class="p">):</span>
-            <span class="c1"># select all clusters</span>
-            <span class="n">target_rankins_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">target_rankings</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selecting all clusters: </span><span class="si">{</span><span class="n">target_rankins_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># select top_cluster clusters</span>
-            <span class="n">target_rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-            <span class="n">target_rankins_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">target_rankings</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;Selecting top </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;top_cluster&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> clusters: &quot;</span>
-                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_rankins_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="c1"># Check if cluster info is accessible</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">mdl</span><span class="o">.</span><span class="n">clt_rank</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">mdl</span> <span class="ow">in</span> <span class="n">models_to_select</span><span class="p">]):</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Impossible to obtain cluster information. Please consider &quot;</span>
+                <span class="s2">&quot;running a clustering method prior to this module.&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
 
-        <span class="c1"># select the models to export</span>
-        <span class="n">models_to_export</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">target_ranking</span> <span class="ow">in</span> <span class="n">target_rankings</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_models&quot;</span><span class="p">]):</span>
-                <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">models_to_select</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">clt_rank</span> <span class="o">==</span> <span class="n">target_ranking</span><span class="p">:</span>
-                        <span class="n">models_to_export</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">model_ranking</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_models&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">models_to_select</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="p">(</span>
-                                <span class="n">pdb</span><span class="o">.</span><span class="n">clt_rank</span> <span class="o">==</span> <span class="n">target_ranking</span>
-                                <span class="ow">and</span> <span class="n">pdb</span><span class="o">.</span><span class="n">clt_model_rank</span> <span class="o">==</span> <span class="n">model_ranking</span>
-                                <span class="p">):</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;&gt; cluster_</span><span class="si">{</span><span class="n">target_ranking</span><span class="si">}</span><span class="s2">_&quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="n">model_ranking</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
-                                <span class="p">)</span>
-                            <span class="n">models_to_export</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
-        
+        <span class="c1"># Make model selection</span>
+        <span class="n">selected_models</span><span class="p">,</span> <span class="n">_notes</span> <span class="o">=</span> <span class="n">select_top_clusts_models</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sortby&quot;</span><span class="p">],</span>
+            <span class="n">models_to_select</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_models&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="c1"># Log notes</span>
+        <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">_notes</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
         <span class="c1"># dump the models to disk and change their attributes</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;seletopclusts.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
-            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;rel_path</span><span class="se">\t</span><span class="s2">ori_name</span><span class="se">\t</span><span class="s2">cluster_name</span><span class="se">\t</span><span class="s2">md5&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models_to_export</span><span class="p">:</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;cluster_</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">clt_rank</span><span class="si">}</span><span class="s2">_model&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">clt_model_rank</span><span class="si">}</span><span class="s2">.pdb&quot;</span><span class="p">)</span>
-                <span class="c1"># writing name</span>
-                <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">ori_name</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\t</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">md5</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-                <span class="c1"># changing attributes</span>
-                <span class="n">name_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="n">name_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">name</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">full_name</span> <span class="o">=</span> <span class="n">name</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+        <span class="n">renamed_models</span> <span class="o">=</span> <span class="n">write_selected_models</span><span class="p">(</span>
+            <span class="s2">&quot;seletopclusts.txt&quot;</span><span class="p">,</span>
+            <span class="n">selected_models</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_export</span>
+        <span class="c1"># Make these new models the output of this module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">renamed_models</span>
+        <span class="c1"># Export outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span></div>
 </pre></div>
 
@@ -208,7 +185,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 15, 2024.
+      <span class="lastupdated">Last updated on Apr 17, 2024.
       </span></p>
   </div>
 

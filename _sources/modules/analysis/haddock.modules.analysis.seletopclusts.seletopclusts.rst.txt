@@ -1,0 +1,7 @@
+haddock.modules.analysis.seletopclusts.seletopclusts module
+===========================================================
+
+.. automodule:: haddock.modules.analysis.seletopclusts.seletopclusts
+   :members:
+   :undoc-members:
+   :show-inheritance:

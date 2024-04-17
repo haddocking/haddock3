@@ -1,6 +1,14 @@
 Selection of top clusters module
 ==============================================
 
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.analysis.seletopclusts.seletopclusts
+
 Module contents
 ---------------
 

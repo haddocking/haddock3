@@ -101,11 +101,11 @@ def save_scoring_weights(cns_step: str) -> Path:
 
 
 def load_contacts(
-        pdb_f,
-        cutoff=5.0,
-        numbering_dic=None,
-        model2ref_chain_dict=None,
-        ):
+        pdb_f: Union[Path, PDBFile],
+        cutoff: float = 5.0,
+        numbering_dic: Optional[dict[str, dict[int, int]]] = None,
+        model2ref_chain_dict: Optional[dict[str, str]] = None,
+        ) -> set[tuple]:
     """Load residue-based contacts.
 
     Parameters
@@ -120,7 +120,6 @@ def load_contacts(
     set(con_list) : set
         set of unique contacts
     """
-    con_list: list = []
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
@@ -147,6 +146,7 @@ def load_contacts(
     unique_chain_combs = list(combinations(sorted(coord_arrays.keys()), 2))
 
     # calculating contacts
+    con_list: list[tuple] = []
     for pair in unique_chain_combs:
         # cycling over each coordinate of the first chain
         for s in range(coord_arrays[pair[0]].shape[0]):

@@ -64,3 +64,48 @@ def test_actpass_to_ambig(client: TestClient):
         ) 2.0 2.0 0.0"""
     )
     assert response.text == expected
+
+def test_passive_from_active(client: TestClient, example_pdb_file_gzipped_base64: str):
+    body = {
+        "structure": example_pdb_file_gzipped_base64,
+        "active": [31, 32, 33],
+        "chain": "A",
+        "surface": [31, 32, 33, 34, 35, 36],
+    }
+    response = client.post("/passive_from_active", json=body)
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"
+    result = response.json()
+    assert result == [34, 35, 36]
+
+def test_restrain_bodies(client: TestClient, example_pdb_file_gzipped_base64: str):
+    body  = {
+        "structure": example_pdb_file_gzipped_base64
+    }
+    response = client.post("/restrain_bodies", json=body)
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/plain")
+    assert 'assign' in response.text
+
+def test_validate_tbl(client: TestClient):
+    content = "assign (resi 1 and segid A) (resi 2 and segid B) 2.0 2.0 0.0"
+    gzipped = gzip.compress(content.encode())
+    tbl = b64encode(gzipped).decode()
+    body = {
+        "tbl": tbl
+    }
+    response = client.post("/validate_tbl", json=body)
+    assert response.status_code == 200
+    assert 'assign' in response.text
+
+def test_preprocess_pdb(client: TestClient, example_pdb_file_gzipped_base64: str):
+    body = {
+        "structure": example_pdb_file_gzipped_base64,
+        "from_chain": "A",
+        "to_chain": "Z",
+    }
+    response = client.post("/preprocess_pdb", json=body)
+    print(response.text)
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/plain")
+    assert 'Z' in response.text

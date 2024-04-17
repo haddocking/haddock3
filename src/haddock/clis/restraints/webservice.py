@@ -5,7 +5,9 @@ Also includes endpoint for PDB preprocessing.
 
 Run with:
 
+```shell
 uvicorn --port 5000 haddock.clis.restraints.webservice:app
+```
 
 The Swagger UI is running at http://127.0.0.1:5000/docs .
 
@@ -15,16 +17,18 @@ it needs to be gzipped and then base64 encoded.
 A base64 encoded gzipped PDB file can made with:
 
 ```shell
-cat examples/data/2oob.pdb | gzip | base64 -w 0 > examples/data/2oob.pdb.gz.base64
+cat examples/data/2oob.pdb | gzip | base64 -w 0 > 2oob.pdb.gz.base64
 ```
 
 Background for PDB file handling:
 
-To store a multiline string, like a pdb file, in JSON we need to encode it in base64.
+To store a multiline string, like a pdb file,
+in JSON we need to encode it in base64.
 Base64 encoding make things 1.33 times bigger.
 A pdb is text which can be compressed a lot.
-To transfer less data we can compress the pdb with gzip before base64 encoding.
-For example the 2oob.pdb 74.8Kb becomes 101Kb when base64 encoded 
+To transfer less data we can compress the pdb
+with gzip before base64 encoding.
+For example the 2oob.pdb 74.8Kb becomes 101Kb when base64 encoded
 while first gzip and then base64 encode it is 25.4Kb.
 """
 
@@ -65,31 +69,28 @@ from haddock.libs.librestraints import (
 app = FastAPI()
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-# TODO add rate limit with slowapi package
-# TODO if on Internet should have some authz and https
-# TODO run the functions in browser with pyscript, needs wheel for haddock3, likely slow
 
 def unpacked_structure(
     structure: str,
 ) -> bytes:
-    """gunzips a base64 encoded string.
-
-    Args:
-        structure: base64 encoded gzipped string.
-
-    Returns:
-        The gunzipped bytes.
-    """
+    """Gunzips a base64 encoded string."""
     decoded = b64decode(structure)
     return gzip.decompress(decoded)
+
+
+def unpacked_tbl(tbl: str) -> str:
+    """Gunzips a base64 encoded tbl file contents."""
+    return gzip.decompress(b64decode(tbl)).decode("utf-8")
 
 
 Structure = Annotated[
     str,
     Field(
         description="The structure file as a base64 encoded gzipped string.",
-        contentMediaType="text/plain",
-        contentEncoding="base64",
+        json_schema_extra=dict(
+            contentMediaType="text/plain",
+            contentEncoding="base64",
+        )
     ),
 ]
 
@@ -107,9 +108,7 @@ class PassiveFromActiveRequest(BaseModel):
 def calculate_passive_from_active(
     request: PassiveFromActiveRequest,
 ) -> list[int]:
-    """
-    Calculate active restraints to passive restraints.
-    """
+    """Calculate active restraints to passive restraints."""
     structure = unpacked_structure(request.structure)
 
     with tempfile.NamedTemporaryFile() as structure_file:
@@ -153,6 +152,7 @@ class ActPassToAmbigRequest(BaseModel):
 def calculate_actpass_to_ambig(
     request: ActPassToAmbigRequest,
 ) -> str:
+    """Get the passive residues."""
     output = io.StringIO()
     with redirect_stdout(output):
         active_passive_to_ambig(
@@ -178,6 +178,7 @@ class RestrainBodiesRequest(BaseModel):
 
 @app.post("/restrain_bodies", response_class=PlainTextResponse, tags=["restraints"])
 def restrain_bodies(request: RestrainBodiesRequest) -> str:
+    """Create distance restraints to lock several chains together."""
     structure = unpacked_structure(request.structure)
     with tempfile.NamedTemporaryFile() as structure_file:
         structure_file.write(structure)
@@ -203,6 +204,7 @@ class CalcAccessibilityRequest(BaseModel):
 def calculate_accessibility(
     request: CalcAccessibilityRequest,
 ) -> dict[str, list[int]]:
+    """Calculate the accessibility of the side chains and apply a cutoff."""
     structure = unpacked_structure(request.structure)
 
     with tempfile.NamedTemporaryFile() as structure_file:
@@ -219,17 +221,15 @@ def calculate_accessibility(
             ) from e
 
 
-def unpacked_tbl(tbl: str) -> str:
-    return gzip.decompress(b64decode(tbl)).decode("utf-8")
-
-
 class ValidateTblRequest(BaseModel):
     tbl: Annotated[
         str,
         Field(
             description="The TBL file as base64 encoded gzipped string.",
-            contentMediaType="text/plain",
-            contentEncoding="base64",
+            json_schema_extra=dict(
+                contentMediaType="text/plain",
+                contentEncoding="base64",
+            )
         ),
     ]
     pcs: bool = Field(

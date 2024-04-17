@@ -7,7 +7,19 @@ from haddock.clis.restraints.calc_accessibility import apply_cutoff, get_accessi
 
 def rearrange_output(output_name: FilePath, path: FilePath,
                           ncores: int) -> None:
-        """Combine different accscoring outputs in a single file."""
+        """Combine different accscoring outputs in a single file.
+        
+        Parameters
+        ----------
+        output_name : FilePath
+            The name of the output file.
+        
+        path : FilePath
+            The path to the output files.
+        
+        ncores : int
+            The number of cores used in the calculation.
+        """
         output_fname = Path(path, output_name)
         log.info(f"rearranging output files into {output_fname}")
         # Combine files
@@ -28,25 +40,44 @@ def rearrange_output(output_name: FilePath, path: FilePath,
 
 
 def calc_acc_score(result_dict, buried_resdic, acc_resdic):
-    """Calculate the accessibility score."""
+    """Calculate the accessibility score.
+    
+    The accessibility score is calculated as the sum of the number of
+    residues that are not in the correct category (buried or accessible).
+    
+    Parameters
+    ----------
+    result_dict : dict
+        A dictionary with the results from the accessibility calculation.
+        
+    buried_resdic : dict
+        A dictionary with the buried residues.
+    
+    acc_resdic : dict
+        A dictionary with the accessible residues.
+    
+    Returns
+    -------
+    acc_score : int
+        The accessibility score.
+    """
     # filter the residues
     acc_score = 0
     for chain in result_dict:
         if chain in buried_resdic:
-            # for every supposedly buried residue that is not buried, the score should increase by one
-            buried_violation_score = len(set(buried_resdic[chain]).intersection(result_dict[chain]))
-            acc_score += buried_violation_score
+            # for every supposedly buried residue that is not buried,
+            # the score should increase by one
+            buried_viol_sc = len(set(buried_resdic[chain]).intersection(result_dict[chain]))
+            acc_score += buried_viol_sc
         if chain in acc_resdic:
-            # now the opposite logic with the accessible logic. acc score should increse by one for every accessible residue that is not accessible
-            # the above command is good but I would like something faster
-            accessible_violation_score = len(set(acc_resdic[chain]).difference(result_dict[chain]))
-            acc_score += accessible_violation_score
-        
+            # now the opposite logic with the accessible amino acids. 
+            acc_viol_sc = len(set(acc_resdic[chain]).difference(result_dict[chain]))
+            acc_score += acc_viol_sc
     return acc_score
 
 
 class AccScoreJob:
-    """A Job dedicated to the parallel writing of xyz files."""
+    """A Job dedicated to the parallel running of Accscore jobs."""
 
     def __init__(
             self,
@@ -63,8 +94,7 @@ class AccScoreJob:
         return
 
 class AccScore:
-    """XYZWriter class."""
-
+    """AccScore class."""
     def __init__(
             self,
             model_list,
@@ -75,7 +105,7 @@ class AccScore:
             acc_resdic,
             cutoff,
             ):
-        """Initialise Contact class."""
+        """Initialise AccScore class."""
         self.model_list = model_list
         self.output_name = output_name
         self.core = core
@@ -86,7 +116,7 @@ class AccScore:
         self.data = []
         
     def run(self):
-        """write xyz coordinates."""
+        """run accessibility calculations."""
         for mod in self.model_list:
             mod_path = str(Path(mod.path, mod.file_name))
             try:
@@ -100,7 +130,7 @@ class AccScore:
         return
     
     def output(self):
-        """Write down unique contacts to file."""
+        """Write down accessibility scores to file."""
         output_fname = Path(self.path, self.output_name)
         df = pd.DataFrame(self.data)
         df.to_csv(output_fname, sep="\t", index=False, header=False)

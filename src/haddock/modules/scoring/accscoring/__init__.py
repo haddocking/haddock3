@@ -1,7 +1,11 @@
-"""EM scoring module.
+"""Accessibility scoring module.
 
-This module performs energy minimization and scoring of the models generated
-in the previous step of the workflow. No restraints are applied during this step.
+This module performs a solvent accessibility analysis based on some 
+user-defined residues that should be buried or accessible.
+
+If a supposedly buried (resp. accessible) residue is accessible (resp. buried),
+the score should increase by one. The lower the final score the more consistent
+the model with the user data.
 """
 from pathlib import Path
 
@@ -24,7 +28,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 class HaddockModule(BaseHaddockModule):
-    """HADDOCK3 module to perform energy minimization scoring."""
+    """HADDOCK3 module to perform accessibility scoring."""
 
     name = RECIPE_PATH.name
 
@@ -41,7 +45,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
-
         try:
             models_to_score = self.previous_io.retrieve_models(
                 individualize=True

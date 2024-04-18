@@ -1,3 +1,12 @@
+"""Voro scoring class.
+
+This class holds all the machinery to perform scoring of input pdb models using
+ftdmp voro-mqa-all tool.
+For more information, please check: https://github.com/kliment-olechnovic/ftdmp
+
+It is a third party module, and requires the appropriate set up and intallation
+for it to run without issue.
+"""
 import os
 import subprocess
 import glob
@@ -60,24 +69,39 @@ echo "./$VOROMQA_SCRIPT --conda-path $CONDA_INSTALL_DIR --conda-env $CONDA_ENV_N
 # 4. Analyze results
 # Print final ouput file
 echo $OUT_MSG
-"""
+"""  # noqa : E501
 
 
 class VoroMQA():
+    """The Haddock3 implementation of voro-mqa-all as a python class."""
 
     def __init__(
             self,
-            models: list[Union[str, Path, PDBFile]],
+            models: list[PDBFile],
             workdir: Union[str, Path],
             params: dict[str, Any],
-            output: Path = Path("voroscoring.tsv"),
+            output: Union[str, Path] = "voroscoring_voro.tsv",
             ):
+        """Init of the VoroMQA class.
+
+        Parameters
+        ----------
+        models : list[PDBFile]
+            List of input PDB files to be scored.
+        workdir : Union[str, Path]
+            Where to do the process.
+        params : dict[str, Any]
+            Config file parameters
+        output : Path, optional
+            Name of the generated file, by default Path("voroscoring_voro.tsv")
+        """
         self.models = models
         self.workdir = workdir
         self.params = params
-        self.output = output
+        self.output = Path(output)
 
     def run(self):
+        """Process class logic."""
         # Obtain absolute paths
         self.workdir = Path(self.workdir).resolve()
         all_pdbs = [
@@ -102,6 +126,17 @@ class VoroMQA():
             batch_index: int = 1,
             gpuid: int = -1,
             ) -> None:
+        """Preset and launch predictions on subset of pdb files.
+
+        Parameters
+        ----------
+        pdb_filepaths : list[str]
+            List of absolute path to the PDBs to score
+        batch_index : int, optional
+            Index of the batch, by default 1
+        gpuid : int, optional
+            Index of the GPU to use, by default -1
+        """
         # Create workdir
         batch_workdir = Path(self.workdir, f"batch_{batch_index}")
         batch_workdir.mkdir(parents=True)
@@ -136,6 +171,13 @@ class VoroMQA():
         os.chdir(initdir)
     
     def recombine_batches(self) -> str:
+        """Recombine batches output file in a single one.
+
+        Returns
+        -------
+        finale_output_fpath : str
+            Filepath of the recombined scores
+        """
         # Wait for all results to be obtained
         batches_result_paths = self.wait_for_termination()
         # Loop over them
@@ -173,24 +215,33 @@ class VoroMQA():
                     for h in combined_header
                     ]
                 line = '\t'.join(ordered_data)
-                filout.write(line+os.linesep)
+                filout.write(line + os.linesep)
         return finale_output_fpath
     
-    def wait_for_termination(
-            self,
-            wait_time: int = 60,
-            ) -> list[Union[str, Path]]:
+    def wait_for_termination(self, wait_time: int = 60) -> list[Path]:
+        """Wait until all results are accessible.
+
+        Parameters
+        ----------
+        wait_time : int, optional
+            Time in second between every termination checks, by default 60
+
+        Returns
+        -------
+        output_files : list[Path]
+            List of voro scores results for every batches.
+        """
         batches_dirpath = glob.glob(f"{self.workdir}/batch_*/")
-        log.info(f"Waiting for voro-mqa predictions to finish...")
+        log.info("Waiting for voro-mqa predictions to finish...")
         while True:
             try:
-                output_files: list[Union[str, Path]] = []
+                output_files: list[Path] = []
                 for batch_dir in batches_dirpath:
                     expected_outputfile = Path(batch_dir, "voro_scores.ssv")
                     assert expected_outputfile.exists()
                     assert expected_outputfile.stat().st_size != 0
                     output_files.append(expected_outputfile)
-            except AssertionError as _e:
+            except AssertionError:
                 log.info(f"Waiting {wait_time} sec more...")
                 time.sleep(wait_time)
             else:
@@ -201,7 +252,24 @@ class VoroMQA():
                 return output_files
 
     @staticmethod
-    def batched(entries: str, size: int = 300) -> Generator[list, None, None]:
+    def batched(
+            entries: list[str],
+            size: int = 300,
+            ) -> Generator[list[str], None, None]:
+        """Generate batches of defined size.
+
+        Parameters
+        ----------
+        entries : list[str]
+            List of pdb files.
+        size : int, optional
+            Maximum size in every batch, by default 300
+
+        Yields
+        ------
+        batch : Generator[list[str], None, None]
+            List of pdb files <= size.
+        """
         batch = []
         for pdb in entries:
             batch.append(pdb)
@@ -210,11 +278,28 @@ class VoroMQA():
                 batch = []
         yield batch
 
+
 def update_models_with_scores(
         output_fname: Union[str, Path],
         models: list[PDBFile],
         metric: str = "jury_score",
         ) -> list[PDBFile]:
+    """Update PDBfiles with computed scores.
+
+    Parameters
+    ----------
+    output_fname : Union[str, Path]
+        Path to the file where to access scoring data.
+    models : list[PDBFile]
+        List of PDBFiles to be updated.
+    metric : str, optional
+        Name of the metric to be retrieved, by default "jury_score"
+
+    Returns
+    -------
+    models : list[PDBFile]
+        The updated list of PDBfiles now holding the score and rank attributes.
+    """
     scores_mapper: dict[str, float] = {}
     # Read output file
     with open(output_fname, 'r') as filin:

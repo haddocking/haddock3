@@ -15,7 +15,17 @@ class ScoringModule(BaseHaddockModule):
             sep: str = "\t",
             ascending_sort: bool = True,
             ) -> None:
-        """Save the output in comprehensive tables."""
+        r"""Save the output in comprehensive tables.
+
+        Parameters
+        ----------
+        output_fname : FilePath
+            Path to the file where to write scoring data.
+        sep : str, optional
+            Charater used as separator in file, by default "\t"
+        ascending_sort : bool, optional
+            Should the data be sorted in ascending order, by default True
+        """
         # saves scoring data
         sc_data = []
         for pdb in self.output_models:
@@ -30,5 +40,6 @@ class ScoringModule(BaseHaddockModule):
 
         return
 
+
 class CNSScoringModule(BaseCNSModule, ScoringModule):
-    """Parent class for Scoring modules."""
+    """Parent class for CNS Scoring modules."""

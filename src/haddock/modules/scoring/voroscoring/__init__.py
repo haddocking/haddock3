@@ -1,4 +1,10 @@
-"""
+"""Voro scoring module.
+
+This module performs scoring of input pdb models using ftdmp voro-mqa-all tool.
+For more information, please check: https://github.com/kliment-olechnovic/ftdmp
+
+It is a third party module, and requires the appropriate set up and intallation
+for it to run without issue.
 """
 from pathlib import Path
 
@@ -30,11 +36,12 @@ class HaddockModule(ScoringModule):
         """Initialize class."""
         super().__init__(order, path, init_params)
 
-
     @classmethod
     def confirm_installation(cls) -> None:
         """Confirm module is installed."""
-        # FIXME ? Check if conda env is accessible
+        # FIXME ? Check :
+        # - if conda env is accessible
+        # - if ftdmp is accessible
         return
 
     def _run(self) -> None:
@@ -58,8 +65,8 @@ class HaddockModule(ScoringModule):
 
         # Launch machinery
         jobs: list[VoroMQA] = [voromqa]
-        # Run CNS Jobs
-        self.log(f"Running Voro-mqa scoring")
+        # Run Job(s)
+        self.log("Running Voro-mqa scoring")
         Engine = get_engine(self.params['mode'], self.params)
         engine = Engine(jobs)
         engine.run()

@@ -80,9 +80,6 @@ class HaddockModule(ScoringModule):
             )
         # Write output file
         scoring_tsv_fpath = f"{RECIPE_PATH.name}.tsv"
-        self.output(
-            scoring_tsv_fpath,
-            ascending_sort="_energy" in self.params["metric"],
-            )
+        self.output(scoring_tsv_fpath)
         # Export to next module
         self.export_io_models()

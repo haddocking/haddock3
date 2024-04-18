@@ -314,6 +314,9 @@ def update_models_with_scores(
             score = float(s_[header.index(metric)])
             # Only extract model filename
             model_filename = modelpath.split('/')[-1]
+            # Reverse score if not an energy
+            if "_energy" not in metric:
+                score = -score
             # Hold score
             scores_mapper[model_filename] = score
 
@@ -321,10 +324,7 @@ def update_models_with_scores(
     ranking_mapper = {
         model_filename: rank
         for rank, model_filename in enumerate(
-            sorted(
-                scores_mapper,
-                reverse="_energy" not in metric,
-                ),
+            sorted(scores_mapper),
             start=1,
             )
         }

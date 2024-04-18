@@ -93,7 +93,7 @@ class VoroMQA():
                 gpuid=bi % self.params['nb_gpus'],
                 )
         # Recombine all batches output files
-        scores_fpath = self.recombine_batches(self.workdir)
+        scores_fpath = self.recombine_batches()
         log.info(f"Generated output file: {scores_fpath}")
 
     def run_voro_batch(
@@ -181,6 +181,7 @@ class VoroMQA():
             wait_time: int = 60,
             ) -> list[Union[str, Path]]:
         batches_dirpath = glob.glob(f"{self.workdir}/batch_*/")
+        log.info(f"Waiting for voro-mqa predictions to finish...")
         while True:
             try:
                 output_files: list[Union[str, Path]] = []
@@ -190,9 +191,13 @@ class VoroMQA():
                     assert expected_outputfile.stat().st_size != 0
                     output_files.append(expected_outputfile)
             except AssertionError as _e:
-                log.info(f"Waiting {wait_time} sec...")
+                log.info(f"Waiting {wait_time} sec more...")
                 time.sleep(wait_time)
             else:
+                log.info(
+                    "VoroMQA results are accessible: "
+                    f"{len(output_files)} batches"
+                    )
                 return output_files
 
     @staticmethod

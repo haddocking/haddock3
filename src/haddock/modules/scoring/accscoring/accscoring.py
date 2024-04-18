@@ -22,21 +22,25 @@ def rearrange_output(output_name: FilePath, path: FilePath,
         """
         output_fname = Path(path, output_name)
         log.info(f"rearranging output files into {output_fname}")
+        key = output_fname.stem.split(".")[0]
         # Combine files
         with open(output_fname, 'w') as out_file:
             for core in range(ncores):
-                tmp_file = Path(path, "accscoring_" + str(core) + ".tsv")
+                tmp_file = Path(path, f"{key}_" + str(core) + ".tsv")
                 with open(tmp_file) as infile:
                     out_file.write(infile.read())
                 log.debug(f"File number {core} written")
                 tmp_file.unlink()
-        log.info("Completed reconstruction of accscoring files.")
-        log.info(f"{output_fname} created.")
-        # dataframe conversion and sorting
-        df = pd.read_csv(output_fname, sep="\t", header=None)
-        df.columns = ["structure", "original_name", "md5", "score"]
-        df_sorted = df.sort_values(by="score", ascending=True)
-        df_sorted.to_csv(output_fname, sep="\t", index=False, na_rep="None")
+        log.info(f"Completed reconstruction of {key} files.")
+        
+def prettify_df(output_fname, columns, sortby=None):
+    # dataframe conversion and sorting
+    df = pd.read_csv(output_fname, sep="\t", header=None)
+    df.columns = columns
+    if sortby:
+        df = df.sort_values(by=sortby, ascending=True)
+    df.to_csv(output_fname, sep="\t", index=False, na_rep="None")
+    log.info(f"{output_fname} created.")
 
 
 def calc_acc_score(result_dict, buried_resdic, acc_resdic):
@@ -63,17 +67,21 @@ def calc_acc_score(result_dict, buried_resdic, acc_resdic):
     """
     # filter the residues
     acc_score = 0
+    buried_viols = {}
+    acc_viols = {}
     for chain in result_dict:
         if chain in buried_resdic:
             # for every supposedly buried residue that is not buried,
             # the score should increase by one
-            buried_viol_sc = len(set(buried_resdic[chain]).intersection(result_dict[chain]))
+            buried_viols[chain] = set(buried_resdic[chain]).difference(result_dict[chain])
+            buried_viol_sc = len(buried_viols[chain])
             acc_score += buried_viol_sc
         if chain in acc_resdic:
             # now the opposite logic with the accessible amino acids. 
-            acc_viol_sc = len(set(acc_resdic[chain]).difference(result_dict[chain]))
+            acc_viols[chain] = set(acc_resdic[chain]).difference(result_dict[chain])
+            acc_viol_sc = len(acc_viols[chain])
             acc_score += acc_viol_sc
-    return acc_score
+    return acc_score, buried_viols, acc_viols
 
 
 class AccScoreJob:
@@ -104,6 +112,7 @@ class AccScore:
             buried_resdic,
             acc_resdic,
             cutoff,
+            viol_output_name
             ):
         """Initialise AccScore class."""
         self.model_list = model_list
@@ -114,7 +123,9 @@ class AccScore:
         self.acc_resdic = acc_resdic
         self.cutoff = cutoff
         self.data = []
-        
+        self.violations = []
+        self.viol_output_name = viol_output_name
+
     def run(self):
         """run accessibility calculations."""
         for mod in self.model_list:
@@ -122,11 +133,19 @@ class AccScore:
             try:
                 access_data = get_accessibility(mod_path)
                 result_dict = apply_cutoff(access_data, self.cutoff)
-                acc_score = calc_acc_score(result_dict, self.buried_resdic, self.acc_resdic)
+                acc_score, buried_viols, acc_viols = calc_acc_score(result_dict, self.buried_resdic, self.acc_resdic)
             except AssertionError as e:
                 log.warning(f"Error in get_accessibility for {mod_path}: {e}.")
                 acc_score = None
             self.data.append([mod.file_name, mod.ori_name, mod.md5, acc_score])
+            violations_data = [mod.file_name]
+            for ch in buried_viols:
+                buried_str = ",".join([str(res) for res in sorted(buried_viols[ch])])                
+                violations_data.append(buried_str)
+            for ch in acc_viols:
+                acc_str = ",".join([str(res) for res in sorted(acc_viols[ch])])
+                violations_data.append(acc_str)
+            self.violations.append(violations_data)
         return
     
     def output(self):
@@ -134,3 +153,8 @@ class AccScore:
         output_fname = Path(self.path, self.output_name)
         df = pd.DataFrame(self.data)
         df.to_csv(output_fname, sep="\t", index=False, header=False)
+        # now we save the violations
+        violations_fname = Path(self.path, self.viol_output_name)
+        viol_df = pd.DataFrame(self.violations)        
+        viol_df.to_csv(violations_fname, sep="\t", index=False, header=False)
+        

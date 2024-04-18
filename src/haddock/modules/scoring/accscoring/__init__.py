@@ -17,6 +17,7 @@ from haddock.libs.libparallel import get_index_list
 from haddock.modules.scoring.accscoring.accscoring import (
     AccScore,
     AccScoreJob,
+    prettify_df,
     rearrange_output,
 )
 from haddock.modules.analysis import (
@@ -68,12 +69,20 @@ class HaddockModule(BaseHaddockModule):
             in self.params.items()
             if key.startswith("resdic_accessible")
             }
-        
+        # remove _
+        buried_resdic.pop("_")
+        acc_resdic.pop("_")
+        # finding the chains
+        buried_violations_chains = [f"acc_{ch}" for ch in acc_resdic.keys()]
+        acc_violations_chains = [f"bur_{ch}" for ch in buried_resdic.keys()]
+        violations_chains = buried_violations_chains + acc_violations_chains
+
         # initialize jobs
         accscoring_jobs: list[AccScoreJob] = []
         
         for core in range(ncores):
             output_name = Path("accscoring_" + str(core) + ".tsv")
+            viol_output_name = Path("violations_" + str(core) + ".tsv")
             accscore_obj = AccScore(
                 model_list=models_to_score[index_list[core]:index_list[core + 1]],
                 output_name=output_name,
@@ -82,6 +91,7 @@ class HaddockModule(BaseHaddockModule):
                 buried_resdic=buried_resdic,
                 acc_resdic=acc_resdic,
                 cutoff=self.params["cutoff"],
+                viol_output_name=viol_output_name,
                 )
             
             job = AccScoreJob(
@@ -102,6 +112,13 @@ class HaddockModule(BaseHaddockModule):
             path=Path("."),
             ncores=ncores
             )
+        prettify_df(output_name, columns=["structure", "original_name", "md5", "score"], sortby="score")
+        violations_df = rearrange_output(
+            "violations.tsv",
+            path=Path("."),
+            ncores=ncores
+            )
+        prettify_df("violations.tsv", columns=["structure"] + violations_chains)
 
         self.output_models = models_to_score
         self.export_io_models()

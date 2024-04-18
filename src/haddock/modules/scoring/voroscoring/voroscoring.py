@@ -7,7 +7,7 @@ from random import randint
 
 from haddock import log
 from haddock.core.typing import Any, Generator, Path, Union
-from haddock.libs.libontology import PDBFile
+from haddock.libs.libontology import NaN, PDBFile
 
 
 VOROMQA_CFG_TEMPLATE = """#!/bin/bash
@@ -214,7 +214,7 @@ def update_models_with_scores(
         output_fname: Union[str, Path],
         models: list[PDBFile],
         metric: str = "jury_score",
-        ) -> tuple[list[PDBFile], dict[str, dict[str, float]]]:
+        ) -> list[PDBFile]:
     scores_mapper: dict[str, float] = {}
     # Read output file
     with open(output_fname, 'r') as filin:
@@ -244,17 +244,14 @@ def update_models_with_scores(
             )
         }
 
-    data_mapper = {
-        model_filename: {
-            "score": scores_mapper[model_filename],
-            "rank": ranking_mapper[model_filename],
-            }
-        }
-
     # Loop over input models
     for model in models:
-        # only modify the model score
-        model.score = data_mapper[model.file_name]["score"]
-        model.rank = data_mapper[model.file_name]["rank"]
-
-    return models, data_mapper
+        # Add score and rank as attribute
+        if model.file_name in scores_mapper.keys():
+            model.score = scores_mapper[model.file_name]
+            model.rank = ranking_mapper[model.file_name]
+        else:
+            # Go for cheese nan
+            model.score = NaN
+            model.rank = NaN
+    return models

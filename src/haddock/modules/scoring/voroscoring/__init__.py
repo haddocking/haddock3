@@ -47,6 +47,7 @@ class HaddockModule(ScoringModule):
         except Exception as e:
             self.finish_with_error(e)
 
+        # Initiate VoroMQA object
         output_fname = Path(f"{RECIPE_PATH.name}_voro.tsv")
         voromqa = VoroMQA(
             models_to_score,
@@ -54,8 +55,9 @@ class HaddockModule(ScoringModule):
             self.params,
             output=output_fname,
             )
-        jobs: list[VoroMQA] = [voromqa]
 
+        # Launch machinery
+        jobs: list[VoroMQA] = [voromqa]
         # Run CNS Jobs
         self.log(f"Running Voro-mqa scoring")
         Engine = get_engine(self.params['mode'], self.params)
@@ -64,7 +66,7 @@ class HaddockModule(ScoringModule):
         self.log("Voro-mqa scoring finished!")
 
         # Update score of output models
-        self.output_models, models_scores = update_models_with_scores(
+        self.output_models = update_models_with_scores(
             output_fname,
             models_to_score,
             metric=self.params["metric"],
@@ -76,4 +78,4 @@ class HaddockModule(ScoringModule):
             ascending_sort="_energy" in self.params["metric"],
             )
         # Export to next module
-        self.export_io_models(faulty_tolerance=self.params["tolerance"])
+        self.export_io_models()

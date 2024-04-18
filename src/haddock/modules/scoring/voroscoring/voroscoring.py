@@ -99,12 +99,11 @@ class VoroMQA():
     def run_voro_batch(
             self,
             pdb_filepaths: list[Union[str, Path]],
-            base_workdir: Union[str, Path],
             batch_index: int = 1,
             gpuid: int = -1,
             ) -> None:
         # Create workdir
-        batch_workdir = Path(base_workdir, f"batch_{batch_index}")
+        batch_workdir = Path(self.workdir, f"batch_{batch_index}")
         batch_workdir.mkdir(parents=True)
 
         # Create list of pdb files

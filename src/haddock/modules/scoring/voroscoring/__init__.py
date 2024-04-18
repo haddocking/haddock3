@@ -20,11 +20,17 @@ class HaddockModule(ScoringModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self,
-                 order: int,
-                 path: Path,
-                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
-        super().__init__(order, path, initial_params=initial_params)
+    def __init__(
+            self,
+            order: int,
+            path: Path,
+            *ignore: Any,
+            init_params: FilePath = DEFAULT_CONFIG,
+            **everything: Any,
+            ) -> None:
+        """Initialize class."""
+        super().__init__(order, path, init_params)
+
 
     @classmethod
     def confirm_installation(cls) -> None:

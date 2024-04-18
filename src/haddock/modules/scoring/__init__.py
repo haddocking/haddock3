@@ -3,9 +3,10 @@ import pandas as pd
 
 from haddock.core.typing import FilePath
 from haddock.modules.base_cns_module import BaseCNSModule
+from haddock.modules import BaseHaddockModule
 
 
-class ScoringModule(BaseCNSModule):
+class ScoringModule(BaseHaddockModule):
     """Parent class for Scoring modules."""
 
     def output(self, output_fname: FilePath, sep: str = "\t") -> None:
@@ -23,3 +24,6 @@ class ScoringModule(BaseCNSModule):
         df_sc_sorted.to_csv(output_fname, sep=sep, index=False, na_rep="None")
 
         return
+
+class CNSScoringModule(BaseCNSModule, ScoringModule):
+    """Parent class for Scoring modules."""

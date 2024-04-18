@@ -70,12 +70,12 @@ class VoroMQA():
             models: list[Union[str, Path, PDBFile]],
             workdir: Union[str, Path],
             params: dict[str, Any],
-            output_filepath: Path = Path("voroscoring.tsv"),
+            output: Path = Path("voroscoring.tsv"),
             ):
         self.models = models
         self.workdir = workdir
         self.params = params
-        self.output = output_filepath
+        self.output = output
 
     def run(self):
         # Obtain absolute paths
@@ -164,7 +164,7 @@ class VoroMQA():
             )
 
         # Write final output file
-        finale_output_fpath = f"{self.workdir}/{self.output_filepath}"
+        finale_output_fpath = f"{self.workdir}/{self.output}"
         with open(finale_output_fpath, "w") as filout:
             file_header = '\t'.join(combined_header)
             filout.write(file_header + os.linesep)

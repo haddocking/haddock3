@@ -81,7 +81,7 @@ class VoroMQA():
         # Obtain absolute paths
         self.workdir = Path(self.workdir).resolve()
         all_pdbs = [
-            Path(mdl.path, mdl.file_name).resolve()
+            str(Path(mdl.path, mdl.file_name).resolve())
             for mdl in self.models
             ]
         # Loop over batches
@@ -89,7 +89,7 @@ class VoroMQA():
             # Run slurm
             self.run_voro_batch(
                 batch,
-                batch_index=bi,
+                batch_index=bi + 1,
                 gpuid=bi % self.params['nb_gpus'],
                 )
         # Recombine all batches output files
@@ -98,7 +98,7 @@ class VoroMQA():
 
     def run_voro_batch(
             self,
-            pdb_filepaths: list[Union[str, Path]],
+            pdb_filepaths: list[str],
             batch_index: int = 1,
             gpuid: int = -1,
             ) -> None:

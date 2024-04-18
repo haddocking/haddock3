@@ -75,7 +75,7 @@ class VoroMQA():
         self.models = models
         self.workdir = workdir
         self.params = params
-        self.output_filepath = output_filepath
+        self.output = output_filepath
 
     def run(self):
         # Obtain absolute paths

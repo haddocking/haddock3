@@ -8,7 +8,6 @@ from haddock.modules.scoring import ScoringModule
 from haddock.modules.scoring.voroscoring.voroscoring import (
     VoroMQA,
     update_models_with_scores,
-    write_models_scores,
     )
 
 RECIPE_PATH = Path(__file__).resolve().parent

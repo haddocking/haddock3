@@ -2,7 +2,7 @@
 """
 from pathlib import Path
 
-from haddock.core.typing import FilePath
+from haddock.core.typing import Any, FilePath
 from haddock.modules import get_engine
 from haddock.modules.scoring import ScoringModule
 from haddock.modules.scoring.voroscoring.voroscoring import (

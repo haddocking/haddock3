@@ -104,6 +104,7 @@ MASS OP1 15.999
 MASS OR3 15.999
 MASS OC  15.999
 MASS OH1 15.999
+MASS OH1C 15.999
 MASS OHP 15.999
 MASS OUF 15.999
 MASS PP  30.97400
@@ -1726,6 +1727,37 @@ residue SER
   DONO HN   N
   DONO HG   OG
   ACCE OG  " "
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue SEC !Serine with reduced vdw on the OG1 oxygen for covalent docking
+  group
+    ATOM N   TYPE=NH1    CHARge=-0.570 end
+    ATOM HN  TYPE=H      CHARge= 0.370 end
+    ATOM CA  TYPE=CH1E   CHARge= 0.200 end
+    ATOM HA  TYPE=HA     CHARge= 0.000 end
+    ATOM CB  TYPE=CH2E   CHARge= 0.200 end
+    ATOM HB1 TYPE=HA     CHARge= 0.000 end
+    ATOM HB2 TYPE=HA     CHARge= 0.000 end
+    ATOM OG  TYPE=OH1C   CHARge= 0.000 end
+    ATOM C   TYPE=C      CHARge= 0.500 end
+    ATOM O   TYPE=O      CHARge=-0.500 end
+
+  BOND N  HN
+  BOND N  CA     BOND CA HA
+  BOND CA CB     BOND CB HB1     BOND CB HB2
+  BOND CB OG 
+  BOND O  C
+  BOND C  CA
+
+  IMPRoper HA N C CB      !chirality CA
+  IMPRoper HB1 HB2 CA OG  !stereo CB
+
+  DIHEdral OG  CB  CA  N
+
+  DONO HN   N
   ACCE O    C
 end
 

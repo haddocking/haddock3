@@ -61,14 +61,23 @@ class WorkflowManager:
 
     def postprocess(self) -> None:
         """Postprocess the workflow."""
+        # is the workflow going to be cleaned?
+        is_cleaned = self.recipe.steps[0].config['clean']
+        # Is the workflow supposed to run offline
+        offline = self.recipe.steps[0].config['offline']
+        
         capri_steps: list[int] = []
         for step in self.recipe.steps:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)  # type: ignore
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
-        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None)
-        # call cli_traceback
-        cli_traceback("./")
+        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None,
+                    inter=False, is_cleaned=is_cleaned, offline=offline)
+        # call cli_traceback. If it fails, it's not a big deal
+        try:
+            cli_traceback("./")
+        except Exception as e:
+            log.warning(f"Error running traceback: {e}")
 
 
 class Workflow:

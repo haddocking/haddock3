@@ -54,9 +54,12 @@ all categories and modules. Below is a summary of the available modules:
     * `emscoring`: *scoring of a complex performing a short EM (builds the topology and all missing atoms).*
     * `mdscoring`: *scoring of a complex performing a short MD in explicit solvent + EM (builds the topology and all missing atoms).*
 * **Analysis modules**
+    * `alascan`: *Performs alanine scanning on the models generated in the previous step.*
     * `caprieval`: *Calculates CAPRI metrics (i-RMDS, l-RMSD, Fnat, DockQ) with respect to the top scoring model or reference structure if provided.*
+    * `contactmap`: *Calculates the contact maps for the models generated in the previous step.*
     * `clustfcc`: *Clusters models based on the fraction of common contacts (FCC)*
     * `clustrmsd`: *Clusters models based on pairwise RMSD matrix calculated with the `rmsdmatrix` module.*
+    * `ilrmsdmatrix`: *Calculates the pairwise iLRMSD matrix between all the models generated in the previous step.*
     * `rmsdmatrix`: *Calculates the pairwise RMSD matrix between all the models generated in the previous step.*
     * `seletop`: *Selects the top N models from the previous step.*
     * `seletopclusts`: *Selects top N clusters from the previous step.*
@@ -107,7 +110,7 @@ You can find examples of HADDOCK3 workflows for the different biological
 systems in the `examples` [subfolder][examples] of the HADDOCK3 folder.
 
 HADDOCK3 will start running (different execution modes are available using
-either local resources (threads) or in HPC mode using a batch queuing system) -
+either local resources (threads) or in "batch" mode using a batch queuing system) -
 for details, see [here][queue]. See examples in the `examples` [subfolder][examples]
 for configuration files ending in `-full.cfg`.
 

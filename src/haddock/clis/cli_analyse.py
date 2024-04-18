@@ -27,6 +27,9 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.clis.cli_unpack import main as haddock3_unpack
+from haddock.clis.cli_clean import main as haddock3_clean
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -39,7 +42,9 @@ from haddock.core.typing import (
     ParamMap,
 )
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.clean_steps import _unpack_gz
 from haddock.libs.libcli import _ParamsToDict
+from haddock.libs.libio import archive_files_ext
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import (
     ClRank,
@@ -51,10 +56,12 @@ from haddock.libs.libplots import (
 )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
+from haddock import modules_defaults_path
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
 ANA_FOLDER = "analysis"  # name of the analysis folder
+INTER_STR = INTERACTIVE_RE_SUFFIX  # suffix of interactive analysis folders
 
 
 def get_cluster_ranking(capri_clt_filename: FilePath, top_cluster: int) -> ClRank:
@@ -153,6 +160,30 @@ ap.add_argument(
 )
 
 ap.add_argument(
+    "--inter",
+    help="interactive analysis",
+    required=False,
+    type=bool,
+    default=False
+    )
+
+ap.add_argument(
+    "--is_cleaned",
+    help="is the directory going to be cleaned?",
+    required=False,
+    type=bool,
+    default=False
+)
+
+ap.add_argument(
+    "--offline",
+    help="Should plots js functions be self-contained?",
+    required=False,
+    type=bool,
+    default=False
+)
+
+ap.add_argument(
     "-p",
     "--other-params",
     dest="other_params",
@@ -188,7 +219,7 @@ def maincli() -> None:
     cli(ap, main)
 
 
-def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> None:
+def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cleaned: bool) -> None:
     """
     Run the caprieval analysis.
 
@@ -205,6 +236,11 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> No
     io = ModuleIO()
     filename = Path("..", f"{step}/io.json")
     io.load(filename)
+    # unpack the files if they are compressed
+    if is_cleaned:
+        default_general_params = read_from_yaml_config(modules_defaults_path)
+        path_to_unpack = io.output[0].path
+        haddock3_unpack(path_to_unpack, ncores=default_general_params["ncores"])
     # create capri
     caprieval_module = HaddockModule(
         order=1,
@@ -216,6 +252,9 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> No
     caprieval_module.previous_io = io
     # run capri module
     caprieval_module._run()
+    # compress files if they should be compressed
+    if is_cleaned:
+        haddock3_clean(path_to_unpack, ncores=default_general_params["ncores"])
 
 
 def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
@@ -281,6 +320,65 @@ def update_paths_in_capri_dict(
     return new_capri_dict
 
 
+def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_name: FilePath) -> None:
+    """
+    Zip the top ranked structures.
+
+    Parameters
+    ----------
+    cluster_ranking : dict
+        {cluster_id : cluster_rank} dictionary
+    ss_file : str or Path
+        capri ss filename
+
+    Returns
+    -------
+    output_zipfile : str or Path
+        path to the zipped file
+    """
+    capri_df = read_capri_table(capri_filename, comment="#")
+    gb_cluster = capri_df.groupby("cluster_id")
+    for cl_id, cl_df in gb_cluster:
+        if cl_id in cluster_ranking.keys():
+            if cl_id != "-":
+                structs = cl_df.loc[cl_df["model-cluster_ranking"] <= 4][["model", "model-cluster_ranking"]]
+            else:
+                structs = cl_df.loc[cl_df["caprieval_rank"] <= 10][["model", "caprieval_rank"]]
+            structs.columns = ["model", "rank"]
+            # iterate over the structures
+            for _, row in structs.iterrows():
+                struct = Path(row["model"])
+                struct_gz = Path(f"{struct}.gz")
+                rank = row["rank"]
+                # set target name
+                if cl_id != "-":
+                    target_name = f"cluster_{cluster_ranking[cl_id]}_model_{rank}.pdb"
+                else:
+                    target_name = f"model_{rank}.pdb"
+                # copy the structure
+                if Path(struct).exists():
+                    shutil.copy(struct, Path(target_name))
+                elif struct_gz.exists():
+                    shutil.copy(struct_gz, ".")
+                    # unpack the file
+                    _unpack_gz(Path(".", struct_gz.name))
+                    shutil.move(struct.name, Path(target_name))
+                else:
+                    log.warning(f"structure {struct} not found")
+
+    # now make the archive and delete the pdb files
+    archive_files_ext(".", "pdb")
+    for file in Path(".").glob("*.pdb"):
+        file.unlink()
+    # move archive to summary
+    expected_archive = Path(".", "pdb.tgz")
+    if expected_archive.exists():
+        shutil.move("pdb.tgz", summary_name)
+        log.info(f"Summary archive {summary_name} created!")
+    else:
+        log.warning(f"Summary archive {summary_name} not created!")
+
+
 def analyse_step(
     step: str,
     run_dir: FilePath,
@@ -289,6 +387,8 @@ def analyse_step(
     top_cluster: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
+    is_cleaned: Optional[bool],
+    offline: bool = False,
 ) -> None:
     """
     Analyse a step.
@@ -317,19 +417,27 @@ def analyse_step(
 
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
+    ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
+    clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
     if step_name != "caprieval":
-        capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
+        if ss_fname.exists() and clt_fname.exists():
+            log.info(f"step {step} has caprieval data, files are available")
+            run_capri = False
+        else:
+            capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
+            run_capri = True
     else:
         log.info(f"step {step} is caprieval, files should be already available")
-        ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
+        run_capri = False
+
+    if run_capri == False:
         shutil.copy(ss_fname, target_path)
-        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(clt_fname, target_path)
 
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
-    if step_name != "caprieval":
-        run_capri_analysis(step, run_dir, capri_dict)
+    if run_capri == True:
+        run_capri_analysis(step, run_dir, capri_dict, is_cleaned)
 
     log.info("CAPRI files identified")
     # plotting
@@ -341,10 +449,24 @@ def analyse_step(
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatters = scatter_plot_handler(ss_file, cluster_ranking, format, scale)
-        boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
-        tables = clt_table_handler(clt_file, ss_file)
+        scatters = scatter_plot_handler(
+            ss_file,
+            cluster_ranking,
+            format,
+            scale,
+            offline=offline,
+            )
+        boxes = box_plot_handler(
+            ss_file,
+            cluster_ranking,
+            format,
+            scale,
+            offline=offline,
+            )
+        tables = clt_table_handler(clt_file, ss_file, is_cleaned)
         report_generator(boxes, scatters, tables, step)
+        # provide a zipped archive of the top ranked structures
+        zip_top_ranked(ss_file, cluster_ranking, Path("summary.tgz"))
 
 
 def main(
@@ -353,6 +475,9 @@ def main(
     top_cluster: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
+    inter: Optional[bool],
+    is_cleaned: Optional[bool],
+    offline: bool = False,
     **kwargs: Any,
 ) -> None:
     """
@@ -374,6 +499,9 @@ def main(
 
     scale : int
         scale for images.
+
+    inter: bool
+        analyse only steps labelled as 'interactive'
     """
     log.level = 20
     log.info(
@@ -398,33 +526,46 @@ def main(
     # Reading steps
     log.info("Reading input run directory")
     # get the module folders from the run_dir input
-    selected_steps = get_module_steps_folders(Path("./"), modules)
-    log.info(f"selected steps: {', '.join(selected_steps)}")
+    sel_steps = get_module_steps_folders(Path("./"), modules)
+    if inter:
+        sel_steps = [st for st in sel_steps if st.endswith(INTER_STR)]
+    else:
+        sel_steps = [st for st in sel_steps if not st.endswith(INTER_STR)]
+    log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis
     good_folder_paths: list[Path] = []
     bad_folder_paths: list[Path] = []
-    for step in selected_steps:
+    for step in sel_steps:
         subfolder_name = f"{step}_analysis"
         target_path = Path(Path("./"), subfolder_name)
 
         # check if subfolder is already present
         dest_path = Path(ANA_FOLDER, subfolder_name)
         if dest_path.exists():
-            if len(os.listdir(dest_path)) != 0:
+            if len(os.listdir(dest_path)) != 0 and not inter:
                 log.warning(
-                    f"{dest_path} exists and is not empty. " "Skipping analysis..."
-                )
+                    f"{dest_path} exists and is not empty. "
+                    "Skipping analysis..."
+                    )
                 continue
-            else:  # subfolder is empty, remove it.
-                log.info(f"Removing empty folder {dest_path}.")
+            else:  # subfolder is empty or is interactive, remove it.
+                log.info(f"Removing folder {dest_path}.")
                 shutil.rmtree(dest_path)
 
         # run the analysis
         error = False
         try:
             analyse_step(
-                step, Path("./"), capri_dict, target_path, top_cluster, format, scale
+                step,
+                Path("./"),
+                capri_dict,
+                target_path,
+                top_cluster,
+                format,
+                scale,
+                is_cleaned,
+                offline=offline,
             )
         except Exception as e:
             error = True

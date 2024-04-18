@@ -41,6 +41,10 @@ def get_index_list(nmodels, ncores):
     index_list : list
         List of model indexes to be used for the parallel scanning.
     """
+    if nmodels < 1:
+        raise ValueError(f"nmodels ({nmodels})) must be greater than 0")
+    if ncores < 1:
+        raise ValueError(f"ncores ({ncores}) must be greater than 0")
     spc = nmodels // ncores
     # now the remainder
     rem = nmodels % ncores
@@ -137,6 +141,9 @@ class Scheduler:
                 worker.start()
 
             c = 1
+            l = 1
+            nlog = max(1,int(self.num_tasks)/10)
+
             for worker in self.worker_list:
                 # Wait for the worker to finish
                 worker.join()
@@ -152,8 +159,12 @@ class Scheduler:
                             f'{t.output.parents[0].name}/'
                             f'{t.output.name}'
                             )
-                    log.info(f'>> {task_ident} completed {per:.0f}% ')
                     c += 1
+                    if l == nlog:
+                        log.info(f'>> completed {per:.0f}% ')
+                        l = 1
+                    else:
+                        l += 1
 
             log.info(f"{self.num_tasks} tasks finished")
 

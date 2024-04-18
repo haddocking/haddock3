@@ -5,7 +5,7 @@ Once you have [cloned the HADDOCK3 repository](INSTALL.md), please follow these 
 
 ## 1 Download CNS
 
-Downloading CNS requires a license, which academic users can [request for free](http://cns-online.org/cns_request/). You will be sent a password for the download via e-mail.
+Downloading CNS requires a license, which academic users can [request for free](http://cns-online.org) (click on the `Download` menu and fill the form). You will be sent a password for the download via e-mail.
 Using the link provided in the same e-mail, download CNS ("Source installer (compilation required on your system)") to the directory in which you want to install it (for example `software`). Navigate to this directory, then uncompress and extract the archive:
 
 ```bash

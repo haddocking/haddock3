@@ -12,6 +12,7 @@ from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     calc_stats,
     capri_cluster_analysis,
+    get_previous_cns_step,
     load_contacts,
     rearrange_ss_capri_output,
     )
@@ -326,7 +327,7 @@ def test_make_output(protprot_caprimodule):
     observed_outf_l = read_capri_file(ss_fname)
     expected_outf_l = [
         ['md5', 'caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
-         'dockq', 'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+         'dockq', 'cluster_id', 'cluster_ranking', 'model-cluster_ranking'],
         ['-', '-', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', '1', '1', '10'], ]
 
     assert observed_outf_l == expected_outf_l
@@ -451,8 +452,8 @@ def test_rearrange_ss_capri_output():
     with open(f"{golden_data}/capri_ss_1.tsv", 'w') as fh:
         fh.write(
             "model	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	"
-            "dockq	cluster-id	cluster-ranking	"
-            "model-cluster-ranking" + os.linesep)
+            "dockq	cluster_id	cluster_ranking	"
+            "model-cluster_ranking" + os.linesep)
         fh.write(
             "../1_emscoring/emscoring_909.pdb	1	-424.751	0.000	"
             "1.000	0.000	0.000	1.000	-	-	-" + os.linesep)
@@ -627,3 +628,11 @@ def test_single_chain_model(protprot_onechain_mod_caprimodule, params):
     # dockq
     protprot_onechain_mod_caprimodule.calc_dockq()
     assert np.isnan(protprot_onechain_mod_caprimodule.dockq)
+
+
+def test_get_previous_cns_step():
+    "Test getting the previous CNS step."
+    mock_steps = ["0_topoaa", "1_emscoring", "1_emscoring_fake", "2_clustfcc"]
+    assert get_previous_cns_step(mock_steps) == "1_emscoring"
+    mock_steps_2 = ["bla", "test"]
+    assert get_previous_cns_step(mock_steps_2) is None

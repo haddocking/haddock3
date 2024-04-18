@@ -2,6 +2,7 @@
 import os
 import shutil
 from pathlib import Path
+import tempfile
 
 import pytest
 
@@ -9,6 +10,7 @@ from haddock.clis.cli_analyse import (
     get_cluster_ranking,
     main,
     update_capri_dict,
+    zip_top_ranked,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules.analysis.caprieval import \
@@ -71,7 +73,15 @@ def test_main(example_capri_ss, example_capri_clt):
     shutil.copy(example_capri_clt, Path(step_dir, "capri_clt.tsv"))
 
     # run haddock3-analyse
-    main(run_dir, [2], 5, format=None, scale=None)
+    main(
+        run_dir,
+        [2],
+        5,
+        format=None,
+        scale=None,
+        is_cleaned=False,
+        inter=False,
+        )
 
     # check analysis directory exists
     ana_dir = Path(run_dir, "analysis/")
@@ -83,3 +93,24 @@ def test_main(example_capri_ss, example_capri_clt):
     assert len(html_files) > 0
 
     shutil.rmtree(run_dir)
+
+
+def test_zip_top_ranked(example_capri_ss):
+    """Test cli_analyse zip_top_ranked function."""
+    cwd = os.getcwd()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
+        # build fake run_dir
+        rigid_dir = "1_rigidbody"
+        rigid_dir_analysis = "1_rigidbody_analysis"
+        os.mkdir(rigid_dir)
+        os.mkdir(rigid_dir_analysis)
+        # fill rigidbody directory with one file
+        shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), Path(rigid_dir, "rigidbody_383.pdb"))
+        os.chdir(rigid_dir_analysis)
+        
+        exp_cl_ranking = {1: 2}
+        zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
+        assert os.path.isfile("summary.tgz") is True
+    os.chdir(cwd)
+    

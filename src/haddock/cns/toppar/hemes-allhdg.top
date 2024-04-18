@@ -1,6 +1,7 @@
 remark file topallhdg.hemes
 
-set message off echo off end
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
 
 autogenerate
   angles=true
@@ -12,12 +13,12 @@ mass CPB  12.011
 mass CPM  12.011
 mass CYC  12.011
 mass CT   12.011
-mass C    12.011
+mass CHH  12.011
 mass NPH  14.007
 mass NPH1 14.007
 mass NPH2 14.007
 mass CYN  14.007
-mass OC   15.9994
+mass OCH  15.9994
 mass FEH  55.847
 mass HA   1.008
  
@@ -58,9 +59,9 @@ residue HEB ! Heme b
     atom CBA  type=CT   charge=-0.28 end
     atom HBA1 type=HA   charge= 0.09 end
     atom HBA2 type=HA   charge= 0.09 end
-    atom CGA  type=C    charge= 0.62 end
-    atom O1A  type=OC   charge=-0.76 end
-    atom O2A  type=OC   charge=-0.76 end
+    atom CGA  type=CHH  charge= 0.62 end
+    atom O1A  type=OCH  charge=-0.76 end
+    atom O2A  type=OCH  charge=-0.76 end
   group
     atom C3A  type=CPB  charge=-0.06 end
     atom CMA  type=CT   charge=-0.27 end
@@ -75,9 +76,9 @@ residue HEB ! Heme b
     atom HMB3 type=HA   charge= 0.09 end
   group
     atom C3B  type=CPB  charge=-0.06 end
-    atom CAB  type=C    charge=-0.20 end
+    atom CAB  type=CHH  charge=-0.20 end
     atom HAB  type=HA   charge= 0.20 end
-    atom CBB  type=C    charge=-0.20 end
+    atom CBB  type=CHH  charge=-0.20 end
     atom HBB1 type=HA   charge= 0.10 end
     atom HBB2 type=HA   charge= 0.10 end
   group
@@ -88,9 +89,9 @@ residue HEB ! Heme b
     atom HMC3 type=HA   charge= 0.09 end
   group
     atom C3C  type=CPB  charge=-0.06 end
-    atom CAC  type=C    charge=-0.20 end
+    atom CAC  type=CHH  charge=-0.20 end
     atom HAC  type=HA   charge= 0.20 end
-    atom CBC  type=C    charge=-0.20 end
+    atom CBC  type=CHH  charge=-0.20 end
     atom HBC1 type=HA   charge= 0.10 end
     atom HBC2 type=HA   charge= 0.10 end
   group
@@ -108,9 +109,9 @@ residue HEB ! Heme b
     atom CBD  type=CT   charge=-0.28 end
     atom HBD1 type=HA   charge= 0.09 end
     atom HBD2 type=HA   charge= 0.09 end
-    atom CGD  type=C    charge= 0.62 end
-    atom O1D  type=OC   charge=-0.76 end
-    atom O2D  type=OC   charge=-0.76 end
+    atom CGD  type=CHH  charge= 0.62 end
+    atom O1D  type=OCH  charge=-0.76 end
+    atom O2D  type=OCH  charge=-0.76 end
  
   bond FE   NA     
   bond FE   NB     
@@ -308,9 +309,9 @@ residue HEC ! Heme c
     atom CBA  type=CT   charge=-0.28 end
     atom HBA1 type=HA   charge= 0.09 end
     atom HBA2 type=HA   charge= 0.09 end
-    atom CGA  type=C    charge= 0.62 end
-    atom O1A  type=OC   charge=-0.76 end
-    atom O2A  type=OC   charge=-0.76 end
+    atom CGA  type=CHH  charge= 0.62 end
+    atom O1A  type=OCH  charge=-0.76 end
+    atom O2A  type=OCH  charge=-0.76 end
   group
     atom C3A  type=CPB  charge=-0.06 end
     atom CMA  type=CT   charge=-0.27 end
@@ -362,9 +363,9 @@ residue HEC ! Heme c
     atom CBD  type=CT   charge=-0.28 end
     atom HBD1 type=HA   charge= 0.09 end
     atom HBD2 type=HA   charge= 0.09 end
-    atom CGD  type=C    charge= 0.62 end
-    atom O1D  type=OC   charge=-0.76 end
-    atom O2D  type=OC   charge=-0.76 end
+    atom CGD  type=CHH  charge= 0.62 end
+    atom O1D  type=OCH  charge=-0.76 end
+    atom O2D  type=OCH  charge=-0.76 end
  
   bond FE   NA     
   bond FE   NB     
@@ -703,4 +704,5 @@ GROUP
   DIHEDRAL C11  C6   C4   N3  
 END
 
-set echo=true end
+
+set message=$old_message echo=$old_echo end

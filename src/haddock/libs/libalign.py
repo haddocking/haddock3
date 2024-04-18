@@ -31,7 +31,17 @@ from haddock import log
 from haddock.core.typing import AtomsDict, FilePath, Literal, NDFloat, Optional
 from haddock.libs.libio import pdb_path_exists
 from haddock.libs.libontology import PDBFile, PDBPath
-from haddock.libs.libpdb import split_by_chain
+from haddock.libs.libpdb import (
+    split_by_chain,
+    slc_name,
+    slc_resname,
+    slc_chainid,
+    slc_resseq,
+    slc_x,
+    slc_y,
+    slc_z,
+    slc_element,
+    )
 
 
 RES_TO_BE_IGNORED = ["SHA", "WAT"]
@@ -57,7 +67,7 @@ PROT_RES = [
     "TRP",
     "TYR",
     "VAL",
-]
+    ]
 
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
@@ -96,7 +106,7 @@ PROT_SIDE_CHAINS_DICT = {
         "CZ2",
         "CZ3",
         "CH2",
-    ],  # noqa: E501
+        ],
     "TYR": [
         "C",
         "N",
@@ -110,9 +120,9 @@ PROT_SIDE_CHAINS_DICT = {
         "CE2",
         "CZ",
         "OH",
-    ],  # noqa: E501
+        ],
     "VAL": ["C", "N", "CA", "O", "CB", "CG1", "CG2"],
-}
+    }
 
 # Bases
 DNA_ATOMS = [
@@ -132,7 +142,7 @@ DNA_ATOMS = [
     "N3",
     "C4",
     "O6",
-]
+    ]
 
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
@@ -160,7 +170,7 @@ DNA_FULL_DICT = {
         "C2'",
         "C3'",
         "O3'",
-    ],  # noqa: E501
+        ],
     "DG": [
         "P",
         "O1P",
@@ -184,7 +194,7 @@ DNA_FULL_DICT = {
         "C2'",
         "C3'",
         "O3'",
-    ],  # noqa: E501
+        ],
     "DC": [
         "P",
         "O1P",
@@ -205,7 +215,7 @@ DNA_FULL_DICT = {
         "C2'",
         "C3'",
         "O3'",
-    ],
+        ],
     "DT": [
         "P",
         "O1P",
@@ -227,8 +237,8 @@ DNA_FULL_DICT = {
         "C2'",
         "C3'",
         "O3'",
-    ],
-}
+        ],
+    }
 
 RNA_FULL_DICT = {
     "A": [
@@ -254,7 +264,7 @@ RNA_FULL_DICT = {
         "C2",
         "N3",
         "C4",
-    ],  # noqa: E501
+        ],
     "G": [
         "P",
         "OP1",
@@ -279,7 +289,7 @@ RNA_FULL_DICT = {
         "N2",
         "N3",
         "C4",
-    ],  # noqa: E501
+        ],
     "C": [
         "P",
         "OP1",
@@ -303,7 +313,7 @@ RNA_FULL_DICT = {
         "N3",
         "C4",
         "N4",
-    ],  # noqa: E501
+        ],
     "U": [
         "P",
         "OP1",
@@ -325,8 +335,8 @@ RNA_FULL_DICT = {
         "O4",
         "C5",
         "C6",
-    ],
-}
+        ],
+    }
 
 
 class ALIGNError(Exception):
@@ -409,8 +419,7 @@ def load_coords(
         model2ref_chain_dict=None,
         add_resname=None,
         ):
-    """
-    Load coordinates from PDB.
+    """Load coordinates from PDB.
 
     Parameters
     ----------
@@ -438,71 +447,102 @@ def load_coords(
     """
     coord_dic: CoordsDict = {}
     chain_dic: ResDict = {}
-    idx = 0
+    idx: int = 0
+    # Check filetype
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
+    # Read file
     with open(pdb_f, "r") as fh:
         for line in fh.readlines():
-            if line.startswith("ATOM"):
-                atom_name = line[12:16].strip()
-                resname = line[17:20].strip()
-                if resname in RES_TO_BE_IGNORED:
-                    continue
-                if model2ref_chain_dict:
-                    chain = model2ref_chain_dict[line[21]]
-                else:
-                    chain = line[21]
-                resnum = int(line[22:26])
-                x = float(line[30:38])
-                y = float(line[38:46])
-                z = float(line[46:54])
-                coords = np.asarray([x, y, z])
-                if numbering_dic and model2ref_chain_dict:
-                    try:
-                        resnum = numbering_dic[chain][resnum]
-                    except KeyError:
-                        # this residue is not matched, and so it should
-                        #  not be considered
-                        # self.log(
-                        #     f"WARNING: {chain}.{resnum}.{atom_name}"
-                        #     " was not matched!"
-                        #     )
-                        continue
-                if add_resname is True:
-                    identifier = (chain, resnum, atom_name, resname)
-                else:
-                    identifier = (chain, resnum, atom_name)
+            # Skip non ATOM records lines
+            if not line.startswith("ATOM"):
+                continue
+            # Extract PDB line data
+            atom_name = line[slc_name].strip()
+            resname = line[slc_resname].strip()
+            # Skip entries to be ignored
+            if resname in RES_TO_BE_IGNORED:
+                continue
+            else:
                 if atom_name not in atoms[resname]:
                     continue
-                if chain not in chain_dic:
-                    chain_dic[chain] = []
+            # Continue parsing of the PDB line
+            chain = line[slc_chainid]
+            resnum = int(line[slc_resseq])
+            x = float(line[slc_x])
+            y = float(line[slc_y])
+            z = float(line[slc_z])
+            coords = np.asarray([x, y, z])
+            # Remap chain name
+            if model2ref_chain_dict:
+                chain = model2ref_chain_dict[chain]
+            if numbering_dic and model2ref_chain_dict:
+                try:
+                    resnum = numbering_dic[chain][resnum]
+                except KeyError:
+                    # this residue is not matched, and so it should
+                    #  not be considered
+                    # self.log(
+                    #     f"WARNING: {chain}.{resnum}.{atom_name}"
+                    #     " was not matched!"
+                    #     )
+                    continue
+
+            # Create identifier tuple
+            if add_resname is True:
+                identifier = (chain, resnum, atom_name, resname)
+            else:
+                identifier = (chain, resnum, atom_name)
+            # Create empty chain entries
+            if chain not in chain_dic.keys():
                 if filter_resdic:
-                    # Only retrieve coordinates from the filter_resdic
-                    if chain in filter_resdic and resnum in filter_resdic[chain]:
+                    if chain in filter_resdic.keys():
+                        chain_dic[chain] = []
+                else:
+                    chain_dic[chain] = []
+
+            # Check if must eventually filter this entry
+            if filter_resdic:
+                # Only retrieve coordinates from the filter_resdic
+                if chain in filter_resdic.keys():
+                    if resnum in filter_resdic[chain]:
                         coord_dic[identifier] = coords
                         chain_dic[chain].append(idx)
                         idx += 1
-                else:
-                    # retrieve everything
-                    coord_dic[identifier] = coords
-                    chain_dic[chain].append(idx)
-                    idx += 1
+            else:
+                # retrieve everything
+                coord_dic[identifier] = coords
+                chain_dic[chain].append(idx)
+                idx += 1
+
+    # Obtain chain ranges
     chain_ranges: ChainsRange = {}
     for chain, indice in chain_dic.items():
+        # Check if NONE residues indices were extracted (empty list)
         if not indice:
-            # this may happen when filter_resdic is defined on a different set
-            # of chains
-            raise ALIGNError(f"Chain matching error on {pdb_f}, chain {chain}")
+            continue
         else:
             min_idx = min(indice)
             max_idx = max(indice)
             chain_ranges[chain] = (min_idx, max_idx)
+
+    # Check that chain_ranges is not empty
+    # NOTE: this may happen when filter_resdic is defined on a different set
+    # of chains or residues
+    if chain_ranges == {}:
+        # Build error message
+        _err_msg = (
+            f"Chain matching error on {pdb_f}! "
+            f"Filtering scheme used: {filter_resdic}."
+            "\nPlease check the input file and queried filterings."
+            )
+        # Raise the error
+        raise ALIGNError(_err_msg)
     return coord_dic, chain_ranges
 
 
 def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
-    """
-    Identify what is the molecule type of each PDB.
+    """Identify what is the molecule type of each PDB.
 
     Parameters
     ----------
@@ -533,15 +573,15 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     with open(pdb) as fh:
         for line in fh.readlines():
             if line.startswith(("ATOM", "HETATM")):
-                resname = line[17:20].strip()
-                atom_name = line[12:16].strip()
-                element = line[76:78].strip()
-                if (
-                    resname not in PROT_RES
-                    and resname not in DNA_RES
-                    and resname not in RNA_RES
-                    and resname not in RES_TO_BE_IGNORED
-                ):
+                resname = line[slc_resname].strip()
+                atom_name = line[slc_name].strip()
+                element = line[slc_element].strip()
+                if all([
+                        resname not in PROT_RES,
+                        resname not in DNA_RES,
+                        resname not in RNA_RES,
+                        resname not in RES_TO_BE_IGNORED,
+                        ]):
                     # its neither DNA/RNA nor protein, use the heavy atoms
                     # WARNING: Atoms that belong to unknown residues must
                     #  be bound to a residue name;
@@ -584,7 +624,7 @@ ResCode = Literal[
     "C",
     "T",
     "X",
-]
+    ]
 """
 The single letter code of a residue.
 
@@ -633,7 +673,7 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
             (
                 "DT",
                 "T",
-            ),  # 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501
+                ),  # 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501
             ("ALY", "K"),
             ("ASH", "D"),
             ("CFE", "C"),
@@ -657,8 +697,8 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
             ("TOP", "T"),
             ("TYP", "Y"),
             ("TYS", "Y"),
-        ]
-    )
+            ]
+        )
 
     seq_dic: dict[str, dict[int, str]] = {}
 
@@ -668,9 +708,9 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
     with open(pdb_f) as fh:
         for line in fh.readlines():
             if line.startswith("ATOM"):
-                res_num = int(line[22:26])
-                res_name = line[17:20].strip()
-                chain = line[21]
+                res_num = int(line[slc_resseq])
+                res_name = line[slc_resname].strip()
+                chain = line[slc_chainid]
                 if res_name in RES_TO_BE_IGNORED:
                     continue
                 try:
@@ -684,8 +724,8 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
 
 
 def get_align(
-    method: str, lovoalign_exec: FilePath
-) -> partial[dict[str, dict[int, int]]]:
+        method: str, lovoalign_exec: FilePath
+        ) -> partial[dict[str, dict[int, int]]]:
     """
     Get the alignment function.
 
@@ -712,16 +752,16 @@ def get_align(
         raise ValueError(
             f"Alignment method {method!r} not recognized. "
             f"Available options are {', '.join(available_alns)}"
-        )
+            )
     return align_func
 
 
 def align_strct(
-    reference: PDBFile,
-    model: PDBFile,
-    output_path: FilePath,
-    lovoalign_exec: Optional[FilePath] = None,
-) -> dict[str, dict[int, int]]:
+        reference: PDBFile,
+        model: PDBFile,
+        output_path: FilePath,
+        lovoalign_exec: Optional[FilePath] = None,
+        ) -> dict[str, dict[int, int]]:
     """
     Structuraly align and get numbering relationship.
 
@@ -743,8 +783,9 @@ def align_strct(
     """
     if lovoalign_exec is None:
         log.error(
-            "Structural alignment needs LovoAlign " "get it at github.com/m3g/lovoalign"
-        )
+            "Structural alignment needs LovoAlign "
+            "get it at github.com/m3g/lovoalign"
+            )
         raise ALIGNError("Path to LovoAlign executable required.")
 
     if not lovoalign_exec:
@@ -755,9 +796,13 @@ def align_strct(
 
     numbering_dic: dict[str, dict[int, int]] = {}
     protein_a_dic = {
-        e.stem.split("_")[-1]: e for e in split_by_chain(reference.rel_path)
-    }
-    protein_b_dic = {e.stem.split("_")[-1]: e for e in split_by_chain(model.rel_path)}
+        e.stem.split("_")[-1]: e
+        for e in split_by_chain(reference.rel_path)
+        }
+    protein_b_dic = {
+        e.stem.split("_")[-1]: e
+        for e in split_by_chain(model.rel_path)
+        }
 
     # check if chain ids match
     if protein_a_dic.keys() != protein_b_dic.keys():
@@ -773,7 +818,7 @@ def align_strct(
             f"{lovoalign_exec} -p1 {protein_a_dic[chain]} "
             f"-p2 {protein_b_dic[chain]} "
             f"-c1 {chain} -c2 {chain}"
-        )
+            )
 
         # logging.debug(f"Command is: {cmd}")
         p = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
@@ -794,7 +839,10 @@ def align_strct(
                 alignment_end_index = i - 2
             elif "ERROR" in line:
                 failed_pdb = line.split()[-1]
-                _msg = f"LovoAlign could not read {failed_pdb} " "is it a ligand?"
+                _msg = (
+                    f"LovoAlign could not read {failed_pdb} "
+                    "is it a ligand?"
+                    )
                 log.warning(_msg)
                 alignment_pass = False
 
@@ -804,8 +852,9 @@ def align_strct(
         if not alignment_pass:
             # This alignment failed, move on to the next
             log.warning(
-                f"Skipping alignment of chain {chain}, " "used sequential matching"
-            )
+                f"Skipping alignment of chain {chain}, "
+                "used sequential matching"
+                )
             continue
 
         aln_l = lovoalign_out[alignment_start_index:alignment_end_index]
@@ -817,7 +866,7 @@ def align_strct(
             fh.write(os.linesep.join(aln_l))
 
         # remove the line between the alignment segments
-        alignment = [aln_l[i : i + 3][:2] for i in range(0, len(aln_l), 3)]
+        alignment = [aln_l[i:i + 3][:2] for i in range(0, len(aln_l), 3)]
         # 100% (5 identical nucleotides / min(length(A),length(B))).
         len_seq_a = len(pa_seqdic[chain])
         len_seq_b = len(pb_seqdic[chain])
@@ -825,15 +874,17 @@ def align_strct(
             (len_seq_a - sum([e[0].count("-") for e in alignment]))
             / min(len_seq_a, len_seq_b)
             * 100
-        )
+            )
 
         if identity <= 40.0:
             log.warning(
-                f'"Structural" identity of chain {chain} is {identity:.2f}%,'
-                " please check the results carefully"
-            )
+                f'"Structural" identity of chain {chain} is {identity:.2f}%'
+                ", please check the results carefully"
+                )
         else:
-            log.info(f'"Structural" identity of chain {chain} is {identity:.2f}%')
+            log.info(
+                f'"Structural" identity of chain {chain} is {identity:.2f}%'
+                )
 
         # logging.debug("Reading alignment and matching numbering")
         for element in alignment:
@@ -928,9 +979,7 @@ def sequence_alignment(seq_ref, seq_model):
 class SeqAlign:
     """SeqAlign class."""
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         """Initialize the class."""
         self.align_dic = {}  # the alignment dictionary, important for CAPRI
         self.model2ref_chain_dict = {}  # model to reference chain dictionary
@@ -965,18 +1014,18 @@ class SeqAlign:
             log.warning(
                 f"No alignment for chain {ref_ch} is it protein/dna-rna? "
                 "Matching sequentially"
-            )
+                )
             if all("X" in s for s in self.seqs_ref[ref_ch]) and all(
-                "X" in s for s in self.seqs_model[mod_ch]
-            ):
+                    "X" in s for s in self.seqs_model[mod_ch]):
                 # this sequence contains only ligands, do it manually
                 if len(self.seqs_ref[ref_ch]) != len(self.seqs_model[mod_ch]):
                     # we cannot handle this
                     # FIXME: This should raise a proper exception instead
                     raise f"Cannot align chain {mod_ch}"  # noqa: B016
                 for ref_res, model_res in zip(
-                    self.seqdic_ref[ref_ch], self.seqdic_model[mod_ch]
-                ):
+                        self.seqdic_ref[ref_ch],
+                        self.seqdic_model[mod_ch]
+                        ):
                     self.align_dic[ref_ch].update({model_res: ref_res})
         else:
             identity = self.identities[align_id]
@@ -985,24 +1034,25 @@ class SeqAlign:
                 log.warning(
                     f"Sequence identity of chain {ref_ch} is "
                     f"{identity:.2f}%, please check the results carefully"
-                )
+                    )
             else:
                 log.debug(
                     f"Sequence identity between chain {ref_ch} "
                     f" of reference and {mod_ch} of model is "
                     f"{identity:.2f}%"
-                )
+                    )
             for ref_segment, model_segment in zip(
-                self.aln_ref_segs[align_id], self.aln_model_segs[align_id]
-            ):
+                    self.aln_ref_segs[align_id],
+                    self.aln_model_segs[align_id]
+                    ):
                 start_ref_segment, end_ref_segment = ref_segment
                 start_model_segment, end_model_segment = model_segment
                 reslist_ref = list(self.seqdic_ref[ref_ch].keys())[
                     start_ref_segment:end_ref_segment
-                ]
+                    ]
                 reslist_model = list(self.seqdic_model[mod_ch].keys())[
                     start_model_segment:end_model_segment
-                ]
+                    ]
                 for _ref_res, _model_res in zip(reslist_ref, reslist_model):
                     self.align_dic[ref_ch].update({_model_res: _ref_res})
 
@@ -1040,7 +1090,10 @@ def align_seq(reference, model, output_path):
     # check if chain ids match
     if SeqAln.seqdic_ref.keys() != SeqAln.seqdic_model.keys():
         # they do not match, we need to do chain matching
-        n_partners = min(len(SeqAln.seqdic_ref.keys()), len(SeqAln.seqdic_model.keys()))
+        n_partners = min(
+            len(SeqAln.seqdic_ref.keys()),
+            len(SeqAln.seqdic_model.keys())
+            )
 
         # unique combinations of chains
         combs = []
@@ -1055,8 +1108,9 @@ def align_seq(reference, model, output_path):
         for ref_ch, mod_ch in combs:
             # align
             identity, top_aln, aln_ref_seg, aln_mod_seg = sequence_alignment(
-                SeqAln.seqs_ref[ref_ch], SeqAln.seqs_model[mod_ch]
-            )
+                SeqAln.seqs_ref[ref_ch],
+                SeqAln.seqs_model[mod_ch]
+                )
             # append values to lists
             identities.append(identity)
             aln_model_segs.append(aln_mod_seg)
@@ -1084,9 +1138,10 @@ def align_seq(reference, model, output_path):
             SeqAln.postprocess_alignment(ref_ch, mod_ch, matches)
             # update identities to avoid double matches
             identities = [
-                identities[n] if combs[n][0] != ref_ch and combs[n][1] != mod_ch else -1
+                identities[n]
+                if combs[n][0] != ref_ch and combs[n][1] != mod_ch else -1
                 for n in range(len(combs))
-            ]
+                ]
             matches += 1
         log.info(f"model2ref chain matching is {SeqAln.model2ref_chain_dict}")
     else:
@@ -1102,8 +1157,9 @@ def align_seq(reference, model, output_path):
             seq_model = SeqAln.seqs_model[mod_ch]
             # sequence alignment
             identity, top_aln, aln_ref_seg, aln_mod_seg = sequence_alignment(
-                seq_ref, seq_model
-            )
+                seq_ref,
+                seq_model
+                )
             # update quantities
             SeqAln.identities.append(identity)
             SeqAln.aln_model_segs.append(aln_mod_seg)
@@ -1122,7 +1178,9 @@ def align_seq(reference, model, output_path):
     return SeqAln.align_dic, SeqAln.model2ref_chain_dict
 
 
-def make_range(chain_range_dic: dict[str, list[int]]) -> dict[str, tuple[int, int]]:
+def make_range(
+        chain_range_dic: dict[str, list[int]],
+        ) -> dict[str, tuple[int, int]]:
     """
     Expand a chain dictionary into ranges.
 
@@ -1169,5 +1227,102 @@ def dump_as_izone(fname, numbering_dic, model2ref_chain_dict=None):
                     "ZONE "
                     f"{chain}{bound_res}:{unb_chain}{unbound_res}"
                     f"{os.linesep}"
-                )
+                    )
                 fh.write(izone_str)
+
+
+def rearrange_xyz_files(output_name: FilePath, path: FilePath,
+                             ncores: int) -> None:
+    """Combine different xyz outputs in a single file.
+    
+    Parameters
+    ----------
+    output_name : FilePath
+        output name
+    
+    path : FilePath
+        path to the output files
+    
+    ncores : int
+        number of cores
+    """
+    output_fname = Path(path, output_name)
+    # take the name without the xyz extension
+    output_fname_str = output_fname.stem
+    log.info(f"rearranging xyz files into {output_fname}")
+    # Combine files
+    with open(output_fname, 'w') as out_file:
+        for core in range(ncores):
+            tmp_file = Path(path, output_fname_str + "_" + str(core) + ".xyz")
+            with open(tmp_file) as infile:
+                out_file.write(infile.read())
+            log.debug(f"File number {core} written")
+            tmp_file.unlink()
+    log.info("Completed reconstruction of xyz files.")
+    log.info(f"{output_fname} created.")
+
+
+def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
+    """
+    Check if the models share the same atoms.
+
+    Parameters
+    ----------
+    models : list
+        list of models
+    
+    filter_resdic : dict
+        dictionary of residues to be loaded (one list per chain)
+    
+    allatoms : bool
+        use all the heavy atoms
+
+    atom_similarity : float
+        minimum atom similarity required between models
+
+    Returns
+    -------
+    n_atoms : int
+        number of common atoms
+    
+    common_keys : list
+        list of common atom keys
+    """
+    # checking the common keys
+    common_keys : list[str] = []    
+    coord_keys_lengths = []
+    for mod in models:
+        atoms: AtomsDict = get_atoms(mod, allatoms)
+        
+        ref_coord_dic, _ = load_coords(
+        mod, atoms, filter_resdic
+        )
+        coord_keys_lengths.append(len(ref_coord_dic.keys()))
+        if common_keys != []:
+            common_keys = set(ref_coord_dic.keys()).intersection(common_keys)
+        else:
+            common_keys = ref_coord_dic.keys()
+
+    # checking the common atoms
+    n_atoms = len(common_keys) #common atoms
+    max_n_atoms = max(coord_keys_lengths)
+    perc = (n_atoms / max_n_atoms) * 100
+    if perc == 100.0:
+        log.info("All the models share the same atoms.")
+    elif perc > atom_similarity and perc < 100.0:
+        # if it's between 0.9 and 1, it's likely that the models share the same atoms
+        # but still the user may want to see a warning
+        log.warning(
+            "Not all the atoms are common to all the models."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
+            )
+    else:
+        # common keys are less than 90% of the previous keys
+        # something is likely wrong
+        _err_msg = (
+            "Input atoms are not the same for all the models."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
+            " Please check the input ensemble."
+            )
+        raise ALIGNError(_err_msg)
+    return n_atoms, list(common_keys)

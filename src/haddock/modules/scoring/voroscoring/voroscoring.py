@@ -259,9 +259,12 @@ def write_models_scores(
     header = ("structure", "original_name", "md5", "score", "rank", )
     with open(filepath, 'w') as filout:
         filout.write('\t'.join(header) + os.linesep)
-        for modelname, scores in sorted(
-                models_scores,
-                key=lambda k: models_scores[k]['rank'],
-                ):
+        # sort models by keys
+        sorted_models = sorted(
+            models_scores,
+            key=lambda k: models_scores[k]['rank'],
+            )
+        for modelname in sorted_models:
+            scores = models_scores[modelname]
             newline_dt = f"{modelname}\t{modelname}\t-\t{scores['score']}\t{scores['rank']}"  # noqa : E501
             filout.write(newline_dt + os.linesep)

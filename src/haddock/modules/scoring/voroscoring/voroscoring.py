@@ -70,7 +70,7 @@ class VoroMQA():
             models: list[Union[str, Path, PDBFile]],
             workdir: Union[str, Path],
             params: dict[str, Any],
-            output_filepath: Union[str, Path] = "voroscoring.tsv",
+            output_filepath: Path = Path("voroscoring.tsv"),
             ):
         self.models = models
         self.workdir = workdir

@@ -48,12 +48,12 @@ class HaddockModule(ScoringModule):
         except Exception as e:
             self.finish_with_error(e)
 
-        output_fname = f"{RECIPE_PATH.name}_voro.tsv"
+        output_fname = Path(f"{RECIPE_PATH.name}_voro.tsv")
         voromqa = VoroMQA(
             models_to_score,
             './',
             self.params,
-            output_filepath=output_fname,
+            output=output_fname,
             )
         jobs: list[VoroMQA] = [voromqa]
 

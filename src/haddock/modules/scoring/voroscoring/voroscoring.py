@@ -6,7 +6,7 @@ import time
 from random import randint
 
 from haddock import log
-from haddock.core.typing import Any, Path, Union
+from haddock.core.typing import Any, Generator, Path, Union
 from haddock.libs.libontology import PDBFile
 
 
@@ -98,11 +98,11 @@ class VoroMQA():
 
     def run_voro_batch(
             self,
-            pdb_filepaths,
-            base_workdir,
+            pdb_filepaths: list[Union[str, Path]],
+            base_workdir: Union[str, Path],
             batch_index: int = 1,
             gpuid: int = -1,
-            ):
+            ) -> None:
         # Create workdir
         batch_workdir = Path(base_workdir, f"batch_{batch_index}")
         batch_workdir.mkdir(parents=True)
@@ -166,8 +166,8 @@ class VoroMQA():
         # Write final output file
         finale_output_fpath = f"{self.workdir}/{self.output_filepath}"
         with open(finale_output_fpath, "w") as filout:
-            header = '\t'.join(combined_header)
-            filout.write(header+os.linesep)
+            file_header = '\t'.join(combined_header)
+            filout.write(file_header + os.linesep)
             for entry in sorted_entries:
                 ordered_data = [
                     entry[h] if h in entry.keys() else '-'
@@ -177,11 +177,14 @@ class VoroMQA():
                 filout.write(line+os.linesep)
         return finale_output_fpath
     
-    def wait_for_termination(self, wait_time: int = 60):
+    def wait_for_termination(
+            self,
+            wait_time: int = 60,
+            ) -> list[Union[str, Path]]:
         batches_dirpath = glob.glob(f"{self.workdir}/batch_*/")
         while True:
             try:
-                output_files = []
+                output_files: list[Union[str, Path]] = []
                 for batch_dir in batches_dirpath:
                     expected_outputfile = Path(batch_dir, "voro_scores.ssv")
                     assert expected_outputfile.exists()
@@ -194,7 +197,7 @@ class VoroMQA():
                 return output_files
 
     @staticmethod
-    def batched(entries: str, size: int = 300):
+    def batched(entries: str, size: int = 300) -> Generator[list, None, None]:
         batch = []
         for pdb in entries:
             batch.append(pdb)
@@ -207,7 +210,7 @@ def update_models_with_scores(
         output_fname: Union[str, Path],
         models: list[PDBFile],
         metric: str = "jury_score",
-        ) -> list[PDBFile]:
+        ) -> tuple[list[PDBFile], dict[str, dict[str, float]]]:
     scores_mapper: dict[str, float] = {}
     # Read output file
     with open(output_fname, 'r') as filin:
@@ -218,8 +221,8 @@ def update_models_with_scores(
                 header = s_
                 continue
             # Extract data
-            modelpath = s_[header["ID"]]
-            score = float(s_[header[metric]])
+            modelpath = str(s_[header.index("ID")])
+            score = float(s_[header.index(metric)])
             # Only extract model filename
             model_filename = modelpath.split('/')[-1]
             # Hold score

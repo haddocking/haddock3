@@ -9,7 +9,12 @@ from haddock.modules import BaseHaddockModule
 class ScoringModule(BaseHaddockModule):
     """Parent class for Scoring modules."""
 
-    def output(self, output_fname: FilePath, sep: str = "\t") -> None:
+    def output(
+            self,
+            output_fname: FilePath,
+            sep: str = "\t",
+            ascending_sort: bool = True,
+            ) -> None:
         """Save the output in comprehensive tables."""
         # saves scoring data
         sc_data = []
@@ -19,7 +24,7 @@ class ScoringModule(BaseHaddockModule):
         # converts to pandas dataframe and sorts by score
         df_columns = ["structure", "original_name", "md5", "score"]
         df_sc = pd.DataFrame(sc_data, columns=df_columns)
-        df_sc_sorted = df_sc.sort_values(by="score", ascending=True)
+        df_sc_sorted = df_sc.sort_values(by="score", ascending=ascending_sort)
         # writes to disk
         df_sc_sorted.to_csv(output_fname, sep=sep, index=False, na_rep="None")
 

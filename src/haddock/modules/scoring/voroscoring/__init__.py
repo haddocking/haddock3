@@ -68,9 +68,13 @@ class HaddockModule(ScoringModule):
         self.output_models, models_scores = update_models_with_scores(
             output_fname,
             models_to_score,
+            metric=self.params["metric"],
             )
         # Write output file
         scoring_tsv_fpath = f"{RECIPE_PATH.name}.tsv"
-        write_models_scores(models_scores, scoring_tsv_fpath)
+        self.output(
+            scoring_tsv_fpath,
+            ascending_sort="_energy" in self.params["metric"],
+            )
         # Export to next module
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

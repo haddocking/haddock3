@@ -253,20 +253,3 @@ def update_models_with_scores(
         model.rank = data_mapper[model.file_name]["rank"]
 
     return models, data_mapper
-
-def write_models_scores(
-        models_scores: dict[str, dict[str, Union[float, int]]],
-        filepath: Union[str, Path],
-        ) -> None:
-    header = ("structure", "original_name", "md5", "score", "rank", )
-    with open(filepath, 'w') as filout:
-        filout.write('\t'.join(header) + os.linesep)
-        # sort models by keys
-        sorted_models = sorted(
-            models_scores,
-            key=lambda k: models_scores[k]['rank'],
-            )
-        for modelname in sorted_models:
-            scores = models_scores[modelname]
-            newline_dt = f"{modelname}\t{modelname}\t-\t{scores['score']}\t{scores['rank']}"  # noqa : E501
-            filout.write(newline_dt + os.linesep)

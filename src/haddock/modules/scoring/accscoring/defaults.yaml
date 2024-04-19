@@ -36,3 +36,14 @@ resdic_accessible_:
     identifier.
   group: analysis
   explevel: easy
+probe_radius:
+  default: 1.4
+  type: float
+  min: 0.0
+  max: 10.0
+  precision: 3
+  title: probe radius
+  short: probe radius
+  long: probe radius
+  group: 'scoring'
+  explevel: easy

@@ -112,7 +112,8 @@ class AccScore:
             buried_resdic,
             acc_resdic,
             cutoff,
-            viol_output_name
+            viol_output_name,
+            probe_radius
             ):
         """Initialise AccScore class."""
         self.model_list = model_list
@@ -125,13 +126,14 @@ class AccScore:
         self.data = []
         self.violations = []
         self.viol_output_name = viol_output_name
+        self.probe_radius = probe_radius
 
     def run(self):
         """run accessibility calculations."""
         for mod in self.model_list:
             mod_path = str(Path(mod.path, mod.file_name))
             try:
-                access_data = get_accessibility(mod_path)
+                access_data = get_accessibility(mod_path, probe_radius=self.probe_radius)
                 result_dict = apply_cutoff(access_data, self.cutoff)
                 acc_score, buried_viols, acc_viols = calc_acc_score(result_dict, self.buried_resdic, self.acc_resdic)
             except AssertionError as e:

@@ -92,6 +92,7 @@ class HaddockModule(BaseHaddockModule):
                 acc_resdic=acc_resdic,
                 cutoff=self.params["cutoff"],
                 viol_output_name=viol_output_name,
+                probe_radius=self.params["probe_radius"],
                 )
             
             job = AccScoreJob(

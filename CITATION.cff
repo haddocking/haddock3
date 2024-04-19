@@ -1,47 +1,54 @@
-cff-version: 1.2.0
-title: HADDOCK3
-message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
-type: software
+# YAML 1.2
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.0.3
+message: If you use this software, please cite it using these metadata.
+# FIXME title as repository name might not be the best name, please make human readable
+title: 'haddocking/haddock3: v3.0.0-beta.5'
+doi: 10.5281/zenodo.10527751
+# FIXME splitting of full names is error prone, please check if given/family name are correct
 authors:
-  - given-names: Alexandre
-    family-names: Bonvin
-    name-particle: A.M.J.J.
-    email: a.m.j.j.bonvin@uu.nl
-    affiliation: Utrecht University
-  - given-names: João
-    family-names: Teixeira
-    affiliation: University of Padova, Italy
-  - given-names: Brian Jimenez Garcia
-    name-particle: B.J.
-    family-names: Garcia
-    affiliation: Senior Researcher and Tecniospring INDUSTRY fellow at ZYMVOL,Barcelona, Spain
-  - given-names: Rodrigo 
-    name-particle: R.V.
-    family-names: Honorato
-    email: r.v.honorato@uu.nl
-    affiliation: Utrecht University
-  - given-names: Marco
-    family-names: Giulini
-    email: m.giulini@uu.nl
-    affiliation: Utrecht University
-  - given-names: Victor
-    name-particle: V.G.P.
-    family-names: Reys
-    email: v.g.p.reys@uu.nl
-repository-code: 'https://github.com/haddocking/haddock3'
-url: 'https://www.bonvinlab.org/'
-abstract: >-
-  Third version of the well known and used HADDOCK (High
-  Ambiguity Driven Docking) series.
-
-  HADDOCK v3.0 is a bottom-up reimagination of the long
-  standing time-proven HADDOCK used for integrative modeling
-  of biomolecular complexes.
-keywords:
-  - protein-protein docking
-  - biomolecular complexes
-  - experimental restraints
-  - Bioexcel
-license: Apache-2.0
+- given-names: João
+  family-names: Teixeira
+  name-particle: M.C.
+  affiliation: Zymvol
+- given-names: Rodrigo
+  family-names: Honorato
+  name-particle: Vargas
+  affiliation: '@UtrechtUniversity'
+- given-names: Marco
+  family-names: Giulini
+  affiliation: Utrecht University
+- given-names: Alexandre
+  family-names: Bonvin
+  affiliation: '@UtrechtUniversity'
+- given-names: SarahAlidoost
+  family-names: ''
+  affiliation: Netherlands eScience center
+- given-names: Victor
+  family-names: Reys
+  affiliation: '@haddocking'
+- given-names: Brian
+  family-names: Jimenez
+  affiliation: '@zymvol'
+- given-names: Douwe
+  family-names: Schulte
+  affiliation: '@UtrechtUniversity'
+- given-names: Charlotte
+  family-names: van Noort
+  affiliation: Utrecht University
+- given-names: Stefan
+  family-names: Verhoeven
+  affiliation: Netherlands eScience Center
+- given-names: Barbara
+  family-names: Vreede
+  affiliation:
+- given-names: SSchott
+  family-names: ''
+  affiliation:
+- given-names: Regen
+  family-names: Tsai
+  affiliation:
+version: 3.0.0-beta.5
+date-released: 2024-01-18
+repository-code: https://github.com/haddocking/haddock3
+license: cc-by-4.0

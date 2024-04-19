@@ -55,7 +55,7 @@ class HaddockModule(ScoringModule):
             self.finish_with_error(e)
 
         # Initiate VoroMQA object
-        output_fname = Path(f"{RECIPE_PATH.name}_voro.tsv")
+        output_fname = Path("voro_mqa_all.tsv")
         voromqa = VoroMQA(
             models_to_score,
             './',
@@ -73,11 +73,15 @@ class HaddockModule(ScoringModule):
         self.log("Voro-mqa scoring finished!")
 
         # Update score of output models
-        self.output_models = update_models_with_scores(
-            output_fname,
-            models_to_score,
-            metric=self.params["metric"],
-            )
+        try:
+            self.output_models = update_models_with_scores(
+                output_fname,
+                models_to_score,
+                metric=self.params["metric"],
+                )
+        except ValueError as e:
+            self.finish_with_error(e)
+
         # Write output file
         scoring_tsv_fpath = f"{RECIPE_PATH.name}.tsv"
         self.output(scoring_tsv_fpath)

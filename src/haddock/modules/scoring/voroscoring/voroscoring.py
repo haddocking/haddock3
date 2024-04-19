@@ -218,7 +218,7 @@ class VoroMQA():
                 filout.write(line + os.linesep)
         return finale_output_fpath
     
-    def wait_for_termination(self, wait_time: int = 60) -> list[Path]:
+    def wait_for_termination(self, wait_time: float = 60) -> list[Path]:
         """Wait until all results are accessible.
 
         Parameters
@@ -232,7 +232,10 @@ class VoroMQA():
             List of voro scores results for every batches.
         """
         batches_dirpath = glob.glob(f"{self.workdir}/batch_*/")
-        log.info("Waiting for voro-mqa predictions to finish...")
+        log.info(
+            f"Waiting for {len(batches_dirpath)} "
+            "voro-mqa prediction batch(es) to finish..."
+            )
         while True:
             try:
                 output_files: list[Path] = []
@@ -247,7 +250,7 @@ class VoroMQA():
             else:
                 log.info(
                     "VoroMQA results are accessible: "
-                    f"{len(output_files)} batches"
+                    f"{len(output_files)} batch(es)"
                     )
                 return output_files
 
@@ -276,11 +279,12 @@ class VoroMQA():
             if len(batch) == size:
                 yield batch
                 batch = []
-        yield batch
+        if batch:
+            yield batch
 
 
 def update_models_with_scores(
-        output_fname: Union[str, Path],
+        voro_scoring_fname: Union[str, Path],
         models: list[PDBFile],
         metric: str = "jury_score",
         ) -> list[PDBFile]:
@@ -301,8 +305,10 @@ def update_models_with_scores(
         The updated list of PDBfiles now holding the score and rank attributes.
     """
     scores_mapper: dict[str, float] = {}
+    ranking_mapper: dict[str, int] = {}
+    rank: int = 0
     # Read output file
-    with open(output_fname, 'r') as filin:
+    with open(voro_scoring_fname, 'r') as filin:
         for i, line in enumerate(filin):
             s_ = line.strip().split('\t')
             # Extract header
@@ -319,15 +325,14 @@ def update_models_with_scores(
                 score = -score
             # Hold score
             scores_mapper[model_filename] = score
+            rank += 1
+            ranking_mapper[model_filename] = rank
 
     # Compute rankings
-    ranking_mapper = {
-        model_filename: rank
-        for rank, model_filename in enumerate(
-            sorted(scores_mapper),
-            start=1,
-            )
-        }
+    #ranking_mapper = {
+    #    model_filename: rank
+    #    for rank, model_filename in enumerate(sorted(scores_mapper), start=1)
+    #    }
 
     # Loop over input models
     for model in models:
@@ -335,8 +340,9 @@ def update_models_with_scores(
         if model.file_name in scores_mapper.keys():
             model.score = scores_mapper[model.file_name]
             model.rank = ranking_mapper[model.file_name]
+        # In some cases computation may fail
         else:
-            # Go for cheese nan
+            # Go for (garlic) cheese naans
             model.score = NaN
             model.rank = NaN
     return models

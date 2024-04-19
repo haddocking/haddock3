@@ -141,7 +141,7 @@ Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html
 To run the restraints web service you must have the following dependencies installed in the `(haddock3)` python environment:
 
 ```bash
-pip install uvicorn fastapi python-multipart
+pip install uvicorn fastapi
 ```
 
 Information on the restraints web service can be found [here](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/restraints/webservice.py).

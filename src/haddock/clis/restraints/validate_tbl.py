@@ -5,7 +5,7 @@ The validate_tbl subcommand validates an input TBL file.
 Usage:
     haddock3-restraints validate_tbl <tbl_file> [--silent] [--quick]
 """
-from pathlib import Path
+from haddock.core.typing import Path, Union
 from haddock.libs.librestraints import check_parenthesis, validate_tbldata
 
 def add_validate_tbl_arguments(validate_tbl_subcommand):
@@ -38,7 +38,12 @@ def add_validate_tbl_arguments(validate_tbl_subcommand):
     return validate_tbl_subcommand
 
 
-def validate_tbl(tbl_file, pcs, quick=False, silent=False):
+def validate_tbl(
+        tbl_file: Union[Path, str],
+        pcs: bool,
+        quick: bool = False,
+        silent: bool = False,
+        ) -> None:
     """Get the passive residues."""
     if quick:
         tbldata = open(tbl_file).read()

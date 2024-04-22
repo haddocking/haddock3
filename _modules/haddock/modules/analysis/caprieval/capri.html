@@ -191,11 +191,11 @@
 
 
 <div class="viewcode-block" id="load_contacts"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.load_contacts">[docs]</a><span class="k">def</span> <span class="nf">load_contacts</span><span class="p">(</span>
-        <span class="n">pdb_f</span><span class="p">,</span>
-        <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
-        <span class="n">numbering_dic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="p">):</span>
+        <span class="n">pdb_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">],</span>
+        <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">numbering_dic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model2ref_chain_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load residue-based contacts.</span>
 
 <span class="sd">    Parameters</span>
@@ -210,7 +210,6 @@
 <span class="sd">    set(con_list) : set</span>
 <span class="sd">        set of unique contacts</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">con_list</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">):</span>
         <span class="n">pdb_f</span> <span class="o">=</span> <span class="n">pdb_f</span><span class="o">.</span><span class="n">rel_path</span>
     <span class="c1"># get also side chains atoms</span>
@@ -237,6 +236,7 @@
     <span class="n">unique_chain_combs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">combinations</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">coord_arrays</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="mi">2</span><span class="p">))</span>
 
     <span class="c1"># calculating contacts</span>
+    <span class="n">con_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">unique_chain_combs</span><span class="p">:</span>
         <span class="c1"># cycling over each coordinate of the first chain</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">coord_arrays</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -320,14 +320,17 @@
             <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref_interface_resdic</span>
                 <span class="p">)</span>
-
-            <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
-                <span class="n">ref_interface_resdic</span><span class="p">,</span>
-                <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
-                <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                    <span class="n">ref_interface_resdic</span><span class="p">,</span>
+                    <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
+                    <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
+                <span class="k">return</span>
 
             <span class="c1"># Here _coord_dic keys are matched</span>
             <span class="c1">#  and formatted as (chain, resnum, atom)</span>
@@ -359,13 +362,16 @@
 <div class="viewcode-block" id="CAPRI.calc_lrmsd"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_lrmsd">[docs]</a>    <span class="k">def</span> <span class="nf">calc_lrmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the L-RMSD.&quot;&quot;&quot;</span>
         <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-
-        <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
-            <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
-            <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
+                <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
+            <span class="k">return</span>
 
         <span class="n">Q</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">P</span> <span class="o">=</span> <span class="p">[]</span>
@@ -466,14 +472,17 @@
         <span class="n">ref_int_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref_interface_resdic</span>
             <span class="p">)</span>
-
-        <span class="n">mod_int_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
-            <span class="n">ref_interface_resdic</span><span class="p">,</span>
-            <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
-            <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mod_int_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                <span class="n">ref_interface_resdic</span><span class="p">,</span>
+                <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
+                <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
+            <span class="k">return</span>
 
         <span class="c1"># write_coord_dic(&quot;ref.pdb&quot;, ref_int_coord_dic)</span>
         <span class="c1"># write_coord_dic(&quot;model.pdb&quot;, mod_int_coord_dic)</span>
@@ -560,14 +569,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ref_contacts</span> <span class="o">=</span> <span class="n">load_contacts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_contacts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">model_contacts</span> <span class="o">=</span> <span class="n">load_contacts</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-                <span class="n">cutoff</span><span class="p">,</span>
-                <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
-                <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">intersection</span> <span class="o">=</span> <span class="n">ref_contacts</span> <span class="o">&amp;</span> <span class="n">model_contacts</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_contacts</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">model_contacts</span> <span class="o">=</span> <span class="n">load_contacts</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                    <span class="n">cutoff</span><span class="p">,</span>
+                    <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
+                    <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">intersection</span> <span class="o">=</span> <span class="n">ref_contacts</span> <span class="o">&amp;</span> <span class="n">model_contacts</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_contacts</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No reference contacts found&quot;</span><span class="p">)</span></div>
 
@@ -1147,7 +1160,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 17, 2024.
+      <span class="lastupdated">Last updated on Apr 22, 2024.
       </span></p>
   </div>
 

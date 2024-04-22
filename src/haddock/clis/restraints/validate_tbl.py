@@ -45,19 +45,15 @@ def validate_tbl(
         silent: bool = False,
         ) -> None:
     """Get the passive residues."""
-    if quick:
-        tbldata = open(tbl_file).read()
-        # Check the parenthesis and quotation marks opening/closure
-        check_parenthesis(tbldata)
-    
     if Path(tbl_file).exists():
         tbldata = open(tbl_file).read()
+        if quick:
+            # Check the parenthesis and quotation marks opening/closure
+            check_parenthesis(tbldata)
+            return
         # Parse and process the restraints
-        if silent:
-            validate_tbldata(tbldata, pcs)
-        else:
-            print(validate_tbldata(tbldata, pcs))
+        valid_tbl = validate_tbldata(tbldata, pcs)
+        if not silent:
+            print(valid_tbl)
     else:
         raise Exception(f"TBL file {tbl_file} does not exist, check the path")
-    
-    return

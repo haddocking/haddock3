@@ -475,18 +475,22 @@ def load_coords(
             coords = np.asarray([x, y, z])
             # Remap chain name
             if model2ref_chain_dict:
-                chain = model2ref_chain_dict[chain]
-            if numbering_dic and model2ref_chain_dict:
-                try:
-                    resnum = numbering_dic[chain][resnum]
-                except KeyError:
-                    # this residue is not matched, and so it should
-                    #  not be considered
-                    # self.log(
-                    #     f"WARNING: {chain}.{resnum}.{atom_name}"
-                    #     " was not matched!"
-                    #     )
+                # Skip chain matching if not present in reference structure
+                if chain not in model2ref_chain_dict.keys():
                     continue
+                chain = model2ref_chain_dict[chain]
+
+                if numbering_dic:
+                    try:
+                        resnum = numbering_dic[chain][resnum]
+                    except KeyError:
+                        # this residue is not matched, and so it should
+                        #  not be considered
+                        # self.log(
+                        #     f"WARNING: {chain}.{resnum}.{atom_name}"
+                        #     " was not matched!"
+                        #     )
+                        continue
 
             # Create identifier tuple
             if add_resname is True:

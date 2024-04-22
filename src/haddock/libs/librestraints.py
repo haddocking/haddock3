@@ -6,6 +6,9 @@ import itertools
 import re
 import random
 import sys
+
+from haddock.core.typing import Union
+
 # Scaling factors for relative ASA
 # Calculated using extended ALA-X-ALA peptides
 # Taken from NACCESS
@@ -81,7 +84,10 @@ REL_ASA = {
         }
 }
 
-def get_surface_resids(structure, cutoff=15):
+def get_surface_resids(
+        structure: Union[Path, str],
+        cutoff: float = 15.0,
+        ) -> list[tuple[str, str, int]]:
     """
     Calls freesasa using its Python API and returns
     per-residue accessibilities.
@@ -118,19 +124,29 @@ def get_surface_resids(structure, cutoff=15):
 
     # convert total asa ro relative asa
     rsa_data.update((res_uid, asa / _rsa[res_uid[1]]) for res_uid, asa in rsa_data.items())
-    rel_main_chain.update((res_uid, asa / _rsa_bb[res_uid[1]] * 100) for res_uid, asa in rel_main_chain.items())
-    rel_side_chain.update((res_uid, asa / _rsa_sc[res_uid[1]] * 100) for res_uid, asa in rel_side_chain.items())
+    rel_main_chain.update(
+        (res_uid, asa / _rsa_bb[res_uid[1]] * 100)
+        for res_uid, asa in rel_main_chain.items()
+        )
+    rel_side_chain.update(
+        (res_uid, asa / _rsa_sc[res_uid[1]] * 100)
+        for res_uid, asa in rel_side_chain.items()
+        )
 
     # We format to fit the pipeline
     resid_access = {}
     for res_uid, access in rel_main_chain.items():
         resid_access[res_uid[2]] = {'side_chain_rel': rel_side_chain.get(res_uid), 'main_chain_rel': access}
-    surface_resids = [r for r, v in resid_access.items() if v['side_chain_rel'] >= cutoff or
-                      v['main_chain_rel'] >= cutoff]
+    surface_resids = [
+        r for r, v in resid_access.items()
+        if v['side_chain_rel'] >= cutoff or v['main_chain_rel'] >= cutoff
+        ]
     return surface_resids
 
 
-def parse_actpass_file(actpass_file):
+def parse_actpass_file(
+        actpass_file: Union[str, Path],
+        ) -> tuple[list[int], list[int]]:
     """Parse actpass file
     
     Parameters
@@ -146,8 +162,8 @@ def parse_actpass_file(actpass_file):
         list of passive residues
     """
     
-    if Path(actpass_file).exists() is False:
-        raise Exception(f"actpass file {actpass_file} does not exist.")
+    if not Path(actpass_file).exists():
+        raise Exception(f"actpass file at `{actpass_file}` does not exist.")
 
     lines = open(actpass_file, "r").readlines()
     nlines = len(lines)
@@ -157,7 +173,14 @@ def parse_actpass_file(actpass_file):
     return active, passive
 
 
-def active_passive_to_ambig(active1, passive1, active2, passive2, segid1='A', segid2='B'):
+def active_passive_to_ambig(
+        active1: list[int],
+        passive1: list[int],
+        active2: list[int],
+        passive2: list[int],
+        segid1: str = 'A',
+        segid2: str = 'B',
+        ) -> None:
     """Convert active and passive residues to Ambiguous Interaction Restraints
 
     Parameters
@@ -215,7 +238,10 @@ def active_passive_to_ambig(active1, passive1, active2, passive2, segid1='A', se
 
 # Functions/Methods
 
-def calc_euclidean(i, j):
+def calc_euclidean(
+        i: Union[list[float], tuple[float, float, float]],
+        j: Union[list[float], tuple[float, float, float]],
+        ) -> float:
 	return ((j[0]-i[0])**2 + (j[1]-i[1])**2 + (j[2]-i[2])**2)**0.5
 
 

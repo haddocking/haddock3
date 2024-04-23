@@ -11,6 +11,6 @@ message
 | *title*: Exiting message.
 | *short description*: The message to print when exiting.
 | *long description*: The message to print when exiting.
-| *group*: None
+| *group*: execution
 | *explevel*: easy
 

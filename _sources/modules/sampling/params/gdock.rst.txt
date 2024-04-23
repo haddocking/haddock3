@@ -11,6 +11,6 @@ ambig_fname
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: distance restraints
 | *explevel*: easy
 

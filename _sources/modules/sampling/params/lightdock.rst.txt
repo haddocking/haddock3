@@ -13,7 +13,7 @@ glowworms
 | *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: sampling
 | *explevel*: easy
 
 ligand_active
@@ -24,7 +24,7 @@ ligand_active
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: restraints
 | *explevel*: easy
 
 ligand_chains
@@ -35,7 +35,7 @@ ligand_chains
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: restraints
 | *explevel*: easy
 
 ligand_passive
@@ -46,7 +46,7 @@ ligand_passive
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: restraints
 | *explevel*: easy
 
 noh
@@ -57,7 +57,7 @@ noh
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: topology
 | *explevel*: easy
 
 noxt
@@ -68,7 +68,7 @@ noxt
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: topology
 | *explevel*: easy
 
 receptor_active
@@ -79,7 +79,7 @@ receptor_active
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: restraints
 | *explevel*: easy
 
 receptor_chains
@@ -90,7 +90,7 @@ receptor_chains
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: restraints
 | *explevel*: easy
 
 receptor_passive
@@ -101,7 +101,7 @@ receptor_passive
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: restraints
 | *explevel*: easy
 
 restraints
@@ -112,7 +112,7 @@ restraints
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: distance restraints
 | *explevel*: easy
 
 scoring
@@ -123,7 +123,7 @@ scoring
 | *title*: No title yet
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: scoring
 | *explevel*: easy
 
 steps
@@ -136,7 +136,7 @@ steps
 | *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: sampling
 | *explevel*: easy
 
 swarms
@@ -149,7 +149,7 @@ swarms
 | *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: sampling
 | *explevel*: easy
 
 top
@@ -162,6 +162,6 @@ top
 | *max*: 9999
 | *short description*: No short description yet
 | *long description*: No long description yet
-| *group*: 
+| *group*: analysis
 | *explevel*: easy
 

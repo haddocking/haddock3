@@ -103,7 +103,7 @@ sinter_rigid_final
 | *max*: 1
 | *short description*: End scaling factor for intermolecular interactions in the first cooling stage.
 | *long description*: End scaling factor applied to intermolecular interactions during the first cooling stage of the simulated annealing protocol.
-| *group*: 
+| *group*: sampling
 | *explevel*: easy
 
 ssdihed

@@ -112,6 +112,6 @@ topX
 | *max*: 100
 | *short description*: Number of unclustered models to analyse.
 | *long description*: Top `X` unclustered models to analyse. Models are sorted based on their score (if accessible) and only a subset defined by this variable are analysed. If no score available, a random set of `topX` models are analysed.
-| *group*: sample
+| *group*: analysis
 | *explevel*: expert
 

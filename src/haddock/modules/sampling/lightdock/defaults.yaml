@@ -114,7 +114,7 @@ noxt:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: 'toplology'
+  group: 'topology'
   explevel: easy
 noh:
   default: true

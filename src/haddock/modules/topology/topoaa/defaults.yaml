@@ -73,7 +73,7 @@ limit:
     Setting the limit to false is useful when the topoaa module is followed by
     scoring modules such as emscoring, or other analysis modules. If topoaa is
     used in the middle of the workflow this parameter has no effect.
-  group: ''
+  group: sampling
   explevel: expert
 tolerance:
   default: 0

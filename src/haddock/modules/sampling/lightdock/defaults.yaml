@@ -6,7 +6,7 @@ glowworms:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'sampling'
   explevel: easy
 steps:
   default: 100
@@ -16,7 +16,7 @@ steps:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'sampling'
   explevel: easy
 swarms:
   default: 400
@@ -26,7 +26,7 @@ swarms:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'sampling'
   explevel: easy
 scoring:
   default: fastdfire
@@ -36,7 +36,7 @@ scoring:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'scoring'
   explevel: easy
 top:
   default: 10
@@ -46,7 +46,7 @@ top:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'analysis'
   explevel: easy
 receptor_chains:
   default: A
@@ -56,7 +56,7 @@ receptor_chains:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'restraints'
   explevel: easy
 receptor_active:
   default: ''
@@ -66,7 +66,7 @@ receptor_active:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'restraints'
   explevel: easy
 receptor_passive:
   default: ''
@@ -76,7 +76,7 @@ receptor_passive:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'restraints'
   explevel: easy
 ligand_chains:
   default: B
@@ -86,7 +86,7 @@ ligand_chains:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'restraints'
   explevel: easy
 ligand_active:
   default: ''
@@ -96,7 +96,7 @@ ligand_active:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'restraints'
   explevel: easy
 ligand_passive:
   default: ''
@@ -106,7 +106,7 @@ ligand_passive:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'restraints'
   explevel: easy
 noxt:
   default: true
@@ -114,7 +114,7 @@ noxt:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'toplology'
   explevel: easy
 noh:
   default: true
@@ -122,7 +122,7 @@ noh:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'toplology'
   explevel: easy
 restraints:
   default: false
@@ -130,5 +130,5 @@ restraints:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'distance restraints'
   explevel: easy

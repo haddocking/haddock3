@@ -103,8 +103,10 @@ class HaddockModule(BaseCNSModule):
                 expected_pdb.restr_fname = ambig_fname
                 try:
                     expected_pdb.ori_name = model.file_name
+                    expected_pdb.ori_rel_path = model.rel_path
                 except AttributeError:
                     expected_pdb.ori_name = None
+                    expected_pdb.ori_rel_path = None
                 self.output_models.append(expected_pdb)
 
                 job = CNSJob(inp_file, out_file, envvars=self.envvars)

@@ -92,6 +92,9 @@ class HaddockModule(BaseHaddockModule):
                 name = (
                     f"cluster_{model.clt_rank}_model"
                     f"_{model.clt_model_rank}.pdb")
+                model.ori_name = model.file_name
+                # for io.json related-reasons the ori_rel_path must be a string
+                model.ori_rel_path = str(model.rel_path)
                 # writing name
                 fh.write(
                     f"{model.rel_path}\t"
@@ -101,7 +104,6 @@ class HaddockModule(BaseHaddockModule):
                 # changing attributes
                 name_path = Path(name)
                 name_path.write_text(model.rel_path.read_text())
-                model.ori_name = model.file_name
                 model.file_name = name
                 model.full_name = name
                 model.rel_path = Path('..', Path(self.path).name, name)

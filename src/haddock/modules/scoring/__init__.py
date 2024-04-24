@@ -13,7 +13,7 @@ class ScoringModule(BaseCNSModule):
         # saves scoring data
         sc_data = []
         for pdb in self.scoring_models:
-            sc_data.append([pdb.file_name, pdb.ori_name, pdb.md5, pdb.score])
+            sc_data.append([pdb.file_name, pdb.ori_rel_path, pdb.md5, pdb.score])
         
         # converts to pandas dataframe and sorts by score
         df_columns = ["structure", "original_name", "md5", "score"]

@@ -64,6 +64,7 @@ class HaddockModule(ScoringModule):
                 )
             # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
+            expected_pdb.ori_rel_path = model.rel_path
             expected_pdb.md5 = model.md5
             expected_pdb.restr_fname = model.restr_fname
 

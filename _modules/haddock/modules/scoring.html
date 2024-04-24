@@ -91,13 +91,29 @@
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.base_cns_module</span> <span class="kn">import</span> <span class="n">BaseCNSModule</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
 
 
-<div class="viewcode-block" id="ScoringModule"><a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.ScoringModule">[docs]</a><span class="k">class</span> <span class="nc">ScoringModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">):</span>
+<div class="viewcode-block" id="ScoringModule"><a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.ScoringModule">[docs]</a><span class="k">class</span> <span class="nc">ScoringModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for Scoring modules.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ScoringModule.output"><a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.ScoringModule.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the output in comprehensive tables.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ScoringModule.output"><a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.ScoringModule.output">[docs]</a>    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+            <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">ascending_sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Save the output in comprehensive tables.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_fname : FilePath</span>
+<span class="sd">            Path to the file where to write scoring data.</span>
+<span class="sd">        sep : str, optional</span>
+<span class="sd">            Character used as separator in file, by default &quot;\t&quot;</span>
+<span class="sd">        ascending_sort : bool, optional</span>
+<span class="sd">            Should the data be sorted in ascending order, by default True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># saves scoring data</span>
         <span class="n">sc_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
@@ -106,11 +122,15 @@
         <span class="c1"># converts to pandas dataframe and sorts by score</span>
         <span class="n">df_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;original_name&quot;</span><span class="p">,</span> <span class="s2">&quot;md5&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
         <span class="n">df_sc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sc_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df_columns</span><span class="p">)</span>
-        <span class="n">df_sc_sorted</span> <span class="o">=</span> <span class="n">df_sc</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df_sc_sorted</span> <span class="o">=</span> <span class="n">df_sc</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="n">ascending_sort</span><span class="p">)</span>
         <span class="c1"># writes to disk</span>
         <span class="n">df_sc_sorted</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">)</span>
 
         <span class="k">return</span></div></div>
+
+
+<div class="viewcode-block" id="CNSScoringModule"><a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule">[docs]</a><span class="k">class</span> <span class="nc">CNSScoringModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">,</span> <span class="n">ScoringModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for CNS Scoring modules.&quot;&quot;&quot;</span></div>
 </pre></div>
 
            </div>
@@ -121,7 +141,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 23, 2024.
+      <span class="lastupdated">Last updated on Apr 24, 2024.
       </span></p>
   </div>
 

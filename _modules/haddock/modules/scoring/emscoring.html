@@ -99,14 +99,14 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libcns</span> <span class="kn">import</span> <span class="n">prepare_cns_input</span><span class="p">,</span> <span class="n">prepare_expected_pdb</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.scoring</span> <span class="kn">import</span> <span class="n">ScoringModule</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.scoring</span> <span class="kn">import</span> <span class="n">CNSScoringModule</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/scoring/haddock.modules.scoring.emscoring.html#haddock.modules.scoring.emscoring.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">ScoringModule</span><span class="p">):</span>
+<div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/scoring/haddock.modules.scoring.emscoring.html#haddock.modules.scoring.emscoring.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">CNSScoringModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module to perform energy minimization scoring.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
@@ -198,7 +198,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 23, 2024.
+      <span class="lastupdated">Last updated on Apr 24, 2024.
       </span></p>
   </div>
 

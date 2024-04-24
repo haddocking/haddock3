@@ -483,8 +483,6 @@ def analyse_step(
             format,
             scale,
             offline=offline,
-            mode=mode,
-            ncores=ncores,
             )
         boxes = box_plot_handler(
             ss_file,

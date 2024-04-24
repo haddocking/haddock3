@@ -10,14 +10,14 @@ from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
-from haddock.modules.scoring import ScoringModule
+from haddock.modules.scoring import CNSScoringModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
-class HaddockModule(ScoringModule):
+class HaddockModule(CNSScoringModule):
     """HADDOCK3 module to perform energy minimization scoring."""
 
     name = RECIPE_PATH.name

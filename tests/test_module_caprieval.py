@@ -257,13 +257,29 @@ def test_protprot_dockq(protprot_caprimodule):
 
 
 def test_protprot_bb_vs_all_atoms(
-    protprot_caprimodule,
-    protprot_allatm_caprimodule,
+        protprot_caprimodule,
+        protprot_allatm_caprimodule,
         ):
     """Test difference between all and backbone atoms selection."""
     assert protprot_caprimodule.allatoms is False
     assert protprot_allatm_caprimodule.allatoms is True
     assert protprot_caprimodule.atoms != protprot_allatm_caprimodule.atoms
+    only_bb_atoms = [
+        a
+        for atn in protprot_caprimodule.atoms.values()
+        for a in atn
+        ]
+    all_atoms = [
+        a
+        for atn in protprot_allatm_caprimodule.atoms.values()
+        for a in atn
+        ]
+    # Check length
+    assert len(only_bb_atoms) < len(all_atoms)
+    # Make sure all bb are also included in all atoms
+    for rname, atoms in protprot_caprimodule.atoms.items():
+        for atn in atoms:
+            assert atn in protprot_allatm_caprimodule.atoms[rname]
 
 
 def test_protprot_allatoms(protprot_allatm_caprimodule):

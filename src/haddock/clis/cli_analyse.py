@@ -219,7 +219,7 @@ def maincli() -> None:
     cli(ap, main)
 
 
-def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cleaned: bool) -> None:
+def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cleaned: bool, mode: str, ncores: int) -> None:
     """
     Run the caprieval analysis.
 
@@ -240,21 +240,27 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cl
     if is_cleaned:
         default_general_params = read_from_yaml_config(modules_defaults_path)
         path_to_unpack = io.output[0].path
-        haddock3_unpack(path_to_unpack, ncores=default_general_params["ncores"])
+        haddock3_unpack(path_to_unpack, ncores=ncores)
+    # define step_order. We add one to it, as the caprieval module will
+    # interpret itself as being after the selected step
+    step_order = int(step.split("_")[0]) + 1
     # create capri
     caprieval_module = HaddockModule(
-        order=1,
+        order=step_order,
         path=Path(run_dir),
         initial_params=caprieval_params,
     )
     caprieval_module.update_params(**capri_dict)
+    # updating mode and ncores
+    caprieval_module.params["mode"] = mode
+    caprieval_module.params["ncores"] = ncores
     # update model info
     caprieval_module.previous_io = io
     # run capri module
     caprieval_module._run()
     # compress files if they should be compressed
     if is_cleaned:
-        haddock3_clean(path_to_unpack, ncores=default_general_params["ncores"])
+        haddock3_clean(path_to_unpack, ncores=ncores)
 
 
 def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
@@ -389,6 +395,8 @@ def analyse_step(
     scale: Optional[float],
     is_cleaned: Optional[bool],
     offline: bool = False,
+    mode: Optional[str] = "local",
+    ncores: Optional[int] = 4,
 ) -> None:
     """
     Analyse a step.
@@ -437,7 +445,7 @@ def analyse_step(
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if run_capri == True:
-        run_capri_analysis(step, run_dir, capri_dict, is_cleaned)
+        run_capri_analysis(step, run_dir, capri_dict, is_cleaned, mode, ncores)
 
     log.info("CAPRI files identified")
     # plotting
@@ -478,6 +486,8 @@ def main(
     inter: Optional[bool],
     is_cleaned: Optional[bool],
     offline: bool = False,
+    mode: Optional[str] = None,
+    ncores: Optional[int] = None,
     **kwargs: Any,
 ) -> None:
     """
@@ -566,6 +576,8 @@ def main(
                 scale,
                 is_cleaned,
                 offline=offline,
+                mode=mode,
+                ncores=ncores,
             )
         except Exception as e:
             error = True

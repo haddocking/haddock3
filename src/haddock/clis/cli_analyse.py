@@ -184,6 +184,26 @@ ap.add_argument(
 )
 
 ap.add_argument(
+    "--mode",
+    help="mode of execution",
+    required=False,
+    type=str,
+    default="local",
+    choices=["local", "batch", "mpi"],
+)
+
+ap.add_argument(
+    "--ncores",
+    help="number of cores to use",
+    required=False,
+    type=int,
+    default=1,
+    # maximum allowed value for ncores is 16
+    choices=range(1, 17),
+)
+
+
+ap.add_argument(
     "-p",
     "--other-params",
     dest="other_params",
@@ -463,6 +483,8 @@ def analyse_step(
             format,
             scale,
             offline=offline,
+            mode=mode,
+            ncores=ncores,
             )
         boxes = box_plot_handler(
             ss_file,
@@ -512,6 +534,18 @@ def main(
 
     inter: bool
         analyse only steps labelled as 'interactive'
+
+    is_cleaned: bool
+        is the directory going to be cleaned?
+    
+    offline: bool
+        Should plots js functions be self-contained?
+    
+    mode: str
+        mode of execution
+    
+    ncores: int
+        number of cores to use
     """
     log.level = 20
     log.info(

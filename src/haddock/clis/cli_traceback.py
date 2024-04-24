@@ -78,7 +78,7 @@ def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int) -> tuple[list, in
         Maximum length of the topologies found so far.
     """
     if n != 0:  # not the first step, ori_name should be defined
-        ori_names = [pdbfile.ori_name]
+        ori_names = [str(pdbfile.ori_rel_path)]
     else:  # first step, we get topology files instead of ori_name
         # topology can either be a list of topologies or a single
         # topology
@@ -204,9 +204,9 @@ def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.Data
     last_column_rank = last_column + "_rank"
     rank_data_subset = rank_data[rank_data[last_column_rank] != '-']
     rank_columns = rank_data_subset.columns[1:].tolist()
-    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(pd.to_numeric, errors='coerce')
+    # convert the ranks to numeric
+    rank_data_subset.loc[:,rank_columns] = rank_data_subset.loc[:,rank_columns].apply(pd.to_numeric, errors='coerce')
     rank_data_subset = rank_data_subset.sort_values(by=last_column_rank, ascending=True)
-    
     # rename the columns
     rank_data_subset.columns = ["Model"] + rank_columns
     # sum the ranks
@@ -240,6 +240,10 @@ def maincli():
     """Execute main client."""
     cli(ap, main)
 
+class Traceback:
+    def __init__(self, run_dir):
+        self.run_dir = run_dir
+    
 
 def main(run_dir):
     """
@@ -281,57 +285,89 @@ def main(run_dir):
     unk_idx, max_topo_len = 0, 0
     # this cycle goes through the steps in reverse order
     for n in range(len(sel_step) - 1, -1, -1):
-        log.info(f"Tracing back step {sel_step[n]}")
-        # correcting names in the dictionary. The ori_name must be complemented
-        # with the step folder name
-        for key in data_dict.keys():
-            if data_dict[key][-1] != "-":
-                data_dict[key][-1] = f"../{sel_step[n]}/{data_dict[key][-1]}"
+       log.info(f"Tracing back step {sel_step[n]}")
+       delta = len(sel_step) - n - 1  # how many steps have we gone back?
+       ls_values = [x for val in data_dict.values() for x in val]
+       # scoring modules. different logic as they could not have pdb files inside
+       if sel_step[n].endswith("scoring"):
+           dataframe_path = Path(run_dir, sel_step[n], f"{sel_step[n].split('_')[1]}.tsv")
+           df = pd.read_csv(dataframe_path, sep="\t")
+           ranks_argsort = np.argsort(df["score"].values)
+           for i in range(df.shape[0]):
+               rank = np.where(ranks_argsort == i)[0][0] + 1
+               ori_name = df["original_name"][i] # with scoring we know the original name
+               if n != len(sel_step) - 1:
+                   rel_path_struct = Path("../", sel_step[n], df["structure"][i])
+                   rel_path_struct = str(rel_path_struct)
+                   if rel_path_struct not in ls_values:
+                       # this is the first step in which the pdbfile appears.
+                       # for the scoring this means that it was discarded for the subsequent steps
+                       if ori_name in ls_values:
+                           # the original structure was there. It means that this scoring module
+                           # did not dump the models. So we should fit this guy into the data_dict
+                           idxs = [i for i, el in enumerate(ls_values) if el==ori_name]
+                           keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
+                       else:
+                           # We need to add the pdbfile to the data_dict
+                           keys = [f"unk{unk_idx}"]
+                           data_dict[keys[0]] = ["-" for el in range(delta - 1)]
+                           data_dict[keys[0]].append(df["structure"][i])
+                           rank_dict[keys[0]] = ["-" for el in range(delta)]
+                           unk_idx += 1
+                   else:
+                       # we've already seen this pdb before.
+                       idxs = [k for k, el in enumerate(ls_values) if el==rel_path_struct]
+                       keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
 
-        delta = len(sel_step) - n - 1  # how many steps have we gone back?
-        # loading the .json file
-        json_path = Path(run_dir, sel_step[n], "io.json")
-        io = ModuleIO()
-        io.load(json_path)
-        # list all the values in the data_dict
-        ls_values = [x for val in data_dict.values() for x in val]
-        # getting and sorting the ranks for the current step folder
-        ranks = [pdbfile.score for pdbfile in io.output]
-        ranks_argsort = np.argsort(ranks)
+                   # assignment
+                   for key in keys:
+                       data_dict[key].append(df["original_name"][i])
+                   for key in keys:
+                       rank_dict[key].append(rank)
+               else:  # last step of the workflow
+                   data_dict[str(df["structure"][i])] = [ori_name]
+                   rank_dict[str(df["structure"][i])] = [rank]
+       else:
+           # loading the .json file
+           json_path = Path(run_dir, sel_step[n], "io.json")
+           io = ModuleIO()
+           io.load(json_path)
+           # getting and sorting the ranks for the current step folder
+           ranks = [pdbfile.score for pdbfile in io.output]
+           ranks_argsort = np.argsort(ranks)
+           print(f"data_dict {data_dict}")
+           # iterating through the pdbfiles to fill data_dict and rank_dict
+           for i, pdbfile in enumerate(io.output):
+               rank = np.where(ranks_argsort == i)[0][0] + 1
+               # getting the original names
+               ori_names, max_topo_len = get_ori_names(n, pdbfile, max_topo_len)
+               if n != len(sel_step) - 1:
+                   if str(pdbfile.rel_path) not in ls_values:
+                       # this is the first step in which the pdbfile appears.
+                       # This means that it was discarded for the subsequent steps
+                       # We need to add the pdbfile to the data_dict
+                       keys = [f"unk{unk_idx}"]
+                       data_dict[keys[0]] = ["-" for el in range(delta - 1)]
+                       data_dict[keys[0]].append(str(pdbfile.rel_path))
+                       rank_dict[keys[0]] = ["-" for el in range(delta)]
+                       unk_idx += 1
+                   else:
+                       # we've already seen this pdb before.
+                       idxs = [i for i, el in enumerate(ls_values) if el==str(pdbfile.rel_path)]
+                       keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
 
-        # iterating through the pdbfiles to fill data_dict and rank_dict
-        for i, pdbfile in enumerate(io.output):
-            rank = np.where(ranks_argsort == i)[0][0] + 1
-            # getting the original names
-            ori_names, max_topo_len = get_ori_names(n, pdbfile, max_topo_len)
-            if n != len(sel_step) - 1:
-                if str(pdbfile.rel_path) not in ls_values:
-                    # this is the first step in which the pdbfile appears.
-                    # This means that it was discarded for the subsequent steps
-                    # We need to add the pdbfile to the data_dict
-                    keys = [f"unk{unk_idx}"]
-                    data_dict[keys[0]] = ["-" for el in range(delta - 1)]
-                    data_dict[keys[0]].append(str(pdbfile.rel_path))
-                    rank_dict[keys[0]] = ["-" for el in range(delta)]
-                    unk_idx += 1
-                else:
-                    # we've already seen this pdb before.
-                    idxs = [i for i, el in enumerate(ls_values) if el==str(pdbfile.rel_path)]
-                    keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
+                   # assignment
+                   for el in ori_names:
+                       for key in keys:
+                           data_dict[key].append(el)
+                   for key in keys:
+                       rank_dict[key].append(rank)
+               else:  # last step of the workflow
+                   data_dict[str(pdbfile.rel_path)] = [on for on in ori_names]
+                   rank_dict[str(pdbfile.rel_path)] = [rank]
 
-                # assignment
-                for el in ori_names:
-                    for key in keys:
-                        data_dict[key].append(el)
-                for key in keys:
-                    rank_dict[key].append(rank)
-            else:  # last step of the workflow
-                data_dict[str(pdbfile.rel_path)] = [on for on in ori_names]
-                rank_dict[str(pdbfile.rel_path)] = [rank]
-
-        # print(f"rank_dict {rank_dict}")
-        # print(f"data_dict {data_dict}, maxtopo {max_topo_len}")
-
+           # print(f"rank_dict {rank_dict}")
+           # print(f"data_dict {data_dict}, maxtopo {max_topo_len}")
     # stripping away relative paths
     final_data_dict = {}
     for key in data_dict.keys():

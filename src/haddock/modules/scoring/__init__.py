@@ -22,7 +22,7 @@ class ScoringModule(BaseHaddockModule):
         output_fname : FilePath
             Path to the file where to write scoring data.
         sep : str, optional
-            Charater used as separator in file, by default "\t"
+            Character used as separator in file, by default "\t"
         ascending_sort : bool, optional
             Should the data be sorted in ascending order, by default True
         """

@@ -112,6 +112,34 @@ class HaddockModule(BaseCNSModule):
                     break
 
         return md5_dic
+    
+    @staticmethod
+    def get_ensemble_origin(ensemble_f: FilePath) -> dict[int, str]:
+        """Try to find origin for each model in ensemble.
+
+        Parameters
+        ----------
+        ensemble_f : FilePath
+            Path to a pdb file containing an ensemble.
+
+        Returns
+        -------
+        origin_dic : dict[int, str]
+            Dictionary holding as keys the modelID and values its origin.
+        """
+        origin_dic: dict[int, str] = {}
+        text = Path(ensemble_f).read_text()
+        lines = text.split(os.linesep)
+        REMARK_lines = (line for line in lines if line.startswith("REMARK"))
+        re_origin = re.compile("REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)")  # noqa : E501
+        for line in REMARK_lines:
+            if (match := re_origin.search(line)):
+                model_num = int(match.group(1).strip())
+                original_path = match.group(3).strip()
+                original_name = Path(original_path).stem
+                origin_dic[model_num] = original_name
+        return origin_dic
+
 
     def _run(self) -> None:
         """Execute module."""
@@ -133,8 +161,8 @@ class HaddockModule(BaseCNSModule):
             if k.startswith("mol") and k[3:].isdigit():
                 mol_params[k] = self.params.pop(k)
 
-        # to facilite the for loop down the line, we create a list with the keys
-        # of `mol_params` with inverted order (we will use .pop)
+        # to facilite the for loop down the line, we create a list with the 
+        #  keys of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
         # limit is only useful when order == 0
@@ -150,6 +178,7 @@ class HaddockModule(BaseCNSModule):
 
         models_dic: dict[int, list[Path]] = {}
         ens_dic: dict[int, dict[int, str]] = {}
+        origi_ens_dic: dict[int, dict[int, str]] = {}
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
@@ -168,7 +197,7 @@ class HaddockModule(BaseCNSModule):
 
             # get the MD5 hash of each model
             ens_dic[i] = self.get_md5(molecule.with_parent)
-
+            origi_ens_dic[i] = self.get_ensemble_origin(molecule.with_parent)
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
@@ -180,7 +209,11 @@ class HaddockModule(BaseCNSModule):
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
                     self.log(f"Using custom topology {custom_top}")
-                    libpdb.sanitize(model, overwrite=True, custom_topology=custom_top)
+                    libpdb.sanitize(
+                        model,
+                        overwrite=True,
+                        custom_topology=custom_top,
+                        )
 
                 else:
                     libpdb.sanitize(model, overwrite=True)
@@ -194,7 +227,9 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                 )
 
-                self.log(f"Topology CNS input created in {topology_filename.name}")
+                self.log(
+                    f"Topology CNS input created in {topology_filename.name}"
+                    )
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
@@ -221,6 +256,7 @@ class HaddockModule(BaseCNSModule):
         for i in models_dic:
             expected[i] = {}
             md5_dic = ens_dic[i]
+            origin_names = origi_ens_dic[i]
             for j, model in enumerate(models_dic[i]):
                 md5_hash = None
                 try:
@@ -233,12 +269,34 @@ class HaddockModule(BaseCNSModule):
 
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
+                processed_topology = Path(
+                    f"{model_name}_haddock.{Format.TOPOLOGY}"
+                    )
+
+                # Check if origin or md5 is available
+                if md5_hash or model_id in origin_names.keys():
+                    # Select prefix
+                    if md5_hash:
+                        prefix_name = md5_hash
+                    else:
+                        prefix_name = origin_names[model_id]
+                    # Build new filename
+                    model_name = f"{prefix_name}_from_{model_name}"
+                    # Rename files
+                    processed_pdb = processed_pdb.rename(
+                        f"{model_name}_haddock.{Format.PDB}"
+                        )
+                    processed_topology = processed_topology.rename(
+                        f"{model_name}_haddock.{Format.TOPOLOGY}"
+                        )
 
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(
-                    file_name=processed_pdb, topology=topology, path=".", md5=md5_hash
-                )
+                    file_name=processed_pdb,
+                    topology=topology,
+                    path=".",
+                    md5=md5_hash,
+                    )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
 

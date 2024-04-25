@@ -1,6 +1,5 @@
 """haddock3-re clustrmsd subcommand."""
 from pathlib import Path
-import os
 import numpy as np
 
 from haddock import log

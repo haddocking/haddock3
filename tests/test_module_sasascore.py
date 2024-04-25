@@ -1,7 +1,6 @@
-"""Test the Accscoring module."""
-from tests.test_module_emscoring import output_models
-from haddock.modules.scoring.accscoring import HaddockModule as AccscoringModule  # noqa : E501
-from haddock.modules.scoring.accscoring.accscoring import (
+"""Test the sasascore module."""
+from haddock.libs.libontology import PDBFile
+from haddock.modules.scoring.sasascore.sasascore import (
     AccScore,
     calc_acc_score
     )
@@ -10,6 +9,24 @@ import pytest
 import tempfile
 import pandas as pd
 from pathlib import Path
+
+from . import golden_data
+
+
+@pytest.fixture
+def scoring_models():
+    """Prot-DNA models using for emscoring output."""
+    return [
+        PDBFile(
+            Path(golden_data, "protdna_complex_1.pdb"),
+            path=golden_data,
+            score=42.0
+            ),
+        PDBFile(
+            Path(golden_data, "protdna_complex_2.pdb"),
+            path=golden_data,
+            score=-28.0
+            )]
 
 
 @pytest.fixture
@@ -29,13 +46,13 @@ def acc_resdic():
         }
 
 
-def test_accscore(buried_resdic, acc_resdic):
+def test_accscore(scoring_models, buried_resdic, acc_resdic):
     """Test emscoring expected output."""
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
-        output_name = Path(tmpdir, "accscoring")
+        output_name = Path(tmpdir, "sasascore")
         viol_output_name = Path(tmpdir, "violations")
         accscore = AccScore(
-            model_list=output_models,
+            model_list=scoring_models,
             output_name=output_name,
             core=0,
             path=Path("."),

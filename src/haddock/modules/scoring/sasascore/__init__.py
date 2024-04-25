@@ -83,8 +83,9 @@ class HaddockModule(BaseHaddockModule):
         for core in range(ncores):
             output_name = Path("sasascore_" + str(core) + ".tsv")
             viol_output_name = Path("violations_" + str(core) + ".tsv")
+            model_list = models_to_score[idx_list[core]:idx_list[core + 1]]
             accscore_obj = AccScore(
-                model_list=models_to_score[idx_list[core]:idx_list[core + 1]],
+                model_list=model_list,
                 output_name=output_name,
                 core=core,
                 path=Path("."),

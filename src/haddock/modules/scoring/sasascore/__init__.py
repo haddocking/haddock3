@@ -79,7 +79,7 @@ class HaddockModule(BaseHaddockModule):
 
         # initialize jobs
         sasascore_jobs: list[AccScoreJob] = []
-        
+
         for core in range(ncores):
             output_name = Path("sasascore_" + str(core) + ".tsv")
             viol_output_name = Path("violations_" + str(core) + ".tsv")

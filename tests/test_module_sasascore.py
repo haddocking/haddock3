@@ -73,7 +73,7 @@ def test_accscore(scoring_models, buried_resdic, acc_resdic):
         exp_viol = pd.Series(["17", "17,29"], name="viols")
         obs_viol_df = pd.read_csv(viol_output_name, sep="\t", header=None)
         assert obs_viol_df.iloc[:, 1].equals(exp_viol)
-    
+
 
 def test_get_calc_acc_score(buried_resdic, acc_resdic):
     """Test calc_acc_score."""

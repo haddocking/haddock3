@@ -174,7 +174,7 @@ class AccScore:
                 violations_data.append(acc_str)
             self.violations.append(violations_data)
         return
-    
+
     def output(self):
         """Write down accessibility scores to file."""
         output_fname = Path(self.path, self.output_name)

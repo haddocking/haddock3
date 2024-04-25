@@ -1,37 +1,41 @@
+"""Accessibility scoring calculations."""
 from haddock import log
 from pathlib import Path
 import pandas as pd
 from haddock.core.typing import FilePath
-from haddock.clis.restraints.calc_accessibility import apply_cutoff, get_accessibility
+from haddock.clis.restraints.calc_accessibility import (
+    apply_cutoff,
+    get_accessibility,
+    )
 
 
 def rearrange_output(output_name: FilePath, path: FilePath,
-                          ncores: int) -> None:
-        """Combine different accscoring outputs in a single file.
-        
-        Parameters
-        ----------
-        output_name : FilePath
-            The name of the output file.
-        
-        path : FilePath
-            The path to the output files.
-        
-        ncores : int
-            The number of cores used in the calculation.
-        """
-        output_fname = Path(path, output_name)
-        log.info(f"rearranging output files into {output_fname}")
-        key = output_fname.stem.split(".")[0]
-        # Combine files
-        with open(output_fname, 'w') as out_file:
-            for core in range(ncores):
-                tmp_file = Path(path, f"{key}_" + str(core) + ".tsv")
-                with open(tmp_file) as infile:
-                    out_file.write(infile.read())
-                log.debug(f"File number {core} written")
-                tmp_file.unlink()
-        log.info(f"Completed reconstruction of {key} files.")
+                     ncores: int) -> None:
+    """Combine different accscoring outputs in a single file.
+    
+    Parameters
+    ----------
+    output_name : FilePath
+        The name of the output file.
+    
+    path : FilePath
+        The path to the output files.
+    
+    ncores : int
+        The number of cores used in the calculation.
+    """
+    output_fname = Path(path, output_name)
+    log.info(f"rearranging output files into {output_fname}")
+    key = output_fname.stem.split(".")[0]
+    # Combine files
+    with open(output_fname, 'w') as out_file:
+        for core in range(ncores):
+            tmp_file = Path(path, f"{key}_" + str(core) + ".tsv")
+            with open(tmp_file) as infile:
+                out_file.write(infile.read())
+            log.debug(f"File number {core} written")
+            tmp_file.unlink()
+    log.info(f"Completed reconstruction of {key} files.")
         
 
 def prettify_df(output_fname, columns, sortby=None):
@@ -81,21 +85,21 @@ def calc_acc_score(result_dict, buried_resdic, acc_resdic):
     """
     # filter the residues
     acc_score = 0
-    buried_viols = {}
-    acc_viols = {}
-    for chain in result_dict:
-        if chain in buried_resdic:
+    b_viols = {}
+    a_viols = {}
+    for ch in result_dict:
+        if ch in buried_resdic:
             # for every supposedly buried residue that is not buried,
             # the score should increase by one
-            buried_viols[chain] = set(buried_resdic[chain]).difference(result_dict[chain])
-            buried_viol_sc = len(buried_viols[chain])
+            b_viols[ch] = set(buried_resdic[ch]).difference(result_dict[ch])
+            buried_viol_sc = len(b_viols[ch])
             acc_score += buried_viol_sc
-        if chain in acc_resdic:
-            # now the opposite logic with the accessible amino acids. 
-            acc_viols[chain] = set(acc_resdic[chain]).difference(result_dict[chain])
-            acc_viol_sc = len(acc_viols[chain])
+        if ch in acc_resdic:
+            # now the opposite logic with the accessible amino acids.
+            a_viols[ch] = set(acc_resdic[ch]).difference(result_dict[ch])
+            acc_viol_sc = len(a_viols[ch])
             acc_score += acc_viol_sc
-    return acc_score, buried_viols, acc_viols
+    return acc_score, b_viols, a_viols
 
 
 class AccScoreJob:
@@ -115,8 +119,10 @@ class AccScoreJob:
         self.accscore_obj.output()
         return
 
+
 class AccScore:
     """AccScore class."""
+
     def __init__(
             self,
             model_list,
@@ -143,23 +149,27 @@ class AccScore:
         self.probe_radius = probe_radius
 
     def run(self):
-        """run accessibility calculations."""
+        """Run accessibility calculations."""
         for mod in self.model_list:
             mod_path = str(Path(mod.path, mod.file_name))
             try:
-                access_data = get_accessibility(mod_path, probe_radius=self.probe_radius)
-                result_dict = apply_cutoff(access_data, self.cutoff)
-                acc_score, buried_viols, acc_viols = calc_acc_score(result_dict, self.buried_resdic, self.acc_resdic)
+                access_data = get_accessibility(mod_path,
+                                                probe_radius=self.probe_radius)
+                result_dic = apply_cutoff(access_data, self.cutoff)
+                acc_sc, b_viols, a_viols = calc_acc_score(result_dic,
+                                                          self.buried_resdic,
+                                                          self.acc_resdic)
             except AssertionError as e:
                 log.warning(f"Error in get_accessibility for {mod_path}: {e}.")
                 acc_score = None
             self.data.append([mod.file_name, mod.ori_name, mod.md5, acc_score])
+            # now violations data
             violations_data = [mod.file_name]
-            for ch in buried_viols:
-                buried_str = ",".join([str(res) for res in sorted(buried_viols[ch])])                
+            for ch in b_viols:
+                buried_str = ",".join([str(res) for res in sorted(b_viols[ch])])
                 violations_data.append(buried_str)
-            for ch in acc_viols:
-                acc_str = ",".join([str(res) for res in sorted(acc_viols[ch])])
+            for ch in a_viols:
+                acc_str = ",".join([str(res) for res in sorted(a_viols[ch])])
                 violations_data.append(acc_str)
             self.violations.append(violations_data)
         return
@@ -173,4 +183,3 @@ class AccScore:
         violations_fname = Path(self.path, self.viol_output_name)
         viol_df = pd.DataFrame(self.violations)
         viol_df.to_csv(violations_fname, sep="\t", index=False, header=False)
-        

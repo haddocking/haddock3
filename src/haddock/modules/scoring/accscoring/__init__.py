@@ -1,7 +1,7 @@
 """Accessibility scoring module.
 
-This module performs a solvent accessibility analysis based on some 
-user-defined residues that should be buried or accessible.
+This module performs a solvent accessibility analysis based on some
+ user-defined residues that should be buried or accessible.
 
 If a supposedly buried (resp. accessible) residue is accessible (resp. buried),
 the score should increase by one. The lower the final score the more consistent
@@ -19,7 +19,7 @@ from haddock.modules.scoring.accscoring.accscoring import (
     AccScoreJob,
     prettify_df,
     rearrange_output,
-)
+    )
 from haddock.modules.analysis import (
     get_analysis_exec_mode,
     )
@@ -56,7 +56,7 @@ class HaddockModule(BaseHaddockModule):
         nmodels = len(models_to_score)
         # index_list for the jobs with linear scaling
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
-        index_list = get_index_list(nmodels, ncores)
+        idx_list = get_index_list(nmodels, ncores)
 
         # loading buried and accessible residue dictionaries
         buried_resdic = {
@@ -84,7 +84,7 @@ class HaddockModule(BaseHaddockModule):
             output_name = Path("accscoring_" + str(core) + ".tsv")
             viol_output_name = Path("violations_" + str(core) + ".tsv")
             accscore_obj = AccScore(
-                model_list=models_to_score[index_list[core]:index_list[core + 1]],
+                model_list=models_to_score[idx_list[core]:idx_list[core + 1]],
                 output_name=output_name,
                 core=core,
                 path=Path("."),
@@ -97,7 +97,7 @@ class HaddockModule(BaseHaddockModule):
             
             job = AccScoreJob(
                 accscore_obj,
-            )
+                )
             accscoring_jobs.append(job)
         
         # Run accscoring Jobs
@@ -108,18 +108,20 @@ class HaddockModule(BaseHaddockModule):
 
         # rearrange output
         output_name = Path("accscoring.tsv")
-        accscoring_df = rearrange_output(
+        rearrange_output(
             output_name,
             path=Path("."),
             ncores=ncores
             )
-        prettify_df(output_name, columns=["structure", "original_name", "md5", "score"], sortby="score")
-        violations_df = rearrange_output(
+        score_columns = ["structure", "original_name", "md5", "score"]
+        prettify_df(output_name, columns=score_columns, sortby="score")
+        rearrange_output(
             "violations.tsv",
             path=Path("."),
             ncores=ncores
             )
-        prettify_df("violations.tsv", columns=["structure"] + violations_chains)
+        prettify_df("violations.tsv",
+                    columns=["structure"] + violations_chains)
 
         self.output_models = models_to_score
         self.export_io_models()

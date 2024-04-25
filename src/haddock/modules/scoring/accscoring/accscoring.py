@@ -33,7 +33,21 @@ def rearrange_output(output_name: FilePath, path: FilePath,
                 tmp_file.unlink()
         log.info(f"Completed reconstruction of {key} files.")
         
+
 def prettify_df(output_fname, columns, sortby=None):
+    """Prettify the output dataframe.
+
+    Parameters
+    ----------
+    output_fname : str
+        The name of the output file.
+    
+    columns : list
+        The columns of the dataframe.
+    
+    sortby : str
+        The column to sort by.
+    """
     # dataframe conversion and sorting
     df = pd.read_csv(output_fname, sep="\t", header=None)
     df.columns = columns
@@ -157,6 +171,6 @@ class AccScore:
         df.to_csv(output_fname, sep="\t", index=False, header=False)
         # now we save the violations
         violations_fname = Path(self.path, self.viol_output_name)
-        viol_df = pd.DataFrame(self.violations)        
+        viol_df = pd.DataFrame(self.violations)
         viol_df.to_csv(violations_fname, sep="\t", index=False, header=False)
         

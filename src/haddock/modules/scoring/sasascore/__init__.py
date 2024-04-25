@@ -1,4 +1,4 @@
-"""Accessibility scoring module.
+"""Surface accessibility scoring module.
 
 This module performs a solvent accessibility analysis based on some
  user-defined residues that should be buried or accessible.
@@ -14,7 +14,7 @@ from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libutil import parse_ncores
 from haddock.libs.libparallel import get_index_list
-from haddock.modules.scoring.accscoring.accscoring import (
+from haddock.modules.scoring.sasascore.sasascore import (
     AccScore,
     AccScoreJob,
     prettify_df,
@@ -78,10 +78,10 @@ class HaddockModule(BaseHaddockModule):
         violations_chains = buried_violations_chains + acc_violations_chains
 
         # initialize jobs
-        accscoring_jobs: list[AccScoreJob] = []
+        sasascore_jobs: list[AccScoreJob] = []
         
         for core in range(ncores):
-            output_name = Path("accscoring_" + str(core) + ".tsv")
+            output_name = Path("sasascore_" + str(core) + ".tsv")
             viol_output_name = Path("violations_" + str(core) + ".tsv")
             accscore_obj = AccScore(
                 model_list=models_to_score[idx_list[core]:idx_list[core + 1]],
@@ -98,16 +98,16 @@ class HaddockModule(BaseHaddockModule):
             job = AccScoreJob(
                 accscore_obj,
                 )
-            accscoring_jobs.append(job)
+            sasascore_jobs.append(job)
         
-        # Run accscoring Jobs
+        # Run sasascore Jobs
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
-        engine = Engine(accscoring_jobs)
+        engine = Engine(sasascore_jobs)
         engine.run()
 
         # rearrange output
-        output_name = Path("accscoring.tsv")
+        output_name = Path("sasascore.tsv")
         rearrange_output(
             output_name,
             path=Path("."),

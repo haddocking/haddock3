@@ -11,7 +11,7 @@ from haddock.clis.restraints.calc_accessibility import (
 
 def rearrange_output(output_name: FilePath, path: FilePath,
                      ncores: int) -> None:
-    """Combine different accscoring outputs in a single file.
+    """Combine different sasascore outputs in a single file.
     
     Parameters
     ----------
@@ -36,7 +36,7 @@ def rearrange_output(output_name: FilePath, path: FilePath,
             log.debug(f"File number {core} written")
             tmp_file.unlink()
     log.info(f"Completed reconstruction of {key} files.")
-        
+
 
 def prettify_df(output_fname, columns, sortby=None):
     """Prettify the output dataframe.
@@ -161,8 +161,9 @@ class AccScore:
                                                           self.acc_resdic)
             except AssertionError as e:
                 log.warning(f"Error in get_accessibility for {mod_path}: {e}.")
-                acc_score = None
-            self.data.append([mod.file_name, mod.ori_name, mod.md5, acc_score])
+                acc_sc, b_viols, a_viols = None, None, None
+                continue
+            self.data.append([mod.file_name, mod.ori_name, mod.md5, acc_sc])
             # now violations data
             violations_data = [mod.file_name]
             for ch in b_viols:

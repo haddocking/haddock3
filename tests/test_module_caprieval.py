@@ -19,11 +19,6 @@ from haddock.modules.analysis.caprieval.capri import (
 from . import golden_data
 
 
-def round_two_dec(value):
-    """Round a value to two digits."""
-    return round(value, 2)
-
-
 def remove_aln_files(class_name):
     """Remove intermediary alignment files."""
     file_l = [Path(class_name.path, 'blosum62.izone'),
@@ -223,28 +218,28 @@ def test_protprot_irmsd(protprot_caprimodule):
     """Test protein-protein i-rmsd calculation."""
     # using standard cutoff
     protprot_caprimodule.calc_irmsd(cutoff=10.0)
-    assert round_two_dec(protprot_caprimodule.irmsd) == 8.33
+    assert np.isclose(protprot_caprimodule.irmsd, 8.33, atol=0.01)
     # using default cutoff = 5.0
     protprot_caprimodule.calc_irmsd()
-    assert round_two_dec(protprot_caprimodule.irmsd) == 7.38
+    assert np.isclose(protprot_caprimodule.irmsd, 7.38, atol=0.01)
 
 
 def test_protprot_lrmsd(protprot_caprimodule):
     """Test protein-protein l-rmsd calculation."""
     protprot_caprimodule.calc_lrmsd()
-    assert round_two_dec(protprot_caprimodule.lrmsd) == 20.94
+    assert np.isclose(protprot_caprimodule.lrmsd, 20.94, atol=0.01)
 
 
 def test_protprot_ilrmsd(protprot_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
     protprot_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protprot_caprimodule.ilrmsd) == 18.25
+    assert np.isclose(protprot_caprimodule.ilrmsd, 18.25, atol=0.01)
 
 
 def test_protprot_fnat(protprot_caprimodule):
     """Test protein-protein fnat calculation."""
     protprot_caprimodule.calc_fnat()
-    assert round_two_dec(protprot_caprimodule.fnat) == 0.05
+    assert np.isclose(protprot_caprimodule.fnat, 0.05, atol=0.01)
 
 
 def test_protprot_dockq(protprot_caprimodule):
@@ -253,7 +248,7 @@ def test_protprot_dockq(protprot_caprimodule):
     protprot_caprimodule.fnat = 0.05
     protprot_caprimodule.lrmsd = 15.9
     protprot_caprimodule.calc_dockq()
-    assert round_two_dec(protprot_caprimodule.dockq) == 0.10
+    assert np.isclose(protprot_caprimodule.dockq, 0.10, atol=0.01)
 
 
 def test_protprot_bb_vs_all_atoms(
@@ -296,25 +291,25 @@ def test_protprot_allatoms(protprot_allatm_caprimodule):
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_irmsd(cutoff=10.0)
-    assert round_two_dec(protprot_1bkd_caprimodule.irmsd) == 8.16
+    assert np.isclose(protprot_1bkd_caprimodule.irmsd, 8.16, atol=0.01)
 
 
 def test_protprot_1bkd_lrmsd(protprot_1bkd_caprimodule):
     """Test protein-protein l-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_lrmsd()
-    assert round_two_dec(protprot_1bkd_caprimodule.lrmsd) == 28.47
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 28.47, atol=0.01)
 
 
 def test_protprot_1bkd_ilrmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protprot_1bkd_caprimodule.ilrmsd) == 21.71
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 21.71, atol=0.01)
 
 
 def test_protprot_1bkd_fnat(protprot_1bkd_caprimodule):
     """Test protein-protein fnat calculation."""
     protprot_1bkd_caprimodule.calc_fnat()
-    assert round_two_dec(protprot_1bkd_caprimodule.fnat) == 0.07
+    assert np.isclose(protprot_1bkd_caprimodule.fnat, 0.07, atol=0.01)
 
 
 def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
@@ -323,7 +318,7 @@ def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
     protprot_1bkd_caprimodule.fnat = 0.07
     protprot_1bkd_caprimodule.lrmsd = 28.47
     protprot_1bkd_caprimodule.calc_dockq()
-    assert round_two_dec(protprot_1bkd_caprimodule.dockq) == 0.06
+    assert np.isclose(protprot_1bkd_caprimodule.dockq, 0.06, atol=0.01)
 
 
 def test_protprot_1bkd_allatoms(protprot_1bkd_caprimodule):
@@ -340,30 +335,37 @@ def test_protprot_1bkd_allatoms(protprot_1bkd_caprimodule):
     protprot_1bkd_caprimodule.calc_lrmsd()
     protprot_1bkd_caprimodule.calc_irmsd()
     protprot_1bkd_caprimodule.calc_ilrmsd()
+    # Check l-rmsd with Pymol cmd
+    # align protprot_1bkd_1 and chain A and not hydrogen, protprot_1bkd_2 and chain A and not hydrogen, cycles=0
+    # rms_cur protprot_1bkd_1 and chain R and not hydrogen, protprot_1bkd_2 and chain R and not hydrogen
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 28.530, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.irmsd, 8.181, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 21.5878, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.fnat, 0.07, atol=0.01)
 
 
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""
     protlig_caprimodule.calc_irmsd()
-    assert round_two_dec(protlig_caprimodule.irmsd) == 0.22
+    assert np.isclose(protlig_caprimodule.irmsd, 0.22, atol=0.01)
 
 
 def test_protlig_lrmsd(protlig_caprimodule):
     """Test protein-ligand l-rmsd calculation."""
     protlig_caprimodule.calc_lrmsd()
-    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.49
+    assert np.isclose(protlig_caprimodule.lrmsd, 0.49, atol=0.01)
 
 
 def test_protlig_ilrmsd(protlig_caprimodule):
     """Test protein-ligand i-l-rmsd calculation."""
     protlig_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.49
+    assert np.isclose(protlig_caprimodule.ilrmsd, 0.49, atol=0.01)
 
 
 def test_protlig_fnat(protlig_caprimodule):
     """Test protein-ligand fnat calculation."""
     protlig_caprimodule.calc_fnat()
-    assert round_two_dec(protlig_caprimodule.fnat) == 1.0
+    assert np.isclose(protlig_caprimodule.fnat, 1.0, atol=0.01)
 
 
 def test_protlig_allatoms(protlig_caprimodule):
@@ -389,25 +391,25 @@ def test_protlig_allatoms(protlig_caprimodule):
 def test_protdna_irmsd(protdna_caprimodule):
     """Test protein-dna i-rmsd calculation."""
     protdna_caprimodule.calc_irmsd()
-    assert round_two_dec(protdna_caprimodule.irmsd) == 2.05
+    assert np.isclose(protdna_caprimodule.irmsd, 2.05, atol=0.01)
 
 
 def test_protdna_lrmsd(protdna_caprimodule):
     """Test protein-dna l-rmsd calculation."""
     protdna_caprimodule.calc_lrmsd()
-    assert round_two_dec(protdna_caprimodule.lrmsd) == 6.13
+    assert np.isclose(protdna_caprimodule.lrmsd, 6.13, atol=0.01)
 
 
 def test_protdna_ilrmsd(protdna_caprimodule):
     """Test protein-dna i-l-rmsd calculation."""
     protdna_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protdna_caprimodule.ilrmsd) == 5.97
+    assert np.isclose(protdna_caprimodule.ilrmsd, 5.97, atol=0.01)
 
 
 def test_protdna_fnat(protdna_caprimodule):
     """Test protein-dna fnat calculation."""
     protdna_caprimodule.calc_fnat()
-    assert round_two_dec(protdna_caprimodule.fnat) == 0.49
+    assert np.isclose(protdna_caprimodule.fnat, 0.49, atol=0.01)
 
 
 def test_protdna_allatoms(protdna_caprimodule):
@@ -424,8 +426,13 @@ def test_protdna_allatoms(protdna_caprimodule):
     protdna_caprimodule.calc_lrmsd()
     protdna_caprimodule.calc_irmsd()
     protdna_caprimodule.calc_ilrmsd()
-    # process checks
-    # assert round_two_dec(protdna_caprimodule.lrmsd) == 6.26
+    # Check l-rmsd with Pymol cmd
+    # align protdna_complex_1 and chain A and not hydrogen, protdna_complex_2 and chain A and not hydrogen, cycles=0
+    # rms_cur protdna_complex_1 and chain B and not hydrogen, protdna_complex_2 and chain B and not hydrogen
+    assert np.isclose(protdna_caprimodule.lrmsd, 6.194, atol=0.01)
+    assert np.isclose(protdna_caprimodule.irmsd, 2.321, atol=0.01)
+    assert np.isclose(protdna_caprimodule.ilrmsd, 5.955, atol=0.01)
+    assert np.isclose(protdna_caprimodule.fnat, 0.4878, atol=0.01)
 
 
 def test_make_output(protprot_caprimodule):
@@ -592,8 +599,8 @@ def test_rearrange_ss_capri_output():
 def test_calc_stats():
     """Test the calculation of statistics."""
     observed_mean, observed_std = calc_stats([2, 2, 4, 5])
-    assert round_two_dec(observed_mean) == 3.25
-    assert round_two_dec(observed_std) == 1.3
+    assert np.isclose(observed_mean, 3.25, atol=0.01)
+    assert np.isclose(observed_std, 1.3, atol=0.01)
 
 
 def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
@@ -736,10 +743,10 @@ def test_single_chain_model(protprot_onechain_mod_caprimodule, params):
     """Test correct values if model has a single chain."""
     # fnat
     protprot_onechain_mod_caprimodule.calc_fnat()
-    assert round_two_dec(protprot_onechain_mod_caprimodule.fnat) == 0.00
+    assert np.isclose(protprot_onechain_mod_caprimodule.fnat, 0.00, atol=0.01)
     # irmsd might be different than zero
     protprot_onechain_mod_caprimodule.calc_irmsd()
-    assert round_two_dec(protprot_onechain_mod_caprimodule.irmsd) == 12.85
+    assert np.isclose(protprot_onechain_mod_caprimodule.irmsd, 12.85, atol=0.01)
     # lrmsd
     protprot_onechain_mod_caprimodule.calc_lrmsd()
     assert np.isnan(protprot_onechain_mod_caprimodule.lrmsd)

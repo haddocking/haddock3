@@ -287,7 +287,7 @@ class BaseHaddockModule(ABC):
         io.add(self.output_models, "o")
         # Save outputs
         io.save()
-        # Check if number of generated outputs is under the tolrance threshold
+        # Check if number of generated outputs is under the tolerance threshold
         faulty = io.check_faulty()
         if faulty > faulty_tolerance:
             _msg = (

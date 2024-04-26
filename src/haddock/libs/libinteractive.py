@@ -7,11 +7,14 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from haddock.libs.libplots import read_capri_table
+from haddock.modules import get_module_steps_folders
 
 def handle_ss_file(
         df_ss: pd.DataFrame,
-        ) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
-    """Manage a caprieval ss data focused on 4 first elements per cluster.
+        ) -> tuple[pd.DataFrame, dict]:
+    """
+    Manage a caprieval capri_ss file focusing on 4 first elements
+    per cluster.
 
     Parameters
     ----------
@@ -22,35 +25,36 @@ def handle_ss_file(
     -------
     df_ss : pd.DataFrame
         The input dataframe
-    clt_ranks : pd.DataFrame
-        New cluster ranking
-    new_values : np.ndarray
-        New cluster values focused on the first 4 elements per cluster.
+    clt_ranks_dict : dict
+        Dictionary with the cluster ranks
     """
     # now we want to calculate mean and std dev of the scores on df_ss
-    # first groupby score
-    df_ss_grouped = df_ss.groupby("cluster_ranking")
-    # sort the dataframe by score
+    # first sort the dataframe by score
     df_ss.sort_values(by=["score"], inplace=True)
+    # groupby cluster_id
+    df_ss_grouped = df_ss.groupby("cluster_id")
     # calculate the mean and standard deviation of the first 4 elements
     # of each group
-    new_values = np.zeros((len(df_ss_grouped), 2))
+    new_values = np.zeros((len(df_ss_grouped), 3))
     # loop over df_ss_grouped with enumerate
     for i, clt_id in enumerate(df_ss_grouped):
         ave_score = np.mean(clt_id[1]["score"].iloc[:4])
         std_score = np.std(clt_id[1]["score"].iloc[:4])
-        new_values[i] = [ave_score, std_score]
+        new_values[i] = [ave_score, std_score, clt_id[0]]
     # get the index that sorts the array by the first column
     clt_ranks = np.argsort(new_values[:, 0])
+    # the ranked clusters are the third column of the new_values array
+    clt_sorted = new_values[clt_ranks, 2]
+    clt_ranks_dict = {clt_sorted[i]: i + 1 for i in range(len(clt_sorted))}
     # adjust clustering values if there are clusters
     if list(np.unique(df_ss["cluster_id"])) != ["-"]:
         df_ss['model-cluster_ranking'] = df_ss.groupby('cluster_id')['score'].rank(ascending=True).astype(int)  # noqa : E501
         # assign to the values of cluster_ranking the corresponding clt_ranks
-        df_ss["cluster_ranking"] = df_ss["cluster_ranking"].apply(lambda x: clt_ranks[x - 1] + 1)  # noqa : E501
+        df_ss["cluster_ranking"] = df_ss["cluster_id"].apply(lambda x: clt_ranks_dict[x])  # noqa : E501
     # assign to the column caprieval_rank the index of the dataframe
     df_ss.index = range(1, len(df_ss) + 1)
     df_ss["caprieval_rank"] = df_ss.index
-    return df_ss, clt_ranks, new_values
+    return df_ss, clt_ranks_dict
 
 
 def rewrite_capri_tables(
@@ -90,7 +94,7 @@ def rewrite_capri_tables(
     # assign cluster_ranking to cluster_id (aka random assignment)
     df_ss['cluster_ranking'] = df_ss['cluster_id']
     # handle ss file
-    df_ss, clt_ranks, _new_values = handle_ss_file(df_ss)
+    df_ss, clt_ranks_dict = handle_ss_file(df_ss)
     
     # save capri_ss file
     capri_ss_file = Path(outdir, "capri_ss.tsv")
@@ -98,7 +102,7 @@ def rewrite_capri_tables(
     df_ss.to_csv(capri_ss_file, sep="\t", index=False)
 
     # retrieve df_clt object
-    df_clt = handle_clt_file(df_ss, clt_ranks)
+    df_clt = handle_clt_file(df_ss, clt_ranks_dict)
     # save capri_clt file
     capri_clt_file = Path(outdir, "capri_clt.tsv")
     log.info(f"Saving capri_clt file to {capri_clt_file}")
@@ -121,7 +125,6 @@ def look_for_capri(run_dir: str, module_id: int) -> Union[Path, None]:
     capri_eval : Path
         Path to the capri evaluation file
     """
-    from haddock.modules import get_module_steps_folders
     prev_modules_id = range(1, module_id)
     prev_modules = get_module_steps_folders(run_dir, prev_modules_id)
     # remove possible interactive modules
@@ -147,8 +150,15 @@ def look_for_capri(run_dir: str, module_id: int) -> Union[Path, None]:
     return capri_folder
 
 
-def handle_clt_file(df_ss, clt_ranks):
-    """Handle clt file.
+def handle_clt_file(df_ss, clt_ranks_dict):
+    """Handle capri.clt file.
+
+    Parameters
+    ----------
+    df_ss : pd.DataFrame
+        The caprieval ss data.
+    clt_ranks_dict : dict
+        New cluster ranking dictionary.
     
     Reclustering modifies the cluster data, so capri_clt.tsv must be updated.
     """
@@ -157,16 +167,18 @@ def handle_clt_file(df_ss, clt_ranks):
     df_ss_grouped = df_ss.groupby("cluster_id")
     # loop over df_ss_grouped
     cl_data = []
-    for i, clt_id in enumerate(df_ss_grouped):
-        cl_rank = np.where(clt_ranks == i)[0][0] + 1  # add +1 to start from 1
+    for clt_id in df_ss_grouped:
+        cl_rank = clt_ranks_dict[clt_id[0]] # the rank of the cluster is the key
         data = [cl_rank, clt_id[0], clt_id[1].shape[0], "-", ]
+        # updating capri quantities
         for column in capri_keys:
             ave_score = np.mean(clt_id[1][column].iloc[:4])
             std_score = np.std(clt_id[1][column].iloc[:4])
             data.extend([ave_score, std_score])
+        # updating model quantities
         for column in model_keys:
-            ave_score = np.mean(clt_id[1][column])
-            std_score = np.std(clt_id[1][column])
+            ave_score = np.mean(clt_id[1][column].iloc[:4])
+            std_score = np.std(clt_id[1][column].iloc[:4])
             data.extend([ave_score, std_score])
         cl_data.append(data)
     

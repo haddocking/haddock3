@@ -1,7 +1,9 @@
 """haddock3-re clustfcc subcommand."""
 
 from pathlib import Path
+import shutil
 from fcc.scripts import cluster_fcc
+
 
 from haddock import log
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
@@ -99,6 +101,8 @@ def reclustfcc(
     filename = Path(clustfcc_dir, "io.json")
     io.load(filename)
     models = io.input
+    # copying io.json to the new directory
+    shutil.copy(filename, Path(outdir, "io.json"))
 
     # load the original clustering parameters via json
     clustfcc_params = read_config(Path(clustfcc_dir, "params.cfg"))

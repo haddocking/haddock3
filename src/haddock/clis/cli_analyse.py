@@ -27,6 +27,8 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.clis.cli_unpack import main as haddock3_unpack
+from haddock.clis.cli_clean import main as haddock3_clean
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import (
     Any,
@@ -54,6 +56,7 @@ from haddock.libs.libplots import (
 )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
+from haddock import modules_defaults_path
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
@@ -173,6 +176,14 @@ ap.add_argument(
 )
 
 ap.add_argument(
+    "--offline",
+    help="Should plots js functions be self-contained?",
+    required=False,
+    type=bool,
+    default=False
+)
+
+ap.add_argument(
     "-p",
     "--other-params",
     dest="other_params",
@@ -208,7 +219,7 @@ def maincli() -> None:
     cli(ap, main)
 
 
-def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> None:
+def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cleaned: bool) -> None:
     """
     Run the caprieval analysis.
 
@@ -225,6 +236,11 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> No
     io = ModuleIO()
     filename = Path("..", f"{step}/io.json")
     io.load(filename)
+    # unpack the files if they are compressed
+    if is_cleaned:
+        default_general_params = read_from_yaml_config(modules_defaults_path)
+        path_to_unpack = io.output[0].path
+        haddock3_unpack(path_to_unpack, ncores=default_general_params["ncores"])
     # create capri
     caprieval_module = HaddockModule(
         order=1,
@@ -236,6 +252,9 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> No
     caprieval_module.previous_io = io
     # run capri module
     caprieval_module._run()
+    # compress files if they should be compressed
+    if is_cleaned:
+        haddock3_clean(path_to_unpack, ncores=default_general_params["ncores"])
 
 
 def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
@@ -369,6 +388,7 @@ def analyse_step(
     format: Optional[ImgFormat],
     scale: Optional[float],
     is_cleaned: Optional[bool],
+    offline: bool = False,
 ) -> None:
     """
     Analyse a step.
@@ -417,7 +437,7 @@ def analyse_step(
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if run_capri == True:
-        run_capri_analysis(step, run_dir, capri_dict)
+        run_capri_analysis(step, run_dir, capri_dict, is_cleaned)
 
     log.info("CAPRI files identified")
     # plotting
@@ -429,8 +449,20 @@ def analyse_step(
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatters = scatter_plot_handler(ss_file, cluster_ranking, format, scale)
-        boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
+        scatters = scatter_plot_handler(
+            ss_file,
+            cluster_ranking,
+            format,
+            scale,
+            offline=offline,
+            )
+        boxes = box_plot_handler(
+            ss_file,
+            cluster_ranking,
+            format,
+            scale,
+            offline=offline,
+            )
         tables = clt_table_handler(clt_file, ss_file, is_cleaned)
         report_generator(boxes, scatters, tables, step)
         # provide a zipped archive of the top ranked structures
@@ -445,6 +477,7 @@ def main(
     scale: Optional[float],
     inter: Optional[bool],
     is_cleaned: Optional[bool],
+    offline: bool = False,
     **kwargs: Any,
 ) -> None:
     """
@@ -512,8 +545,9 @@ def main(
         if dest_path.exists():
             if len(os.listdir(dest_path)) != 0 and not inter:
                 log.warning(
-                    f"{dest_path} exists and is not empty. " "Skipping analysis..."
-                )
+                    f"{dest_path} exists and is not empty. "
+                    "Skipping analysis..."
+                    )
                 continue
             else:  # subfolder is empty or is interactive, remove it.
                 log.info(f"Removing folder {dest_path}.")
@@ -523,7 +557,15 @@ def main(
         error = False
         try:
             analyse_step(
-                step, Path("./"), capri_dict, target_path, top_cluster, format, scale, is_cleaned
+                step,
+                Path("./"),
+                capri_dict,
+                target_path,
+                top_cluster,
+                format,
+                scale,
+                is_cleaned,
+                offline=offline,
             )
         except Exception as e:
             error = True

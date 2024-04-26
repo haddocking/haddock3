@@ -12,6 +12,7 @@ from scipy.spatial.distance import cdist
 from typing import Any
 
 from haddock import log
+from haddock.core.defaults import CNS_MODULES
 from haddock.core.typing import (
     AtomsDict,
     FilePath,
@@ -34,10 +35,41 @@ from haddock.libs.libalign import (
     )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
+from haddock.modules import get_module_steps_folders
+
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
 import json
 from haddock.gear.config import load as read_config
+
+
+def get_previous_cns_step(sel_steps: list) -> Union[str, None]:
+    """
+    Get the previous CNS step.
+
+    Parameters
+    ----------
+    run_path : Path
+        Path to the run folder.
+
+    Returns
+    -------
+    cns_step : str
+        Name of the CNS step.
+    """
+    # just to be careful, remove steps with more than one underscore
+    sel_steps = [step for step in sel_steps if step.count("_") == 1]
+    # get the previous CNS step
+    cns_step = None
+    mod = len(sel_steps) - 2
+    while mod > -1:
+        st_name = sel_steps[mod].split("_")[1]
+        if st_name in CNS_MODULES:
+            cns_step = sel_steps[mod]
+            break
+        mod -= 1
+
+    return cns_step
 
 
 def save_scoring_weights(cns_step: str) -> Path:
@@ -69,11 +101,11 @@ def save_scoring_weights(cns_step: str) -> Path:
 
 
 def load_contacts(
-        pdb_f,
-        cutoff=5.0,
-        numbering_dic=None,
-        model2ref_chain_dict=None,
-        ):
+        pdb_f: Union[Path, PDBFile],
+        cutoff: float = 5.0,
+        numbering_dic: Optional[dict[str, dict[int, int]]] = None,
+        model2ref_chain_dict: Optional[dict[str, str]] = None,
+        ) -> set[tuple]:
     """Load residue-based contacts.
 
     Parameters
@@ -88,7 +120,6 @@ def load_contacts(
     set(con_list) : set
         set of unique contacts
     """
-    con_list: list = []
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
@@ -115,6 +146,7 @@ def load_contacts(
     unique_chain_combs = list(combinations(sorted(coord_arrays.keys()), 2))
 
     # calculating contacts
+    con_list: list[tuple] = []
     for pair in unique_chain_combs:
         # cycling over each coordinate of the first chain
         for s in range(coord_arrays[pair[0]].shape[0]):
@@ -199,14 +231,17 @@ class CAPRI:
             ref_coord_dic, _ = load_coords(
                 self.reference, self.atoms, ref_interface_resdic
                 )
-
-            mod_coord_dic, _ = load_coords(
-                self.model,
-                self.atoms,
-                ref_interface_resdic,
-                numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict=self.model2ref_chain_dict,
-                )
+            try:
+                mod_coord_dic, _ = load_coords(
+                    self.model,
+                    self.atoms,
+                    ref_interface_resdic,
+                    numbering_dic=self.model2ref_numbering,
+                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    )
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
+                return
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -238,13 +273,16 @@ class CAPRI:
     def calc_lrmsd(self) -> None:
         """Calculate the L-RMSD."""
         ref_coord_dic, _ = load_coords(self.reference, self.atoms)
-
-        mod_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            numbering_dic=self.model2ref_numbering,
-            model2ref_chain_dict=self.model2ref_chain_dict,
-            )
+        try:
+            mod_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
         Q = []
         P = []
@@ -345,14 +383,17 @@ class CAPRI:
         ref_int_coord_dic, _ = load_coords(
             self.reference, self.atoms, ref_interface_resdic
             )
-
-        mod_int_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            ref_interface_resdic,
-            numbering_dic=self.model2ref_numbering,
-            model2ref_chain_dict=self.model2ref_chain_dict,
-            )
+        try:
+            mod_int_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                ref_interface_resdic,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
         # write_coord_dic("ref.pdb", ref_int_coord_dic)
         # write_coord_dic("model.pdb", mod_int_coord_dic)
@@ -439,14 +480,18 @@ class CAPRI:
         """
         ref_contacts = load_contacts(self.reference, cutoff)
         if len(ref_contacts) != 0:
-            model_contacts = load_contacts(
-                self.model,
-                cutoff,
-                numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict=self.model2ref_chain_dict,
-                )
-            intersection = ref_contacts & model_contacts
-            self.fnat = len(intersection) / float(len(ref_contacts))
+            try:
+                model_contacts = load_contacts(
+                    self.model,
+                    cutoff,
+                    numbering_dic=self.model2ref_numbering,
+                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    )
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
+            else:
+                intersection = ref_contacts & model_contacts
+                self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
 

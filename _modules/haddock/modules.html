@@ -372,14 +372,17 @@
         <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="c1"># add the output models</span>
         <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
+        <span class="c1"># Save outputs</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="c1"># Check if number of generated outputs is under the tolerance threshold</span>
         <span class="n">faulty</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">check_faulty</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">faulty</span> <span class="o">&gt;</span> <span class="n">faulty_tolerance</span><span class="p">:</span>
             <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">faulty</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% of output was not generated for this module &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;and tolerance was set to </span><span class="si">{</span><span class="n">faulty_tolerance</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%.&quot;</span>
                 <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
-        <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span></div>
+        
 
 <div class="viewcode-block" id="BaseHaddockModule.finish_with_error"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.finish_with_error">[docs]</a>    <span class="k">def</span> <span class="nf">finish_with_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish with error message.&quot;&quot;&quot;</span>

@@ -161,7 +161,7 @@ class HaddockModule(BaseCNSModule):
             if k.startswith("mol") and k[3:].isdigit():
                 mol_params[k] = self.params.pop(k)
 
-        # to facilite the for loop down the line, we create a list with the 
+        # to facilitate the for loop down the line, we create a list with the 
         #  keys of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 

@@ -195,12 +195,13 @@ class CAPRI:
             self.model = model
         self.path = path
         self.params = params
-        self.irmsd = float("nan")
-        self.lrmsd = float("nan")
-        self.ilrmsd = float("nan")
-        self.fnat = float("nan")
-        self.dockq = float("nan")
-        self.atoms = self._load_atoms(model, reference)
+        self.irmsd = float('nan')
+        self.lrmsd = float('nan')
+        self.ilrmsd = float('nan')
+        self.fnat = float('nan')
+        self.dockq = float('nan')
+        self.allatoms = params["allatoms"]
+        self.atoms = self._load_atoms(model, reference, full=self.allatoms)
         self.r_chain = params["receptor_chain"]
         self.l_chains = params["ligand_chains"]
         self.model2ref_numbering = None
@@ -637,7 +638,11 @@ class CAPRI:
         return r_chain, l_chains
 
     @staticmethod
-    def _load_atoms(model: PDBPath, reference: PDBPath) -> AtomsDict:
+    def _load_atoms(
+            model: PDBPath,
+            reference: PDBPath,
+            full: bool = False,
+            ) -> AtomsDict:
         """
         Load atoms from a model and reference.
 
@@ -647,14 +652,16 @@ class CAPRI:
             PDB file of the model to have its atoms identified
         reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             PDB file of the model to have its atoms identified
+        full : bool
+            If False, only backbone atoms will be retrieved, otherwise all atoms
 
         Returns
         -------
         atom_dic : dict
             Dictionary containing atoms observed in model and reference
         """
-        model_atoms = get_atoms(model)
-        reference_atoms = get_atoms(reference)
+        model_atoms = get_atoms(model, full=full)
+        reference_atoms = get_atoms(reference, full=full)
         atoms_dict: AtomsDict = {}
         atoms_dict.update(model_atoms)
         atoms_dict.update(reference_atoms)

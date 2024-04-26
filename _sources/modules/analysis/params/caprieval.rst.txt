@@ -15,6 +15,17 @@ alignment_method
 | *group*: analysis
 | *explevel*: easy
 
+allatoms
+~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Atoms to be considered during the analysis.
+| *short description*: Atoms to be considered during the analysis.
+| *long description*: Atoms to be considered during the analysis. If false (default), only backbone atoms will be considered, otherwise all the heavy-atoms.
+| *group*: analysis
+| *explevel*: easy
+
 clt_threshold
 ~~~~~~~~~~~~~
 

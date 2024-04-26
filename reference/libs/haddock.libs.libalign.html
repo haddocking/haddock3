@@ -304,7 +304,12 @@
 <dd><p>Identify what is the molecule type of each PDB.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pdb</strong> (PosixPath or <a class="reference internal" href="haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">haddock.libs.libontology.PDBFile</span></code></a>) – PDB file to have its atoms identified</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pdb</strong> (PosixPath or <a class="reference internal" href="haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">haddock.libs.libontology.PDBFile</span></code></a>) – PDB file to have its atoms identified</p></li>
+<li><p><strong>full</strong> (<em>bool</em>) – Weather or not to take <cite>full</cite> atoms into consideration.
+If False, only main-chain atoms retrieved.
+If True, all heavy atoms retrieved.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>atom_dic</strong> (<em>dict</em>) – dictionary of atoms</p>

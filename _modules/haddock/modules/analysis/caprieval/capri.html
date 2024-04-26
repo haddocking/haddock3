@@ -285,12 +285,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_atoms</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">reference</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allatoms</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;allatoms&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_atoms</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allatoms</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r_chain</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l_chains</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span> <span class="o">=</span> <span class="kc">None</span>
@@ -727,7 +728,11 @@
         <span class="k">return</span> <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_atoms</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span> <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_load_atoms</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+            <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+            <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load atoms from a model and reference.</span>
 
@@ -737,14 +742,16 @@
 <span class="sd">            PDB file of the model to have its atoms identified</span>
 <span class="sd">        reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`</span>
 <span class="sd">            PDB file of the model to have its atoms identified</span>
+<span class="sd">        full : bool</span>
+<span class="sd">            If False, only backbone atoms will be retrieved, otherwise all atoms</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        atom_dic : dict</span>
 <span class="sd">            Dictionary containing atoms observed in model and reference</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_atoms</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="n">reference_atoms</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+        <span class="n">model_atoms</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="n">full</span><span class="p">)</span>
+        <span class="n">reference_atoms</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="n">full</span><span class="p">)</span>
         <span class="n">atoms_dict</span><span class="p">:</span> <span class="n">AtomsDict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">atoms_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_atoms</span><span class="p">)</span>
         <span class="n">atoms_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reference_atoms</span><span class="p">)</span>

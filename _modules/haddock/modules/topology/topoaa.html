@@ -200,6 +200,34 @@
                     <span class="k">break</span>
 
         <span class="k">return</span> <span class="n">md5_dic</span></div>
+    
+<div class="viewcode-block" id="HaddockModule.get_ensemble_origin"><a class="viewcode-back" href="../../../../modules/topology/haddock.modules.topology.topoaa.html#haddock.modules.topology.topoaa.HaddockModule.get_ensemble_origin">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_ensemble_origin</span><span class="p">(</span><span class="n">ensemble_f</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to find origin for each model in ensemble.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ensemble_f : FilePath</span>
+<span class="sd">            Path to a pdb file containing an ensemble.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        origin_dic : dict[int, str]</span>
+<span class="sd">            Dictionary holding as keys the modelID and values its origin.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">origin_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ensemble_f</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+        <span class="n">REMARK_lines</span> <span class="o">=</span> <span class="p">(</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;REMARK&quot;</span><span class="p">))</span>
+        <span class="n">re_origin</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)&quot;</span><span class="p">)</span>  <span class="c1"># noqa : E501</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">REMARK_lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">re_origin</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)):</span>
+                <span class="n">model_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="n">original_path</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">original_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">original_path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
+                <span class="n">origin_dic</span><span class="p">[</span><span class="n">model_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_name</span>
+        <span class="k">return</span> <span class="n">origin_dic</span></div>
+
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
@@ -221,8 +249,8 @@
             <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mol&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
                 <span class="n">mol_params</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 
-        <span class="c1"># to facilite the for loop down the line, we create a list with the keys</span>
-        <span class="c1"># of `mol_params` with inverted order (we will use .pop)</span>
+        <span class="c1"># to facilitate the for loop down the line, we create a list with the </span>
+        <span class="c1">#  keys of `mol_params` with inverted order (we will use .pop)</span>
         <span class="n">mol_params_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mol_params</span><span class="o">.</span><span class="n">keys</span><span class="p">())[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># limit is only useful when order == 0</span>
@@ -238,6 +266,7 @@
 
         <span class="n">models_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ens_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">origi_ens_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">molecules</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecule </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">molecule</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">models_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -256,7 +285,7 @@
 
             <span class="c1"># get the MD5 hash of each model</span>
             <span class="n">ens_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_md5</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">with_parent</span><span class="p">)</span>
-
+            <span class="n">origi_ens_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ensemble_origin</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">with_parent</span><span class="p">)</span>
             <span class="c1"># nice variable name, isn&#39;t it? :-)</span>
             <span class="c1"># molecule parameters are shared among models of the same molecule</span>
             <span class="n">parameters_for_this_molecule</span> <span class="o">=</span> <span class="n">mol_params</span><span class="p">[</span><span class="n">mol_params_get</span><span class="p">()]</span>
@@ -268,7 +297,11 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">]:</span>
                     <span class="n">custom_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">]</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using custom topology </span><span class="si">{</span><span class="n">custom_top</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="n">libpdb</span><span class="o">.</span><span class="n">sanitize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">custom_topology</span><span class="o">=</span><span class="n">custom_top</span><span class="p">)</span>
+                    <span class="n">libpdb</span><span class="o">.</span><span class="n">sanitize</span><span class="p">(</span>
+                        <span class="n">model</span><span class="p">,</span>
+                        <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">custom_topology</span><span class="o">=</span><span class="n">custom_top</span><span class="p">,</span>
+                        <span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">libpdb</span><span class="o">.</span><span class="n">sanitize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -282,7 +315,9 @@
                     <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Topology CNS input created in </span><span class="si">{</span><span class="n">topology_filename</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Topology CNS input created in </span><span class="si">{</span><span class="n">topology_filename</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
 
                 <span class="c1"># Add new job to the pool</span>
                 <span class="n">output_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">CNS_OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -309,6 +344,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">models_dic</span><span class="p">:</span>
             <span class="n">expected</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">md5_dic</span> <span class="o">=</span> <span class="n">ens_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">origin_names</span> <span class="o">=</span> <span class="n">origi_ens_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
                 <span class="n">md5_hash</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -321,12 +357,34 @@
 
                 <span class="n">model_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">stem</span>
                 <span class="n">processed_pdb</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">PDB</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">processed_topology</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">TOPOLOGY</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">processed_topology</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">TOPOLOGY</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Check if origin or md5 is available</span>
+                <span class="k">if</span> <span class="n">md5_hash</span> <span class="ow">or</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">origin_names</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="c1"># Select prefix</span>
+                    <span class="k">if</span> <span class="n">md5_hash</span><span class="p">:</span>
+                        <span class="n">prefix_name</span> <span class="o">=</span> <span class="n">md5_hash</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">prefix_name</span> <span class="o">=</span> <span class="n">origin_names</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
+                    <span class="c1"># Build new filename</span>
+                    <span class="n">model_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix_name</span><span class="si">}</span><span class="s2">_from_</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="c1"># Rename files</span>
+                    <span class="n">processed_pdb</span> <span class="o">=</span> <span class="n">processed_pdb</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">PDB</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">processed_topology</span> <span class="o">=</span> <span class="n">processed_topology</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">TOPOLOGY</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
 
                 <span class="n">topology</span> <span class="o">=</span> <span class="n">TopologyFile</span><span class="p">(</span><span class="n">processed_topology</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
                 <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span>
-                    <span class="n">file_name</span><span class="o">=</span><span class="n">processed_pdb</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topology</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">md5</span><span class="o">=</span><span class="n">md5_hash</span>
-                <span class="p">)</span>
+                    <span class="n">file_name</span><span class="o">=</span><span class="n">processed_pdb</span><span class="p">,</span>
+                    <span class="n">topology</span><span class="o">=</span><span class="n">topology</span><span class="p">,</span>
+                    <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+                    <span class="n">md5</span><span class="o">=</span><span class="n">md5_hash</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="n">pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">stem</span>
                 <span class="n">expected</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdb</span>
 
@@ -343,7 +401,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 25, 2024.
+      <span class="lastupdated">Last updated on Apr 26, 2024.
       </span></p>
   </div>
 

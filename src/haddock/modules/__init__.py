@@ -285,6 +285,9 @@ class BaseHaddockModule(ABC):
         io.add(self.previous_io.output, "i")
         # add the output models
         io.add(self.output_models, "o")
+        # Save outputs
+        io.save()
+        # Check if number of generated outputs is under the tolrance threshold
         faulty = io.check_faulty()
         if faulty > faulty_tolerance:
             _msg = (
@@ -292,7 +295,7 @@ class BaseHaddockModule(ABC):
                 f"and tolerance was set to {faulty_tolerance:.2f}%."
                 )
             self.finish_with_error(_msg)
-        io.save()
+        
 
     def finish_with_error(self, reason: object = "Module has failed.") -> None:
         """Finish with error message."""

@@ -11,7 +11,7 @@ stable beta version.
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
 
-[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
+[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8844/badge)](https://www.bestpractices.dev/projects/8844)
 
 [![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)

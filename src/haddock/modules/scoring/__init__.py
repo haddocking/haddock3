@@ -1,7 +1,8 @@
 """HADDOCK3 modules to score models."""
+from os import linesep
 import pandas as pd
 
-from haddock.core.typing import FilePath
+from haddock.core.typing import FilePath, Optional
 from haddock.modules.base_cns_module import BaseCNSModule
 from haddock.modules import BaseHaddockModule
 
@@ -14,6 +15,7 @@ class ScoringModule(BaseHaddockModule):
             output_fname: FilePath,
             sep: str = "\t",
             ascending_sort: bool = True,
+            header_comments: Optional[str] = None,
             ) -> None:
         r"""Save the output in comprehensive tables.
 
@@ -36,9 +38,18 @@ class ScoringModule(BaseHaddockModule):
         df_sc = pd.DataFrame(sc_data, columns=df_columns)
         df_sc_sorted = df_sc.sort_values(by="score", ascending=ascending_sort)
         # writes to disk
-        df_sc_sorted.to_csv(output_fname, sep=sep, index=False, na_rep="None")
-
-        return
+        output_file = open(output_fname, 'a')
+        # Check if some comment in header are here
+        if header_comments:
+            output_file.write(header_comments)
+        # Write the dataframe
+        df_sc_sorted.to_csv(
+            output_file,
+            sep=sep,
+            index=False,
+            na_rep="None",
+            line_terminator=linesep,
+            )
 
 
 class CNSScoringModule(BaseCNSModule, ScoringModule):

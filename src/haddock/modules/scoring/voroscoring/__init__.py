@@ -6,6 +6,7 @@ For more information, please check: https://github.com/kliment-olechnovic/ftdmp
 It is a third party module, and requires the appropriate set up and intallation
 for it to run without issue.
 """
+from os import linesep
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath
@@ -84,6 +85,12 @@ class HaddockModule(ScoringModule):
 
         # Write output file
         scoring_tsv_fpath = f"{RECIPE_PATH.name}.tsv"
-        self.output(scoring_tsv_fpath)
+        self.output(
+            scoring_tsv_fpath,
+            header_comments=(
+                "# Note that negative of the value are reported "
+                f"in the case of non-energetical predictions{linesep}",
+                ),
+            )
         # Export to next module
         self.export_io_models()

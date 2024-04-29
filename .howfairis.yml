@@ -1,0 +1,9 @@
+## Uncomment a line if you want to skip a given category of checks
+
+#skip_repository_checks_reason: <reason for skipping goes here>
+#skip_license_checks_reason: <reason for skipping goes here>
+#skip_registry_checks_reason: <reason for skipping goes here>
+#skip_citation_checks_reason: <reason for skipping goes here>
+skip_checklist_checks_reason: "I'm using the Codacy dashboard to guide my development"
+
+ignore_commented_badges: false

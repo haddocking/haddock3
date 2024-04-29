@@ -57,11 +57,12 @@ def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
     cns_step : str
         Name of the CNS step.
     """
-    # just to be careful, remove steps with more than one underscore
-    sel_steps = [step for step in sel_steps if step.count("_") == 1]
     # get the previous CNS step
     cns_step = None
-    mod = st_order - 1
+    # just to be careful, remove steps with more than one underscore
+    sel_steps = [step for step in sel_steps if step.count("_") == 1]
+    mod = min(st_order - 1, len(sel_steps) - 1)
+    # loop
     while mod > -1:
         st_name = sel_steps[mod].split("_")[1]
         if st_name in CNS_MODULES:

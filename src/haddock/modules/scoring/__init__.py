@@ -41,6 +41,9 @@ class ScoringModule(BaseHaddockModule):
         output_file = open(output_fname, 'a')
         # Check if some comment in header are here
         if header_comments:
+            # Make sure the comments is ending by a new line
+            if header_comments[-1] != linesep:
+                header_comments += linesep
             output_file.write(header_comments)
         # Write the dataframe
         df_sc_sorted.to_csv(

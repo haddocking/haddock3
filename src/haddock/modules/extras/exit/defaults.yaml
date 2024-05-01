@@ -6,5 +6,5 @@ message:
   title: Exiting message.
   short: The message to print when exiting.
   long: The message to print when exiting.
-  group:
+  group: execution
   explevel: easy

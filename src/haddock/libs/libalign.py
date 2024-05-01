@@ -144,32 +144,35 @@ DNA_ATOMS = [
     "O6",
     ]
 
-RNA_RES = ["A", "G", "C", "U"]
-RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
-
 DNA_FULL_DICT = {
-    "DA": [
-        "P",
-        "O1P",
-        "O2P",
+    'DA': [
+        'P',
+        'O1P',
+        'O2P',
         "O5'",
         "C5'",
         "C4'",
         "O4'",
         "C1'",
-        "N9",
-        "C4",
-        "N3",
-        "C2",
-        "N1",
-        "C6",
-        "N6",
-        "C5",
-        "N7",
-        "C8",
+        'N9',
+        'C4',
+        'N3',
+        'C2',
+        'N1',
+        'C6',
+        'N6',
+        'C5',
+        'N7',
+        'C8',
         "C2'",
         "C3'",
         "O3'",
+        'N2',
+        'O2',
+        'N4',
+        'C7',
+        'O4',
+        'O6',
         ],
     "DG": [
         "P",
@@ -180,20 +183,25 @@ DNA_FULL_DICT = {
         "C4'",
         "O4'",
         "C1'",
-        "N9",
-        "C4",
-        "N3",
-        "C2",
-        "N2",
-        "N1",
-        "C6",
-        "O6",
-        "C5",
-        "N7",
-        "C8",
+        'N9',
+        'C4',
+        'N3',
+        'C2',
+        'N2',
+        'N1',
+        'C6',
+        'O6',
+        'C5',
+        'N7',
+        'C8',
         "C2'",
         "C3'",
         "O3'",
+        'O2',
+        'N4',
+        'C7',
+        'N6',
+        'O4',
         ],
     "DC": [
         "P",
@@ -204,17 +212,25 @@ DNA_FULL_DICT = {
         "C4'",
         "O4'",
         "C1'",
-        "N1",
-        "C6",
-        "C2",
-        "O2",
-        "N3",
-        "C4",
-        "N4",
-        "C5",
+        'N1',
+        'C6',
+        'C2',
+        'O2',
+        'N3',
+        'C4',
+        'N4',
+        'C5',
         "C2'",
         "C3'",
         "O3'",
+        'N9',
+        'N2',
+        'C8',
+        'N7',
+        'C7',
+        'N6',
+        'O4',
+        'O6',
         ],
     "DT": [
         "P",
@@ -225,20 +241,30 @@ DNA_FULL_DICT = {
         "C4'",
         "O4'",
         "C1'",
-        "N1",
-        "C6",
-        "C2",
-        "O2",
-        "N3",
-        "C4",
-        "O4",
-        "C5",
-        "C7",
+        'N1',
+        'C6',
+        'C2',
+        'O2',
+        'N3',
+        'C4',
+        'O4',
+        'C5',
+        'C7',
         "C2'",
         "C3'",
         "O3'",
-        ],
+        'N9',
+        'N2',
+        'C8',
+        'N4',
+        'N7',
+        'N6',
+        'O6',
+        ]
     }
+
+RNA_RES = ["A", "G", "C", "U"]
+RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 
 RNA_FULL_DICT = {
     "A": [
@@ -475,18 +501,22 @@ def load_coords(
             coords = np.asarray([x, y, z])
             # Remap chain name
             if model2ref_chain_dict:
-                chain = model2ref_chain_dict[chain]
-            if numbering_dic and model2ref_chain_dict:
-                try:
-                    resnum = numbering_dic[chain][resnum]
-                except KeyError:
-                    # this residue is not matched, and so it should
-                    #  not be considered
-                    # self.log(
-                    #     f"WARNING: {chain}.{resnum}.{atom_name}"
-                    #     " was not matched!"
-                    #     )
+                # Skip chain matching if not present in reference structure
+                if chain not in model2ref_chain_dict.keys():
                     continue
+                chain = model2ref_chain_dict[chain]
+
+                if numbering_dic:
+                    try:
+                        resnum = numbering_dic[chain][resnum]
+                    except KeyError:
+                        # this residue is not matched, and so it should
+                        #  not be considered
+                        # self.log(
+                        #     f"WARNING: {chain}.{resnum}.{atom_name}"
+                        #     " was not matched!"
+                        #     )
+                        continue
 
             # Create identifier tuple
             if add_resname is True:
@@ -548,6 +578,10 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     ----------
     pdb : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
         PDB file to have its atoms identified
+    full : bool
+        Weather or not to take `full` atoms into consideration.
+        If False, only main-chain atoms retrieved.
+        If True, all heavy atoms retrieved.
 
     Returns
     -------

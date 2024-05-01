@@ -83,7 +83,7 @@ topX:
      their score (if accessible) and only a subset defined
      by this variable are analysed. If no score available, a random set of
      `topX` models are analysed.
-  group: sample
+  group: analysis
   explevel: expert
 
 cluster_heatmap_datatype:

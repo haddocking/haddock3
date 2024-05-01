@@ -101,11 +101,11 @@ def save_scoring_weights(cns_step: str) -> Path:
 
 
 def load_contacts(
-        pdb_f,
-        cutoff=5.0,
-        numbering_dic=None,
-        model2ref_chain_dict=None,
-        ):
+        pdb_f: Union[Path, PDBFile],
+        cutoff: float = 5.0,
+        numbering_dic: Optional[dict[str, dict[int, int]]] = None,
+        model2ref_chain_dict: Optional[dict[str, str]] = None,
+        ) -> set[tuple]:
     """Load residue-based contacts.
 
     Parameters
@@ -120,7 +120,6 @@ def load_contacts(
     set(con_list) : set
         set of unique contacts
     """
-    con_list: list = []
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
@@ -147,6 +146,7 @@ def load_contacts(
     unique_chain_combs = list(combinations(sorted(coord_arrays.keys()), 2))
 
     # calculating contacts
+    con_list: list[tuple] = []
     for pair in unique_chain_combs:
         # cycling over each coordinate of the first chain
         for s in range(coord_arrays[pair[0]].shape[0]):
@@ -195,12 +195,13 @@ class CAPRI:
             self.model = model
         self.path = path
         self.params = params
-        self.irmsd = float("nan")
-        self.lrmsd = float("nan")
-        self.ilrmsd = float("nan")
-        self.fnat = float("nan")
-        self.dockq = float("nan")
-        self.atoms = self._load_atoms(model, reference)
+        self.irmsd = float('nan')
+        self.lrmsd = float('nan')
+        self.ilrmsd = float('nan')
+        self.fnat = float('nan')
+        self.dockq = float('nan')
+        self.allatoms = params["allatoms"]
+        self.atoms = self._load_atoms(model, reference, full=self.allatoms)
         self.r_chain = params["receptor_chain"]
         self.l_chains = params["ligand_chains"]
         self.model2ref_numbering = None
@@ -230,14 +231,17 @@ class CAPRI:
             ref_coord_dic, _ = load_coords(
                 self.reference, self.atoms, ref_interface_resdic
                 )
-
-            mod_coord_dic, _ = load_coords(
-                self.model,
-                self.atoms,
-                ref_interface_resdic,
-                numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict=self.model2ref_chain_dict,
-                )
+            try:
+                mod_coord_dic, _ = load_coords(
+                    self.model,
+                    self.atoms,
+                    ref_interface_resdic,
+                    numbering_dic=self.model2ref_numbering,
+                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    )
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
+                return
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -269,13 +273,16 @@ class CAPRI:
     def calc_lrmsd(self) -> None:
         """Calculate the L-RMSD."""
         ref_coord_dic, _ = load_coords(self.reference, self.atoms)
-
-        mod_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            numbering_dic=self.model2ref_numbering,
-            model2ref_chain_dict=self.model2ref_chain_dict,
-            )
+        try:
+            mod_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
         Q = []
         P = []
@@ -376,14 +383,17 @@ class CAPRI:
         ref_int_coord_dic, _ = load_coords(
             self.reference, self.atoms, ref_interface_resdic
             )
-
-        mod_int_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            ref_interface_resdic,
-            numbering_dic=self.model2ref_numbering,
-            model2ref_chain_dict=self.model2ref_chain_dict,
-            )
+        try:
+            mod_int_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                ref_interface_resdic,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
 
         # write_coord_dic("ref.pdb", ref_int_coord_dic)
         # write_coord_dic("model.pdb", mod_int_coord_dic)
@@ -470,14 +480,18 @@ class CAPRI:
         """
         ref_contacts = load_contacts(self.reference, cutoff)
         if len(ref_contacts) != 0:
-            model_contacts = load_contacts(
-                self.model,
-                cutoff,
-                numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict=self.model2ref_chain_dict,
-                )
-            intersection = ref_contacts & model_contacts
-            self.fnat = len(intersection) / float(len(ref_contacts))
+            try:
+                model_contacts = load_contacts(
+                    self.model,
+                    cutoff,
+                    numbering_dic=self.model2ref_numbering,
+                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    )
+            except ALIGNError as alignerror:
+                log.warning(alignerror)
+            else:
+                intersection = ref_contacts & model_contacts
+                self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
 
@@ -624,7 +638,11 @@ class CAPRI:
         return r_chain, l_chains
 
     @staticmethod
-    def _load_atoms(model: PDBPath, reference: PDBPath) -> AtomsDict:
+    def _load_atoms(
+            model: PDBPath,
+            reference: PDBPath,
+            full: bool = False,
+            ) -> AtomsDict:
         """
         Load atoms from a model and reference.
 
@@ -634,14 +652,16 @@ class CAPRI:
             PDB file of the model to have its atoms identified
         reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             PDB file of the model to have its atoms identified
+        full : bool
+            If False, only backbone atoms will be retrieved, otherwise all atoms
 
         Returns
         -------
         atom_dic : dict
             Dictionary containing atoms observed in model and reference
         """
-        model_atoms = get_atoms(model)
-        reference_atoms = get_atoms(reference)
+        model_atoms = get_atoms(model, full=full)
+        reference_atoms = get_atoms(reference, full=full)
         atoms_dict: AtomsDict = {}
         atoms_dict.update(model_atoms)
         atoms_dict.update(reference_atoms)

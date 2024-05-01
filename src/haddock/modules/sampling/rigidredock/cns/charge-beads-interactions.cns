@@ -1,0 +1,43 @@
+! charge-beads-interactions.cns
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+for $id1 in id ( (resn SER or resn THR or resn ASN or resn GLN) and name BB ) loop c1beads
+
+    show (segid) (id $id1)
+    evaluate ($cgsegid=$result)
+    show (resid) (id $id1)
+    evaluate ($cgresid=$result)
+
+    igroup
+        ! turn off all vdw interactions between charged beads and all beads
+        interaction (segid $cgsegid and resid $cgresid and name SCD1) (all) weight vdw 0.0 end
+        interaction (segid $cgsegid and resid $cgresid and name SCD2) (all) weight vdw 0.0 end
+
+        ! turn off all vdw and elec interactions between the charged beads within one residue
+        interaction (segid $cgsegid and resid $cgresid and name SCD1)
+                 (segid $cgsegid and resid $cgresid and name SCD2) weight * 1.0 vdw 0.0 elec 0.0 end
+    end
+
+end loop c1beads
+
+for $id1 in id ( (resn LYS or resn ARG or resn ASP or resn GLU) and name BB ) loop c2beads
+
+    show (segid) (id $id1)
+    evaluate ($cgsegid=$result)
+    show (resid) (id $id1)
+    evaluate ($cgresid=$result)
+
+    igroup
+        ! turn off all vdw interactions between charged beads and all beads
+        interaction (segid $cgsegid and resid $cgresid and name SCD1) (all) weight vdw 0.0 end
+    end
+
+end loop c2beads
+

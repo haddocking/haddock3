@@ -1,0 +1,52 @@
+! bsa.cns
+!
+!   Calculate buried surface area and desolvation energy of the complex
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{====>} {* define ASA-based solvation parameters *}
+inline @MODULE:def_solv_param.cns
+
+{====>} {* buried surface area and desolvation of single chains *}
+evaluate ($nchain1 = 0)
+evaluate ($saafree = 0)
+evaluate ($esolfree = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    evaluate ($nchain1 = $nchain1 + 1)
+    {====>} {* buried surface area and desolvation*}
+    do (rmsd = 0) (all)
+    surface mode=access accu=0.075 rh2o=1.4 sele=(segid $prot_segid_$nchain1 and not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA)) end
+    show sum (rmsd) (segid $prot_segid_$nchain1 and not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+    evaluate ($saafree = $saafree + $result)
+    do (store2 = rmsd * store1) (segid $prot_segid_$nchain1 and not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+    show sum (store2) (segid $prot_segid_$nchain1 and not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+    evaluate ($esolfree = $esolfree + $result)
+end loop nloop1
+
+{====>} {* buried surface area and desolvation of complex *}
+do (rmsd = 0) (all)
+do (store2 = 0) (all)
+surface mode=access accu=0.075 rh2o=1.4 sele=(not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA)) end
+show sum (rmsd) (not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+evaluate ($satot = $result)
+do (store2 = rmsd * store1) (not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+show sum (store2) (not ((resn WAT or resn HOH or resn TIP*) or resn DMS or resn SHA))
+evaluate ($esolcplx = $result)
+evaluate ($saburied = $saafree - $satot)
+! minimum BSA value set to 15 (one H atom would have SASA of 12.56 A**2)
+if ($saburied < 15) then
+    evaluate ($saburied = -999999)
+end if
+
+evaluate ($edesolv = $esolcplx - $esolfree)
+
+if ($data.ncomponents eq 1) then
+    evaluate ($bsa = 0)
+    evaluate ($desolv = 0)
+end if

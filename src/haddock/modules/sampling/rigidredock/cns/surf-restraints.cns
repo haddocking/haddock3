@@ -1,0 +1,69 @@
+! surf-restraints.cns
+!    Define surface contact restraints
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+!define surface contact restraints between all molecules
+!using distance restraints between CA atoms with sum averaging
+  
+eval($nchain = 0)
+do (store9 = 0) (all)
+do (store9 = 1) (name CA or name BB or name N1)
+while ($nchain < $data.ncomponents) loop nloop0
+    eval($nchain = $nchain + 1)
+    show sum (store9) (segid $prot_segid_$nchain)
+    if ($result < 3) then
+        evaluate ($selat$nchain = 0)
+        evaluate ($dist$nchain = 1.0)
+    else
+        evaluate ($selat$nchain = 1)
+        evaluate ($dist$nchain = 3.5)
+    end if
+end loop nloop0
+  
+eval($nchain1 = 0)
+noe class surface 
+    while ($nchain1 < $data.ncomponents) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+        eval($nchain2 = $nchain1 )
+        while ($nchain2 < $data.ncomponents) loop nloop2
+            eval($nchain2 = $nchain2 + 1)
+            evaluate ($updist = $dist$nchain1 + $dist$nchain2)
+            if ($selat$nchain1 = 1) then
+                if ($selat$nchain2 = 1) then
+                    assign (segid $prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
+	                       (segid $prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $updist $updist 1.0
+	            else
+                    assign (segid $prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
+	                       (segid $prot_segid_$nchain2) $updist $updist 1.0
+	            end if
+	        else
+                if ($selat$nchain2 = 1) then
+                    assign (segid $prot_segid_$nchain1)
+	                       (segid $prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $updist $updist 1.0
+	            else
+                    assign (segid $prot_segid_$nchain1)
+	                       (segid $prot_segid_$nchain2) $updist $updist 1.0
+	            end if
+	        end if
+        end loop nloop2
+    end loop nloop1
+
+    averaging  surface sum
+    scale      surface $Data.ksurf
+    sqconstant surface 1.0
+    sqexponent surface 2
+    soexponent surface 1
+    rswitch    surface 1.0
+    sqoffset   surface 0.0
+    asymptote  surface 2.0
+    msoexponent surface 1
+    masymptote  surface -0.1
+    mrswitch    surface 1.0
+end

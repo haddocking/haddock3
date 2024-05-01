@@ -1,0 +1,91 @@
+! get_random_rotation.cns
+!    Define a random rotation
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{*
+   The random rotation is calculated by taking a random unit quaternion,
+   so that all rotations are uniformely distributed. For more details, see
+   "Quaternions in molecular modeling" Charles F.F. Karney
+   Journal of Molecular Graphics and Modelling 25 (2007) 595-604
+
+   Original author: Christophe Schmidt
+   Modularized it: Gydo van Zundert
+
+   Parameters
+   ----------
+       Rotation : A struct which will hold the random rotation
+
+       Type : Optional string, either 'Quaternion' or 'Matrix'
+           Determines whether the random rotation is expressed as a quaternion or a matrix
+
+   Note
+   ----
+       There is no need in general to specify the Type as a matrix when performing the rotation.
+       
+   Example:
+   >>>> ! $rand_rot does NOT have to exist currently
+   !>>>> @MODULE:get_random_rotation.cns(Rotation=$rand_rot;)
+   >>>> coor rotate
+   >>>>    quaternion $rand_rot.q0 $rand_rot.q1 $rand_rot.q2 $rand_rot.q3
+   >>>>    selection=(all)
+   >>>> end
+
+   Example using a rotation matrix:
+   !>>>> @MODULE:get_random_rotation.cns(Rotation=$rr; Type='Matrix';)
+   >>>> coor rotate
+   >>>>    matrix $rr.a11 $rr.a12 $rr.a13 
+   >>>>           $rr.a21 $rr.a22 $rr.a23 
+   >>>>           $rr.a31 $rr.a32 $rr.a33
+   >>>>    selection=(all)
+   >>>> end
+*}
+
+!1. Generate random e1 e2 e3 and e4 in [-1, 1] so that e1^2 + e2^2 < 1 and e3^2+e4^2 < 1
+evaluate ($RRM_e1 = random() * 2 - 1)
+evaluate ($RRM_e2 = random() * 2 - 1)
+evaluate ($RRM_s1 = ($RRM_e1)*($RRM_e1) + ($RRM_e2)*($RRM_e2))
+while ( $RRM_s1  >= 1) loop s1loop
+    evaluate ($RRM_e1 = random() * 2 - 1)
+    evaluate ($RRM_e2 = random() * 2 - 1)
+    evaluate ($RRM_s1 = ($RRM_e1)*($RRM_e1) + ($RRM_e2)*($RRM_e2))
+end loop s1loop
+
+evaluate ($RRM_e3 = random() * 2 - 1)
+evaluate ($RRM_e4 = random() * 2 - 1)
+evaluate ($RRM_s2 = ($RRM_e3)*($RRM_e3) + ($RRM_e4)*($RRM_e4))
+while ( $RRM_s2  >= 1) loop s2loop
+    evaluate ($RRM_e3 = random() * 2 - 1)
+    evaluate ($RRM_e4 = random() * 2 - 1)
+    evaluate ($RRM_s2 = ($RRM_e3)*($RRM_e3) + ($RRM_e4)*($RRM_e4))
+end loop s2loop
+
+!2. the quaternion q0 q1 q2 q3
+evaluate($RRM_q0 = $RRM_e1)
+evaluate($RRM_q1 = $RRM_e2)
+evaluate($RRM_q2 = $RRM_e3 * sqrt((1 - $RRM_s1)/$RRM_s2) )
+evaluate($RRM_q3 = $RRM_e4 * sqrt((1 - $RRM_s1)/$RRM_s2) )
+
+! package it in a struct
+if (&Type='Quaternion') then
+    evaluate(&Rotation.q0 = $RRM_q0)
+    evaluate(&Rotation.q1 = $RRM_q1)
+    evaluate(&Rotation.q2 = $RRM_q2)
+    evaluate(&Rotation.q3 = $RRM_q3)
+elseif (&Type='Matrix') then
+    evaluate (&Rotation.a11 = $RRM_q0 * $RRM_q0  +  $RRM_q1 * $RRM_q1  -  $RRM_q2 * $RRM_q2  -  $RRM_q3 * $RRM_q3)
+    evaluate (&Rotation.a12 = 2 * ($RRM_q1 * $RRM_q2 - $RRM_q0 * $RRM_q3) )
+    evaluate (&Rotation.a13 = 2 * ($RRM_q1 * $RRM_q3 + $RRM_q0 * $RRM_q2) )
+    evaluate (&Rotation.a21 = 2 * ($RRM_q1 * $RRM_q2 + $RRM_q0 * $RRM_q3) )
+    evaluate (&Rotation.a22 = $RRM_q0 * $RRM_q0  -  $RRM_q1 * $RRM_q1  +  $RRM_q2 * $RRM_q2  -  $RRM_q3 * $RRM_q3)
+    evaluate (&Rotation.a23 = 2 * ($RRM_q2 * $RRM_q3 - $RRM_q0 * $RRM_q1) )
+    evaluate (&Rotation.a31 = 2 * ($RRM_q1 * $RRM_q3 - $RRM_q0 * $RRM_q2) )
+    evaluate (&Rotation.a32 = 2 * ($RRM_q2 * $RRM_q3 + $RRM_q0 * $RRM_q1) )
+    evaluate (&Rotation.a33 = $RRM_q0 * $RRM_q0  -  $RRM_q1 * $RRM_q1  -  $RRM_q2 * $RRM_q2  +  $RRM_q3 * $RRM_q3)
+end if

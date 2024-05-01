@@ -1,0 +1,80 @@
+! rotation180.cns
+!    Perform a 180 degree rotation around a vector perpendicular to 
+!    the interface of the complex
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+eval($distcu = 5.0) 
+eval($rotate180 = 180.0)
+eval($xa = 0.0)
+eval($ya = 0.0)
+eval($za = 0.0)
+eval($xb = 0.0)
+eval($zb = 0.0)
+eval($zb = 0.0)
+
+show aver (x) (segid $prot_segid_$nchain1 and ((segid $prot_segid_$nchain2) around $distcu))
+evaluate ($xa = $result)
+show aver (y) (segid $prot_segid_$nchain1 and ((segid $prot_segid_$nchain2) around $distcu))
+evaluate ($ya = $result)
+show aver (z) (segid $prot_segid_$nchain1 and ((segid $prot_segid_$nchain2) around $distcu))
+evaluate ($za = $result)
+show aver (x) (segid $prot_segid_$nchain2 and ((segid $prot_segid_$nchain1) around $distcu))
+evaluate ($xb = $result)
+show aver (y) (segid $prot_segid_$nchain2 and ((segid $prot_segid_$nchain1) around $distcu))
+evaluate ($yb = $result)
+show aver (z) (segid $prot_segid_$nchain2 and ((segid $prot_segid_$nchain1) around $distcu))
+evaluate ($zb = $result)
+eval($xdiff=$xa-$xb)
+eval($ydiff=$ya-$yb)
+eval($zdiff=$za-$zb)
+eval($rnorm=$xdiff**2+$ydiff**2+$zdiff**2)
+
+if ($rnorm > 0.0) then
+
+    coor
+        rotate sele= (segid $prot_segid_$nchain2 or segid $watersegname_$nchain2 and not name MAP)
+               center=($xa $ya $za)
+               axis ($xdiff $ydiff $zdiff)
+               $rotate180
+    end
+
+    fix sele=(name OO) end
+     
+    minimize rigid
+        eval ($nch1 = 0)
+        while ($nch1 < $data.ncomponents) loop nloop1
+            eval($nch1 = $nch1 + 1)
+            if ($mol_fix_origin_$nch1 eq false) then
+                group (segid $prot_segid_$nch1 or segid $watersegname_$nch1 and not name MAP)
+            end if
+            translation=true
+        end loop nloop1
+        translation=true
+        nstep 250
+        nprint 10
+    end
+
+    minimize rigid
+        eval ($nch1 = 0)
+        while ($nch1 < $data.ncomponents) loop nloop1
+            eval($nch1 = $nch1 + 1)
+            if ($mol_fix_origin_$nch1 eq false) then
+                group (segid $prot_segid_$nch1 or segid $watersegname_$nch1 and not name MAP)
+            end if
+            translation=true
+        end loop nloop1
+        translation=true
+        nstep 250
+        nprint 10
+    end
+
+    energy end
+
+end if

@@ -137,7 +137,7 @@ class HaddockModule(BaseHaddockModule):
         log.info(f"{output_fname} created.")
         return npu_resdic
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
@@ -306,12 +306,12 @@ class HaddockModule(BaseHaddockModule):
         ilrmsd_jobs: list[RMSDJob] = []
         self.log(f"running RmsdFast Jobs with {ncores} cores")
         for core in range(ncores):
-            output_name = Path("ilrmsd_" + str(core) + ".out")
+            output_name = f"ilrmsd_{core:d}.out"
             job_f = Path(output_name)
             # init RMSDJob
             job = RMSDJob(
                 rec_traj_filename,
-                output_name,
+                job_f,
                 EXEC_PATH,
                 core,
                 npairs[core],

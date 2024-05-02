@@ -35,6 +35,7 @@ def contact_obj(protprot_input_list, params):
         output_name="contact",
         path=Path("."),
         core=0,
+        contact_cutoff=5.0,
         params=params,
     )
 
@@ -63,6 +64,21 @@ def test_contact(contact_obj):
     #assert contact_obj.unique_lig_res == exp_lig_res
     exp_rec_res = np.array(
         [37, 38, 39, 40, 43, 44, 45, 69, 71, 72, 75, 90, 93, 94, 96, 132])
+    assert np.array_equal(contact_obj.unique_rec_res, exp_rec_res)
+
+
+def test_contact_cutoff(contact_obj):
+    """Test the contact class with reduced contact cutoff."""
+    # Modify cutoff of the object
+    contact_obj.contact_cutoff = 3.9
+    contact_obj.run()
+    contact_obj.output()
+    assert Path(contact_obj.output_name).exists()
+    exp_lig_res = np.array([11, 12, 16, 17, 48, 51, 52, 56, 57])
+    # assert that they are all equal
+    assert np.array_equal(contact_obj.unique_lig_res, exp_lig_res)
+    #assert contact_obj.unique_lig_res == exp_lig_res
+    exp_rec_res = np.array([38, 39, 40, 45, 69, 71, 72, 90, 94, 96, 132])
     assert np.array_equal(contact_obj.unique_rec_res, exp_rec_res)
 
 

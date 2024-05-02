@@ -43,6 +43,7 @@ class Contact:
             output_name,
             core,
             path,
+            contact_cutoff: float = 5.0,
             **params,
             ):
         """Initialise Contact class."""
@@ -50,6 +51,7 @@ class Contact:
         self.output_name = output_name
         self.core = core
         self.path = path
+        self.contact_cutoff = contact_cutoff
         self.atoms = {}
         self.receptor_chain = params["params"]["receptor_chain"]
         self.ligand_chains = params["params"]["ligand_chains"]
@@ -65,7 +67,10 @@ class Contact:
         receptor_interface_residues = []
         ligand_interface_residues = []
         for n in range(nmodels):
-            contacts = load_contacts(self.model_list[n], cutoff=5.0)
+            contacts = load_contacts(
+                self.model_list[n],
+                cutoff=self.contact_cutoff,
+                )
             rec_resids = [
                 con[1] if con[0] == self.receptor_chain
                 else con[3] for con in contacts

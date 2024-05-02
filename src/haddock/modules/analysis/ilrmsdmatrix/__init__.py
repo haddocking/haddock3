@@ -59,11 +59,15 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if fast-rmsdmatrix is installed and available."""
 
         if not os.access(EXEC_PATH, mode=os.F_OK):
-            raise Exception(f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
-                            "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md")
+            raise Exception(
+                f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
+                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md"
+                )  # noqa : E501
 
         if not os.access(EXEC_PATH, mode=os.X_OK):
-            raise Exception(f"Required {str(EXEC_PATH)} file is not executable")
+            raise Exception(
+                f"Required {str(EXEC_PATH)} file is not executable"
+                )
 
         return
 
@@ -153,7 +157,10 @@ class HaddockModule(BaseHaddockModule):
         
         if nmodels > self.params['max_models']:
             # too many input models : ilRMSD matrix would be too big => Abort!
-            raise Exception(f"Too many models ({nmodels} > {self.params['max_models']}) for ilRMSD matrix calculation")  # noqa : E501
+            raise Exception(
+                f"Too many models ({nmodels} > {self.params['max_models']}) "
+                "for ilRMSD matrix calculation"
+                )
 
         # Find the common residues making contacts for the receptor and ligand.
         index_list = get_index_list(nmodels, ncores)
@@ -166,6 +173,7 @@ class HaddockModule(BaseHaddockModule):
                 output_name=output_name,
                 core=core,
                 path=Path("."),
+                contact_cutoff=self.params["contact_cutoff"],
                 params=self.params,
                 )
             # running now the ContactJob
@@ -210,9 +218,16 @@ class HaddockModule(BaseHaddockModule):
         rec_traj_filename = Path("traj_rec.xyz")
         lig_traj_filename = Path("traj_lig.xyz")
 
-        res_resdic_rec = {k:res_resdic[k] for k in res_resdic if k[0] == self.params["receptor_chain"]}
+        res_resdic_rec = {
+            k:res_resdic[k]
+            for k in res_resdic
+            if k[0] == self.params["receptor_chain"]
+            }
         # ligand_chains is a list of chains
-        res_resdic_lig = {k:res_resdic[k] for k in self.params["ligand_chains"]}
+        res_resdic_lig = {
+            k:res_resdic[k]
+            for k in self.params["ligand_chains"]
+            }
 
         n_atoms_rec, common_keys_rec = check_common_atoms(
             models,

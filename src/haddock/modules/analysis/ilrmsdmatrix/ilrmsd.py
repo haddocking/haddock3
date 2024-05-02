@@ -85,7 +85,7 @@ class Contact:
                 receptor_interface_residues.append(np.unique(rec_resids))
             if lig_resids != []:
                 ligand_interface_residues.append(np.unique(lig_resids))
-        # concatenate all the receptor residues
+        # concatenate all the receptor residues
         if receptor_interface_residues != []:
             rec_np_arr = np.concatenate(receptor_interface_residues)
             self.unique_rec_res = np.unique(rec_np_arr)

@@ -21,7 +21,6 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log, RMSD_path
-from haddock.core.typing import AtomsDict
 from haddock.libs.libalign import rearrange_xyz_files, check_common_atoms
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
@@ -57,12 +56,11 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls) -> None:
         """Confirm if fast-rmsdmatrix is installed and available."""
-
         if not os.access(EXEC_PATH, mode=os.F_OK):
             raise Exception(
                 f"Required {str(EXEC_PATH)} file does not exist.{os.linesep}"
-                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md"
-                )  # noqa : E501
+                "Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md"  # noqa : E501
+                )
 
         if not os.access(EXEC_PATH, mode=os.X_OK):
             raise Exception(
@@ -219,13 +217,13 @@ class HaddockModule(BaseHaddockModule):
         lig_traj_filename = Path("traj_lig.xyz")
 
         res_resdic_rec = {
-            k:res_resdic[k]
+            k: res_resdic[k]
             for k in res_resdic
             if k[0] == self.params["receptor_chain"]
             }
         # ligand_chains is a list of chains
         res_resdic_lig = {
-            k:res_resdic[k]
+            k: res_resdic[k]
             for k in self.params["ligand_chains"]
             }
 

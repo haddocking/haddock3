@@ -110,7 +110,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">RMSD_path</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">AtomsDict</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">rearrange_xyz_files</span><span class="p">,</span> <span class="n">check_common_atoms</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">RMSDFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">get_index_list</span>
@@ -146,13 +145,16 @@
 <div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.html#haddock.modules.analysis.ilrmsdmatrix.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if fast-rmsdmatrix is installed and available.&quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">)</span><span class="si">}</span><span class="s2"> file does not exist.</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
-                            <span class="s2">&quot;Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">)</span><span class="si">}</span><span class="s2"> file does not exist.</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Old HADDOCK3 installation? Please follow the new installation instructions at https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md&quot;</span>  <span class="c1"># noqa : E501</span>
+                <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">)</span><span class="si">}</span><span class="s2"> file is not executable&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">)</span><span class="si">}</span><span class="s2"> file is not executable&quot;</span>
+                <span class="p">)</span>
 
         <span class="k">return</span></div>
 
@@ -224,7 +226,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2"> created.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">npu_resdic</span>
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Get the models generated in previous step</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="p">)</span> <span class="o">==</span> <span class="nb">iter</span><span class="p">:</span>
@@ -242,7 +244,10 @@
         
         <span class="k">if</span> <span class="n">nmodels</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]:</span>
             <span class="c1"># too many input models : ilRMSD matrix would be too big =&gt; Abort!</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Too many models (</span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) for ilRMSD matrix calculation&quot;</span><span class="p">)</span>  <span class="c1"># noqa : E501</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Too many models (</span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_models&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) &quot;</span>
+                <span class="s2">&quot;for ilRMSD matrix calculation&quot;</span>
+                <span class="p">)</span>
 
         <span class="c1"># Find the common residues making contacts for the receptor and ligand.</span>
         <span class="n">index_list</span> <span class="o">=</span> <span class="n">get_index_list</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">ncores</span><span class="p">)</span>
@@ -255,6 +260,7 @@
                 <span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span>
                 <span class="n">core</span><span class="o">=</span><span class="n">core</span><span class="p">,</span>
                 <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
+                <span class="n">contact_distance_cutoff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;contact_distance_cutoff&quot;</span><span class="p">],</span>
                 <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="c1"># running now the ContactJob</span>
@@ -299,9 +305,16 @@
         <span class="n">rec_traj_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_rec.xyz&quot;</span><span class="p">)</span>
         <span class="n">lig_traj_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_lig.xyz&quot;</span><span class="p">)</span>
 
-        <span class="n">res_resdic_rec</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res_resdic</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]}</span>
+        <span class="n">res_resdic_rec</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res_resdic</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
         <span class="c1"># ligand_chains is a list of chains</span>
-        <span class="n">res_resdic_lig</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]}</span>
+        <span class="n">res_resdic_lig</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
 
         <span class="n">n_atoms_rec</span><span class="p">,</span> <span class="n">common_keys_rec</span> <span class="o">=</span> <span class="n">check_common_atoms</span><span class="p">(</span>
             <span class="n">models</span><span class="p">,</span>
@@ -382,12 +395,12 @@
         <span class="n">ilrmsd_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RMSDJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;running RmsdFast Jobs with </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> cores&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
-            <span class="n">output_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;ilrmsd_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.out&quot;</span><span class="p">)</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ilrmsd_</span><span class="si">{</span><span class="n">core</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">.out&quot;</span>
             <span class="n">job_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
             <span class="c1"># init RMSDJob</span>
             <span class="n">job</span> <span class="o">=</span> <span class="n">RMSDJob</span><span class="p">(</span>
                 <span class="n">rec_traj_filename</span><span class="p">,</span>
-                <span class="n">output_name</span><span class="p">,</span>
+                <span class="n">job_f</span><span class="p">,</span>
                 <span class="n">EXEC_PATH</span><span class="p">,</span>
                 <span class="n">core</span><span class="p">,</span>
                 <span class="n">npairs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>

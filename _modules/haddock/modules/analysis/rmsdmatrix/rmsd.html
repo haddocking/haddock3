@@ -94,7 +94,7 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">AtomsDict</span><span class="p">,</span> <span class="n">FilePath</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">AtomsDict</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">get_atoms</span><span class="p">,</span> <span class="n">load_coords</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">BaseJob</span>
 
@@ -153,6 +153,7 @@
         <span class="n">end_structures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">npairs</span><span class="p">,</span> <span class="n">start_structures</span><span class="p">,</span> <span class="n">end_structures</span></div>
 
+
 <div class="viewcode-block" id="XYZWriterJob"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriterJob">[docs]</a><span class="k">class</span> <span class="nc">XYZWriterJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Job dedicated to the parallel writing of xyz files.&quot;&quot;&quot;</span>
 
@@ -168,7 +169,8 @@
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">xyzwriter_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running XYZWriter...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xyzwriter_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">return</span></div></div>
-    
+
+
 <div class="viewcode-block" id="XYZWriter"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriter">[docs]</a><span class="k">class</span> <span class="nc">XYZWriter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;XYZWriter class.&quot;&quot;&quot;</span>
 
@@ -191,7 +193,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span> <span class="o">=</span> <span class="n">filter_resdic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allatoms</span> <span class="o">=</span> <span class="n">allatoms</span>
         
-<div class="viewcode-block" id="XYZWriter.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriter.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="XYZWriter.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriter.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;write xyz coordinates.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">traj_xyz</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">:</span>

@@ -27,6 +27,19 @@ atom_similarity
 | *group*: analysis
 | *explevel*: easy
 
+contact_distance_cutoff
+~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 5.0
+| *type*: float
+| *title*: Distance cutoff defining a contact.
+| *min*: 0.1
+| *max*: 30.0
+| *short description*: Cutoff distance (in Angstrom) defining a contact.
+| *long description*: Distance (in Angstrom) cutoff defining a contact. Any atoms within this cutoff range will be used to define the interface. Standard values are usually 3.9 A or 5.0 A.
+| *group*: analysis
+| *explevel*: easy
+
 ligand_chains
 ~~~~~~~~~~~~~
 

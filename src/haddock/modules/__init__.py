@@ -285,7 +285,7 @@ class BaseHaddockModule(ABC):
         io.add(self.previous_io.output, "i")
         # add the output models
         io.add(self.output_models, "o")
-        # Removes un-generated outputs and compute ratio of ungenerated
+        # Removes un-generated outputs and compute percentage of ungenerated
         faulty = io.check_faulty()
         # Save outputs
         io.save()

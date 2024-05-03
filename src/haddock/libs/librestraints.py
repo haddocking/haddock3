@@ -628,7 +628,7 @@ def validate_tbldata(restraints, pcs=False):
         output = output.replace("\n", "", 1)
     return output
 
-def passive_from_active_raw(structure, active, chain_id=None, surface=None):
+def passive_from_active_raw(structure, active, chain_id=None, surface=None, radius=6.5):
     """Get the passive residues.
     
     Parameters
@@ -645,6 +645,9 @@ def passive_from_active_raw(structure, active, chain_id=None, surface=None):
     
     surface : list
        List of surface residues.
+
+    radius : float
+        Radius from active residues
     """
 
     # Parse the PDB file
@@ -674,7 +677,7 @@ def passive_from_active_raw(structure, active, chain_id=None, surface=None):
     ns = NeighborSearch(atom_list)
     neighbors = []
     for a in act_atoms:
-        neighbors.append(ns.search(a, 6.5, "R"))  # HADDOCK used 6.5A as default
+        neighbors.append(ns.search(a, radius, "R"))  # HADDOCK used 6.5A as default
 
     passive_list = set()
     for n in neighbors:

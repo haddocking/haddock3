@@ -102,6 +102,7 @@ class PassiveFromActiveRequest(BaseModel):
     )
     chain: str = Field(default="A", description="The chain identifier.")
     surface: list[int] = Field(default=[], description="List of surface restraints.")
+    radius: float = Field(default=6.5, description="The radius from active.")
 
 
 @app.post("/passive_from_active", tags=["restraints"])
@@ -120,6 +121,7 @@ def calculate_passive_from_active(
                 active=request.active,
                 chain_id=request.chain,
                 surface=request.surface,
+                radius=request.radius,
             )
             return passive
         except Exception as e:

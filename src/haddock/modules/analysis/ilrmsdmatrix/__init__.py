@@ -171,7 +171,7 @@ class HaddockModule(BaseHaddockModule):
                 output_name=output_name,
                 core=core,
                 path=Path("."),
-                contact_cutoff=self.params["contact_cutoff"],
+                contact_distance_cutoff=self.params["contact_distance_cutoff"],
                 params=self.params,
                 )
             # running now the ContactJob

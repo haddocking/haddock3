@@ -45,7 +45,7 @@ class Contact:
             output_name: str,
             core: int,
             path: Path,
-            contact_cutoff: float = 5.0,
+            contact_distance_cutoff: float = 5.0,
             **params: dict[str, Any],
             ):
         """Initialise Contact class."""
@@ -53,7 +53,7 @@ class Contact:
         self.output_name = output_name
         self.core = core
         self.path = path
-        self.contact_cutoff = contact_cutoff
+        self.contact_distance_cutoff = contact_distance_cutoff
         self.atoms = {}
         self.receptor_chain = params["params"]["receptor_chain"]
         self.ligand_chains = params["params"]["ligand_chains"]
@@ -71,7 +71,7 @@ class Contact:
         for n in range(nmodels):
             contacts = load_contacts(
                 self.model_list[n],
-                cutoff=self.contact_cutoff,
+                cutoff=self.contact_distance_cutoff,
                 )
             rec_resids = [
                 con[1] if con[0] == self.receptor_chain

@@ -56,7 +56,7 @@ allatoms:
   group: analysis
   explevel: easy
 
-contact_cutoff:
+contact_distance_cutoff:
   default: 5.0
   type: float
   min: 0.1

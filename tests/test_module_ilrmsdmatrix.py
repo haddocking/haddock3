@@ -36,7 +36,7 @@ def contact_obj(protprot_input_list, params):  # noqa : F811
         output_name="contact",
         path=Path("."),
         core=0,
-        contact_cutoff=5.0,
+        contact_distance_cutoff=5.0,
         params=params,
         )
 
@@ -71,7 +71,7 @@ def test_contact(contact_obj):
 def test_contact_cutoff(contact_obj):
     """Test the contact class with reduced contact cutoff."""
     # Modify cutoff of the object
-    contact_obj.contact_cutoff = 3.9
+    contact_obj.contact_distance_cutoff = 3.9
     contact_obj.run()
     contact_obj.output()
     assert Path(contact_obj.output_name).exists()

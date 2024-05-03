@@ -372,10 +372,11 @@
         <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span>
         <span class="c1"># add the output models</span>
         <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
+        <span class="c1"># Removes un-generated outputs and compute percentage of ungenerated</span>
+        <span class="n">faulty</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">check_faulty</span><span class="p">()</span>
         <span class="c1"># Save outputs</span>
         <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
         <span class="c1"># Check if number of generated outputs is under the tolerance threshold</span>
-        <span class="n">faulty</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">check_faulty</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">faulty</span> <span class="o">&gt;</span> <span class="n">faulty_tolerance</span><span class="p">:</span>
             <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">faulty</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% of output was not generated for this module &quot;</span>
@@ -602,7 +603,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 29, 2024.
+      <span class="lastupdated">Last updated on May 03, 2024.
       </span></p>
   </div>
 

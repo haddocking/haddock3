@@ -87,10 +87,7 @@ class HaddockModule(ScoringModule):
         scoring_tsv_fpath = f"{RECIPE_PATH.name}.tsv"
         self.output(
             scoring_tsv_fpath,
-            header_comments=(
-                "# Note that negative of the value are reported "
-                f"in the case of non-energetical predictions{linesep}",
-                ),
+            header_comments=f"# Note that negative of the value are reported in the case of non-energetical predictions{linesep}",  # noqa : E501
             )
         # Export to next module
         self.export_io_models()

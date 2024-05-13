@@ -237,5 +237,5 @@ def write_selected_models(
             model.file_name = name
             model.full_name = name
             model.rel_path = Path('..', Path(module_path).name, name)
-            model.path = str(Path(module_path).resolve())
+            model.path = str(Path(".").resolve())
     return models

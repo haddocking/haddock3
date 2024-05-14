@@ -1395,7 +1395,7 @@ def make_alascan_plot(
             # dtick=10,
             ),
         yaxis=dict(
-            title="Weigted delta",
+            title="Average Delta (WT - mutant)",
             titlefont_size=16,
             tickfont_size=14,
             ),

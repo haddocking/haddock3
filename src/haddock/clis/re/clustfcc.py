@@ -12,6 +12,8 @@ from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
     add_cluster_info,
+    get_cluster_matrix_plot_clt_dt,
+    plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
     )
@@ -56,6 +58,15 @@ def add_clustfcc_arguments(clustfcc_subcommand):
         type=int,
         )
     
+    clustfcc_subcommand.add_argument(
+        "-p",
+        "--plot_matrix",
+        help="Generate the matrix plot with the clusters.",
+        required=False,
+        default=False,
+        action='store_true',
+        )
+    
     return clustfcc_subcommand
 
 
@@ -64,6 +75,7 @@ def reclustfcc(
         clust_cutoff: Union[bool, float] = None,
         strictness: Union[bool, float] = None,
         min_population: Union[bool, int] = None,
+        plot_matrix : bool = True,
         ) -> Path:
     """
     Recluster the models in the clustfcc directory.
@@ -82,6 +94,9 @@ def reclustfcc(
     
     min_population : Union[bool, int]
         Minimum cluster population.
+    
+    plot_matrix : bool
+        Should the corresponding matrix plot be generated.
     
     Returns
     -------
@@ -117,7 +132,8 @@ def reclustfcc(
         clustfcc_params["strictness"] = strictness
     if min_population is not None:
         clustfcc_params["min_population"] = min_population
-    
+    clustfcc_params["plot_matrix"] = plot_matrix
+
     # load the fcc matrix
     pool = cluster_fcc.read_matrix(
         Path(clustfcc_dir, "fcc.matrix"),
@@ -167,5 +183,36 @@ def reclustfcc(
         if caprieval_folder:
             log.info("Rewriting capri tables")
             rewrite_capri_tables(caprieval_folder, clt_dic, outdir)
+    
+    else:
+        output_models = models
+
+    # Generate matrix plot
+    if clustfcc_params["plot_matrix"]:
+        log.info("Generating graphical representation of the clusters.")
+        # Obtain final models indices
+        final_order_idx, labels, cluster_ids = [], [], []
+        for pdb in output_models:
+            final_order_idx.append(models.index(pdb))
+            labels.append(pdb.file_name.replace('.pdb', ''))
+            cluster_ids.append(pdb.clt_id)
+        # Get custom cluster data
+        matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+            cluster_ids
+            )
+        # Define output filename
+        html_matrix_basepath = Path(outdir, 'fcc_matrix')
+        # Plot matrix
+        html_matrixpath = plot_cluster_matrix(
+            Path(clustfcc_dir, "fcc.matrix"),
+            final_order_idx,
+            labels,
+            dttype='FCC',
+            diag_fill=1,
+            output_fname=html_matrix_basepath,
+            matrix_cluster_dt=matrix_cluster_dt,
+            cluster_limits=cluster_limits,
+            )
+        log.info(f"Plotting matrix in {html_matrixpath}")
             
     return outdir

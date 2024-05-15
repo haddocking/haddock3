@@ -87,17 +87,19 @@
   <h1>Source code for haddock.clis.re.clustrmsd</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;haddock3-re clustrmsd subcommand.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">save</span> <span class="k">as</span> <span class="n">save_config</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">add_cluster_info</span><span class="p">,</span>
     <span class="n">clustrmsd_tolerance_params</span><span class="p">,</span>
+    <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">,</span>
+    <span class="n">plot_cluster_matrix</span><span class="p">,</span>
     <span class="n">rank_clusters</span><span class="p">,</span>
     <span class="n">write_structure_list</span><span class="p">,</span>
     <span class="p">)</span>
@@ -105,6 +107,7 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustrmsd.clustrmsd</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_clusters</span><span class="p">,</span>
+    <span class="n">get_matrix_path</span><span class="p">,</span>
     <span class="n">iterate_min_population</span><span class="p">,</span>
     <span class="n">write_clusters</span><span class="p">,</span>
     <span class="n">write_clustrmsd_file</span><span class="p">,</span>
@@ -141,6 +144,15 @@
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="p">)</span>
+    
+    <span class="n">clustrmsd_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--plot_matrix&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate the matrix plot with the clusters.&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">clustrmsd_subcommand</span></div>
 
@@ -150,6 +162,7 @@
         <span class="n">n_clusters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">clust_cutoff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">min_population</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">plot_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recluster the models in the clustrmsd directory.</span>
@@ -167,6 +180,9 @@
 <span class="sd">    </span>
 <span class="sd">    min_population : Union[bool, int]</span>
 <span class="sd">        Cluster population min_population.</span>
+<span class="sd">    </span>
+<span class="sd">    plot_matrix : bool</span>
+<span class="sd">        Should the corresponding matrix plot be generated.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -211,6 +227,8 @@
     
     <span class="k">if</span> <span class="n">min_population</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+
+    <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;plot_matrix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_matrix</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Clustering with </span><span class="si">{</span><span class="n">tolerance_param_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">tolerance</span><span class="si">}</span><span class="s2">, &quot;</span>
@@ -272,6 +290,43 @@
         <span class="n">clustrmsd_params</span><span class="p">,</span>
         <span class="n">output_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;clustrmsd.txt&quot;</span><span class="p">),</span>
         <span class="p">)</span>
+    
+    <span class="c1"># Draw the matrix</span>
+    <span class="k">if</span> <span class="n">clustrmsd_params</span><span class="p">[</span><span class="s2">&quot;plot_matrix&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">matrix_json_path</span> <span class="o">:=</span> <span class="n">search_previousstep_matrix</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">)):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Could not find the rmsd matrix in previous step.&quot;</span>
+                <span class="s2">&quot; Unable to produce a graph out of it!&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating graphical representation of the clusters.&quot;</span><span class="p">)</span>
+            <span class="n">matrix_io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+            <span class="n">matrix_io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">matrix_json_path</span><span class="p">)</span>
+            <span class="c1"># Obtain final models indices</span>
+            <span class="n">final_order_idx</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cluster_ids</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">output_models</span><span class="p">:</span>
+                <span class="n">final_order_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pdb</span><span class="p">))</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+                <span class="n">cluster_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">clt_id</span><span class="p">)</span>
+            <span class="c1"># Get custom cluster data</span>
+            <span class="n">matrix_cluster_dt</span><span class="p">,</span> <span class="n">cluster_limits</span> <span class="o">=</span> <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span>
+                <span class="n">cluster_ids</span>
+                <span class="p">)</span>
+            <span class="c1"># Define output filename</span>
+            <span class="n">html_matrix_basepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;rmsd_matrix&#39;</span><span class="p">)</span>
+            <span class="c1"># Plot matrix</span>
+            <span class="n">html_matrixpath</span> <span class="o">=</span> <span class="n">plot_cluster_matrix</span><span class="p">(</span>
+                <span class="n">get_matrix_path</span><span class="p">(</span><span class="n">matrix_io</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="n">final_order_idx</span><span class="p">,</span>
+                <span class="n">labels</span><span class="p">,</span>
+                <span class="n">dttype</span><span class="o">=</span><span class="s1">&#39;RMSD(Å)&#39;</span><span class="p">,</span>
+                <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">diag_fill</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">output_fname</span><span class="o">=</span><span class="n">html_matrix_basepath</span><span class="p">,</span>
+                <span class="n">matrix_cluster_dt</span><span class="o">=</span><span class="n">matrix_cluster_dt</span><span class="p">,</span>
+                <span class="n">cluster_limits</span><span class="o">=</span><span class="n">cluster_limits</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plotting matrix in </span><span class="si">{</span><span class="n">html_matrixpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># save the io.json file</span>
     <span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
@@ -287,6 +342,37 @@
         <span class="n">rewrite_capri_tables</span><span class="p">(</span><span class="n">caprieval_folder</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">outdir</span></div>
+
+
+<div class="viewcode-block" id="search_previousstep_matrix"><a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustrmsd.html#haddock.clis.re.clustrmsd.search_previousstep_matrix">[docs]</a><span class="k">def</span> <span class="nf">search_previousstep_matrix</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the path of the previous step matrix_json file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    clustrmsd_dir : str</span>
+<span class="sd">        Path to the clustrmsd directory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matrix_json : Optional[Path]</span>
+<span class="sd">        Path to the matrix_json file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute previous step index</span>
+    <span class="n">previous_step_ind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">workflow_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+    <span class="c1"># Try to get previous step directory name</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">previous_steps</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span>
+            <span class="n">workflow_dir</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">previous_step_ind</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="n">previous_step</span> <span class="o">=</span> <span class="n">previous_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">matrix_json</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">workflow_dir</span><span class="p">,</span> <span class="n">previous_step</span><span class="p">,</span> <span class="s2">&quot;rmsd_matrix.json&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">matrix_json</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">matrix_json</span></div>
 </pre></div>
 
            </div>

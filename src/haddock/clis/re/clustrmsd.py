@@ -61,7 +61,7 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     clustrmsd_subcommand.add_argument(
         "-p",
         "--plot_matrix",
-        help="Generate the a plot of the clusters.",
+        help="Generate the matrix plot with the clusters.",
         required=False,
         default=False,
         action='store_true',

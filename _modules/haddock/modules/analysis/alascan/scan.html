@@ -389,7 +389,6 @@
     <span class="c1"># now average the data</span>
     <span class="k">for</span> <span class="n">cl_id</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">:</span>
         <span class="n">scan_clt_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="n">cl_id</span><span class="si">}</span><span class="s2">.csv&quot;</span>
-        <span class="c1">#scan_clt_filename = Path(path, f&quot;scan_clt_{cl_id}.csv&quot;)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing </span><span class="si">{</span><span class="n">scan_clt_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">clt_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">ident</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]:</span>
@@ -541,14 +540,8 @@
 <div class="viewcode-block" id="Scan.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.Scan.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run alascan calculations.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">native</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">:</span>
-            <span class="c1"># original score from the workflow</span>
-            <span class="n">ori_score</span> <span class="o">=</span> <span class="n">native</span><span class="o">.</span><span class="n">score</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">ori_score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ori_score</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">ori_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="c1"># here we rescore the native model for consistency, as the ori_score</span>
-            <span class="c1"># could come from any module in principle</span>
+            <span class="c1"># here we rescore the native model for consistency, as the score</span>
+            <span class="c1"># attribute could come from any module in principle</span>
             <span class="n">sc_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;haddock3-score-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">n_score</span><span class="p">,</span> <span class="n">n_vdw</span><span class="p">,</span> <span class="n">n_elec</span><span class="p">,</span> <span class="n">n_des</span><span class="p">,</span> <span class="n">n_bsa</span> <span class="o">=</span> <span class="n">calc_score</span><span class="p">(</span><span class="n">native</span><span class="o">.</span><span class="n">rel_path</span><span class="p">,</span>
                                                               <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">)</span>
@@ -579,7 +572,7 @@
                     <span class="n">ori_resname</span> <span class="o">=</span> <span class="n">resname_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
                     <span class="n">end_resname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan_res</span>
                     <span class="k">if</span> <span class="n">ori_resname</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan_res</span><span class="p">:</span>
-                        <span class="c1"># we do not re-score</span>
+                        <span class="c1"># we do not re-score equal residues (e.g. ALA = ALA)</span>
                         <span class="n">c_score</span> <span class="o">=</span> <span class="n">n_score</span>
                         <span class="n">c_vdw</span> <span class="o">=</span> <span class="n">n_vdw</span>
                         <span class="n">c_elec</span> <span class="o">=</span> <span class="n">n_elec</span>
@@ -597,29 +590,24 @@
                         <span class="n">c_score</span><span class="p">,</span> <span class="n">c_vdw</span><span class="p">,</span> <span class="n">c_elec</span><span class="p">,</span> <span class="n">c_des</span><span class="p">,</span> <span class="n">c_bsa</span> <span class="o">=</span> <span class="n">calc_score</span><span class="p">(</span>
                             <span class="n">mut_pdb_name</span><span class="p">,</span>
                             <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">)</span>
-                        <span class="c1"># difference with the original score</span>
-                        <span class="k">if</span> <span class="n">ori_score</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-                            <span class="n">delta_ori_score</span> <span class="o">=</span> <span class="n">c_score</span> <span class="o">-</span> <span class="n">ori_score</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">delta_ori_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                        <span class="c1"># now the deltas with the native</span>
-                        <span class="n">delta_score</span> <span class="o">=</span> <span class="n">c_score</span> <span class="o">-</span> <span class="n">n_score</span>
-                        <span class="n">delta_vdw</span> <span class="o">=</span> <span class="n">c_vdw</span> <span class="o">-</span> <span class="n">n_vdw</span>
-                        <span class="n">delta_elec</span> <span class="o">=</span> <span class="n">c_elec</span> <span class="o">-</span> <span class="n">n_elec</span>
-                        <span class="n">delta_desolv</span> <span class="o">=</span> <span class="n">c_des</span> <span class="o">-</span> <span class="n">n_des</span>
-                        <span class="n">delta_bsa</span> <span class="o">=</span> <span class="n">c_bsa</span> <span class="o">-</span> <span class="n">n_bsa</span>
+                        <span class="c1"># now the deltas (wildtype - mutant)</span>
+                        <span class="n">delta_score</span> <span class="o">=</span> <span class="n">n_score</span> <span class="o">-</span> <span class="n">c_score</span>
+                        <span class="n">delta_vdw</span> <span class="o">=</span> <span class="n">n_vdw</span> <span class="o">-</span> <span class="n">c_vdw</span>
+                        <span class="n">delta_elec</span> <span class="o">=</span> <span class="n">n_elec</span> <span class="o">-</span> <span class="n">c_elec</span>
+                        <span class="n">delta_desolv</span> <span class="o">=</span> <span class="n">n_des</span> <span class="o">-</span> <span class="n">c_des</span>
+                        <span class="n">delta_bsa</span> <span class="o">=</span> <span class="n">n_bsa</span> <span class="o">-</span> <span class="n">c_bsa</span>
  
                         <span class="n">scan_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">chain</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">ori_resname</span><span class="p">,</span> <span class="n">end_resname</span><span class="p">,</span>
                                           <span class="n">c_score</span><span class="p">,</span> <span class="n">c_vdw</span><span class="p">,</span> <span class="n">c_elec</span><span class="p">,</span> <span class="n">c_des</span><span class="p">,</span>
-                                          <span class="n">c_bsa</span><span class="p">,</span> <span class="n">delta_ori_score</span><span class="p">,</span> <span class="n">delta_score</span><span class="p">,</span>
+                                          <span class="n">c_bsa</span><span class="p">,</span> <span class="n">delta_score</span><span class="p">,</span>
                                           <span class="n">delta_vdw</span><span class="p">,</span> <span class="n">delta_elec</span><span class="p">,</span> <span class="n">delta_desolv</span><span class="p">,</span>
                                           <span class="n">delta_bsa</span><span class="p">])</span>
                         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mut_pdb_name</span><span class="p">)</span>
             <span class="c1"># write output</span>
             <span class="n">df_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;res&#39;</span><span class="p">,</span> <span class="s1">&#39;ori_resname&#39;</span><span class="p">,</span> <span class="s1">&#39;end_resname&#39;</span><span class="p">,</span>
                           <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;vdw&#39;</span><span class="p">,</span> <span class="s1">&#39;elec&#39;</span><span class="p">,</span> <span class="s1">&#39;desolv&#39;</span><span class="p">,</span> <span class="s1">&#39;bsa&#39;</span><span class="p">,</span>
-                          <span class="s1">&#39;delta_ori_score&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_score&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_vdw&#39;</span><span class="p">,</span>
-                          <span class="s1">&#39;delta_elec&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_desolv&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_bsa&#39;</span><span class="p">]</span>
+                          <span class="s1">&#39;delta_score&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_vdw&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_elec&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;delta_desolv&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_bsa&#39;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">df_scan</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scan_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df_columns</span><span class="p">)</span>
             <span class="n">alascan_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;scan_</span><span class="si">{</span><span class="n">native</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
             <span class="c1"># add zscore</span>
@@ -662,7 +650,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 14, 2024.
+      <span class="lastupdated">Last updated on May 15, 2024.
       </span></p>
   </div>
 

@@ -280,15 +280,17 @@ class HaddockModule(BaseCNSModule):
                         prefix_name = md5_hash
                     else:
                         prefix_name = origin_names[model_id]
-                    # Build new filename
-                    model_name = f"{prefix_name}_from_{model_name}"
-                    # Rename files
-                    processed_pdb = processed_pdb.rename(
-                        f"{model_name}_haddock.{Format.PDB}"
-                        )
-                    processed_topology = processed_topology.rename(
-                        f"{model_name}_haddock.{Format.TOPOLOGY}"
-                        )
+                    # Check if topology and file created
+                    if processed_pdb.exists() and processed_topology.exists():
+                        # Build new filename
+                        model_name = f"{prefix_name}_from_{model_name}"
+                        # Rename files
+                        processed_pdb = processed_pdb.rename(
+                            f"{model_name}_haddock.{Format.PDB}"
+                            )
+                        processed_topology = processed_topology.rename(
+                            f"{model_name}_haddock.{Format.TOPOLOGY}"
+                            )
 
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(

@@ -10,7 +10,7 @@ fantastic project. There are several ways to contribute:
 * write more unittests (we dare you to do that :godmode:)
 
 Before attempting any development, please install HADDOCK3 following the
-instructions in the [INSTALL](https://github.com/haddocking/haddock3/blob/main/docs/INSTALL.md) file. Afterwards, follow the
+instructions in the [INSTALL](docs/INSTALL.md) file. Afterwards, follow the
 instructions in this file.
 
 ## 1. Contributing new code

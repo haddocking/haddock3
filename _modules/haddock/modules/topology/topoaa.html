@@ -368,15 +368,17 @@
                         <span class="n">prefix_name</span> <span class="o">=</span> <span class="n">md5_hash</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">prefix_name</span> <span class="o">=</span> <span class="n">origin_names</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
-                    <span class="c1"># Build new filename</span>
-                    <span class="n">model_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix_name</span><span class="si">}</span><span class="s2">_from_</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="c1"># Rename files</span>
-                    <span class="n">processed_pdb</span> <span class="o">=</span> <span class="n">processed_pdb</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">PDB</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
-                    <span class="n">processed_topology</span> <span class="o">=</span> <span class="n">processed_topology</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">TOPOLOGY</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
+                    <span class="c1"># Check if topology and file created</span>
+                    <span class="k">if</span> <span class="n">processed_pdb</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">processed_topology</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                        <span class="c1"># Build new filename</span>
+                        <span class="n">model_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix_name</span><span class="si">}</span><span class="s2">_from_</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="c1"># Rename files</span>
+                        <span class="n">processed_pdb</span> <span class="o">=</span> <span class="n">processed_pdb</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">PDB</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                        <span class="n">processed_topology</span> <span class="o">=</span> <span class="n">processed_topology</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">_haddock.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">TOPOLOGY</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
 
                 <span class="n">topology</span> <span class="o">=</span> <span class="n">TopologyFile</span><span class="p">(</span><span class="n">processed_topology</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
                 <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span>
@@ -401,7 +403,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 15, 2024.
+      <span class="lastupdated">Last updated on May 21, 2024.
       </span></p>
   </div>
 

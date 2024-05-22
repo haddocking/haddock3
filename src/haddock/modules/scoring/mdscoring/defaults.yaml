@@ -2,7 +2,7 @@
 # Group scoring
 #
 per_interface_scoring:
-  default: false
+  default: true
   type: boolean
   title: Interchain scoring
   short: Output scores per interface in the PDB header.

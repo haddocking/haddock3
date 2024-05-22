@@ -36,7 +36,62 @@ If you are using sh/bash, edit `.cns_solve_env_sh`:
         CNS_SOLVE=/PATH/TO/cns_solve_1.3
 ```
 
-## 2 Add HADDOCK routines
+## 2 Check that your current OS is recognized by the CNS installation scripts
+
+From the CNS installation directory, type the following command:
+
+```bash
+./bin/getarch
+```
+
+For an unknown system you might see as output:
+
+```
+~/software/cns_solve_1.31-UU> ./bin/getarch
+unknown-arm64-Darwin
+```
+
+The current list of supported architectures can be found by looking at the content of the `instlib/machine/supported` directory.
+In those directories, you will find Makefiles for various compilers, including some for gfortran. 
+
+If you OS is supported, we recommend editing the gfortran  Makefiles to have the following content:
+
+```
+# fortran options
+F77 = gfortran
+F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch
+F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native
+F77FLAGS = $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
+
+# C options
+CC = gcc
+CPP = g++
+CCFLAGS = -O -DINTEGER='long int' -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS)
+
+# link options
+LD = gfortran
+LDFLAGS = -w $(EXT_LDFLAGS) -static-libgfortran
+```
+
+If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.
+For example, the default CNS package will not recognize the Mac M1/2/3/ processors. To solve that edit the `./bin/get_arch` script
+and add the following lines after line 179 (this should be added after a line containin `exit 0`):
+
+```
+    arm64:Darwin:*:*)
+    echo mac-arm64-darwin
+    exit 0 ;;
+```
+
+We are providing with HADDOCK3 updated CNS files for the supported systems in which the gfortran Makefiles have already been edited.
+Simply copy these to your CNS installation directory with:
+
+```bash
+cp -r ~/software/haddock3/varia/cns1.3/instlib ./ 
+```
+
+
+## 3 Add HADDOCK routines
 
 HADDOCK requires some adjustments in CNS to function properly.
 The set of routines to add is provided in the haddock3 repository under [`varia/cns1.3/`](/varia/cns1.3/README.md).
@@ -46,17 +101,12 @@ Copy all of these files into the CNS source directory (`/PATH/TO/cns_solve_1.3/s
 cp ~/software/haddock3/varia/cns1.3/* source/
 ```
 
+
 ## 3 Compile CNS
 
+
 Make sure you are inside the main `cns_solve_1.3` directory.
-
-If a suitable compiler is installed on your system, the following command should start the compilation of CNS:
-
-```bash
-make install
-```
-
-If needed, you can specify the compiler you want to use by adding the `compiler` option, for example:
+To compile CNS we recommend using the gfortran compiler. The following command should start the compilation of CNS:
 
 ```bash
 make install compiler=gfortran
@@ -151,7 +201,7 @@ For example, for `gfortran`, create a new file named `Makefile.header.6.gfortran
 # fortran options
 F77 = gfortran
 F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch
-F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native -static
+F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native
 F77FLAGS = $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
 
 # C options
@@ -161,7 +211,7 @@ CCFLAGS = -O -DINTEGER='long int' -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS
 
 # link options
 LD = gfortran
-LDFLAGS = -w $(EXT_LDFLAGS)
+LDFLAGS = -w $(EXT_LDFLAGS) -static-libgfortran
 ```
 
 Note the `-fallow-argument-mismatch` flag. From gfortran version 10 onward, type mismatches by default give an error rather than a warning. This flag returns warnings instead, so that CNS compilation can successfully complete. If a `Makefile.header.x.gfortran` is provided for your system but compilation fails with (many) `Error: Type mismatch`, you may need to add this flag to the provided file.

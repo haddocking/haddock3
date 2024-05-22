@@ -66,7 +66,9 @@ Copy the CNS files distributed with HADDOCK3 to the CNS directory:
 cp -r ~/software/haddock3/varia/cns1.3/[bis]*  ~/software/cns_solve_1.3/
 ```
 
-> ❗ You cannot use CNS in HADDOCK without this patched files❗
+**Note:** Make sure to use the correct path to your haddock3 location in the above command.
+
+> ❗ You cannot use CNS in HADDOCK without these patched files❗
 
 ## 4. Compiling CNS
 

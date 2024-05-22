@@ -85,10 +85,9 @@ To check what is *your* architectures, type the following command:
 
 ```bash
 $ ~/software/cns_solve_1.3/bin/getarch
-intel-x86_64bit-linux
 ```
 
-> You might get something like `unknown-arm64-Darwin`, in that case installation is still possible, however it means the compiler options might not be properly defined - check the Troubleshooting section
+> You might get something like `unknown-...`, in that case installation is still possible, however it means the compiler options might not be properly defined - check the Troubleshooting section
 
 Several `Makefile` headers are already provided - here we will focus on the ones that use `gfortran` as the compiler.
 

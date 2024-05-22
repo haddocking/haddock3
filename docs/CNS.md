@@ -53,7 +53,7 @@ sed -i 's@_CNSsolve_location_@'"$PWD"'@' cns_solve_env
 Check if the substitution worked:
 
 ```bash
-$ sed -n 18p cns_solve_env
+sed -n 18p cns_solve_env
 ```
 
 ## 3. Patch CNS with HADDOCK custom files
@@ -77,14 +77,14 @@ Before installing CNS, you need to check wether your operating system is support
 The list of supported architectures can be seen with the following command:
 
 ```bash
-$ ls ~/software/cns_solve_1.3/instlib/machine/supported
+ls ~/software/cns_solve_1.3/instlib/machine/supported
 arm-aarch64-linux  intel-x86_64bit-linux  linux  mac-arm-darwin  mac-intel-darwin
 ```
 
 To check what is *your* architectures, type the following command:
 
 ```bash
-$ ~/software/cns_solve_1.3/bin/getarch
+~/software/cns_solve_1.3/bin/getarch
 ```
 
 > You might get something like `unknown-...`, in that case installation is still possible, however it means the compiler options might not be properly defined - check the Troubleshooting section
@@ -113,7 +113,7 @@ And on a Mac with arm processors (M1/2/3) is will be under `~software/cns_solve_
 Check if it is working by executing it:
 
 ```bash
-$ ~/software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2405221906.exe
+~/software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2405221906.exe
 ```
 
 If you see the CNS prompt, the compilation was successful! 🎉

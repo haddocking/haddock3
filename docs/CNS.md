@@ -69,7 +69,6 @@ cp ~/software/haddock3/varia/cns1.3/bin/getarch ./bin
 
 Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
 
-
 The recommended gfortran Makefile options are:
 
 ```

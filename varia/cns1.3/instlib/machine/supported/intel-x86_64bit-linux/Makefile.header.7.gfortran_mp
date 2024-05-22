@@ -8,8 +8,8 @@
 
 # fortran options
 F77 = gfortran -fopenmp
-F77STD = -fdefault-integer-8 -w
-F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math
+F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch
+F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native
 F77FLAGS = $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
 
 # C options
@@ -19,7 +19,7 @@ CCFLAGS = -O -DINTEGER='long int' -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS
 
 # link options
 LD = gfortran
-LDFLAGS = -w -fopenmp $(EXT_LDFLAGS)
+LDFLAGS = -w -fopenmp $(EXT_LDFLAGS) -static-libgfortran
 
 # utility programs
 compile-utils:

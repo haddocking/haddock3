@@ -103,7 +103,10 @@ make install compiler=gfortran
 
 You should see the progress of the compilation, followed by a confirmation that an executable has been created.
 
-The executable will be located at `~software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-XXXXXXX.exe`
+The executable will be located in a new architecture-specific directory.
+
+For example under Linux (Intel or AMD processors) it will be under `~software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-XXXXXXX.exe`
+And on a Mac with arm processors (M1/2/3) is will be under `~software/cns_solve_1.3/mac-arm64-darwin/source/cns_solve-XXXXXXX.exe`
 
 > The `XXXXXXX` will be a number specific to your compilation.
 
@@ -128,10 +131,11 @@ If you see the CNS prompt, the compilation was successful! 🎉
 ============================================================
 ```
 
-The command to exit CNS is `STOP`!
+The command to exit CNS is `stop`!
 
 If this does not work, check the [troubleshooting section](#Troubleshooting) below.
 
+**Note:** If you want to CNS as standalone application, you should first source the `cns_solve_env` file (csh) or `.cns_solve_env_sh` file (bash). CNS will then be defined in you path and can be simply started using `cns` as command. If using bash, make sure to first edit the cns_solve_env variable in the `.cns_solve_env_sh` file as described above.
 
 ## 5. Installing the created CNS executable into haddock3
 
@@ -160,7 +164,7 @@ For an unknown system you might see as output:
 
 ```
 ~/software/cns_solve_1.31-UU> ./bin/getarch
-unknown-arm64-Darwin
+unknown-...
 ```
 
 If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.

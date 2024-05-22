@@ -3,7 +3,7 @@
 The computational engine for most of HADDOCK3's modules is the [Crystallography and NMR System (CNS)](http://cns-online.org/v1.3/).
 Once you have [cloned the HADDOCK3 repository](INSTALL.md), please follow these instructions to compile a CNS executable that can be used to run HADDOCK.
 
-Before starting, make sure you download the system requirements, they are `gcc`, `gfotran` and `csh`. Luckly they are easily available from the package manager, so if you are using Ubuntu (for example):
+Before starting, make sure you download the system requirements, they are `gcc`, `gfortran` and `csh`. Luckily they are easily available from the package manager, so if you are using Ubuntu (for example):
 
 ```
 sudo apt-get install gcc gfortran csh
@@ -15,11 +15,11 @@ Downloading CNS requires a license, which academic users can [request for free](
 
 To Download CNS, go to their [website](http://cns-online.org) and  click on the `Download` menu and fill the form. You will be sent a password for the download via e-mail - keep in mind only education e-mails are allowed for this.
 
-You will recieve a login/password in the e-mail, once you have those go to the [download page](http://cns-online.org/download/v1.3/cns_solve_1.3_all.tar.gz) and use the provided login/password to download the CNS package.
+You will receive a login/password in the e-mail, once you have those go to the [download page](http://cns-online.org/download/v1.3/cns_solve_1.3_all.tar.gz) and use the provided login/password to download the CNS package.
 
 > The CNS website is not currently using SSL certificates, this mean your download might be blocked or it might give you a warning, double check in your browser.
 
-Once the archive `cns_solve_1.3_all.tar.gz` has been downloaded, move it to a `$HOME/software` directory (or any other directory of your choice) and uncompress it:
+Once the archive `cns_solve_1.3_all.tar.gz` has been downloaded, move it to a `$HOME/software` directory (or any other directory of your choice) and decompress it:
 
 ```bash
 mkdir ~/software
@@ -71,14 +71,14 @@ cp -r ~/software/haddock3/varia/cns1.3/[bis]*  ~/software/cns_solve_1.3/
 
 Before installing CNS, you need to check wether your operating system is supported by CNS.
 
-The list of supported architecthures can be seen with the following command:
+The list of supported architectures can be seen with the following command:
 
 ```bash
 $ ls ~/software/cns_solve_1.3/instlib/machine/supported
 arm-aarch64-linux  intel-x86_64bit-linux  linux  mac-arm-darwin  mac-intel-darwin
 ```
 
-To check what is *your* architecthure, type the following command:
+To check what is *your* architectures, type the following command:
 
 ```bash
 $ ~/software/cns_solve_1.3/bin/getarch
@@ -93,14 +93,7 @@ Several `Makefile` headers are already provided - here we will focus on the ones
 ls ~/software/cns_solve_1.3/instlib/machine/supported/*/Makefile*gfortran*
 ```
 
-So you need to actually install it first, you can do that with the package manager; for example in Ubuntu:
-
-```bash
-sudo apt-get install gcc gfortran
-```
-
-Then its time to compile CNS, you can do that with the following command:
-
+Now its time to compile CNS, you can do that with the following command:
 
 ```bash
 make install compiler=gfortran
@@ -155,7 +148,7 @@ You can then copy this executable into the `haddock3/bin` directory, renaming it
 
 If the installation fails because your OS/hardware are not recognized, most likely the `bin/getarch` script needs to be updated.
 
-From withon your CNS installation directory type the following command to check if your system is recognized:
+From within your CNS installation directory type the following command to check if your system is recognized:
 
 ```bash
 ./bin/getarch
@@ -170,7 +163,7 @@ unknown-arm64-Darwin
 
 If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.
 For example, the default CNS package will not recognize the Mac M1/2/3/ processors (but after copying the CNS files distributed with haddock3 it should!).
-To solve that edit the `./bin/get_arch` script and add lines such as your system be recognized (e.g. after line 179 - this should be added after a line containin `exit 0`). Here is an example to add support for the Mac M1/2/3 processors:
+To solve that edit the `./bin/get_arch` script and add lines such as your system be recognized (e.g. after line 179 - this should be added after a line containing `exit 0`). Here is an example to add support for the Mac M1/2/3 processors:
 
 ```
     arm64:Darwin:*:*)

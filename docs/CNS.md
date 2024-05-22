@@ -48,6 +48,7 @@ You can do that either by opening this file in a code editor such as VScode or v
 ```bash
 sed -i 's@_CNSsolve_location_@'"$PWD"'@' cns_solve_env
 ```
+**Note** that on a Mac, the default sed version will give an error with the above command. Install instead gnu-sed using brew, and then replace `sed` by `gsed` in the above command.
 
 Check if the substitution worked:
 

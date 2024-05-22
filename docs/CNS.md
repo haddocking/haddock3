@@ -53,7 +53,24 @@ unknown-arm64-Darwin
 
 The current list of supported architectures can be found by looking at the content of the `instlib/machine/supported` directory.
 In those directories, you will find Makefiles for various compilers, including some for gfortran.
-If you OS is supported, we recommend editing the gfortran  Makefiles to have the following content:
+
+For convenience, we are providing with HADDOCK3 updated CNS files for the supported systems in which the gfortran Makefiles have already been edited.
+Simply copy these to your CNS installation directory with:
+
+```bash
+cp -r ~/software/haddock3/varia/cns1.3/instlib ./ 
+```
+
+Also copy an updated `getarch` script that will recognize Mac M1/2/3/ processors:
+
+```bash
+cp ~/software/haddock3/varia/cns1.3/bin/getarch ./bin 
+```
+
+Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
+
+
+The recommended gfortran Makefile options are:
 
 ```
 # fortran options
@@ -73,8 +90,7 @@ LDFLAGS = -w $(EXT_LDFLAGS) -static-libgfortran
 ```
 
 If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.
-For example, the default CNS package will not recognize the Mac M1/2/3/ processors. To solve that edit the `./bin/get_arch` script
-and add the following lines after line 179 (this should be added after a line containin `exit 0`):
+For example, the default CNS package will not recognize the Mac M1/2/3/ processors (but after copying the CNS files distributed with haddock3 it should!). To solve that edit the `./bin/get_arch` script and add the following lines after line 179 (this should be added after a line containin `exit 0`):
 
 ```
     arm64:Darwin:*:*)
@@ -82,16 +98,7 @@ and add the following lines after line 179 (this should be added after a line co
     exit 0 ;;
 ```
 
-If you OS/hardware is not in the list of supported systems, you will need to define it in the `get_arch` script and create a directory under `instlib/machine/supported` with the same name as the one you defined in `get_arch`. Copy then and edit if needed the files from another supported system into the directory you created.
-
-We are providing with HADDOCK3 updated CNS files for the supported systems in which the gfortran Makefiles have already been edited.
-Simply copy these to your CNS installation directory with:
-
-```bash
-cp -r ~/software/haddock3/varia/cns1.3/instlib ./ 
-```
-
-Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
+If you OS/hardware is not in the list of supported systems, you will need to define it in the `getarch` script as just explained and create a directory under `instlib/machine/supported` with the same name as the one you defined in `getarch`. Copy then and edit if needed the files from another supported system into the directory you created.
 
 
 ## 3 Add HADDOCK routines

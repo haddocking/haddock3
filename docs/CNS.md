@@ -36,82 +36,17 @@ If you are using sh/bash, edit `.cns_solve_env_sh`:
         CNS_SOLVE=/PATH/TO/cns_solve_1.3
 ```
 
-## 2. Check that your current OS is recognized by the CNS installation scripts
+## 2. Copy the CNS code, scripts and Makefile provided with haddock3
 
-From the CNS installation directory, type the following command:
-
-```bash
-./bin/getarch
-```
-
-For an unknown system you might see as output:
-
-```
-~/software/cns_solve_1.31-UU> ./bin/getarch
-unknown-arm64-Darwin
-```
-
-The current list of supported architectures can be found by looking at the content of the `instlib/machine/supported` directory.
-In those directories, you will find Makefiles for various compilers, including some for gfortran.
-
-For convenience, we are providing with HADDOCK3 updated CNS files for the supported systems in which the gfortran Makefiles have already been edited.
-Simply copy these to your CNS installation directory with:
+Assuming you are in the current CNS installation directoy, copy the CNS files provided with haddock3 to your CNS installation:
 
 ```bash
-cp -r ~/software/haddock3/varia/cns1.3/instlib ./ 
-```
-
-Also copy an updated `getarch` script that will recognize Mac M1/2/3/ processors:
-
-```bash
-cp ~/software/haddock3/varia/cns1.3/bin/getarch ./bin 
+cp -r <my-path-to-haddock3>/haddock3/varia/cns1.3/[bis]*  ./ 
 ```
 
 Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
 
-The recommended gfortran Makefile options are:
-
-```
-# fortran options
-F77 = gfortran
-F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch
-F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native
-F77FLAGS = $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
-
-# C options
-CC = gcc
-CPP = g++
-CCFLAGS = -O -DINTEGER='long int' -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS)
-
-# link options
-LD = gfortran
-LDFLAGS = -w $(EXT_LDFLAGS) -static-libgfortran
-```
-
-If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.
-For example, the default CNS package will not recognize the Mac M1/2/3/ processors (but after copying the CNS files distributed with haddock3 it should!). To solve that edit the `./bin/get_arch` script and add the following lines after line 179 (this should be added after a line containin `exit 0`):
-
-```
-    arm64:Darwin:*:*)
-    echo mac-arm64-darwin
-    exit 0 ;;
-```
-
-If you OS/hardware is not in the list of supported systems, you will need to define it in the `getarch` script as just explained and create a directory under `instlib/machine/supported` with the same name as the one you defined in `getarch`. Copy then and edit if needed the files from another supported system into the directory you created.
-
-## 3. Add HADDOCK routines
-
-HADDOCK requires some adjustments in CNS to function properly.
-The set of routines to add is provided in the haddock3 repository under [`varia/cns1.3/`](/varia/cns1.3/README.md).
-Copy all of these files into the CNS source directory (`/PATH/TO/cns_solve_1.3/source/`), for example:
-
-```bash
-cp ~/software/haddock3/varia/cns1.3/* source/
-```
-
-Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
-
-## 4. Compile CNS
+## 3. Compile CNS
 
 Make sure you are inside the main `cns_solve_1.3` directory. 
 Source first the `cns_solve_env` (for csh/tcsh) or `.cns_solve_env_sh` script (for bash).
@@ -128,6 +63,8 @@ For bash:
 source ./.cns_solve_env_sh
 ```
 
+In case your system is not recognized refer to the troubleshooting section below.
+
 To compile CNS we recommend using the gfortran compiler. The following command should start the compilation of CNS:
 
 ```bash
@@ -142,7 +79,7 @@ created executable file cns_solve-2206031450.exe
 
 If this does not work, check the [troubleshooting section](#Troubleshooting) below.
 
-## 5. Source CNS
+## 4. Source CNS
 
 Lastly, CNS needs to be loaded in the current shell before it can be used.
 
@@ -158,7 +95,7 @@ For sh/bash:
 source ./.cns_solve_env_sh
 ```
 
-## 6. Check installation
+## 5. Check installation
 
 To check that CNS has been installed, start the program with the following command:
 
@@ -187,7 +124,7 @@ You now have a suitable CNS executable to finish [installing HADDOCK3](INSTALL.m
 
 ***
 
-## 7. Installing the created CNS executable into haddock3
+## 6. Installing the created CNS executable into haddock3
 
 You can find the freshly compiled CNS executable a newly created directory in the CNS installation directory named after the architecture of your system. E.g. for a M1/2/3/ Mac Arm processor it will be `mac-arm64-darwin`. In the `source` directory in that directory you can find the compiled CNS executable.
 
@@ -200,7 +137,36 @@ You can then copy this executable into the `haddock3/bin` directory, renaming it
 
 # Troubleshooting
 
-## 1. Compiler
+## 1. System not recognized
+
+If the installation fails because your OS/hardware are not recognized, most likely the `bin/getarch` script needs to be updated.
+
+From withon your CNS installation directory type the following command to check if your system is recognized:
+
+```bash
+./bin/getarch
+```
+
+For an unknown system you might see as output:
+
+```
+~/software/cns_solve_1.31-UU> ./bin/getarch
+unknown-arm64-Darwin
+```
+
+If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.
+For example, the default CNS package will not recognize the Mac M1/2/3/ processors (but after copying the CNS files distributed with haddock3 it should!). 
+To solve that edit the `./bin/get_arch` script and add lines such as your system be recognized (e.g. after line 179 - this should be added after a line containin `exit 0`). Here is an example to add support for the Mac M1/2/3 processors:
+
+```
+    arm64:Darwin:*:*)
+    echo mac-arm64-darwin
+    exit 0 ;;
+```
+
+You should then create a directory under `instlib/machine/supported` with the same name as the one you defined in `getarch`. Copy then and edit if needed the files from another supported system into the directory you created.
+
+## 2. Compiler
 
 If no suitable compiler is found, you will get an error message:
 
@@ -217,7 +183,7 @@ brew install gcc
 
 Alternatively, gfortran can be downloaded as a [separate binary](https://gcc.gnu.org/wiki/GFortranBinaries).
 
-## 2. Makefile
+## 3. Makefile
 
 If a suitable compiler is installed but no corresponding `Makefile.header` is found, `make install` will give an error as well. For example (with gfortran):
 

@@ -1,0 +1,31 @@
+###############################################################################
+# 									      #
+#       Machine dependent Makefile header for CNSsolve                        #
+#       copyright Yale University                                             #
+# 	Mac OS X 64 bit ifort compiler, openmp enabled, i8 integers           #
+# 									      #
+###############################################################################
+
+# fortran options
+F77 = ifort
+F77STD = -w -vec-report0
+F77OPT = -O -axSSSE3
+F77FLAGS = -i8 -traceback $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
+
+# C options
+CC = icc
+CPP = icc
+CCFLAGS = -O -axSSSE3 -DINTEGER='long int' -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS)
+
+# link options
+LD = ifort
+LDFLAGS = -static-intel -save-temps -traceback -O -axPT $(EXT_LDFLAGS)
+
+# utility programs
+compile-utils:
+	@ cd $(CNS_INST)/utils; \
+	  make utils F77="$(F77)"  CC="$(CC)" CPP="$(CPP)"\
+	             F77FLAGS="-O -xP -w -vec-report0" CCFLAGS="-O" \
+	             F77LINK="-i-static" CCLINK="-lm" LEXLIB="fl"
+
+#==============================================================================

@@ -90,6 +90,8 @@ Simply copy these to your CNS installation directory with:
 cp -r ~/software/haddock3/varia/cns1.3/instlib ./ 
 ```
 
+If you OS/hardware is not in the list of supported systems, you will need to define it in the `get_arch` script and create a directory under `instlib/machines/supported` with the same name as the one you defined in `get_arch`. Copy then and edit if needed the files from another supported system into the directory you just created.
+
 
 ## 3 Add HADDOCK routines
 
@@ -102,7 +104,7 @@ cp ~/software/haddock3/varia/cns1.3/* source/
 ```
 
 
-## 3 Compile CNS
+## 4 Compile CNS
 
 
 Make sure you are inside the main `cns_solve_1.3` directory.
@@ -120,7 +122,7 @@ created executable file cns_solve-2206031450.exe
 
 If this does not work, check the [troubleshooting section](#Troubleshooting) below.
 
-## 4 Source CNS
+## 5 Source CNS
 
 Lastly, CNS needs to be loaded in the current shell before it can be used.
 
@@ -136,7 +138,7 @@ For sh/bash:
 source .cns_solve_env_sh
 ```
 
-## 5 Check installation
+## 6 Check installation
 
 To check that CNS has been installed, start the program with the following command:
 

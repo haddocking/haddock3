@@ -10,11 +10,11 @@ To copy the code and scripts to your CNS installation directory use:
 cp -r source bin instlib <CNS-installation-directory>
 ```
 
-**The provided getarch script under the bin dir adds support for Mac M1/2/3 processors**
+The provided getarch script under the bin dir adds support for Mac M1/2/3 processors.
 
-**The provided Makefiles under the instlib dir adds the proper gfortran compiler options**
+The provided Makefiles under the instlib dir adds the proper gfortran compiler options.
 
-**The provided code adds functionality for:**
+And the provided code adds functionality for:
 
 
 #### Radius of gyration restraints

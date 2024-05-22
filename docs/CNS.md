@@ -48,7 +48,7 @@ You can do that either by opening this file in a code editor such as VScode or v
 ```bash
 sed -i 's@_CNSsolve_location_@'"$PWD"'@' cns_solve_env
 ```
-**Note** that on a Mac, the default sed version will give an error with the above command. Install instead gnu-sed using brew, and then replace `sed` by `gsed` in the above command.
+**Note:** On a Mac, the default sed version will give an error with the above command. Install instead `gnu-sed` using `brew`, and then replace `sed` by `gsed` in the above command.
 
 Check if the substitution worked:
 
@@ -110,7 +110,7 @@ And on a Mac with arm processors (M1/2/3) is will be under `~software/cns_solve_
 
 > The `XXXXXXX` will be a number specific to your compilation.
 
-Check if its working by executing it:
+Check if it is working by executing it:
 
 ```bash
 $ ~/software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2405221906.exe
@@ -135,7 +135,7 @@ The command to exit CNS is `stop`!
 
 If this does not work, check the [troubleshooting section](#Troubleshooting) below.
 
-**Note:** If you want to CNS as standalone application, you should first source the `cns_solve_env` file (csh) or `.cns_solve_env_sh` file (bash). CNS will then be defined in you path and can be simply started using `cns` as command. If using bash, make sure to first edit the cns_solve_env variable in the `.cns_solve_env_sh` file as described above.
+**Note:** If you want to use CNS as standalone application, you should first source the `cns_solve_env` file (csh) or `.cns_solve_env_sh` file (bash). CNS will then be defined in you path and can be simply started using `cns` as command. If using bash, make sure to first edit the `cns_solve_env` variable in the `.cns_solve_env_sh` file to define the installation directory as described above.
 
 ## 5. Installing the created CNS executable into haddock3
 

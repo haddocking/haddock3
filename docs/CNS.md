@@ -63,7 +63,7 @@ For HADDOCK to use CNS, some modifications were made to the CNS source code. We 
 Copy the CNS files distributed with HADDOCK3 to the CNS directory:
 
 ```bash
-cp -r ~/software/haddock3/varia/cns1.3/[bis]*  ~/software/cns_solve_1.3/
+\cp -r ~/software/haddock3/varia/cns1.3/[bis]*  ~/software/cns_solve_1.3/
 ```
 
 **Note:** Make sure to use the correct path to your haddock3 location in the above command.

@@ -52,8 +52,7 @@ unknown-arm64-Darwin
 ```
 
 The current list of supported architectures can be found by looking at the content of the `instlib/machine/supported` directory.
-In those directories, you will find Makefiles for various compilers, including some for gfortran. 
-
+In those directories, you will find Makefiles for various compilers, including some for gfortran.
 If you OS is supported, we recommend editing the gfortran  Makefiles to have the following content:
 
 ```
@@ -83,6 +82,8 @@ and add the following lines after line 179 (this should be added after a line co
     exit 0 ;;
 ```
 
+If you OS/hardware is not in the list of supported systems, you will need to define it in the `get_arch` script and create a directory under `instlib/machine/supported` with the same name as the one you defined in `get_arch`. Copy then and edit if needed the files from another supported system into the directory you created.
+
 We are providing with HADDOCK3 updated CNS files for the supported systems in which the gfortran Makefiles have already been edited.
 Simply copy these to your CNS installation directory with:
 
@@ -90,7 +91,7 @@ Simply copy these to your CNS installation directory with:
 cp -r ~/software/haddock3/varia/cns1.3/instlib ./ 
 ```
 
-If you OS/hardware is not in the list of supported systems, you will need to define it in the `get_arch` script and create a directory under `instlib/machines/supported` with the same name as the one you defined in `get_arch`. Copy then and edit if needed the files from another supported system into the directory you just created.
+Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
 
 
 ## 3 Add HADDOCK routines
@@ -103,11 +104,28 @@ Copy all of these files into the CNS source directory (`/PATH/TO/cns_solve_1.3/s
 cp ~/software/haddock3/varia/cns1.3/* source/
 ```
 
+Make sure to specify the correct location of your haddock3 installation as the above command is only an example.
+
 
 ## 4 Compile CNS
 
 
-Make sure you are inside the main `cns_solve_1.3` directory.
+Make sure you are inside the main `cns_solve_1.3` directory. 
+Source first the `cns_solve_env` (for csh/tcsh) or `.cns_solve_env_sh` script (for bash).
+
+For csh/tcsh:
+
+```bash
+source ./cns_solve_env
+```
+
+For bash:
+
+```bash
+source ./.cns_solve_env_sh
+```
+
+
 To compile CNS we recommend using the gfortran compiler. The following command should start the compilation of CNS:
 
 ```bash
@@ -122,6 +140,7 @@ created executable file cns_solve-2206031450.exe
 
 If this does not work, check the [troubleshooting section](#Troubleshooting) below.
 
+
 ## 5 Source CNS
 
 Lastly, CNS needs to be loaded in the current shell before it can be used.
@@ -129,13 +148,13 @@ Lastly, CNS needs to be loaded in the current shell before it can be used.
 For csh/tcsh:
 
 ```bash
-source cns_solve_env
+source ./cns_solve_env
 ```
 
 For sh/bash:
 
 ```bash
-source .cns_solve_env_sh
+source ./.cns_solve_env_sh
 ```
 
 ## 6 Check installation
@@ -166,6 +185,20 @@ The command to exit CNS is `STOP`.
 You now have a suitable CNS executable to finish [installing HADDOCK3](INSTALL.md).
 
 ***
+
+
+## 7 Installing the created CNS executable into haddock3
+
+You can find the freshly compiled CNS executable a newly created directory in the CNS installation directory named after the architecture of your system. E.g. for a M1/2/3/ Mac Arm processor it will be `mac-arm64-darwin`. In the `source` directory in that directory you can find the compiled CNS executable.
+
+```bash
+ls mac-arm64-darwin/source/*exe 
+> mac-arm64-darwin/source/cns_solve-2405221019.exe
+```
+
+You can then copy this executable into the `haddock3/bin` directory, renaming it simply to `cns`
+
+
 
 # Troubleshooting
 

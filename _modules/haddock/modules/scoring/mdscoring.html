@@ -90,7 +90,9 @@
 <span></span><span class="sd">&quot;&quot;&quot;MD scoring module.</span>
 
 <span class="sd">This module will perform a short MD simulation on the input models and</span>
-<span class="sd">score them. No restraints are applied during this step.&quot;&quot;&quot;</span>
+<span class="sd">score them. No restraints are applied during this step.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
@@ -185,6 +187,8 @@
         <span class="n">output_fname</span> <span class="o">=</span> <span class="s2">&quot;mdscoring.tsv&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving output to </span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;per_interface_scoring&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">per_interface_output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span></div>
 </pre></div>
@@ -197,7 +201,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 22, 2024.
+      <span class="lastupdated">Last updated on May 23, 2024.
       </span></p>
   </div>
 

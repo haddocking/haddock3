@@ -112,8 +112,8 @@
 <section id="module-haddock.modules.scoring.emscoring">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.scoring.emscoring" title="Permalink to this heading"></a></h2>
 <p>EM scoring module.</p>
-<p>This module performs energy minimization and scoring of the models generated
-in the previous step of the workflow. No restraints are applied during this step.</p>
+<p>This module performs energy minimization and scoring of the models generated in
+the previous step of the workflow. No restraints are applied during this step.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.scoring.emscoring.HaddockModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.emscoring.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/scoring/emscoring/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/scoring/emscoring.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.emscoring.HaddockModule" title="Permalink to this definition"></a></dt>
@@ -241,6 +241,18 @@ in the previous step of the workflow. No restraints are applied during this step
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
+<section id="per-interface-scoring">
+<h4>per_interface_scoring<a class="headerlink" href="#per-interface-scoring" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Interchains scoring</div>
+<div class="line"><em>short description</em>: Output scores per interface in the PDB header.</div>
+<div class="line"><em>long description</em>: With this option true, the interface of all combinations of chains will be analysed and the corresponding HADDOCK scores (without restraints terms) and their components (Eelec, Evdw, Edesol, BSA) will be written to the header of each PDB file.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
 <section id="tolerance">
 <h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading"></a></h4>
 <div class="line-block">
@@ -252,6 +264,20 @@ in the previous step of the workflow. No restraints are applied during this step
 <div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
 <div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-air">
+<h4>w_air<a class="headerlink" href="#w-air" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the distance restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the distance restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
@@ -357,7 +383,7 @@ in the previous step of the workflow. No restraints are applied during this step
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 22, 2024.
+      <span class="lastupdated">Last updated on May 23, 2024.
       </span></p>
   </div>
 

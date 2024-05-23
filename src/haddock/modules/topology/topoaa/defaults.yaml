@@ -76,12 +76,12 @@ limit:
   group: sampling
   explevel: expert
 set_bfactor:
-  default: false
+  default: true
   type: boolean
-  title: Define is the b-factor column is overwritten
+  title: Define if the b-factor column must be overwritten
   short: When true (default), all b-factors are set to a default value of 15
-  long: Defines if the original b-factor values are kept or all b-factors are
-    set to a default value (15)
+  long: Defines if the original b-factor values are kept (true) or 
+    all b-factors are set to a default value for 15 (false).
   group: module
   explevel: expert
 tolerance:

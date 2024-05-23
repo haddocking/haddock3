@@ -5,7 +5,7 @@ Once you have [cloned the HADDOCK3 repository](INSTALL.md), please follow these 
 
 Before starting, make sure you download the system requirements, they are `gcc`, `gfortran` and `csh`. Luckily they are easily available from the package manager, so if you are using Ubuntu (for example):
 
-```
+```bash
 sudo apt-get install gcc gfortran csh
 ```
 
@@ -48,7 +48,8 @@ You can do that either by opening this file in a code editor such as VScode or v
 ```bash
 sed -i 's@_CNSsolve_location_@'"$PWD"'@' cns_solve_env
 ```
-**Note:** On a Mac, the default sed version will give an error with the above command. Install instead `gnu-sed` using `brew`, and then replace `sed` by `gsed` in the above command.
+
+> **Note:** On a Mac, the default sed version will give an error with the above command. Install instead `gnu-sed` using `brew`, and then replace `sed` by `gsed` in the above command.
 
 Check if the substitution worked:
 
@@ -60,15 +61,15 @@ sed -n 18p cns_solve_env
 
 For HADDOCK to use CNS, some modifications were made to the CNS source code. We provide those modifications together with the haddock3 source files.
 
+> ❗ You cannot use CNS in HADDOCK without these patched files❗
+
 Copy the CNS files distributed with HADDOCK3 to the CNS directory:
 
 ```bash
 \cp -r ~/software/haddock3/varia/cns1.3/[bis]*  ~/software/cns_solve_1.3/
 ```
 
-**Note:** Make sure to use the correct path to your haddock3 location in the above command.
-
-> ❗ You cannot use CNS in HADDOCK without these patched files❗
+> **Note:** Make sure to use the correct path to your haddock3 location in the above command.
 
 ## 4. Compiling CNS
 
@@ -133,9 +134,9 @@ If you see the CNS prompt, the compilation was successful! 🎉
 
 The command to exit CNS is `stop`!
 
-If this does not work, check the [troubleshooting section](#Troubleshooting) below.
+If this does not work, check the [troubleshooting section](#troubleshooting) below.
 
-**Note:** If you want to use CNS as standalone application, you should first source the `cns_solve_env` file (csh) or `.cns_solve_env_sh` file (bash). CNS will then be defined in you path and can be simply started using `cns` as command. If using bash, make sure to first edit the `cns_solve_env` variable in the `.cns_solve_env_sh` file to define the installation directory as described above.
+> **Note:** If you want to use CNS as standalone application, you should first source the `cns_solve_env` file (csh) or `.cns_solve_env_sh` file (bash). CNS will then be defined in you path and can be simply started using `cns` as command. If using bash, make sure to first edit the `cns_solve_env` variable in the `.cns_solve_env_sh` file to define the installation directory as described above.
 
 ## 5. Installing the created CNS executable into haddock3
 
@@ -148,21 +149,21 @@ ls mac-arm64-darwin/source/*exe
 
 You can then copy this executable into the `haddock3/bin` directory, renaming it simply to `cns`
 
-# Troubleshooting
+## Troubleshooting
 
-## 1. System not recognized
+### 1. System not recognized
 
 If the installation fails because your OS/hardware are not recognized, most likely the `bin/getarch` script needs to be updated.
 
 From within your CNS installation directory type the following command to check if your system is recognized:
 
-```bash
+```text
 ./bin/getarch
 ```
 
 For an unknown system you might see as output:
 
-```
+```text
 ~/software/cns_solve_1.31-UU> ./bin/getarch
 unknown-...
 ```
@@ -171,7 +172,7 @@ If your OS/hardware is unknown, this is not per se a problem, but it means the c
 For example, the default CNS package will not recognize the Mac M1/2/3/ processors (but after copying the CNS files distributed with haddock3 it should!).
 To solve that edit the `./bin/get_arch` script and add lines such as your system be recognized (e.g. after line 179 - this should be added after a line containing `exit 0`). Here is an example to add support for the Mac M1/2/3 processors:
 
-```
+```shell
     arm64:Darwin:*:*)
     echo mac-arm64-darwin
     exit 0 ;;
@@ -179,11 +180,11 @@ To solve that edit the `./bin/get_arch` script and add lines such as your system
 
 You should then create a directory under `instlib/machine/supported` with the same name as the one you defined in `getarch`. Copy then and edit if needed the files from another supported system into the directory you created.
 
-## 2. Compiler
+### 2. Compiler
 
 If no suitable compiler is found, you will get an error message:
 
-```
+```text
 Error: no suitable compiler (ifort, pgf95, ifort_i4, ifort_mp or pgf95_mp) found
 ```
 
@@ -196,11 +197,11 @@ brew install gcc
 
 Alternatively, gfortran can be downloaded as a [separate binary](https://gcc.gnu.org/wiki/GFortranBinaries).
 
-## 3. Makefile
+### 3. Makefile
 
 If a suitable compiler is installed but no corresponding `Makefile.header` is found, `make install` will give an error as well. For example (with gfortran):
 
-```
+```text
 Error: Makefile template for compiler gfortran is not available
 ```
 
@@ -209,7 +210,7 @@ If this directory does not contain the desired file (eg. `Makefile.header.2.gfor
 
 For example, for `gfortran`, create a new file named `Makefile.header.6.gfortran` inside the directory containing Makefile headers for your system. Save the following lines in this file:
 
-```
+```makefile
 # fortran options
 F77 = gfortran
 F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch

@@ -1,7 +1,7 @@
 """EM scoring module.
 
-This module performs energy minimization and scoring of the models generated
-in the previous step of the workflow. No restraints are applied during this step.
+This module performs energy minimization and scoring of the models generated in
+the previous step of the workflow. No restraints are applied during this step.
 """
 from pathlib import Path
 
@@ -97,5 +97,7 @@ class HaddockModule(CNSScoringModule):
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
+        if self.params['per_interface_scoring']:
+            self.per_interface_output(output_fname)
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

@@ -9,7 +9,6 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-! edited
 define(atom_build=(not(known)))
 
 identity (store9) (none)
@@ -58,6 +57,14 @@ if ( $tobuild > 0 ) then
             do (z=$ave_z) (byres(id $id) and store9 and name H7*)
  
         end loop avco 
+
+        ! Assign average b-factor of known atoms to unknown ones
+        if ($set_bfactor = false) then
+            for $id in id (tag and byres(store9)) loop bfac
+                show ave(b) (byres(id $id) and not store9)
+                do (b=$result) (byres(id $id) and store9)
+            end loop bfac 
+        end if
 
         ! Better initial position for rebuilding if atoms to which a missing atom is bonded to exist
         for $id in id (store9) loop bndto

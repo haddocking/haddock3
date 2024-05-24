@@ -221,9 +221,21 @@
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
 <div class="line"><em>title</em>: Limit the number of input molecules.</div>
-<div class="line"><em>short description</em>: When TRUE, the topoaa module can accept any number of input molecules.</div>
+<div class="line"><em>short description</em>: When true, the topoaa module can accept any number of input molecules.</div>
 <div class="line"><em>long description</em>: Enable/disable the limit of input molecules for the topoaa module. Setting the limit to false is useful when the topoaa module is followed by scoring modules such as emscoring, or other analysis modules. If topoaa is used in the middle of the workflow this parameter has no effect.</div>
 <div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="set-bfactor">
+<h2>set_bfactor<a class="headerlink" href="#set-bfactor" title="Permalink to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Define if the b-factor column must be overwritten</div>
+<div class="line"><em>short description</em>: When true (default), all b-factors are set to a default value of 15</div>
+<div class="line"><em>long description</em>: Defines if the original b-factor values are kept (true) or all b-factors are set to a default value for 15 (false).</div>
+<div class="line"><em>group</em>: module</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
@@ -282,7 +294,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 23, 2024.
+      <span class="lastupdated">Last updated on May 24, 2024.
       </span></p>
   </div>
 

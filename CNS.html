@@ -88,100 +88,155 @@
 <h1>CNS Installation<a class="headerlink" href="#cns-installation" title="Permalink to this heading"></a></h1>
 <p>The computational engine for most of HADDOCK3’s modules is the <a class="reference external" href="http://cns-online.org/v1.3/">Crystallography and NMR System (CNS)</a>.
 Once you have <a class="reference internal" href="INSTALL.html"><span class="std std-doc">cloned the HADDOCK3 repository</span></a>, please follow these instructions to compile a CNS executable that can be used to run HADDOCK.</p>
-<section id="download-cns">
-<h2>1 Download CNS<a class="headerlink" href="#download-cns" title="Permalink to this heading"></a></h2>
-<p>Downloading CNS requires a license, which academic users can <a class="reference external" href="http://cns-online.org">request for free</a> (click on the <code class="docutils literal notranslate"><span class="pre">Download</span></code> menu and fill the form). You will be sent a password for the download via e-mail.
-Using the link provided in the same e-mail, download CNS (“Source installer (compilation required on your system)”) to the directory in which you want to install it (for example <code class="docutils literal notranslate"><span class="pre">software</span></code>). Navigate to this directory, then uncompress and extract the archive:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~/software/
-gunzip<span class="w"> </span>cns_solve_1.3_all.tar.gz
-tar<span class="w"> </span>-xvf<span class="w"> </span>cns_solve_1.3_all.tar
+<p>Before starting, make sure you download the system requirements, they are <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, <code class="docutils literal notranslate"><span class="pre">gfortran</span></code> and <code class="docutils literal notranslate"><span class="pre">csh</span></code>. Luckily they are easily available from the package manager, so if you are using Ubuntu (for example):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>gcc<span class="w"> </span>gfortran<span class="w"> </span>csh
 </pre></div>
 </div>
+<blockquote>
+<div><p>Make sure <code class="docutils literal notranslate"><span class="pre">gfortran</span></code> is in your <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>, check it with <code class="docutils literal notranslate"><span class="pre">which</span> <span class="pre">gfortran</span></code>.</p>
+</div></blockquote>
+<section id="downloading-cns">
+<h2>1. Downloading CNS<a class="headerlink" href="#downloading-cns" title="Permalink to this heading"></a></h2>
+<p>Downloading CNS requires a license, which academic users can <a class="reference external" href="http://cns-online.org">request for free</a>.</p>
+<p>To Download CNS, go to their <a class="reference external" href="http://cns-online.org">website</a> and  click on the <code class="docutils literal notranslate"><span class="pre">Download</span></code> menu and fill the form. You will be sent a password for the download via e-mail - keep in mind only education e-mails are allowed for this.</p>
+<p>You will receive a login/password in the e-mail, once you have those go to the <a class="reference external" href="http://cns-online.org/download/v1.3/cns_solve_1.3_all.tar.gz">download page</a> and use the provided login/password to download the CNS package - the archive you need is: <code class="docutils literal notranslate"><span class="pre">cns_solve_1.3_all.tar.gz</span></code>.</p>
+<blockquote>
+<div><p>The CNS website is not currently using SSL certificates, this mean your download might be blocked or it might give you a warning, double check in your browser.</p>
+</div></blockquote>
+<p>Once the archive <code class="docutils literal notranslate"><span class="pre">cns_solve_1.3_all.tar.gz</span></code> has been downloaded, move it to a <code class="docutils literal notranslate"><span class="pre">$HOME/software</span></code> directory (or any other directory of your choice) and decompress it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>~/software
+mv<span class="w"> </span>~/Downloads/cns_solve_1.3_all.tar.gz<span class="w"> </span>~/software/
+tar<span class="w"> </span>-zxvf<span class="w"> </span>cns_solve_1.3_all.tar.gz
+</pre></div>
+</div>
+<p>The command above will have create a <code class="docutils literal notranslate"><span class="pre">cns_solve_1.3</span></code> directory in the <code class="docutils literal notranslate"><span class="pre">~/software</span></code> directory, containing the CNS source code.</p>
+</section>
+<section id="configuring-cns">
+<h2>2. Configuring CNS<a class="headerlink" href="#configuring-cns" title="Permalink to this heading"></a></h2>
 <p>Go to the CNS directory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>cns_solve_1.3
 </pre></div>
 </div>
-<p>If you are using csh/tcsh, edit <code class="docutils literal notranslate"><span class="pre">cns_solve_env</span></code> to point to the correct location (the current directory):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># CHANGE THE NEXT LINE TO POINT TO THE LOCATION OF THE CNSsolve DIRECTORY</span>
-
-            <span class="n">setenv</span> <span class="n">CNS_SOLVE</span> <span class="o">/</span><span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">cns_solve_1</span><span class="mf">.3</span>
+<p>Inside this directory there will be a <code class="docutils literal notranslate"><span class="pre">cns_solve_env</span></code> file.</p>
+<p>You need to edit this file to point to the current directory.</p>
+<p>You will need to change line 18 of this file to point to the current directory.</p>
+<p>You can do that either by opening this file in a code editor such as VScode or vim, or by running the command below:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s@_CNSsolve_location_@&#39;</span><span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span><span class="s1">&#39;@&#39;</span><span class="w"> </span>cns_solve_env
 </pre></div>
 </div>
-<p>If you are using sh/bash, edit <code class="docutils literal notranslate"><span class="pre">.cns_solve_env_sh</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># CHANGE THE NEXT LINE TO POINT TO THE LOCATION OF THE CNSsolve DIRECTORY</span>
-
-        <span class="n">CNS_SOLVE</span><span class="o">=/</span><span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">cns_solve_1</span><span class="mf">.3</span>
+<blockquote>
+<div><p><strong>Note:</strong> On a Mac, the default sed version will give an error with the above command. Install instead <code class="docutils literal notranslate"><span class="pre">gnu-sed</span></code> using <code class="docutils literal notranslate"><span class="pre">brew</span></code>, and then replace <code class="docutils literal notranslate"><span class="pre">sed</span></code> by <code class="docutils literal notranslate"><span class="pre">gsed</span></code> in the above command.</p>
+</div></blockquote>
+<p>Check if the substitution worked:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sed<span class="w"> </span>-n<span class="w"> </span>18p<span class="w"> </span>cns_solve_env
 </pre></div>
 </div>
-</section>
-<section id="add-haddock-routines">
-<h2>2 Add HADDOCK routines<a class="headerlink" href="#add-haddock-routines" title="Permalink to this heading"></a></h2>
-<p>HADDOCK requires some adjustments in CNS to function properly.
-The set of routines to add is provided in the haddock3 repository under <a class="reference internal" href="#/varia/cns1.3/README.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">varia/cns1.3/</span></code></span></a>.
-Copy all of these files into the CNS source directory (<code class="docutils literal notranslate"><span class="pre">/PATH/TO/cns_solve_1.3/source/</span></code>), for example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>~/software/haddock3/varia/cns1.3/*<span class="w"> </span>source/
+<p>The expected output will be (with the path to your CNS installation directory):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">        </span>setenv<span class="w"> </span>CNS_SOLVE<span class="w"> </span><span class="s1">&#39;/Absolute/path/where/cns_solve/is/cns_solve_1.3&#39;</span>
 </pre></div>
 </div>
 </section>
-<section id="compile-cns">
-<h2>3 Compile CNS<a class="headerlink" href="#compile-cns" title="Permalink to this heading"></a></h2>
-<p>Make sure you are inside the main <code class="docutils literal notranslate"><span class="pre">cns_solve_1.3</span></code> directory.</p>
-<p>If a suitable compiler is installed on your system, the following command should start the compilation of CNS:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install
+<section id="patch-cns-with-haddock-custom-files">
+<h2>3. Patch CNS with HADDOCK custom files<a class="headerlink" href="#patch-cns-with-haddock-custom-files" title="Permalink to this heading"></a></h2>
+<p>For HADDOCK to use CNS, some modifications were made to the CNS source code. We provide those modifications together with the haddock3 source files.</p>
+<blockquote>
+<div><p>❗ You cannot use CNS in HADDOCK without these patched files❗</p>
+</div></blockquote>
+<p>Copy the CNS files distributed with HADDOCK3 to the CNS directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="se">\c</span>p<span class="w"> </span>-r<span class="w"> </span>~/software/haddock3/varia/cns1.3/<span class="o">[</span>bis<span class="o">]</span>*<span class="w">  </span>~/software/cns_solve_1.3/
 </pre></div>
 </div>
-<p>If needed, you can specify the compiler you want to use by adding the <code class="docutils literal notranslate"><span class="pre">compiler</span></code> option, for example:</p>
+<blockquote>
+<div><p><strong>Note:</strong> Make sure to use the correct path to your haddock3 location in the above command.</p>
+</div></blockquote>
+</section>
+<section id="compiling-cns">
+<h2>4. Compiling CNS<a class="headerlink" href="#compiling-cns" title="Permalink to this heading"></a></h2>
+<p>Before installing CNS, you need to check wether your operating system is supported by CNS.</p>
+<p>The list of supported architectures can be seen with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>~/software/cns_solve_1.3/instlib/machine/supported
+arm-aarch64-linux<span class="w">  </span>intel-x86_64bit-linux<span class="w">  </span>linux<span class="w">  </span>mac-arm-darwin<span class="w">  </span>mac-intel-darwin
+</pre></div>
+</div>
+<p>To check what is <em>your</em> architecture, type the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/software/cns_solve_1.3/bin/getarch
+</pre></div>
+</div>
+<blockquote>
+<div><p>You might get something like <code class="docutils literal notranslate"><span class="pre">unknown-...</span></code>, in that case installation is still possible, however it means the compiler options might not be properly defined - check the Troubleshooting section</p>
+</div></blockquote>
+<p>Several <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> headers are already provided - here we will use on the one that uses <code class="docutils literal notranslate"><span class="pre">gfortran</span></code> as the compiler.</p>
+<p>Now it is time to compile CNS, you can do that with the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install<span class="w"> </span><span class="nv">compiler</span><span class="o">=</span>gfortran
 </pre></div>
 </div>
-<p>You should see the progress of the compilation, followed by a confirmation that an executable has been created. For example (with gfortran):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">created</span> <span class="n">executable</span> <span class="n">file</span> <span class="n">cns_solve</span><span class="o">-</span><span class="mf">2206031450.</span><span class="n">exe</span>
+<p>You should see the progress of the compilation, followed by a confirmation that an executable has been created.</p>
+<p>The executable will be located in a new architecture-specific directory.</p>
+<p>For example under Linux (Intel or AMD processors) it will be under <code class="docutils literal notranslate"><span class="pre">~software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-XXXXXXX.exe</span></code>
+And on a Mac with arm processors (M1/2/3) is will be under <code class="docutils literal notranslate"><span class="pre">~software/cns_solve_1.3/mac-arm64-darwin/source/cns_solve-XXXXXXX.exe</span></code></p>
+<blockquote>
+<div><p>The <code class="docutils literal notranslate"><span class="pre">XXXXXXX</span></code> will be a number specific to your compilation.</p>
+</div></blockquote>
+<p>Check if it is working by executing it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/software/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2405221906.exe
 </pre></div>
 </div>
-<p>If this does not work, check the <a class="reference internal" href="#troubleshooting"><span class="std std-ref">troubleshooting section</span></a> below.</p>
+<p>If you see the CNS prompt, the compilation was successful! 🎉</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>============================================================
+|                                                          |
+|            Crystallography &amp; NMR System (CNS)            |
+|                         CNSsolve                         |
+|                                                          |
+============================================================
+ Version: 1.3 at patch level U
+ Status: Special UU release with Rg, paramagnetic
+         and Z-restraints (A. Bonvin, UU 2013)
+============================================================
+</pre></div>
+</div>
+<p>The command to exit CNS is <code class="docutils literal notranslate"><span class="pre">stop</span></code>!</p>
+<p>If this does not work, check the <a class="reference internal" href="#troubleshooting">troubleshooting section</a> below.</p>
+<blockquote>
+<div><p><strong>Note:</strong> If you want to use CNS as standalone application, you should first source the <code class="docutils literal notranslate"><span class="pre">cns_solve_env</span></code> file (csh) or <code class="docutils literal notranslate"><span class="pre">.cns_solve_env_sh</span></code> file (bash). CNS will then be defined in you path and can be simply started using <code class="docutils literal notranslate"><span class="pre">cns</span></code> as command. If using bash, make sure to first edit the <code class="docutils literal notranslate"><span class="pre">cns_solve_env</span></code> variable in the <code class="docutils literal notranslate"><span class="pre">.cns_solve_env_sh</span></code> file to define the installation directory as described above.</p>
+</div></blockquote>
 </section>
-<section id="source-cns">
-<h2>4 Source CNS<a class="headerlink" href="#source-cns" title="Permalink to this heading"></a></h2>
-<p>Lastly, CNS needs to be loaded in the current shell before it can be used.</p>
-<p>For csh/tcsh:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>cns_solve_env
+<section id="installing-the-created-cns-executable-into-haddock3">
+<h2>5. Installing the created CNS executable into haddock3<a class="headerlink" href="#installing-the-created-cns-executable-into-haddock3" title="Permalink to this heading"></a></h2>
+<p>You can find the freshly compiled CNS executable a newly created directory in the CNS installation directory named after the architecture of your system. E.g. for a M1/2/3/ Mac Arm processor it will be <code class="docutils literal notranslate"><span class="pre">mac-arm64-darwin</span></code>. In the <code class="docutils literal notranslate"><span class="pre">source</span></code> directory in that directory you can find the compiled CNS executable.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>mac-arm64-darwin/source/*exe
+&gt;<span class="w"> </span>mac-arm64-darwin/source/cns_solve-2405221019.exe
 </pre></div>
 </div>
-<p>For sh/bash:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.cns_solve_env_sh
-</pre></div>
-</div>
+<p>You can then copy this executable into the <code class="docutils literal notranslate"><span class="pre">haddock3/bin</span></code> directory, renaming it simply to <code class="docutils literal notranslate"><span class="pre">cns</span></code>.</p>
 </section>
-<section id="check-installation">
-<h2>5 Check installation<a class="headerlink" href="#check-installation" title="Permalink to this heading"></a></h2>
-<p>To check that CNS has been installed, start the program with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cns
-</pre></div>
-</div>
-<p>If the installation was successful, CNS will open in your terminal with a header including the following information:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">============================================================</span>
-<span class="o">|</span>                                                          <span class="o">|</span>
-<span class="o">|</span>            <span class="n">Crystallography</span> <span class="o">&amp;</span> <span class="n">NMR</span> <span class="n">System</span> <span class="p">(</span><span class="n">CNS</span><span class="p">)</span>            <span class="o">|</span>
-<span class="o">|</span>                         <span class="n">CNSsolve</span>                         <span class="o">|</span>
-<span class="o">|</span>                                                          <span class="o">|</span>
-<span class="o">============================================================</span>
- <span class="n">Version</span><span class="p">:</span> <span class="mf">1.3</span> <span class="n">at</span> <span class="n">patch</span> <span class="n">level</span> <span class="n">U</span>
- <span class="n">Status</span><span class="p">:</span> <span class="n">Special</span> <span class="n">UU</span> <span class="n">release</span> <span class="k">with</span> <span class="n">Rg</span><span class="p">,</span> <span class="n">paramagnetic</span>
-         <span class="ow">and</span> <span class="n">Z</span><span class="o">-</span><span class="n">restraints</span> <span class="p">(</span><span class="n">A</span><span class="o">.</span> <span class="n">Bonvin</span><span class="p">,</span> <span class="n">UU</span> <span class="mi">2013</span><span class="p">)</span>
-<span class="o">============================================================</span>
-</pre></div>
-</div>
-<p>The command to exit CNS is <code class="docutils literal notranslate"><span class="pre">STOP</span></code>.</p>
-<p>You now have a suitable CNS executable to finish <a class="reference internal" href="INSTALL.html"><span class="std std-doc">installing HADDOCK3</span></a>.</p>
-</section>
-</section>
-<hr class="docutils" />
 <section id="troubleshooting">
-<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h1>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<section id="system-not-recognized">
+<h3>1. System not recognized<a class="headerlink" href="#system-not-recognized" title="Permalink to this heading"></a></h3>
+<p>If the installation fails because your OS/hardware are not recognized, most likely the <code class="docutils literal notranslate"><span class="pre">bin/getarch</span></code> script needs to be updated.</p>
+<p>From within your CNS installation directory type the following command to check if your system is recognized:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>./bin/getarch
+</pre></div>
+</div>
+<p>For an unknown system you might see as output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>~/software/cns_solve_1.31-UU&gt; ./bin/getarch
+unknown-...
+</pre></div>
+</div>
+<p>If your OS/hardware is unknown, this is not per se a problem, but it means the compiler options might not be properly defined.
+For example, the default CNS package will not recognize the Mac M1/2/3/ processors (but after copying the CNS files distributed with haddock3 it should!).
+To solve that edit the <code class="docutils literal notranslate"><span class="pre">./bin/get_arch</span></code> script and add lines such as your system be recognized (e.g. after line 179 - this should be added after a line containing <code class="docutils literal notranslate"><span class="pre">exit</span> <span class="pre">0</span></code>). Here is an example to add support for the Mac M1/2/3 processors:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="w">    </span>arm64:Darwin:*:*<span class="o">)</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span>mac-arm64-darwin
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="p">;;</span>
+</pre></div>
+</div>
+<p>You should then create a directory under <code class="docutils literal notranslate"><span class="pre">instlib/machine/supported</span></code> with the same name as the one you defined in <code class="docutils literal notranslate"><span class="pre">getarch</span></code>. Copy then and edit if needed the files from another supported system into the directory you created.</p>
+</section>
 <section id="compiler">
-<h2>Compiler<a class="headerlink" href="#compiler" title="Permalink to this heading"></a></h2>
+<h3>2. Compiler<a class="headerlink" href="#compiler" title="Permalink to this heading"></a></h3>
 <p>If no suitable compiler is found, you will get an error message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span><span class="p">:</span> <span class="n">no</span> <span class="n">suitable</span> <span class="n">compiler</span> <span class="p">(</span><span class="n">ifort</span><span class="p">,</span> <span class="n">pgf95</span><span class="p">,</span> <span class="n">ifort_i4</span><span class="p">,</span> <span class="n">ifort_mp</span> <span class="ow">or</span> <span class="n">pgf95_mp</span><span class="p">)</span> <span class="n">found</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: no suitable compiler (ifort, pgf95, ifort_i4, ifort_mp or pgf95_mp) found
 </pre></div>
 </div>
 <p>In this case, you will have to install a compiler. For more information, check the <a class="reference external" href="http://cns-online.org/v1.3/installation/frame.html">CNS Installation page</a>.
@@ -192,31 +247,32 @@ One Fortran compiler that is easy (and free) to install is <code class="docutils
 <p>Alternatively, gfortran can be downloaded as a <a class="reference external" href="https://gcc.gnu.org/wiki/GFortranBinaries">separate binary</a>.</p>
 </section>
 <section id="makefile">
-<h2>Makefile<a class="headerlink" href="#makefile" title="Permalink to this heading"></a></h2>
+<h3>3. Makefile<a class="headerlink" href="#makefile" title="Permalink to this heading"></a></h3>
 <p>If a suitable compiler is installed but no corresponding <code class="docutils literal notranslate"><span class="pre">Makefile.header</span></code> is found, <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code> will give an error as well. For example (with gfortran):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span><span class="p">:</span> <span class="n">Makefile</span> <span class="n">template</span> <span class="k">for</span> <span class="n">compiler</span> <span class="n">gfortran</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">available</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: Makefile template for compiler gfortran is not available
 </pre></div>
 </div>
 <p>Makefile headers for each supported system-compiler combination are provided in <code class="docutils literal notranslate"><span class="pre">instlib/machine/supported/</span></code> (for unsupported systems, see <code class="docutils literal notranslate"><span class="pre">instlib/machine/unsupported/</span></code>). If you already tried <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">install</span></code>, the appropriate directory for your system (eg. <code class="docutils literal notranslate"><span class="pre">mac-intel-darwin</span></code>) will have been copied to the main <code class="docutils literal notranslate"><span class="pre">cns_solve_1.3</span></code> directory.
 If this directory does not contain the desired file (eg. <code class="docutils literal notranslate"><span class="pre">Makefile.header.2.gfortran</span></code>), you can create one manually.</p>
 <p>For example, for <code class="docutils literal notranslate"><span class="pre">gfortran</span></code>, create a new file named <code class="docutils literal notranslate"><span class="pre">Makefile.header.6.gfortran</span></code> inside the directory containing Makefile headers for your system. Save the following lines in this file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># fortran options
-F77 = gfortran
-F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch
-F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native -static
-F77FLAGS = $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
+<div class="highlight-makefile notranslate"><div class="highlight"><pre><span></span><span class="c"># fortran options</span>
+<span class="nv">F77</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>gfortran
+<span class="nv">F77STD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>-fdefault-integer-8<span class="w"> </span>-w<span class="w"> </span>-fallow-argument-mismatch
+<span class="nv">F77OPT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>-O3<span class="w"> </span><span class="k">$(</span>CNS_MALIGN_I86<span class="k">)</span><span class="w"> </span>-funroll-loops<span class="w"> </span>-ffast-math<span class="w"> </span>-march<span class="o">=</span>native<span class="w"> </span>-mtune<span class="o">=</span>native
+<span class="nv">F77FLAGS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">$(</span>F77STD<span class="k">)</span><span class="w"> </span><span class="k">$(</span>F77OPT<span class="k">)</span><span class="w"> </span><span class="k">$(</span>EXT_F77FLAGS<span class="k">)</span><span class="w"> </span><span class="k">$(</span>F77BUG<span class="k">)</span>
 
-# C options
-CC = gcc
-CPP = g++
-CCFLAGS = -O -DINTEGER=&#39;long int&#39; -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS)
+<span class="c"># C options</span>
+<span class="nv">CC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>gcc
+<span class="nv">CPP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>g++
+<span class="nv">CCFLAGS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>-O<span class="w"> </span>-DINTEGER<span class="o">=</span><span class="s1">&#39;long int&#39;</span><span class="w"> </span>-DCNS_ARCH_TYPE_<span class="k">$(</span>CNS_ARCH_TYPE<span class="k">)</span><span class="w"> </span><span class="k">$(</span>EXT_CCFLAGS<span class="k">)</span>
 
-# link options
-LD = gfortran
-LDFLAGS = -w $(EXT_LDFLAGS)
+<span class="c"># link options</span>
+<span class="nv">LD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>gfortran
+<span class="nv">LDFLAGS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>-w<span class="w"> </span><span class="k">$(</span>EXT_LDFLAGS<span class="k">)</span><span class="w"> </span>-static-libgfortran
 </pre></div>
 </div>
 <p>Note the <code class="docutils literal notranslate"><span class="pre">-fallow-argument-mismatch</span></code> flag. From gfortran version 10 onward, type mismatches by default give an error rather than a warning. This flag returns warnings instead, so that CNS compilation can successfully complete. If a <code class="docutils literal notranslate"><span class="pre">Makefile.header.x.gfortran</span></code> is provided for your system but compilation fails with (many) <code class="docutils literal notranslate"><span class="pre">Error:</span> <span class="pre">Type</span> <span class="pre">mismatch</span></code>, you may need to add this flag to the provided file.</p>
+</section>
 </section>
 </section>
 
@@ -229,7 +285,7 @@ LDFLAGS = -w $(EXT_LDFLAGS)
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 24, 2024.
+      <span class="lastupdated">Last updated on May 27, 2024.
       </span></p>
   </div>
 

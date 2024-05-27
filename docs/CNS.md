@@ -9,13 +9,15 @@ Before starting, make sure you download the system requirements, they are `gcc`,
 sudo apt-get install gcc gfortran csh
 ```
 
+> Make sure `gfortran` is in your `$PATH`, check it with `which gfortran`.
+
 ## 1. Downloading CNS
 
 Downloading CNS requires a license, which academic users can [request for free](http://cns-online.org).
 
 To Download CNS, go to their [website](http://cns-online.org) and  click on the `Download` menu and fill the form. You will be sent a password for the download via e-mail - keep in mind only education e-mails are allowed for this.
 
-You will receive a login/password in the e-mail, once you have those go to the [download page](http://cns-online.org/download/v1.3/cns_solve_1.3_all.tar.gz) and use the provided login/password to download the CNS package.
+You will receive a login/password in the e-mail, once you have those go to the [download page](http://cns-online.org/download/v1.3/cns_solve_1.3_all.tar.gz) and use the provided login/password to download the CNS package - the archive you need is: `cns_solve_1.3_all.tar.gz`.
 
 > The CNS website is not currently using SSL certificates, this mean your download might be blocked or it might give you a warning, double check in your browser.
 
@@ -57,6 +59,12 @@ Check if the substitution worked:
 sed -n 18p cns_solve_env
 ```
 
+The expected output will be (with the path to your CNS installation directory):
+
+```shell
+        setenv CNS_SOLVE '/Absolute/path/where/cns_solve/is/cns_solve_1.3'
+```
+
 ## 3. Patch CNS with HADDOCK custom files
 
 For HADDOCK to use CNS, some modifications were made to the CNS source code. We provide those modifications together with the haddock3 source files.
@@ -82,7 +90,7 @@ ls ~/software/cns_solve_1.3/instlib/machine/supported
 arm-aarch64-linux  intel-x86_64bit-linux  linux  mac-arm-darwin  mac-intel-darwin
 ```
 
-To check what is *your* architectures, type the following command:
+To check what is *your* architecture, type the following command:
 
 ```bash
 ~/software/cns_solve_1.3/bin/getarch
@@ -90,13 +98,9 @@ To check what is *your* architectures, type the following command:
 
 > You might get something like `unknown-...`, in that case installation is still possible, however it means the compiler options might not be properly defined - check the Troubleshooting section
 
-Several `Makefile` headers are already provided - here we will focus on the ones that use `gfortran` as the compiler.
+Several `Makefile` headers are already provided - here we will use on the one that uses `gfortran` as the compiler.
 
-```bash
-ls ~/software/cns_solve_1.3/instlib/machine/supported/*/Makefile*gfortran*
-```
-
-Now its time to compile CNS, you can do that with the following command:
+Now it is time to compile CNS, you can do that with the following command:
 
 ```bash
 make install compiler=gfortran
@@ -147,7 +151,7 @@ ls mac-arm64-darwin/source/*exe
 > mac-arm64-darwin/source/cns_solve-2405221019.exe
 ```
 
-You can then copy this executable into the `haddock3/bin` directory, renaming it simply to `cns`
+You can then copy this executable into the `haddock3/bin` directory, renaming it simply to `cns`.
 
 ## Troubleshooting
 

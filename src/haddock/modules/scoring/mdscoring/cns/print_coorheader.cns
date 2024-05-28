@@ -302,11 +302,29 @@ else
     evaluate ($elec_water_water = 0.0)
 end if
 
+! calculate the HADDOCK score
+evaluate ($hscore = $w_vdw  * $vdwall)
+evaluate ($hscore = $hscore + $w_elec * $elecall)
+evaluate ($hscore = $hscore + $w_air  * $noeall)
+evaluate ($hscore = $hscore + $w_rg   * $rgall)
+evaluate ($hscore = $hscore + $w_cdih * $cdihall)
+evaluate ($hscore = $hscore + $w_sani * $saniall)
+evaluate ($hscore = $hscore + $w_xpcs * $xpcsall)
+evaluate ($hscore = $hscore + $w_dani * $daniall)
+evaluate ($hscore = $hscore + $w_vean * $veanall)
+evaluate ($hscore = $hscore + $w_sym  * $esym)
+evaluate ($hscore = $hscore + $w_bsa  * $saburied)
+evaluate ($hscore = $hscore + $w_desolv * $edesolv)
+evaluate ($hscore = $hscore + $w_lcc * $lcc)
+
 set message=on echo=on end
 set remarks=reset end
 set remarks=accumulate end
 remarks ===============================================================
 remarks HADDOCK stats for $output_pdb_filename
+remarks ===============================================================
+remarks HADDOCK score: $hscore
+remarks ===============================================================
 
 !list input molecules
 evaluate ($nmol=1)

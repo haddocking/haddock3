@@ -842,13 +842,16 @@ def create_other_cluster(
     if len(clusters_df) <= max_clusters:
         return clusters_df, structs_df
 
-    other_structs_df = structs_df[structs_df['cluster_ranking'] >= max_clusters]
-    structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters]
-    other_structs_df['cluster_id'] = 'Other'
-    other_structs_df['cluster_ranking'] = max_clusters
+    other_structs_df = structs_df[structs_df['cluster_ranking'] >= max_clusters].copy()
+    #structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters]
+    # structs_df = structs_df.loc[:,['cluster_ranking']]
+    # do what structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters] does without SettingWithCopyWarning
+    structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters].copy()
+    other_structs_df.loc[:,'cluster_id'] = 'Other'
+    other_structs_df.loc[:,'cluster_ranking'] = max_clusters
     inner_rank = other_structs_df['caprieval_rank'].rank(method='first').astype(int)  # noqa : E501
     other_structs_df['model-cluster_ranking'] = inner_rank
-    structs_df = structs_df.append(other_structs_df)
+    structs_df = pd.concat([structs_df, other_structs_df])
 
     clusters_df = clusters_df[clusters_df['cluster_rank'] < max_clusters]
     other_cluster = {
@@ -865,8 +868,8 @@ def create_other_cluster(
             continue
         other_cluster[col] = other_structs_df[col].mean()
         other_cluster[col + '_std'] = other_structs_df[col].std()
-    clusters_df = clusters_df.append(other_cluster, ignore_index=True).round(2)
-
+    other_cluster_df = pd.DataFrame([other_cluster])
+    clusters_df = pd.concat([clusters_df, other_cluster_df], ignore_index=True).round(2)
     return clusters_df, structs_df
 
 

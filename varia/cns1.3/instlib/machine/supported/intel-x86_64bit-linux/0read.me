@@ -1,0 +1,25 @@
+To install on 64-bit linux machines use the following commands:
+
+make install compiler=ifort  ! compilation with ifort compiler 
+make install compiler=ifort_mp  ! compilation with ifort compiler with OpenMP parallelization enabled
+make install compiler=gfortran ! compilation with gfortran compiler
+make install compiler=gfortran_mp ! compilation with gfortran compiler with OpenMP parallelization enabled
+make install compiler=pgf95 ! compilation with pgf95 compiler
+make install compiler=ifort_mp_profile ! for development: compilation with ifort profiler
+make install compiler=ifort_mp_tcheck ! for development: compilation with ifort thread checking
+
+
+
+The number of threads during run time is set in cns_solve_env.
+To change it to a different number set it to a different
+number after sourcing cns_solve_env:
+
+setenv OMP_NUM_THREADS <x> 
+
+where <x> is the number of desired processors used. 
+
+For advanced debugging with the ifort compiler, include the following debug options during build:
+   make install compiler=ifort debug='-g -mp -traceback -debug extended -debug inline_debug_info'
+
+It sometimes helps to include "-check uninit" which emits a run-time error if memory is accessed 
+that is not initialized. On linux systems, you can also try the Electric Fence (-lefence) option.

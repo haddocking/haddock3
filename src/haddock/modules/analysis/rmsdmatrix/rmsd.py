@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 
 from haddock import log
-from haddock.core.typing import AtomsDict, FilePath
+from haddock.core.typing import AtomsDict
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libsubprocess import BaseJob
 
@@ -63,6 +63,7 @@ def rmsd_dispatcher(nmodels: int, tot_npairs: int,
         end_structures.append(pair[1])
     return npairs, start_structures, end_structures
 
+
 class XYZWriterJob:
     """A Job dedicated to the parallel writing of xyz files."""
 
@@ -78,7 +79,8 @@ class XYZWriterJob:
         log.info(f"core {self.xyzwriter_obj.core}, running XYZWriter...")
         self.xyzwriter_obj.run()
         return
-    
+
+
 class XYZWriter:
     """XYZWriter class."""
 
@@ -101,7 +103,7 @@ class XYZWriter:
         self.filter_resdic = filter_resdic
         self.allatoms = allatoms
         
-    def run(self):
+    def run(self) -> None:
         """write xyz coordinates."""
         with open(self.output_name, "w") as traj_xyz:
             for mod in self.model_list:

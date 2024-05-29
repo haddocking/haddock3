@@ -5,9 +5,11 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.core.typing import NDFloat, Any
 from haddock.libs.libalign import (
     get_atoms,
     )
+from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.caprieval.capri import load_contacts
 
 
@@ -39,22 +41,24 @@ class Contact:
 
     def __init__(
             self,
-            model_list,
-            output_name,
-            core,
-            path,
-            **params,
+            model_list: list[PDBFile],
+            output_name: str,
+            core: int,
+            path: Path,
+            contact_distance_cutoff: float = 5.0,
+            **params: dict[str, Any],
             ):
         """Initialise Contact class."""
         self.model_list = model_list
         self.output_name = output_name
         self.core = core
         self.path = path
+        self.contact_distance_cutoff = contact_distance_cutoff
         self.atoms = {}
         self.receptor_chain = params["params"]["receptor_chain"]
         self.ligand_chains = params["params"]["ligand_chains"]
-        self.unique_rec_res = []
-        self.unique_lig_res = []
+        self.unique_rec_res: NDFloat = []
+        self.unique_lig_res: NDFloat = []
         for m in model_list:
             self.atoms.update(get_atoms(m))
         
@@ -65,7 +69,10 @@ class Contact:
         receptor_interface_residues = []
         ligand_interface_residues = []
         for n in range(nmodels):
-            contacts = load_contacts(self.model_list[n], cutoff=5.0)
+            contacts = load_contacts(
+                self.model_list[n],
+                cutoff=self.contact_distance_cutoff,
+                )
             rec_resids = [
                 con[1] if con[0] == self.receptor_chain
                 else con[3] for con in contacts
@@ -78,7 +85,7 @@ class Contact:
                 receptor_interface_residues.append(np.unique(rec_resids))
             if lig_resids != []:
                 ligand_interface_residues.append(np.unique(lig_resids))
-        # concatenate all the receptor residues
+        # concatenate all the receptor residues
         if receptor_interface_residues != []:
             rec_np_arr = np.concatenate(receptor_interface_residues)
             self.unique_rec_res = np.unique(rec_np_arr)

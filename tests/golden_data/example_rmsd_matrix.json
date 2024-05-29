@@ -1,0 +1,41 @@
+{
+    "input": [
+        {
+            "created": "2024-04-12 16:42:08",
+            "file_name": "example_ilrmsd.matrix",
+            "file_type": {
+                "py/reduce": [
+                    {
+                        "py/type": "haddock.libs.libontology.Format"
+                    },
+                    {
+                        "py/tuple": [
+                            "matrix"
+                        ]
+                    }
+                ]
+            },
+            "full_name": "example_ilrmsd.matrix",
+            "md5": null,
+            "npairs": 45,
+            "path": "./tests/golden_data",
+            "py/object": "haddock.libs.libontology.RMSDFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "1_ilrmsdmatrix",
+                            "example_ilrmsd.matrix"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null
+        }
+    ],
+    "output": []
+}

@@ -1266,16 +1266,16 @@
             <span class="n">matches</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model2ref chain matching is </span><span class="si">{</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># chains do match. no need to do chain matching</span>
+        <span class="c1"># chains do match. no need to do chain matching. Chains are the same.</span>
+        <span class="c1"># of course if the structures do not correspond the output will be a</span>
+        <span class="c1"># mess</span>
         <span class="n">matches</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="p">,</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span><span class="p">):</span>
-            <span class="n">SeqAln</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_ch</span>
-            <span class="n">SeqAln</span><span class="o">.</span><span class="n">ref2model_chain_dict</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod_ch</span>
-            <span class="k">if</span> <span class="n">ref_ch</span> <span class="o">!=</span> <span class="n">mod_ch</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">ALIGNError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chain mismatch: </span><span class="si">{</span><span class="n">ref_ch</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">mod_ch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ref_ch</span> <span class="ow">in</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">SeqAln</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_ch</span>
+            <span class="n">SeqAln</span><span class="o">.</span><span class="n">ref2model_chain_dict</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_ch</span>
             <span class="c1"># extract sequences</span>
             <span class="n">seq_ref</span> <span class="o">=</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span>
-            <span class="n">seq_model</span> <span class="o">=</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span>
+            <span class="n">seq_model</span> <span class="o">=</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span>
             <span class="c1"># sequence alignment</span>
             <span class="n">identity</span><span class="p">,</span> <span class="n">top_aln</span><span class="p">,</span> <span class="n">aln_ref_seg</span><span class="p">,</span> <span class="n">aln_mod_seg</span> <span class="o">=</span> <span class="n">sequence_alignment</span><span class="p">(</span>
                 <span class="n">seq_ref</span><span class="p">,</span>
@@ -1289,7 +1289,7 @@
             <span class="c1"># write alignment</span>
             <span class="n">write_alignment</span><span class="p">(</span><span class="n">top_aln</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">)</span>
             <span class="c1"># postprocess alignment</span>
-            <span class="n">SeqAln</span><span class="o">.</span><span class="n">postprocess_alignment</span><span class="p">(</span><span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span><span class="p">,</span> <span class="n">matches</span><span class="p">)</span>
+            <span class="n">SeqAln</span><span class="o">.</span><span class="n">postprocess_alignment</span><span class="p">(</span><span class="n">ref_ch</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">matches</span><span class="p">)</span>
             <span class="n">matches</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="c1"># dump the .izone file</span>
     <span class="n">izone_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;blosum62.izone&quot;</span><span class="p">)</span>
@@ -1457,7 +1457,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on May 28, 2024.
+      <span class="lastupdated">Last updated on Jun 12, 2024.
       </span></p>
   </div>
 

@@ -51,7 +51,7 @@ class ScoringModule(BaseHaddockModule):
             sep=sep,
             index=False,
             na_rep="None",
-            line_terminator=linesep,
+            lineterminator=linesep,
             )
 
 

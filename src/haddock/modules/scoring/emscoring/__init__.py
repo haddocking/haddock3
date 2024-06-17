@@ -1,7 +1,7 @@
 """EM scoring module.
 
-This module performs energy minimization and scoring of the models generated
-in the previous step of the workflow. No restraints are applied during this step.
+This module performs energy minimization and scoring of the models generated in
+the previous step of the workflow. No restraints are applied during this step.
 """
 from pathlib import Path
 
@@ -10,14 +10,14 @@ from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
-from haddock.modules.scoring import ScoringModule
+from haddock.modules.scoring import CNSScoringModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
-class HaddockModule(ScoringModule):
+class HaddockModule(CNSScoringModule):
     """HADDOCK3 module to perform energy minimization scoring."""
 
     name = RECIPE_PATH.name
@@ -98,6 +98,8 @@ class HaddockModule(ScoringModule):
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
+        if self.params['per_interface_scoring']:
+            self.per_interface_output(output_fname)
 
         # if the export flag is set, export the scored models
         # otherwise, export the input models to the next step

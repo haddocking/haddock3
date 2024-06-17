@@ -1,13 +1,20 @@
-### CNS-related code
+### CNS-related code and scripts
 
 HADDOCK requires that CNS1.3 be recompiled to increase in particular the size of some arrays and adding new functionalities.
 For this, when installing CNS, copy first all the files from this directory into the source directory of your CNS installation before starting the installation.
 The large number of molecule types and their corresponding force field parameters does require to increase the size of various arrays.
 
+To copy the code and scripts to your CNS installation directory use:
 
+```bash
+cp -r source bin instlib <CNS-installation-directory>
+```
 
+The provided getarch script under the bin dir adds support for Mac M1/2/3 processors.
 
-**The provided code adds functionality for:**
+The provided Makefiles under the instlib dir adds the proper gfortran compiler options.
+
+And the provided code adds functionality for:
 
 
 #### Radius of gyration restraints

@@ -299,7 +299,6 @@ def alascan_cluster_analysis(models):
     # now average the data
     for cl_id in clt_scan:
         scan_clt_filename = f"scan_clt_{cl_id}.csv"
-        #scan_clt_filename = Path(path, f"scan_clt_{cl_id}.csv")
         log.info(f"Writing {scan_clt_filename}")
         clt_data = []
         for ident in clt_scan[cl_id]:
@@ -451,14 +450,8 @@ class Scan:
     def run(self):
         """Run alascan calculations."""
         for native in self.model_list:
-            # original score from the workflow
-            ori_score = native.score
-            try:
-                ori_score = float(ori_score)
-            except ValueError:
-                ori_score = np.nan
-            # here we rescore the native model for consistency, as the ori_score
-            # could come from any module in principle
+            # here we rescore the native model for consistency, as the score
+            # attribute could come from any module in principle
             sc_dir = f"haddock3-score-{self.core}"
             n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
                                                               run_dir=sc_dir)
@@ -489,7 +482,7 @@ class Scan:
                     ori_resname = resname_dict[f"{chain}-{res}"]
                     end_resname = self.scan_res
                     if ori_resname == self.scan_res:
-                        # we do not re-score
+                        # we do not re-score equal residues (e.g. ALA = ALA)
                         c_score = n_score
                         c_vdw = n_vdw
                         c_elec = n_elec
@@ -507,29 +500,24 @@ class Scan:
                         c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
                             mut_pdb_name,
                             run_dir=sc_dir)
-                        # difference with the original score
-                        if ori_score != "-":
-                            delta_ori_score = c_score - ori_score
-                        else:
-                            delta_ori_score = np.nan
-                        # now the deltas with the native
-                        delta_score = c_score - n_score
-                        delta_vdw = c_vdw - n_vdw
-                        delta_elec = c_elec - n_elec
-                        delta_desolv = c_des - n_des
-                        delta_bsa = c_bsa - n_bsa
+                        # now the deltas (wildtype - mutant)
+                        delta_score = n_score - c_score
+                        delta_vdw = n_vdw - c_vdw
+                        delta_elec = n_elec - c_elec
+                        delta_desolv = n_des - c_des
+                        delta_bsa = n_bsa - c_bsa
  
                         scan_data.append([chain, res, ori_resname, end_resname,
                                           c_score, c_vdw, c_elec, c_des,
-                                          c_bsa, delta_ori_score, delta_score,
+                                          c_bsa, delta_score,
                                           delta_vdw, delta_elec, delta_desolv,
                                           delta_bsa])
                         os.remove(mut_pdb_name)
             # write output
             df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
                           'score', 'vdw', 'elec', 'desolv', 'bsa',
-                          'delta_ori_score', 'delta_score', 'delta_vdw',
-                          'delta_elec', 'delta_desolv', 'delta_bsa']
+                          'delta_score', 'delta_vdw', 'delta_elec',
+                          'delta_desolv', 'delta_bsa']
             self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
             alascan_fname = Path(self.path, f"scan_{native.file_name.rstrip('.pdb')}.csv")
             # add zscore

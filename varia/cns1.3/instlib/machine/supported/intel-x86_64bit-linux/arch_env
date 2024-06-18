@@ -1,0 +1,35 @@
+#!/bin/csh -f
+#
+# architecture specific setup file for CNSsolve
+#
+# written by: Axel Brunger, Ralf Grosse-Kunstleve and Paul Adams
+#
+# copyright Yale University
+#
+# fft library
+# use CNS code by default
+if ( ! $?CNS_FFTDIR ) then
+  setenv CNS_FFTDIR ""
+endif
+if ( ! $?CNS_FFTLIB ) then
+  setenv CNS_FFTLIB ""
+endif
+#
+# set LEXLIB (linux is different from most others)
+#
+setenv LEXLIB "l"
+if ( $CNS_ARCH =~ *linux* ) then
+  setenv LEXLIB "fl"
+endif
+#
+# set -malign-double flag on intel-based machines
+#
+setenv CNS_MALIGN_I86 ""
+##if ( $CNS_ARCH =~ *-i[3456789]86-* ) then
+##  setenv CNS_MALIGN_I86 "-malign-double"
+##endif
+#
+# machine architecture string for C preprocessor
+#
+setenv CNS_ARCH_TYPE LINUX
+#

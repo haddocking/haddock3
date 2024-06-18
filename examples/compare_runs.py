@@ -87,6 +87,7 @@ examples = (
     ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-ilrmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "alascan-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "contmap-test.cfg"),  # noqa: E203, E501
     )
 

@@ -54,11 +54,11 @@ jobs:
       - name: unit tests
         run: tox -e test
 
-      - uses: codecov/codecov-action@v2
+      - uses: codacy/codacy-coverage-reporter-action@v1
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          verbose: true
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage.xml
 
   integration:
     needs: unit

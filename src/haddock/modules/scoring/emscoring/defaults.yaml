@@ -1,6 +1,14 @@
 #
 # Group scoring
 #
+per_interface_scoring:
+  default: false
+  type: boolean
+  title: Interchains scoring
+  short: Output scores per interface in the PDB header.
+  long: With this option true, the interface of all combinations of chains will be analysed and the corresponding HADDOCK scores (without restraints terms) and their components (Eelec, Evdw, Edesol, BSA) will be written to the header of each PDB file.
+  group: 'scoring'
+  explevel: expert
 w_air:
   default: 0.0
   type: float
@@ -12,7 +20,7 @@ w_air:
   long: Weight of the distance restraints energy in the scoring function.
     Note that this is different from the force constants used during the calculations.
   group: 'scoring'
-  explevel: hidden
+  explevel: expert
 w_bsa:
   default: 0.0
   type: float

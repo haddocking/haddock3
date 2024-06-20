@@ -1,0 +1,33 @@
+To install on intel-mac-darwin (MAC OS X operating system with Intel hardware)
+use the following commands:
+
+make install compiler=ifort  ! compilation with ifort compiler with i8 integers
+make install compiler=ifort_mp  ! compilation with ifort compiler with i8 integers and openmp parallelization enabled
+make install compiler=ifort_i4 ! compliation with ifort compiler with i4 integers and openmp parallelization enabled
+make install compiler=pgf95 ! compilation with pgf95 compiler
+make install compiler=pgf95_mp ! CAUTION - DO NOT USE: compilation with pgf95 compiler and openmp parallelization enabled is not reliable 
+
+CNS can be compiled with MAC OS X in either 32 bit or 64 bit mode. The
+reason is that with MAC OS X, it is possible to use i4 integers to address heap arrays even when
+the program is compiled in 64 bit mode.  The only restriction is that the
+address space is limited (to about 10^9 4 byte "words").  However, it is recommended
+to compile in 64 bit mode since 64 bit mode increases the address space
+of the dynamic heap.  
+
+The number of threads during run time is set in cns_solve_env.
+To change it to a different number set it to a different
+number after sourcing cns_solve_env:
+
+setenv OMP_NUM_THREADS <x> 
+
+where <x> is the number of desired processors used. 
+
+Note, the option "-axSSSE3" is used for the ifort and icc compilers. This option enables
+optimized instructions for Intel Core 2 Duo processors on Mac OS X.  If you have a different
+processor, you need to change this value to SSE3 or leave out the "-axSSSE3" options. 
+
+For advanced debugging with the ifort compiler, include the following debug options during build:
+   make install compiler=ifort debug='-g -mp -traceback -debug extended -debug inline_debug_info'
+
+It sometimes helps to include "-check uninit" which emits a run-time error if memory is accessed 
+that is not initialized. On linux systems, you can also try the Electric Fence (-lefence) option.

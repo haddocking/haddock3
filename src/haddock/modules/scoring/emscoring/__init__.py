@@ -98,5 +98,7 @@ class HaddockModule(CNSScoringModule):
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
+        if self.params['per_interface_scoring']:
+            self.per_interface_output(output_fname)
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

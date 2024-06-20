@@ -1,0 +1,202 @@
+#!/bin/sh
+#
+# script to return architecture string
+#
+# derived from the FSF GNU script: configure.guess
+#
+# modified and truncated for CNSsolve
+#
+# Paul Adams 20-6-96
+#
+# =========================================================================
+#
+MACHINE=`(uname -m) 2>/dev/null | sed 's/ /_/g'` || MACHINE=unknown
+RELEASE=`(uname -r) 2>/dev/null` || RELEASE=unknown
+SYSTEM=`(uname -s) 2>/dev/null`  || SYSTEM=unknown
+VERSION=`(uname -v) 2>/dev/null` || VERSION=unknown
+if [ $RELEASE = unknown ] 
+  then MAJOR=unknown
+else
+  MAJOR=`echo $RELEASE | sed -e 's/^V//' | sed -e 's/[A-Za-z]\.//' | awk 'BEGIN{FS="."}{print $1*1}'`
+fi
+
+case "${MACHINE}:${SYSTEM}:${RELEASE}:${VERSION}" in
+    alpha:OSF1:*:*)
+        if [ ! -x /usr/sbin/psrinfo ]
+          then DEC_EV=4
+        else
+          DEC_EV=`/usr/sbin/psrinfo -v | grep EV | uniq | awk '{print $3}' | sed 's/[A-Za-z]*[A-Za-z]//g'`
+        fi
+	echo dec-alpha${DEC_EV}-osf-${MAJOR}
+	exit 0 ;;
+    sun4*:SunOS:4.*:*)
+	echo sun-sparc-sunos-${MAJOR}
+	exit 0 ;;
+    sun4*:SunOS:5.*:*)
+	echo sun-sparc-solaris-2`echo ${RELEASE}|sed -e 's/[^.]*//'`
+	exit 0 ;;
+    sun4*:SunOS:6*:*)
+	echo sun-sparc-solaris-3`echo ${RELEASE}|sed -e 's/[^.]*//'`
+	exit 0 ;;
+    sun4*:SunOS:*:*)
+	case "`/usr/bin/arch -k`" in
+	    Series*|S4*)
+		RELEASE=`uname -v`
+		;;
+	esac
+	echo sun-sparc-sunos-`echo ${RELEASE}|sed -e 's/-/_/'`
+	exit 0 ;;
+    sun3*:SunOS:*:*)
+	echo sun-m68k-sunos-`echo ${RELEASE}`
+	exit 0 ;;
+    RISC*:ULTRIX:*:*)
+	echo dec-mips-ultrix-${RELEASE}
+	exit 0 ;;
+    VAX*:ULTRIX*:*:*)
+	echo dec-vax-ultrix-${RELEASE}
+	exit 0 ;;
+    mips:*:5*:RISCos)
+	echo mips-mips-riscos-${RELEASE}
+	exit 0 ;;
+    *:IRIX*:*:*)
+        SGI_OS=`echo $SYSTEM | sed -e 's/IRIX/irix/' | sed -e 's/64//'`
+        CPU=`hinv -t cpu | awk '{print $3}' | sed -e 's/R/r/' | sort | uniq | awk '{if (NR==1) print $1}'`
+        case "${CPU}" in
+           r4*)
+             CPU=r4k5k
+        esac
+        case "${CPU}" in
+           r5*)
+             CPU=r4k5k
+        esac
+        case "${CPU}" in
+           r8*)
+             CPU=r8k10k
+        esac
+        case "${CPU}" in
+           r10*)
+             CPU=r8k10k
+        esac
+        case "${CPU}" in
+           r12*)
+             CPU=r8k10k
+        esac
+	echo sgi-${CPU}-${SGI_OS}-`echo ${RELEASE}|sed -e 's/-/_/g'`
+	exit 0 ;;
+    i[34]86:AIX:*:*)
+        echo ibm-i386-aix
+        exit 0 ;;
+    *:AIX:*:4)
+        if /usr/sbin/lsattr -EHl proc0 | grep POWER >/dev/null 2>&1; then
+                IBM_ARCH=rs6000
+        else
+                IBM_ARCH=powerpc
+        fi
+        echo ibm-${IBM_ARCH}-aix
+        exit 0 ;;
+    *:AIX:*:*)
+        echo ibm-rs6000-aix
+        exit 0 ;;
+    9000/[3478]??:HP-UX:*:*)
+	case "${MACHINE}" in
+	    9000/31? )            		HP_ARCH=m68000 ;;
+	    9000/[34]?? )         		HP_ARCH=m68k ;;
+	    9000/[78]?? ) 			HP_ARCH=hppa ;;
+	esac
+	echo hp-${HP_ARCH}-hpux-${MAJOR}
+	exit 0 ;;
+    C1*:ConvexOS:*:* | convex:ConvexOS:C1*:*)
+	echo convex-c1-bsd
+        exit 0 ;;
+    C2*:ConvexOS:*:* | convex:ConvexOS:C2*:*)
+	if getsysinfo -f scalar_acc
+	then echo convex-c32-bsd
+	else echo convex-c2-bsd
+	fi
+        exit 0 ;;
+    C34*:ConvexOS:*:* | convex:ConvexOS:C34*:*)
+	echo convex-c34-bsd
+        exit 0 ;;
+    C38*:ConvexOS:*:* | convex:ConvexOS:C38*:*)
+	echo convex-c38-bsd
+        exit 0 ;;
+    C4*:ConvexOS:*:* | convex:ConvexOS:C4*:*)
+	echo convex-c4-bsd
+        exit 0 ;;
+    CRAY*T3E:*:*:*)
+	echo cray-t3e-unicos-${MAJOR}
+        exit 0 ;;
+    CRAY*T90:*:*:*)
+	echo cray-t90-unicos-${MAJOR}
+        exit 0 ;;
+    CRAY*C90:*:*:*)
+	echo cray-c90-unicos-${MAJOR}
+        exit 0 ;;
+    CRAY*J90:*:*:*)
+	echo cray-j90-unicos-${MAJOR}
+        exit 0 ;;
+    CRAY*Y-MP:*:*:*)
+	echo cray-ymp-unicos-${MAJOR}
+        exit 0 ;;
+    CRAY*X-MP:*:*:*)
+	echo cray-xmp-unicos-${MAJOR}
+        exit 0 ;;
+    i[34567]86:BSD/386:*:* | *:BSD/OS:*:*)
+	echo intel-${MACHINE}-bsdi-${RELEASE}
+	exit 0 ;;
+    i[34567]86:Linux:*:*)
+	echo intel-${MACHINE}-linux
+	exit 0 ;;
+    x86_64:Linux:*:*)
+        echo intel-x86_64bit-linux
+        exit 0 ;;
+    ia64:Linux:*:*)
+	echo intel-itanium-linux
+	exit 0 ;;
+    aarch64:Linux:*:*)
+	echo arm-${MACHINE}-linux
+	exit 0 ;;
+    alpha:Linux:*:*)
+	echo dec-${MACHINE}-linux
+	exit 0 ;;
+    sparc:Linux:*:*)
+	echo sparc-${MACHINE}-linux
+	exit 0 ;;
+    hp_pa:Linux:*:*)
+	echo hp-${MACHINE}-linux
+	exit 0 ;;
+    Power*:Darwin:*:*)
+	echo mac-ppc-darwin
+	exit 0 ;;
+    ppc:Darwin:*:*)
+	echo mac-ppc-darwin
+	exit 0 ;;
+    i[34567]86:Darwin:*:*)
+	echo mac-intel-darwin
+	exit 0 ;;
+    x86_64:Darwin:*:*)
+    echo mac-intel-darwin
+    exit 0 ;;
+    arm64:Darwin:*:*)
+    echo mac-arm64-darwin
+    exit 0 ;;
+    i[34567]86:CYGWIN*:*:*)
+    echo intel-${MACHINE}-cygwin
+	exit 0 ;;
+esac
+
+if [ -d /NextApps ] 
+    then CPU=`hostinfo | grep 'Processor type' | awk '{print $3}'`
+    case "${CPU}" in
+        HPPA*)
+            CPU=hppa ;;
+        MC68*)
+            CPU=m68k ;;
+    esac
+    echo next-${CPU}-nextstep
+    exit 0
+fi
+
+echo "unknown-${MACHINE}-${SYSTEM}" 
+
+exit 1

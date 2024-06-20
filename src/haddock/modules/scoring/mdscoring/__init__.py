@@ -4,6 +4,7 @@ This module will perform a short MD simulation on the input models and
 score them.
 Note that no restraints (AIRs) are applied during this step.
 """
+
 from pathlib import Path
 
 from haddock.core.typing import FilePath
@@ -98,5 +99,7 @@ class HaddockModule(CNSScoringModule):
         output_fname = "mdscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
+        if self.params['per_interface_scoring']:
+            self.per_interface_output(output_fname)
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

@@ -127,10 +127,6 @@ define(
 {* to delete no atoms use: (none) *}
 {===>} atom_delete=(none);
 
-{* set bfactor flag *}
-{+ choice: true false +}
-{===>} set_bfactor=true;
-
 {* set bfactor value *}
 {===>} bfactor=15.0;
 
@@ -754,11 +750,8 @@ else
     end
 end if
 
-if (&set_bfactor=true) then
+if ($set_bfactor=true) then
     do (b=&bfactor) ( all )
-else
-    show ave(b) (known and not(store9))
-    do (b=$result) (store9 and (attr b < 0.01))
 end if
 
 if (&set_occupancy=true) then

@@ -415,8 +415,8 @@ def analyse_step(
     scale: Optional[float],
     is_cleaned: Optional[bool],
     offline: bool = False,
-    mode: Optional[str] = "local",
-    ncores: Optional[int] = 4,
+    mode: str = "local",
+    ncores: int = 4,
 ) -> None:
     """
     Analyse a step.

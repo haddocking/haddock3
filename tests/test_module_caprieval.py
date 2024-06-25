@@ -762,6 +762,6 @@ def test_single_chain_model(protprot_onechain_mod_caprimodule, params):
 def test_get_previous_cns_step():
     "Test getting the previous CNS step."
     mock_steps = ["0_topoaa", "1_emscoring", "1_emscoring_fake", "2_clustfcc"]
-    assert get_previous_cns_step(mock_steps) == "1_emscoring"
+    assert get_previous_cns_step(mock_steps, 2) == "1_emscoring"
     mock_steps_2 = ["bla", "test"]
-    assert get_previous_cns_step(mock_steps_2) is None
+    assert get_previous_cns_step(mock_steps_2, 1) is None

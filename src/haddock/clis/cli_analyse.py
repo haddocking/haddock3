@@ -198,8 +198,8 @@ ap.add_argument(
     required=False,
     type=int,
     default=1,
-    # maximum allowed value for ncores is 16
-    choices=range(1, 17),
+    # maximum allowed value for ncores is 96
+    choices=range(1, 97),
 )
 
 

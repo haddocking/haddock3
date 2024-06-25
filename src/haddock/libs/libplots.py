@@ -384,7 +384,7 @@ def box_plot_handler(
     # generating the correct dataframe
     capri_df = read_capri_table(capri_filename, comment="#")
     gb_full = box_plot_data(capri_df, cl_rank)
-
+    
     # iterate over the variables
     fig_list: list[Figure] = []
     for y_ax in AXIS_NAMES.keys():
@@ -841,11 +841,9 @@ def create_other_cluster(
     """
     if len(clusters_df) <= max_clusters:
         return clusters_df, structs_df
-
+    # other clusters
     other_structs_df = structs_df[structs_df['cluster_ranking'] >= max_clusters].copy()
-    #structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters]
-    # structs_df = structs_df.loc[:,['cluster_ranking']]
-    # do what structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters] does without SettingWithCopyWarning
+    # drop other clusters from structs_df
     structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters].copy()
     other_structs_df.loc[:,'cluster_id'] = 'Other'
     other_structs_df.loc[:,'cluster_ranking'] = max_clusters

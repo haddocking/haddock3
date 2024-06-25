@@ -164,7 +164,7 @@
         
         <span class="c1"># dump previously used weights</span>
         <span class="n">sel_steps</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">))</span>
-        <span class="n">cns_step</span> <span class="o">=</span> <span class="n">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">)</span>
+        <span class="n">cns_step</span> <span class="o">=</span> <span class="n">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">cns_step</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found previous CNS step: </span><span class="si">{</span><span class="n">cns_step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

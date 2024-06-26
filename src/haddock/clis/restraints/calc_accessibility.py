@@ -11,6 +11,7 @@ Usage:
         [-c <cutoff>]               Relative side-chain accessibility cutoff
         [--log_level <log_level>]   DEBUG, INFO, WARNING, ERROR, or CRITICAL
         [--export_to_actpass]       Flag to export accessible resiudes
+        [--probe_radius <probe_radius>]   Probe radius for the accessibility calculation
 """
 
 
@@ -54,6 +55,14 @@ def add_calc_accessibility_arguments(calc_accessibility_subcommand):
         default=False,
         action="store_true",
         help="Export the exposed residues as passive to an actpass file",
+        required=False,
+        )
+    
+    calc_accessibility_subcommand.add_argument(
+        "--probe_radius",
+        default=1.4,
+        type=float,
+        help="Probe radius for the accessibility calculation",
         required=False,
         )
 
@@ -214,10 +223,12 @@ REL_ASA = {
             'PNS': 78.11,
             }
     }
+DEFAULT_PROBE_RADIUS = 1.4
 
 
 def get_accessibility(
-        pdb_f: Union[Path, str]
+        pdb_f: Union[Path, str],
+        probe_radius: float = DEFAULT_PROBE_RADIUS,
         ) -> dict[str, dict[int, dict[str, float]]]:
     """Compute per-residue accessibility values.
     
@@ -237,7 +248,7 @@ def get_accessibility(
     naccess_unsupported_aa = ['HEC', 'TIP', 'ACE', 'THP', 'HEB', 'CTN']
     logging.info("Calculate accessibility...")
     try:
-        from freesasa import Classifier, calc
+        from freesasa import Classifier, calc, Parameters
     except ImportError as err:
         logging.error("calc_accessibility requires the 'freesasa' Python API")
         raise ImportError(err)
@@ -265,7 +276,21 @@ def get_accessibility(
 
     struct = Structure(pdb_f, classifier, options={})
     struct.setRadiiWithClassifier(classifier)
-    result = calc(struct)
+    # if the probe_radius is different from the default value
+    # we need to redefine the parameters
+    if probe_radius != DEFAULT_PROBE_RADIUS:
+        new_parameters = Parameters(
+            {
+                'algorithm': 'LeeRichards',
+                'probe-radius': probe_radius,
+                'n-points': Parameters.defaultParameters['n-points'],
+                'n-slices': Parameters.defaultParameters['n-slices'],
+                'n-threads': Parameters.defaultParameters['n-threads'],
+                }
+            )
+        result = calc(struct, parameters=new_parameters)
+    else:
+        result = calc(struct)
 
     # iterate over all atoms to get SASA and residue name
     for idx in range(struct.nAtoms()):
@@ -382,6 +407,7 @@ def calc_accessibility(
         cutoff: float = 0.4,
         log_level: str = "INFO",
         export_to_actpass: bool = False,
+        probe_radius: float = DEFAULT_PROBE_RADIUS,
         ) -> None:
     """Calculate the accessibility of the side chains and apply a cutoff.
     
@@ -395,6 +421,8 @@ def calc_accessibility(
         Logging level.
     export_to_actpass : bool
         Export the exposed residues as passive to an actpass file.
+    probe_radius : float
+        Probe radius for the accessibility calculation.
     """
     logging.basicConfig(
         level=log_level,
@@ -402,7 +430,7 @@ def calc_accessibility(
         datefmt='%d/%m/%Y %H:%M:%S',
         )
     # Compute per-residues accessibilities
-    access_dic = get_accessibility(input_pdb_file)
+    access_dic = get_accessibility(input_pdb_file, probe_radius)
     # Filter residues based on accessibility cutoff
     result_dict = apply_cutoff(access_dic, cutoff)
 

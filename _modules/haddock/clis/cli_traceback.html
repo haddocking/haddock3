@@ -289,7 +289,8 @@
     <span class="n">rank_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">last_column_data</span><span class="p">,</span> <span class="n">rank_data</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="c1"># the rank of the last column must be defined</span>
     <span class="n">last_column_rank</span> <span class="o">=</span> <span class="n">last_column</span> <span class="o">+</span> <span class="s2">&quot;_rank&quot;</span>
-    <span class="n">rank_data_subset</span> <span class="o">=</span> <span class="n">rank_data</span><span class="p">[</span><span class="n">rank_data</span><span class="p">[</span><span class="n">last_column_rank</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;-&#39;</span><span class="p">]</span>
+    <span class="c1"># copy avoids SettingWithCopyWarning</span>
+    <span class="n">rank_data_subset</span> <span class="o">=</span> <span class="n">rank_data</span><span class="p">[</span><span class="n">rank_data</span><span class="p">[</span><span class="n">last_column_rank</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;-&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">rank_columns</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="n">rank_data_subset</span><span class="p">[</span><span class="n">rank_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="p">[</span><span class="n">rank_columns</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
     <span class="n">rank_data_subset</span> <span class="o">=</span> <span class="n">rank_data_subset</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">last_column_rank</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -464,7 +465,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 25, 2024.
+      <span class="lastupdated">Last updated on Jun 26, 2024.
       </span></p>
   </div>
 

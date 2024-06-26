@@ -471,7 +471,7 @@
     <span class="c1"># generating the correct dataframe</span>
     <span class="n">capri_df</span> <span class="o">=</span> <span class="n">read_capri_table</span><span class="p">(</span><span class="n">capri_filename</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
     <span class="n">gb_full</span> <span class="o">=</span> <span class="n">box_plot_data</span><span class="p">(</span><span class="n">capri_df</span><span class="p">,</span> <span class="n">cl_rank</span><span class="p">)</span>
-
+    
     <span class="c1"># iterate over the variables</span>
     <span class="n">fig_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Figure</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">y_ax</span> <span class="ow">in</span> <span class="n">AXIS_NAMES</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -928,14 +928,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters_df</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_clusters</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">clusters_df</span><span class="p">,</span> <span class="n">structs_df</span>
-
-    <span class="n">other_structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">max_clusters</span><span class="p">]</span>
-    <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_clusters</span><span class="p">]</span>
-    <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Other&#39;</span>
-    <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_clusters</span>
+    <span class="c1"># other clusters</span>
+    <span class="n">other_structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">max_clusters</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># drop other clusters from structs_df</span>
+    <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_clusters</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">other_structs_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Other&#39;</span>
+    <span class="n">other_structs_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_clusters</span>
     <span class="n">inner_rank</span> <span class="o">=</span> <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;caprieval_rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># noqa : E501</span>
     <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;model-cluster_ranking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">inner_rank</span>
-    <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_structs_df</span><span class="p">)</span>
+    <span class="n">structs_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">structs_df</span><span class="p">,</span> <span class="n">other_structs_df</span><span class="p">])</span>
 
     <span class="n">clusters_df</span> <span class="o">=</span> <span class="n">clusters_df</span><span class="p">[</span><span class="n">clusters_df</span><span class="p">[</span><span class="s1">&#39;cluster_rank&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_clusters</span><span class="p">]</span>
     <span class="n">other_cluster</span> <span class="o">=</span> <span class="p">{</span>
@@ -952,8 +953,8 @@
             <span class="k">continue</span>
         <span class="n">other_cluster</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">other_structs_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="n">other_cluster</span><span class="p">[</span><span class="n">col</span> <span class="o">+</span> <span class="s1">&#39;_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">other_structs_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-    <span class="n">clusters_df</span> <span class="o">=</span> <span class="n">clusters_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_cluster</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-
+    <span class="n">other_cluster_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">other_cluster</span><span class="p">])</span>
+    <span class="n">clusters_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">clusters_df</span><span class="p">,</span> <span class="n">other_cluster_df</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">clusters_df</span><span class="p">,</span> <span class="n">structs_df</span></div>
 
 
@@ -1594,7 +1595,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 25, 2024.
+      <span class="lastupdated">Last updated on Jun 26, 2024.
       </span></p>
   </div>
 

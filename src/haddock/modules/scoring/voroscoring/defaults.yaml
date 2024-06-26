@@ -1,0 +1,77 @@
+metric:
+  default: jury_score
+  type: string
+  choices:
+    - jury_score
+    - GNN_sum_score
+    - GNN_pcadscore
+    - voromqa_dark
+    - voromqa_light
+    - voromqa_energy
+    - gen_voromqa_energy
+    - clash_score
+    - area
+  minchars: 1
+  maxchars: 50
+  title: VoroMQA metric used to score.
+  short: VoroMQA metric used to score.
+  long: VoroMQA metric used to score.
+  group: analysis
+  explevel: easy
+
+conda_install_dir:
+  default: "/trinity/login/vreys/miniconda3/"
+  type: string
+  minchars: 1
+  maxchars: 158
+  title: Path to conda intall directory.
+  short: Absolute path to conda intall directory.
+  long: Absolute path to conda intall directory.
+  group: execution
+  explevel: easy
+
+conda_env_name:
+  default: "ftdmp5"
+  type: string
+  minchars: 1
+  maxchars: 100
+  title: Name of the ftdmp conda env.
+  short: Name of the ftdmp conda env.
+  long: Name of the ftdmp conda env.
+  group: execution
+  explevel: easy
+
+ftdmp_install_dir:
+  default: "/trinity/login/vreys/Venclovas/ftdmp/"
+  type: string
+  minchars: 1
+  maxchars: 158
+  title: Path to ftdmp intall directory.
+  short: Absolute path to ftdmp intall directory.
+  long: Absolute path to ftdmp intall directory.
+  group: execution
+  explevel: easy
+
+nb_gpus:
+  default: 1
+  type: integer
+  min: 1
+  max: 420
+  title: Number of accessible gpu on the device.
+  short: Number of accessible gpu on the device.
+  long: Number of accessible gpu on the device.
+  group: execution
+  explevel: easy
+
+concat_chain_:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: List of residues supposed to be buried
+  short: List of residues supposed to be buried
+  long: concat_chain_* is an expandable parameter. You can provide concat_chain_1,
+    concat_chain_2, concat_chain_3, etc. For each selection, enlisted chains will
+    be concatenated as one prior to scoring.
+  group: analysis
+  explevel: expert

@@ -8,6 +8,7 @@ from fnmatch import fnmatch
 
 from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
+from haddock import haddock3_source_path
 
 from . import (
     haddock3_yaml_cfg_examples,
@@ -20,7 +21,7 @@ def default_yaml_files():
     """Return list of defaults.yaml file within the haddock src directory."""
     all_defaults_yaml: list[str] = []
     default_yaml_fname = "defaults.yaml"
-    for path, _subdirs, files in os.walk('../src/haddock/'):
+    for path, _subdirs, files in os.walk(haddock3_source_path):
         for name in files:
             if fnmatch(name, default_yaml_fname):
                 all_defaults_yaml.append(f"{path}/{default_yaml_fname}")

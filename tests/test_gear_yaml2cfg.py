@@ -17,7 +17,7 @@ from . import (
 
 @pytest.fixture
 def default_yaml_files():
-    """Return list of defaults.yaml file withing the haddock src directory."""
+    """Return list of defaults.yaml file within the haddock src directory."""
     all_defaults_yaml: list[str] = []
     default_yaml_fname = "defaults.yaml"
     for path, _subdirs, files in os.walk('../src/haddock/'):
@@ -116,6 +116,7 @@ def test_yaml2cfg_test_no_header():
 
 def test_yaml_duplicated_params(default_yaml_files):
     """Make sure no duplicated parameters are present in a ymal file."""
+    assert default_yaml_files != []
     # Build regular expression
     yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
     for yaml_fpath in default_yaml_files:

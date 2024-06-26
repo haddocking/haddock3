@@ -202,7 +202,8 @@ def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.Data
     rank_data = pd.concat([last_column_data, rank_data], axis=1)
     # the rank of the last column must be defined
     last_column_rank = last_column + "_rank"
-    rank_data_subset = rank_data[rank_data[last_column_rank] != '-']
+    # copy avoids SettingWithCopyWarning
+    rank_data_subset = rank_data[rank_data[last_column_rank] != '-'].copy()
     rank_columns = rank_data_subset.columns[1:].tolist()
     rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(pd.to_numeric, errors='coerce')
     rank_data_subset = rank_data_subset.sort_values(by=last_column_rank, ascending=True)

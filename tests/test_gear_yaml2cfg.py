@@ -1,6 +1,5 @@
 """Test yaml2cfg gear."""
 import filecmp
-import re
 import os
 import pytest
 from pathlib import Path
@@ -15,6 +14,7 @@ from . import (
     haddock3_yaml_converted,
     haddock3_yaml_converted_no_header,
     )
+
 
 @pytest.fixture
 def default_yaml_files():
@@ -118,8 +118,6 @@ def test_yaml2cfg_test_no_header():
 def test_yaml_duplicated_params(default_yaml_files):
     """Make sure no duplicated parameters are present in a ymal file."""
     assert default_yaml_files != []
-    # Build regular expression
-    yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
     # Loop over default yaml files
     for yaml_fpath in default_yaml_files:
         check_yaml_duplicated_parameters(yaml_fpath)

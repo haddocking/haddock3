@@ -430,6 +430,23 @@ def test_align_seq_chm():
         assert observed_chm_dict == expected_chm_dict
 
 
+def test_align_seq_inverted():
+    """Test the sequence alignment with inverted chain."""
+    ref = Path(golden_data, "protprot_complex_1.pdb")
+    mod = Path(golden_data, "protprot_complex_2_inverted.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
+        print(f"observed_numb_dic: {observed_numb_dic}")
+        print(f"observed_chm_dict: {observed_chm_dict}")
+        expected_numb_keys = ["A", "B"]
+        expected_chm_dict = {"A" : "A", "B": "B"}
+
+        assert list(observed_numb_dic.keys()) == expected_numb_keys
+        assert observed_chm_dict == expected_chm_dict    
+
+
 def test_make_range():
     """Test the expansion of a chain dic into ranges."""
     chain_range_dic = {"A": [1, 2, 4], "B": [100, 110, 200]}

@@ -1179,16 +1179,16 @@ def align_seq(reference, model, output_path):
             matches += 1
         log.info(f"model2ref chain matching is {SeqAln.model2ref_chain_dict}")
     else:
-        # chains do match. no need to do chain matching
+        # chains do match. no need to do chain matching. Chains are the same.
+        # of course if the structures do not correspond the output will be a
+        # mess
         matches = 0
-        for ref_ch, mod_ch in zip(SeqAln.seqdic_ref, SeqAln.seqdic_model):
-            SeqAln.model2ref_chain_dict[mod_ch] = ref_ch
-            SeqAln.ref2model_chain_dict[ref_ch] = mod_ch
-            if ref_ch != mod_ch:
-                raise ALIGNError(f"Chain mismatch: {ref_ch} != {mod_ch}")
+        for ref_ch in SeqAln.seqdic_ref.keys():
+            SeqAln.model2ref_chain_dict[ref_ch] = ref_ch
+            SeqAln.ref2model_chain_dict[ref_ch] = ref_ch
             # extract sequences
             seq_ref = SeqAln.seqs_ref[ref_ch]
-            seq_model = SeqAln.seqs_model[mod_ch]
+            seq_model = SeqAln.seqs_model[ref_ch]
             # sequence alignment
             identity, top_aln, aln_ref_seg, aln_mod_seg = sequence_alignment(
                 seq_ref,
@@ -1202,7 +1202,7 @@ def align_seq(reference, model, output_path):
             # write alignment
             write_alignment(top_aln, output_path, ref_ch)
             # postprocess alignment
-            SeqAln.postprocess_alignment(ref_ch, mod_ch, matches)
+            SeqAln.postprocess_alignment(ref_ch, ref_ch, matches)
             matches += 1
     # dump the .izone file
     izone_fname = Path(output_path, "blosum62.izone")

@@ -75,7 +75,7 @@ class HaddockModule(BaseHaddockModule):
         
         # dump previously used weights
         sel_steps = get_module_steps_folders(Path(".."))
-        cns_step = get_previous_cns_step(sel_steps)
+        cns_step = get_previous_cns_step(sel_steps, self.order)
         
         if cns_step:
             self.log(f"Found previous CNS step: {cns_step}")

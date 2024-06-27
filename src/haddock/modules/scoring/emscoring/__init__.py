@@ -46,7 +46,7 @@ class HaddockModule(CNSScoringModule):
         except Exception as e:
             self.finish_with_error(e)
 
-        self.output_models = []
+        self.scoring_models = []
         for model_num, model in enumerate(models_to_score, start=1):
             scoring_inp = prepare_cns_input(
                 model_num,
@@ -65,10 +65,11 @@ class HaddockModule(CNSScoringModule):
                 )
             # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
+            expected_pdb.ori_rel_path = model.rel_path
             expected_pdb.md5 = model.md5
             expected_pdb.restr_fname = model.restr_fname
 
-            self.output_models.append(expected_pdb)
+            self.scoring_models.append(expected_pdb)
 
             job = CNSJob(scoring_inp, scoring_out, envvars=self.envvars)
 
@@ -86,7 +87,7 @@ class HaddockModule(CNSScoringModule):
         weights = {e: self.params[e] for e in _weight_keys}
 
         # Check for generated output, fail it not all expected files are found
-        for pdb in self.output_models:
+        for pdb in self.scoring_models:
             if pdb.is_present():
                 haddock_model = HaddockModel(pdb.file_name)
                 pdb.unw_energies = haddock_model.energies
@@ -99,5 +100,12 @@ class HaddockModule(CNSScoringModule):
         self.output(output_fname)
         if self.params['per_interface_scoring']:
             self.per_interface_output(output_fname)
+
+        # if the export flag is set, export the scored models
+        # otherwise, export the input models to the next step
+        if self.params["export"]:
+            self.output_models = self.scoring_models
+        else:
+            self.output_models = models_to_score
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

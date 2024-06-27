@@ -5,6 +5,7 @@ import gzip
 import os
 import stat
 import tarfile
+import re
 from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
@@ -101,6 +102,10 @@ def read_from_yaml(yaml_file: FilePath) -> dict[Any, Any]:
         Always returns a dictionary.
         Returns empty dictionary if yaml_file is empty.
     """
+    # Check that this yaml file do not contain duplicated parameters
+    check_yaml_duplicated_parameters(yaml_file)
+
+    # Load yaml file using the yaml lib
     with open(yaml_file, "r") as fin:
         ycfg = yaml.safe_load(fin)
 
@@ -111,6 +116,25 @@ def read_from_yaml(yaml_file: FilePath) -> dict[Any, Any]:
 
     assert isinstance(ycfg, dict), type(ycfg)
     return ycfg
+
+
+def check_yaml_duplicated_parameters(yaml_fpath: str) -> None:
+    # Build regular expression
+    yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
+    # Read content as string
+    with open(yaml_fpath, 'r') as filin:
+        yaml_content = filin.readlines()
+    parsed_param_names: dict[str, int] = {}
+    # Loop over lines
+    for i, line in enumerate(yaml_content, start=1):
+        # Check if new parameter
+        if (match := yaml_param_regex.search(line)):
+            # Point parameter name
+            param_name = match.group(1)
+            # Make sure this parameter has not yet been used
+            assert param_name not in parsed_param_names.keys(), f"Parameter '{param_name}' in {yaml_fpath} has duplicates: l.{parsed_param_names[param_name]} and l.{i}"  # noqa : E501
+            # Hold line were this parameter is, in case of duplication, to help
+            parsed_param_names[param_name] = i
 
 
 def open_files_to_lines(*files: FilePath) -> list[list[str]]:

@@ -7,7 +7,7 @@ from pathlib import Path
 from fnmatch import fnmatch
 
 from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
-from haddock.libs.libio import read_from_yaml
+from haddock.libs.libio import read_from_yaml, check_yaml_duplicated_parameters
 from haddock import haddock3_source_path
 
 from . import (
@@ -120,13 +120,6 @@ def test_yaml_duplicated_params(default_yaml_files):
     assert default_yaml_files != []
     # Build regular expression
     yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
+    # Loop over default yaml files
     for yaml_fpath in default_yaml_files:
-        # Loop over default yaml files
-        parsed_param_names: dict[str, int] = {}
-        with open(yaml_fpath, 'r') as filin:
-            yaml_content = filin.readlines()
-        for i, line in enumerate(yaml_content, start=1):
-            if (match := yaml_param_regex.search(line)):
-                param_name = match.group(1)
-                assert param_name not in parsed_param_names.keys(), f"Parameter '{param_name}' in {yaml_fpath} has duplicates: l.{parsed_param_names[param_name]} and l.{i}"  # noqa : E501
-                parsed_param_names[param_name] = i
+        check_yaml_duplicated_parameters(yaml_fpath)

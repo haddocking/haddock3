@@ -136,6 +136,16 @@ $ conda install -c conda-forge mpi4py
 
 Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html) instructions on how to run HADDOCK3 with MPI.
 
+## 7. (Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service
+
+To run the restraints web service you must have the following dependencies installed in the `(haddock3)` python environment:
+
+```bash
+pip install uvicorn fastapi
+```
+
+Information on the restraints web service can be found [here](https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/restraints/webservice.py).
+
 # Installing third-party packages
 
 HADDOCK3 can integrate third-party software in its workflows.

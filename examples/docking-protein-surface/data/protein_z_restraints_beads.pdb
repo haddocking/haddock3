@@ -1,0 +1,72 @@
+ATOM      1  SHA SHA S   1    -100.000-100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   2    -100.000 -60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   3    -100.000 -20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   4    -100.000  20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   5    -100.000  60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   6    -100.000 100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   7     -60.000-100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   8     -60.000 -60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S   9     -60.000 -20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  10     -60.000  20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  11     -60.000  60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  12     -60.000 100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  13     -20.000-100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  14     -20.000 -60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  15     -20.000 -20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  16     -20.000  20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  17     -20.000  60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  18     -20.000 100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  19      20.000-100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  20      20.000 -60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  21      20.000 -20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  22      20.000  20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  23      20.000  60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  24      20.000 100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  25      60.000-100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  26      60.000 -60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  27      60.000 -20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  28      60.000  20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  29      60.000  60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  30      60.000 100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  31     100.000-100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  32     100.000 -60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  33     100.000 -20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  34     100.000  20.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  35     100.000  60.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  36     100.000 100.000  20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  37    -100.000-100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  38    -100.000 -60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  39    -100.000 -20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  40    -100.000  20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  41    -100.000  60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  42    -100.000 100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  43     -60.000-100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  44     -60.000 -60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  45     -60.000 -20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  46     -60.000  20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  47     -60.000  60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  48     -60.000 100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  49     -20.000-100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  50     -20.000 -60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  51     -20.000 -20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  52     -20.000  20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  53     -20.000  60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  54     -20.000 100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  55      20.000-100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  56      20.000 -60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  57      20.000 -20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  58      20.000  20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  59      20.000  60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  60      20.000 100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  61      60.000-100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  62      60.000 -60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  63      60.000 -20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  64      60.000  20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  65      60.000  60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  66      60.000 100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  67     100.000-100.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  68     100.000 -60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  69     100.000 -20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  70     100.000  20.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  71     100.000  60.000 -20.823  1.00  1.00         SHA  
+ATOM      1  SHA SHA S  72     100.000 100.000 -20.823  1.00  1.00         SHA  

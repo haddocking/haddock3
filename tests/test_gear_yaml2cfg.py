@@ -5,9 +5,13 @@ import pytest
 from pathlib import Path
 from fnmatch import fnmatch
 
-from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
-from haddock.libs.libio import read_from_yaml, check_yaml_duplicated_parameters
 from haddock import haddock3_source_path
+from haddock.libs.libio import read_from_yaml
+from haddock.gear.yaml2cfg import (
+    flat_yaml_cfg,
+    yaml2cfg_text,
+    )
+from haddock.gear.validations import validate_defaults_yaml
 
 from . import (
     haddock3_yaml_cfg_examples,
@@ -119,5 +123,5 @@ def test_yaml_duplicated_params(default_yaml_files):
     """Make sure no duplicated parameters are present in a ymal file."""
     assert default_yaml_files != []
     # Loop over default yaml files
-    for yaml_fpath in default_yaml_files:
-        check_yaml_duplicated_parameters(yaml_fpath)
+    for default_yaml_fpath in default_yaml_files:
+        validate_defaults_yaml(default_yaml_fpath)

@@ -96,7 +96,7 @@ class CNSJob:
     def __init__(
         self,
         input_file: FilePath,
-        output_file: FilePath,
+        output_file: Optional[FilePath] = None,
         envvars: Optional[ParamDict] = None,
         cns_exec: Optional[FilePath] = None,
     ) -> None:
@@ -190,32 +190,44 @@ class CNSJob:
             Compress the *.seed file to '.gz' after the run. Defaults to
             ``False``.
         """
-        with open(self.input_file) as inp, open(self.output_file, "w+") as outf:
 
+        if isinstance(self.input_file, str):
             p = subprocess.Popen(
                 self.cns_exec,
-                stdin=inp,
-                stdout=outf,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 close_fds=True,
                 env=self.envvars,
             )
-
-            out, error = p.communicate()
+            out, error = p.communicate(input=self.input_file.encode())
             p.kill()
 
-        if compress_inp:
-            gzip_files(self.input_file, remove_original=True)
-
-        if compress_out:
-            gzip_files(self.output_file, remove_original=True)
-
-        if compress_seed:
-            with suppress(FileNotFoundError):
-                gzip_files(
-                    Path(Path(self.output_file).stem).with_suffix(".seed"),
-                    remove_original=True,
+        elif isinstance(self.input_file, Path) and isinstance(self.output_file, Path):
+            with open(self.input_file) as inp, open(self.output_file, "w+") as outf:
+                p = subprocess.Popen(
+                    self.cns_exec,
+                    stdin=inp,
+                    stdout=outf,
+                    stderr=subprocess.PIPE,
+                    close_fds=True,
+                    env=self.envvars,
                 )
+                out, error = p.communicate()
+                p.kill()
+
+            if compress_inp:
+                gzip_files(self.input_file, remove_original=True)
+
+            if compress_out:
+                gzip_files(self.output_file, remove_original=True)
+
+            if compress_seed:
+                with suppress(FileNotFoundError):
+                    gzip_files(
+                        Path(Path(self.output_file).stem).with_suffix(".seed"),
+                        remove_original=True,
+                    )
 
         if error:
             raise CNSRunningError(error)

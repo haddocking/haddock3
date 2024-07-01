@@ -1,7 +1,7 @@
 """Module in charge of parallelizing the execution of tasks."""
 
 import math
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 from haddock import log
 from haddock.core.typing import (
@@ -61,15 +61,25 @@ def get_index_list(nmodels, ncores):
 class Worker(Process):
     """Work on tasks."""
 
-    def __init__(self, tasks: Sequence[SupportsRunT]) -> None:
+    def __init__(self, tasks: Sequence[SupportsRunT], results: Queue) -> None:
         super(Worker, self).__init__()
         self.tasks = tasks
+        self.result_queue = results
         log.debug(f"Worker ready with {len(self.tasks)} tasks")
 
     def run(self) -> None:
         """Execute tasks."""
+        results = []
         for task in self.tasks:
-            task.run()
+            r = task.run()
+            results.append(r)
+
+        # Collect the results
+        self.result_queue.put(results)
+
+        # Signal that the worker has finished
+        self.result_queue.put(None)
+
         log.debug(f"{self.name} executed")
 
 
@@ -98,25 +108,25 @@ class Scheduler:
         self.max_cpus = max_cpus
         self.num_tasks = len(tasks)
         self.num_processes = ncores  # first parses num_cores
+        self.queue = Queue()
 
-        # Sort the tasks by input_file name and its length,
-        #  so we know that 2 comes before 10
-        task_name_dic: dict[int, tuple[FilePath, int]] = {}
-        for i, t in enumerate(tasks):
-            try:
-                task_name_dic[i] = (t.input_file, len(str(t.input_file)))
-            except AttributeError:
-                # If this is not a CNS job it will not have
-                #  input_file, use the output instead
-                task_name_dic[i] = (t.output, len(str(t.output)))
+        # Sort the tasks by input_file name and its length, so we know that 2 comes before 10
+        ### Q? Whys is this necessary?
+        # Only CNSJobs can be sorted like this
+        if all(hasattr(t, "input_file") for t in tasks):
+            task_name_dic: dict[int, tuple[FilePath, int]] = {}
+            for i, t in enumerate(tasks):
+                task_name_dic[i] = (t.input_file, len(str(t.input_file)))  # type: ignore
 
-        sorted_task_list: list[SupportsRunT] = []
-        for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):
-            idx = e[0]
-            sorted_task_list.append(tasks[idx])
+            sorted_task_list: list[SupportsRunT] = []
+            for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):
+                idx = e[0]
+                sorted_task_list.append(tasks[idx])
+        else:
+            sorted_task_list = tasks
 
         job_list = split_tasks(sorted_task_list, self.num_processes)
-        self.worker_list = [Worker(jobs) for jobs in job_list]
+        self.worker_list = [Worker(jobs, self.queue) for jobs in job_list]
 
         log.info(f"Using {self.num_processes} cores")
         log.debug(f"{self.num_tasks} tasks ready.")
@@ -137,32 +147,23 @@ class Scheduler:
 
     def run(self) -> None:
         """Run tasks in parallel."""
+
         try:
-            for worker in self.worker_list:
-                # Start the worker
-                worker.start()
+            for w in self.worker_list:
+                w.start()
 
-            c = 1
-            l = 1
-            nlog = max(1, int(self.num_tasks) / 10)
+            # Check if all workers have finished
+            all_results = []
+            completed_workers = 0
+            while completed_workers < len(self.worker_list):
+                result = self.queue.get()
+                if result is None:
+                    completed_workers += 1
+                else:
+                    all_results.append(result)
 
-            for worker in self.worker_list:
-                # Wait for the worker to finish
-                worker.join()
-                for t in worker.tasks:
-                    per = (c / float(self.num_tasks)) * 100
-                    try:
-                        task_ident = (
-                            f"{t.input_file.parents[0].name}/" f"{t.input_file.name}"
-                        )
-                    except AttributeError:
-                        task_ident = f"{t.output.parents[0].name}/" f"{t.output.name}"
-                    c += 1
-                    if l == nlog:
-                        log.info(f">> completed {per:.0f}% ")
-                        l = 1
-                    else:
-                        l += 1
+            for w in self.worker_list:
+                w.join()
 
             log.info(f"{self.num_tasks} tasks finished")
 
@@ -181,3 +182,7 @@ class Scheduler:
             worker.terminate()
 
         log.info("The workers terminated in a controlled way")
+
+    def get_results(self) -> list:
+        """Return the results of the tasks."""
+        return self.queue.get()

@@ -54,7 +54,7 @@ class HaddockModule(CNSScoringModule):
                 self.params,
                 "emscoring",
                 native_segid=True,
-                write_to_disk=self.params["less_io"],
+                less_io=self.params["less_io"],
             )
 
             scoring_out = f"emscoring_{model_num}.out"

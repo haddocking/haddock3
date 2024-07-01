@@ -91,7 +91,7 @@ class HaddockModule(BaseCNSModule):
                     "mdref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
-                    write_to_disk=self.params["less_io"],
+                    less_io=self.params["less_io"],
                 )
                 out_file = f"mdref_{idx}.out"
 

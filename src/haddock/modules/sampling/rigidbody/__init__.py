@@ -120,7 +120,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     default_params_path=self.toppar_path,
                     native_segid=True,
-                    write_to_disk=self.params["less_io"],
+                    less_io=self.params["less_io"],
                 )
 
                 log_fname = f"rigidbody_{idx}.out"

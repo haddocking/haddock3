@@ -277,7 +277,7 @@ def prepare_cns_input(
     ambig_fname: FilePath = "",
     native_segid: bool = False,
     default_params_path: Optional[Path] = None,
-    write_to_disk: Optional[bool] = True,
+    less_io: Optional[bool] = True,
 ) -> Union[Path, str]:
     """
     Generate the .inp file needed by the CNS engine.
@@ -360,12 +360,13 @@ def prepare_cns_input(
 
     inp = default_params + input_str + output + segid_str + recipe_str
 
-    if write_to_disk:
+    if less_io:
+        return inp
+    else:
         inp_file = Path(f"{identifier}_{model_number}.inp")
         inp_file.write_text(inp)
         return inp_file
-    else:
-        return inp
+
 
 
 def prepare_expected_pdb(

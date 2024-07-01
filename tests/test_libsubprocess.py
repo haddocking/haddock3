@@ -28,11 +28,20 @@ def job():
 
 
 @pytest.fixture
-def cnsjob():
-    return CNSJob(
-        input_file=Path("input"),
-        output_file=Path("output"),
-    )
+def cnsjob(mocker):
+    with tempfile.NamedTemporaryFile() as f:
+        f.file.write(b"")
+        f.file.flush()
+        f.file.seek(0)
+        os.chmod(f.name, 0o755)
+
+        mocker.patch("haddock.libs.libsubprocess.global_cns_exec", f.name)
+
+        yield CNSJob(
+            input_file=Path("input"),
+            output_file=Path("output"),
+            cns_exec=Path(f.name),
+        )
 
 
 def test_basejob_run(basejob, mocker):

@@ -74,8 +74,11 @@ class Worker(Process):
             r = task.run()
             results.append(r)
 
-        # Collect the results
+        # Put results into the queue
         self.result_queue.put(results)
+
+        # Signal completion by putting a unique identifier into the queue
+        self.result_queue.put(f"{self.name}_done")
 
         log.debug(f"{self.name} executed")
 
@@ -150,12 +153,22 @@ class Scheduler:
             for w in self.worker_list:
                 w.start()
 
-            # Check if all workers have finished
-            while len(self.results) < len(self.worker_list):
-                self.results = self.queue.get()
+            # Collect results until all workers have signaled completion
+            all_results = []
+            num_workers = len(self.worker_list)
+            completed_workers = 0
+
+            while completed_workers < num_workers:
+                result = self.queue.get()
+                if isinstance(result, str) and result.endswith("_done"):
+                    completed_workers += 1
+                else:
+                    all_results.append(result)
 
             for w in self.worker_list:
                 w.join()
+
+            self.results = [item for sublist in all_results for item in sublist]
 
             log.info(f"{self.num_tasks} tasks finished")
 

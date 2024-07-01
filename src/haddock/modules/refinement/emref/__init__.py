@@ -1,4 +1,5 @@
 """Energy minimization refinement with CNS."""
+
 from pathlib import Path
 
 from haddock.core.typing import FilePath
@@ -80,7 +81,7 @@ class HaddockModule(BaseCNSModule):
             model_idx += 1
 
             for _ in range(self.params["sampling_factor"]):
-                inp_file = prepare_cns_input(
+                emref_inpyt = prepare_cns_input(
                     idx,
                     model,
                     self.path,
@@ -89,6 +90,7 @@ class HaddockModule(BaseCNSModule):
                     "emref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
+                    write_to_disk=self.params["less_io"],
                 )
                 out_file = f"emref_{idx}.out"
 
@@ -101,7 +103,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(inp_file, out_file, envvars=self.envvars)
+                job = CNSJob(emref_inpyt, out_file, envvars=self.envvars)
 
                 jobs.append(job)
 

@@ -3,6 +3,7 @@
 This module performs energy minimization and scoring of the models generated in
 the previous step of the workflow. No restraints are applied during this step.
 """
+
 from pathlib import Path
 
 from haddock.core.typing import FilePath
@@ -22,10 +23,9 @@ class HaddockModule(CNSScoringModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self,
-                 order: int,
-                 path: Path,
-                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
+    def __init__(
+        self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
+    ) -> None:
         cns_script = Path(RECIPE_PATH, "cns", "emscoring.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
@@ -40,29 +40,27 @@ class HaddockModule(CNSScoringModule):
         jobs: list[CNSJob] = []
 
         try:
-            models_to_score = self.previous_io.retrieve_models(
-                individualize=True
-                )
+            models_to_score = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
 
         self.output_models = []
         for model_num, model in enumerate(models_to_score, start=1):
-            scoring_inp = prepare_cns_input(
+            scoring_input = prepare_cns_input(
                 model_num,
                 model,
                 self.path,
                 self.recipe_str,
                 self.params,
                 "emscoring",
-                native_segid=True)
+                native_segid=True,
+                write_to_disk=self.params["less_io"],
+            )
 
             scoring_out = f"emscoring_{model_num}.out"
 
             # create the expected PDBobject
-            expected_pdb = prepare_expected_pdb(
-                model, model_num, ".", "emscoring"
-                )
+            expected_pdb = prepare_expected_pdb(model, model_num, ".", "emscoring")
             # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
             expected_pdb.md5 = model.md5
@@ -70,13 +68,13 @@ class HaddockModule(CNSScoringModule):
 
             self.output_models.append(expected_pdb)
 
-            job = CNSJob(scoring_inp, scoring_out, envvars=self.envvars)
+            job = CNSJob(scoring_input, scoring_out, envvars=self.envvars)
 
             jobs.append(job)
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        Engine = get_engine(self.params['mode'], self.params)
+        Engine = get_engine(self.params["mode"], self.params)
         engine = Engine(jobs)
         engine.run()
         self.log("CNS jobs have finished")
@@ -97,7 +95,7 @@ class HaddockModule(CNSScoringModule):
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
-        if self.params['per_interface_scoring']:
+        if self.params["per_interface_scoring"]:
             self.per_interface_output(output_fname)
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

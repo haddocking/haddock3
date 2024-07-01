@@ -28,6 +28,7 @@ much better and the sampling can be limited. In *ab-initio* mode, however, very
 diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
 """
+
 from pathlib import Path
 
 from haddock.core.typing import FilePath
@@ -109,7 +110,7 @@ class HaddockModule(BaseCNSModule):
                 else:
                     ambig_fname = self.params["ambig_fname"]
                 # prepare cns input
-                inp_file = prepare_cns_input(
+                rigidbody_input = prepare_cns_input(
                     idx,
                     combination,
                     self.path,
@@ -119,19 +120,18 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     default_params_path=self.toppar_path,
                     native_segid=True,
+                    write_to_disk=self.params["less_io"],
                 )
 
                 log_fname = f"rigidbody_{idx}.out"
                 output_pdb_fname = f"rigidbody_{idx}.pdb"
 
                 # Create a model for the expected output
-                model = PDBFile(
-                    output_pdb_fname, path=".", restr_fname=ambig_fname
-                )
+                model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
                 model.topology = [e.topology for e in combination]
                 self.output_models.append(model)
 
-                job = CNSJob(inp_file, log_fname, envvars=self.envvars)
+                job = CNSJob(rigidbody_input, log_fname, envvars=self.envvars)
                 jobs.append(job)
 
                 idx += 1

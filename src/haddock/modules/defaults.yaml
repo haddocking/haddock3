@@ -141,8 +141,10 @@ offline:
 less_io:
   default: false
   type: boolean
-  title:
-  short:
-  long:
+  title: Reduce the amount of I/O operations.
+  short: Reduce the amount of I/O operations.
+  long: This option will reduce the amount of I/O operations by writing
+    less files to disk. This can be useful for example when running on
+    a network file system where I/O operations are slow.
   group: "execution"
   explevel: easy

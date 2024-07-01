@@ -1,4 +1,5 @@
 """Module in charge of parallelizing the execution of tasks."""
+
 import math
 from multiprocessing import Process
 
@@ -11,31 +12,30 @@ from haddock.core.typing import (
     Sequence,
     SupportsRunT,
     Union,
-    )
+)
 from haddock.libs.libutil import parse_ncores
 
 
-def split_tasks(lst: Sequence[AnyT],
-                n: int) -> Generator[Sequence[AnyT], None, None]:
+def split_tasks(lst: Sequence[AnyT], n: int) -> Generator[Sequence[AnyT], None, None]:
     """Split tasks into N-sized chunks."""
     n = math.ceil(len(lst) / n)
     for j in range(0, len(lst), n):
-        chunk = lst[j:n + j]
+        chunk = lst[j : n + j]
         yield chunk
 
 
 def get_index_list(nmodels, ncores):
     """
     Optimal distribution of models among cores
-    
+
     Parameters
     ----------
     nmodels : int
         Number of models to be distributed.
-    
+
     ncores : int
         Number of cores to be used.
-    
+
     Returns
     -------
     index_list : list
@@ -76,10 +76,12 @@ class Worker(Process):
 class Scheduler:
     """Schedules tasks to run in multiprocessing."""
 
-    def __init__(self,
-                 tasks: list[SupportsRunT],
-                 ncores: Optional[int] = None,
-                 max_cpus: bool = False) -> None:
+    def __init__(
+        self,
+        tasks: list[SupportsRunT],
+        ncores: Optional[int] = None,
+        max_cpus: bool = False,
+    ) -> None:
         """
         Schedule tasks to a defined number of processes.
 
@@ -130,7 +132,7 @@ class Scheduler:
             n,
             njobs=self.num_tasks,
             max_cpus=self.max_cpus,
-            )
+        )
         log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
 
     def run(self) -> None:
@@ -142,7 +144,7 @@ class Scheduler:
 
             c = 1
             l = 1
-            nlog = max(1,int(self.num_tasks)/10)
+            nlog = max(1, int(self.num_tasks) / 10)
 
             for worker in self.worker_list:
                 # Wait for the worker to finish
@@ -151,17 +153,13 @@ class Scheduler:
                     per = (c / float(self.num_tasks)) * 100
                     try:
                         task_ident = (
-                            f'{t.input_file.parents[0].name}/'
-                            f'{t.input_file.name}'
-                            )
+                            f"{t.input_file.parents[0].name}/" f"{t.input_file.name}"
+                        )
                     except AttributeError:
-                        task_ident = (
-                            f'{t.output.parents[0].name}/'
-                            f'{t.output.name}'
-                            )
+                        task_ident = f"{t.output.parents[0].name}/" f"{t.output.name}"
                     c += 1
                     if l == nlog:
-                        log.info(f'>> completed {per:.0f}% ')
+                        log.info(f">> completed {per:.0f}% ")
                         l = 1
                     else:
                         l += 1

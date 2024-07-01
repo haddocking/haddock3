@@ -1,4 +1,5 @@
 """Run subprocess jobs."""
+
 import os
 import shlex
 import subprocess
@@ -14,8 +15,9 @@ from haddock.libs.libio import gzip_files
 class BaseJob:
     """Base class for a subprocess job."""
 
-    def __init__(self, input_: Path, output: Path, executable: Path,
-                 *args: Any) -> None:
+    def __init__(
+        self, input_: Path, output: Path, executable: Path, *args: Any
+    ) -> None:
         self.input = input_
         self.output = output
         self.executable = executable
@@ -26,12 +28,12 @@ class BaseJob:
         """Execute job in subprocess."""
         self.make_cmd()
 
-        with open(self.output, 'w') as outf:
+        with open(self.output, "w") as outf:
             p = subprocess.Popen(
                 shlex.split(self.cmd),
                 stdout=outf,
                 close_fds=True,
-                )
+            )
             out, error = p.communicate()
 
         p.kill()
@@ -57,11 +59,13 @@ class Job(BaseJob):
 
     def make_cmd(self) -> None:
         """Execute subprocess job."""
-        self.cmd = " ".join([
-            os.fspath(self.executable),
-            ''.join(map(str, self.args)),  # empty string if no args
-            os.fspath(self.input),
-            ])
+        self.cmd = " ".join(
+            [
+                os.fspath(self.executable),
+                "".join(map(str, self.args)),  # empty string if no args
+                os.fspath(self.input),
+            ]
+        )
         return
 
 
@@ -76,11 +80,13 @@ class JobInputFirst(BaseJob):
 
     def make_cmd(self) -> None:
         """Execute job in subprocess."""
-        self.cmd = " ".join([
-            os.fspath(self.executable),
-            os.fspath(self.input),
-            ''.join(map(str, self.args)),  # empty string if no args
-            ])
+        self.cmd = " ".join(
+            [
+                os.fspath(self.executable),
+                os.fspath(self.input),
+                "".join(map(str, self.args)),  # empty string if no args
+            ]
+        )
         return
 
 
@@ -88,12 +94,12 @@ class CNSJob:
     """A CNS job script."""
 
     def __init__(
-            self,
-            input_file: FilePath,
-            output_file: FilePath,
-            envvars: Optional[ParamDict] = None,
-            cns_exec: Optional[FilePath] = None,
-            ) -> None:
+        self,
+        input_file: FilePath,
+        output_file: FilePath,
+        envvars: Optional[ParamDict] = None,
+        cns_exec: Optional[FilePath] = None,
+    ) -> None:
         """
         CNS subprocess.
 
@@ -122,7 +128,7 @@ class CNSJob:
         return (
             f"CNSJob({self.input_file}, {self.output_file}, "
             f"envvars={self.envvars}, cns_exec={self.cns_exec})"
-            )
+        )
 
     def __str__(self) -> str:
         return repr(self)
@@ -137,7 +143,7 @@ class CNSJob:
         """CNS environment vars."""
         self._envvars = envvars or {}
         if not isinstance(self._envvars, dict):
-            raise ValueError('`envvars` must be a dictionary.')
+            raise ValueError("`envvars` must be a dictionary.")
 
         for k, v in self._envvars.items():
             if isinstance(v, Path):
@@ -155,18 +161,18 @@ class CNSJob:
 
         if not os.access(cns_exec_path, mode=os.X_OK):
             raise ValueError(
-                f'{str(cns_exec_path)!r} binary file not found, '
-                'or is not executable.'
-                )
+                f"{str(cns_exec_path)!r} binary file not found, "
+                "or is not executable."
+            )
 
         self._cns_exec = cns_exec_path
 
     def run(
-            self,
-            compress_inp: bool = False,
-            compress_out: bool = True,
-            compress_seed: bool = False,
-            ) -> bytes:
+        self,
+        compress_inp: bool = False,
+        compress_out: bool = True,
+        compress_seed: bool = False,
+    ) -> bytes:
         """
         Run this CNS job script.
 
@@ -184,8 +190,7 @@ class CNSJob:
             Compress the *.seed file to '.gz' after the run. Defaults to
             ``False``.
         """
-        with open(self.input_file) as inp, \
-                open(self.output_file, 'w+') as outf:
+        with open(self.input_file) as inp, open(self.output_file, "w+") as outf:
 
             p = subprocess.Popen(
                 self.cns_exec,
@@ -194,7 +199,7 @@ class CNSJob:
                 stderr=subprocess.PIPE,
                 close_fds=True,
                 env=self.envvars,
-                )
+            )
 
             out, error = p.communicate()
             p.kill()
@@ -208,8 +213,9 @@ class CNSJob:
         if compress_seed:
             with suppress(FileNotFoundError):
                 gzip_files(
-                    Path(Path(self.output_file).stem).with_suffix('.seed'),
-                    remove_original=True)
+                    Path(Path(self.output_file).stem).with_suffix(".seed"),
+                    remove_original=True,
+                )
 
         if error:
             raise CNSRunningError(error)

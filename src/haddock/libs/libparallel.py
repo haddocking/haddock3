@@ -108,8 +108,8 @@ class Scheduler:
         self.max_cpus = max_cpus
         self.num_tasks = len(tasks)
         self.num_processes = ncores  # first parses num_cores
-        self.queue = Queue()
-        self.results = []
+        self.queue: Queue = Queue()
+        self.results: list = []
 
         # Sort the tasks by input_file name and its length, so we know that 2 comes before 10
         ### Q? Whys is this necessary?

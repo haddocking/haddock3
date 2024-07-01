@@ -30,7 +30,7 @@ def v_rundir(rundir: FilePath) -> None:
         raise ConfigurationError(emsg)
 
 
-def validate_yaml_params_scheme(yaml_fpath: str) -> None:
+def validate_yaml_params_scheme(yaml_fpath: FilePath) -> None:
     """Validate a default.yaml file parameters schemes.
 
     Parameters
@@ -63,7 +63,7 @@ def validate_yaml_params_scheme(yaml_fpath: str) -> None:
                     assert specific_param in parameters.keys(), f"Parameter {param} is missing specific subparam '{specific_param}' for type '{base_subparam}' (in {yaml_fpath})"  # noqa : E501
 
 
-def validate_defaults_yaml(yaml_fpath: str) -> None:
+def validate_defaults_yaml(yaml_fpath: FilePath) -> None:
     """Validate a default.yaml file.
 
     Parameters

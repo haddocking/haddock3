@@ -127,6 +127,7 @@ def check_yaml_duplicated_parameters(yaml_fpath: str) -> None:
         Path to a yaml file
     """
     # Build regular expression
+    # Note: Understand behavior here -> https://regex101.com/r/AaFHp4/1
     yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
     # Read content as string
     with open(yaml_fpath, 'r') as filin:

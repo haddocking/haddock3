@@ -25,7 +25,7 @@ def default_yaml_files():
     """Return list of defaults.yaml file within the haddock src directory."""
     all_defaults_yaml: list[str] = []
     default_yaml_fname = "defaults.yaml"
-    for path, _subdirs, files in os.walk(haddock3_source_path):
+    for path, _, files in os.walk(haddock3_source_path):
         for name in files:
             if fnmatch(name, default_yaml_fname):
                 all_defaults_yaml.append(f"{path}/{default_yaml_fname}")
@@ -119,9 +119,9 @@ def test_yaml2cfg_test_no_header():
     p.unlink()
 
 
-def test_yaml_duplicated_params(default_yaml_files):
+def test_yaml_duplicated_params(default_yaml_files: list[str]):
     """Make sure no duplicated parameters are present in a ymal file."""
     assert default_yaml_files != []
     # Loop over default yaml files
     for default_yaml_fpath in default_yaml_files:
-        validate_defaults_yaml(default_yaml_fpath)
+        assert validate_defaults_yaml(default_yaml_fpath) is None

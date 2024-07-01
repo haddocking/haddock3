@@ -1,6 +1,7 @@
 import pytest
 from haddock.libs.libparallel import split_tasks, get_index_list, Worker, Scheduler
 from pathlib import Path
+from multiprocessing import Queue
 import uuid
 
 
@@ -10,8 +11,9 @@ class Task:
         self.input = input
         self.output = None
 
-    def run(self):
+    def run(self) -> int:
         self.output = self.input + 1
+        return self.output
 
 
 class FileTask:
@@ -25,7 +27,7 @@ class FileTask:
 
 @pytest.fixture
 def worker():
-    yield Worker(tasks=[Task(1), Task(2), Task(3)])
+    yield Worker(tasks=[Task(1), Task(2), Task(3)], results=Queue())
 
 
 @pytest.fixture
@@ -90,18 +92,27 @@ def test_worker_run(worker):
 
     _ = worker.run()
 
-    # To make sure this was executed, they should have been incremented
     assert worker.tasks[0].output == 2
     assert worker.tasks[1].output == 3
     assert worker.tasks[2].output == 4
 
 
-def test_scheduler_run(scheduler_files):
-    scheduler_files.run()
+def test_scheduler_files(scheduler_files):
+
+    _ = scheduler_files.run()
 
     assert Path(scheduler_files.worker_list[0].tasks[0].input_file).exists()
     assert Path(scheduler_files.worker_list[0].tasks[1].input_file).exists()
     assert Path(scheduler_files.worker_list[0].tasks[2].input_file).exists()
+
+
+def test_scheduler(scheduler):
+
+    _ = scheduler.run()
+
+    assert scheduler.results[0] == 2
+    assert scheduler.results[1] == 3
+    assert scheduler.results[2] == 4
 
 
 @pytest.mark.skip("WIP")

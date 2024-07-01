@@ -77,9 +77,6 @@ class Worker(Process):
         # Collect the results
         self.result_queue.put(results)
 
-        # Signal that the worker has finished
-        self.result_queue.put(None)
-
         log.debug(f"{self.name} executed")
 
 
@@ -109,6 +106,7 @@ class Scheduler:
         self.num_tasks = len(tasks)
         self.num_processes = ncores  # first parses num_cores
         self.queue = Queue()
+        self.results = []
 
         # Sort the tasks by input_file name and its length, so we know that 2 comes before 10
         ### Q? Whys is this necessary?
@@ -153,14 +151,8 @@ class Scheduler:
                 w.start()
 
             # Check if all workers have finished
-            all_results = []
-            completed_workers = 0
-            while completed_workers < len(self.worker_list):
-                result = self.queue.get()
-                if result is None:
-                    completed_workers += 1
-                else:
-                    all_results.append(result)
+            while len(self.results) < len(self.worker_list):
+                self.results = self.queue.get()
 
             for w in self.worker_list:
                 w.join()

@@ -200,13 +200,9 @@ class ModuleIO:
                 raise Exception(_msg)
 
             # prepare pairwise combinations
-            model_list = [
-                values for values in zip(*input_dic.values())
-                ]  # type: ignore
+            model_list = [values for values in zip(*input_dic.values())]  # type: ignore
         elif input_dic and crossdock and not individualize:
-            model_list = [
-                values for values in itertools.product(*input_dic.values())
-                ]  # type: ignore
+            model_list = [values for values in itertools.product(*input_dic.values())]  # type: ignore
         elif input_dic and individualize:
             model_list = list(itertools.chain(*input_dic.values()))
 

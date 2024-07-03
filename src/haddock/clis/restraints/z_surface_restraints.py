@@ -45,7 +45,7 @@ def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
 
     z_surf_restraints_subcommand.add_argument(
         "--residues", "-r",
-        help="List of coma separated residues (can be multiple selections).",
+        help="List of comma separated residues (can be multiple selections). Example 1,2,3 7,8,9 for two selections.",
         required=False,
         default=[],
         nargs='+',

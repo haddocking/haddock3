@@ -23,10 +23,12 @@ class Molecule:
         as ``file_name``.
     """
 
-    def __init__(self,
-                 file_name: Path,
-                 segid: Optional[int] = None,
-                 no_parent: bool = False) -> None:
+    def __init__(
+            self,
+            file_name: Path,
+            segid: Optional[int] = None,
+            no_parent: bool = False,
+            ) -> None:
         # the rest of the code is too dependent on the Path API
         assert isinstance(file_name, Path), \
             f"`file_name` must be pathlib.Path: {type(file_name)} given"

@@ -37,6 +37,9 @@ RUNDIR = "run_dir"
 INTERACTIVE_RE_SUFFIX = "interactive"
 """Suffix added to interactive haddock3-re runs."""
 
+DATA_DIRNAME = "data"
+"""Name given to the directory holding data."""
+
 CNS_MODULES = ["rigidbody",
                "flexref",
                "emscoring",

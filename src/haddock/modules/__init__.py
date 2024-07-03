@@ -7,7 +7,11 @@ from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
-from haddock.core.defaults import MODULE_IO_FILE, INTERACTIVE_RE_SUFFIX
+from haddock.core.defaults import (
+    DATA_DIRNAME,
+    INTERACTIVE_RE_SUFFIX,
+    MODULE_IO_FILE,
+    )
 from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import (
     Any,
@@ -122,7 +126,6 @@ class BaseHaddockModule(ABC):
         """
         self.order = order
         self.path = path
-        self.previous_io = self._load_previous_io()
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
@@ -132,6 +135,7 @@ class BaseHaddockModule(ABC):
 
         self._params: ParamDict = {}
         self.update_params(update_from_cfg_file=params_fname)
+        self.previous_io = self._load_previous_io()
 
     @property
     def params(self) -> ParamDict:
@@ -207,7 +211,7 @@ class BaseHaddockModule(ABC):
         # ...
         ignore = config_mandatory_general_parameters.union(
             non_mandatory_general_parameters_defaults
-        )  # noqa: 501
+            )
         params = deepcopy(self.params)
 
         with suppress(KeyError):
@@ -262,7 +266,7 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_io_models(self, faulty_tolerance=0):
+    def export_io_models(self, faulty_tolerance: int = 0) -> None:
         """
         Export input/output to the ModuleIO interface.
 
@@ -296,7 +300,6 @@ class BaseHaddockModule(ABC):
                 f"and tolerance was set to {faulty_tolerance:.2f}%."
                 )
             self.finish_with_error(_msg)
-        
 
     def finish_with_error(self, reason: object = "Module has failed.") -> None:
         """Finish with error message."""
@@ -310,32 +313,44 @@ class BaseHaddockModule(ABC):
             self,
             filename: FilePath = MODULE_IO_FILE,
             ) -> ModuleIO:
-        if self.order == 0:
-            self._num_of_input_molecules = 0
-            return ModuleIO()
-
         io = ModuleIO()
-        previous_io = Path(self.previous_path(), filename)
-
-        if previous_io.is_file():
+        # In case of the first step in the workflow
+        if self.order == 0:
+            self._load_first_io(io)
+        else:
+            previous_io = Path(self.previous_path(), filename)
             io.load(previous_io)
-
+        # Count number of molecules
         self._num_of_input_molecules = len(io.output)
-
         return io
+    
+    def _load_first_io(self, io: ModuleIO) -> None:
+        """Provide the first ModuleIO.
+
+        Parameters
+        ----------
+        io : ModuleIO
+            The content of the step -1 moduleIO object.
+        """
+        # Point input molecules path
+        input_molecules_dir = Path(DATA_DIRNAME, self.path)
+        # Generate pdb files
+        io.load_from_input_molecules(input_molecules_dir)
 
     def previous_path(self) -> Path:
         """Give the path from the previous calculation."""
         previous = get_module_steps_folders(self.path.resolve().parent)
 
         try:
-            # return Path(previous[self.order - 1])
             return self.last_step_folder(previous, self.order - 1)
         except IndexError:
             return self.path
 
     @staticmethod
-    def last_step_folder(folders, index):
+    def last_step_folder(
+            folders: list[str],
+            index: int,
+            ) -> Optional[str]:
         """Retrieve last step folder."""
         with_ind = [
             folder for folder in folders

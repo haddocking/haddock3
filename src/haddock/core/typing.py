@@ -30,6 +30,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    List,
     Literal,
     Mapping,
     MutableMapping,

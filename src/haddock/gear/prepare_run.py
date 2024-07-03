@@ -4,8 +4,8 @@ import importlib
 import itertools as it
 import json
 import os
+import re
 import shutil
-import string
 import sys
 import tarfile
 from contextlib import contextmanager, suppress
@@ -14,7 +14,7 @@ from functools import lru_cache, wraps
 from pathlib import Path, PosixPath
 
 from haddock import EmptyPath, contact_us, haddock3_source_path, log
-from haddock.core.defaults import RUNDIR, max_molecules_allowed
+from haddock.core.defaults import RUNDIR, max_molecules_allowed, DATA_DIRNAME
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.core.typing import (
     Any,
@@ -296,7 +296,7 @@ def setup_run(
 
     if restarting_from:
         remove_folders_after_number(general_params[RUNDIR], restart_from)
-        _data_dir = Path(general_params[RUNDIR], "data")
+        _data_dir = Path(general_params[RUNDIR], DATA_DIRNAME)
         remove_folders_after_number(_data_dir, restart_from)
 
     if restarting_from or starting_from_copy:
@@ -315,6 +315,12 @@ def setup_run(
             dec_all=True,
         )
 
+    first_module_id = list(modules_params.keys())[0]
+    if (topoaa_module_id := "topoaa.1") in modules_params.keys():
+        topology_params = modules_params[topoaa_module_id]
+    else:
+        topology_params = {}
+
     if starting_from_copy:
         num_steps = len(step_folders)
         _num_modules = len(modules_params)
@@ -327,24 +333,27 @@ def setup_run(
     else:
         copy_molecules_to_topology(
             general_params["molecules"],
-            modules_params["topoaa.1"],
+            topology_params,
         )
+        # copy_molecules_to_topology(
+        #     general_params["molecules"],
+        #     modules_params[first_module_id],
+        # )
 
-        if len(modules_params["topoaa.1"]["molecules"]) > max_molecules_allowed:
+        max_mols = len(topology_params["molecules"])
+        if max_mols > max_molecules_allowed:
             raise ConfigurationError(
                 f"Too many molecules defined, max is {max_molecules_allowed}."
-            )  # noqa: E501
+                )
 
         zero_fill.read(modules_params)
 
-        populate_topology_molecule_params(modules_params["topoaa.1"])
-        populate_mol_parameters(modules_params)
-
-        max_mols = len(modules_params["topoaa.1"]["molecules"])
+        populate_topology_molecule_params(topology_params)
+        populate_mol_parameters(modules_params, topology_params)
 
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
-        renum_step_folders(Path(general_params[RUNDIR], "data"))
+        renum_step_folders(Path(general_params[RUNDIR], DATA_DIRNAME))
         if UNPACK_FOLDERS:  # only if there was any folder unpacked
             update_unpacked_names(_prev, _new, UNPACK_FOLDERS)
         update_step_contents_to_step_names(
@@ -367,7 +376,8 @@ def setup_run(
     if scratch_rest0:
         copy_molecules_to_data_dir(
             data_dir,
-            modules_params["topoaa.1"],
+            topology_params,
+            first_module_id,
             preprocess=general_params["preprocess"],
         )
 
@@ -418,8 +428,9 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     # Initiate files data
     infofile = {
         "raw_input": (
-            "An untouched copy of the raw input file, " "as provided by the user."
-        ),
+            "An untouched copy of the raw input file, "
+            "as provided by the user."
+            ),
         "cleaned_input": (
             "Pre-parsed input file where (eventually) "
             "some indexing and modifications were "
@@ -427,8 +438,8 @@ def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
         ),
         "enhanced_haddock_params": (
             "Final input file with detailed default parameters."
-        ),
-    }
+            ),
+        }
     added_files = {}
     # Set list of configurations that wish to be saved
     list_save_conf = [
@@ -775,7 +786,7 @@ def create_data_dir(run_dir: FilePath) -> Path:
     pathlib.Path
         A path referring only to 'data'.
     """
-    data_dir = Path(run_dir, "data")
+    data_dir = Path(run_dir, DATA_DIRNAME)
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir
 
@@ -789,8 +800,11 @@ def copy_molecules_to_topology(
 
 
 def copy_molecules_to_data_dir(
-    data_dir: Path, topoaa_params: ParamMap, preprocess: bool = True
-) -> None:
+        data_dir: Path,
+        topoaa_params: ParamMap,
+        _first_module_name: str,
+        preprocess: bool = True,
+        ) -> None:
     """
     Copy molecules to data directory and to topoaa parameters.
 
@@ -807,7 +821,13 @@ def copy_molecules_to_data_dir(
         Whether to preprocess input molecules. Defaults to ``True``.
         See :py:mod:`haddock.gear.preprocessing`.
     """
-    topoaa_dir = zero_fill.fill("topoaa", 0)
+    # Removes digit from module name
+    # Build regex to capture '<name>.<digit>'
+    name_digit_regex = re.compile(r"(\w+)\.\d+")
+    first_module_name: str = "input_molecules"
+    if match := name_digit_regex.search(_first_module_name):
+        first_module_name = match.group(1)
+    topoaa_dir = zero_fill.fill(first_module_name, 0)
 
     # define paths
     data_topoaa_dir = Path(data_dir, topoaa_dir)
@@ -815,32 +835,34 @@ def copy_molecules_to_data_dir(
     rel_data_topoaa_dir = Path(data_dir.name, topoaa_dir)
     original_mol_dir = Path(data_dir, "original_molecules")
 
+    # Init new molecule holder to be filled with relative paths
     new_molecules: list[Path] = []
+    # Loop over input molecules
     for molecule in copy(topoaa_params["molecules"]):
         check_if_path_exists(molecule)
-
         mol_name = Path(molecule).name
-
-        if preprocess:  # preprocess PDB files
-            top_fname = topoaa_params.get("ligand_top_fname", False)
-            new_residues = read_additional_residues(top_fname) if top_fname else None
-
-            new_pdbs = process_pdbs(molecule, user_supported_residues=new_residues)
-
-            # copy the original molecule
+        # preprocess PDB files
+        if preprocess:
+            # copy the un-processed molecule (for later checks)
             original_mol_dir.mkdir(parents=True, exist_ok=True)
             original_mol = Path(original_mol_dir, mol_name)
             shutil.copy(molecule, original_mol)
-
+            # Gather potential user-provided topology file
+            top_fname = topoaa_params.get("ligand_top_fname", False)
+            new_residues = read_additional_residues(top_fname) if top_fname else None
+            # Do the pre-processing of file
+            new_pdbs = process_pdbs(molecule, user_supported_residues=new_residues)
             # write the new processed molecule
             new_pdb = os.linesep.join(new_pdbs[0])
             Path(data_topoaa_dir, mol_name).write_text(new_pdb)
-
+        # Do not preprocess
         else:
+            # Create a copy of input molecules into `data/0_firstmodule`
             shutil.copy(molecule, Path(data_topoaa_dir, mol_name))
-
-        new_molecules.append(Path(rel_data_topoaa_dir, mol_name))
-
+        # Create relative path of the molecule
+        data_dir_molecule_relpath = Path(rel_data_topoaa_dir, mol_name)
+        new_molecules.append(data_dir_molecule_relpath)
+    # Modify molecules parameters to point relative path of copied files
     topoaa_params["molecules"] = copy(new_molecules)
 
 
@@ -984,7 +1006,7 @@ def get_expandable_parameters(
     # the topoaa module is an exception because it has subdictionaries
     # for the `mol` parameter. Instead of defining a general recursive
     # function, I decided to add a simple if/else exception.
-    # no other module should have subdictionaries has parameters
+    # no other module should have subdictionaries as parameters
     if get_module_name(module_name) == "topoaa":
         ap: set[str] = set()  # allowed_parameters
         ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
@@ -1053,7 +1075,10 @@ def populate_topology_molecule_params(topoaa: ParamMap) -> None:
     return
 
 
-def populate_mol_parameters(modules_params: ParamMap) -> None:
+def populate_mol_parameters(
+        modules_params: ParamMap,
+        topology_params: ParamMap,
+        ) -> None:
     """
     Populate modules subdictionaries with the needed molecule `mol_` parameters.
 
@@ -1079,7 +1104,7 @@ def populate_mol_parameters(modules_params: ParamMap) -> None:
         Alter the dictionary in place.
     """
     # the starting number of the `mol_` parameters is 1 by CNS definition.
-    num_mols = range(1, len(modules_params["topoaa.1"]["molecules"]) + 1)
+    num_mols = range(1, len(topology_params["molecules"]) + 1)
     for module_name, _ in modules_params.items():
         # read the modules default parameters
         defaults = _read_defaults(module_name)

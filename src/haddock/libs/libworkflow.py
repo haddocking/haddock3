@@ -17,18 +17,18 @@ from haddock.libs.libutil import recursive_dict_update
 from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
-)
+    )
 
 
 class WorkflowManager:
     """Read and execute workflows."""
 
     def __init__(
-        self,
-        workflow_params: ModuleParams,
-        start: Optional[int] = 0,
-        **other_params: Any,
-    ) -> None:
+            self,
+            workflow_params: ModuleParams,
+            start: Optional[int] = 0,
+            **other_params: Any,
+            ) -> None:
         self.start = 0 if start is None else start
         self.recipe = Workflow(workflow_params, start=0, **other_params)
         # terminate is used to synchronize the `clean` option with the
@@ -149,8 +149,13 @@ class Step:
 
         # Import the module given by the mode or default
         module_name = ".".join(
-            ["haddock", "modules", modules_category[self.module_name], self.module_name]
-        )
+            [
+                "haddock",
+                "modules",
+                modules_category[self.module_name],
+                self.module_name
+                ]
+            )
         module_lib = importlib.import_module(module_name)
         self.module = module_lib.HaddockModule(order=self.order, path=self.working_path)
 

@@ -1342,7 +1342,7 @@ def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
     max_n_atoms = max(coord_keys_lengths)
     perc = (n_atoms / max_n_atoms) * 100
     if perc == 100.0:
-        log.info(f"All the models share the same atoms (chains {list(filter_resdic.keys())}).")
+        log.info(f"All the models share the same atoms.")
     elif perc > atom_similarity and perc < 100.0:
         # if it's between 0.9 and 1, it's likely that the models share the same atoms
         # but still the user may want to see a warning

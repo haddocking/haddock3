@@ -234,6 +234,7 @@ class HaddockModule(BaseHaddockModule):
             for k in self.params["ligand_chains"]
             }
 
+        log.info(f"Check common atoms for receptor (chain {list(res_resdic_rec.keys())})")
         n_atoms_rec, common_keys_rec = check_common_atoms(
             models,
             res_resdic_rec,
@@ -241,6 +242,7 @@ class HaddockModule(BaseHaddockModule):
             self.params["atom_similarity"]
             )
         
+        log.info(f"Check common atoms for ligand (chains {list(res_resdic_lig.keys())})")
         n_atoms_lig, common_keys_lig = check_common_atoms(
             models,
             res_resdic_lig,

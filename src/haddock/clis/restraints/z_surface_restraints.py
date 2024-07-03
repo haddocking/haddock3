@@ -71,7 +71,7 @@ def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
     z_surf_restraints_subcommand.add_argument(
         "--x-size",
         "-x",
-        help="Size of the plan in X dimension",
+        help="Size of the plan in X dimension (A)",
         required=False,
         default=200,
         type=float,

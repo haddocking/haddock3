@@ -63,7 +63,7 @@ def add_z_surf_restraints_arguments(z_surf_restraints_subcommand):
     z_surf_restraints_subcommand.add_argument(
         "--spacing", "-s",
         type=float,
-        help="Spacing between two beads",
+        help="Spacing between two beads (A)",
         required=False,
         default=40,
         )

@@ -203,7 +203,7 @@ class CNSJob:
             out, error = p.communicate(input=self.input_file.encode())
             p.kill()
 
-        elif isinstance(self.input_file, Path) and isinstance(self.output_file, Path):
+        elif isinstance(self.input_file, Path) and self.output_file is not None:
             with open(self.input_file) as inp, open(self.output_file, "w+") as outf:
                 p = subprocess.Popen(
                     self.cns_exec,

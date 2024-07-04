@@ -629,7 +629,7 @@ def shape_bead(
     return bead
 
 
-def _get_ideal_restraint_dist(spacing: int) -> float:
+def _get_ideal_restraint_dist(spacing: float) -> float:
     """Computes ideal restraint distance based on spacing.
 
     Basically, want to return (spacing / 2) - 2
@@ -736,7 +736,7 @@ if __name__ == "__main__":
         spacing=args['spacing'],
         x_size=args['x_size'],
         y_size=args['y_size'],
-        z_extermas_padding=args['z_padding'],
+        z_padding=args['z_padding'],
         log_level=args["log_level"],
         )
     logging.info(restraints_fpath)

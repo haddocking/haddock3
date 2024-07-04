@@ -166,7 +166,9 @@ def load_selected_resiudes_coords(
                 # Also add chain and atom type
                 selected_chains.append(chain)
                 selected_atoms.append(atname)
-    return selection_coords, selected_chains, selected_atoms
+    set_selected_chains = list(set(selected_chains))
+    set_selected_atoms = list(set(selected_atoms))
+    return selection_coords, set_selected_chains, set_selected_atoms
 
 
 def compute_barycenter(

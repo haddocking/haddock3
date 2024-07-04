@@ -15,17 +15,14 @@ from haddock.clis.restraints.calc_accessibility import (
     calc_accessibility,
     REL_ASA,
     )
-from haddock.clis.restraints.z_surfaces import (
-    shape_bead,
-    step_coords,
-    )
 from haddock.clis.restraints.z_surface_restraints import (
     compute_barycenter,
     get_z_coords,
     load_selected_resiudes_coords,
     load_selections,
+    shape_bead,
+    step_coords,
     )
-
 from haddock.libs.libpdb import (
     slc_serial,
     slc_name,
@@ -213,7 +210,7 @@ def test_compute_barycenter():
 
 def test_load_selected_resiudes_coords(example_pdb_file):
     """Test loading of selected resiudes from pdb file."""
-    select_coords = load_selected_resiudes_coords(
+    select_coords, _chainids, _atnames = load_selected_resiudes_coords(
         example_pdb_file,
         {
             "select_1": [1],

@@ -3,7 +3,7 @@ import pytest
 import random
 import tempfile
 
-from haddock.core.defaults import valid_run_dir_chars
+from haddock.core.defaults import valid_run_dir_chars, MODULE_DEFAULT_YAML
 from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import Generator, Any
 from haddock.gear.validations import (
@@ -31,7 +31,7 @@ def wrong_rundir(valid_rundir: str) -> str:
 def temp_default_yaml() -> Generator[str, Any, Any]:
     """Generate an empty directory with default.yaml."""
     with tempfile.TemporaryDirectory('.') as tempdir:
-        yield tempdir + "default.yaml"
+        yield f"{tempdir}{MODULE_DEFAULT_YAML}" 
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@
 from copy import deepcopy
 from pathlib import Path
 
-from haddock.core.defaults import MODULE_DEFAULT_YAM
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import Any, FilePath, SupportsRunT
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine

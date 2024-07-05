@@ -33,7 +33,8 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-# from haddock.core.typing import FilePath
+from haddock.core.defaults import MODULE_DEFAULT_YAM
+from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
@@ -53,10 +54,9 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     write_clusters,
     write_clustrmsd_file,
     )
-from typing import Union
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAM)
 
 
 class HaddockModule(BaseHaddockModule):

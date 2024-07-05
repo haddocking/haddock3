@@ -12,6 +12,7 @@ from pathlib import Path
 
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 from haddock import FCC_path, log
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
@@ -32,7 +33,7 @@ from haddock.modules.analysis.clustfcc.clustfcc import (
 from haddock.modules.analysis import get_analysis_exec_mode
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):

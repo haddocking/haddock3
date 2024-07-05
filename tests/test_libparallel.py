@@ -6,6 +6,12 @@ import uuid
 
 
 class Task:
+    """Dummy task class to be used in the test.
+
+    This is a simple task that receives an integer and returns the integer + 1.
+
+    **The important part is that the task is a class that implements a `run` method.**
+    """
 
     def __init__(self, input):
         self.input = input
@@ -17,6 +23,12 @@ class Task:
 
 
 class FileTask:
+    """Dummy task class to be used in the test.
+
+    This is a simple task that receives a filename and creates an empty file with that name.
+
+    **The important part is that the task is a class that implements a `run` method.**
+    """
 
     def __init__(self, filename):
         self.input_file = Path(filename)
@@ -27,11 +39,13 @@ class FileTask:
 
 @pytest.fixture
 def worker():
+    """Return a worker with 3 tasks."""
     yield Worker(tasks=[Task(1), Task(2), Task(3)], results=Queue())
 
 
 @pytest.fixture
 def scheduler():
+    """Return a scheduler with 3 tasks."""
     yield Scheduler(
         ncores=1,
         tasks=[
@@ -44,6 +58,7 @@ def scheduler():
 
 @pytest.fixture
 def scheduler_files():
+    """Return a scheduler with 3 tasks that create files."""
 
     file_list = [uuid.uuid4().hex for _ in range(3)]
     yield Scheduler(

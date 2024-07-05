@@ -10,7 +10,7 @@ from haddock.libs.libsubprocess import BaseJob, Job, CNSJob
 
 @pytest.fixture
 def basejob():
-
+    """Create a BaseJob instance."""
     return BaseJob(
         input_=Path("input"),
         output=Path("output"),
@@ -20,6 +20,7 @@ def basejob():
 
 @pytest.fixture
 def job():
+    """Create a Job instance."""
     return Job(
         input_=Path("input"),
         output=Path("output"),
@@ -29,6 +30,10 @@ def job():
 
 @pytest.fixture
 def cnsjob(mocker):
+    """Create a CNSJob instance.
+
+    Here we create a temporary file and set it as the mock CNS executable.
+    """
     with tempfile.NamedTemporaryFile() as f:
         f.file.write(b"")
         f.file.flush()
@@ -45,6 +50,7 @@ def cnsjob(mocker):
 
 
 def test_basejob_run(basejob, mocker):
+    """Test the run method of the BaseJob class."""
     basejob.make_cmd = lambda: None
     basejob.cmd = "some_command"
 

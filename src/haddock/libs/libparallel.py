@@ -187,7 +187,3 @@ class Scheduler:
             worker.terminate()
 
         log.info("The workers terminated in a controlled way")
-
-    def get_results(self) -> list:
-        """Return the results of the tasks."""
-        return self.queue.get()

@@ -177,27 +177,7 @@ end if
 
 {* Read and write random seed in case randremoval=true ===============*}
 
-if ($Data.randremoval eq true) then
-    evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
-    fileexist $fileseed end
-    if ($result eq true) then
-        @@$fileseed (seed=$seed;npart=$npart )
-    else
-        evaluate ($seed = $count*$Saprotocol.iniseed)
-    end if
-    evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-    set display=$fileseed end
-    display module(seed;npart)
-    display define (
-    display currentseed = $seed;
-    display currentpart = $npart;
-    display )
-    display evaluate (&seed=&currentseed)
-    display evaluate (&npart=&currentpart)
-    close $fileseed end
-else
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-end if
+! The seed definition logic is handled at haddock.libs.libcns.prepare_cns_input (July 2024)
 set seed $seed end
 
 
@@ -242,7 +222,7 @@ noe
     averaging  * sum
     potential  * soft
     scale      * 1.0
-    scale ambi $amb_scale 
+    scale ambi $amb_scale
     scale dist $unamb_scale
     scale hbon $hbond_scale
     sqconstant * 1.0
@@ -311,7 +291,7 @@ fix sele = (not all) end
 ! fix the shape
 fix sele = (resn SHA) end
 
-! fix rigid molecules 
+! fix rigid molecules
 evaluate($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     evaluate($nchain1 = $nchain1 + 1)
@@ -328,7 +308,7 @@ do (refy=y) (all)
 do (refz=z) (all)
 
 ! Define harmonic restraints on heavy atoms of molecules
-restraints harmonic 
+restraints harmonic
     exponent = 2
 end
 do (harm = 0)  (all)
@@ -362,7 +342,7 @@ do (harm = 20) (resn DAN and name OO)
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1 and 
+    do (harm = 0)  (attribute store5 = $nchain1 and
                     not ( name CA or name BB or name C or name N or name P or name C# or name C## ))
 end loop nloop1
 
@@ -372,19 +352,19 @@ end loop nloop1
 do (mass =$Saprotocol.mass) (all)
 do (mass=1000) (resn ANI or resn DAN or resn XAN)
 do (fbeta = 0) (all)
-do (fbeta = $Saprotocol.fbeta {1/ps} ) ( all )                
+do (fbeta = $Saprotocol.fbeta {1/ps} ) ( all )
 
 ! heat to 300 K
 for $bath in (100 200 300) loop heat
 
     do (vx=maxwell($bath)) (all)
     do (vy=maxwell($bath)) (all)
-    do (vz=maxwell($bath)) (all)  
+    do (vz=maxwell($bath)) (all)
 
     dynamics cartesian
-        nstep=$refine.heatsteps timest=0.002{ps}       
+        nstep=$refine.heatsteps timest=0.002{ps}
         temperature=$bath  tcoupling = true
-        nprint=50 
+        nprint=50
     end
 
 end loop heat
@@ -402,17 +382,17 @@ do (harm = 1)  (not name h* and not resn ANI and not resn DAN and not resn XAN a
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1) 
+    do (harm = 0)  (attribute store5 = $nchain1)
 end loop nloop1
 do (harm = 20) (resn ANI and name OO)
 do (harm = 20) (resn DAN and name OO)
 
 ! MD refinement
 dynamics cartesian
-   nstep=$refine.steps timest=0.002{ps}      
+   nstep=$refine.steps timest=0.002{ps}
    temperature=$bath  tcoupling = true
-   nprint=50 
-end 
+   nprint=50
+end
 
 do (refx=x) (all)
 do (refy=y) (all)
@@ -426,21 +406,21 @@ do (harm = 1)  (name CA or name BB or name C or name N or name P or name C# or n
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1) 
+    do (harm = 0)  (attribute store5 = $nchain1)
 end loop nloop1
 do (harm = 20) (resn ANI and name OO)
 do (harm = 20) (resn DAN and name OO)
 
 
-! cooling phase 
+! cooling phase
 for $bath in (300 200 100) loop cool
 
     dynamics cartesian
-       nstep=$refine.coolsteps timest=0.002{ps}      
-       temperature=$bath  tcoupling = true                       
-       nprint=50 
+       nstep=$refine.coolsteps timest=0.002{ps}
+       temperature=$bath  tcoupling = true
+       nprint=50
     end
-    
+
 end loop cool
 
 
@@ -456,7 +436,7 @@ end if
 {* ======================= calculate free molecules internal energy *}
 
 igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
                 (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
 end
 
@@ -568,7 +548,7 @@ else
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if
-end if 
+end if
 
 if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns

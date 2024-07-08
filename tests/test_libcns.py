@@ -81,7 +81,7 @@ def pdbfile():
                 file_type=Format.TOPOLOGY,
             ),
         )
-        pdb.seed = 42
+        pdb.seed = 42  # type: ignore
         yield pdb
 
 

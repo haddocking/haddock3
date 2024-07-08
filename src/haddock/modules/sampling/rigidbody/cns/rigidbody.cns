@@ -156,22 +156,7 @@ end
 
 flag include bond angle impr vdw end
 
-if ($Data.randremoval eq true) then
-    evaluate ($npart = 1 + mod($count,$Data.npart))
-    evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-    set display=$fileseed end
-    display module(seed;npart)
-    display define (
-    display currentseed = $seed;
-    display currentpart = $npart;
-    display )
-    display evaluate (&seed=&currentseed)
-    display evaluate (&npart=&currentpart)
-    close $fileseed end
-else
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-end if
+! The seed definition logic is handled at haddock.libs.libcns.prepare_cns_input (July 2024)
 set seed $seed end
 
 do (refx=x) (all)
@@ -516,7 +501,7 @@ end if
 energy end
 
 evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
-evaluate ($eintfree = $eintcplx) 
+evaluate ($eintfree = $eintcplx)
 {* at this stage the two are similar since rigid-body EM only *}
 
 {* =========================== write out structure after rigid body refinement *}

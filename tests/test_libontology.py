@@ -13,7 +13,7 @@ from haddock.libs.libontology import (
     Persistent,
     RMSDFile,
     TopologyFile,
-)
+    )
 
 
 @pytest.fixture

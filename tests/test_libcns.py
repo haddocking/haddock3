@@ -1,9 +1,9 @@
 """Test libcns."""
 
 import os
-from pathlib import Path
-import tempfile
 import random
+import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -11,11 +11,10 @@ from haddock import EmptyPath
 from haddock.libs import libcns
 from haddock.libs.libcns import (
     prepare_cns_input,
-    prepare_multiple_input,
     prepare_expected_pdb,
+    prepare_multiple_input,
 )
-from haddock.libs.libontology import PDBFile, Persistent, Format
-from haddock.core.typing import FilePath
+from haddock.libs.libontology import Format, PDBFile, Persistent
 
 
 @pytest.mark.parametrize(

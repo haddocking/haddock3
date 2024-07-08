@@ -127,6 +127,7 @@ def test_pdbfile_init_empty():
     assert pdbfile.clt_model_rank is None
     assert math.isnan(pdbfile.len)
     assert pdbfile.unw_energies is None
+    assert pdbfile.seed is None
 
 
 def test_pdbfile_init():

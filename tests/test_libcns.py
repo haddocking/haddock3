@@ -129,6 +129,7 @@ def test_prepare_cns_input(pdbfile):
         native_segid=False,
         default_params_path=None,
         less_io=True,
+        seed=pdbfile.seed,
     )
 
     expected_cns_input = f"""
@@ -171,7 +172,6 @@ eval ($input_pdb_filename_1="pdb_1")
 coor @@pdb_2
 eval ($input_pdb_filename_2="pdb_2")
 eval ($ncomponents=1)
-eval ($seed=726)
 """
 
     assert observed_input == expected_input

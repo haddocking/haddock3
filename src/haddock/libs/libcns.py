@@ -1,4 +1,5 @@
 """CNS scripts util functions."""
+
 import itertools
 import math
 from functools import partial
@@ -19,15 +20,17 @@ RND = RandomNumberGenerator()
 
 
 def generate_default_header(
-        path: Optional[FilePath] = None
-        ) -> tuple[str, str, str, str, str, str]:
+    path: Optional[FilePath] = None,
+) -> tuple[str, str, str, str, str, str]:
     """Generate CNS default header."""
     if path is not None:
         axis = load_axis(**cns_paths.get_axis(path))
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
         tensor = load_tensor(**cns_paths.get_tensors(path))
-        trans_vec = load_trans_vectors(**cns_paths.get_translation_vectors(path))  # noqa: E501
+        trans_vec = load_trans_vectors(
+            **cns_paths.get_translation_vectors(path)
+        )  # noqa: E501
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
@@ -45,7 +48,7 @@ def generate_default_header(
         scatter,
         axis,
         water_box,
-        )
+    )
 
 
 def _is_nan(x: Any) -> bool:
@@ -82,7 +85,7 @@ def filter_empty_vars(v: Any) -> bool:
         (lambda x: isinstance(x, (EmptyPath, Path)), true),
         (lambda x: type(x) in (int, float), true),
         (lambda x: x is None, false),
-        )
+    )
 
     for detect, give in cases:
         if detect(v):
@@ -94,9 +97,9 @@ def filter_empty_vars(v: Any) -> bool:
 
 
 def load_workflow_params(
-        param_header: str = f"{linesep}! Parameters{linesep}",
-        **params: Any,
-        ) -> str:
+    param_header: str = f"{linesep}! Parameters{linesep}",
+    **params: Any,
+) -> str:
     """
     Write the values at the header section.
 
@@ -114,9 +117,7 @@ def load_workflow_params(
     str
         The string with the CNS parameters defined.
     """
-    non_empty_parameters = (
-        (k, v) for k, v in params.items() if filter_empty_vars(v)
-        )
+    non_empty_parameters = ((k, v) for k, v in params.items() if filter_empty_vars(v))
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
@@ -126,9 +127,7 @@ def load_workflow_params(
     return param_header
 
 
-def write_eval_line(param: Any,
-                    value: Any,
-                    eval_line: str = "eval (${}={})") -> str:
+def write_eval_line(param: Any, value: Any, eval_line: str = "eval (${}={})") -> str:
     """Write the CNS eval line depending on the type of `value`."""
     eval_line += linesep
 
@@ -159,14 +158,22 @@ def write_eval_line(param: Any,
 def load_link(mol_link: Path) -> str:
     """Add the link header."""
     return load_workflow_params(
-        param_header=f"{linesep}! Link file{linesep}",
-        link_file=mol_link)
+        param_header=f"{linesep}! Link file{linesep}", link_file=mol_link
+    )
 
 
-load_axis = partial(load_workflow_params, param_header=f"{linesep}! Axis{linesep}")  # noqa: E501
-load_tensor = partial(load_workflow_params, param_header=f"{linesep}! Tensors{linesep}")  # noqa: E501
-prepare_output = partial(load_workflow_params, param_header=f"{linesep}! Output structure{linesep}")  # noqa: E501
-load_trans_vectors = partial(load_workflow_params, param_header=f"{linesep}! Translation vectors{linesep}")  # noqa: E501
+load_axis = partial(
+    load_workflow_params, param_header=f"{linesep}! Axis{linesep}"
+)  # noqa: E501
+load_tensor = partial(
+    load_workflow_params, param_header=f"{linesep}! Tensors{linesep}"
+)  # noqa: E501
+prepare_output = partial(
+    load_workflow_params, param_header=f"{linesep}! Output structure{linesep}"
+)  # noqa: E501
+load_trans_vectors = partial(
+    load_workflow_params, param_header=f"{linesep}! Translation vectors{linesep}"
+)  # noqa: E501
 
 load_ambig = partial(write_eval_line, "ambig_fname")
 load_unambig = partial(write_eval_line, "unambig_fname")
@@ -178,20 +185,21 @@ load_tensor_tbl = partial(write_eval_line, "tensor_tbl")
 def load_scatter(scatter_lib: Path) -> str:
     """Add scatter library."""
     return load_workflow_params(
-        param_header=f"{linesep}! Scatter lib{linesep}",
-        scatter_lib=scatter_lib)
+        param_header=f"{linesep}! Scatter lib{linesep}", scatter_lib=scatter_lib
+    )
 
 
 def load_boxtyp20(waterbox_param: Path) -> str:
     """Add boxtyp20 eval line."""
     return load_workflow_params(
-        param_header=f"{linesep}! Water box{linesep}",
-        boxtyp20=waterbox_param)
+        param_header=f"{linesep}! Water box{linesep}", boxtyp20=waterbox_param
+    )
 
 
 # This is used by docking
-def prepare_multiple_input(pdb_input_list: list[FilePath],
-                           psf_input_list: list[FilePath]) -> str:
+def prepare_multiple_input(
+    pdb_input_list: list[FilePath], psf_input_list: list[FilePath]
+) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -202,7 +210,7 @@ def prepare_multiple_input(pdb_input_list: list[FilePath],
     ncount = 1
     for pdb in pdb_input_list:
         input_str += f"coor @@{pdb}{linesep}"
-        input_str += write_eval_line(f'input_pdb_filename_{ncount}', pdb)
+        input_str += write_eval_line(f"input_pdb_filename_{ncount}", pdb)
         ncount += 1
 
     # check how many chains there are across all the PDBs
@@ -211,18 +219,18 @@ def prepare_multiple_input(pdb_input_list: list[FilePath],
         for element in libpdb.identify_chainseg(pdb):
             chain_l.append(element)
     ncomponents = len(set(itertools.chain(*chain_l)))
-    input_str += write_eval_line('ncomponents', ncomponents)
+    input_str += write_eval_line("ncomponents", ncomponents)
 
     seed = RND.randint(100, 999)
-    input_str += write_eval_line('seed', seed)
+    input_str += write_eval_line("seed", seed)
 
     return input_str
 
 
 # This is used by Topology and Scoring
 def prepare_single_input(
-        pdb_input: FilePath,
-        psf_input: Union[None, FilePath, list[FilePathT]] = None) -> str:
+    pdb_input: FilePath, psf_input: Union[None, FilePath, list[FilePathT]] = None
+) -> str:
     """Input of the CNS file.
 
     This section will be written for any recipe even if some CNS variables
@@ -243,7 +251,7 @@ def prepare_single_input(
             input_str += f"end{linesep}"
 
     # $file variable is still used by some CNS recipes, need refactoring!
-    input_str += write_eval_line('file', pdb_input)
+    input_str += write_eval_line("file", pdb_input)
     segids, chains = libpdb.identify_chainseg(pdb_input)
     chainsegs = sorted(list(set(segids) | set(chains)))
 
@@ -254,22 +262,23 @@ def prepare_single_input(
         input_str += write_eval_line(f"prot_segid_{i}", segid)
 
     seed = RND.randint(100, 99999)
-    input_str += write_eval_line('seed', seed)
+    input_str += write_eval_line("seed", seed)
 
     return input_str
 
 
 def prepare_cns_input(
-        model_number: int,
-        input_element: Union[PDBFile, list[PDBFile]],
-        step_path: FilePath,
-        recipe_str: str,
-        defaults: Any,
-        identifier: str,
-        ambig_fname: FilePath = "",
-        native_segid: bool = False,
-        default_params_path: Optional[Path] = None,
-        ) -> Path:
+    model_number: int,
+    input_element: Union[PDBFile, list[PDBFile]],
+    step_path: FilePath,
+    recipe_str: str,
+    defaults: Any,
+    identifier: str,
+    ambig_fname: FilePath = "",
+    native_segid: bool = False,
+    default_params_path: Optional[Path] = None,
+    less_io: Optional[bool] = True,
+) -> Union[Path, str]:
     """
     Generate the .inp file needed by the CNS engine.
 
@@ -282,13 +291,10 @@ def prepare_cns_input(
     """
     # read the default parameters
     default_params = load_workflow_params(**defaults)
-    default_params += write_eval_line('ambig_fname', ambig_fname)
+    default_params += write_eval_line("ambig_fname", ambig_fname)
 
     # write the PDBs
-    pdb_list = [
-        pdb.rel_path
-        for pdb in transform_to_list(input_element)
-        ]
+    pdb_list = [pdb.rel_path for pdb in transform_to_list(input_element)]
 
     # write the PSFs
     psf_list: list[Path] = []
@@ -317,7 +323,7 @@ def prepare_cns_input(
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
 
     output = f"{linesep}! Output structure{linesep}"
-    output += write_eval_line('output_pdb_filename', output_pdb_filename)
+    output += write_eval_line("output_pdb_filename", output_pdb_filename)
 
     # prepare chain/seg IDs
     segid_str = ""
@@ -326,8 +332,7 @@ def prepare_cns_input(
         if isinstance(input_element, (list, tuple)):
             for pdb in input_element:
 
-                segids, chains = \
-                    libpdb.identify_chainseg(pdb.rel_path, sort=False)
+                segids, chains = libpdb.identify_chainseg(pdb.rel_path, sort=False)
 
                 chainsegs = sorted(list(set(segids) | set(chains)))
                 # check if any of chainsegs is already in chainid_list
@@ -335,39 +340,41 @@ def prepare_cns_input(
                     if any(chainseg in chainid_list for chainseg in chainsegs):
                         raise ValueError(
                             f"Chain/seg IDs are not unique for pdbs {input_element}."
-                            )
+                        )
                 chainid_list.extend(chainsegs)
 
             for i, _chainseg in enumerate(chainid_list, start=1):
-                segid_str += write_eval_line(f'prot_segid_{i}', _chainseg)
+                segid_str += write_eval_line(f"prot_segid_{i}", _chainseg)
 
         else:
-            segids, chains = \
-                libpdb.identify_chainseg(input_element.rel_path, sort=False)
+            segids, chains = libpdb.identify_chainseg(
+                input_element.rel_path, sort=False
+            )
 
             chainsegs = sorted(list(set(segids) | set(chains)))
 
             for i, _chainseg in enumerate(chainsegs, start=1):
-                segid_str += write_eval_line(f'prot_segid_{i}', _chainseg)
+                segid_str += write_eval_line(f"prot_segid_{i}", _chainseg)
 
-    output += write_eval_line('count', model_number)
+    output += write_eval_line("count", model_number)
 
-    inp = (
-        default_params
-        + input_str
-        + output
-        + segid_str
-        + recipe_str
-        )
+    inp = default_params + input_str + output + segid_str + recipe_str
 
-    inp_file = Path(f"{identifier}_{model_number}.inp")
-    inp_file.write_text(inp)
-    return inp_file
+    if less_io:
+        return inp
+    else:
+        inp_file = Path(f"{identifier}_{model_number}.inp")
+        inp_file.write_text(inp)
+        return inp_file
 
 
-def prepare_expected_pdb(model_obj: Union[PDBFile, tuple[PDBFile,
-                                                         ...]], model_nb: int,
-                         path: FilePath, identifier: str) -> PDBFile:
+
+def prepare_expected_pdb(
+    model_obj: Union[PDBFile, tuple[PDBFile, ...]],
+    model_nb: int,
+    path: FilePath,
+    identifier: str,
+) -> PDBFile:
     """Prepare a PDBobject."""
     expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
     pdb = PDBFile(expected_pdb_fname, path=path)

@@ -92,6 +92,7 @@
 <span class="sd">This module performs energy minimization and scoring of the models generated in</span>
 <span class="sd">the previous step of the workflow. No restraints are applied during this step.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
@@ -111,10 +112,9 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                 <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">cns_script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">,</span> <span class="s2">&quot;emscoring.cns&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">cns_script</span><span class="o">=</span><span class="n">cns_script</span><span class="p">)</span>
 
@@ -129,29 +129,27 @@
         <span class="n">jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CNSJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">models_to_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span>
-                <span class="n">individualize</span><span class="o">=</span><span class="kc">True</span>
-                <span class="p">)</span>
+            <span class="n">models_to_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span><span class="n">individualize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">model_num</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models_to_score</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">scoring_inp</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
+            <span class="n">scoring_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
                 <span class="n">model_num</span><span class="p">,</span>
                 <span class="n">model</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                 <span class="s2">&quot;emscoring&quot;</span><span class="p">,</span>
-                <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
 
             <span class="n">scoring_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;emscoring_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.out&quot;</span>
 
             <span class="c1"># create the expected PDBobject</span>
-            <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span>
-                <span class="n">model</span><span class="p">,</span> <span class="n">model_num</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;emscoring&quot;</span>
-                <span class="p">)</span>
+            <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_num</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;emscoring&quot;</span><span class="p">)</span>
             <span class="c1"># fill the ori_name field of expected_pdb</span>
             <span class="n">expected_pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
             <span class="n">expected_pdb</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">md5</span>
@@ -159,13 +157,13 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expected_pdb</span><span class="p">)</span>
 
-            <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">scoring_inp</span><span class="p">,</span> <span class="n">scoring_out</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">scoring_input</span><span class="p">,</span> <span class="n">scoring_out</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
 
             <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
         <span class="c1"># Run CNS Jobs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running CNS Jobs n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
         <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;CNS jobs have finished&quot;</span><span class="p">)</span>
@@ -186,7 +184,7 @@
         <span class="n">output_fname</span> <span class="o">=</span> <span class="s2">&quot;emscoring.tsv&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving output to </span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;per_interface_scoring&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;per_interface_scoring&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">per_interface_output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span></div>
@@ -200,7 +198,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 26, 2024.
+      <span class="lastupdated">Last updated on Jul 08, 2024.
       </span></p>
   </div>
 

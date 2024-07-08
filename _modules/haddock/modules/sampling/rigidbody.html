@@ -116,6 +116,7 @@
 <span class="sd">diverse solutions will be obtained and the sampling should be increased to make</span>
 <span class="sd">sure to sample enough the possible interaction space.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
@@ -197,7 +198,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">ambig_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
                 <span class="c1"># prepare cns input</span>
-                <span class="n">inp_file</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
+                <span class="n">rigidbody_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
                     <span class="n">idx</span><span class="p">,</span>
                     <span class="n">combination</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
@@ -207,19 +208,18 @@
                     <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
                     <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
                     <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
 
                 <span class="n">log_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.out&quot;</span>
                 <span class="n">output_pdb_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
 
                 <span class="c1"># Create a model for the expected output</span>
-                <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span>
-                    <span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span>
-                <span class="p">)</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
-                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">inp_file</span><span class="p">,</span> <span class="n">log_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
+                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">rigidbody_input</span><span class="p">,</span> <span class="n">log_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
                 <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
                 <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -255,7 +255,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 26, 2024.
+      <span class="lastupdated">Last updated on Jul 08, 2024.
       </span></p>
   </div>
 

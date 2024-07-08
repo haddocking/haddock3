@@ -87,6 +87,7 @@
              
   <h1>Source code for haddock.modules.refinement.flexref</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Flexible refinement with CNS.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
@@ -107,10 +108,9 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                 <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                 <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">cns_script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">,</span> <span class="s2">&quot;flexref.cns&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">cns_script</span><span class="o">=</span><span class="n">cns_script</span><span class="p">)</span>
 
@@ -148,7 +148,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Too many models (</span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2">) to refine, max_nmodels =&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">max_nmodels</span><span class="si">}</span><span class="s2">. Please reduce the number of models or&quot;</span>
                 <span class="s2">&quot; decrease the sampling_factor.&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="c1"># checking the ambig_fname:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -169,9 +169,9 @@
                 <span class="n">ambig_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
             <span class="n">model_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sampling_factor&#39;</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling_factor&quot;</span><span class="p">]):</span>
                 <span class="c1"># prepare cns input</span>
-                <span class="n">inp_file</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
+                <span class="n">flexref_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
                     <span class="n">idx</span><span class="p">,</span>
                     <span class="n">model</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
@@ -180,14 +180,13 @@
                     <span class="s2">&quot;flexref&quot;</span><span class="p">,</span>
                     <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
                     <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="p">)</span>
+                    <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
 
                 <span class="n">out_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;flexref_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.out&quot;</span>
 
                 <span class="c1"># create the expected PDBobject</span>
-                <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span>
-                    <span class="n">model</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;flexref&quot;</span>
-                    <span class="p">)</span>
+                <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;flexref&quot;</span><span class="p">)</span>
                 <span class="n">expected_pdb</span><span class="o">.</span><span class="n">restr_fname</span> <span class="o">=</span> <span class="n">ambig_fname</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">expected_pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
@@ -195,7 +194,7 @@
                     <span class="n">expected_pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expected_pdb</span><span class="p">)</span>
 
-                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">inp_file</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
+                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">flexref_input</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
 
                 <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
@@ -203,7 +202,7 @@
 
         <span class="c1"># Run CNS Jobs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running CNS Jobs n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
         <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
         <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;CNS jobs have finished&quot;</span><span class="p">)</span>
@@ -232,7 +231,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 26, 2024.
+      <span class="lastupdated">Last updated on Jul 08, 2024.
       </span></p>
   </div>
 

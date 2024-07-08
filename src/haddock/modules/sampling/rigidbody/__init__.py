@@ -88,7 +88,7 @@ class HaddockModule(BaseCNSModule):
 
         # get all the different ambig files
         prev_ambig_fnames = [None for model in range(self.params["sampling"])]
-        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
         # if no files are found, we will stick to self.params["ambig_fname"]
         if diff_ambig_fnames:
             n_diffs = len(diff_ambig_fnames)
@@ -131,8 +131,8 @@ class HaddockModule(BaseCNSModule):
 
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
-                model.topology = [e.topology for e in combination]
-                model.set_seed(seed)
+                model.topology = [e.topology for e in combination]  # type: ignore
+                model.seed = seed
 
                 self.output_models.append(model)
 

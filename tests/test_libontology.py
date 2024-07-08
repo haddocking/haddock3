@@ -13,7 +13,7 @@ from haddock.libs.libontology import (
     Persistent,
     RMSDFile,
     TopologyFile,
-    )
+)
 
 
 @pytest.fixture
@@ -61,7 +61,8 @@ def module_io_with_persistent():
     yield m
 
     for f in file_list:
-        Path(f.name).unlink()
+        if Path(f.name).exists():
+            Path(f.name).unlink()
 
 
 @pytest.fixture

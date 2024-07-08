@@ -12,6 +12,7 @@ from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.scoring import CNSScoringModule
+from haddock.libs.libontology import PDBFile
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -55,6 +56,7 @@ class HaddockModule(CNSScoringModule):
                 "mdscoring",
                 native_segid=True,
                 less_io=self.params["less_io"],
+                seed=model.seed if isinstance(model, PDBFile) else None,
             )
 
             scoring_out = f"mdscoring_{model_num}.out"

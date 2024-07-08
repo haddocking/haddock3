@@ -109,6 +109,8 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname = ambig_fnames[idx - 1]
                 else:
                     ambig_fname = self.params["ambig_fname"]
+
+                seed = self.params["iniseed"] * idx
                 # prepare cns input
                 rigidbody_input = prepare_cns_input(
                     idx,
@@ -121,6 +123,7 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                     native_segid=True,
                     less_io=self.params["less_io"],
+                    seed=seed,
                 )
 
                 log_fname = f"rigidbody_{idx}.out"
@@ -129,6 +132,8 @@ class HaddockModule(BaseCNSModule):
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
                 model.topology = [e.topology for e in combination]
+                model.set_seed(seed)
+
                 self.output_models.append(model)
 
                 job = CNSJob(rigidbody_input, log_fname, envvars=self.envvars)

@@ -23,7 +23,6 @@ end if
 !==================================================================!
 
 evaluate ($saprotocol.randorien=$randorien)
-evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.tadhigh_t=$temp_high)
 evaluate ($saprotocol.t1_init=$temp_cool1_init)
 evaluate ($saprotocol.t2_init=$temp_cool2_init)

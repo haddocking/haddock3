@@ -21,7 +21,6 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.timestep=$timestep)
 evaluate ($saprotocol.fbeta=100)
 evaluate ($saprotocol.mass=100)

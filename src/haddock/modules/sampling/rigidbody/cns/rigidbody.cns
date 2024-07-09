@@ -27,7 +27,6 @@ evaluate ($saprotocol.crossdock=$crossdock)
 evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.rigidtrans=$rigidtrans)
 evaluate ($saprotocol.ntrials=$ntrials)
-evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.inter_rigid=$inter_rigid)
 evaluate ($saprotocol.rotate180=$rotate180)
 

@@ -21,8 +21,6 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.iniseed=$iniseed)
-
 evaluate ($ini_count    =1)
 
 evaluate ($data.ncomponents=$ncomponents)

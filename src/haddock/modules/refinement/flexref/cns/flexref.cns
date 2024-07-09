@@ -225,21 +225,14 @@ if ($SaProtocol.randorien eq true) then
     @MODULE:random_rotations.cns
 end if
 
-{* Read and write random seed in case randremoval=true ===============*}
-
-! The seed definition logic is handled at haddock.libs.libcns.prepare_cns_input (July 2024)
-set seed $seed end
-
-
 {* Read the distance restraints ================================ *}
+set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
 if ($Data.randremoval eq true) then
     noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 if ( $log_level = "verbose" ) then
@@ -531,22 +524,26 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.randremoval eq true) then
-        evaluate ($violations_test_noe=0)
-        evaluate ($rms_test_noe=0.0)
-        display Print out of cross-validated violations and rms not
-        display possible in combination with symmetry restraints
-        display CV values set therefore to 0
-    end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
+    ! random removal of restaints
+    if ($Data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
     noe
         scale dist $Data.unamb_cool3
         scale ambi $Data.amb_cool3
         scale hbon $Data.hbond_cool3
     end
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
 else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)

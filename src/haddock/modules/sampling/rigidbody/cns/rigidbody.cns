@@ -122,11 +122,6 @@ while ($nmol1 <=$data.ncomponents) loop mol1
     evaluate ($nmol1 = $nmol1 + 1)
 end loop mol1
 
-
-! Restraints
-evaluate ($npart = $npart)
-
-
 ! Unsupported restraints
 evaluate ($Data.flags.cdih = false)
 evaluate ($Data.flags.em   = false)
@@ -156,9 +151,6 @@ end
 
 flag include bond angle impr vdw end
 
-! The seed definition logic is handled at haddock.libs.libcns.prepare_cns_input (July 2024)
-set seed $seed end
-
 do (refx=x) (all)
 do (refy=y) (all)
 do (refz=z) (all)
@@ -168,17 +160,22 @@ set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_noes.cns  ! rigidbody version with only distance restraints support
 
+{* random removal of restaints ================================== *}
+if ($Data.randremoval eq true) then
+    noe cv $npart ? end
+end if
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
 {* set distance restraint energy flag =========================== *}
 if ($Data.flags.noe  =  TRUE) then
      flags include noe end
-end if
-
-{* random removal of restaints ================================== *}
-if ($Data.randremoval eq true) then
-    set message=on echo=on end
-    noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 {* ============================================================== *}
@@ -530,28 +527,21 @@ if ($Data.flags.sym eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read again the NOE data, needed to remove the symmetry restraints
     inline @@MODULE:read_noes.cns
-    if ( $log_level = "verbose" ) then
-        set message=normal echo=on end
-    elseif ( $log_level = "normal" ) then
-        set message=normal echo=off end
-    else
-        set message=off echo=off end
+    !random removal of restaints
+    if ($Data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
     end if
 else
-    if ($Data.randremoval eq true) then
-        set message=on echo=on end
-        noe cv $ncvbest ? end
-    end if
-    if ( $log_level = "verbose" ) then
-        set message=normal echo=on end
-    elseif ( $log_level = "normal" ) then
-        set message=normal echo=off end
-    else
-        set message=off echo=off end
-    end if
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)

@@ -152,22 +152,14 @@ else
 end if
 
 
-{* Read and write random seed in case randremoval=true ===============*}
-
-! The seed definition logic is handled at haddock.libs.libcns.prepare_cns_input (July 2024)
-set seed $seed end
-
-
 {* Read the distance restraints ================================ *}
+set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
 if ($data.randremoval eq true) then
-    set message=on echo=on end
     noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 if ( $log_level = "verbose" ) then
@@ -412,14 +404,25 @@ if ($data.flags.sym eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
+    !random removal of restaints
+    if ($data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
     noe
         scale dist $data.unamb_scale
         scale ambi $data.amb_scale
         scale hbon $data.hbond_scale
     end
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
 else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)

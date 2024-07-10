@@ -17,7 +17,7 @@ def alascan_module():
     """Return a default alascan module."""
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         alascan = AlascanModule(
-            order=0, path=".", initial_params=DEFAULT_ALASCAN_CONFIG
+            order=1, path=".", initial_params=DEFAULT_ALASCAN_CONFIG
         )
         alascan.params["int_cutoff"] = 3.5
         yield alascan

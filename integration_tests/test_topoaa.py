@@ -1,25 +1,37 @@
 import tempfile
-from pathlib import Path
-
 import pytest
+from pathlib import Path
+from shutil import copyfile
 
-from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
-from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
+from haddock.core.defaults import DATA_DIRNAME
+from haddock.modules.topology.topoaa import (
+    DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG,
+    HaddockModule as TopoaaModule,
+    )
 
 from . import CNS_EXEC, DATA_DIR, has_cns
 
 
 @pytest.fixture
-def topoaa_module():
-    with tempfile.TemporaryDirectory() as tmpdir:
-        topoaa = TopoaaModule(
-            order=0, path=tmpdir, initial_params=DEFAULT_TOPOAA_CONFIG
-        )
-        topoaa.__init__(path=tmpdir, order=0)
-        topoaa.params["molecules"] = [
-            Path(DATA_DIR, "docking-protein-protein/data/e2aP_1F3G.pdb"),
-            Path(DATA_DIR, "docking-protein-protein/data/hpr_ensemble.pdb"),
+def molecules():
+    return [
+        Path(DATA_DIR, "docking-protein-protein/data/e2aP_1F3G.pdb"),
+        Path(DATA_DIR, "docking-protein-protein/data/hpr_ensemble.pdb"),
         ]
+
+
+@pytest.fixture
+def topoaa_module(molecules):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        mol_copies = [
+            copyfile(mol, Path(tmpdir, DATA_DIRNAME, "0_topoaa", mol.name))
+            for mol in molecules
+            ]
+        topoaa = TopoaaModule(
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
+        )
+        topoaa.__init__(path=Path(tmpdir), order=0)
+        topoaa.params["molecules"] = molecules
         topoaa.params["mol1"] = {"prot_segid": "A"}
         topoaa.params["mol2"] = {"prot_segid": "B"}
 

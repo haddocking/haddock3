@@ -75,7 +75,6 @@ def test_load_single_pdb(molecule: Molecule, protein: Path):
         # Re-initialize with a actual protein
         molecule.__init__(tmp_protein)
         assert isinstance(molecule.pdb_files, dict)
-        print(molecule.pdb_files)
         for pdbfile in molecule.pdb_files.values():
             assert isinstance(pdbfile, PDBFile)
         assert len(molecule) == 1

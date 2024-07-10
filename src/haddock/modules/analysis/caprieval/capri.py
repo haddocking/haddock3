@@ -9,7 +9,6 @@ from pathlib import Path
 
 
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
-from typing import Any
 
 import numpy as np
 from pdbtools import pdb_segxchain
@@ -18,6 +17,7 @@ from scipy.spatial.distance import cdist
 from haddock import log
 from haddock.core.defaults import CNS_MODULES
 from haddock.core.typing import (
+    Any,
     AtomsDict,
     FilePath,
     Iterable,

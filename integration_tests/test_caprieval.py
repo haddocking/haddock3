@@ -54,10 +54,8 @@ class MockPreviousIO:
         return None
 
 
-def test_caprieval_default(caprieval_module, model_list):
-
-    caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
-    caprieval_module.run()
+def evaluate_caprieval_execution(module: CaprievalModule, model_list):
+    """Helper function to check if `caprieval` executed properly."""
 
     # Check if the files were written
     expected_files = [
@@ -69,16 +67,16 @@ def test_caprieval_default(caprieval_module, model_list):
     ]
 
     for file in expected_files:
-        assert Path(caprieval_module.path, file).exists(), f"{file} does not exist"
-        assert Path(caprieval_module.path, file).stat().st_size > 0, f"{file} is empty"
+        assert Path(module.path, file).exists(), f"{file} does not exist"
+        assert Path(module.path, file).stat().st_size > 0, f"{file} is empty"
 
     # Check if the `output_models` are the same as the `input_models`
     #  they will change locations, so check the filenames
-    assert caprieval_module.output_models[0].file_name == model_list[0].file_name
-    assert caprieval_module.output_models[1].file_name == model_list[1].file_name
+    assert module.output_models[0].file_name == model_list[0].file_name
+    assert module.output_models[1].file_name == model_list[1].file_name
 
     # The models do not hold the capri metrics, so check the output files to see if they were written
-    with open(Path(caprieval_module.path, "capri_ss.tsv")) as f:
+    with open(Path(module.path, "capri_ss.tsv")) as f:
         lines = f.readlines()
 
     # Check the values
@@ -171,3 +169,20 @@ def test_caprieval_default(caprieval_module, model_list):
                     ), f"Value mismatch for {key}"
             else:
                 assert v1 == v2, f"Value mismatch for {key}"
+
+
+def test_caprieval_default(caprieval_module, model_list):
+
+    caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
+    caprieval_module.run()
+
+    evaluate_caprieval_execution(caprieval_module, model_list)
+
+
+def test_caprieval_less_io(caprieval_module, model_list):
+    caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
+    caprieval_module.params["less_io"] = True
+
+    caprieval_module.run()
+
+    evaluate_caprieval_execution(caprieval_module, model_list)

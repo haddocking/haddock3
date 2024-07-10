@@ -166,7 +166,7 @@ class ModuleIO:
             output_handler.write(jsonpickle.encode(to_save))  # type: ignore
         return fpath
 
-    def load(self, filename: FilePath) -> None:
+    def load(self, filename: Path) -> None:
         """Load the content of a given IO filename."""
         if filename.is_file():
             with open(filename) as json_file:

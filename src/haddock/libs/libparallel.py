@@ -58,6 +58,17 @@ def get_index_list(nmodels, ncores):
     return index_list
 
 
+class GenericTask:
+    """Generic task to be executed."""
+
+    def __init__(self, function, args):
+        self.function = function
+        self.args = args
+
+    def run(self):
+        return self.function(*self.args)
+
+
 class Worker(Process):
     """Work on tasks."""
 

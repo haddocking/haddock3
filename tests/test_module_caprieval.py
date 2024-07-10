@@ -4,6 +4,7 @@ import os
 import random
 import shutil
 import tempfile
+import uuid
 from pathlib import Path
 
 import numpy as np
@@ -14,8 +15,10 @@ from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     calc_stats,
     capri_cluster_analysis,
+    extract_data_from_capri_class,
     get_previous_cns_step,
     load_contacts,
+    rank_according_to_score,
     rearrange_ss_capri_output,
     )
 
@@ -113,7 +116,7 @@ def protdna_caprimodule(protdna_input_list, params):
     reference = protdna_input_list[0].rel_path
     model = protdna_input_list[1].rel_path
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -131,7 +134,7 @@ def protlig_caprimodule(protlig_input_list, params):
     reference = protlig_input_list[0].rel_path
     model = protlig_input_list[1].rel_path
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -149,7 +152,7 @@ def protprot_caprimodule(protprot_input_list, params):
     reference = protprot_input_list[0].rel_path
     model = protprot_input_list[1]
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -167,7 +170,7 @@ def protprot_allatm_caprimodule(protprot_input_list, params_all):
     reference = protprot_input_list[0].rel_path
     model = protprot_input_list[1]
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -185,7 +188,7 @@ def protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
     reference = protprot_1bkd_input_list[0].rel_path
     model = protprot_1bkd_input_list[1]
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -197,25 +200,24 @@ def protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
     remove_aln_files(capri)
 
 
-@pytest.fixture
-def protprot_caprimodule_parallel(protprot_input_list):
-    """Protein-Protein CAPRI module."""
-    reference = protprot_input_list[0].rel_path
-    model = protprot_input_list[1].rel_path
-    capri = CAPRI(
-        reference=reference,
-        model=model,
-        receptor_chain="A",
-        ligand_chains=["B"],
-        aln_method="sequence",
-        path=golden_data,
-        identificator=0,
-        core_model_idx=0,
-    )
-
-    yield capri
-
-    remove_aln_files(capri)
+# Q: Not used anywhere?
+# @pytest.fixture
+# def protprot_caprimodule_parallel(protprot_input_list):
+#     """Protein-Protein CAPRI module."""
+#     reference = protprot_input_list[0].rel_path
+#     model = protprot_input_list[1].rel_path
+#     capri = CAPRI(
+#         reference=reference,
+#         model=model,
+#         receptor_chain="A",
+#         ligand_chains=["B"],
+#         aln_method="sequence",
+#         path=golden_data,
+#         identificator=0,
+#         core_model_idx=0,
+#     )
+#     yield capri
+#     remove_aln_files(capri)
 
 
 def test_protprot_irmsd(protprot_caprimodule):
@@ -786,7 +788,7 @@ def protprot_onechain_ref_caprimodule(
     reference = protprot_onechain_list[0].rel_path
     model = protprot_input_list[1].rel_path
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -806,7 +808,7 @@ def protprot_onechain_mod_caprimodule(
     reference = protprot_input_list[0].rel_path
     model = protprot_onechain_list[0].rel_path
     capri = CAPRI(
-        identificator=42,
+        identificator=str(42),
         reference=reference,
         model=model,
         path=golden_data,
@@ -930,3 +932,83 @@ def test_capri_run(mocker):
     assert capri.lrmsd == pytest.approx(rand_lrmsd)
     assert capri.ilrmsd == pytest.approx(rand_ilrmsd)
     assert capri.dockq == pytest.approx(rand_dockq)
+
+
+def test_rank_according_to_score():
+    data = {
+        1: {
+            "score": 3.0,
+            "caprieval_rank": 99999,
+        },
+        2: {
+            "score": 2.0,
+            "caprieval_rank": 99999,
+        },
+        3: {
+            "score": 1.0,
+            "caprieval_rank": 99999,
+        },
+    }
+
+    ranked_data = rank_according_to_score(
+        data=data, sort_key="score", sort_ascending=True
+    )
+
+    assert ranked_data[1]["caprieval_rank"] == 1
+    assert ranked_data[2]["caprieval_rank"] == 2
+    assert ranked_data[3]["caprieval_rank"] == 3
+
+
+def test_extract_data_from_capri_class(mocker):
+
+    mocker.patch(
+        "haddock.modules.analysis.caprieval.capri.write_nested_dic_to_file",
+        return_value=None,
+    )
+    mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
+
+    c = CAPRI(
+        path=Path("."),
+        identificator="42",
+        model=Path("anything"),
+        reference=Path("anything"),
+        params={
+            "allatoms": True,
+            "receptor_chain": "X",
+            "ligand_chains": ["X"],
+        },
+    )
+
+    # Create random entries
+    random_model = PDBFile(file_name=str(uuid.uuid4()), score=42)
+    random_md5 = str(uuid.uuid4())
+    random_score = random.random()
+    random_irmsd = random.random()
+    random_fnat = random.random()
+    random_lrmsd = random.random()
+    random_ilrmsd = random.random()
+    random_dockq = random.random()
+
+    c.model = random_model
+    c.md5 = random_md5
+    c.score = random_score
+    c.irmsd = random_irmsd
+    c.fnat = random_fnat
+    c.lrmsd = random_lrmsd
+    c.ilrmsd = random_ilrmsd
+    c.dockq = random_dockq
+
+    observed_data = extract_data_from_capri_class(
+        capri_objects=[c], sort_key="score", sort_ascending=True, output_fname=Path("")
+    )
+
+    assert observed_data is not None
+
+    assert observed_data[1]["model"] == random_model
+    assert observed_data[1]["md5"] == random_md5
+    assert observed_data[1]["score"] == random_score
+    assert observed_data[1]["irmsd"] == random_irmsd
+    assert observed_data[1]["fnat"] == random_fnat
+    assert observed_data[1]["lrmsd"] == random_lrmsd
+    assert observed_data[1]["ilrmsd"] == random_ilrmsd
+    assert observed_data[1]["dockq"] == random_dockq

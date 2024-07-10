@@ -1,14 +1,14 @@
-import pytest
-import tempfile
-from haddock.modules.analysis.caprieval import HaddockModule as CaprievalModule
-from haddock.modules.analysis.caprieval import (
-    DEFAULT_CONFIG as DEFAULT_CAPRIEVAL_CONFIG,
-)
-from haddock.libs.libontology import PDBFile
-from pathlib import Path
 import math
-
 import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
+
+from haddock.libs.libontology import PDBFile
+from haddock.modules.analysis.caprieval import \
+    DEFAULT_CONFIG as DEFAULT_CAPRIEVAL_CONFIG
+from haddock.modules.analysis.caprieval import HaddockModule as CaprievalModule
 from tests import golden_data
 
 

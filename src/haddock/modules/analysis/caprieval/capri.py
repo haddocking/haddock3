@@ -1,16 +1,19 @@
 """CAPRI module."""
 
+import copy
 import os
 import shutil
 import tempfile
 from itertools import combinations
 from pathlib import Path
 
+
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
+from typing import Any
+
 import numpy as np
 from pdbtools import pdb_segxchain
 from scipy.spatial.distance import cdist
-from typing import Any
 
 from haddock import log
 from haddock.core.defaults import CNS_MODULES
@@ -23,6 +26,7 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
+    Type,
 )
 from haddock.libs.libalign import (
     ALIGNError,
@@ -41,6 +45,7 @@ from haddock.modules import get_module_steps_folders
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
 import json
+
 from haddock.gear.config import load as read_config
 
 
@@ -173,6 +178,7 @@ class CAPRI:
         path: Path,
         reference: PDBPath,
         params: ParamMap,
+        less_io: Optional[bool] = False,
     ) -> None:
         """
         Initialize the class.
@@ -193,8 +199,12 @@ class CAPRI:
         self.reference = reference
         if not isinstance(model, PDBFile):
             self.model = PDBFile(model)
+            self.md5 = ""
+            self.score = float("nan")
         else:
             self.model = model
+            self.md5 = model.md5
+            self.score = model.score
         self.path = path
         self.params = params
         self.irmsd = float("nan")
@@ -210,10 +220,10 @@ class CAPRI:
         self.model2ref_chain_dict = None
         self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
         self.output_clt_fname = Path(f"capri_clt_{identificator}.tsv")
-        # for parallelisation
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
+        self.less_io = less_io
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -486,8 +496,8 @@ class CAPRI:
                 model_contacts = load_contacts(
                     self.model,
                     cutoff,
-                    numbering_dic=self.model2ref_numbering,
-                    model2ref_chain_dict=self.model2ref_chain_dict,
+                    numbering_dic=self.model2ref_numbering,  # type: ignore
+                    model2ref_chain_dict=self.model2ref_chain_dict,  # type: ignore
                 )
             except ALIGNError as alignerror:
                 log.warning(alignerror)
@@ -557,7 +567,7 @@ class CAPRI:
 
         write_dic_to_file(data, output_fname)
 
-    def run(self) -> None:
+    def run(self) -> Union[None, "CAPRI"]:
         """Get the CAPRI metrics."""
         try:
             align_func = get_align(
@@ -601,7 +611,12 @@ class CAPRI:
             log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
 
-        self.make_output()
+        if not self.less_io:
+            self.make_output()
+        else:
+            # The scheduler will use the return of the `run` method as the output of the tasks
+            #  Here to avoid writing a file, return a copy of this instance
+            return copy.deepcopy(self)
 
     def check_chains(self, obs_chains):
         """Check observed chains against the expected ones.
@@ -831,7 +846,40 @@ def rearrange_ss_capri_output(
 
         out_file.unlink()
 
-    # Rank according to the score
+    ranked_data = rank_according_to_score(
+        data, sort_key=sort_key, sort_ascending=sort_ascending
+    )
+
+    data = ranked_data
+
+    if not data:
+        # This means no files have been collected
+        return
+    else:
+        write_nested_dic_to_file(data, output_name)
+
+
+def rank_according_to_score(
+    data: dict[int, ParamDict], sort_key: str, sort_ascending: bool
+) -> dict[int, ParamDict]:
+    """
+    Ranks a dictionary of data based on a specified sort key and sort order,
+    and assigns a rank to each entry based on its 'score' attribute.
+
+    Args:
+        data (dict[int, ParamDict]): Dictionary where each key is an index and each
+                                     value is a ParamDict containing data attributes.
+        sort_key (str): Key by which to sort the data within the ParamDict.
+                        Must correspond to a valid attribute in ParamDict.
+        sort_ascending (bool): If True, sorts the data in ascending order based on
+                               the sort_key; if False, sorts in descending order.
+
+    Returns:
+        dict[int, ParamDict]: A new dictionary where entries are sorted according
+                              to the sort_key and optionally sorted order. Each entry
+                              also includes a 'caprieval_rank' attribute indicating
+                              its rank based on the 'score'.
+    """
     score_rankkey_values = [(k, v["score"]) for k, v in data.items()]
     score_rankkey_values.sort(key=lambda x: x[1])
 
@@ -851,11 +899,63 @@ def rearrange_ss_capri_output(
         _data[i + 1] = data[data_idx]
     data = _data
 
-    if not data:
+    return _data
+
+
+def extract_data_from_capri_class(
+    capri_objects: list[CAPRI],
+    sort_key: str,
+    sort_ascending: bool,
+    output_fname: Path,
+):
+    """
+    Extracts data attributes from a list of CAPRI objects into a structured dictionary,
+    optionally sorts the data based on a specified key, and writes the sorted data to
+    a file.
+
+    Args:
+        capri_objects (list[CAPRI]): List of CAPRI objects containing data attributes
+                                     to be extracted.
+        sort_key (str): Key by which to sort the extracted data. Must correspond to
+                        a valid attribute in the CAPRI object (e.g., 'score', 'irmsd').
+        sort_ascending (bool): If True, sorts the data in ascending order based on
+                               the sort_key; if False, sorts in descending order.
+        output_fname (Path): Path to the output file where the sorted data will be written.
+
+    Returns:
+        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if
+                                        successful, None if no data was processed.
+
+    Raises:
+        (Include any specific exceptions the function may raise)
+    """
+
+    data: dict[int, ParamDict] = {}
+    for i, c in enumerate(capri_objects, start=1):
+        data[i] = {
+            "model": c.model,
+            "md5": c.md5,
+            "caprieval_rank": None,
+            "score": c.score,
+            "irmsd": c.irmsd,
+            "fnat": c.fnat,
+            "lrmsd": c.lrmsd,
+            "ilrmsd": c.ilrmsd,
+            "dockq": c.dockq,
+            "cluster_id": None,
+            "cluster_ranking": None,
+            "model-cluster_ranking": None,
+        }
+
+    ranked_data = rank_according_to_score(
+        data, sort_key=sort_key, sort_ascending=sort_ascending
+    )
+    if not ranked_data:
         # This means no files have been collected
         return
     else:
-        write_nested_dic_to_file(data, output_name)
+        write_nested_dic_to_file(data_dict=ranked_data, output_fname=output_fname)
+        return ranked_data
 
 
 def calc_stats(data: list) -> tuple[float, float]:

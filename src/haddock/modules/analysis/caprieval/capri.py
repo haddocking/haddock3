@@ -907,7 +907,7 @@ def extract_data_from_capri_class(
     sort_key: str,
     sort_ascending: bool,
     output_fname: Path,
-):
+) -> Union[dict[int, ParamDict], None]:
     """
     Extracts data attributes from a list of CAPRI objects into a structured dictionary,
     optionally sorts the data based on a specified key, and writes the sorted data to

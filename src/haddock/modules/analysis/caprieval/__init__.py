@@ -27,21 +27,17 @@ The following files are generated:
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath, Union
-from haddock.modules import BaseHaddockModule, get_module_steps_folders
-from haddock.modules import get_engine
-from haddock.modules.analysis import get_analysis_exec_mode
-
-# from haddock.core.typing import List, PDBFile
 from haddock.libs.libontology import PDBFile
-
+from haddock.libs.libparallel import Scheduler
+from haddock.modules import BaseHaddockModule, get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
-    get_previous_cns_step,
+    dump_weights,
+    extract_data_from_capri_class,
     merge_data,
     rearrange_ss_capri_output,
-    save_scoring_weights,
-    dump_weights,
 )
 
 
@@ -107,6 +103,11 @@ class HaddockModule(BaseHaddockModule):
             )
             reference = best_model_fname
 
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+        Engine = get_engine(exec_mode, self.params)
+
+        less_io = self.params["less_io"] and self.params["mode"] == "local"
+
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
         #  we can handle scenarios in which the models are hetergoneous
@@ -126,28 +127,33 @@ class HaddockModule(BaseHaddockModule):
                     path=Path("."),
                     reference=reference,
                     params=self.params,
+                    less_io=less_io,
                 )
             )
 
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
-
-        Engine = get_engine(exec_mode, self.params)
         engine = Engine(jobs)
         engine.run()
 
-        # very ugly way of loading the capri metrics back into
-        #  the CAPRI object, there's definitively a better way
-        #  of doing this
-        # jobs = merge_data(jobs)
+        if less_io and isinstance(engine, Scheduler):
+            jobs = engine.results
+            extract_data_from_capri_class(
+                capri_objects=jobs,
+                output_fname=Path(".", "capri_ss.tsv"),
+                sort_key=self.params["sortby"],
+                sort_ascending=self.params["sort_ascending"],
+            )
 
-        # Each job created one .tsv, unify them:
-        rearrange_ss_capri_output(
-            output_name="capri_ss.tsv",
-            output_count=len(jobs),
-            sort_key=self.params["sortby"],
-            sort_ascending=self.params["sort_ascending"],
-            path=Path("."),
-        )
+        else:
+            jobs = merge_data(jobs)
+
+            # Each job created one .tsv, unify them:
+            rearrange_ss_capri_output(
+                output_name="capri_ss.tsv",
+                output_count=len(jobs),
+                sort_key=self.params["sortby"],
+                sort_ascending=self.params["sort_ascending"],
+                path=Path("."),
+            )
 
         capri_cluster_analysis(
             capri_list=jobs,

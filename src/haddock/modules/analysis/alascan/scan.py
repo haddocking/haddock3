@@ -156,7 +156,8 @@ def add_delta_to_bfactor(pdb_f, df_scan):
     os.rename(tmp_pdb_f, pdb_f)
     return pdb_f
 
-def get_score_string(pdb_f, run_dir):
+
+def get_score_string(pdb_f: str, run_dir: str) -> list[str]:
     """Get score output from cli_score.main.
 
     Parameters
@@ -169,7 +170,7 @@ def get_score_string(pdb_f, run_dir):
     
     Returns
     -------
-    out : list
+    out : list[str]
         List of strings with the score output.
     """
     f = io.StringIO()
@@ -179,7 +180,10 @@ def get_score_string(pdb_f, run_dir):
     return out
 
 
-def calc_score(pdb_f, run_dir):
+def calc_score(
+        pdb_f: str,
+        run_dir: str,
+        ) -> tuple[float, float, float, float, float]:
     """Calculate the score of a model.
 
     Parameters
@@ -464,12 +468,13 @@ class Scan:
                     native.rel_path,
                     cutoff=self.int_cutoff
                     )
-                    
+
             atoms = get_atoms(native.rel_path)
-            coords, chain_ranges = load_coords(native.rel_path,
-                                               atoms,
-                                               add_resname=True
-                                               )
+            coords, _chain_ranges = load_coords(
+                native.rel_path,
+                atoms,
+                add_resname=True,
+                )
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():
                 key = f"{chain}-{resid}"
@@ -490,10 +495,12 @@ class Scan:
                         c_bsa = n_bsa
                     else:
                         try:
-                            mut_pdb_name = mutate(native.rel_path,
-                                                  chain,
-                                                  res,
-                                                  end_resname)
+                            mut_pdb_name = mutate(
+                                native.rel_path,
+                                chain,
+                                res,
+                                end_resname,
+                                )
                         except KeyError:
                             continue
                         # now we score the mutated model

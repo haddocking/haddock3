@@ -144,6 +144,35 @@ def split_ensemble(
     return pdb_files_path
 
 
+def count_models(pdb_file_path: FilePath) -> int:
+    """Count number of models in a pdb file.
+    
+    Read filepath and return number of models found in it.
+    If none (not an ensemble), 1 is returned.
+
+    Parameters
+    ----------
+    pdb_file_path : FilePath (Union[str, Path])
+        Path to the pdb file to analyse.
+    
+    Returns
+    -------
+    nb_models : int
+        The number of models found in this pdb file.
+    """
+    models_starts: int = 0
+    model_ends: int = 0
+    with open(pdb_file_path, 'r') as filin:
+        for line in filin:
+            if line.startswith("ENDMDL"):
+                model_ends += 1
+            elif line.startswith("MODEL"):
+                models_starts += 1
+    nb_models = max(1, model_ends)
+    assert max(1, models_starts) == nb_models
+    return nb_models
+
+
 def split_by_chain(pdb_file_path: FilePath) -> list[Path]:
     """Split a PDB file into multiple structures for each chain."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()

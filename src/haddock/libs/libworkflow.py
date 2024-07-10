@@ -38,7 +38,8 @@ class WorkflowManager:
 
     def run(self) -> None:
         """High level workflow composer."""
-        for i, step in enumerate(self.recipe.steps[self.start :], start=self.start):
+        id_steps = enumerate(self.recipe.steps[self.start:], start=self.start)
+        for i, step in id_steps:
             try:
                 step.execute()
             except HaddockTermination:
@@ -75,8 +76,11 @@ class WorkflowManager:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)  # type: ignore
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
-        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None,
-                inter=False, is_cleaned=is_cleaned, offline=offline, mode=mode, ncores=ncores)
+        cli_analyse(
+            "./", capri_steps, top_cluster=10, format=None, scale=None,
+            inter=False, is_cleaned=is_cleaned, offline=offline, mode=mode,
+            ncores=ncores,
+            )
         # call cli_traceback. If it fails, it's not a big deal
         try:
             cli_traceback("./")

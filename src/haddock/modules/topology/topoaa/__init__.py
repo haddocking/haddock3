@@ -88,22 +88,16 @@ class HaddockModule(BaseCNSModule):
 
     def _run(self) -> None:
         """Execute module."""
-        md5_dic: dict[int, dict[int, str]] = {}
         self.params.pop("molecules")
-        molecules: list[list[Path]] = []
+        input_molecules: list[list[PDBFile]] = []
         if self.order == 0:
             _molecules = self.previous_io.output
-            for i, models in enumerate(_molecules, start=1):
-                molecules.append([model.rel_path for model in models.values()])
-                md5_dic[i] = {
-                    j: model.md5
-                    for j, model in enumerate(models.values())
-                    }
+            input_molecules = [list(models.values()) for models in _molecules]
         else:
             # in case topoaa is not the first step, the topology is rebuilt for
             # each retrieved model
             _molecules = self.previous_io.retrieve_models()
-            molecules = [[mol.rel_path] for mol in _molecules]
+            input_molecules = [[mol] for mol in _molecules]
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -125,52 +119,66 @@ class HaddockModule(BaseCNSModule):
 
         # Pool of jobs to be executed by the CNS engine
         jobs: list[CNSJob] = []
-        models_dic: dict[int, list[Path]] = {}
-
-        for i, models in enumerate(molecules, start=1):
+        output_molecules: list[dict[int, PDBFile]] = []
+        for i, models in enumerate(input_molecules, start=1):
             self.log(f"Molecule {i}")
-            models_dic[i] = []
+            models_dic: dict[int, PDBFile] = {}
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
-
-            for model in models:
-                self.log(f"Sanitizing model {model.name}")
+            # Loop over models/conformers of this molecule
+            for j, model in enumerate(models):
+                # Point path of this model
+                model_path = model.rel_path
+                self.log(f"Sanitizing model {model_path.name}")
+                # Gather custom topology
                 custom_top: Optional[FilePath] = None
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
                     self.log(f"Using custom topology {custom_top}")
                 libpdb.sanitize(
-                    model,
+                    model_path,
                     overwrite=True,
                     custom_topology=custom_top,
                     )
-                models_dic[i].append(model)
-
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(
-                    model,
+                    model_path,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
                     )
-
                 self.log(
                     f"Topology CNS input created in {topology_filename.name}"
                     )
-
                 # Add new job to the pool
-                output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
-
+                output_filename = Path(f"{model_path.stem}.{Format.CNS_OUTPUT}")
                 job = CNSJob(
                     topology_filename,
                     output_filename,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
                     )
-
                 jobs.append(job)
+                # Generate future output files
+                model_name = model_path.stem
+                processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
+                processed_topology = Path(
+                    f"{model_name}_haddock.{Format.TOPOLOGY}"
+                    )
+                topology = TopologyFile(processed_topology, path=".")
+                # Create new PDBFile object
+                pdb = PDBFile(
+                    file_name=processed_pdb,
+                    topology=topology,
+                    path=".",
+                    md5=model.md5,
+                    )
+                pdb.ori_name = model_name
+                # Hold PDBFile into models
+                models_dic[j] = pdb
+            output_molecules.append(models_dic)
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
@@ -179,31 +187,6 @@ class HaddockModule(BaseCNSModule):
         engine.run()
         self.log("CNS jobs have finished")
 
-        # Check for generated output, fail if not all expected files
-        #  are found
-        expected: dict[int, dict[int, PDBFile]] = {}
-        for i, models in models_dic.items():
-            expected.setdefault(i, {})
-            for j, model in enumerate(models):
-                model_name = model.stem
-                processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                processed_topology = Path(
-                    f"{model_name}_haddock.{Format.TOPOLOGY}"
-                    )
-                topology = TopologyFile(processed_topology, path=".")
-                try:
-                    md5 = md5_dic[i][j]
-                except KeyError:
-                    md5 = None
-                pdb = PDBFile(
-                    file_name=processed_pdb,
-                    topology=topology,
-                    path=".",
-                    md5=md5,
-                    )
-                pdb.ori_name = model.stem
-                expected[i][j] = pdb
-
         # Save module information
-        self.output_models = list(expected.values())  # type: ignore
+        self.output_models = output_molecules  # type: ignore
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

@@ -4,6 +4,7 @@ import itertools
 import os
 import re
 from enum import Enum
+from functools import partial
 from os import linesep
 from os.path import getmtime
 from pathlib import Path
@@ -14,12 +15,13 @@ from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.typing import (
     Any,
     FilePath,
+    Iterable,
     List,
     Optional,
     TypeVar,
     Union,
     )
-from haddock.libs import libpdb
+from haddock.libs.libpdb import split_ensemble
 
 
 NaN = float("nan")
@@ -181,13 +183,15 @@ class ModuleIO:
         input_dic: dict[int, list[PDBFile]] = {}
 
         for i, element in enumerate(self.output):
-            if isinstance(element, dict):
+            # Make molecules from elements
+            molecule = Molecule(element)
+            if isinstance(molecule.pdb_files, dict):
                 position_list: list[PDBFile] = input_dic.setdefault(i, [])
                 for key in element:
                     position_list.append(element[key])  # type: ignore
-
-            elif element.file_type == Format.PDB:  # type: ignore
+            elif molecule.pdb_files.file_type == Format.PDB:  # type: ignore
                 model_list.append(element)  # type: ignore
+
         if input_dic and not crossdock and not individualize:
             # check if all ensembles contain the same number of models
             sub_lists = iter(input_dic.values())
@@ -198,7 +202,6 @@ class ModuleIO:
                     " cannot prepare pairwise complexes."
                     )
                 raise Exception(_msg)
-
             # prepare pairwise combinations
             model_list = [values for values in zip(*input_dic.values())]  # type: ignore
         elif input_dic and crossdock and not individualize:
@@ -271,77 +274,148 @@ class ModuleIO:
         """
         # Gather all input molecules
         input_molecules = list(input_molecules_dir.glob('*.pdb'))
+        assert input_molecules != [], \
+            f"No molecules could be found in `{input_molecules_dir}`"
         # Sort them by creation date (which is also input order)
         input_molecules.sort(key=getmtime)  # FIXME: getctime ?
         # Set input attribute
         self.input = input_molecules
 
         # Set parsing variables
-        molecules_dic: dict[int, dict[int, PDBFile]] = {}
-        # Loop over input molecules
-        for i, molecule in enumerate(self.input, start=1):
-            # Split models (these come already sorted)
-            splited_models = libpdb.split_ensemble(
-                molecule,
-                dest=input_molecules_dir,
-                )
-            # get the MD5 hash of each model
-            md5_dic = self.get_md5(molecule)
-            origin_names = self.get_ensemble_origin(molecule)
-            # Initiate with empty list
-            molecules_dic.setdefault(i, {})
-            # Loop over conformers of this ensemble
-            for j, model in enumerate(splited_models):
-                processed_model = model
-                model_name = model.stem
-                # Search of md5 information
-                md5_hash = None
-                try:
-                    model_id = int(model_name.split("_")[-1])
-                except ValueError:
-                    model_id = 0
-                if model_id in md5_dic:
-                    md5_hash = md5_dic[model_id]
-                # Check if origin or md5 is available
-                if md5_hash or model_id in origin_names.keys():
-                    # Select prefix
-                    if md5_hash:  # Prioritize the md5 hash
-                        prefix_name = md5_hash
-                    else:
-                        prefix_name = origin_names[model_id]
-                    # Build new filename
-                    model_new_name = f"{prefix_name}_from_{model_name}"
-                    # Rename file
-                    processed_model = model.rename(
-                        Path(
-                            input_molecules_dir,
-                            f"{model_new_name}.{Format.PDB}",
-                            )
-                        )
-                # Create a PDBFile object
-                pdbfile = PDBFile(
-                    processed_model,
-                    md5=md5_hash,
-                    )
-                # Modify relative path attribute
-                pdbfile.rel_path = Path(
-                    "..",
-                    input_molecules_dir,
-                    pdbfile.file_name
-                    )
-                # Set origin name
-                pdbfile.ori_name = molecule
-                # Hold that conformer/model
-                molecules_dic[i][j] = pdbfile
+        molecules_list: list[dict[int, PDBFile]] = [
+            Molecule(input_file).pdb_files
+            for input_file in self.input
+            ]
         # And fake them to be the output of the previous io
-        self.output = list(molecules_dic.values())
+        self.output = molecules_list
+    
+
+class Molecule:
+    """
+    Input molecule, usually a PDB file.
+
+    Parameters
+    ----------
+    file_name : :external:py:class:`pathlib.Path`
+        The path to the molecule file.
+
+    segid : int, optional
+        The ID of the segment. Defaults to ``None``.
+
+    no_parent : boolean
+        Whether to add the parent path ``..`` to the
+        :py:attr:`haddock.libs.libstructure.Molecule.with_parent`.
+        When set to true, the ``with_parent`` attribute returns the same
+        as ``file_name``.
+    """
+
+    def __init__(
+            self,
+            pdb_file: Union[PDBFile, tuple[dict[int, PDBFile]], FilePath],
+            ) -> None:
+        self.input_file = pdb_file
+        self._pdb_files: dict[int, PDBFile] = {}
+        self.standardize_input_pdbfile()
+    
+    def standardize_input_pdbfile(self):
+        if any([isinstance(self.input_file, ftype) for ftype in (str, Path)]):
+            self.gen_pdb_object()
+        else:
+            self.pdb_files = self.input_file
+
+    @property
+    def count_models(self) -> int:
+        self._nb_models = getattr(
+            self,
+            "_nb_models",
+            1 if isinstance(self.pdb_files, PDBFile) \
+            else len(self.pdb_files.keys()),
+            )
+        return self._nb_models
+
+    @property
+    def pdb_files(self):
+        return self._pdb_files
+
+    @pdb_files.setter
+    def pdb_files(self, value: Union[dict[int, PDBFile], PDBFile]) -> None:
+        self._pdb_files = value
+    
+    def __len__(self) -> int:
+        return self.count_models
+
+    def __repr__(self) -> str:
+        return f"Molecule {self.input_file}: {len(self)} models"
+
+    def gen_pdb_object(self) -> None:
+        # Create a Path object form input file
+        pdb_filepath = self.input_file
+        if not isinstance(pdb_filepath, Path):
+            pdb_filepath = Path(pdb_filepath)
+        # Obtain origin directory
+        input_molecules_dir = pdb_filepath.parent
+        # Eventually split models (they come back sorted by order in the file)
+        splited_models = split_ensemble(
+            pdb_filepath,
+            dest=input_molecules_dir,
+            )
+        # get the MD5 hash of each model
+        md5_dic = self.get_md5(pdb_filepath)
+        origin_names = self.get_ensemble_origin(pdb_filepath)
+        # Initiate holding variable
+        pdb_files: dict[int, PDBFile] = {}
+        # Loop over conformers of this ensemble
+        for j, model in enumerate(splited_models):
+            processed_model = model
+            model_name = model.stem
+            # Search of md5 information
+            md5_hash = None
+            try:
+                model_id = int(model_name.split("_")[-1])
+            except ValueError:
+                model_id = 0
+            if model_id in md5_dic:
+                md5_hash = md5_dic[model_id]
+            # Check if origin or md5 is available
+            if md5_hash or model_id in origin_names.keys():
+                # Select prefix
+                if md5_hash:  # Prioritize the md5 hash
+                    prefix_name = md5_hash
+                else:
+                    prefix_name = origin_names[model_id]
+                # Build new filename
+                model_new_name = f"{prefix_name}_from_{model_name}"
+                # Rename file
+                processed_model = model.rename(
+                    Path(
+                        input_molecules_dir,
+                        f"{model_new_name}.pdb",
+                        )
+                    )
+            # Create a PDBFile object
+            pdbfile = PDBFile(
+                processed_model,
+                md5=md5_hash,
+                )
+            # Modify relative path attribute
+            pdbfile.rel_path = Path(
+                "..",
+                input_molecules_dir,
+                pdbfile.file_name
+                )
+            # Set origin name
+            pdbfile.ori_name = pdb_filepath
+            # Hold this guy
+            pdb_files[j] = pdbfile
+        # Set attribute
+        self.pdb_files = pdb_files
     
     @staticmethod
     def get_md5(ensemble_f: FilePath) -> dict[int, str]:
         """Get MD5 hash of a multi-model PDB file."""
         md5_dic: dict[int, str] = {}
         text = Path(ensemble_f).read_text()
-        lines = text.split(os.linesep)
+        lines = text.split(linesep)
         REMARK_lines = (line for line in lines if line.startswith("REMARK"))
         remd5 = re.compile(r"^[a-f0-9]{32}$")
         for line in REMARK_lines:
@@ -379,7 +453,7 @@ class ModuleIO:
         """
         origin_dic: dict[int, str] = {}
         text = Path(ensemble_f).read_text()
-        lines = text.split(os.linesep)
+        lines = text.split(linesep)
         REMARK_lines = (line for line in lines if line.startswith("REMARK"))
         re_origin = re.compile(
             r"REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
@@ -391,6 +465,11 @@ class ModuleIO:
                 original_name = Path(original_path).stem
                 origin_dic[model_num] = original_name
         return origin_dic
+
+
+def make_molecules(paths: Iterable[Path], **kwargs: Any) -> list[Molecule]:
+    """Get input molecules from the data stream."""
+    return list(map(partial(Molecule, **kwargs), paths))
 
 
 PDBPath = Union[PDBFile, Path]

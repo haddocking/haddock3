@@ -365,9 +365,12 @@ def prepare_cns_input(
     return inp_file
 
 
-def prepare_expected_pdb(model_obj: Union[PDBFile, tuple[PDBFile,
-                                                         ...]], model_nb: int,
-                         path: FilePath, identifier: str) -> PDBFile:
+def prepare_expected_pdb(
+        model_obj: Union[PDBFile, tuple[PDBFile, ...]],
+        model_nb: int,
+        path: FilePath,
+        identifier: str,
+        ) -> PDBFile:
     """Prepare a PDBobject."""
     expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
     pdb = PDBFile(expected_pdb_fname, path=path)

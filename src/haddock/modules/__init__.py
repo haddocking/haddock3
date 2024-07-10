@@ -235,7 +235,7 @@ class BaseHaddockModule(ABC):
 
     def run(self, **params: Any) -> None:
         """Execute the module."""
-        log.info(f"Running [{self.name}] module")
+        log.info(f"Running [{self.name}] module (step {self.order})")
 
         self.update_params(**params)
         self.add_parent_to_paths()

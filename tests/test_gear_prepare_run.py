@@ -119,7 +119,7 @@ def test_populate_mol_params():
         "caprieval.1": {},
         }
 
-    populate_mol_parameters(params)
+    populate_mol_parameters(params, params["topoaa.1"])
     assert "mol_fix_origin_1" in params["flexref.1"]
     assert "mol_fix_origin_2" in params["flexref.1"]
     assert "mol_fix_origin_3" in params["flexref.1"]

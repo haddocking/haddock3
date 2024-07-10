@@ -12,7 +12,7 @@ By default the following metrics are calculated:
     ligand of the docked complex with respect to the
     reference complex upon superposition of the receptor.
 - DOCKQ, a measure of the quality of the docked model obtained
-    by combining FNAT, IRMSD and LRMSD (see 
+    by combining FNAT, IRMSD and LRMSD (see
     Basu and Wallner 2016,  11 (8), e0161879).
 - ILRMSD (interface ligand root mean square deviation), the RMSD of the
     ligand of the docked complex with respect to the reference complex
@@ -23,12 +23,16 @@ The following files are generated:
 - **capri_ss.tsv**: a table with the CAPRI metrics for each model.
 - **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).
 """
+
 from pathlib import Path
 
-from haddock.core.typing import Any, FilePath
+from haddock.core.typing import Any, FilePath, Union
 from haddock.modules import BaseHaddockModule, get_module_steps_folders
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
+
+# from haddock.core.typing import List, PDBFile
+from haddock.libs.libontology import PDBFile
 
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
@@ -37,7 +41,8 @@ from haddock.modules.analysis.caprieval.capri import (
     merge_data,
     rearrange_ss_capri_output,
     save_scoring_weights,
-    )
+    dump_weights,
+)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -49,18 +54,27 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self,
-                 order: int,
-                 path: Path,
-                 *ignore: Any,
-                 init_params: FilePath = DEFAULT_CONFIG,
-                 **everything: Any) -> None:
+    def __init__(
+        self,
+        order: int,
+        path: Path,
+        *ignore: Any,
+        init_params: FilePath = DEFAULT_CONFIG,
+        **everything: Any,
+    ) -> None:
         super().__init__(order, path, init_params)
 
     @classmethod
     def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
+
+    @staticmethod
+    def is_nested(models: list[Union[PDBFile, list[PDBFile]]]) -> bool:
+        for model in models:
+            if isinstance(model, list):
+                return True
+        return False
 
     def _run(self) -> None:
         """Execute module."""
@@ -69,31 +83,28 @@ class HaddockModule(BaseHaddockModule):
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
 
-        models = self.previous_io.retrieve_models(
-            individualize=True
+        models = self.previous_io.retrieve_models(individualize=True)
+        if self.is_nested(models):
+            raise ValueError(
+                "CAPRI module cannot be executed after modules that produce a nested list of models"
             )
-        
+
         # dump previously used weights
-        sel_steps = get_module_steps_folders(Path(".."))
-        cns_step = get_previous_cns_step(sel_steps, self.order)
-        
-        if cns_step:
-            self.log(f"Found previous CNS step: {cns_step}")
-            scoring_params_fname = save_scoring_weights(cns_step)
-            self.log(f"Saved scoring weights to: {scoring_params_fname}")
-        else:
-            self.log("No previous CNS step found. Cannot save scoring weights.")
+        dump_weights(self.order)
 
         # Sort by score to find the "best"
         models.sort()
-        best_model_fname = Path(models[0].rel_path)
+        best_model = models[0]
+        assert isinstance(best_model, PDBFile), "Best model is not a PDBFile"
+        best_model_fname = best_model.rel_path
 
         if self.params["reference_fname"]:
             reference = Path(self.params["reference_fname"])
         else:
             self.log(
                 "No reference was given. "
-                "Using the structure with the lowest score from previous step")
+                "Using the structure with the lowest score from previous step"
+            )
             reference = best_model_fname
 
         # Each model is a job; this is not the most efficient way
@@ -102,16 +113,22 @@ class HaddockModule(BaseHaddockModule):
         #  for example during CAPRI scoring
         jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):
+            if isinstance(
+                model_to_be_evaluated, list
+            ):  # `models_to_be_evaluated` cannot be a list, `CAPRI` class is expecting a single model
+                raise ValueError(
+                    "CAPRI module cannot handle a list of `model_to_be_evaluated`"
+                )
             jobs.append(
                 CAPRI(
                     identificator=str(i),
                     model=model_to_be_evaluated,
                     path=Path("."),
                     reference=reference,
-                    params=self.params
-                    )
+                    params=self.params,
                 )
-        
+            )
+
         exec_mode = get_analysis_exec_mode(self.params["mode"])
 
         Engine = get_engine(exec_mode, self.params)
@@ -121,7 +138,7 @@ class HaddockModule(BaseHaddockModule):
         # very ugly way of loading the capri metrics back into
         #  the CAPRI object, there's definitively a better way
         #  of doing this
-        jobs = merge_data(jobs)
+        # jobs = merge_data(jobs)
 
         # Each job created one .tsv, unify them:
         rearrange_ss_capri_output(
@@ -129,21 +146,21 @@ class HaddockModule(BaseHaddockModule):
             output_count=len(jobs),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
-            path=Path(".")
-            )
+            path=Path("."),
+        )
 
         capri_cluster_analysis(
             capri_list=jobs,
-            model_list=models,
+            model_list=models,  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
             output_fname="capri_clt.tsv",
             clt_threshold=self.params["clt_threshold"],
             # output_count=len(capri_jobs),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
-            path=Path(".")
-            )
+            path=Path("."),
+        )
 
         # Send models to the next step,
         #  no operation is done on them
-        self.output_models = models
+        self.output_models = models  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
         self.export_io_models()

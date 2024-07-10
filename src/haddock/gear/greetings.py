@@ -22,6 +22,7 @@ international_good_byes = [
     "La revedere",
     "Adiós",
     "Do pobachennya",
+    "Tchau",
 ]
 
 

@@ -22,6 +22,14 @@ def caprieval_module():
         )
 
 
+@pytest.fixture
+def model_list():
+    return [
+        PDBFile(file_name="protprot_complex_1.pdb", path="."),
+        PDBFile(file_name="protprot_complex_2.pdb", path="."),
+    ]
+
+
 class MockPreviousIO:
     def __init__(self, path):
         self.path = path
@@ -46,7 +54,7 @@ class MockPreviousIO:
         return None
 
 
-def test_caprieval_default(caprieval_module):
+def test_caprieval_default(caprieval_module, model_list):
 
     caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
     caprieval_module.run()
@@ -66,9 +74,8 @@ def test_caprieval_default(caprieval_module):
 
     # Check if the `output_models` are the same as the `input_models`
     #  they will change locations, so check the filenames
-    input_models = caprieval_module.previous_io.retrieve_models()
-    assert caprieval_module.output_models[0].file_name == input_models[0].file_name
-    assert caprieval_module.output_models[1].file_name == input_models[1].file_name
+    assert caprieval_module.output_models[0].file_name == model_list[0].file_name
+    assert caprieval_module.output_models[1].file_name == model_list[1].file_name
 
     # The models do not hold the capri metrics, so check the output files to see if they were written
     with open(Path(caprieval_module.path, "capri_ss.tsv")) as f:

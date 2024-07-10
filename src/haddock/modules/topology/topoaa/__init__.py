@@ -1,9 +1,10 @@
 """Create and manage CNS all-atom topology."""
+
 import operator
 from functools import partial
 from pathlib import Path
 
-from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap
+from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
@@ -27,7 +28,8 @@ def generate_topology(
         defaults: ParamMap,
         mol_params: ParamMap,
         default_params_path: Optional[FilePath] = None,
-        ) -> Path:
+        write_to_disk: Optional[bool] = True,
+        ) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
     general_param = load_workflow_params(**defaults)
@@ -61,10 +63,12 @@ def generate_topology(
 
     inp = "".join(inp_parts)
 
-    output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
-    output_inp_filename.write_text(inp)
-
-    return output_inp_filename
+    if write_to_disk:
+        output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
+        output_inp_filename.write_text(inp)
+        return output_inp_filename
+    else:
+        return inp
 
 
 class HaddockModule(BaseCNSModule):
@@ -142,20 +146,22 @@ class HaddockModule(BaseCNSModule):
                     custom_topology=custom_top,
                     )
                 # Prepare generation of topologies jobs
-                topology_filename = generate_topology(
+                topoaa_input = generate_topology(
                     model_path,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
+                    write_to_disk=not self.params["less_io"],
                     )
                 self.log(
-                    f"Topology CNS input created in {topology_filename.name}"
+                    f"Topology CNS input created in {topoaa_input.name}"
                     )
+
                 # Add new job to the pool
                 output_filename = Path(f"{model_path.stem}.{Format.CNS_OUTPUT}")
                 job = CNSJob(
-                    topology_filename,
+                    topoaa_input,
                     output_filename,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],

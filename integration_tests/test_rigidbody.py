@@ -96,3 +96,21 @@ def test_rigidbody(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.seed").stat().st_size > 0
+
+
+def test_rigidbody_less_io(rigidbody_module):
+
+    sampling = 5
+    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
+    rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["cmrest"] = True
+    rigidbody_module.params["mol_fix_origin_1"] = True
+    rigidbody_module.params["mol_fix_origin_2"] = False
+    rigidbody_module.params["less_io"] = True
+
+    rigidbody_module.run()
+
+    for i in range(1, sampling + 1):
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
+
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0

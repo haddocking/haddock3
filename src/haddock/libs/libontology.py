@@ -334,7 +334,7 @@ class Molecule:
         return self._nb_models
 
     @property
-    def pdb_files(self):
+    def pdb_files(self) -> Union[dict[int, PDBFile], PDBFile]:
         return self._pdb_files
 
     @pdb_files.setter

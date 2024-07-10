@@ -1,5 +1,8 @@
 """Test functions and methods in haddock.libs.libontology."""
 import pytest
+import tempfile
+import shutil
+
 from pathlib import Path
 
 from haddock.libs.libontology import (
@@ -25,7 +28,11 @@ def ensemble_header_w_md5():
     return Path(golden_data, "ens_header.pdb")
 
 
-def test_get_md5(molecule, ensemble_header_w_md5, protein):
+def test_get_md5(
+        molecule: Molecule,
+        ensemble_header_w_md5: Path,
+        protein: Path,
+        ):
     """Test get_md5 method."""
     observed_md5_dic = molecule.get_md5(ensemble_header_w_md5)
     expected_md5_dic = {
@@ -41,7 +48,11 @@ def test_get_md5(molecule, ensemble_header_w_md5, protein):
     assert observed_md5_dic == {}
 
 
-def test_get_ensemble_origin(molecule, ensemble_header_w_md5, protein):
+def test_get_ensemble_origin(
+        molecule: Molecule,
+        ensemble_header_w_md5: Path,
+        protein: Path,
+        ):
     """Test get_ensemble_origin method."""
     expected_origin_dic = {
         1: 'T161-hybrid-fit-C2-NCS_complex_100w',
@@ -56,21 +67,15 @@ def test_get_ensemble_origin(molecule, ensemble_header_w_md5, protein):
     assert observed_origin == {}
 
 
-def test_load_single_pdb(molecule, protein):
+def test_load_single_pdb(molecule: Molecule, protein: Path):
     """Test casting into PDBFile."""
-    # Re-initialize with a actual protein
-    molecule.__init__(protein)
-    assert isinstance(molecule.pdb_files, dict)
-    for pdbfile in molecule.pdb_files.values():
-        assert isinstance(pdbfile, PDBFile)
-    assert len(molecule) == 1
-
-
-def test_load_single_pdb(molecule, protein):
-    """Test casting into PDBFile."""
-    # Re-initialize with a actual protein
-    molecule.__init__(protein)
-    assert isinstance(molecule.pdb_files, dict)
-    for pdbfile in molecule.pdb_files.values():
-        assert isinstance(pdbfile, PDBFile)
-    assert len(molecule) == 1
+    with tempfile.TemporaryDirectory('.') as tempdir:
+        tmp_protein = Path(tempdir, protein.name)
+        shutil.copyfile(protein, tmp_protein)
+        # Re-initialize with a actual protein
+        molecule.__init__(tmp_protein)
+        assert isinstance(molecule.pdb_files, dict)
+        print(molecule.pdb_files)
+        for pdbfile in molecule.pdb_files.values():
+            assert isinstance(pdbfile, PDBFile)
+        assert len(molecule) == 1

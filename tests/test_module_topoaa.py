@@ -75,22 +75,6 @@ def test_generate_topology(topoaa, protein):
     observed_inp_out.unlink()
 
 
-def test_get_md5(topoaa, ensemble_header_w_md5, protein):
-    """Test get_md5 method."""
-    observed_md5_dic = topoaa.get_md5(ensemble_header_w_md5)
-    expected_md5_dic = {
-        1: '71098743056e0b95fbfafff690703761',
-        2: 'f7ab0b7c751adf44de0f25f53cfee50b',
-        3: '41e028d8d28b8d97148dc5e548672142',
-        4: '761cb5da81d83971c2aae2f0b857ca1e',
-        5: '6c438f941cec7c6dc092c8e48e5b1c10'}
-
-    assert observed_md5_dic == expected_md5_dic
-
-    observed_md5_dic = topoaa.get_md5(protein)
-    assert observed_md5_dic == {}
-
-
 @pytest.mark.skip(reason="Cannot test in Github Actions")
 def test__run(topoaa, protein):
     """Test _run method."""

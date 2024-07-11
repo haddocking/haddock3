@@ -4,6 +4,7 @@ from pathlib import Path
 from shutil import copyfile
 
 from haddock.core.defaults import DATA_DIRNAME
+from haddock.libs.libio import working_directory
 from haddock.modules.topology.topoaa import (
     DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG,
     HaddockModule as TopoaaModule,
@@ -23,23 +24,27 @@ def molecules():
 @pytest.fixture
 def topoaa_module(molecules):
     with tempfile.TemporaryDirectory() as tmpdir:
-        input_dir_path = Path(tmpdir, DATA_DIRNAME, "0_topoaa")
-        input_dir_path.mkdir(parents=True)
-        mol_copies = [
-            copyfile(mol, Path(input_dir_path, mol.name))
-            for mol in molecules
-            ]
-        topoaa = TopoaaModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
-        )
-        topoaa.__init__(path=Path(tmpdir), order=0)
-        topoaa.params["molecules"] = mol_copies
-        topoaa.params["mol1"] = {"prot_segid": "A"}
-        topoaa.params["mol2"] = {"prot_segid": "B"}
+        with working_directory(tmpdir):
+            modulename = "0_topoaa"
+            input_dir_path = Path(DATA_DIRNAME, modulename)
+            input_dir_path.mkdir(parents=True)
+            mol_copies = [
+                copyfile(mol, Path(input_dir_path, mol.name))
+                for mol in molecules
+                ]
+            topoaa = TopoaaModule(
+                order=0,
+                path=Path(modulename),
+                initial_params=DEFAULT_TOPOAA_CONFIG,
+                )
+            topoaa.__init__(path=Path(modulename), order=0)
+            topoaa.params["molecules"] = mol_copies
+            topoaa.params["mol1"] = {"prot_segid": "A"}
+            topoaa.params["mol2"] = {"prot_segid": "B"}
 
-        topoaa.params["cns_exec"] = CNS_EXEC
+            topoaa.params["cns_exec"] = CNS_EXEC
 
-        yield topoaa
+            yield topoaa
 
 
 @has_cns

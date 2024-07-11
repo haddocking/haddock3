@@ -35,6 +35,7 @@ def prepare_topoaa_run(molecules):
                 ]
             yield modulename_path, mol_copies
 
+
 @pytest.fixture
 def topoaa_module(prepare_topoaa_run):
     modulename_path = prepare_topoaa_run[0]

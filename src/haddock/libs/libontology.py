@@ -458,7 +458,7 @@ class Molecule:
         lines = text.split(linesep)
         REMARK_lines = (line for line in lines if line.startswith("REMARK"))
         re_origin = re.compile(
-            r"REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
+            r"REMARK\s+\d*\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+[\./]{0,2}(([\w_-]+[/]?)+)\.?"  # noqa : E501
             )
         for line in REMARK_lines:
             if (match := re_origin.search(line)):

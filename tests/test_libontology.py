@@ -133,6 +133,7 @@ def test_get_ensemble_origin(
         3: 'T161-hybrid-fit-C2-NCS_complex_102w',
         4: 'T161-hybrid-fit-C2-NCS_complex_103w',
         5: 'T161-hybrid-fit-C2-NCS_complex_104w',
+        6: '73b07fb2ab6b3245_t264_1',
         }
     observed_origin = molecule.get_ensemble_origin(ensemble_header_w_md5)
     assert observed_origin == expected_origin_dic

@@ -944,7 +944,7 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
     return
 
 
-def validate_parameters_are_not_incompatible(params: ParamMap):
+def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
     """Validate parameters are not incompatible.
 
     Args:

@@ -5,11 +5,13 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import random
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules.sampling.rigidbody import \
-    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_PARAMS
+from haddock.modules.sampling.rigidbody import (
+    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_PARAMS,
+)
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 
 
@@ -50,6 +52,7 @@ def test_rigidbody_make_cns_jobs(rigidbody_module):
     cns_output_file = "rigidbody_1.out"
     output_pdb_name = "rigidbody_1.pdb"
     ambig_fname = "ambig.tbl"
+    seed = random.randint(0, 1000)
     topology = Persistent(file_name="topology.psf", path=".", file_type=Format.TOPOLOGY)
     input_pdb_1 = PDBFile(
         Path("model1.pdb"), path=".", restr_fname="ambig1.tbl", topology=topology
@@ -65,6 +68,7 @@ def test_rigidbody_make_cns_jobs(rigidbody_module):
             ],
             cns_input_file,
             ambig_fname,
+            seed,
         )
     ]
 
@@ -76,6 +80,7 @@ def test_rigidbody_make_cns_jobs(rigidbody_module):
     assert rigidbody_module.output_models[0].restr_fname == ambig_fname
     assert rigidbody_module.output_models[0].file_name == output_pdb_name
     assert rigidbody_module.output_models[0].topology == [topology, topology]
+    assert rigidbody_module.output_models[0].seed == seed
 
 
 def test_prepare_cns_input_sequential(mocker, rigidbody_module):

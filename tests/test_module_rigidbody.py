@@ -1,5 +1,6 @@
 """Test the rigidbody module."""
 
+import os
 import tempfile
 from pathlib import Path
 
@@ -13,8 +14,14 @@ from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 
 
 @pytest.fixture
-def rigidbody_module():
-    with tempfile.TemporaryDirectory() as tempdir:
+def rigidbody_module(mocker):
+    with tempfile.NamedTemporaryFile() as fake_cns, tempfile.TemporaryDirectory() as tempdir:
+        fake_cns.file.write(b"")
+        fake_cns.file.flush()
+        fake_cns.file.seek(0)
+        os.chmod(fake_cns.name, 0o755)
+        mocker.patch("haddock.libs.libsubprocess.global_cns_exec", fake_cns.name)
+
         yield RigidbodyModule(
             order=1,
             path=Path(tempdir),
@@ -35,6 +42,7 @@ def test_prev_fnames():
 
 
 def test_rigidbody_make_cns_jobs(rigidbody_module):
+
     rigidbody_module.output_models = []
     rigidbody_module.envvars = {}
 

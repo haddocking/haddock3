@@ -32,7 +32,7 @@ sure to sample enough the possible interaction space.
 from datetime import datetime
 from pathlib import Path
 
-from haddock.core.typing import FilePath, Union
+from haddock.core.typing import FilePath, Sequence, Union
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile
@@ -63,7 +63,8 @@ class HaddockModule(BaseCNSModule):
         return
 
     def make_cns_jobs(
-        self, inp_list: list[tuple[list[PDBFile], Union[Path, str], Union[str, None]]]
+        self,
+        inp_list: Sequence[tuple[list[PDBFile], Union[Path, str], Union[str, None]]],
     ) -> list[CNSJob]:
         jobs = []
         for idx, e in enumerate(inp_list, start=1):

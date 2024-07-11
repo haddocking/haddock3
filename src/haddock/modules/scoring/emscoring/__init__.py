@@ -9,6 +9,7 @@ from pathlib import Path
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.scoring import CNSScoringModule
@@ -55,6 +56,7 @@ class HaddockModule(CNSScoringModule):
                 "emscoring",
                 native_segid=True,
                 less_io=self.params["less_io"],
+                seed=model.seed if isinstance(model, PDBFile) else None,
             )
 
             scoring_out = f"emscoring_{model_num}.out"

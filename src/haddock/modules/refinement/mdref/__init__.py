@@ -92,6 +92,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     less_io=self.params["less_io"],
+                    seed=model.seed if isinstance(model, PDBFile) else None,
                 )
                 out_file = f"mdref_{idx}.out"
 

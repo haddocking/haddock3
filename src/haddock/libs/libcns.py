@@ -23,22 +23,23 @@ def generate_default_header(
     path: Optional[FilePath] = None,
 ) -> tuple[str, str, str, str, str, str]:
     """Generate CNS default header."""
+    # TODO: Remove the `type: ignore` comments
     if path is not None:
-        axis = load_axis(**cns_paths.get_axis(path))
+        axis = load_axis(**cns_paths.get_axis(path))  # type: ignore
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
-        tensor = load_tensor(**cns_paths.get_tensors(path))
+        tensor = load_tensor(**cns_paths.get_tensors(path))  # type: ignore
         trans_vec = load_trans_vectors(
-            **cns_paths.get_translation_vectors(path)
+            **cns_paths.get_translation_vectors(path)  # type: ignore
         )  # noqa: E501
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
-        axis = load_axis(**cns_paths.axis)
+        axis = load_axis(**cns_paths.axis)  # type: ignore
         link = load_link(cns_paths.link_file)
         scatter = load_scatter(cns_paths.scatter_lib)
-        tensor = load_tensor(**cns_paths.tensors)
-        trans_vec = load_trans_vectors(**cns_paths.translation_vectors)
+        tensor = load_tensor(**cns_paths.tensors)  # type: ignore
+        trans_vec = load_trans_vectors(**cns_paths.translation_vectors)  # type: ignore
         water_box = load_boxtyp20(cns_paths.water_box["boxtyp20"])
 
     return (
@@ -197,9 +198,7 @@ def load_boxtyp20(waterbox_param: Path) -> str:
 
 
 # This is used by docking
-def prepare_multiple_input(
-    pdb_input_list: list[FilePath], psf_input_list: list[FilePath]
-) -> str:
+def prepare_multiple_input(pdb_input_list: list[str], psf_input_list: list[str]) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -220,9 +219,6 @@ def prepare_multiple_input(
             chain_l.append(element)
     ncomponents = len(set(itertools.chain(*chain_l)))
     input_str += write_eval_line("ncomponents", ncomponents)
-
-    seed = RND.randint(100, 999)
-    input_str += write_eval_line("seed", seed)
 
     return input_str
 
@@ -278,6 +274,7 @@ def prepare_cns_input(
     native_segid: bool = False,
     default_params_path: Optional[Path] = None,
     less_io: Optional[bool] = True,
+    seed: Optional[int] = None,
 ) -> Union[Path, str]:
     """
     Generate the .inp file needed by the CNS engine.
@@ -289,6 +286,7 @@ def prepare_cns_input(
 
     input_element : `libs.libontology.Persisten`, list of those
     """
+    # TODO: Refactor this function into smaller functions or classes
     # read the default parameters
     default_params = load_workflow_params(**defaults)
     default_params += write_eval_line("ambig_fname", ambig_fname)
@@ -305,20 +303,29 @@ def prepare_cns_input(
                     psf_fname = psf.rel_path
                     psf_list.append(psf_fname)
             else:
+                if pdb.topology is None:
+                    raise ValueError(f"Topology not found for pdb {pdb.rel_path}.")
                 psf_fname = pdb.topology.rel_path
                 psf_list.append(psf_fname)
 
     elif isinstance(input_element.topology, (list, tuple)):
         pdb = input_element  # for clarity
+        if pdb.topology is None:
+            raise ValueError(f"Topology not found for pdb {pdb.rel_path}.")
         for psf in pdb.topology:
             psf_fname = psf.rel_path
             psf_list.append(psf_fname)
     else:
         pdb = input_element  # for clarity
+        if pdb.topology is None:
+            raise ValueError(f"Topology not found for pdb {pdb.rel_path}.")
         psf_fname = pdb.topology.rel_path
         psf_list.append(psf_fname)
 
-    input_str = prepare_multiple_input(pdb_list, psf_list)
+    input_str = prepare_multiple_input(
+        pdb_input_list=[str(p) for p in pdb_list],
+        psf_input_list=[str(p) for p in psf_list],
+    )
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
 
@@ -358,7 +365,12 @@ def prepare_cns_input(
 
     output += write_eval_line("count", model_number)
 
-    inp = default_params + input_str + output + segid_str + recipe_str
+    if seed is None:
+        seed = RND.randint(100, 99999)
+
+    seed_str = write_eval_line("seed", seed)
+
+    inp = default_params + input_str + seed_str + output + segid_str + recipe_str
 
     if less_io:
         return inp
@@ -366,7 +378,6 @@ def prepare_cns_input(
         inp_file = Path(f"{identifier}_{model_number}.inp")
         inp_file.write_text(inp)
         return inp_file
-
 
 
 def prepare_expected_pdb(
@@ -378,8 +389,9 @@ def prepare_expected_pdb(
     """Prepare a PDBobject."""
     expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
     pdb = PDBFile(expected_pdb_fname, path=path)
-    if type(model_obj) == tuple:
+    if isinstance(model_obj, tuple):
         pdb.topology = [p.topology for p in model_obj]
     else:
         pdb.topology = model_obj.topology
+        pdb.seed = model_obj.seed
     return pdb

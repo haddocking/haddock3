@@ -64,11 +64,13 @@ class HaddockModule(BaseCNSModule):
 
     def make_cns_jobs(
         self,
-        inp_list: Sequence[tuple[list[PDBFile], Union[Path, str], Union[str, None]]],
+        inp_list: Sequence[
+            tuple[list[PDBFile], Union[Path, str], Union[str, None], int]
+        ],
     ) -> list[CNSJob]:
         jobs = []
         for idx, e in enumerate(inp_list, start=1):
-            combination, inp_input, ambig_fname = e
+            combination, inp_input, ambig_fname, seed = e
 
             log_fname = f"rigidbody_{idx}.out"
             output_pdb_fname = f"rigidbody_{idx}.pdb"
@@ -76,6 +78,7 @@ class HaddockModule(BaseCNSModule):
             # Create a model for the expected output
             model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
             model.topology = [e.topology for e in combination]
+            model.seed = seed  # type: ignore
             self.output_models.append(model)
 
             job = CNSJob(inp_input, log_fname, envvars=self.envvars)
@@ -98,6 +101,7 @@ class HaddockModule(BaseCNSModule):
                 else:
                     ambig_fname = self.params["ambig_fname"]
                 # prepare cns input
+                seed = self.params["seed"] + idx
                 rigidbody_input = prepare_cns_input(
                     idx,
                     combination,
@@ -109,8 +113,9 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                     native_segid=True,
                     less_io=self.params["less_io"],
+                    seed=seed,
                 )
-                _l.append((combination, rigidbody_input, ambig_fname))
+                _l.append((combination, rigidbody_input, ambig_fname, seed))
 
                 idx += 1
         return _l
@@ -131,6 +136,7 @@ class HaddockModule(BaseCNSModule):
                     if ambig_fnames
                     else self.params["ambig_fname"]
                 )
+                seed = self.params["seed"] + idx
                 task = GenericTask(
                     function=prepare_cns_input,
                     args=(
@@ -144,10 +150,11 @@ class HaddockModule(BaseCNSModule):
                         self.toppar_path,
                         True,
                         self.params["less_io"],
+                        seed,
                     ),
                 )
                 prepare_tasks.append(task)
-                _l.append((combination, task, ambig_fname))
+                _l.append((combination, task, ambig_fname, seed))
                 idx += 1
         Engine = get_engine(self.params["mode"], self.params)
         prepare_engine = Engine(prepare_tasks)

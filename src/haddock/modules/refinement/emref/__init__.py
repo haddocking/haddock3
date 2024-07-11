@@ -5,6 +5,7 @@ from pathlib import Path
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -81,7 +82,7 @@ class HaddockModule(BaseCNSModule):
             model_idx += 1
 
             for _ in range(self.params["sampling_factor"]):
-                emref_inpyt = prepare_cns_input(
+                emref_input = prepare_cns_input(
                     idx,
                     model,
                     self.path,
@@ -91,6 +92,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     less_io=self.params["less_io"],
+                    seed=model.seed if isinstance(model, PDBFile) else None,
                 )
                 out_file = f"emref_{idx}.out"
 
@@ -103,7 +105,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(emref_inpyt, out_file, envvars=self.envvars)
+                job = CNSJob(emref_input, out_file, envvars=self.envvars)
 
                 jobs.append(job)
 

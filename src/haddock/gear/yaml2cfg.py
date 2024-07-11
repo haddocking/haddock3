@@ -5,6 +5,7 @@ Accross this file you will see references to "yaml" as variables and
 function names. In these cases, we always mean the HADDOCK3 YAML
 configuration files which have specific keys.
 """
+
 import os
 from collections.abc import Mapping
 from pathlib import Path
@@ -214,3 +215,15 @@ def flat_yaml_cfg(cfg: ParamMap) -> ParamDict:
         new[param] = new_value
 
     return new
+
+
+def find_incompatible_parameters(yaml_file: Path) -> dict[str, dict[str, str]]:
+
+    config = read_from_yaml(yaml_file=yaml_file)
+
+    # Go over each node and see which contains the `incompatible` key
+    incompatible_parameters = {}
+    for node, values in config.items():
+        if "incompatible" in values:
+            incompatible_parameters[node] = values["incompatible"]
+    return incompatible_parameters

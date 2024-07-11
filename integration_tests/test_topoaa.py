@@ -22,7 +22,7 @@ def molecules():
 
 
 @pytest.fixture
-def topoaa_module(molecules):
+def prepare_topoaa_run(molecules):
     with tempfile.TemporaryDirectory() as tmpdir:
         with working_directory(tmpdir):
             modulename_path = Path("0_topoaa")
@@ -33,19 +33,25 @@ def topoaa_module(molecules):
                 copyfile(mol, Path(input_dir_path, mol.name))
                 for mol in molecules
                 ]
-            topoaa = TopoaaModule(
-                order=0,
-                path=modulename_path,
-                initial_params=DEFAULT_TOPOAA_CONFIG,
-                )
-            topoaa.__init__(path=modulename_path, order=0)
-            topoaa.params["molecules"] = mol_copies
-            topoaa.params["mol1"] = {"prot_segid": "A"}
-            topoaa.params["mol2"] = {"prot_segid": "B"}
+            yield modulename_path, mol_copies
 
-            topoaa.params["cns_exec"] = CNS_EXEC
+@pytest.fixture
+def topoaa_module(prepare_topoaa_run):
+    modulename_path = prepare_topoaa_run[0]
+    mol_copies = prepare_topoaa_run[1]
+    topoaa = TopoaaModule(
+        order=0,
+        path=modulename_path,
+        initial_params=DEFAULT_TOPOAA_CONFIG,
+        )
+    #topoaa.__init__(path=modulename_path, order=0)
+    topoaa.params["molecules"] = mol_copies
+    topoaa.params["mol1"] = {"prot_segid": "A"}
+    topoaa.params["mol2"] = {"prot_segid": "B"}
 
-            yield topoaa
+    topoaa.params["cns_exec"] = CNS_EXEC
+
+    yield topoaa
 
 
 @has_cns

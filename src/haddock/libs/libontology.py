@@ -1,4 +1,5 @@
 """Describe the Haddock3 ontology used for communicating between modules."""
+
 import datetime
 import itertools
 import os
@@ -96,6 +97,7 @@ class PDBFile(Persistent):
         self.clt_model_rank: Optional[int] = None
         self.len = score
         self.unw_energies = unw_energies
+        self.seed = None
 
     def __lt__(self, other: "PDBFile") -> bool:
         return self.score < other.score

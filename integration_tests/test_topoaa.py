@@ -25,8 +25,9 @@ def molecules():
 def topoaa_module(molecules):
     with tempfile.TemporaryDirectory() as tmpdir:
         with working_directory(tmpdir):
-            modulename = "0_topoaa"
-            input_dir_path = Path(DATA_DIRNAME, modulename)
+            modulename_path = Path("0_topoaa")
+            modulename_path.mkdir(parents=True)
+            input_dir_path = Path(DATA_DIRNAME, modulename_path)
             input_dir_path.mkdir(parents=True)
             mol_copies = [
                 copyfile(mol, Path(input_dir_path, mol.name))
@@ -34,10 +35,10 @@ def topoaa_module(molecules):
                 ]
             topoaa = TopoaaModule(
                 order=0,
-                path=Path(modulename),
+                path=modulename_path,
                 initial_params=DEFAULT_TOPOAA_CONFIG,
                 )
-            topoaa.__init__(path=Path(modulename), order=0)
+            topoaa.__init__(path=modulename_path, order=0)
             topoaa.params["molecules"] = mol_copies
             topoaa.params["mol1"] = {"prot_segid": "A"}
             topoaa.params["mol2"] = {"prot_segid": "B"}

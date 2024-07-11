@@ -93,6 +93,7 @@
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.haddockmodel</span> <span class="kn">import</span> <span class="n">HaddockModel</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libcns</span> <span class="kn">import</span> <span class="n">prepare_cns_input</span><span class="p">,</span> <span class="n">prepare_expected_pdb</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.base_cns_module</span> <span class="kn">import</span> <span class="n">BaseCNSModule</span>
@@ -169,7 +170,7 @@
             <span class="n">model_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling_factor&quot;</span><span class="p">]):</span>
-                <span class="n">emref_inpyt</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
+                <span class="n">emref_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
                     <span class="n">idx</span><span class="p">,</span>
                     <span class="n">model</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
@@ -179,6 +180,7 @@
                     <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
                     <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">seed</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">out_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;emref_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.out&quot;</span>
 
@@ -191,7 +193,7 @@
                     <span class="n">expected_pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expected_pdb</span><span class="p">)</span>
 
-                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">emref_inpyt</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
+                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">emref_input</span><span class="p">,</span> <span class="n">out_file</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
 
                 <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 

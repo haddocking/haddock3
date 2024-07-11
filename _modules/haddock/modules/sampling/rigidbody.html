@@ -176,7 +176,7 @@
 
         <span class="c1"># get all the different ambig files</span>
         <span class="n">prev_ambig_fnames</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling&quot;</span><span class="p">])]</span>
-        <span class="n">diff_ambig_fnames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ambig_fnames</span><span class="p">(</span><span class="n">prev_ambig_fnames</span><span class="p">)</span>
+        <span class="n">diff_ambig_fnames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ambig_fnames</span><span class="p">(</span><span class="n">prev_ambig_fnames</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="c1"># if no files are found, we will stick to self.params[&quot;ambig_fname&quot;]</span>
         <span class="k">if</span> <span class="n">diff_ambig_fnames</span><span class="p">:</span>
             <span class="n">n_diffs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_ambig_fnames</span><span class="p">)</span>
@@ -197,6 +197,8 @@
                     <span class="n">ambig_fname</span> <span class="o">=</span> <span class="n">ambig_fnames</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">ambig_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
+
+                <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;iniseed&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">idx</span>
                 <span class="c1"># prepare cns input</span>
                 <span class="n">rigidbody_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
                     <span class="n">idx</span><span class="p">,</span>
@@ -209,6 +211,7 @@
                     <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
                     <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="n">log_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.out&quot;</span>
@@ -216,7 +219,9 @@
 
                 <span class="c1"># Create a model for the expected output</span>
                 <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">)</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
                 <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">rigidbody_input</span><span class="p">,</span> <span class="n">log_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>

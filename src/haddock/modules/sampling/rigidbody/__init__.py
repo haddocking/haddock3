@@ -101,7 +101,7 @@ class HaddockModule(BaseCNSModule):
                 else:
                     ambig_fname = self.params["ambig_fname"]
                 # prepare cns input
-                seed = self.params["seed"] + idx
+                seed = self.params["iniseed"] + idx
                 rigidbody_input = prepare_cns_input(
                     idx,
                     combination,

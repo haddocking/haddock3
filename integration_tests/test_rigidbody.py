@@ -90,12 +90,11 @@ def test_rigidbody(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
         assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").exists()
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").exists()
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
 
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.seed").stat().st_size > 0
 
 
 def test_rigidbody_less_io(rigidbody_module):
@@ -112,5 +111,8 @@ def test_rigidbody_less_io(rigidbody_module):
 
     for i in range(1, sampling + 1):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.inp").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
 
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0

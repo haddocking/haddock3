@@ -90,7 +90,7 @@ class HaddockModule(BaseCNSModule):
         models_to_dock: list[list[PDBFile]],
         sampling_factor: int,
         ambig_fnames: Union[list, None],
-    ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None]]]:
+    ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
         _l = []
         idx = 1
         for combination in models_to_dock:
@@ -125,7 +125,7 @@ class HaddockModule(BaseCNSModule):
         models_to_dock: list[list[PDBFile]],
         sampling_factor: int,
         ambig_fnames: Union[list, None],
-    ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None]]]:
+    ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
         prepare_tasks = []
         _l = []
         idx = 1
@@ -164,7 +164,7 @@ class HaddockModule(BaseCNSModule):
         l = []
         assert isinstance(prepare_engine, Scheduler)
         for element, task_result in zip(_l, prepare_engine.results):
-            l.append((element[0], task_result, element[2]))
+            l.append((element[0], task_result, element[2], element[3]))
 
         return l
 

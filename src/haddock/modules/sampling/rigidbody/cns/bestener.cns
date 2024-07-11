@@ -77,7 +77,6 @@ evaluate ($etot = $etot + $w_lcc * $lcc)
 if ($nfirst = 1) then
     evaluate ($bestener = $etot)
     evaluate ($bestair = $eair)
-    evaluate ($ncvbest = $npart)
     do (refx = x) (all)
     do (refy = y) (all)
     do (refz = z) (all)
@@ -87,7 +86,6 @@ else
     if ($etot < $bestener) then
         evaluate ($bestener = $etot)
         evaluate ($bestair = $eair)
-        evaluate ($ncvbest = $npart)
         do (refx = x) (all)
         do (refy = y) (all)
         do (refz = z) (all)

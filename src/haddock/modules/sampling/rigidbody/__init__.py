@@ -136,7 +136,7 @@ class HaddockModule(BaseCNSModule):
                     if ambig_fnames
                     else self.params["ambig_fname"]
                 )
-                seed = self.params["seed"] + idx
+                seed = self.params["iniseed"] + idx
                 task = GenericTask(
                     function=prepare_cns_input,
                     args=(

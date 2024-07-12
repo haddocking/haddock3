@@ -139,20 +139,19 @@ class HaddockModule(BaseCNSModule):
                 seed = self.params["iniseed"] + idx
                 task = GenericTask(
                     function=prepare_cns_input,
-                    args=(
-                        idx,
-                        combination,
-                        self.path,
-                        self.recipe_str,
-                        self.params,
-                        "rigidbody",
-                        ambig_fname,
-                        self.toppar_path,
-                        True,
-                        self.params["less_io"],
-                        seed,
-                    ),
+                    model_number=idx,
+                    input_element=combination,
+                    step_path=self.path,
+                    recipe_str=self.recipe_str,
+                    defaults=self.params,
+                    identifier="rigidbody",
+                    ambig_fname=ambig_fname,
+                    native_segid=True,
+                    default_params_path=self.toppar_path,
+                    less_io=self.params["less_io"],
+                    seed=seed,
                 )
+
                 prepare_tasks.append(task)
                 _l.append((combination, task, ambig_fname, seed))
                 idx += 1

@@ -28,6 +28,7 @@ much better and the sampling can be limited. In *ab-initio* mode, however, very
 diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
 """
+
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
@@ -88,7 +89,7 @@ class HaddockModule(BaseCNSModule):
 
         # get all the different ambig files
         prev_ambig_fnames = [None for model in range(self.params["sampling"])]
-        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
         # if no files are found, we will stick to self.params["ambig_fname"]
         if diff_ambig_fnames:
             n_diffs = len(diff_ambig_fnames)
@@ -109,8 +110,10 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname = ambig_fnames[idx - 1]
                 else:
                     ambig_fname = self.params["ambig_fname"]
+
+                seed = self.params["iniseed"] * idx
                 # prepare cns input
-                inp_file = prepare_cns_input(
+                rigidbody_input = prepare_cns_input(
                     idx,
                     combination,
                     self.path,
@@ -120,19 +123,21 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname=ambig_fname,
                     default_params_path=self.toppar_path,
                     native_segid=True,
+                    less_io=self.params["less_io"],
+                    seed=seed,
                 )
 
                 log_fname = f"rigidbody_{idx}.out"
                 output_pdb_fname = f"rigidbody_{idx}.pdb"
 
                 # Create a model for the expected output
-                model = PDBFile(
-                    output_pdb_fname, path=".", restr_fname=ambig_fname
-                )
-                model.topology = [e.topology for e in combination]
+                model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
+                model.topology = [e.topology for e in combination]  # type: ignore
+                model.seed = seed
+
                 self.output_models.append(model)
 
-                job = CNSJob(inp_file, log_fname, envvars=self.envvars)
+                job = CNSJob(rigidbody_input, log_fname, envvars=self.envvars)
                 jobs.append(job)
 
                 idx += 1

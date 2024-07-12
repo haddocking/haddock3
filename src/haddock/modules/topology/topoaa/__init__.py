@@ -1,4 +1,5 @@
 """Create and manage CNS all-atom topology."""
+
 import operator
 import os
 import re
@@ -6,7 +7,7 @@ from functools import partial
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap
+from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
@@ -31,7 +32,8 @@ def generate_topology(
     defaults: ParamMap,
     mol_params: ParamMap,
     default_params_path: Optional[FilePath] = None,
-) -> Path:
+    write_to_disk: Optional[bool] = True,
+) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
     general_param = load_workflow_params(**defaults)
@@ -65,10 +67,12 @@ def generate_topology(
 
     inp = "".join(inp_parts)
 
-    output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
-    output_inp_filename.write_text(inp)
-
-    return output_inp_filename
+    if write_to_disk:
+        output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
+        output_inp_filename.write_text(inp)
+        return output_inp_filename
+    else:
+        return inp
 
 
 class HaddockModule(BaseCNSModule):
@@ -113,7 +117,7 @@ class HaddockModule(BaseCNSModule):
                     break
 
         return md5_dic
-    
+
     @staticmethod
     def get_ensemble_origin(ensemble_f: FilePath) -> dict[int, str]:
         """Try to find origin for each model in ensemble.
@@ -132,15 +136,16 @@ class HaddockModule(BaseCNSModule):
         text = Path(ensemble_f).read_text()
         lines = text.split(os.linesep)
         REMARK_lines = (line for line in lines if line.startswith("REMARK"))
-        re_origin = re.compile("REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)")  # noqa : E501
+        re_origin = re.compile(
+            "REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
+        )  # noqa : E501
         for line in REMARK_lines:
-            if (match := re_origin.search(line)):
+            if match := re_origin.search(line):
                 model_num = int(match.group(1).strip())
                 original_path = match.group(3).strip()
                 original_name = Path(original_path).stem
                 origin_dic[model_num] = original_name
         return origin_dic
-
 
     def _run(self) -> None:
         """Execute module."""
@@ -162,7 +167,7 @@ class HaddockModule(BaseCNSModule):
             if k.startswith("mol") and k[3:].isdigit():
                 mol_params[k] = self.params.pop(k)
 
-        # to facilitate the for loop down the line, we create a list with the 
+        # to facilitate the for loop down the line, we create a list with the
         #  keys of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
@@ -203,7 +208,7 @@ class HaddockModule(BaseCNSModule):
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
-            for model in splited_models:
+            for task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 
@@ -214,29 +219,28 @@ class HaddockModule(BaseCNSModule):
                         model,
                         overwrite=True,
                         custom_topology=custom_top,
-                        )
+                    )
 
                 else:
                     libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topology_filename = generate_topology(
+                topoaa_input = generate_topology(
                     model,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
+                    write_to_disk=not self.params["less_io"],
                 )
 
-                self.log(
-                    f"Topology CNS input created in {topology_filename.name}"
-                    )
+                self.log("Topology CNS input created")
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
 
                 job = CNSJob(
-                    topology_filename,
+                    topoaa_input,
                     output_filename,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
@@ -270,9 +274,7 @@ class HaddockModule(BaseCNSModule):
 
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                processed_topology = Path(
-                    f"{model_name}_haddock.{Format.TOPOLOGY}"
-                    )
+                processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
 
                 # Check if origin or md5 is available
                 if md5_hash or model_id in origin_names.keys():
@@ -288,10 +290,10 @@ class HaddockModule(BaseCNSModule):
                         # Rename files
                         processed_pdb = processed_pdb.rename(
                             f"{model_name}_haddock.{Format.PDB}"
-                            )
+                        )
                         processed_topology = processed_topology.rename(
                             f"{model_name}_haddock.{Format.TOPOLOGY}"
-                            )
+                        )
 
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(
@@ -299,7 +301,7 @@ class HaddockModule(BaseCNSModule):
                     topology=topology,
                     path=".",
                     md5=md5_hash,
-                    )
+                )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
 

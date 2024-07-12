@@ -1,4 +1,5 @@
 """Water refinement with CNS."""
+
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
@@ -82,7 +83,7 @@ class HaddockModule(BaseCNSModule):
             model_idx += 1
 
             for _ in range(self.params["sampling_factor"]):
-                inp_file = prepare_cns_input(
+                mdref_input = prepare_cns_input(
                     idx,
                     model,
                     self.path,
@@ -91,6 +92,8 @@ class HaddockModule(BaseCNSModule):
                     "mdref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
+                    less_io=self.params["less_io"],
+                    seed=model.seed if isinstance(model, PDBFile) else None,
                 )
                 out_file = f"mdref_{idx}.out"
 
@@ -103,7 +106,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(inp_file, out_file, envvars=self.envvars)
+                job = CNSJob(mdref_input, out_file, envvars=self.envvars)
 
                 jobs.append(job)
 

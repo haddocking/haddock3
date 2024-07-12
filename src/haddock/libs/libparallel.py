@@ -61,12 +61,15 @@ def get_index_list(nmodels, ncores):
 class GenericTask:
     """Generic task to be executed."""
 
-    def __init__(self, function, args):
+    def __init__(self, function, *args, **kwargs):
+        if not callable(function):
+            raise TypeError("The 'function' argument must be callable")
         self.function = function
         self.args = args
+        self.kwargs = kwargs
 
     def run(self):
-        return self.function(*self.args)
+        return self.function(*self.args, **self.kwargs)
 
 
 class Worker(Process):

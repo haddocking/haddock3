@@ -60,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#make-a-cns-binary-shortcut-to-the-expected-path">4. Make a CNS binary shortcut to the expected path:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#keep-your-installation-up-to-date">5. Keep your installation up to date</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">7. (Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
@@ -219,6 +220,14 @@ $<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </
 </div>
 <p>Later, you can find <a class="reference external" href="https://www.bonvinlab.org/haddock3/tutorials/mpi.html">here</a> instructions on how to run HADDOCK3 with MPI.</p>
 </section>
+<section id="optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">
+<h2>7. (Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service<a class="headerlink" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service" title="Permalink to this heading"></a></h2>
+<p>To run the restraints web service you must have the following dependencies installed in the <code class="docutils literal notranslate"><span class="pre">(haddock3)</span></code> python environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>uvicorn<span class="w"> </span>fastapi
+</pre></div>
+</div>
+<p>Information on the restraints web service can be found <a class="reference external" href="https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/restraints/webservice.py">here</a>.</p>
+</section>
 </section>
 <section id="installing-third-party-packages">
 <h1>Installing third-party packages<a class="headerlink" href="#installing-third-party-packages" title="Permalink to this heading"></a></h1>
@@ -273,7 +282,7 @@ information.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 11, 2024.
+      <span class="lastupdated">Last updated on Jul 12, 2024.
       </span></p>
   </div>
 

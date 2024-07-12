@@ -1,0 +1,7 @@
+haddock.clis.restraints.webservice module
+=========================================
+
+.. automodule:: haddock.clis.restraints.webservice
+   :members:
+   :undoc-members:
+   :show-inheritance:

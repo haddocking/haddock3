@@ -210,6 +210,23 @@ per-residue accessibilities.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.librestraints.passive_from_active_raw">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.librestraints.</span></span><span class="sig-name descname"><span class="pre">passive_from_active_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/librestraints.html#passive_from_active_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.librestraints.passive_from_active_raw" title="Permalink to this definition"></a></dt>
+<dd><p>Get the passive residues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>str</em>) – path to the PDB file</p></li>
+<li><p><strong>active</strong> (<em>list</em>) – List of active residues</p></li>
+<li><p><strong>chain_id</strong> (<em>str</em>) – Chain ID</p></li>
+<li><p><strong>surface</strong> (<em>list</em>) – List of surface residues.</p></li>
+<li><p><strong>radius</strong> (<em>float</em>) – Radius from active residues</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.librestraints.read_structure">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.librestraints.</span></span><span class="sig-name descname"><span class="pre">read_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdbf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/librestraints.html#read_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.librestraints.read_structure" title="Permalink to this definition"></a></dt>
 <dd><p>Reads a PDB file and returns a list of parsed atoms</p>
@@ -234,7 +251,7 @@ per-residue accessibilities.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 11, 2024.
+      <span class="lastupdated">Last updated on Jul 12, 2024.
       </span></p>
   </div>
 

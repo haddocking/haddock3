@@ -1,11 +1,13 @@
-from freesasa import Classifier, structureFromBioPDB, calc
 from pathlib import Path
-
 import logging
 import itertools
 import re
 import random
 import sys
+
+from Bio.PDB import PDBParser, NeighborSearch
+from freesasa import Classifier, structureFromBioPDB, calc
+
 # Scaling factors for relative ASA
 # Calculated using extended ALA-X-ALA peptides
 # Taken from NACCESS
@@ -625,3 +627,62 @@ def validate_tbldata(restraints, pcs=False):
     if output.startswith("\n"):
         output = output.replace("\n", "", 1)
     return output
+
+def passive_from_active_raw(structure, active, chain_id=None, surface=None, radius=6.5):
+    """Get the passive residues.
+    
+    Parameters
+    ----------
+
+    structure : str
+        path to the PDB file
+
+    active : list
+        List of active residues
+
+    chain_id : str
+        Chain ID
+    
+    surface : list
+       List of surface residues.
+
+    radius : float
+        Radius from active residues
+    """
+
+    # Parse the PDB file
+    if Path(structure).exists():
+        p = PDBParser(QUIET=True)
+        s = p.get_structure('pdb', structure)
+    else:
+        raise FileNotFoundError('File not found: {0}'.format(structure))
+
+    try:
+        if chain_id:
+            atom_list = [a for a in s[0][chain_id].get_atoms()]
+        else:
+            atom_list = [a for a in s[0].get_atoms()]
+    except KeyError as e:
+        raise KeyError('Chain {0} does not exist in the PDB file {1}, please enter a proper chain id'.
+              format(chain_id, structure)) from e
+
+    act_atoms = [a.get_coord() for a in atom_list if a.parent.id[1] in active]
+
+    try:
+        if not surface:
+            surface = get_surface_resids(s)
+    except Exception as e:
+        raise Exception("There was an error while calculating surface residues: {}".format(e)) from e
+
+    ns = NeighborSearch(atom_list)
+    neighbors = []
+    for a in act_atoms:
+        neighbors.append(ns.search(a, radius, "R"))  # HADDOCK used 6.5A as default
+
+    passive_list = set()
+    for n in neighbors:
+        for r in n:
+            passive_list.add(r.id[1])
+    tmp = passive_list & set(surface)
+    passive_list = tmp - set(active)
+    return sorted(passive_list)

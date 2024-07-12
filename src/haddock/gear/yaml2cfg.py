@@ -217,7 +217,7 @@ def flat_yaml_cfg(cfg: ParamMap) -> ParamDict:
     return new
 
 
-def find_incompatible_parameters(yaml_file: Path) -> dict[str, dict[str, str]]:
+def find_incompatible_parameters(yaml_file: Path) -> dict[str, ParamDict]:
     """
     Reads a YAML configuration file and identifies nodes containing the 'incompatible' key.
 

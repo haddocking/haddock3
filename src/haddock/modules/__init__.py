@@ -65,7 +65,7 @@ non_mandatory_general_parameters_defaults = read_from_yaml_config(
     modules_defaults_path
 )  # noqa : E501
 
-incompatible_params = find_incompatible_parameters(modules_defaults_path)
+incompatible_defaults_params = find_incompatible_parameters(modules_defaults_path)
 
 config_readers = {
     ".yaml": read_from_yaml_config,

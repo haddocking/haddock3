@@ -77,7 +77,7 @@ from haddock.modules import (
     modules_category,
     modules_names,
     non_mandatory_general_parameters_defaults,
-    incompatible_params,
+    incompatible_defaults_params,
 )
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
@@ -945,15 +945,20 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
 
 
 def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
-    """Validate parameters are not incompatible.
-
-    Args:
-        params (ParamMap): A mapping of parameter names to their values.
-
-    Raises:
-        ValueError: If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.
     """
-    for limiting_param, incompatibilities in incompatible_params.items():
+    Validate parameters are not incompatible.
+
+    Parameters
+    ----------
+    params : ParamMap
+        A mapping of parameter names to their values.
+
+    Raises
+    ------
+    ValueError
+        If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.
+    """
+    for limiting_param, incompatibilities in incompatible_defaults_params.items():
         # Check if the limiting parameter is present in the parameters
         if limiting_param in params:
             # Check each incompatibility for the limiting parameter

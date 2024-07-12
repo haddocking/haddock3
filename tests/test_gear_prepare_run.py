@@ -391,7 +391,7 @@ def test_param_value_error(defaultparams, key, value):
 
 def test_validate_parameters_are_not_incompatible(mocker):
     mocker.patch(
-        "haddock.gear.prepare_run.incompatible_params",
+        "haddock.gear.prepare_run.incompatible_defaults_params",
         {"limiting_parameter": {"incompatible_parameter": "incompatible_value"}},
     )
 

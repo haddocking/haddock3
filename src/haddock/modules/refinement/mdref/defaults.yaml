@@ -1385,10 +1385,10 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 200
+  max: 400
   title: Sampling factor for each starting model
-  short: This paramater control how many times a model will be refined.
-  long: This paramater control how many times a model will be refined. 
+  short: This parameter control how many times a model will be refined.
+  long: This parameter control how many times a model will be refined. 
   group: 'sampling'
   explevel: expert
 max_nmodels:
@@ -1397,8 +1397,8 @@ max_nmodels:
   min: 1
   max: 50000
   title: Maximum number of models to refine
-  short: This paramater controls the maximum number of models to refine.
-  long: This paramater controls the maximum number of models to refine.
+  short: This parameter controls the maximum number of models to refine.
+  long: This parameter controls the maximum number of models to refine.
   group: 'sampling'
   explevel: expert
 solvent:

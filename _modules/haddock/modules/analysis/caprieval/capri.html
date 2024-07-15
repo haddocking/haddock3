@@ -89,21 +89,25 @@
              
   <h1>Source code for haddock.modules.analysis.caprieval.capri</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;CAPRI module.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OPENBLAS_NUM_THREADS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OPENBLAS_NUM_THREADS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pdbtools</span> <span class="kn">import</span> <span class="n">pdb_segxchain</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">CNS_MODULES</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
     <span class="n">AtomsDict</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
@@ -112,7 +116,8 @@
     <span class="n">ParamDict</span><span class="p">,</span>
     <span class="n">ParamMap</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">Type</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ALIGNError</span><span class="p">,</span>
     <span class="n">calc_rmsd</span><span class="p">,</span>
@@ -122,7 +127,7 @@
     <span class="n">kabsch</span><span class="p">,</span>
     <span class="n">load_coords</span><span class="p">,</span>
     <span class="n">make_range</span><span class="p">,</span>
-    <span class="p">)</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">write_dic_to_file</span><span class="p">,</span> <span class="n">write_nested_dic_to_file</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
@@ -130,6 +135,7 @@
 
 <span class="n">WEIGHTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;w_elec&quot;</span><span class="p">,</span> <span class="s2">&quot;w_vdw&quot;</span><span class="p">,</span> <span class="s2">&quot;w_desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;w_bsa&quot;</span><span class="p">,</span> <span class="s2">&quot;w_air&quot;</span><span class="p">]</span>
 <span class="kn">import</span> <span class="nn">json</span>
+
 <span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
 
 
@@ -170,33 +176,33 @@
 <span class="sd">    ----------</span>
 <span class="sd">    cns_step : str</span>
 <span class="sd">        Name of the CNS step.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    scoring_params_fname : Path</span>
 <span class="sd">        Path to the json file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cns_params</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">cns_step</span><span class="p">,</span> <span class="s2">&quot;params.cfg&quot;</span><span class="p">))</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cns_params</span><span class="p">[</span><span class="s1">&#39;final_cfg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">scoring_pars</span> <span class="o">=</span> <span class="p">{</span><span class="n">kv</span><span class="p">:</span> <span class="n">cns_params</span><span class="p">[</span><span class="s1">&#39;final_cfg&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">kv</span><span class="p">]</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">WEIGHTS</span><span class="p">}</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cns_params</span><span class="p">[</span><span class="s2">&quot;final_cfg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">scoring_pars</span> <span class="o">=</span> <span class="p">{</span><span class="n">kv</span><span class="p">:</span> <span class="n">cns_params</span><span class="p">[</span><span class="s2">&quot;final_cfg&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">kv</span><span class="p">]</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">WEIGHTS</span><span class="p">}</span>
 
     <span class="n">scoring_params_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;weights_params.json&quot;</span><span class="p">)</span>
     <span class="c1"># write json file</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scoring_params_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">jsonf</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scoring_params_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">jsonf</span><span class="p">:</span>
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
             <span class="n">scoring_pars</span><span class="p">,</span>
             <span class="n">jsonf</span><span class="p">,</span>
             <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">scoring_params_fname</span></div>
 
 
 <div class="viewcode-block" id="load_contacts"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.load_contacts">[docs]</a><span class="k">def</span> <span class="nf">load_contacts</span><span class="p">(</span>
-        <span class="n">pdb_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">],</span>
-        <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
-        <span class="n">numbering_dic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">model2ref_chain_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]:</span>
+    <span class="n">pdb_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">],</span>
+    <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+    <span class="n">numbering_dic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">model2ref_chain_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load residue-based contacts.</span>
 
 <span class="sd">    Parameters</span>
@@ -220,7 +226,7 @@
         <span class="n">atoms</span><span class="p">,</span>
         <span class="n">numbering_dic</span><span class="o">=</span><span class="n">numbering_dic</span><span class="p">,</span>
         <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="c1"># create coordinate arrays</span>
     <span class="n">coord_arrays</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NDFloat</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">coord_ids</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -256,13 +262,14 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;CAPRI class.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">identificator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-            <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
-            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-            <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
-            <span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">identificator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
+        <span class="n">less_io</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the class.</span>
 
@@ -282,15 +289,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reference</span> <span class="o">=</span> <span class="n">reference</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">md5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allatoms</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;allatoms&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_atoms</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">allatoms</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r_chain</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]</span>
@@ -299,10 +310,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_ss_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;capri_ss_</span><span class="si">{</span><span class="n">identificator</span><span class="si">}</span><span class="s2">.tsv&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_clt_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;capri_clt_</span><span class="si">{</span><span class="n">identificator</span><span class="si">}</span><span class="s2">.tsv&quot;</span><span class="p">)</span>
-        <span class="c1"># for parallelisation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_ss_fname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identificator</span> <span class="o">=</span> <span class="n">identificator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_model_idx</span> <span class="o">=</span> <span class="n">identificator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">less_io</span> <span class="o">=</span> <span class="n">less_io</span>
 
 <div class="viewcode-block" id="CAPRI.calc_irmsd"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_irmsd">[docs]</a>    <span class="k">def</span> <span class="nf">calc_irmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the I-RMSD.</span>
@@ -321,7 +332,7 @@
             <span class="c1"># Load interface coordinates</span>
             <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref_interface_resdic</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
@@ -329,7 +340,7 @@
                     <span class="n">ref_interface_resdic</span><span class="p">,</span>
                     <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
                     <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
                 <span class="k">return</span>
@@ -370,7 +381,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
                 <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
                 <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
             <span class="k">return</span>
@@ -412,8 +423,8 @@
             <span class="c1"># write_coords(&quot;model_first.pdb&quot;, P)</span>
 
             <span class="c1"># get receptor and ligand coordinates</span>
-            <span class="n">Q_r_first</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">P_r_first</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">Q_r_first</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">P_r_first</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
             <span class="c1"># write_coords(&quot;ref_r_first.pdb&quot;, Q_r_first)</span>
             <span class="c1"># write_coords(&quot;model_r_first.pdb&quot;, P_r_first)</span>
             <span class="c1"># Q_l_first = Q[l_start: l_end + 1]</span>
@@ -427,8 +438,8 @@
             <span class="n">P</span> <span class="o">=</span> <span class="n">P</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">(</span><span class="n">P_r_first</span><span class="p">)</span>
 
             <span class="c1"># get receptor coordinates</span>
-            <span class="n">Q_r</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">P_r</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">Q_r</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">P_r</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
             <span class="c1"># Center receptors and get rotation matrix</span>
             <span class="c1"># Q_r = Q_r - centroid(Q_r)</span>
             <span class="c1"># P_r = P_r - centroid(P_r)</span>
@@ -448,8 +459,8 @@
             <span class="n">Q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
             <span class="n">P_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">l_start</span><span class="p">,</span> <span class="n">l_end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">l_starts</span><span class="p">,</span> <span class="n">l_ends</span><span class="p">):</span>
-                <span class="n">Q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Q_l</span><span class="p">,</span> <span class="n">Q</span><span class="p">[</span><span class="n">l_start</span><span class="p">:</span><span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
-                <span class="n">P_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">P_l</span><span class="p">,</span> <span class="n">P</span><span class="p">[</span><span class="n">l_start</span><span class="p">:</span><span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+                <span class="n">Q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Q_l</span><span class="p">,</span> <span class="n">Q</span><span class="p">[</span><span class="n">l_start</span> <span class="p">:</span> <span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+                <span class="n">P_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">P_l</span><span class="p">,</span> <span class="n">P</span><span class="p">[</span><span class="n">l_start</span> <span class="p">:</span> <span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
             <span class="c1"># Q_l = Q[l_start: l_end + 1]</span>
             <span class="c1"># P_l = P[l_start: l_end + 1]</span>
 
@@ -473,7 +484,7 @@
 
         <span class="n">ref_int_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ref_interface_resdic</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">mod_int_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
@@ -481,7 +492,7 @@
                 <span class="n">ref_interface_resdic</span><span class="p">,</span>
                 <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
                 <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
             <span class="k">return</span>
@@ -527,16 +538,16 @@
             <span class="c1"># write_coords(&quot;model.pdb&quot;, P)</span>
 
             <span class="c1"># put system at origin of the receptor interface</span>
-            <span class="n">Q_r_int</span> <span class="o">=</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">P_r_int</span> <span class="o">=</span> <span class="n">P_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">Q_r_int</span> <span class="o">=</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">P_r_int</span> <span class="o">=</span> <span class="n">P_int</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
             <span class="n">Q_int</span> <span class="o">=</span> <span class="n">Q_int</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">(</span><span class="n">Q_r_int</span><span class="p">)</span>
             <span class="n">P_int</span> <span class="o">=</span> <span class="n">P_int</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">(</span><span class="n">P_r_int</span><span class="p">)</span>
             <span class="c1"># put interfaces at the origin</span>
 
             <span class="c1"># find the rotation that minimizes the receptor interface rmsd</span>
-            <span class="n">Q_r_int</span> <span class="o">=</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="n">P_r_int</span> <span class="o">=</span> <span class="n">P_int</span><span class="p">[</span><span class="n">r_start</span><span class="p">:</span><span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">Q_r_int</span> <span class="o">=</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">P_r_int</span> <span class="o">=</span> <span class="n">P_int</span><span class="p">[</span><span class="n">r_start</span> <span class="p">:</span> <span class="n">r_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
             <span class="n">U_int</span> <span class="o">=</span> <span class="n">kabsch</span><span class="p">(</span><span class="n">P_r_int</span><span class="p">,</span> <span class="n">Q_r_int</span><span class="p">)</span>
             <span class="n">P_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">P_int</span><span class="p">,</span> <span class="n">U_int</span><span class="p">)</span>
@@ -550,8 +561,8 @@
             <span class="n">Q_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
             <span class="n">P_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">l_start</span><span class="p">,</span> <span class="n">l_end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">l_starts</span><span class="p">,</span> <span class="n">l_ends</span><span class="p">):</span>
-                <span class="n">Q_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Q_l_int</span><span class="p">,</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">l_start</span><span class="p">:</span><span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
-                <span class="n">P_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">P_l_int</span><span class="p">,</span> <span class="n">P_int</span><span class="p">[</span><span class="n">l_start</span><span class="p">:</span><span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+                <span class="n">Q_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">Q_l_int</span><span class="p">,</span> <span class="n">Q_int</span><span class="p">[</span><span class="n">l_start</span> <span class="p">:</span> <span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+                <span class="n">P_l_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">P_l_int</span><span class="p">,</span> <span class="n">P_int</span><span class="p">[</span><span class="n">l_start</span> <span class="p">:</span> <span class="n">l_end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
             <span class="c1"># prior to multibody:</span>
             <span class="c1"># Q_l_int = Q_int[l_start: l_end + 1]</span>
             <span class="c1"># P_l_int = P_int[l_start: l_end + 1]</span>
@@ -575,9 +586,9 @@
                 <span class="n">model_contacts</span> <span class="o">=</span> <span class="n">load_contacts</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
                     <span class="n">cutoff</span><span class="p">,</span>
-                    <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>
-                    <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>
-                    <span class="p">)</span>
+                    <span class="n">numbering_dic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="n">ALIGNError</span> <span class="k">as</span> <span class="n">alignerror</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">alignerror</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -646,21 +657,21 @@
 
         <span class="n">write_dic_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output_fname</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CAPRI.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="CAPRI.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;CAPRI&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the CAPRI metrics.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">align_func</span> <span class="o">=</span> <span class="n">get_align</span><span class="p">(</span>
                 <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;alignment_method&quot;</span><span class="p">],</span>
                 <span class="n">lovoalign_exec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;lovoalign_exec&quot;</span><span class="p">],</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model2ref_numbering</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span> <span class="o">=</span> <span class="n">align_func</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="n">ALIGNError</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Alignment failed between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="si">}</span><span class="s2"> &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">, skipping...&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">return</span>
         <span class="c1"># print(f&quot;model2ref_numbering {self.model2ref_numbering}&quot;)</span>
         <span class="c1"># print(f&quot;model2ref_chain_dict {self.model2ref_chain_dict}&quot;)</span>
@@ -690,7 +701,12 @@
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating DockQ metric&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_dockq</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">make_output</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">less_io</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">make_output</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The scheduler will use the return of the `run` method as the output of the tasks</span>
+            <span class="c1">#  Here to avoid writing a file, return a copy of this instance</span>
+            <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CAPRI.check_chains"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.check_chains">[docs]</a>    <span class="k">def</span> <span class="nf">check_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_chains</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check observed chains against the expected ones.</span>
@@ -730,10 +746,10 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_load_atoms</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
-            <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
-            <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+        <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+        <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load atoms from a model and reference.</span>
 
@@ -760,9 +776,9 @@
 
 <div class="viewcode-block" id="CAPRI.identify_interface"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">identify_interface</span><span class="p">(</span>
-            <span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
-            <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
+        <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify the interface.</span>
 
 <span class="sd">        Parameters</span>
@@ -855,12 +871,12 @@
 
 
 <div class="viewcode-block" id="rearrange_ss_capri_output"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.rearrange_ss_capri_output">[docs]</a><span class="k">def</span> <span class="nf">rearrange_ss_capri_output</span><span class="p">(</span>
-        <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">output_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-        <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine different capri outputs in a single file.</span>
 
 <span class="sd">    Parameters</span>
@@ -881,7 +897,7 @@
     <span class="n">split_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;capri_ss&quot;</span><span class="p">:</span> <span class="s2">&quot;model-cluster_ranking&quot;</span><span class="p">,</span>
         <span class="s2">&quot;capri_clt&quot;</span><span class="p">:</span> <span class="s2">&quot;caprieval_rank&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
+    <span class="p">}</span>
     <span class="k">if</span> <span class="n">keyword</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">split_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keyword </span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
 
@@ -896,8 +912,8 @@
                 <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Output file </span><span class="si">{</span><span class="n">out_file</span><span class="si">}</span><span class="s2"> does not exist. &quot;</span>
                     <span class="s2">&quot;Caprieval will not be exhaustive...&quot;</span>
-                    <span class="p">)</span>
                 <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">continue</span>
 
         <span class="n">data</span><span class="p">[</span><span class="n">ident</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -920,7 +936,40 @@
 
         <span class="n">out_file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
 
-    <span class="c1"># Rank according to the score</span>
+    <span class="n">ranked_data</span> <span class="o">=</span> <span class="n">rank_according_to_score</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">sort_key</span><span class="o">=</span><span class="n">sort_key</span><span class="p">,</span> <span class="n">sort_ascending</span><span class="o">=</span><span class="n">sort_ascending</span>
+    <span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ranked_data</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+        <span class="c1"># This means no files have been collected</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">write_nested_dic_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rank_according_to_score"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.rank_according_to_score">[docs]</a><span class="k">def</span> <span class="nf">rank_according_to_score</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">],</span> <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ranks a dictionary of data based on a specified sort key and sort order,</span>
+<span class="sd">    and assigns a rank to each entry based on its &#39;score&#39; attribute.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict[int, ParamDict]): Dictionary where each key is an index and each</span>
+<span class="sd">                                     value is a ParamDict containing data attributes.</span>
+<span class="sd">        sort_key (str): Key by which to sort the data within the ParamDict.</span>
+<span class="sd">                        Must correspond to a valid attribute in ParamDict.</span>
+<span class="sd">        sort_ascending (bool): If True, sorts the data in ascending order based on</span>
+<span class="sd">                               the sort_key; if False, sorts in descending order.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[int, ParamDict]: A new dictionary where entries are sorted according</span>
+<span class="sd">                              to the sort_key and optionally sorted order. Each entry</span>
+<span class="sd">                              also includes a &#39;caprieval_rank&#39; attribute indicating</span>
+<span class="sd">                              its rank based on the &#39;score&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">score_rankkey_values</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
     <span class="n">score_rankkey_values</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
@@ -933,18 +982,70 @@
     <span class="n">rankkey_values</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>
         <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sort_ascending</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">_data</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">data_idx</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rankkey_values</span><span class="p">):</span>
         <span class="n">_data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">data_idx</span><span class="p">]</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">_data</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_data</span></div>
+
+
+<div class="viewcode-block" id="extract_data_from_capri_class"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.extract_data_from_capri_class">[docs]</a><span class="k">def</span> <span class="nf">extract_data_from_capri_class</span><span class="p">(</span>
+    <span class="n">capri_objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">],</span>
+    <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">output_fname</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts data attributes from a list of CAPRI objects into a structured dictionary,</span>
+<span class="sd">    optionally sorts the data based on a specified key, and writes the sorted data to</span>
+<span class="sd">    a file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        capri_objects (list[CAPRI]): List of CAPRI objects containing data attributes</span>
+<span class="sd">                                     to be extracted.</span>
+<span class="sd">        sort_key (str): Key by which to sort the extracted data. Must correspond to</span>
+<span class="sd">                        a valid attribute in the CAPRI object (e.g., &#39;score&#39;, &#39;irmsd&#39;).</span>
+<span class="sd">        sort_ascending (bool): If True, sorts the data in ascending order based on</span>
+<span class="sd">                               the sort_key; if False, sorts in descending order.</span>
+<span class="sd">        output_fname (Path): Path to the output file where the sorted data will be written.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if</span>
+<span class="sd">                                        successful, None if no data was processed.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        (Include any specific exceptions the function may raise)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">capri_objects</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="s2">&quot;md5&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">md5</span><span class="p">,</span>
+            <span class="s2">&quot;caprieval_rank&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">score</span><span class="p">,</span>
+            <span class="s2">&quot;irmsd&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">irmsd</span><span class="p">,</span>
+            <span class="s2">&quot;fnat&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">fnat</span><span class="p">,</span>
+            <span class="s2">&quot;lrmsd&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">lrmsd</span><span class="p">,</span>
+            <span class="s2">&quot;ilrmsd&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">ilrmsd</span><span class="p">,</span>
+            <span class="s2">&quot;dockq&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">dockq</span><span class="p">,</span>
+            <span class="s2">&quot;cluster_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;cluster_ranking&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;model-cluster_ranking&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="n">ranked_data</span> <span class="o">=</span> <span class="n">rank_according_to_score</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">sort_key</span><span class="o">=</span><span class="n">sort_key</span><span class="p">,</span> <span class="n">sort_ascending</span><span class="o">=</span><span class="n">sort_ascending</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ranked_data</span><span class="p">:</span>
         <span class="c1"># This means no files have been collected</span>
         <span class="k">return</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">write_nested_dic_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span></div>
+        <span class="n">write_nested_dic_to_file</span><span class="p">(</span><span class="n">data_dict</span><span class="o">=</span><span class="n">ranked_data</span><span class="p">,</span> <span class="n">output_fname</span><span class="o">=</span><span class="n">output_fname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ranked_data</span></div>
 
 
 <div class="viewcode-block" id="calc_stats"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.calc_stats">[docs]</a><span class="k">def</span> <span class="nf">calc_stats</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
@@ -967,19 +1068,22 @@
     <span class="n">stdev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stdev</span></div>
 
+
 <span class="c1"># Define dict types</span>
-<span class="n">CltData</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">]]]</span>  <span class="c1"># noqa : E501</span>
+<span class="n">CltData</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">]]</span>
+<span class="p">]</span>  <span class="c1"># noqa : E501</span>
 
 
 <div class="viewcode-block" id="capri_cluster_analysis"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.capri_cluster_analysis">[docs]</a><span class="k">def</span> <span class="nf">capri_cluster_analysis</span><span class="p">(</span>
-        <span class="n">capri_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">],</span>
-        <span class="n">model_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
-        <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-        <span class="n">clt_threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-        <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">capri_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">],</span>
+    <span class="n">model_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
+    <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+    <span class="n">clt_threshold</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Consider the cluster results for the CAPRI evaluation.&quot;&quot;&quot;</span>
     <span class="n">capri_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;irmsd&quot;</span><span class="p">,</span> <span class="s2">&quot;fnat&quot;</span><span class="p">,</span> <span class="s2">&quot;lrmsd&quot;</span><span class="p">,</span> <span class="s2">&quot;dockq&quot;</span><span class="p">]</span>
     <span class="n">model_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;air&quot;</span><span class="p">,</span> <span class="s2">&quot;bsa&quot;</span><span class="p">,</span> <span class="s2">&quot;desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;elec&quot;</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="s2">&quot;vdw&quot;</span><span class="p">]</span>
@@ -1008,9 +1112,7 @@
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;under_eval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
         <span class="c1"># score</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">score_array</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clt_data</span><span class="p">[</span><span class="n">element</span><span class="p">][:</span><span class="n">clt_threshold</span><span class="p">]</span>
-                <span class="p">]</span>
+            <span class="n">score_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clt_data</span><span class="p">[</span><span class="n">element</span><span class="p">][:</span><span class="n">clt_threshold</span><span class="p">]]</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;score_std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_stats</span><span class="p">(</span><span class="n">score_array</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
@@ -1020,9 +1122,7 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">capri_keys</span><span class="p">:</span>
             <span class="n">std_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_std&quot;</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">key_array</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="nb">vars</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clt_data</span><span class="p">[</span><span class="n">element</span><span class="p">][:</span><span class="n">clt_threshold</span><span class="p">]</span>
-                    <span class="p">]</span>
+                <span class="n">key_array</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clt_data</span><span class="p">[</span><span class="n">element</span><span class="p">][:</span><span class="n">clt_threshold</span><span class="p">]]</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">std_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_stats</span><span class="p">(</span><span class="n">key_array</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
@@ -1036,7 +1136,7 @@
                     <span class="n">key_array</span> <span class="o">=</span> <span class="p">[</span>
                         <span class="nb">vars</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="s2">&quot;unw_energies&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
                         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clt_data</span><span class="p">[</span><span class="n">element</span><span class="p">][:</span><span class="n">clt_threshold</span><span class="p">]</span>
-                        <span class="p">]</span>
+                    <span class="p">]</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">std_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_stats</span><span class="p">(</span><span class="n">key_array</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
@@ -1056,7 +1156,7 @@
     <span class="n">rankkey_values</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>
         <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
         <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sort_ascending</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">_output_dic</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rankkey_values</span><span class="p">):</span>
@@ -1076,19 +1176,15 @@
     <span class="n">info_header</span> <span class="o">+=</span> <span class="p">(</span>
         <span class="s2">&quot;# NOTE: if under_eval=yes, it means that there were less models in&quot;</span>
         <span class="s2">&quot; a cluster than&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">info_header</span> <span class="o">+=</span> <span class="p">(</span>
-        <span class="s2">&quot;#    clt_threshold, thus these values were under &quot;</span>
-        <span class="s2">&quot;evaluated.&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
-        <span class="p">)</span>
+        <span class="s2">&quot;#    clt_threshold, thus these values were under &quot;</span> <span class="s2">&quot;evaluated.&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+    <span class="p">)</span>
     <span class="n">info_header</span> <span class="o">+=</span> <span class="p">(</span>
         <span class="s2">&quot;#   You might need to tweak the value of clt_threshold or change&quot;</span>
         <span class="s2">&quot; some parameters&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
-        <span class="p">)</span>
-    <span class="n">info_header</span> <span class="o">+=</span> <span class="p">(</span>
-        <span class="s2">&quot;#    in `clustfcc` depending on your &quot;</span>
-        <span class="s2">&quot;analysis.&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">info_header</span> <span class="o">+=</span> <span class="s2">&quot;#    in `clustfcc` depending on your &quot;</span> <span class="s2">&quot;analysis.&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
     <span class="n">info_header</span> <span class="o">+=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
     <span class="n">info_header</span> <span class="o">+=</span> <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">40</span>
 
@@ -1100,7 +1196,7 @@
             <span class="n">output_dic</span><span class="p">,</span>
             <span class="n">output_fname</span><span class="p">,</span>
             <span class="n">info_header</span><span class="o">=</span><span class="n">info_header</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CAPRIError"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRIError">[docs]</a><span class="k">class</span> <span class="nc">CAPRIError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -1109,6 +1205,17 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dump_weights"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.dump_weights">[docs]</a><span class="k">def</span> <span class="nf">dump_weights</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">sel_steps</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">))</span>
+    <span class="n">cns_step</span> <span class="o">=</span> <span class="n">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="o">=</span><span class="n">sel_steps</span><span class="p">,</span> <span class="n">st_order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cns_step</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found previous CNS step: </span><span class="si">{</span><span class="n">cns_step</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">scoring_params_fname</span> <span class="o">=</span> <span class="n">save_scoring_weights</span><span class="p">(</span><span class="n">cns_step</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved scoring weights to: </span><span class="si">{</span><span class="n">scoring_params_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No previous CNS step found. Cannot save scoring weights.&quot;</span><span class="p">)</span></div>
 
 
 <span class="c1"># # debug only</span>

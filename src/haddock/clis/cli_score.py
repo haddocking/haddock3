@@ -106,7 +106,19 @@ def maincli() -> None:
     cli(_ap(), main)
 
 
-def get_parameters(kwargs: Any) -> dict[str, Any]:
+def get_parameters(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Obtain and validate command line arguments and add defaults one.
+
+    Parameters
+    ----------
+    kwargs : dict[str, Any]
+        Command line arguments (supposed to be emsocring parameters)
+
+    Return
+    ------
+    ems_dict : dict[str, Any]
+        Default parameters updated by command line arguments.
+    """
     from os import linesep
     from haddock.gear.yaml2cfg import read_from_yaml_config
     from haddock.modules.scoring.emscoring import DEFAULT_CONFIG

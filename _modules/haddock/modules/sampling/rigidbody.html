@@ -117,12 +117,14 @@
 <span class="sd">sure to sample enough the possible interaction space.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.haddockmodel</span> <span class="kn">import</span> <span class="n">HaddockModel</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libcns</span> <span class="kn">import</span> <span class="n">prepare_cns_input</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">GenericTask</span><span class="p">,</span> <span class="n">Scheduler</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.base_cns_module</span> <span class="kn">import</span> <span class="n">BaseCNSModule</span>
@@ -147,6 +149,111 @@
     <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm module is installed.&quot;&quot;&quot;</span>
         <span class="k">return</span></div>
+
+<div class="viewcode-block" id="HaddockModule.make_cns_jobs"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.make_cns_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">make_cns_jobs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">inp_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CNSJob</span><span class="p">]:</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inp_list</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">combination</span><span class="p">,</span> <span class="n">inp_input</span><span class="p">,</span> <span class="n">ambig_fname</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">e</span>
+
+            <span class="n">log_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.out&quot;</span>
+            <span class="n">output_pdb_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
+
+            <span class="c1"># Create a model for the expected output</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>  <span class="c1"># type: ignore</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+            <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">inp_input</span><span class="p">,</span> <span class="n">log_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
+            <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jobs</span></div>
+
+<div class="viewcode-block" id="HaddockModule.prepare_cns_input_sequential"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_sequential">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_cns_input_sequential</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">models_to_dock</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
+        <span class="n">sampling_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">ambig_fnames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="n">_l</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sampling_factor</span><span class="p">):</span>
+                <span class="c1"># assign ambig_fname</span>
+                <span class="k">if</span> <span class="n">ambig_fnames</span><span class="p">:</span>
+                    <span class="n">ambig_fname</span> <span class="o">=</span> <span class="n">ambig_fnames</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ambig_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
+                <span class="c1"># prepare cns input</span>
+                <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;iniseed&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">idx</span>
+                <span class="n">rigidbody_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
+                    <span class="n">idx</span><span class="p">,</span>
+                    <span class="n">combination</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                    <span class="s2">&quot;rigidbody&quot;</span><span class="p">,</span>
+                    <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
+                    <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
+                    <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">_l</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">combination</span><span class="p">,</span> <span class="n">rigidbody_input</span><span class="p">,</span> <span class="n">ambig_fname</span><span class="p">,</span> <span class="n">seed</span><span class="p">))</span>
+
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">_l</span></div>
+
+<div class="viewcode-block" id="HaddockModule.prepare_cns_input_parallel"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_parallel">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_cns_input_parallel</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">models_to_dock</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
+        <span class="n">sampling_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">ambig_fnames</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="n">prepare_tasks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">_l</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sampling_factor</span><span class="p">):</span>
+                <span class="n">ambig_fname</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">ambig_fnames</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">ambig_fnames</span>
+                    <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;iniseed&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">idx</span>
+                <span class="n">task</span> <span class="o">=</span> <span class="n">GenericTask</span><span class="p">(</span>
+                    <span class="n">function</span><span class="o">=</span><span class="n">prepare_cns_input</span><span class="p">,</span>
+                    <span class="n">model_number</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">input_element</span><span class="o">=</span><span class="n">combination</span><span class="p">,</span>
+                    <span class="n">step_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                    <span class="n">recipe_str</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
+                    <span class="n">defaults</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">identifier</span><span class="o">=</span><span class="s2">&quot;rigidbody&quot;</span><span class="p">,</span>
+                    <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
+                    <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
+                    <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">prepare_tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+                <span class="n">_l</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">combination</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">ambig_fname</span><span class="p">,</span> <span class="n">seed</span><span class="p">))</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">prepare_engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">prepare_tasks</span><span class="p">)</span>
+        <span class="n">prepare_engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># Replace the task with the result of the task</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prepare_engine</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">element</span><span class="p">,</span> <span class="n">task_result</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_l</span><span class="p">,</span> <span class="n">prepare_engine</span><span class="o">.</span><span class="n">results</span><span class="p">):</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">task_result</span><span class="p">,</span> <span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">l</span></div>
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
@@ -186,48 +293,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ambig_fnames</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1"># Prepare the jobs</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Preparing jobs...&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sampling_factor</span><span class="p">):</span>
-                <span class="c1"># assign ambig_fname</span>
-                <span class="k">if</span> <span class="n">ambig_fnames</span><span class="p">:</span>
-                    <span class="n">ambig_fname</span> <span class="o">=</span> <span class="n">ambig_fnames</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ambig_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span><span class="p">:</span>
+            <span class="n">cns_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_cns_input_sequential</span><span class="p">(</span>
+                <span class="n">models_to_dock</span><span class="p">,</span> <span class="n">sampling_factor</span><span class="p">,</span> <span class="n">ambig_fnames</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
 
-                <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;iniseed&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">idx</span>
-                <span class="c1"># prepare cns input</span>
-                <span class="n">rigidbody_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
-                    <span class="n">idx</span><span class="p">,</span>
-                    <span class="n">combination</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                    <span class="s2">&quot;rigidbody&quot;</span><span class="p">,</span>
-                    <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
-                    <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
-                    <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">less_io</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">],</span>
-                    <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
-                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cns_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_cns_input_parallel</span><span class="p">(</span>
+                <span class="n">models_to_dock</span><span class="p">,</span> <span class="n">sampling_factor</span><span class="p">,</span> <span class="n">ambig_fnames</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
 
-                <span class="n">log_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.out&quot;</span>
-                <span class="n">output_pdb_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparation took </span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 
-                <span class="c1"># Create a model for the expected output</span>
-                <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">)</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-
-                <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">rigidbody_input</span><span class="p">,</span> <span class="n">log_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
-                <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
-
-                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_cns_jobs</span><span class="p">(</span><span class="n">cns_input</span><span class="p">)</span>
 
         <span class="c1"># Run CNS Jobs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running CNS Jobs n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -260,7 +342,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 12, 2024.
+      <span class="lastupdated">Last updated on Jul 15, 2024.
       </span></p>
   </div>
 

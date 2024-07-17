@@ -13,6 +13,7 @@ from pathlib import Path
 import jsonpickle
 
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.exceptions import SetupError
 from haddock.core.typing import (
     Any,
     FilePath,
@@ -276,8 +277,10 @@ class ModuleIO:
         """
         # Gather all input molecules
         input_molecules = list(input_molecules_dir.glob('*.pdb'))
-        assert input_molecules != [], \
-            f"No molecules could be found in `{input_molecules_dir}`"
+        if input_molecules == []:
+            raise SetupError(
+                f"No molecules could be found in `{input_molecules_dir}`"
+                )
         # Sort them by creation date (which is also input order)
         input_molecules.sort(key=getmtime)  # FIXME: getctime ?
         # Set input attribute

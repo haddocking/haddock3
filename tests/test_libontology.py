@@ -34,7 +34,7 @@ def output_pdbfile() -> Generator[PDBFile, None, None]:
 
 
 @pytest.fixture
-def moduleio_with_pdbfile_list(input_pdbfile, output_pdbfile):
+def moduleio_with_pdbfile_list(input_pdbfile: PDBFile, output_pdbfile: PDBFile):
     m = ModuleIO()
     m.input = [input_pdbfile]
     m.output = [output_pdbfile, output_pdbfile]
@@ -42,7 +42,7 @@ def moduleio_with_pdbfile_list(input_pdbfile, output_pdbfile):
 
 
 @pytest.fixture
-def moduleio_with_pdbfile_dict(output_pdbfile):
+def moduleio_with_pdbfile_dict(output_pdbfile: PDBFile):
     m = ModuleIO()
     m.input = []
     m.output = [
@@ -76,7 +76,7 @@ def io_data() -> dict:
 
 
 @pytest.fixture
-def io_json_file(io_data) -> Generator[Path, None, None]:
+def io_json_file(io_data: dict) -> Generator[Path, None, None]:
     with tempfile.NamedTemporaryFile(mode="w+") as f:
 
         json.dump(io_data, f)
@@ -88,7 +88,7 @@ def io_json_file(io_data) -> Generator[Path, None, None]:
 
 @pytest.fixture
 def molecule():
-    return Molecule(None)
+    return Molecule(None)  # type: ignore
 
 
 @pytest.fixture
@@ -306,7 +306,7 @@ def test_moduleio_add_list():
     assert moduleio.output == ["literally", "anything"]
 
 
-def test_moduleio_save(mocker, moduleio_with_pdbfile_list):
+def test_moduleio_save(mocker, moduleio_with_pdbfile_list: ModuleIO):
 
     with tempfile.NamedTemporaryFile() as temp_module_io_f:
         mocker.patch("haddock.core.defaults", temp_module_io_f.name)
@@ -328,7 +328,7 @@ def test_moduleio_save(mocker, moduleio_with_pdbfile_list):
         assert isinstance(observed_data, dict)
 
 
-def test_moduleio_load(io_json_file, io_data):
+def test_moduleio_load(io_json_file: Path, io_data: dict):
 
     moduleio = ModuleIO()
     moduleio.load(filename=io_json_file)
@@ -337,7 +337,7 @@ def test_moduleio_load(io_json_file, io_data):
     assert moduleio.output == io_data["output"]
 
 
-def test_moduleio_retrieve_models_list(moduleio_with_pdbfile_list):
+def test_moduleio_retrieve_models_list(moduleio_with_pdbfile_list: ModuleIO):
 
     result = moduleio_with_pdbfile_list.retrieve_models()
 
@@ -346,7 +346,7 @@ def test_moduleio_retrieve_models_list(moduleio_with_pdbfile_list):
     assert isinstance(result[1], PDBFile)
 
 
-def test_moduleio_retrieve_models_dict(moduleio_with_pdbfile_dict):
+def test_moduleio_retrieve_models_dict(moduleio_with_pdbfile_dict: ModuleIO):
 
     result = moduleio_with_pdbfile_dict.retrieve_models(
         crossdock=True, individualize=True
@@ -379,7 +379,7 @@ def test_moduleio_retrieve_models_dict(moduleio_with_pdbfile_dict):
     assert isinstance(result[0][0], PDBFile)
 
 
-def test_moduleio_check_faulty(mocker, module_io_with_persistent):
+def test_moduleio_check_faulty(mocker, module_io_with_persistent: ModuleIO):
 
     mocker.patch.object(module_io_with_persistent, "remove_missing", return_value=None)
 
@@ -400,7 +400,7 @@ def test_moduleio_check_faulty(mocker, module_io_with_persistent):
     assert result == pytest.approx(10.0)
 
 
-def test_moduleio_remove_missing(module_io_with_persistent):
+def test_moduleio_remove_missing(module_io_with_persistent: ModuleIO):
 
     # Remove the first file
     first_file = module_io_with_persistent.output[0].rel_path

@@ -45,7 +45,6 @@ def topoaa_module(prepare_topoaa_run):
         path=modulename_path,
         initial_params=DEFAULT_TOPOAA_CONFIG,
         )
-    #topoaa.__init__(path=modulename_path, order=0)
     topoaa.params["molecules"] = mol_copies
     topoaa.params["mol1"] = {"prot_segid": "A"}
     topoaa.params["mol2"] = {"prot_segid": "B"}

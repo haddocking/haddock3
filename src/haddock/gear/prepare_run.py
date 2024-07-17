@@ -316,9 +316,15 @@ def setup_run(
         )
 
     first_module_id = list(modules_params.keys())[0]
-    if (topoaa_module_id := "topoaa.1") in modules_params.keys():
-        topology_params = modules_params[topoaa_module_id]
+    # Here we check if topoaa is the first module in the workflow.
+    # If it is, we gather the parameters of topoaa in the topology_params,
+    # as equired by the function populate_topology_molecule_params(),
+    # to map the molX parameters info to input molecules.
+    # Without this, we loose the information.
+    if first_module_id == "topoaa.1":
+        topology_params = modules_params[first_module_id]
     else:
+        # If not, just fake an empty set of parameters
         topology_params = {}
 
     if starting_from_copy:
@@ -335,10 +341,6 @@ def setup_run(
             general_params["molecules"],
             topology_params,
         )
-        # copy_molecules_to_topology(
-        #     general_params["molecules"],
-        #     modules_params[first_module_id],
-        # )
 
         max_mols = len(topology_params["molecules"])
         if max_mols > max_molecules_allowed:
@@ -816,6 +818,9 @@ def copy_molecules_to_data_dir(
 
     topoaa_params : dict
         A dictionary containing the topoaa parameters.
+    
+    _first_module_name : str
+        Name of the first module used in the workflow.
 
     preprocess : bool
         Whether to preprocess input molecules. Defaults to ``True``.
@@ -823,7 +828,7 @@ def copy_molecules_to_data_dir(
     """
     # Removes digit from module name
     # Build regex to capture '<name>.<digit>'
-    name_digit_regex = re.compile(r"(\w+)\.\d+")
+    name_digit_regex = re.compile(r"(\w+)(\.\d+)?")
     first_module_name: str = "input_molecules"
     if match := name_digit_regex.search(_first_module_name):
         first_module_name = match.group(1)
@@ -1061,16 +1066,24 @@ def _get_expandable(
     return allowed_params
 
 
-def populate_topology_molecule_params(topoaa: ParamMap) -> None:
-    """Populate topoaa `molX` subdictionaries."""
+def populate_topology_molecule_params(topology_params: ParamMap) -> None:
+    """Populate topoaa `molX` subdictionaries.
+
+    Parameters
+    ----------
+    topology_params : ParamMap
+        Dictionary of parameter with their values.
+        Possibily parameters from topoaa module.
+        If not, nothing will happen
+    """
     topoaa_dft = _read_defaults("topoaa.1")
 
-    for i in range(1, len(topoaa["molecules"]) + 1):
+    for i in range(1, len(topology_params["molecules"]) + 1):
         mol = f"mol{i}"
 
-        topoaa[mol] = recursive_dict_update(
+        topology_params[mol] = recursive_dict_update(
             topoaa_dft["mol1"],
-            topoaa[mol] if mol in topoaa else {},
+            topology_params[mol] if mol in topology_params else {},
         )
     return
 

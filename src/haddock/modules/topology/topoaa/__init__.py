@@ -154,9 +154,10 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                     write_to_disk=not self.params["less_io"],
                     )
-                self.log(
-                    f"Topology CNS input created in {topoaa_input.name}"
-                    )
+                if isinstance(topoaa_input, Path):
+                    self.log(
+                        f"Topology CNS input created in {topoaa_input.name}"
+                        )
 
                 # Add new job to the pool
                 output_filename = Path(f"{model_path.stem}.{Format.CNS_OUTPUT}")

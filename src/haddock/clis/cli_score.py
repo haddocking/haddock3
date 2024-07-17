@@ -18,7 +18,6 @@ Usage::
 """
 import argparse
 import sys
-import tempfile
 
 from haddock.core.typing import (
     Any,
@@ -139,17 +138,19 @@ def get_parameters(kwargs: dict[str, Any]) -> dict[str, Any]:
                 f"* ATTENTION * Value ({value}) of parameter {param} "
                 f"different from default ({default_emscoring[param]})"
                 )
-            # get the type of default value
-            default_type = type(default_emscoring[param])
             # convert the value to the same type
-            if default_type == bool:
+            if isinstance(default_emscoring[param], bool):
+                # In the case of boolean type
                 if value.lower() not in ["true", "false"]:
                     sys.exit(
                         f"* ERROR * Boolean parameter {param} "
                         "should be True or False"
                         )
+                # convert into pythonic True or False
                 value = value.lower() == "true"
             else:
+                # Cast value into specific python3 type
+                default_type = type(default_emscoring[param])
                 value = default_type(value)
             ems_dict[param] = value
             n_warnings += 1

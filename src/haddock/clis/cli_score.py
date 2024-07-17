@@ -19,6 +19,7 @@ Usage::
 import argparse
 import sys
 
+from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -121,13 +122,13 @@ def get_parameters(kwargs: dict[str, Any]) -> dict[str, Any]:
     from os import linesep
     from haddock.gear.yaml2cfg import read_from_yaml_config
     from haddock.modules.scoring.emscoring import DEFAULT_CONFIG
-    # config all parameters are correctly spelled.
+    # check all parameters are correctly spelled.
     default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
     ems_dict = default_emscoring.copy()
     n_warnings = 0
     for param, value in kwargs.items():
         if param not in default_emscoring:
-            sys.exit(
+            raise ConfigurationError(
                 f"* ERROR * Parameter {param!r} is not a "
                 f"valid `emscoring` parameter.{linesep}"
                 "Valid emscoring parameters are: "
@@ -142,7 +143,7 @@ def get_parameters(kwargs: dict[str, Any]) -> dict[str, Any]:
             if isinstance(default_emscoring[param], bool):
                 # In the case of boolean type
                 if value.lower() not in ["true", "false"]:
-                    sys.exit(
+                    raise ConfigurationError(
                         f"* ERROR * Boolean parameter {param} "
                         "should be True or False"
                         )
@@ -151,7 +152,13 @@ def get_parameters(kwargs: dict[str, Any]) -> dict[str, Any]:
             else:
                 # Cast value into specific python3 type
                 default_type = type(default_emscoring[param])
-                value = default_type(value)
+                try:
+                    value = default_type(value)
+                except ValueError:
+                    raise ConfigurationError(
+                        f"* ERROR * parameter '{param}' must be of "
+                        f"type '{default_type.__name__}'"
+                        )
             ems_dict[param] = value
             n_warnings += 1
     if n_warnings != 0:
@@ -219,7 +226,10 @@ def main(
         sys.exit(f"* ERROR * Input PDB file {str(input_pdb)!r} does not exist")
 
     # Get parameters
-    ems_dict = get_parameters(kwargs)
+    try:
+        ems_dict = get_parameters(kwargs)
+    except ConfigurationError as config_error:
+        sys.exit(config_error)
 
     # create run directory
     run_dir = Path(run_dir)

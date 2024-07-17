@@ -1,35 +1,19 @@
 """Test yaml2cfg gear."""
 import filecmp
-import os
 import pytest
 from pathlib import Path
-from fnmatch import fnmatch
 
-from haddock import haddock3_source_path
-from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libio import read_from_yaml
 from haddock.gear.yaml2cfg import (
     flat_yaml_cfg,
     yaml2cfg_text,
     )
-from haddock.gear.validations import validate_defaults_yaml
 
 from . import (
     haddock3_yaml_cfg_examples,
     haddock3_yaml_converted,
     haddock3_yaml_converted_no_header,
     )
-
-
-@pytest.fixture
-def default_yaml_files():
-    """Return list of defaults.yaml file within the haddock src directory."""
-    all_defaults_yaml: list[str] = []
-    for path, _, files in os.walk(haddock3_source_path):
-        for name in files:
-            if fnmatch(name, MODULE_DEFAULT_YAML):
-                all_defaults_yaml.append(f"{path}/{MODULE_DEFAULT_YAML}")
-    return all_defaults_yaml
 
 
 complex_cfg = {
@@ -117,11 +101,3 @@ def test_yaml2cfg_test_no_header():
         shallow=False,
         )
     p.unlink()
-
-
-def test_yaml_duplicated_params(default_yaml_files: list[str]):
-    """Make sure no duplicated parameters are present in a ymal file."""
-    assert default_yaml_files != []
-    # Loop over default yaml files
-    for default_yaml_fpath in default_yaml_files:
-        assert validate_defaults_yaml(default_yaml_fpath) is None

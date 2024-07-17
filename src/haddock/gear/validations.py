@@ -2,7 +2,7 @@
 from haddock import config_expert_levels, _hidden_level
 from haddock.core.defaults import RUNDIR, valid_run_dir_chars
 from haddock.core.exceptions import ConfigurationError
-from haddock.core.typing import FilePath, Any
+from haddock.core.typing import FilePath, Any, ParamDict
 from haddock.libs.libio import read_from_yaml, check_yaml_duplicated_parameters
 
 _allowed_expert_levels = config_expert_levels + ("all", _hidden_level)
@@ -31,12 +31,12 @@ def v_rundir(rundir: FilePath) -> None:
 
 
 def validate_yaml_params_scheme(yaml_fpath: FilePath) -> None:
-    """Validate a default.yaml file parameters schemes.
+    """Validate a defaults.yaml file module parameters schemes.
 
     Parameters
     ----------
     yaml_fpath : str
-        Path to the default.yaml file
+        Path to the defaults.yaml file to check.
     """
     ycfg = read_from_yaml(yaml_fpath)
     # Loop over parameters
@@ -49,7 +49,7 @@ def validate_yaml_params_scheme(yaml_fpath: FilePath) -> None:
 
 def validate_parameter_scheme(
         param_name: str,
-        parameters: dict[str, Any],
+        parameters: ParamDict,
         ) -> None:
     """Validate a parameter scheme.
 
@@ -72,7 +72,7 @@ def validate_parameter_scheme(
         # Once we know the type, we can make parameter type specific checks
         elif base_subparam == "type":
             # Check if known type
-            assert param_value in TYPE_SPECIFIC_SCHEMES.keys(), f"Parameter {param_name} contain an unknown parameter type"  # noqa : E501
+            assert param_value in TYPE_SPECIFIC_SCHEMES.keys(), f"Parameter '{param_name}' contain an unknown parameter type: '{param_value}'"  # noqa : E501
             # Skip subsequent checks in case of type: dict
             if param_value == "dict":
                 # Loop over nested parameters
@@ -93,12 +93,12 @@ def validate_parameter_scheme(
 
 
 def validate_defaults_yaml(yaml_fpath: FilePath) -> None:
-    """Validate a default.yaml file.
+    """Validate a defaults.yaml file.
 
     Parameters
     ----------
     yaml_fpath : str
-        Path to the default.yaml file
+        Path to the defaults.yaml file to validate.
     """
     try:
         check_yaml_duplicated_parameters(yaml_fpath)

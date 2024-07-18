@@ -1,4 +1,4 @@
-"""Explicient solvent MD refinement with CNS.
+"""Explicit solvent MD refinement with CNS.
 
 The `[mdref]` module (also known as `itw` in HADDOCK2.X series), is a small
 molecular dynamics simulation, in cartesian space, using explicit solvent.

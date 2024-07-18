@@ -1,6 +1,6 @@
 """Explicient solvent MD refinement with CNS.
 
-The `[mdref]` module (also known as `itw` in HADDOCK2.X series), as a small
+The `[mdref]` module (also known as `itw` in HADDOCK2.X series), is a small
 molecular dynamic simulation, in cartesian space, using explicit solvent.
 
 A layer of solvent (8A for water, 12.5A for DMSO) is generated around

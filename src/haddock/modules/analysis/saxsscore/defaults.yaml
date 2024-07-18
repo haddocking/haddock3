@@ -12,7 +12,7 @@ w_haddock:
   long: Weight of the HADDOCK score in the HADDOCKsaxs score.
     The HADDOCK score from the previous module is multiplied by this weight
     and added to the chi term to get the HADDOCKsaxs score.
-  group: 'scoring'
+  group: "scoring"
   explevel: expert
 w_saxs:
   default: 50.0
@@ -25,21 +25,21 @@ w_saxs:
   long: Weight of the SAXS term in the scoring function.
     The chi value is multiplied by this weight
     and added to the HADDOCK score to get the HADDOCKsaxs score.
-  group: 'scoring'
+  group: "scoring"
   explevel: expert
 #
 # Group CRYSOL
 #
 saxs_fname:
-    default: ''
-    type: file
-    title: Path to SAXS data
-    short: Path to SAXS data.
-    long: Path to the .dat file containing SAXS data for CRYSOL.
-      Two or three columns separated by whitespace, containing (in this order)
-      momentum transfer, scattering intensity, and (optional) standard deviation.
-    group: 'scoring'
-    explevel: easy
+  default: ""
+  type: file
+  title: Path to SAXS data
+  short: Path to SAXS data.
+  long: Path to the .dat file containing SAXS data for CRYSOL.
+    Two or three columns separated by whitespace, containing (in this order)
+    momentum transfer, scattering intensity, and (optional) standard deviation.
+  group: "scoring"
+  explevel: easy
 lm:
   default: 18
   type: integer
@@ -48,7 +48,7 @@ lm:
   title: Maximum order of harmonics
   short: Maximum order of harmonics.
   long: Maximum order of harmonics for CRYSOL.
-  group: 'scoring'
+  group: "scoring"
   explevel: expert
 ns:
   default: 256
@@ -58,7 +58,7 @@ ns:
   title: Number of calculated data points in computed curve
   short: Number of calculated data points in computed curve.
   long: Number of calculated data points in computed curve from CRYSOL.
-  group: 'scoring'
+  group: "scoring"
   explevel: expert
 cst:
   default: true
@@ -66,5 +66,13 @@ cst:
   title: Subtract constant
   short: Subtract constant.
   long: Subtract constant in CRYSOL.
-  group: 'scoring'
+  group: "scoring"
+  explevel: expert
+atsas_path:
+  default: ""
+  type: string
+  title: Path to ATSAS instalaltion
+  short: Path to ATSAS instalaltion.
+  long: Path to the installation of ATSAS.
+  group: "scoring"
   explevel: expert

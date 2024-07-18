@@ -1,7 +1,7 @@
 """Select a number of models.
 
-This module selects a number of models from the input models. The
-selection is based on the score of the models.
+This module selects a number of models from the input models. By default, the
+selection is based on the HADDOCK score of the models.
 
 The number of models to be selected is defined by the parameter `select`.
 In the standard HADDOCK protocol, this number is 200, which can be increased

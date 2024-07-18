@@ -1,4 +1,24 @@
-"""Water refinement with CNS."""
+"""Explicient solvent MD refinement with CNS.
+
+The `[mdref]` module (also known as `itw` in HADDOCK2.X series), as a small
+molecular dynamic simulation, in cartesian space, using explicit solvent.
+
+A layer of solvent (8A for water, 12.5A for DMSO) is generated around
+surface resiudes.
+
+The `mdref` protocol is composed of 4 sequential steps:
+- Short energy minimization
+- 3 successive of water heating steps to reach 300K (at 100, 200 and 300K)
+- A series of steps at 300K.
+- 3 number of water cooling steps, to reach 100K (at 300, 200 and 100K)
+
+Using this protocol, with default parameters, no spectacular changes are
+expected, however, the scoring of the various structures might be improved.
+
+
+Number of MD steps can be modified using the `waterheatsteps`, `watersteps`
+and `watercoolsteps`.
+"""
 
 from pathlib import Path
 

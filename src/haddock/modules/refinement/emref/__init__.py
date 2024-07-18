@@ -1,4 +1,13 @@
-"""Energy minimization refinement with CNS."""
+"""Energy minimization refinement with CNS.
+
+The `[emref]` module refine the input complexes by energy minimization using
+conjugated gradient method develped by
+[Powell](https://en.wikipedia.org/wiki/Powell%27s_method),
+and implemented in CNS.
+
+Coordinates of the energy minimized structures are saved, and each
+complex is then evaluated using the HADDOCK scoring function.
+"""
 
 from pathlib import Path
 

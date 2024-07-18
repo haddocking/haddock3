@@ -1,4 +1,16 @@
-"""Flexible refinement with CNS."""
+"""Flexible refinement with CNS.
+
+The `[flexref]` module (also known as `it1` stage in HADDOCK2.X series),
+is a semi-flexible simulated annealing (SA) protocol in torsion angle space.
+
+This semi-flexible SA consists of several stages:
+- High temperature rigid body search
+- Rigid body SA
+- Semi-flexible SA with flexible side-chains at the interface
+- Semi-flexible SA with fully flexible interface (both backbone and side-chains)
+
+The temperatures and number of steps for the various stages can be tuned.
+"""
 
 from pathlib import Path
 

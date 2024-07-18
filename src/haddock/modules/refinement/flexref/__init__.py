@@ -9,7 +9,7 @@ This semi-flexible SA consists of several stages:
 - Semi-flexible SA with flexible side-chains at the interface
 - Semi-flexible SA with fully flexible interface (both backbone and side-chains)
 
-The temperatures and number of steps for the various stages can be tuned.
+The temperature and number of steps for the various stages can be tuned.
 """
 
 from pathlib import Path

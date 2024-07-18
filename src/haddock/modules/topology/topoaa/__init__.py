@@ -16,7 +16,7 @@ Therefore this is the reason why the module [topoaa] is often used as first
 module in a workflow.
 
 Note that for non-standard bio-molecules
-(appart from standard amino-acids, some modified ones, DNA, RNA, ions
+(apart from standard amino-acids, some modified ones, DNA, RNA, ions
 and carbohydrates ... see [detailed list of supported molecules]
 (https://rascar.science.uu.nl/haddock2.4/library)),
 such as small-molecules, parameters and topology must be obtained and provided,

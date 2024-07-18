@@ -8,9 +8,9 @@ surface residues.
 
 The `mdref` protocol is composed of 4 sequential steps:
 - Short energy minimization
-- 3 successive of water heating steps to reach 300K (at 100, 200 and 300K)
+- 3 stages of water heating to reach 300K (at 100, 200 and 300K)
 - A series of steps at 300K.
-- 3 number of water cooling steps, to reach 100K (at 300, 200 and 100K)
+- 3 stages of water cooling, to reach 100K (at 300, 200 and 100K)
 
 Using this protocol, with default parameters, no spectacular changes are
 expected, however, the scoring of the various structures might be improved.

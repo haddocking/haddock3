@@ -1,10 +1,22 @@
-"""HADDOCK3 module for alanine scan."""
+"""HADDOCK3 module for alanine scan.
+
+This module is responsible for the alanine scan analysis of the models
+generated in the previous step of the workflow. For each model, the module
+will mutate the interface residues and calculate the energy differences
+between the wild type and the mutant, thus providing a measure of the impact
+of such mutation.
+
+If cluster information is available, the module will also calculate the
+average energy difference for each cluster of models.
+"""
 from pathlib import Path
 
 from haddock import log
-from haddock.libs.libparallel import Scheduler, get_index_list
+from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
@@ -67,14 +79,21 @@ class HaddockModule(BaseHaddockModule):
                 )
             alascan_jobs.append(job)
 
-        scan_engine = Scheduler(alascan_jobs, ncores=ncores)
-        scan_engine.run()
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(alascan_jobs)
+        engine.run()
         
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data
         if self.params["plot"] is True:
-            create_alascan_plots(clt_alascan, self.params["scan_residue"])
+            create_alascan_plots(
+                clt_alascan,
+                self.params["scan_residue"],
+                offline=self.params["offline"],
+                )
         # if output is true, write the models and export them
         if self.params["output"] is True:
             models_to_export = generate_alascan_output(models, self.path)

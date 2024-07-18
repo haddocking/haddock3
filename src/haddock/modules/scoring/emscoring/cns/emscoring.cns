@@ -41,6 +41,7 @@ evaluate ($Data.flags.dani = false)
 evaluate ($Data.flags.vean = false)
 
 evaluate ($Data.noecv = false)
+evaluate ($Data.randremoval = false)
 evaluate ($refine.keepwater = false)
 
 evaluate ($data.ncomponents=$ncomponents)
@@ -48,7 +49,7 @@ evaluate ($data.ncomponents=$ncomponents)
 evaluate ($nmol=1)
 while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
-    evaluate ($toppar.shape_$nmol = false)
+    evaluate ($mol_shape_$nmol = false)
     evaluate ($nmol = $nmol + 1)
 end loop mol
 

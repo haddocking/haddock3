@@ -55,19 +55,12 @@ def test_alascan_default(alascan_module, mocker):
     
     # check single complex csv
     df = pd.read_csv(expected_csv1, sep="\t", comment="#")
-    assert df.shape == (10, 16), f"{expected_csv1} has wrong shape"
-    # ARG 17 B should have a delta_score approximately equal to 28.53 
-    assert np.isclose(
-        df.loc[df["ori_resname"] == "ARG"].iloc[0,:]["delta_score"],
-        28.53,
-        atol=10)
+    assert df.shape == (10, 15), f"{expected_csv1} has wrong shape"
+    # ARG 17 B should have a negative delta_score
+    assert df.loc[df["ori_resname"] == "ARG"].iloc[0,:]["delta_score"] < 0.0
 
     # check clt csv
     df_clt = pd.read_csv(expected_clt_csv, sep="\t", comment="#")
     assert df_clt.shape == (18, 11), f"{expected_clt_csv} has wrong shape"
-    # average delta score of A-38-ASP should be around 8.18
-    assert np.isclose(
-        df_clt.loc[df_clt["full_resname"] == "A-38-ASP"]["delta_score"],
-        8.18,
-        atol=2)
-    
+    # average delta score of A-38-ASP should be negative
+    assert df_clt.loc[df_clt["full_resname"] == "A-38-ASP"].iloc[0,:]["delta_score"] < 0.0

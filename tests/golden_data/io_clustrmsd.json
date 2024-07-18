@@ -1,0 +1,644 @@
+{
+    "input": [
+        {
+            "clt_id": 3,
+            "clt_model_rank": 1,
+            "clt_rank": 3,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_1_haddock.pdb",
+            "file_type": {
+                "py/reduce": [
+                    {
+                        "py/type": "haddock.libs.libontology.Format"
+                    },
+                    {
+                        "py/tuple": [
+                            "pdb"
+                        ]
+                    }
+                ]
+            },
+            "full_name": "ensemble_4G6M_1_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_1",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_1_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_1_haddock.psf",
+                "file_type": {
+                    "py/reduce": [
+                        {
+                            "py/type": "haddock.libs.libontology.Format"
+                        },
+                        {
+                            "py/tuple": [
+                                "psf"
+                            ]
+                        }
+                    ]
+                },
+                "full_name": "ensemble_4G6M_1_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_1_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 4,
+            "clt_model_rank": 1,
+            "clt_rank": 4,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_2_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_2_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_2",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_2_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_2_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_2_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_2_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 5,
+            "clt_model_rank": 1,
+            "clt_rank": 5,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_3_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_3_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_3",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_3_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_3_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_3_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_3_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 8,
+            "clt_model_rank": 1,
+            "clt_rank": 8,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_4_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_4_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_4",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_4_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_4_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_4_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_4_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 9,
+            "clt_model_rank": 1,
+            "clt_rank": 9,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_5_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_5_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_5",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_5_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_5_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_5_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_5_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 1,
+            "clt_model_rank": 1,
+            "clt_rank": 1,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_6_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_6_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_6",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_6_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_6_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_6_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_6_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 7,
+            "clt_model_rank": 1,
+            "clt_rank": 7,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_7_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_7_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_7",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_7_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_7_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_7_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_7_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 3,
+            "clt_model_rank": 2,
+            "clt_rank": 3,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_8_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_8_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_8",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_8_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_8_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_8_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_8_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 6,
+            "clt_model_rank": 1,
+            "clt_rank": 6,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_9_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_9_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_9",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_9_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_9_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_9_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_9_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        },
+        {
+            "clt_id": 2,
+            "clt_model_rank": 1,
+            "clt_rank": 2,
+            "created": "2024-04-11 14:58:17",
+            "file_name": "ensemble_4G6M_10_haddock.pdb",
+            "file_type": {
+                "py/id": 3
+            },
+            "full_name": "ensemble_4G6M_10_haddock.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "ensemble_4G6M_10",
+            "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "0_topoaa",
+                            "ensemble_4G6M_10_haddock.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": null,
+            "score": NaN,
+            "topology": {
+                "created": "2024-04-11 14:58:17",
+                "file_name": "ensemble_4G6M_10_haddock.psf",
+                "file_type": {
+                    "py/id": 6
+                },
+                "full_name": "ensemble_4G6M_10_haddock.psf",
+                "md5": null,
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3/examples/analysis/run1-topoaa-ilrmsdmatrix-clustrmsd-test/0_topoaa",
+                "py/object": "haddock.libs.libontology.TopologyFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "ensemble_4G6M_10_haddock.psf"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null
+            },
+            "unw_energies": null
+        }
+    ],
+    "output": [
+        {
+            "py/id": 24
+        },
+        {
+            "py/id": 40
+        },
+        {
+            "py/id": 2
+        },
+        {
+            "py/id": 32
+        },
+        {
+            "py/id": 8
+        },
+        {
+            "py/id": 12
+        },
+        {
+            "py/id": 36
+        },
+        {
+            "py/id": 28
+        },
+        {
+            "py/id": 16
+        },
+        {
+            "py/id": 20
+        }
+    ]
+}

@@ -1,3 +1,7 @@
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+
 BOND TNS4 TNS2	500.000	3.220
 BOND TNS4 NH6	500.000	3.220
 BOND NH5 TNS2	500.000	3.220
@@ -1458,3 +1462,6 @@ NBFIx	CNS1	ANS3	3311406.906	3083.988	3311406.906	3083.988
 NBFIx	ANS1	ANS2	2897481.043	2698.490	2897481.043	2698.490
 NBFIx	ANS1	ANS3	3311406.906	3083.988	3311406.906	3083.988
 NBFIx	ANS2	ANS3	3725332.770	3469.487	3725332.770	3469.487
+
+
+set message=$old_message echo=$old_echo end

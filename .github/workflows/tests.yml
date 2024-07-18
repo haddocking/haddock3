@@ -42,6 +42,11 @@ jobs:
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true
           cd -
+          cd src/fast-rmsdmatrix/src
+          chmod u+x Makefile
+          make fast-rmsdmatrix
+          cd -
+
 
       - name: types
         run: tox -e types
@@ -49,15 +54,16 @@ jobs:
       - name: unit tests
         run: tox -e test
 
-      - uses: codecov/codecov-action@v2
+      - uses: codacy/codacy-coverage-reporter-action@v1
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
-          verbose: true
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage.xml
 
   integration:
     needs: unit
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
     strategy:
       matrix:
         python-version: [3.9]
@@ -87,15 +93,15 @@ jobs:
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true
           cd -
+          cd src/fast-rmsdmatrix/src
+          chmod u+x Makefile
+          make fast-rmsdmatrix
+          cd -
 
       - name: install integration dependencies
-        # developers outside the organization cannot access secrets
-        #   so we need to make sure that the job does not fail
-        # the test will handle the environment variable not being set
-        #  and will skip the test
-        continue-on-error: true
         run: |
           curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC -s
           chmod +x $CNS_EXEC
 
-      - run: tox -e integration
+      - name: run integration tests
+        run: tox -e integration

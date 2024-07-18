@@ -164,7 +164,9 @@ def main(
         return
 
     if extend_run:
-        restart_step = len(get_module_steps_folders(extend_run))
+        steps_folders = get_module_steps_folders(extend_run)
+        restart_step = max([int(fold.split('_')[0]) for fold in steps_folders])
+        restart_step += 1
         WorkflowManager_ = WorkflowManagerExtend
 
     else:

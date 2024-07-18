@@ -21,9 +21,16 @@ JOB_STATUS_DIC = {
     "COMPLETING": "running",
     "COMPLETED": "finished",
     "FAILED": "failed",
+    "TIMEOUT": "timed-out",
     }
 
-# if you change these defaults, chage also the values in the
+TERMINATED_STATUS = (
+    "finished",
+    "failed",
+    "timed-out",
+    )
+
+# if you change these defaults, change also the values in the
 # modules/defaults.cfg file
 _tmpcfg = read_from_yaml_config(modules_defaults_path)
 HPCScheduler_CONCAT_DEFAULT: int = _tmpcfg["concat"]  # original value 1
@@ -41,7 +48,7 @@ class HPCWorker:
             num: int,
             job_id: Optional[int] = None,
             workfload_manager: str = 'slurm',
-            queue: Optional[str] = None
+            queue: Optional[str] = None,
             ) -> None:
         """
         Define the HPC job.
@@ -97,7 +104,7 @@ class HPCWorker:
 
     def run(self) -> None:
         """Execute the tasks."""
-        self.prepare_job_file(self.workload_manager)
+        self.prepare_job_file(queue_type=self.workload_manager)
         cmd = f"sbatch {self.job_fname}"
         p = subprocess.run(shlex.split(cmd), capture_output=True)
         self.job_id = int(p.stdout.decode("utf-8").split()[-1])
@@ -110,8 +117,7 @@ class HPCWorker:
         out = p.stdout.decode("utf-8")
         # err = p.stderr.decode('utf-8')
         if out:
-            # https://regex101.com/r/M2vbAc/1
-            status = re.findall(STATE_REGEX, out)[0]
+            status = extract_slurm_status(out)
             self.job_status = JOB_STATUS_DIC[status]
         else:
             self.job_status = "finished"
@@ -181,25 +187,26 @@ class HPCScheduler:
                     worker.run()
 
                 # check if those finished
-                completed = False
+                completed: bool = False
                 while not completed:
+                    # Initiate count of terminated jobs
+                    terminated_count: int = 0
+                    # Loop over workers
                     for worker in worker_list:
                         worker.update_status()
+                        # Log status if not finished
                         if worker.job_status != "finished":
                             log.info(
                                 f">> {worker.job_fname.name}"
                                 f" {worker.job_status}"
                                 )
+                        # Increment number of terminated works
+                        if worker.job_status in TERMINATED_STATUS:
+                            terminated_count += 1
 
-                    completed_count = sum(
-                        w.job_status == "finished" for w in worker_list
-                        )
-
-                    failed_count = sum(
-                        w.job_status == "failed" for w in worker_list
-                        )
-
-                    if completed_count + failed_count == len(worker_list):
+                    # Check if all terminated
+                    if terminated_count == len(worker_list):
+                        # Set while loop condition
                         completed = True
                         end = time.time()
                         elapsed = end - start
@@ -240,7 +247,7 @@ class HPCScheduler:
 
 
 def create_slurm_header(
-        job_name: str = 'haddock3_slurm_job',
+        job_name: FilePath = 'haddock3_slurm_job',
         work_dir: FilePath = '.',
         stdout_path: FilePath = 'haddock3_job.out',
         stderr_path: FilePath = 'haddock3_job.err',
@@ -258,6 +265,9 @@ def create_slurm_header(
     work_dir : pathlib.Path
         The working dir of the example. That is, the directory where
         `input`, `jobs`, and `logs` reside. Injected in `create_job_header`.
+
+    time : int
+        Time in minutes before job reach TIMEOUT status.
 
     **job_params
         According to `job_setup`.
@@ -281,7 +291,7 @@ def create_slurm_header(
 
 
 def create_torque_header(
-        job_name: str = 'haddock3_torque_job',
+        job_name: FilePath = 'haddock3_slurm_job',
         work_dir: FilePath = '.',
         stdout_path: FilePath = 'haddock3_job.out',
         stderr_path: FilePath = 'haddock3_job.err',
@@ -318,6 +328,49 @@ def create_torque_header(
     header += f"#PBS -e {stderr_path}{os.linesep}"
     header += f"#PBS -wd {work_dir}{os.linesep}"
     return header
+
+
+def to_torque_time(time: int) -> str:
+    """Convert time in minutes to the form hh:mm:ss.
+
+    Parameters
+    ----------
+    time : int
+        Time in minutes.
+
+    Return
+    ------
+    hh_mm_ss : str
+        Time in the form for HH:MM:SS
+    """
+    hours = time // 60
+    remain_mins = time - (hours * 60)
+    # Convert to hh:mm:ss string
+    hh_mm_ss_l = [hours, remain_mins, 0]
+    # Make sure hours contain at least 2 characters
+    hh_mm_ss = '{0:02d}:{1:02d}:{2:02d}'.format(*hh_mm_ss_l)
+    return hh_mm_ss
+
+
+def extract_slurm_status(slurm_out: str) -> str:
+    """Extract job status from slurm scontrol stdout.
+
+    Parameters
+    ----------
+    slurm_out : str
+        StdOut of `scontrol show jobid -dd {job_id}` command.
+    Return
+    ------
+    status : str
+        Status of the slurm job.
+        May also return `error`, when job do not exists.
+    """
+    try:
+        # https://regex101.com/r/M2vbAc/1
+        status = re.findall(STATE_REGEX, slurm_out)[0]
+    except IndexError:
+        status = 'FAILED'
+    return status
 
 
 def create_CNS_export_envvars(**envvars: Any) -> str:

@@ -1,16 +1,35 @@
-"""Cluster modules with FCC."""
+"""Cluster modules with FCC.
+
+The module takes the models generated in the previous step and calculates the
+contacts between them. Then, the module calculates the FCC matrix and clusters
+the models based on the calculated contacts.
+
+For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*
+"""  # noqa: E501
+
 import os
 from pathlib import Path
 
-import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
-from typing import Any, Union
 from haddock import FCC_path, log
-from haddock.libs.libclust import write_structure_list
-from haddock.libs.libparallel import Scheduler
+from haddock.core.typing import Union
+from haddock.libs.libclust import (
+    add_cluster_info,
+    get_cluster_matrix_plot_clt_dt,
+    plot_cluster_matrix,
+    rank_clusters,
+    write_structure_list,
+    )
 from haddock.libs.libsubprocess import JobInputFirst
+from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
-
+from haddock.modules.analysis.clustfcc.clustfcc import (
+    get_cluster_centers,
+    iterate_clustering,
+    write_clusters,
+    write_clustfcc_file,
+    )
+from haddock.modules.analysis import get_analysis_exec_mode
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -22,8 +41,11 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
-    ) -> None:
+            self,
+            order: int,
+            path: Path,
+            initial_params: Union[Path, str] = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
@@ -45,24 +67,27 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params["executable"])
 
         # Get the models generated in previous step
-        models_to_cluster = self.previous_io.retrieve_models(individualize=True)
+        models_to_clust = self.previous_io.retrieve_models(individualize=True)
 
         # Calculate the contacts for each model
         log.info("Calculating contacts")
         contact_jobs: list[JobInputFirst] = []
-        for model in models_to_cluster:
+        for model in models_to_clust:
             pdb_f = Path(model.rel_path)  # type: ignore
-            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore
+            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore  # noqa : E501
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params["contact_distance_cutoff"],
-            )
+                )
             contact_jobs.append(job)
+            
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
-        contact_engine.run()
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(contact_jobs)
+        engine.run()
 
         contact_file_l: list[str] = []
         not_found: list[str] = []
@@ -78,17 +103,22 @@ class HaddockModule(BaseHaddockModule):
 
         if not_found:
             # No contacts were calculated, we cannot cluster
-            self.finish_with_error("Several files were not generated:" f" {not_found}")
+            self.finish_with_error(
+                "Several files were not generated:"
+                f" {not_found}"
+                )
 
         log.info("Calculating the FCC matrix")
         parsed_contacts = calc_fcc_matrix.parse_contact_file(
-            contact_file_l, False
-        )  # noqa: E501
+            contact_file_l,
+            False,
+            )
 
         # Imporant: matrix is a generator object, be careful with it
         matrix = calc_fcc_matrix.calculate_pairwise_matrix(
-            parsed_contacts, False
-        )  # noqa: E501
+            parsed_contacts,
+            False,
+            )
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
@@ -98,156 +128,84 @@ class HaddockModule(BaseHaddockModule):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
                 data_str += os.linesep
                 fh.write(data_str)
-        fh.close()
 
         # Cluster
         log.info("Clustering...")
         pool = cluster_fcc.read_matrix(
             fcc_matrix_f,
-            self.params["fraction_cutoff"],
+            self.params["clust_cutoff"],
             self.params["strictness"],
-        )
+            )
 
-        cluster_check = False
-        while not cluster_check:
-            for threshold in range(self.params["threshold"], 0, -1):
-                log.info(f"Clustering with threshold={threshold}")
-                _, clusters = cluster_fcc.cluster_elements(
-                    pool,
-                    threshold=threshold,
-                )
-                if not clusters:
-                    log.info("[WARNING] No cluster was found, decreasing threshold!")
-                else:
-                    cluster_check = True
-                    # pass the actual threshold back to the param dict
-                    #  because it will be use in the detailed output
-                    self.params["threshold"] = threshold
-                    break
-            if not cluster_check:
-                # No cluster was obtained in any threshold
-                cluster_check = True
+        # iterate clustering until at least one cluster is found
+        clusters, min_population = iterate_clustering(
+            pool,
+            self.params['min_population'],
+            )
+        self.params['min_population'] = min_population
 
         # Prepare output and read the elements
-        clt_dic: dict[Any, Any] = {}
-        if clusters:  # type: ignore
-            # write the classic output file for compatibility reasons
-            log.info("Saving output to cluster.out")
-            cluster_out = Path("cluster.out")
-            with open(cluster_out, "w") as fh:
-                cluster_fcc.output_clusters(fh, clusters)
-            fh.close()
-
-            clt_centers = {}
-            for clt in clusters:
-                cluster_id = clt.name
-                cluster_center_id = clt.center.name - 1
-                cluster_center_pdb = models_to_cluster[cluster_center_id]
-
-                clt_dic[cluster_id] = []
-                clt_centers[cluster_id] = cluster_center_pdb
-                clt_dic[cluster_id].append(cluster_center_pdb)
-
-                for model in clt.members:
-                    model_id = model.name
-                    model_pdb = models_to_cluster[model_id - 1]
-                    clt_dic[cluster_id].append(model_pdb)
-
-            # Rank the clusters
-            #  they are sorted by the topX (threshold) models in each cluster
-            score_dic = {}
-            for clt_id in clt_dic:
-                score_l = [p.score for p in clt_dic[clt_id]]
-                score_l.sort()
-                denom = float(min(threshold, len(score_l)))  # type: ignore
-                top4_score = sum(score_l[:threshold]) / denom  # type: ignore
-                score_dic[clt_id] = top4_score
-
-            sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
+        if clusters:
+            # Write the clusters
+            write_clusters(clusters)
+            
+            # Get the cluster centers
+            clt_dic, clt_centers = get_cluster_centers(
+                clusters,
+                models_to_clust,
+                )
+            
+            # ranking clusters
+            _scores, sorted_score_dic = rank_clusters(clt_dic, min_population)
 
             # Add this info to the models
-            self.output_models = []
-            for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-                cluster_id, _ = _e
-                # sort the models by score
-                clt_dic[cluster_id].sort()
-                # rank the models
-                for model_ranking, pdb in enumerate(clt_dic[cluster_id], start=1):
-                    pdb.clt_id = cluster_id
-                    pdb.clt_rank = cluster_rank
-                    pdb.clt_model_rank = model_ranking
-                    self.output_models.append(pdb)
+            self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
 
             # Write unclustered structures
             write_structure_list(
-                models_to_cluster, self.output_models, out_fname="clustfcc.tsv"  # type: ignore
-            )
-
-            # Prepare clustfcc.txt
-            output_fname = Path("clustfcc.txt")
-            output_str = f"### clustfcc output ###{os.linesep}"
-            output_str += os.linesep
-            output_str += f"Clustering parameters {os.linesep}"
-            output_str += (
-                "> contact_distance_cutoff="
-                f"{self.params['contact_distance_cutoff']}A"
-                f"{os.linesep}"
-            )
-            output_str += (
-                f"> fraction_cutoff={self.params['fraction_cutoff']}" f"{os.linesep}"
-            )
-            output_str += f"> threshold={self.params['threshold']}{os.linesep}"
-            output_str += f"> strictness={self.params['strictness']}{os.linesep}"
-            output_str += os.linesep
-            output_str += (
-                "Note: Models marked with * represent the center of the cluster"
-                f"{os.linesep}"
-            )
-            output_str += f"-----------------------------------------------{os.linesep}"
-            output_str += os.linesep
-            output_str += f"Total # of clusters: {len(clusters)}{os.linesep}"
-
-            for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-                cluster_id, _ = _e
-                center_pdb = clt_centers[cluster_id]
-                model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
-                model_score_l.sort()
-                subset_score_l = [e[0] for e in model_score_l][:threshold]
-                top_mean_score = np.mean(subset_score_l)
-                top_std = np.std(subset_score_l)
-                output_str += (
-                    f"{os.linesep}"
-                    "-----------------------------------------------"
-                    f"{os.linesep}"
-                    f"Cluster {cluster_rank} (#{cluster_id}, "
-                    f"n={len(model_score_l)}, "
-                    f"top{threshold}_avg_score = {top_mean_score:.2f} "
-                    f"+-{top_std:.2f})"
-                    f"{os.linesep}"
+                models_to_clust,
+                self.output_models,
+                out_fname="clustfcc.tsv",
                 )
-                output_str += os.linesep
-                output_str += f"clt_rank\tmodel_name\tscore{os.linesep}"
-                for model_ranking, element in enumerate(model_score_l, start=1):
-                    score, pdb = element
-                    if pdb.file_name == center_pdb.file_name:
-                        output_str += (
-                            f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
-                            f"{os.linesep}"
-                        )
-                    else:
-                        output_str += (
-                            f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                            f"{os.linesep}"
-                        )
-            output_str += (
-                "-----------------------------------------------" f"{os.linesep}"
-            )
 
-            log.info("Saving detailed output to clustfcc.txt")
-            with open(output_fname, "w") as out_fh:
-                out_fh.write(output_str)
+            write_clustfcc_file(
+                clusters,
+                clt_centers,
+                clt_dic,
+                self.params,
+                sorted_score_dic
+                )
         else:
             log.warning("No clusters were found")
-            self.output_models = models_to_cluster  # type: ignore
+            self.output_models = models_to_clust  # type: ignore
 
+        # Draw the matrix
+        if self.params['plot_matrix']:
+            # Obtain final models indices
+            final_order_idx, labels, cluster_ids = [], [], []
+            for pdb in self.output_models:
+                final_order_idx.append(models_to_clust.index(pdb))
+                labels.append(pdb.file_name.replace('.pdb', ''))
+                cluster_ids.append(pdb.clt_id)
+            # Get custom cluster data
+            matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+                cluster_ids
+                )
+
+            # Define output filename
+            html_matrix_basepath = 'fcc_matrix'
+            # Plot matrix
+            html_matrixpath = plot_cluster_matrix(
+                fcc_matrix_f,
+                final_order_idx,
+                labels,
+                dttype='FCC',
+                diag_fill=1,
+                output_fname=html_matrix_basepath,
+                matrix_cluster_dt=matrix_cluster_dt,
+                cluster_limits=cluster_limits,
+                )
+            log.info(f"Plotting matrix in {html_matrixpath}")
+
+        # Export models for next module
         self.export_io_models()

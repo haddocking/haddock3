@@ -100,7 +100,6 @@ def example_df_scan():
             -275.271,
             -10.252,
             1589.260,
-            -0.243,
             5.401,
             0.119,
             28.482,
@@ -118,7 +117,6 @@ def example_df_scan():
             -270.271,
             -11.252,
             589.260,
-            +0.243,
             4.401,
             0.109,
             27.482,
@@ -137,7 +135,6 @@ def example_df_scan():
         "elec",
         "desolv",
         "bsa",
-        "delta_ori_score",
         "delta_score",
         "delta_vdw",
         "delta_elec",
@@ -277,7 +274,6 @@ def test_scan_run_output(
     """Test Scan run and output method."""
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
-    print(f"os listdir {scan_obj.path}: {os.listdir(scan_obj.path)}")
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 2
 
@@ -294,16 +290,6 @@ def test_scan_run_interface(mocker, scan_obj):
 
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 5
-
-
-def test_no_oriscore(mocker, scan_obj):
-    """Test Scan run with no ori score"""
-    scan_obj.model_list[0].ori_score = None
-    mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
-    scan_obj.run()
-    df = pd.read_csv(Path(scan_obj.path, "scan_protprot_complex_1.csv"), sep="\t", comment="#")
-    # column delta_ori_score should be nan
-    assert np.isnan(df["delta_ori_score"][0])
     
 
 def test_calc_score(mocker):

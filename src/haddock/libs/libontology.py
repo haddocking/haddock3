@@ -1,4 +1,5 @@
 """Describe the Haddock3 ontology used for communicating between modules."""
+
 import datetime
 import itertools
 from enum import Enum
@@ -84,6 +85,7 @@ class PDBFile(Persistent):
         self.clt_model_rank: Optional[int] = None
         self.len = score
         self.unw_energies = unw_energies
+        self.seed = None
 
     def __lt__(self, other: "PDBFile") -> bool:
         return self.score < other.score
@@ -221,9 +223,12 @@ class ModuleIO:
         idxs: list[int] = []
         for idx, element in enumerate(self.output):
             if isinstance(element, dict):
+                to_pop = []
                 for key2 in element:
                     if not element[key2].is_present():
-                        element.pop(key2)
+                        to_pop.append(key2)
+                for pop_me in to_pop:
+                    element.pop(pop_me)
             else:
                 if not element.is_present():
                     idxs.append(idx)

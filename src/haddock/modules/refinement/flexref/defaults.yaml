@@ -321,12 +321,12 @@ dihedrals_cool3:
   group: 'dihedral restraints'
   explevel: expert
 ssdihed:
-  default: ""
+  default: none
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - ""
+    - none
     - all
     - alpha
     - alphabeta
@@ -376,7 +376,7 @@ mrswi_hot:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 mrswi_cool1:
   default: 0.5
@@ -387,7 +387,7 @@ mrswi_cool1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 mrswi_cool2:
   default: 0.5
@@ -398,7 +398,7 @@ mrswi_cool2:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 mrswi_cool3:
   default: 0.5
@@ -409,7 +409,7 @@ mrswi_cool3:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 rswi_hot:
   default: 0.5
@@ -420,7 +420,7 @@ rswi_hot:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 rswi_cool1:
   default: 0.5
@@ -431,7 +431,7 @@ rswi_cool1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 rswi_cool2:
   default: 0.5
@@ -442,7 +442,7 @@ rswi_cool2:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 rswi_cool3:
   default: 0.5
@@ -453,7 +453,7 @@ rswi_cool3:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 masy_hot:
   default: -1.0
@@ -464,7 +464,7 @@ masy_hot:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 masy_cool1:
   default: -1.0
@@ -475,7 +475,7 @@ masy_cool1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 masy_cool2:
   default: -0.1
@@ -486,7 +486,7 @@ masy_cool2:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 masy_cool3:
   default: -0.1
@@ -497,7 +497,7 @@ masy_cool3:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 asy_hot:
   default: 1.0
@@ -508,7 +508,7 @@ asy_hot:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 asy_cool1:
   default: 1.0
@@ -519,7 +519,7 @@ asy_cool1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 asy_cool2:
   default: 0.1
@@ -530,7 +530,7 @@ asy_cool2:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 asy_cool3:
   default: 0.1
@@ -541,7 +541,7 @@ asy_cool3:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: 'hidden'
   explevel: hidden
 #
 # Group symmetry
@@ -1869,7 +1869,7 @@ sinter_rigid_final:
   title: End rigid-body MD intermolecular interactions scaling factor. 
   short: End scaling factor for intermolecular interactions in the first cooling stage.
   long: End scaling factor applied to intermolecular interactions during the first cooling stage of the simulated annealing protocol.
-  group: ''
+  group: 'sampling'
   explevel: easy
 sinter_cool2_init:
   default: 0.001

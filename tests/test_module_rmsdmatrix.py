@@ -1,6 +1,7 @@
 """Test the rmsdmatrix module."""
 import os
 from pathlib import Path
+import tempfile
 
 import numpy as np
 import pytest
@@ -9,10 +10,9 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
 from haddock.modules.analysis.rmsdmatrix import HaddockModule
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
-    RMSD,
-    RMSDJob,
     get_pair,
     rmsd_dispatcher,
+    XYZWriter,
     )
 
 from . import golden_data
@@ -109,68 +109,45 @@ def test_overall_rmsd(input_protdna_models):
     os.unlink(Path("io.json"))
 
 
-def test_RMSD_class(input_protdna_models):
-    """Test focusing on the RMSD class."""
-    params = {}
-    rmsd_obj = RMSD(
-        input_protdna_models,
-        core=0,
-        npairs=1,
-        start_ref=0,
-        start_mod=1,
-        output_name="rmsd_0.matrix",
-        path=Path("."),
-        params=params
-        )
-    rmsd_obj.run()
+def test_xyzwriter(input_protdna_models):
+    "test XYZWriter"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        common_keys = [
+            ('A', 10, 'N'),
+            ('A', 10, 'CA'),
+            ('A', 32, 'N'),
+            ('B', 38, 'C6'),
+        ]
+        exp_output = Path(tmpdir, "test.xyz")
+        xyzwriter_obj = XYZWriter(
+            model_list=input_protdna_models,
+            output_name=exp_output,
+            core=1,
+            n_atoms=4,
+            common_keys=common_keys,
+            filter_resdic=None,
+            allatoms=False,
+            )
+        xyzwriter_obj.run()
+        
+        assert exp_output.exists()
+        # check the content
+        with open(exp_output) as f:
+            content = f.read()
+        exp_content_list = [
+            "4",
+            "",
+            "A10N 12.163 -4.828 -1.492",
+            "A10CA 11.392 -5.83 -0.759",
+            "A32N 0.127 -0.923 -0.471",
+            "B38C6 -6.564 -18.595 -5.571",
+            "4",
+            "",
+            "A10N -11.179 7.766 -1.6",
+            "A10CA -9.966 8.514 -1.292",
+            "A32N -1.291 -0.108 -2.675",
+            "B38C6 14.422 15.302 -5.743",
+        ]
 
-    expected_data = np.array([[1, 2, 2.257]])
-
-    np.testing.assert_allclose(rmsd_obj.data, expected_data, atol=0.001)
-
-
-def test_RMSD_filter_resdic(input_protdna_models):
-    """Test filter_resdic."""
-    params = {"resdic_A": [1, 2, 3], "resdic_B": [4, 5, 6]}
-
-    # this test only considers the initialisation of the object
-    rmsd_obj = RMSD(
-        input_protdna_models,
-        core=0,
-        npairs=1,
-        start_ref=0,
-        start_mod=1,
-        output_name="rmsd_0.matrix",
-        path=Path("."),
-        params=params
-        )
-
-    expected_resdic = {"A": [1, 2, 3], "B": [4, 5, 6]}
-
-    assert rmsd_obj.filter_resdic == expected_resdic
-
-
-def test_RMSDJob(input_protdna_models):
-    """Test the RMSD job."""
-    rmsd_obj = RMSD(
-        input_protdna_models,
-        core=0,
-        npairs=1,
-        start_ref=0,
-        start_mod=1,
-        output_name="rmsd_0.matrix",
-        path=Path("."),
-        )
-
-    job_f = "fake_rmsd.job"
-    params = {}
-
-    job = RMSDJob(
-        job_f,
-        params,
-        rmsd_obj
-        )
-    
-    assert job.rmsd_obj == rmsd_obj
-
-    assert job.output == job_f
+        exp_content = os.linesep.join(exp_content_list) + os.linesep
+        assert content == exp_content

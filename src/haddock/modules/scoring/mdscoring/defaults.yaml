@@ -20,18 +20,6 @@ w_air:
   long: Weight of the distance restraints energy in the scoring function.
     Note that this is different from the force constants used during the calculations.
   group: 'scoring'
-  explevel: expert
-w_air:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the distance restraint energy
-  short: Weight of the distance restraints energy in the scoring function
-  long: Weight of the distance restraints energy in the scoring function.
-    Note that this is different from the force constants used during the calculations.
-  group: 'scoring'
   explevel: hidden
 w_bsa:
   default: 0.0

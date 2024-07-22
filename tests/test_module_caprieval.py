@@ -982,7 +982,10 @@ def test_extract_data_from_capri_class(mocker):
     )
 
     # Create random entries
-    random_model = PDBFile(file_name=str(uuid.uuid4()), score=42)
+    random_energy = random.random()
+    random_model = PDBFile(
+        file_name=str(uuid.uuid4()), score=42, unw_energies={"energy": random_energy}
+    )
     random_md5 = str(uuid.uuid4())
     random_score = random.random()
     random_irmsd = random.random()
@@ -1014,3 +1017,4 @@ def test_extract_data_from_capri_class(mocker):
     assert observed_data[1]["lrmsd"] == random_lrmsd
     assert observed_data[1]["ilrmsd"] == random_ilrmsd
     assert observed_data[1]["dockq"] == random_dockq
+    assert observed_data[1]["energy"] == random_energy

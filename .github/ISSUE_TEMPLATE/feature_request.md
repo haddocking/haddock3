@@ -23,7 +23,7 @@ If you're reporting an error or unexpected behavior with existing functionality,
 <!-- Please provide context of why this would be relevant/useful. -->
 
 ## **Description**
-<!-- Please provide an exhaustive description of the feature/enhancement you are suggesting, including details about it's implementation -->
+<!-- Please provide an exhaustive description of the feature/enhancement you are suggesting, including details about its implementation -->
 
 ## **Additional context**
 <!-- Please add any other context about the feature/enhancement that might be relevant here. -->

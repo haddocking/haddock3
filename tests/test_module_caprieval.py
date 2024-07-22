@@ -20,7 +20,7 @@ from haddock.modules.analysis.caprieval.capri import (
     load_contacts,
     rank_according_to_score,
     rearrange_ss_capri_output,
-    )
+)
 
 from . import golden_data
 
@@ -438,6 +438,7 @@ def test_make_output(protprot_caprimodule):
     protprot_caprimodule.model.clt_id = 1
     protprot_caprimodule.model.clt_rank = 1
     protprot_caprimodule.model.clt_model_rank = 10
+    protprot_caprimodule.model.unw_energies = {"something": 0.0}
 
     protprot_caprimodule.make_output()
 
@@ -463,8 +464,9 @@ def test_make_output(protprot_caprimodule):
             "cluster_id",
             "cluster_ranking",
             "model-cluster_ranking",
+            "something",
         ],
-        ["-", "-", "nan", "nan", "nan", "nan", "nan", "nan", "1", "1", "10"],
+        ["-", "-", "nan", "nan", "nan", "nan", "nan", "nan", "1", "1", "10", "0.000"],
     ]
 
     assert observed_outf_l == expected_outf_l

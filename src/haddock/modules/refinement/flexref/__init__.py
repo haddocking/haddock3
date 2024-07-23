@@ -1,13 +1,21 @@
 """Flexible refinement with CNS.
 
 The `[flexref]` module (also known as `it1` stage in HADDOCK2.X series),
-is a semi-flexible simulated annealing (SA) protocol in torsion angle space.
+is a semi-flexible simulated annealing (SA) protocol based on molecular
+dynamics in torsion angle space.
+
 
 This semi-flexible SA consists of several stages:
-- High temperature rigid body search
+- High temperature rigid body molecular dynamics
 - Rigid body SA
 - Semi-flexible SA with flexible side-chains at the interface
 - Semi-flexible SA with fully flexible interface (both backbone and side-chains)
+
+By default, only the interface regions is treated as flexible. It is automatically
+defined based on the intermolecular contacts made. It is also possible to manually
+define the semi-flexible regions, and also define fully flexible regions that are
+allowed to move throughout the entire protocol from the high temperature rigid
+body molecular dynamics on.
 
 The temperature and number of steps for the various stages can be tuned.
 """

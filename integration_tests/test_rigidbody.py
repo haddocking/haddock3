@@ -107,6 +107,7 @@ def test_rigidbody_mpi(rigidbody_module):
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
     rigidbody_module.params["mode"] = "mpi"
+    rigidbody_module.params["ncores"] = 1
 
     rigidbody_module.run()
 

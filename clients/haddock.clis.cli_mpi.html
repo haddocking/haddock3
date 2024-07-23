@@ -66,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_dmn.html">Benchmark Daemon</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">HADDOCK3 MPI Run</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_mpi.cli"><code class="docutils literal notranslate"><span class="pre">cli()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_mpi.get_mpi"><code class="docutils literal notranslate"><span class="pre">get_mpi()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_mpi.load_args"><code class="docutils literal notranslate"><span class="pre">load_args()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_mpi.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_mpi.maincli"><code class="docutils literal notranslate"><span class="pre">maincli()</span></code></a></li>
@@ -135,6 +136,12 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.cli_mpi.get_mpi">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_mpi.</span></span><span class="sig-name descname"><span class="pre">get_mpi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/clis/cli_mpi.html#get_mpi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_mpi.get_mpi" title="Permalink to this definition"></a></dt>
+<dd><p>Lazy load MPI and COMM.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_mpi.load_args">
 <span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_mpi.</span></span><span class="sig-name descname"><span class="pre">load_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.12)"><span class="pre">ArgumentParser</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.12)"><span class="pre">Namespace</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_mpi.html#load_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_mpi.load_args" title="Permalink to this definition"></a></dt>
 <dd><p>Load argument parser args.</p>
@@ -172,7 +179,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 22, 2024.
+      <span class="lastupdated">Last updated on Jul 23, 2024.
       </span></p>
   </div>
 

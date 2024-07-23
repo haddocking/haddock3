@@ -113,17 +113,32 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
 
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> - To run this cli you must have mpi4py and &quot;</span>
-        <span class="s2">&quot;OpenMPI installed in the system&quot;</span>
-    <span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
+<span class="c1"># Note! ########################################################################################</span>
+<span class="c1"># It&#39;s important to not define `MPI` and `COMM` directly but to use the `get_mpi`</span>
+<span class="c1">#  function to ensure that the MPI module is only loaded when needed.</span>
+<span class="c1"># This is important for testing purposes, and this CLI should further be refactored to not use</span>
+<span class="c1">#  global variables.</span>
+<span class="n">MPI</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">COMM</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="c1"># Note! ########################################################################################</span>
 
 
-<span class="n">COMM</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+<div class="viewcode-block" id="get_mpi"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.get_mpi">[docs]</a><span class="k">def</span> <span class="nf">get_mpi</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Lazy load MPI and COMM.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">MPI</span><span class="p">,</span> <span class="n">COMM</span>
+    <span class="k">if</span> <span class="n">MPI</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span> <span class="k">as</span> <span class="n">_MPI</span>
+
+            <span class="n">MPI</span> <span class="o">=</span> <span class="n">_MPI</span>
+            <span class="n">COMM</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> - To run this cli you must have mpi4py and &quot;</span>
+                <span class="s2">&quot;OpenMPI installed in the system&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">MPI</span><span class="p">,</span> <span class="n">COMM</span></div>
 
 
 <div class="viewcode-block" id="split_tasks"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.split_tasks">[docs]</a><span class="k">def</span> <span class="nf">split_tasks</span><span class="p">(</span><span class="n">task_l</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">]]:</span>
@@ -170,6 +185,7 @@
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">pickled_tasks</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute the tasks.&quot;&quot;&quot;</span>
+    <span class="n">MPI</span><span class="p">,</span> <span class="n">COMM</span> <span class="o">=</span> <span class="n">get_mpi</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">COMM</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pickled_tasks</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pkl</span><span class="p">:</span>
             <span class="n">tasks</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pkl</span><span class="p">)</span>
@@ -202,7 +218,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 22, 2024.
+      <span class="lastupdated">Last updated on Jul 23, 2024.
       </span></p>
   </div>
 

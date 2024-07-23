@@ -6,12 +6,11 @@ parameters (.param) and topologies (.psf) for each of the input structures.
 It will:
 - Detect missing atoms, including hydrogens
 - Re-build them when missing
-- Obtain MD parameters
-- Build the topology
+- Build and write out topologies (psf) and coordinates (pdb) files
 
 This module is a pre-requisite to run any downstream modules using CNS.
-Indeed, having access to parameters and topology is mandatory for any kind
-of MD related tasks.
+Having access to parameters and topology is mandatory for any kind
+of EM/MD related tasks.
 Therefore this is the reason why the module [topoaa] is often used as first
 module in a workflow.
 
@@ -19,8 +18,9 @@ Note that for non-standard bio-molecules
 (apart from standard amino-acids, some modified ones, DNA, RNA, ions
 and carbohydrates ... see [detailed list of supported molecules]
 (https://rascar.science.uu.nl/haddock2.4/library)),
-such as small-molecules, parameters and topology must be obtained and provided,
-as there is currently no built-in solution to generate them on the fly.
+such as small-molecules, parameters and topology must be obtained and provided
+by the user, as there is currently no built-in solution to generate
+them on the fly.
 """
 
 import operator

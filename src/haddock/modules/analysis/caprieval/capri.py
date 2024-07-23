@@ -946,6 +946,8 @@ def extract_data_from_capri_class(
             "cluster_ranking": None,
             "model-cluster_ranking": None,
         }
+        if c.model.unw_energies is not None:
+            data[i].update(c.model.unw_energies)
 
     ranked_data = rank_according_to_score(
         data, sort_key=sort_key, sort_ascending=sort_ascending

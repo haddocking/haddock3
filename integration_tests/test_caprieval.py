@@ -6,8 +6,9 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.caprieval import \
-    DEFAULT_CONFIG as DEFAULT_CAPRIEVAL_CONFIG
+from haddock.modules.analysis.caprieval import (
+    DEFAULT_CONFIG as DEFAULT_CAPRIEVAL_CONFIG,
+)
 from haddock.modules.analysis.caprieval import HaddockModule as CaprievalModule
 from tests import golden_data
 
@@ -25,8 +26,16 @@ def caprieval_module():
 @pytest.fixture
 def model_list():
     return [
-        PDBFile(file_name="protprot_complex_1.pdb", path="."),
-        PDBFile(file_name="protprot_complex_2.pdb", path="."),
+        PDBFile(
+            file_name="protprot_complex_1.pdb",
+            path=".",
+            unw_energies={"energy_term": 0.0},
+        ),
+        PDBFile(
+            file_name="protprot_complex_2.pdb",
+            path=".",
+            unw_energies={"energy_term": 0.0},
+        ),
     ]
 
 
@@ -44,8 +53,16 @@ class MockPreviousIO:
             Path(".", "protprot_complex_2.pdb"),
         )
         model_list = [
-            PDBFile(file_name="protprot_complex_1.pdb", path="."),
-            PDBFile(file_name="protprot_complex_2.pdb", path="."),
+            PDBFile(
+                file_name="protprot_complex_1.pdb",
+                path=".",
+                unw_energies={"energy_term": 0.0},
+            ),
+            PDBFile(
+                file_name="protprot_complex_2.pdb",
+                path=".",
+                unw_energies={"energy_term": 0.0},
+            ),
         ]
 
         return model_list
@@ -96,6 +113,7 @@ def evaluate_caprieval_execution(module: CaprievalModule, model_list):
         "dockq",
         "cluster_ranking",
         "model-cluster_ranking",
+        "energy_term",
     ]
     header = lines[0].strip().split("\t")
     for col_name in expected_colnames:
@@ -117,6 +135,7 @@ def evaluate_caprieval_execution(module: CaprievalModule, model_list):
             "cluster_id": "-",
             "cluster_ranking": "-",
             "model-cluster_ranking": "-",
+            "energy_term": 0.000,
         },
         {
             "model": "",
@@ -131,6 +150,7 @@ def evaluate_caprieval_execution(module: CaprievalModule, model_list):
             "cluster_id": "-",
             "cluster_ranking": "-",
             "model-cluster_ranking": "-",
+            "energy_term": 0.000,
         },
     ]
     oberseved_data = []
@@ -149,6 +169,7 @@ def evaluate_caprieval_execution(module: CaprievalModule, model_list):
             "cluster_id": str(values[9]),
             "cluster_ranking": str(values[10]),
             "model-cluster_ranking": str(values[11]),
+            "energy_term": float(values[12]),
         }
         oberseved_data.append(data_dict)
 

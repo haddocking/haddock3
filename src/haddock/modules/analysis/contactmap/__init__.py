@@ -10,7 +10,7 @@ based on all structures from each cluster.
 residues (both intramolecular and intermolecular).
 
 **Chordcharts** are describing only intermolecular contacts in circles,
-connecting with *chords* the two resiudes that are contacting.
+connecting with *chords* the two residues that are contacting.
 """
 
 from copy import deepcopy

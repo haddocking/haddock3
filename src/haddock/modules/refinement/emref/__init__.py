@@ -1,7 +1,7 @@
 """Energy minimization refinement with CNS.
 
 The `[emref]` module refine the input complexes by energy minimization using
-the conjugate gradient method develped by
+the conjugate gradient method developed by
 [Powell](https://en.wikipedia.org/wiki/Powell%27s_method),
 and implemented in CNS.
 

@@ -1036,6 +1036,8 @@
             <span class="s2">&quot;cluster_ranking&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="s2">&quot;model-cluster_ranking&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">unw_energies</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">unw_energies</span><span class="p">)</span>
 
     <span class="n">ranked_data</span> <span class="o">=</span> <span class="n">rank_according_to_score</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">sort_key</span><span class="o">=</span><span class="n">sort_key</span><span class="p">,</span> <span class="n">sort_ascending</span><span class="o">=</span><span class="n">sort_ascending</span>

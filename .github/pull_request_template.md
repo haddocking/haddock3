@@ -15,4 +15,4 @@ You are about to submit a new Pull Request. Before continuing make sure you read
 
 ---
 
-*Delete this line and explain your PR here*
+<!-- Carefully explain what changed you made to the code, make sure the title reflects the changes -->

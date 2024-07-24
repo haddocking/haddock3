@@ -9,8 +9,8 @@ clust_cutoff
 | *default*: 7.5
 | *type*: float
 | *title*: Clustering cutoff distance
-| *min*: 1
-| *max*: 9999
+| *min*: 0.1
+| *max*: 100
 | *short description*: Value of cutoff cophenetic distance.
 | *long description*: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.
 | *group*: analysis

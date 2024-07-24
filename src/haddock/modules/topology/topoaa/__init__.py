@@ -17,7 +17,7 @@ module in a workflow.
 Note that for non-standard bio-molecules
 (apart from standard amino-acids, some modified ones, DNA, RNA, ions
 and carbohydrates ... see [detailed list of supported molecules]
-(https://rascar.science.uu.nl/haddock2.4/library)),
+(https://wenmr.science.uu.nl/haddock2.4/library)),
 such as small-molecules, parameters and topology must be obtained and provided
 by the user, as there is currently no built-in solution to generate
 them on the fly.

@@ -1,6 +1,6 @@
 """Flexible refinement with CNS.
 
-The `[flexref]` module (also known as `it1` stage in HADDOCK2.X series),
+The ``[flexref]`` module (also known as ``it1`` stage in HADDOCK2.X series),
 is a semi-flexible simulated annealing (SA) protocol based on molecular
 dynamics in torsion angle space.
 

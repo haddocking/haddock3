@@ -1,6 +1,6 @@
 """Compute contacts between chains in complexes.
 
-The `[contactmap]` module aims at generating heatmaps and chordcharts of
+The ``[contactmap]`` module aims at generating heatmaps and chordcharts of
 the contacts observed in the input complexes.
 
 If complexes are clustered, the analysis of contacts will be performed

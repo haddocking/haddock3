@@ -1,6 +1,6 @@
 """Explicit solvent MD refinement with CNS.
 
-The `[mdref]` module (also known as `itw` in HADDOCK2.X series), is a small
+The ``[mdref]`` module (also known as ``itw`` in HADDOCK2.X series), is a small
 molecular dynamics simulation, in cartesian space, using explicit solvent.
 
 A layer of solvent (8A for water, 12.5A for DMSO) is generated around
@@ -16,8 +16,8 @@ Using this protocol, with default parameters, no spectacular changes are
 expected, however, the scoring of the various structures might be improved.
 
 
-Number of MD steps can be modified using the `waterheatsteps`, `watersteps`
-and `watercoolsteps`.
+Number of MD steps can be modified using the ``waterheatsteps``, ``watersteps``
+and ``watercoolsteps``.
 """
 
 from pathlib import Path

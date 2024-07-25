@@ -75,7 +75,7 @@ class MockPreviousIO:
         return None
 
 
-def test_rigidbody(rigidbody_module):
+def test_rigidbody_local(rigidbody_module):
 
     sampling = 5
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
@@ -83,6 +83,7 @@ def test_rigidbody(rigidbody_module):
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
+    rigidbody_module.params["mode"] = "local"
 
     rigidbody_module.run()
 
@@ -95,6 +96,35 @@ def test_rigidbody(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
+
+
+def test_rigidbody_mpi(rigidbody_module):
+
+    sampling = 5
+    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
+    rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["cmrest"] = True
+    rigidbody_module.params["mol_fix_origin_1"] = True
+    rigidbody_module.params["mol_fix_origin_2"] = False
+    rigidbody_module.params["mode"] = "mpi"
+    rigidbody_module.params["ncores"] = 1
+
+    rigidbody_module.run()
+
+    for i in range(1, sampling + 1):
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").exists()
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
+
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
+
+
+@pytest.mark.skip("Not implemented yet")
+def test_rigidbody_batch(rigidbody_module):
+    pass
 
 
 def test_rigidbody_less_io(rigidbody_module):

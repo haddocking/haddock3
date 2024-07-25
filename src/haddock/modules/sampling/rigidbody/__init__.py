@@ -161,7 +161,6 @@ class HaddockModule(BaseCNSModule):
 
         # Replace the task with the result of the task
         l = []
-        assert isinstance(prepare_engine, Scheduler)
         for element, task_result in zip(_l, prepare_engine.results):
             l.append((element[0], task_result, element[2], element[3]))
 
@@ -208,7 +207,8 @@ class HaddockModule(BaseCNSModule):
         start = datetime.now()
         self.output_models: list[PDBFile] = []
         self.log("Preparing jobs...")
-        if self.params["mode"] == "batch":
+        if self.params["mode"] != "local":
+            # Note: `batch` and (pseudo)-`mpi` mode uses files to communicate and cannot extract the information from the task object.
             cns_input = self.prepare_cns_input_sequential(
                 models_to_dock, sampling_factor, ambig_fnames  # type: ignore
             )

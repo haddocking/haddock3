@@ -71,8 +71,10 @@ cst:
 atsas_path:
   default: ""
   type: string
-  title: Path to ATSAS instalaltion
-  short: Path to ATSAS instalaltion.
+  minchars: 5
+  maxchars: 4095
+  title: Path to ATSAS installation
+  short: Path to ATSAS installation.
   long: Path to the installation of ATSAS.
   group: "scoring"
-  explevel: expert
+  explevel: easy

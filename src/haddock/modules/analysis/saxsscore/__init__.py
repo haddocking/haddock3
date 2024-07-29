@@ -45,7 +45,8 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG, **everything):
+    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG, 
+                 **everything):
         super().__init__(order, path, init_params)
 
     @classmethod
@@ -67,6 +68,7 @@ class HaddockModule(BaseHaddockModule):
 
         for model in models_to_score:
 
+            # Run CRYSOL
             run_crysol(
                 atsas_path=self.params["atsas_path"],
                 input_f=model.rel_path,
@@ -76,29 +78,31 @@ class HaddockModule(BaseHaddockModule):
             )
 
             # Read Chi^2 value
-            fit_file = Path(model.file_name).stem + "_" + Path(saxs_data).stem + ".fit"
-            chi2 = read_chi2(fit_file=fit_file)
+            fit_file = (Path(model.file_name).stem 
+                        + "_" + Path(saxs_data).stem + ".fit")
+            model.chi2 = read_chi2(fit_file=fit_file)
 
-            # TODO: Should the PDBFile keep this `chi2` attribute?
-            model.chi2 = chi2
-
+            # Calculate HADDOCKsaxs score
             if math.isnan(model.score):
                 haddocksaxs_score = model.chi2
             else:
                 haddocksaxs_score = calculate_haddocksaxs_score(
                     score=model.score,
-                    chi2=chi2,
+                    chi2=model.chi2,
                     w_haddock=w_haddock,
                     w_saxs=w_saxs,
                 )
 
             model.score = haddocksaxs_score
 
+        # Write output
         self.output_models = models_to_score
+        output_fname="saxsscore.tsv"
+        self.log(f"Saving output to {output_fname}")
 
         output_saxsscore(
             output_models=self.output_models,
-            output_fname="saxsscore.tsv",
+            output_fname=output_fname,
         )
 
         # Send models (unchanged) to the next step

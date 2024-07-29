@@ -1121,7 +1121,7 @@ class CAPRIError(Exception):
 
 def dump_weights(order: int) -> None:
     sel_steps = get_module_steps_folders(Path(".."))
-    cns_step = get_previous_cns_step(sel_steps=sel_steps, st_order=order)
+    cns_step = get_previous_cns_step(sel_steps=sel_steps, step_order=order)
     if cns_step:
         log.info(f"Found previous CNS step: {cns_step}")
         scoring_params_fname = save_scoring_weights(cns_step)

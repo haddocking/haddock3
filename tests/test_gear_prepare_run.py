@@ -5,8 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from haddock.core.exceptions import ConfigurationError
+from haddock.core.defaults import CNS_MODULES
+from haddock.core.exceptions import ConfigurationError, DependencyError
 from haddock.gear.prepare_run import (
+    check_CNS_usage,
     check_if_path_exists,
     copy_molecules_to_topology,
     fuzzy_match,
@@ -370,3 +372,20 @@ def test_param_value_error(defaultparams, key, value):
     """
     with pytest.raises(ConfigurationError):
         validate_value(defaultparams, key, value)
+
+
+def test_check_CNS_usage():
+    """Test if check_CNS_usage is functional."""
+    # Case were topology is run before
+    check = check_CNS_usage({"topoaa": {}, "mdref": {}})
+    assert check is None
+    # Loop over CNS modules requiring topology to be accessible
+    for cns_module in CNS_MODULES:
+        # Case were topology is run after
+        with pytest.raises(DependencyError):
+            check_exception1 = check_CNS_usage({cns_module: {}, "topoaa": {}})
+            assert check_exception1 is None
+        # Case were topology not run at all
+        with pytest.raises(DependencyError):
+            check_exception2 = check_CNS_usage({cns_module: {}})
+            assert check_exception2 is None

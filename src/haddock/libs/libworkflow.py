@@ -110,8 +110,8 @@ class Workflow:
         # Create the list of steps contained in this workflow
         self.steps: list[Step] = []
         _items = enumerate(modules_parameters.items(), start=start)
-        for num_stage, (stage_name, params) in _items:
-            stage_name = get_module_name(stage_name)
+        for num_stage, (_stage_name, params) in _items:
+            stage_name = get_module_name(_stage_name)
             log.info(f"Reading instructions step {num_stage}_{stage_name}")
 
             # updates the module's specific parameter with global parameters
@@ -161,7 +161,10 @@ class Step:
                 ]
             )
         module_lib = importlib.import_module(module_name)
-        self.module = module_lib.HaddockModule(order=self.order, path=self.working_path)
+        self.module = module_lib.HaddockModule(
+            order=self.order,
+            path=self.working_path,
+            )
 
         # Run module
         start = time()

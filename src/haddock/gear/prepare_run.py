@@ -15,7 +15,11 @@ from pathlib import Path, PosixPath
 
 from haddock import EmptyPath, contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed, DATA_DIRNAME
-from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.core.exceptions import (
+    ConfigurationError,
+    ModuleError,
+    DependencyError,
+    )
 from haddock.core.typing import (
     Any,
     Callable,
@@ -290,6 +294,7 @@ def setup_run(
 
     if from_scratch:
         check_run_dir_exists(general_params[RUNDIR])
+        check_CNS_usage(modules_params)
 
     if scratch_rest0:
         check_mandatory_argments_are_present(general_params)
@@ -930,7 +935,10 @@ def check_run_dir_exists(run_dir: FilePath) -> None:
 
 def identify_modules(params: Iterable[str]) -> list[str]:
     """Identify keys (headings) belonging to HADDOCK3 modules."""
-    modules_keys = [k for k in params if get_module_name(k) in modules_category]
+    modules_keys = [
+        param_name for param_name in params
+        if get_module_name(param_name) in modules_category
+        ]
     return modules_keys
 
 
@@ -1295,3 +1303,41 @@ def update_step_names_in_file(
         text = text.replace(s1, s2)
     file_.write_text(text)
     return
+
+
+def check_CNS_usage(modules_params: ParamMap) -> None:
+    """Check that a topology module is run prior to modules requiring CNS.
+
+    Parameters
+    ----------
+    modules_params : ParamMap
+        Dict of modules parameters.
+        Only used to obtain ordered list of modules.
+
+    Raises
+    ------
+    DependencyError
+        Error thrown if topology not run before a CNS module.
+    """
+    from haddock.core.defaults import CNS_MODULES
+    generated_topology: bool = False
+    for _module_name in modules_params:
+        module_name = get_module_name(_module_name)
+        # Check if this module is a topology module
+        if modules_category[module_name] == "topology":
+            # Set the flag
+            generated_topology = True
+        # Check if this module is a CNS module (that require topology)
+        if module_name in CNS_MODULES:
+            # Check that topology was generated
+            if not generated_topology:
+                raise DependencyError(
+                    msg="A topology module should be used prior to CNS module.",
+                    module=module_name,
+                    dependency=", ".join([
+                        k for k, v in modules_category.items()
+                        if v == "topology"
+                        ])
+                    )
+            # We can stop here as either error raised or check passsed
+            break

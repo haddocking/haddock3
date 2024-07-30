@@ -87,7 +87,21 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.contactmap</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Compute contacts and generate heatmaps.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Compute contacts between chains in complexes.</span>
+
+<span class="sd">The ``[contactmap]`` module aims at generating heatmaps and chordcharts of</span>
+<span class="sd">the contacts observed in the input complexes.</span>
+
+<span class="sd">If complexes are clustered, the analysis of contacts will be performed</span>
+<span class="sd">based on all structures from each cluster.</span>
+
+<span class="sd">**Heatmaps** are describing the probability of contacts (&lt;5A) between two</span>
+<span class="sd">residues (both intramolecular and intermolecular).</span>
+
+<span class="sd">**Chordcharts** are describing only intermolecular contacts in circles,</span>
+<span class="sd">connecting with *chords* the two residues that are contacting.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -212,7 +226,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 25, 2024.
+      <span class="lastupdated">Last updated on Jul 30, 2024.
       </span></p>
   </div>
 

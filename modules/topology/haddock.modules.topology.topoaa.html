@@ -111,6 +111,23 @@
 <section id="module-haddock.modules.topology.topoaa">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.topology.topoaa" title="Permalink to this heading"></a></h2>
 <p>Create and manage CNS all-atom topology.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">[topoaa]</span></code> module is dedicated to the generation of CNS compatible
+parameters (.param) and topologies (.psf) for each of the input structures.</p>
+<p>It will:
+- Detect missing atoms, including hydrogens
+- Re-build them when missing
+- Build and write out topologies (psf) and coordinates (pdb) files</p>
+<p>This module is a pre-requisite to run any downstream modules using CNS.
+Having access to parameters and topology is mandatory for any kind
+of EM/MD related tasks.
+Therefore this is the reason why the module [topoaa] is often used as first
+module in a workflow.</p>
+<p>Note that for non-standard bio-molecules
+(apart from standard amino-acids, some modified ones, DNA, RNA, ions
+and carbohydrates … see <a class="reference external" href="https://wenmr.science.uu.nl/haddock2.4/library">detailed list of supported molecules</a>),
+such as small-molecules, parameters and topology must be obtained and provided
+by the user, as there is currently no built-in solution to generate
+them on the fly.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.HaddockModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.topology.topoaa.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/topology/topoaa/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule" title="Permalink to this definition"></a></dt>
@@ -373,7 +390,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 25, 2024.
+      <span class="lastupdated">Last updated on Jul 30, 2024.
       </span></p>
   </div>
 

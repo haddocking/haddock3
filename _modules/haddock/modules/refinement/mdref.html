@@ -86,7 +86,27 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.refinement.mdref</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Water refinement with CNS.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Explicit solvent MD refinement with CNS.</span>
+
+<span class="sd">The ``[mdref]`` module (also known as ``itw`` in HADDOCK2.X series), is a small</span>
+<span class="sd">molecular dynamics simulation, in cartesian space, using explicit solvent.</span>
+
+<span class="sd">A layer of solvent (8A for water, 12.5A for DMSO) is generated around</span>
+<span class="sd">surface residues.</span>
+
+<span class="sd">The `mdref` protocol is composed of 4 sequential steps:</span>
+<span class="sd">- Short energy minimization</span>
+<span class="sd">- 3 stages of molecular dynamics to reach 300K (at 100, 200 and 300K)</span>
+<span class="sd">- Molecular dynamics at 300K.</span>
+<span class="sd">- 3 stages of molecular dynamics, to reach 100K (at 300, 200 and 100K)</span>
+
+<span class="sd">Using this protocol, with default parameters, no spectacular changes are</span>
+<span class="sd">expected, however, the scoring of the various structures might be improved.</span>
+
+
+<span class="sd">Number of MD steps can be modified using the ``waterheatsteps``, ``watersteps``</span>
+<span class="sd">and ``watercoolsteps``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -230,7 +250,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 25, 2024.
+      <span class="lastupdated">Last updated on Jul 30, 2024.
       </span></p>
   </div>
 

@@ -86,7 +86,30 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.topology.topoaa</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Create and manage CNS all-atom topology.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Create and manage CNS all-atom topology.</span>
+
+<span class="sd">The ``[topoaa]`` module is dedicated to the generation of CNS compatible</span>
+<span class="sd">parameters (.param) and topologies (.psf) for each of the input structures.</span>
+
+<span class="sd">It will:</span>
+<span class="sd">- Detect missing atoms, including hydrogens</span>
+<span class="sd">- Re-build them when missing</span>
+<span class="sd">- Build and write out topologies (psf) and coordinates (pdb) files</span>
+
+<span class="sd">This module is a pre-requisite to run any downstream modules using CNS.</span>
+<span class="sd">Having access to parameters and topology is mandatory for any kind</span>
+<span class="sd">of EM/MD related tasks.</span>
+<span class="sd">Therefore this is the reason why the module [topoaa] is often used as first</span>
+<span class="sd">module in a workflow.</span>
+
+<span class="sd">Note that for non-standard bio-molecules</span>
+<span class="sd">(apart from standard amino-acids, some modified ones, DNA, RNA, ions</span>
+<span class="sd">and carbohydrates ... see `detailed list of supported molecules </span>
+<span class="sd">&lt;https://wenmr.science.uu.nl/haddock2.4/library&gt;`_),</span>
+<span class="sd">such as small-molecules, parameters and topology must be obtained and provided</span>
+<span class="sd">by the user, as there is currently no built-in solution to generate</span>
+<span class="sd">them on the fly.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -405,7 +428,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 25, 2024.
+      <span class="lastupdated">Last updated on Jul 30, 2024.
       </span></p>
   </div>
 

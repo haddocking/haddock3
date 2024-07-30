@@ -86,7 +86,27 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.refinement.flexref</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Flexible refinement with CNS.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Flexible refinement with CNS.</span>
+
+<span class="sd">The ``[flexref]`` module (also known as ``it1`` stage in HADDOCK2.X series),</span>
+<span class="sd">is a semi-flexible simulated annealing (SA) protocol based on molecular</span>
+<span class="sd">dynamics in torsion angle space.</span>
+
+
+<span class="sd">This semi-flexible SA consists of several stages:</span>
+<span class="sd">- High temperature rigid body molecular dynamics</span>
+<span class="sd">- Rigid body SA</span>
+<span class="sd">- Semi-flexible SA with flexible side-chains at the interface</span>
+<span class="sd">- Semi-flexible SA with fully flexible interface (both backbone and side-chains)</span>
+
+<span class="sd">By default, only the interface regions is treated as flexible. It is automatically</span>
+<span class="sd">defined based on the intermolecular contacts made. It is also possible to manually</span>
+<span class="sd">define the semi-flexible regions, and also define fully flexible regions that are</span>
+<span class="sd">allowed to move throughout the entire protocol from the high temperature rigid</span>
+<span class="sd">body molecular dynamics on.</span>
+
+<span class="sd">The temperature and number of steps for the various stages can be tuned.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -232,7 +252,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 25, 2024.
+      <span class="lastupdated">Last updated on Jul 30, 2024.
       </span></p>
   </div>
 

@@ -20,7 +20,7 @@ w_air:
   long: Weight of the distance restraints energy in the scoring function.
     Note that this is different from the force constants used during the calculations.
   group: 'scoring'
-  explevel: expert
+  explevel: hidden
 w_bsa:
   default: 0.0
   type: float

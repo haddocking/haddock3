@@ -1,4 +1,7 @@
-"""Create and manage CNS coarse-grained-atom topology."""
+"""Create and manage CNS coarse-grained-atom topology.
+
+This module is under development...
+"""
 # to be developed
 # adding dummy interfaces to pass the tests
 from pathlib import Path

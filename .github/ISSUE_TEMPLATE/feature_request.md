@@ -1,21 +1,29 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Enhancement/Feature request
+about: An enhancement/feature request is a suggestion for new functionality or an enhancement to existing features in the software.
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
+<!-- Examples of feature requests include:
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+- Adding new functionality
+- Improving existing features
+- Enhancing user interface or user experience
+- Integrating with other tools or services
+- Optimizing performance for specific use cases
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+If you're reporting an error or unexpected behavior with existing functionality, please use the Bug Report template instead. -->
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+## **Desired feature/enhancement**
+<!-- Explain what you would like to see added or improved in the software -->
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## **Motivation**
+<!-- Please provide context of why this would be relevant/useful. -->
 
+## **Description**
+<!-- Please provide an exhaustive description of the feature/enhancement you are suggesting, including details about its implementation -->
+
+## **Additional context**
+<!-- Please add any other context about the feature/enhancement that might be relevant here. -->

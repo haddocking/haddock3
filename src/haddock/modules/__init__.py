@@ -1,5 +1,6 @@
 """HADDOCK3 modules."""
 import re
+
 from abc import ABC, abstractmethod
 from contextlib import contextmanager, suppress
 from copy import deepcopy

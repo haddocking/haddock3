@@ -653,6 +653,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "lrmsd_std",
             "dockq",
             "dockq_std",
+            "ilrmsd",
+            "ilrmsd_std",
             "caprieval_rank",
         ],
         [
@@ -669,6 +671,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "0.000",
             "nan",
             "nan",
+            "4.300",
+            "0.000",
             "1",
         ],
         [
@@ -685,6 +689,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "0.000",
             "nan",
             "nan",
+            "4.300",
+            "0.000",
             "2",
         ],
     ]

@@ -202,14 +202,14 @@ def _check_capri_ss_tsv(
         lines = f.readlines()
 
     # Check the header
-    expected_colnames = list(expected_data[0].keys())
-    header = lines[0].strip().split("\t")
+    expected_header_cols = list(expected_data[0].keys())
+    observed_header_cols = lines[0].strip().split("\t")
 
     # Check if all they have the same lenght
-    assert len(header) == len(expected_colnames), "Header mismatch"
+    assert len(observed_header_cols) == len(expected_header_cols), "Header mismatch"
 
-    for col_name in expected_colnames:
-        assert col_name in header, f"{col_name} not found in the header"
+    for col_name in expected_header_cols:
+        assert col_name in observed_header_cols, f"{col_name} not found in the header"
 
     oberseved_data: list[dict[str, Union[int, str, float]]] = []
     data = lines[1:]
@@ -217,10 +217,10 @@ def _check_capri_ss_tsv(
         values = line.strip().split("\t")
 
         # Check there is one value for each column
-        assert len(values) == len(expected_colnames), "Values mismatch"
+        assert len(values) == len(expected_header_cols), "Values mismatch"
 
         data_dict = {}
-        for h, v in zip(expected_colnames, values):
+        for h, v in zip(expected_header_cols, values):
             data_dict[h] = _cast_float_str_int(v)
 
         oberseved_data.append(data_dict)
@@ -241,10 +241,8 @@ def _check_capri_clt_tsv(
     # There are several `#` lines in the file, these are comments and can be ignored
     lines = [line for line in lines if not line.startswith("#")]
 
-    # check header
-    # Get the headers from the expected data
+    # Check header
     expected_header_cols = list(expected_data[0].keys())
-
     observed_header_cols = lines[0].strip().split("\t")
 
     # Check if all the columns are present
@@ -266,9 +264,8 @@ def _check_capri_clt_tsv(
             data_dic[h] = _cast_float_str_int(v)
 
         oberseved_data.append(data_dic)
-    assert len(oberseved_data) == 1, "There should be 1 cluster"
 
-    # Check the values
+    assert len(oberseved_data) == 1, "There should be 1 cluster"
 
     _compare_polymorphic_data(expected_data, oberseved_data)
 
@@ -295,13 +292,6 @@ def evaluate_caprieval_execution(
     #  they will change locations, so check the filenames
     assert module.output_models[0].file_name == model_list[0].file_name
     assert module.output_models[1].file_name == model_list[1].file_name
-
-    # The models do not hold the capri metrics, so check the output files to see if they were written
-    with open(Path(module.path, "capri_ss.tsv"), "r") as f:
-        lines = f.readlines()
-
-    # Check the values
-    assert len(lines) == 3, "There should be 3 lines in the capri_ss.tsv"
 
     _check_capri_ss_tsv(
         capri_file=str(Path(module.path, "capri_ss.tsv")),

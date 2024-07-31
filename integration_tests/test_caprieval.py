@@ -265,7 +265,7 @@ def _check_capri_clt_tsv(
 
         oberseved_data.append(data_dic)
 
-    assert len(oberseved_data) == 1, "There should be 1 cluster"
+    assert len(oberseved_data) == len(expected_data), "Data mismatch"
 
     _compare_polymorphic_data(expected_data, oberseved_data)
 

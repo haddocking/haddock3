@@ -1,0 +1,240 @@
+! patch-bb-cg.cns
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * and from the CNS distriution of Brunger and Adams                   *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+! define cutoff for chain break
+evaluate ($bdbreak = 8.0)
+
+! encode beads info
+evaluate ($bdnum = 0)
+for $id in id (name BB) loop cg1
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+   show (name) (bondedto (name $bdname_$bdnum and resid $bdresi_$bdnum))
+    if ($result NE 0) then
+        evaluate ($sbdname_$bdnum = $result)
+    else
+        evaluate ($sbdname_$bdnum = "XXX")
+    end if
+end loop cg1
+
+
+!!! BBB Angles
+
+evaluate ($ncount = 0)
+evaluate ($nend = $bdnum - 2)
+while ($ncount < $nend) loop cg2
+    evaluate ($ncount = $ncount + 1)
+
+    ! define three consecutive backbone beads
+    evaluate ($nat1 = $ncount)
+    evaluate ($nat2 = $ncount + 1)
+    evaluate ($nat3 = $ncount + 2)
+  
+    ! get their atom names
+    evaluate ($bname1 = $bdname_$nat1)
+    evaluate ($bname2 = $bdname_$nat2)
+    evaluate ($bname3 = $bdname_$nat3)
+
+    ! get their residue number
+    evaluate ($bresi1 = $bdresi_$nat1)
+    evaluate ($bresi2 = $bdresi_$nat2)
+    evaluate ($bresi3 = $bdresi_$nat3)
+
+    ! define atom names for patch
+    evaluate ($pat1 = "1"+$bname1)
+    evaluate ($pat2 = "2"+$bname2)
+    evaluate ($pat3 = "3"+$bname3)
+
+    ! check for breaks before defining any angle
+    evaluate ($break = "FALSE")
+    pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
+    if ($result > $bdbreak) then
+        evaluate ($break = "TRUE")
+    end if
+    pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3) geometry
+    if ($result > $bdbreak) then
+        evaluate ($break = "TRUE")
+    end if
+ 
+    if ($break EQ FALSE) then
+
+        ! define new backbone angle patch 
+        topology
+            presidue cgang  ! Patch to add an angle between three beads
+                add angle $pat1 $pat2 $pat3 
+            end
+        end
+
+        ! apply new patch to the selected three beads
+        patch cgang refe=1=(resid $bresi1) refe=2=(resid $bresi2) refe=3=(resid $bresi3) end
+        display PATCH-BB-CG: ADDED ONE ANGLE BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $bname3 $bresi3
+
+    end if
+
+end loop cg2
+
+
+!!! BBS Angles
+evaluate ($ncount = 0)
+evaluate ($nend = $bdnum - 1)
+while ($ncount < $nend) loop cg3
+    evaluate ($ncount = $ncount + 1)
+
+    !! BBA Angles
+    ! define two consecutive backbone beads
+    evaluate ($nat1 = $ncount)
+    evaluate ($nat2 = $ncount + 1)
+  
+    ! get their atom names
+    evaluate ($bname1 = $bdname_$nat1)
+    evaluate ($bname2 = $bdname_$nat2)
+
+    ! get their side-chain beads names
+    evaluate ($sbname1 = $sbdname_$nat1)
+    evaluate ($sbname2 = $sbdname_$nat2)
+
+    ! get their residue number
+    evaluate ($bresi1 = $bdresi_$nat1)
+    evaluate ($bresi2 = $bdresi_$nat2)
+
+    ! define atom names for patch
+    evaluate ($pat1 = "1"+$bname1)
+    evaluate ($pat2 = "2"+$bname2)
+    evaluate ($pas1 = "1"+$sbname1)
+    evaluate ($pas2 = "2"+$sbname2)
+
+    ! check for breaks before defining any angle
+    evaluate ($break = "FALSE")
+    evaluate ($pbreak = "FALSE")
+    pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
+    if ($result > $bdbreak) then
+        evaluate ($break = "TRUE")
+        evaluate ($pbreak = "TRUE")
+    end if
+ 
+    if ($break EQ FALSE) then
+
+        ! define new side-chain angle patch for 1st residue
+        if ($ncount EQ 1) then
+            if ($sbname1 NE "XXX") then
+                ! define SBB angle patch
+                topology
+                    presidue scgang  ! Patch to add an angle between three beads
+                        add angle $pas1 $pat1 $pat2 
+                    end
+                end
+                ! apply new patch to the selected three beads
+                patch scgang refe=1=(resid $bresi1) refe=2=(resid $bresi1) refe=3=(resid $bresi2) end
+                display PATCH-SBB-CG: ADDED ONE SIDE-CHAIN/BB ANGLE BETWEEN $sbname1 $bresi1 , $bname1 $bresi1 , $bname2 $bresi2
+            end if
+        end if
+
+        ! define new side-chain angle patch for 1st residue after chain break
+        if ($pbreak EQ TRUE) then
+            if ($sbname1 NE "XXX") then
+                ! define SBB angle patch
+                topology
+                    presidue scgsang  ! Patch to add an angle between three beads
+                        add angle $pas1 $pat1 $pat2 
+                    end
+                end
+                ! apply new patch to the selected three beads
+                patch scgsang refe=1=(resid $bresi1) refe=2=(resid $bresi1) refe=3=(resid $bresi2) end
+                display PATCH-SBB-CG: ADDED ONE SIDE-CHAIN/BB ANGLE BETWEEN $sbname1 $bresi1 , $bname1 $bresi1 , $bname2 $bresi2
+            end if
+        end if
+
+        ! define BBS angle patch
+        if ($sbname2 NE "XXX") then
+            topology
+                presidue cgsang  ! Patch to add an angle between three beads
+                    add angle $pat1 $pat2 $pas2 
+                end
+            end
+            ! apply new patch to the selected three beads
+            patch cgsang refe=1=(resid $bresi1) refe=2=(resid $bresi2) refe=3=(resid $bresi2) end
+            display PATCH-BBS-CG: ADDED ONE BB/SIDE-CHAIN ANGLE BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $sbname2 $bresi2
+        end if
+
+    end if
+
+end loop cg3
+
+
+!! BBB dihedral
+
+evaluate ($ncount = 0)
+evaluate ($nend = $bdnum - 3)
+while ($ncount < $nend) loop cg4
+    evaluate ($ncount = $ncount + 1)
+
+    ! define four consecutive beads
+    evaluate ($nat1 = $ncount)
+    evaluate ($nat2 = $ncount + 1)
+    evaluate ($nat3 = $ncount + 2)
+    evaluate ($nat4 = $ncount + 3)
+
+    ! get their atom names
+    evaluate ($bname1 = $bdname_$nat1)
+    evaluate ($bname2 = $bdname_$nat2)
+    evaluate ($bname3 = $bdname_$nat3)
+    evaluate ($bname4 = $bdname_$nat4)
+
+    ! get their residue number
+    evaluate ($bresi1 = $bdresi_$nat1)
+    evaluate ($bresi2 = $bdresi_$nat2)
+    evaluate ($bresi3 = $bdresi_$nat3)
+    evaluate ($bresi4 = $bdresi_$nat4)
+
+    ! define atom names for patch
+    evaluate ($pat1 = "1"+$bname1)
+    evaluate ($pat2 = "2"+$bname2)
+    evaluate ($pat3 = "3"+$bname3)
+    evaluate ($pat4 = "4"+$bname4)
+
+    evaluate ($break = "FALSE")
+    ! check for breaks before defining any dihedral
+    pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
+    if ($result > $bdbreak) then
+        evaluate ($break = "TRUE")
+    end if
+    pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3) geometry
+    if ($result > $bdbreak) then
+        evaluate ($break = "TRUE")
+    end if
+    pick bond (name $bname3 and resid $bresi3) (name $bname4 and resid $bresi4) geometry
+    if ($result > $bdbreak) then
+        evaluate ($break = "TRUE")
+    end if
+ 
+    if ($break EQ FALSE) then
+
+        ! define new patch 
+        topology
+            presidue cgdihe  ! Patch to add a dihedral angle between four beads
+                add dihedral $pat1 $pat2 $pat3 $pat4
+            end
+        end
+
+        ! apply new patch to the selected four beads
+        patch cgdihe refe=1=(resid $bresi1) refe=2=(resid $bresi2) refe=3=(resid $bresi3) refe=4=(resid $bresi4) end
+        display PATCH-BB-CG: ADDED ONE DIHEDRAL BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $bname3 $bresi3 , $bname4 $bresi4
+
+    end if
+
+end loop cg4
+
+
+

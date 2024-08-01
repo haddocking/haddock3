@@ -1,0 +1,125 @@
+! covalheme.cns
+!    Add a covalent bond between a hemeC and a cysteine
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+evaluate ($ncac = 0)
+for $id1 in id ( name CAC and resn HEC ) loop heme1
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resname) (id $id1)
+    evaluate ($resname1=$result)
+    show (name) (id $id1)
+    evaluate ($name1=$result)
+
+    evaluate ($mindis = 4.0)
+    evaluate ($minid  = 0)
+    for $id2 in id ( name SG and (id $id1) around 4.0 and (resn CYS or resn CYF) ) loop search
+        pick bond (id $id1) (id $id2) geometry
+        if ( $result < $mindis) then
+            evaluate ($mindis = $result)
+            evaluate ($minid = $id2)
+        end if
+    end loop search
+     
+    if ($minid > 0) then
+        evaluate ($ncac = $ncac + 1)
+        show (segid) (id $minid)
+        evaluate ($segid2=$result)
+        show (resid) (id $minid)
+        evaluate ($resid2=$result)
+        show (resname) (id $minid)
+        evaluate ($resname2=$result)
+        show (name) (id $minid)
+        evaluate ($name2=$result)
+
+        evaluate ($seg1.$ncac=$segid1)
+        evaluate ($seg2.$ncac=$segid2)
+        evaluate ($res1.$ncac=$resid1)
+        evaluate ($res2.$ncac=$resid2)
+    end if
+
+end loop heme1
+
+evaluate ($counter=1)
+while ( $counter <= $ncac ) loop ncac
+
+    patch phcc 
+        refe=2=(resid $res1.$counter and segid $seg1.$counter) 
+        refe=1=(resid $res2.$counter and segid $seg2.$counter) 
+    end
+    buffer message
+       display COVALHEME: ADDED ONE COVALENT BOND BETWEEN $name1 $resid1 AND $name2 $resname2 $resid2
+    end
+    evaluate ($counter=$counter+1)
+end loop ncac
+
+
+evaluate ($ncab = 0)
+for $id1 in id ( name CAB and resn HEC ) loop heme2
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resname) (id $id1)
+    evaluate ($resname1=$result)
+    show (name) (id $id1)
+    evaluate ($name1=$result)
+
+    evaluate ($mindis = 4.0)
+    evaluate ($minid  = 0)
+    for $id2 in id ( name SG and (id $id1) around 4.0 and
+                     (resn CYS or resn CYF) ) loop search
+
+        pick bond (id $id1) (id $id2) geometry
+
+        if ( $result < $mindis) then
+            evaluate ($mindis = $result)
+            evaluate ($minid = $id2)
+        end if
+
+    end loop search
+
+    if ($minid > 0) then
+        evaluate ($ncab = $ncab + 1)
+        show (segid) (id $minid)
+        evaluate ($segid2=$result)
+        show (resid) (id $minid)
+        evaluate ($resid2=$result)
+        show (resname) (id $minid)
+        evaluate ($resname2=$result)
+        show (name) (id $minid)
+        evaluate ($name2=$result)
+
+        evaluate ($seg1.$ncab=$segid1)
+        evaluate ($seg2.$ncab=$segid2)
+        evaluate ($res1.$ncab=$resid1)
+        evaluate ($res2.$ncab=$resid2)
+    end if
+
+end loop heme2
+
+evaluate ($counter=1)
+while ( $counter <= $ncab ) loop ncab
+
+    patch phcb 
+        refe=2=(resid $res1.$counter and segid $seg1.$counter) 
+        refe=1=(resid $res2.$counter and segid $seg2.$counter) 
+    end
+    buffer message
+        display COVALHEME: ADDED ONE COVALENT BOND BETWEEN $name1 $resid1 AND $name2 $resname2 $resid2
+    end
+    evaluate ($counter=$counter+1)
+
+end loop ncab
+

@@ -1,1 +1,169 @@
-{}
+autohis:
+  default: true
+  type: boolean
+  title: Automatic HIS protonation state
+  short: 'The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically
+    set by HADDOCK'
+  long: 'If set to true, HADDOCK will automatically define the protonation state of
+    histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest
+    electrostatic energy'
+  group: molecule
+  explevel: expert
+delenph:
+  default: true
+  type: boolean
+  title: Keep or remove non-polar hydrogen atoms
+  short: If set to true, non-polar hydrogen atoms will be discarded to save computing
+    time
+  long: Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
+    can be in principle discarded. This saves computing time. However this should
+    not be done if you are defining distance restraints to specific hydrogen atoms
+    (e.g. when using NMR distance restraints).
+  group: molecule
+  explevel: easy
+log_level:
+  default: quiet
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - verbose
+    - normal
+    - quiet
+  title: Log level verbosity for CNS
+  short: Set the log level verbosity for CNS
+  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+    messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
+  group: module
+  explevel: guru
+iniseed:
+  default: 917
+  type: integer
+  min: 0
+  max: 9999999999999999
+  title: Random seed
+  short: Random seed used in CNS to initialize the random seed function
+  long: Random seed used in CNS to initialize the random seed function
+  group: molecule
+  explevel: guru
+ligand_param_fname:
+  default: ''
+  type: file
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format containing all force field parameters
+    (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+  group: force field
+  explevel: expert
+ligand_top_fname:
+  default: ''
+  type: file
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: force field
+  explevel: expert
+limit:
+  default: true
+  type: boolean
+  title: Limit the number of input molecules.
+  short: When true, the topoaa module can accept any number of input molecules.
+  long: Enable/disable the limit of input molecules for the topoaa module.
+    Setting the limit to false is useful when the topoaa module is followed by
+    scoring modules such as emscoring, or other analysis modules. If topoaa is
+    used in the middle of the workflow this parameter has no effect.
+  group: sampling
+  explevel: expert
+set_bfactor:
+  default: true
+  type: boolean
+  title: Define if the b-factor column must be overwritten
+  short: When true (default), all b-factors are set to a default value of 15
+  long: Defines if the original b-factor values are kept (true) or 
+    all b-factors are set to a default value for 15 (false).
+  group: module
+  explevel: expert
+tolerance:
+  default: 0
+  type: integer
+  min: 0
+  max: 99
+  precision: 3
+  title: Failure tolerance percentage
+  short: Percentage of allowed failures for a module to successfully complete
+  long: Percentage of allowed failures for a module to successfully complete
+  group: module
+  explevel: expert
+mol1:
+  cyclicpept:
+    default: false
+    type: boolean
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A.
+          This cutoff can be changed in the generate-topology.cns script.
+    group: molecule
+    explevel: easy
+  nhisd:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues.
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: molecule
+    explevel: expert
+  hisd_1:
+    default: .nan
+    type: integer
+    min: -9999
+    max: 9999
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD
+    group: molecule
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues.
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: molecule
+    explevel: expert
+  hise_1:
+    default: .nan
+    type: integer
+    min: -9999
+    max: 9999
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE
+    group: molecule
+    explevel: expert
+  group: input molecules
+  explevel: easy
+  title: Input molecule configuration
+  short: Specific molecule configuration
+  long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
+        if you input three molecules, you can define mol1, mol2, and mol3
+        subparameters. Those not defined will be populated with the defaults.
+molecules:
+  default: false
+  type: boolean
+  title: Input molecules
+  short: Path to the input molecules.
+  long: This parameter is a general mandatory parameter but is masked here to
+    allow parameter validation while preparing the run. Therefore, the default
+    and type values of this parameter are meaningless.
+  explevel: hidden
+  group: molecules
+

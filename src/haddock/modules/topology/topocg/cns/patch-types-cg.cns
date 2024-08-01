@@ -1,0 +1,83 @@
+! patch-types-cg.cns
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * and from the CNS distriution of Brunger and Adams                   *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+! encode beads info
+evaluate ($bdnum = 0)
+for $id in id (name BB and (not (resn ALA or resn PRO or resn HY3 or resn HYP))) loop cgt1
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    evaluate ($ptype= "PTY"+encode($bfactor_$bdnum))
+    patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+end loop cgt1
+
+! encode beads info for ALA
+evaluate ($bdnum = 0)
+for $id in id (name BB and resn ALA) loop cgt2
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    evaluate ($ptype= "PTA"+encode($bfactor_$bdnum))
+    patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+end loop cgt2
+
+! encode beads info for PRO
+evaluate ($bdnum = 0)
+for $id in id (name BB and resn PRO) loop cgt3
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    evaluate ($ptype= "PTP"+encode($bfactor_$bdnum))
+    patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+end loop cgt3
+
+! encode beads info for HY3
+evaluate ($bdnum = 0)
+for $id in id (name BB and resn HY3) loop cgt4
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    evaluate ($ptype= "PTH"+encode($bfactor_$bdnum))
+    patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+end loop cgt4
+
+
+! encode beads info for HYP
+evaluate ($bdnum = 0)
+for $id in id (name BB and resn HYP) loop cgt4
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    evaluate ($ptype= "PTH"+encode($bfactor_$bdnum))
+    patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+end loop cgt4
+

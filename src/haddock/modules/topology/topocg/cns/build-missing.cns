@@ -1,0 +1,296 @@
+! build-missing.cns
+!    build missing atoms
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+define(atom_build=(not(known)))
+
+identity (store9) (none)
+
+identity (store9) (&atom_build)
+if ( &hydrogen_build = "all" ) then
+    identity (store9) (store9 or hydrogen)
+elseif ( &hydrogen_build = "unknown" ) then
+    identity (store9) (store9 or (not(known) and hydrogen))
+end if
+
+show sum(1) (store9)
+evaluate ($tobuild=$result)
+
+if ( $tobuild > 0 ) then
+
+    fix selection=(not(store9)) end
+
+    show sum(1) (store9)
+    evaluate ($moving=$result)
+
+    if ( $moving > 0 ) then
+        for $id in id (tag and byres(store9)) loop avco
+
+            show ave(x) (byres(id $id) and known)
+            evaluate ($ave_x=$result)
+            show ave(y) (byres(id $id) and known)
+            evaluate ($ave_y=$result)
+            show ave(z) (byres(id $id) and known)
+            evaluate ($ave_z=$result)
+
+            do (x=$ave_x) (byres(id $id) and store9)
+            do (y=$ave_y) (byres(id $id) and store9)
+            do (z=$ave_z) (byres(id $id) and store9)
+
+            !The following is to deal with problems with THY methyl group
+            show (x) (byres(id $id) and known and name C7)
+            evaluate ($ave_x=$result)
+            show ave(y) (byres(id $id) and known and name C7)
+            evaluate ($ave_y=$result)
+            show ave(z) (byres(id $id) and known and name C7)
+            evaluate ($ave_z=$result)
+ 
+            do (x=$ave_x) (byres(id $id) and store9 and name H7*)
+            do (y=$ave_y) (byres(id $id) and store9 and name H7*)
+            do (z=$ave_z) (byres(id $id) and store9 and name H7*)
+ 
+        end loop avco 
+
+        ! Assign average b-factor of known atoms to unknown ones
+        if ($set_bfactor = false) then
+            for $id in id (tag and byres(store9)) loop bfac
+                show ave(b) (byres(id $id) and not store9)
+                do (b=$result) (byres(id $id) and store9)
+            end loop bfac 
+        end if
+
+        ! Better initial position for rebuilding if atoms to which a missing atom is bonded to exist
+        for $id in id (store9) loop bndto
+
+            show sum(1) (bondedto(id $id) and known)
+            if ($result > 0) then
+                show ave(x) (bondedto(id $id) and known)
+                evaluate ($ave_x=$result)
+                show ave(y) (bondedto(id $id) and known)
+                evaluate ($ave_y=$result)
+                show ave(z) (bondedto(id $id) and known)
+                evaluate ($ave_z=$result)
+            end if
+ 
+        end loop bndto 
+
+        for $id in id (store9) loop radis
+            do (x=x+2*random(1.0)-1) (id $id)
+            do (y=y+2*random(1.0)-1) (id $id)
+            do (z=z+2*random(1.0)-1) (id $id)
+        end loop radis
+
+        {- start parameter for the side chain building -}
+        parameter
+            nbonds
+                rcon=20. nbxmod=-2 repel=0.9  wmin=0.1 tolerance=1.
+                rexp=2 irexp=2 inhibit=0.25
+            end
+        end
+
+        {- Friction coefficient, in 1/ps. -}
+        do (fbeta=100) (store9)
+
+        evaluate ($bath=300.0)
+        evaluate ($nstep=500)
+        evaluate ($timestep=0.0005)
+
+        do (refy=mass) (store9)
+
+        do (mass=20) (store9)
+
+        igroup interaction 
+            (store9) (store9 or known)
+        end
+
+        {- turn on initial energy terms -}
+        flags exclude * include bond angle vdw end
+ 
+        minimize powell nstep=50  nprint=10 end
+
+        set seed=$iniseed end
+
+        do (vx=maxwell($bath)) (store9)
+        do (vy=maxwell($bath)) (store9)
+        do (vz=maxwell($bath)) (store9)
+
+        flags exclude vdw include impr end
+
+        dynamics cartesian
+            nstep=50
+            timestep=$timestep
+            tcoupling=true temperature=$bath
+            nprint=$nstep
+            cmremove=false
+        end
+
+        flags include vdw end
+
+        minimize powell nstep=50 nprint=10 end
+
+        set seed=$iniseed end
+
+        do (vx=maxwell($bath)) (store9)
+        do (vy=maxwell($bath)) (store9)
+        do (vz=maxwell($bath)) (store9)
+
+        dynamics cartesian
+            nstep=50
+            timestep=$timestep
+            tcoupling=true temperature=$bath
+            nprint=$nstep
+            cmremove=false
+        end
+
+        parameter
+            nbonds
+                rcon=2. nbxmod=-3 repel=0.75
+            end
+        end
+
+        minimize powell nstep=100 nprint=25 end
+
+        set seed=$iniseed end
+
+        do (vx=maxwell($bath)) (store9)
+        do (vy=maxwell($bath)) (store9)
+        do (vz=maxwell($bath)) (store9)
+
+        dynamics cartesian
+            nstep=$nstep
+            timestep=$timestep
+            tcoupling=true temperature=$bath
+            nprint=$nstep
+            cmremove=false
+        end
+
+        {- turn on all energy terms -}
+        flags include dihe ? end
+
+        {- set repel to ~vdw radii -}
+        parameter
+            nbonds
+                repel=0.89
+            end
+        end
+
+        minimize powell nstep=500 nprint=50 end
+
+        flags exclude * include bond angl impr dihe vdw elec end
+
+        minimize powell nstep=500 nprint=50 end
+
+        {- return masses to something sensible -}
+        do (mass=refy) (store9)
+
+        set seed=$iniseed end
+
+        do (vx=maxwell($bath)) (store9)
+        do (vy=maxwell($bath)) (store9)
+        do (vz=maxwell($bath)) (store9)
+
+        dynamics cartesian
+            nstep=$nstep
+            timestep=$timestep
+            tcoupling=true temperature=$bath
+            nprint=$nstep
+            cmremove=false
+        end
+
+        {- some final minimisation -}
+        minimize powell nstep=500 drop=40.0 nprint=50 end
+
+        print thres=0.02 bonds
+        print thres=5. angles
+
+    end if
+  
+    noe reset end
+    rest dihe reset end
+
+
+    ! Check for D-amino acids
+
+    for $id in id ( name HA and not resn GLY ) loop ltod
+
+        show (segid) (id $id)
+        evaluate ($segid=$result)
+        show (resid) (id $id)
+        evaluate ($resid=$result)
+        show (resn) (id $id)
+        evaluate ($resn=$result)
+
+        show ave(x) (segid $segid and resid $resid and (name CB or name C or name N) and known)
+        evaluate ($ave_x=$result)
+        show ave(y) (segid $segid and resid $resid and (name CB or name C or name N) and known)
+        evaluate ($ave_y=$result)
+        show ave(z) (segid $segid and resid $resid and (name CB or name C or name N) and known)
+        evaluate ($ave_z=$result)
+        show ave(x) (segid $segid and resid $resid and name CA and known)
+        evaluate ($ha_x=3*$result-2*$ave_x)
+        show ave(y) (segid $segid and resid $resid and name CA and known)
+        evaluate ($ha_y=3*$result-2*$ave_y)
+        show ave(z) (segid $segid and resid $resid and name CA and known)
+        evaluate ($ha_z=3*$result-2*$ave_z)
+
+        do (x=$ha_x) (segid $segid and resid $resid and name HA)
+        do (y=$ha_y) (segid $segid and resid $resid and name HA)
+        do (z=$ha_z) (segid $segid and resid $resid and name HA)
+
+        flags exclude * include bond angle vdw end
+        minimize powell nstep=50 drop=40.0 nprint=50 end
+
+        pick impr
+            (segid $segid and resid $resid and name HA)
+            (segid $segid and resid $resid and name N)
+            (segid $segid and resid $resid and name C)
+            (segid $segid and resid $resid and name CB)
+            geometry
+
+        if ($result lt 0) then
+            patch LTOD reference=nil=(segid $segid and resid $resid) end
+            buffer message
+                display D-amino acid detected for $resn $resid of chain $segid
+            end
+            flag exclude * include bond impr end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+            flag include angle end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+            flag include vdw end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+        end if
+
+    end loop ltod
+
+    fix selection=( none ) end
+
+    flag incl noe cdih end
+    print threshold=0.3 noe
+    print threshold=5. cdih
+
+    energy end
+
+    print threshold=0.3 noe
+    print threshold=5. cdih
+    print thres=0.02 bonds
+    print thres=5. angles
+    flag excl noe cdih end
+
+end if
+
+do (store2=0) (all)
+for $id in id (tag and name BB) loop cgmodel 
+    do (store2=1) (byres(id $id))
+end loop cgmodel
+
+fix sele=(attr store2 = 0) end
+minimize powell nstep=50 drop=40.0 nprint=10 end
+
+fix selection=( none ) end

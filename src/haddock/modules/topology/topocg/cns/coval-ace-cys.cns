@@ -1,0 +1,57 @@
+! coval-ace-cys.cns
+!    Add a covalent bond between an acetylated Nter and a cysteine sulphur
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+for $id1 in id ( name CA and resn ACE ) loop ace
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resname) (id $id1)
+    evaluate ($resname1=$result)
+    show (name) (id $id1)
+    evaluate ($name1=$result)
+    show (chem) (id $id1)
+    evaluate ($chem1=$result)
+
+    evaluate ($mindis = 3.0)
+    evaluate ($minid  = 0)
+    for $id2 in id ( name SG and (id $id1) around 3.0 and
+                     (resn CYS or resn CYF) ) loop search
+
+        pick bond (id $id1) (id $id2) geometry
+
+        if ( $result < $mindis) then
+            evaluate ($mindis = $result)
+            evaluate ($minid = $id2)
+        end if
+
+    end loop search
+     
+    if ($minid > 0) then
+        show (segid) (id $minid)
+        evaluate ($segid2=$result)
+        show (resid) (id $minid)
+        evaluate ($resid2=$result)
+        show (resname) (id $minid)
+        evaluate ($resname2=$result)
+        show (name) (id $minid)
+        evaluate ($name2=$result)
+        show (chem) (id $minid)
+        evaluate ($chem2=$result)
+
+        evaluate ($pat1 = "1"+$name1)
+        evaluate ($pat2 = "2"+$name2)
+        patch accy refe=1=(resid $resid1 and segid $segid1) refe=2=(resid $resid2 and segid $segid2) end
+        display COVAL-ACE-CYS: ADDED ONE COVALENT BOND BETWEEN $name1 $resid1 AND $name2 $resname2 $resid2
+    end if
+
+end loop ace

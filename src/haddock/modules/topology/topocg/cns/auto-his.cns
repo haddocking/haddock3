@@ -1,0 +1,141 @@
+! auto-his.cns
+!    Automatically define the protonation state of histidines
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{- turn on electrostatic and proper non-bonded-}
+parameter
+    nbonds
+        repel=0
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=10.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5
+        tolerance  0.5
+    end
+end
+
+flags exclude * include bond angl impr dihe vdw elec end
+
+evaluate ($nhisd = 0)
+evaluate ($nhise = 0)
+
+for $id1 in id ( resn HIS and name CA ) loop hisp
+
+    evaluate ($hisdpatch = false)
+    evaluate ($hisepatch = false)
+    evaluate ($hiselec = 9999999)
+
+    igroup interaction (not all) (not all) end
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+
+    do (refx = x) (all)
+    do (refy = y) (all)
+    do (refz = z) (all)
+
+    igroup interaction (segid $segid1 and resid $resid1) (not (segid $segid1 and resid $resid1)) end
+    minimize powell nstep=10 drop=40.0 nprint=5 end
+    energy end
+    evaluate ($hiselec = $elec)
+
+    do (x = refx) (all)
+    do (y = refy) (all)
+    do (z = refz) (all)
+
+    !change partial charges of HIS side-chain to minic HISD
+  
+    do (charge =  0.00) (segid $segid1 and resid $resid1 and name CB)
+    do (charge =  0.13) (segid $segid1 and resid $resid1 and name CG)
+    do (charge = -0.57) (segid $segid1 and resid $resid1 and name ND1)
+    do (charge =  0.42) (segid $segid1 and resid $resid1 and name HD1)
+    do (charge =  0.10) (segid $segid1 and resid $resid1 and name CD2)
+    do (charge = -0.49) (segid $segid1 and resid $resid1 and name NE2)
+    do (charge =  0.41) (segid $segid1 and resid $resid1 and name CE1)
+    do (charge =  0.00) (segid $segid1 and resid $resid1 and name HE2)
+
+    minimize powell nstep=10 drop=40.0 nprint=5 end
+    energy end
+    if ($elec < $hiselec) then
+        evaluate ($hiselec = $elec)
+        evaluate ($hisdpatch = true)
+    end if
+
+    do (x = refx) (all)
+    do (y = refy) (all)
+    do (z = refz) (all)
+
+    !change partial charges of HIS side-chain to minic HISE
+  
+    do (charge =  0.00) (segid $segid1 and resid $resid1 and name CB)
+    do (charge =  0.13) (segid $segid1 and resid $resid1 and name CG)
+    do (charge = -0.49) (segid $segid1 and resid $resid1 and name ND1)
+    do (charge =  0.00) (segid $segid1 and resid $resid1 and name HD1)
+    do (charge =  0.10) (segid $segid1 and resid $resid1 and name CD2)
+    do (charge = -0.57) (segid $segid1 and resid $resid1 and name NE2)
+    do (charge =  0.41) (segid $segid1 and resid $resid1 and name CE1)
+    do (charge =  0.42) (segid $segid1 and resid $resid1 and name HE2)
+
+    minimize powell nstep=10 drop=40.0 nprint=5 end
+    energy end
+    if ($elec < $hiselec) then
+        evaluate ($hiselec = $elec)
+        evaluate ($hisepatch = true)
+        evaluate ($hisdpatch = false)
+    end if
+
+    !change partial charges of HIS side-chain to the initial default
+  
+    do (charge =  0.00) (segid $segid1 and resid $resid1 and name CB)
+    do (charge =  0.33) (segid $segid1 and resid $resid1 and name CG)
+    do (charge = -0.54) (segid $segid1 and resid $resid1 and name ND1)
+    do (charge =  0.46) (segid $segid1 and resid $resid1 and name HD1)
+    do (charge =  0.33) (segid $segid1 and resid $resid1 and name CD2)
+    do (charge = -0.54) (segid $segid1 and resid $resid1 and name NE2)
+    do (charge =  0.50) (segid $segid1 and resid $resid1 and name CE1)
+    do (charge =  0.46) (segid $segid1 and resid $resid1 and name HE2)
+
+    do (x = refx) (all)
+    do (y = refy) (all)
+    do (z = refz) (all)
+
+    if ($hisdpatch = true) then
+        evaluate ($nhisd = $nhisd + 1)
+        evaluate ($seg1.$nhisd=$segid1)
+        evaluate ($res1.$nhisd=$resid1)
+    end if
+    if ($hisepatch = true) then
+        evaluate ($nhise = $nhise + 1)
+        evaluate ($seg2.$nhise=$segid1)
+        evaluate ($res2.$nhise=$resid1)
+    end if
+
+end loop hisp
+
+evaluate ($counter=1)
+while ( $counter <= $nhisd ) loop hisd
+     buffer message
+         display Patching histidine $res1.$counter to HISD
+     end
+     patch hisd reference=nil=(segid $seg1.$counter and resid $res1.$counter) end
+     evaluate ($counter=$counter+1)
+end loop hisd
+
+evaluate ($counter=1)
+while ( $counter <= $nhise ) loop hise
+    buffer message
+        display Patching histidine $res2.$counter to HISE
+     end
+     patch hise reference=nil=(segid $seg2.$counter and resid $res2.$counter) end
+     evaluate ($counter=$counter+1)
+end loop hise
+
+igroup interaction (all) (all) end

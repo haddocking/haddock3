@@ -1,0 +1,82 @@
+! dna_break.cns
+!    Check for DNA chain breaks
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+evaluate ($dbreak=0)
+
+for $id1 in id ( name O5' and bondedto(name C5') ) loop dbreak
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resn) (id $id1)
+    evaluate ($resn1=$result)
+
+    show sum(1) (id $id1)
+    if ( $result = 0 ) then
+        display unknown coordinates for segid $segid1 resn $resn1 resid $resid1 name O5'
+        display this coordinate must be known for automatic dna chain break detection
+        abort
+    end if
+
+    identity (store1) ( name O3' and bondedto( segid $segid1 and resid $resid1 and name P ) )
+
+    if ( $select = 1 ) then
+        show element (store1) (attribute store1 > 0)
+        evaluate ($id2=$result)
+        show (segid) (id $id2)
+        evaluate ($segid2=$result)
+        show (resid) (id $id2)
+        evaluate ($resid2=$result)
+        show (resn) (id $id2)
+        evaluate ($resn2=$result)
+
+        show sum(1) (id $id2)
+        if ( $result = 0 ) then
+            display unknown coordinates for segid $segid2 resn $resn2 resid $resid2 name O3' 
+            display this coordinate must be known for automatic dna chain break detection
+            abort
+        end if
+
+        pick bond
+            (name P and segid $segid1 and resid $resid1)
+            (name O3' and segid $segid2 and resid $resid2)
+            geometry
+
+        if ( $result > &dbreak_cutoff ) then
+            evaluate ($dbreak=$dbreak+1)
+            evaluate ($seg1.$dbreak=$segid2)
+            evaluate ($res1.$dbreak=$resid2)
+            evaluate ($seg2.$dbreak=$segid1)
+            evaluate ($res2.$dbreak=$resid1)
+           evaluate ($patch.$dbreak=DNUC)
+        end if
+    end if
+
+end loop dbreak
+
+evaluate ($counter=1)
+
+while ($counter <= $dbreak) loop delete
+    patch $patch.$counter
+        reference=-=(segid $seg1.$counter and resid $res1.$counter)
+        reference=+=(segid $seg2.$counter and resid $res2.$counter)
+    end
+    buffer message
+        display dna link removed (applied $patch.$counter): from \
+$seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+    end
+    evaluate ($counter=$counter+1)
+end loop delete
+
+
+

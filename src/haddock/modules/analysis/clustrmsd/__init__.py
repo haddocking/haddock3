@@ -115,11 +115,24 @@ class HaddockModule(BaseHaddockModule):
                 self.params['min_population'],
                 )
             self.params['min_population'] = min_population
-
-        # print clusters
-        unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
-        clusters = [c for c in unq_clusters if c != -1]
+        
+        # assign cluster IDs by population. The most populated cluster will be
+        # assigned the ID 1, the second most populated the ID 2, and so on.
+        cluster_pops = np.unique(cluster_arr, return_counts=True)
+        
+        sorted_indices = np.argsort(-cluster_pops[1])
+        sorted_clusters = cluster_pops[0][sorted_indices]
+        
+        # delete -1 from sorted_clusters if present
+        sorted_clusters = sorted_clusters[sorted_clusters != -1]
+        clusters = []
+        for c in sorted_clusters:
+            cluster_arr[cluster_arr == c] = -c
+        for i, c in enumerate(sorted_clusters):
+            clusters.append(i+1)
+            cluster_arr[cluster_arr == -c] = i+1
         log.info(f"clusters = {clusters}")
+        log.info(f"cluster_arr = {cluster_arr}")
         
         out_filename = Path('cluster.out')
         clt_dic, cluster_centers = write_clusters(

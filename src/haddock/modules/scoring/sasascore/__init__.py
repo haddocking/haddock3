@@ -38,6 +38,11 @@ class HaddockModule(BaseHaddockModule):
                  initial_params: FilePath = DEFAULT_CONFIG) -> None:
         super().__init__(order, path, initial_params)
 
+    @classmethod
+    def confirm_installation(cls) -> None:
+        """Confirm module is installed."""
+        return
+
     def _rearrange_output(self, output_name: FilePath, path: FilePath,
                           ncores: int) -> None:
         """Combine different tsv outputs in a single file."""

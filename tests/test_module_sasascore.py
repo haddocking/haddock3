@@ -2,7 +2,8 @@
 from haddock.libs.libontology import PDBFile
 from haddock.modules.scoring.sasascore.sasascore import (
     AccScore,
-    calc_acc_score
+    calc_acc_score,
+    prettify_df,
     )
 import pytest
 
@@ -96,3 +97,20 @@ def test_get_calc_acc_score(buried_resdic, acc_resdic):
     assert acc_score == 0
     assert b_viols == {"A": set()}
     assert a_viols == {"A": set(), "B": set()}
+
+
+def test_prettiy_df():
+    """Test prettify_df."""
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        output_name = Path(tmpdir, "sasascore")
+        data = [
+            ["prot1.pdb", "prot1", "md5_1", 1.0],
+            ["prot2.pdb", "prot2", "md5_2", 2.0]
+            ]
+        df = pd.DataFrame(data)
+        df.to_csv(output_name, sep="\t", index=False, header=False)
+        score_columns = ["structure", "original_name", "md5", "score"]
+        prettify_df(output_name, columns=score_columns, sortby="score")
+        obs_df = pd.read_csv(output_name, sep="\t")
+        assert obs_df.iloc[0, -1] == 1
+        assert obs_df.iloc[1, -1] == 2

@@ -18,7 +18,6 @@ from haddock.modules.scoring.sasascore.sasascore import (
     AccScore,
     AccScoreJob,
     prettify_df,
-    rearrange_output,
     )
 from haddock.modules.analysis import (
     get_analysis_exec_mode,
@@ -39,11 +38,22 @@ class HaddockModule(BaseHaddockModule):
                  initial_params: FilePath = DEFAULT_CONFIG) -> None:
         super().__init__(order, path, initial_params)
 
-    @classmethod
-    def confirm_installation(cls) -> None:
-        """Confirm module is installed."""
-        return
-
+    def _rearrange_output(self, output_name: FilePath, path: FilePath,
+                          ncores: int) -> None:
+        """Combine different tsv outputs in a single file."""
+        output_fname = Path(path, output_name)
+        self.log(f"rearranging output files into {output_fname}")
+        key = output_fname.stem.split(".")[0]
+        # Combine files
+        with open(output_fname, 'w') as out_file:
+            for core in range(ncores):
+                tmp_file = Path(path, f"{key}_" + str(core) + ".tsv")
+                with open(tmp_file) as infile:
+                    out_file.write(infile.read())
+                tmp_file.unlink()
+        self.log(f"Completed reconstruction of {key} files.")
+        self.log(f"{output_fname} created.")
+    
     def _run(self) -> None:
         """Execute module."""
         try:
@@ -109,14 +119,14 @@ class HaddockModule(BaseHaddockModule):
 
         # rearrange output
         output_name = Path("sasascore.tsv")
-        rearrange_output(
+        self._rearrange_output(
             output_name,
             path=Path("."),
             ncores=ncores
             )
         score_columns = ["structure", "original_name", "md5", "score"]
         prettify_df(output_name, columns=score_columns, sortby="score")
-        rearrange_output(
+        self._rearrange_output(
             "violations.tsv",
             path=Path("."),
             ncores=ncores

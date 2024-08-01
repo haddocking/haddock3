@@ -9,35 +9,6 @@ from haddock.clis.restraints.calc_accessibility import (
     )
 
 
-def rearrange_output(output_name: FilePath, path: FilePath,
-                     ncores: int) -> None:
-    """Combine different sasascore outputs in a single file.
-    
-    Parameters
-    ----------
-    output_name : FilePath
-        The name of the output file.
-    
-    path : FilePath
-        The path to the output files.
-    
-    ncores : int
-        The number of cores used in the calculation.
-    """
-    output_fname = Path(path, output_name)
-    log.info(f"rearranging output files into {output_fname}")
-    key = output_fname.stem.split(".")[0]
-    # Combine files
-    with open(output_fname, 'w') as out_file:
-        for core in range(ncores):
-            tmp_file = Path(path, f"{key}_" + str(core) + ".tsv")
-            with open(tmp_file) as infile:
-                out_file.write(infile.read())
-            log.debug(f"File number {core} written")
-            tmp_file.unlink()
-    log.info(f"Completed reconstruction of {key} files.")
-
-
 def prettify_df(output_fname, columns, sortby=None):
     """Prettify the output dataframe.
 
@@ -57,7 +28,7 @@ def prettify_df(output_fname, columns, sortby=None):
     df.columns = columns
     if sortby:
         df = df.sort_values(by=sortby, ascending=True)
-    df.to_csv(output_fname, sep="\t", index=False, na_rep="None")
+    df.to_csv(output_fname, sep="\t", index=False, na_rep="None", float_format="%.0f")
     log.info(f"{output_fname} created.")
 
 

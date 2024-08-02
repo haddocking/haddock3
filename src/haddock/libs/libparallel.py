@@ -85,7 +85,12 @@ class Worker(Process):
         """Execute tasks."""
         results = []
         for task in self.tasks:
-            r = task.run()
+            r = None
+            try:
+                r = task.run()
+            except Exception as e:
+                log.exception(f"Exception in task {task}: {e}")
+
             results.append(r)
 
         # Put results into the queue

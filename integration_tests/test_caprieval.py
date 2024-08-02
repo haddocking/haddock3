@@ -31,11 +31,13 @@ def model_list():
             file_name="protprot_complex_1.pdb",
             path=".",
             unw_energies={"energy_term": 0.0},
+            score=0.0,
         ),
         PDBFile(
             file_name="protprot_complex_2.pdb",
             path=".",
             unw_energies={"energy_term": 0.0},
+            score=100.0,
         ),
     ]
 
@@ -48,8 +50,8 @@ def expected_clt_data() -> list[dict[str, Union[int, str, float]]]:
             "cluster_id": "-",
             "n": 2,
             "under_eval": "yes",
-            "score": float("nan"),
-            "score_std": float("nan"),
+            "score": 50.0,
+            "score_std": 50.0,
             "irmsd": 4.163,
             "irmsd_std": 4.163,
             "fnat": 0.525,
@@ -84,7 +86,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "model": "",
             "md5": "-",
             "caprieval_rank": 1,
-            "score": float("nan"),
+            "score": 0.0,
             "irmsd": 0.000,
             "fnat": 1.000,
             "lrmsd": 0.000,
@@ -99,7 +101,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "model": "",
             "md5": "-",
             "caprieval_rank": 2,
-            "score": float("nan"),
+            "score": 100.0,
             "irmsd": 8.327,
             "fnat": 0.050,
             "lrmsd": 20.937,
@@ -131,11 +133,13 @@ class MockPreviousIO:
                 file_name="protprot_complex_1.pdb",
                 path=".",
                 unw_energies={"energy_term": 0.0},
+                score=0.0,
             ),
             PDBFile(
                 file_name="protprot_complex_2.pdb",
                 path=".",
                 unw_energies={"energy_term": 0.0},
+                score=100.0,
             ),
         ]
 

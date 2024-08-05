@@ -1,0 +1,19 @@
+! z restraints for selection_1: 19,83,145,119,167
+assign (resid      19 and name CA and segid A) (name SHA and attr z gt    18.22) 8.0 8.0 0.0
+assign (resid      83 and name CA and segid A) (name SHA and attr z gt    18.22) 8.0 8.0 0.0
+assign (resid     145 and name CA and segid A) (name SHA and attr z gt    18.22) 8.0 8.0 0.0
+assign (resid     119 and name CA and segid A) (name SHA and attr z gt    18.22) 8.0 8.0 0.0
+assign (resid     167 and name CA and segid A) (name SHA and attr z gt    18.22) 8.0 8.0 0.0
+! z restraints for selection_2: 98,101,126,129
+assign (resid      98 and name CA and segid A) (name SHA and attr z lt   -18.22) 8.0 8.0 0.0
+assign (resid     101 and name CA and segid A) (name SHA and attr z lt   -18.22) 8.0 8.0 0.0
+assign (resid     126 and name CA and segid A) (name SHA and attr z lt   -18.22) 8.0 8.0 0.0
+assign (resid     129 and name CA and segid A) (name SHA and attr z lt   -18.22) 8.0 8.0 0.0
+! z restraints for selection_3: 23,62,87,111,116,153,163
+assign (resid      23 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0
+assign (resid      62 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0
+assign (resid      87 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0
+assign (resid     111 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0
+assign (resid     116 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0
+assign (resid     153 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0
+assign (resid     163 and name CA and segid A) (name SHA and attr z lt     7.03 and attr z gt     6.83) 8.0 8.0 0.0

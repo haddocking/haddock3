@@ -1,0 +1,6 @@
+! z restraints for selection_1: 19,83,145,119,167
+assign (resid      19 and name CA and segid A) (name SHA and attr z lt     0.10) 8.0 8.0 0.0
+assign (resid      83 and name CA and segid A) (name SHA and attr z lt     0.10) 8.0 8.0 0.0
+assign (resid     145 and name CA and segid A) (name SHA and attr z lt     0.10) 8.0 8.0 0.0
+assign (resid     119 and name CA and segid A) (name SHA and attr z lt     0.10) 8.0 8.0 0.0
+assign (resid     167 and name CA and segid A) (name SHA and attr z lt     0.10) 8.0 8.0 0.0

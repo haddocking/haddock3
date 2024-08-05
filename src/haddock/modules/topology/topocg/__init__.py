@@ -39,6 +39,8 @@ from haddock.libs.libcns import (
 )
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
+from haddock.libs.libontology import PDBFile
+from haddock.libs.libstructure import Molecule
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -171,16 +173,13 @@ class HaddockModule(BaseCNSModule):
 
     def _run(self) -> None:
         """Execute module."""
-        if self.order == 0:
-            # topoaa is the first step in the workflow
-            molecules = make_molecules(self.params.pop("molecules"))
 
-        else:
-            # in case topoaa is not the first step, the topology is rebuilt for
-            # each retrieved model
-            _molecules = self.previous_io.retrieve_models()
+        try:
+            _molecules = self.previous_io.retrieve_models(individualize=True)
             molecules_paths: list[Path] = [mol.rel_path for mol in _molecules]  # type: ignore
             molecules = make_molecules(molecules_paths, no_parent=True)
+        except Exception as e:
+            self.finish_with_error(e)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -208,7 +207,7 @@ class HaddockModule(BaseCNSModule):
         ens_dic: dict[int, dict[int, str]] = {}
         origi_ens_dic: dict[int, dict[int, str]] = {}
         for i, molecule in enumerate(molecules, start=1):
-            self.log(f"Molecule {i}: {molecule.file_name.name}")
+            self.log(f"Molecule {i}: {molecule.with_parent}")
             models_dic[i] = []
             # Copy the molecule to the step folder
 
@@ -219,7 +218,7 @@ class HaddockModule(BaseCNSModule):
             )
             # these come already sorted
             splited_models = libpdb.split_ensemble(
-                molecule.with_parent,
+                Path(molecule.with_parent),
                 dest=Path.cwd(),
             )
 

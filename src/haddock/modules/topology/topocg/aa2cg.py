@@ -26,7 +26,7 @@ from Bio.PDB import PDBParser
 from Bio.PDB.DSSP import DSSP
 from Bio.PDB.StructureBuilder import StructureBuilder
 
-from cg_tools.helper import *
+from helper import *
 
 warnings.filterwarnings("ignore")
 

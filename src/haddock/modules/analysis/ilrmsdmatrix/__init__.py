@@ -124,7 +124,7 @@ class HaddockModule(BaseHaddockModule):
             resids = np.concatenate(res_resdic[ch])
             resids_npu = np.unique(resids)
             npu_resdic[ch] = resids_npu
-        log.info(f"Overall interface residues: {npu_resdic}")
+        log.info(f"Overall interface residues: {npu_resdic}")        
 
         # Write to file
         with open(output_fname, 'w') as out_file:
@@ -212,6 +212,13 @@ class HaddockModule(BaseHaddockModule):
             path=contact_obj.path,
             ncores=ncores
             )
+        # if the chains in res_resdic are empty, then there are no contacts and
+        # the ilrmsd matrix cannot be calculated
+        for ch in res_resdic:
+            if res_resdic[ch].size == 0:
+                _msg = f"No contacts found for chain {ch}. Impossible to calculate ilRMSD matrix."
+                _msg += " Please check your input and make sure that there are at least two chains in contact."
+                self.finish_with_error(_msg)
         
         rec_traj_filename = Path("traj_rec.xyz")
         lig_traj_filename = Path("traj_lig.xyz")
@@ -227,6 +234,7 @@ class HaddockModule(BaseHaddockModule):
             for k in self.params["ligand_chains"]
             }
 
+        log.info(f"Check common atoms for receptor (chain {list(res_resdic_rec.keys())})")
         n_atoms_rec, common_keys_rec = check_common_atoms(
             models,
             res_resdic_rec,
@@ -234,6 +242,7 @@ class HaddockModule(BaseHaddockModule):
             self.params["atom_similarity"]
             )
         
+        log.info(f"Check common atoms for ligand (chains {list(res_resdic_lig.keys())})")
         n_atoms_lig, common_keys_lig = check_common_atoms(
             models,
             res_resdic_lig,

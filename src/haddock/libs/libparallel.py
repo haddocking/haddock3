@@ -89,7 +89,7 @@ class Worker(Process):
             try:
                 r = task.run()
             except Exception as e:
-                log.exception(f"Exception in task {task}: {e}")
+                log.warning(f"Exception in task execution: {e}")
 
             results.append(r)
 

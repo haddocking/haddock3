@@ -148,3 +148,5 @@ less_io:
     a network file system where I/O operations are slow.
   group: "execution"
   explevel: easy
+  incompatible:
+    mode: batch

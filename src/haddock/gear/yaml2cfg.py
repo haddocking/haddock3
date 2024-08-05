@@ -225,12 +225,16 @@ def find_incompatible_parameters(yaml_file: Path) -> dict[str, ParamDict]:
     that include an 'incompatible' key. It returns a dictionary where each key is a node name
     and each value is another dictionary representing the 'incompatible' parameters for that node.
 
-    Args:
-        yaml_file (Path): The path to the YAML file to be read.
+    Parameters
+    ----------
+    yaml_file : Path
+        The path to the YAML file to be read.
 
-    Returns:
-        dict[str, dict[str, str]]: A dictionary with node names as keys and their corresponding
-                                   'incompatible' parameters as values.
+    Return
+    ------
+    incompatible_parameters : dict[str, dict[str, str]]
+        A dictionary with node names as keys and their corresponding
+        'incompatible' parameters as values.
     """
     config = read_from_yaml(yaml_file=yaml_file)
 

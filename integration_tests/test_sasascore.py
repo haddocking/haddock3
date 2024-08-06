@@ -44,7 +44,7 @@ class MockPreviousIO():
 
 
 def test_sasascore_default(sasascore_module, mocker):
-    """Test the alascan module."""
+    """Test the sasascore module."""
     sasascore_module.previous_io = MockPreviousIO(path=sasascore_module.path)
     sasascore_module.run()
 
@@ -68,6 +68,7 @@ def test_sasascore_default(sasascore_module, mocker):
 
 
 def test_sasascore_no_residues(sasascore_module, mocker):
+    "Test the sasascore module when a non-existing chain is added."
     sasascore_module.previous_io = MockPreviousIO(path=sasascore_module.path)
     # adding a non existing chain
     sasascore_module.params["resdic_buried_C"] = [1]

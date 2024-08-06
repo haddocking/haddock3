@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.validations import v_rundir
 

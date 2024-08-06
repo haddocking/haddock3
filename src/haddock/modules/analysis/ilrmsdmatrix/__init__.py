@@ -21,6 +21,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log, RMSD_path
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libalign import rearrange_xyz_files, check_common_atoms
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
@@ -40,7 +41,7 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 EXEC_PATH = Path(RMSD_path, "src/fast-rmsdmatrix")
 
 

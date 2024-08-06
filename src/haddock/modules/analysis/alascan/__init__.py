@@ -12,6 +12,7 @@ average energy difference for each cluster of models.
 from pathlib import Path
 
 from haddock import log
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
@@ -27,7 +28,7 @@ from haddock.modules.analysis.alascan.scan import (
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):

@@ -59,7 +59,10 @@ from haddock.gear.parameters import (
 )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.validations import v_rundir
+from haddock.gear.validations import (
+    v_rundir,
+    validate_defaults_yaml,
+    )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
@@ -126,6 +129,9 @@ TYPES_MAPPER = {
         PosixPath,
         EmptyPath,
     ),
+    "dict": (
+        dict,
+    )
 }
 
 
@@ -178,6 +184,7 @@ def _read_defaults(module_name, default_only=True):
         module_name_,
         "defaults.yaml",
     ).resolve()
+    validate_defaults_yaml(pdef)
     mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
     return mod_default_config
 

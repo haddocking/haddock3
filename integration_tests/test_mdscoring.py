@@ -62,6 +62,3 @@ def test_mdscoring_default(mdscoring_module):
     assert df["score"].dtype == float
     # the model should have highly negative score
     assert all(df["score"] < -500)
-
-
-    

@@ -59,6 +59,3 @@ def test_emscoring_default(emscoring_module):
     assert df["score"].dtype == float
     # the model should have highly negative score
     assert all(df["score"] < -500)
-
-
-    

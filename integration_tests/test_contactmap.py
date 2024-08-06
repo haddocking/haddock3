@@ -18,7 +18,7 @@ def contactmap():
     """Return contmap module."""
     with tempfile.TemporaryDirectory() as tmpdir:
         preset_contactmap = CMapModule(
-            order=0,
+            order=1,
             path=Path(tmpdir),
             initial_params=CONTMAP_CONF,
             )

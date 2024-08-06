@@ -18,7 +18,7 @@ from tests import golden_data
 def caprieval_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         yield CaprievalModule(
-            order=0,
+            order=1,
             path=Path(tmpdir),
             init_params=DEFAULT_CAPRIEVAL_CONFIG,
         )

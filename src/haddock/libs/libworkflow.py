@@ -17,18 +17,18 @@ from haddock.libs.libutil import recursive_dict_update
 from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
-)
+    )
 
 
 class WorkflowManager:
     """Read and execute workflows."""
 
     def __init__(
-        self,
-        workflow_params: ModuleParams,
-        start: Optional[int] = 0,
-        **other_params: Any,
-    ) -> None:
+            self,
+            workflow_params: ModuleParams,
+            start: Optional[int] = 0,
+            **other_params: Any,
+            ) -> None:
         self.start = 0 if start is None else start
         self.recipe = Workflow(workflow_params, start=0, **other_params)
         # terminate is used to synchronize the `clean` option with the
@@ -38,7 +38,8 @@ class WorkflowManager:
 
     def run(self) -> None:
         """High level workflow composer."""
-        for i, step in enumerate(self.recipe.steps[self.start :], start=self.start):
+        id_steps = enumerate(self.recipe.steps[self.start:], start=self.start)
+        for i, step in id_steps:
             try:
                 step.execute()
             except HaddockTermination:
@@ -75,8 +76,11 @@ class WorkflowManager:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)  # type: ignore
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
-        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None,
-                inter=False, is_cleaned=is_cleaned, offline=offline, mode=mode, ncores=ncores)
+        cli_analyse(
+            "./", capri_steps, top_cluster=10, format=None, scale=None,
+            inter=False, is_cleaned=is_cleaned, offline=offline, mode=mode,
+            ncores=ncores,
+            )
         # call cli_traceback. If it fails, it's not a big deal
         try:
             cli_traceback("./")
@@ -106,8 +110,8 @@ class Workflow:
         # Create the list of steps contained in this workflow
         self.steps: list[Step] = []
         _items = enumerate(modules_parameters.items(), start=start)
-        for num_stage, (stage_name, params) in _items:
-            stage_name = get_module_name(stage_name)
+        for num_stage, (_stage_name, params) in _items:
+            stage_name = get_module_name(_stage_name)
             log.info(f"Reading instructions step {num_stage}_{stage_name}")
 
             # updates the module's specific parameter with global parameters
@@ -149,10 +153,18 @@ class Step:
 
         # Import the module given by the mode or default
         module_name = ".".join(
-            ["haddock", "modules", modules_category[self.module_name], self.module_name]
-        )
+            [
+                "haddock",
+                "modules",
+                modules_category[self.module_name],
+                self.module_name
+                ]
+            )
         module_lib = importlib.import_module(module_name)
-        self.module = module_lib.HaddockModule(order=self.order, path=self.working_path)
+        self.module = module_lib.HaddockModule(
+            order=self.order,
+            path=self.working_path,
+            )
 
         # Run module
         start = time()

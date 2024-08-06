@@ -1,3 +1,1 @@
-"""
-Core haddock3 functionalities.
-"""
+"""Core haddock3 functionalities."""

@@ -13,9 +13,9 @@ from . import golden_data
 
 @pytest.fixture
 def rmsdmatrix_module():
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(".") as tmpdir:
         ilrmsdmatrix = rmsdmatrixModule(
-            order=0, path=tmpdir, initial_params=DEFAULT_RMSD_CONFIG
+            order=1, path=Path(tmpdir), initial_params=DEFAULT_RMSD_CONFIG
         )
         yield ilrmsdmatrix
 

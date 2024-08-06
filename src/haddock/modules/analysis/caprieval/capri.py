@@ -1,12 +1,13 @@
 """CAPRI module."""
 
 import copy
+import json
 import os
 import shutil
 import tempfile
+
 from itertools import combinations
 from pathlib import Path
-
 
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
@@ -26,8 +27,8 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    Type,
 )
+from haddock.gear.config import load as read_config
 from haddock.libs.libalign import (
     ALIGNError,
     calc_rmsd,
@@ -44,19 +45,21 @@ from haddock.modules import get_module_steps_folders
 
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
-import json
-
-from haddock.gear.config import load as read_config
 
 
-def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
+def get_previous_cns_step(
+        sel_steps: list[str],
+        step_order: int,
+        ) -> Optional[str]:
     """
     Get the previous CNS step.
 
     Parameters
     ----------
-    run_path : Path
-        Path to the run folder.
+    sel_steps : list[str]
+        Selected steps.
+    step_order : int
+        Index of the step.
 
     Returns
     -------
@@ -67,7 +70,7 @@ def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
     cns_step = None
     # just to be careful, remove steps with more than one underscore
     sel_steps = [step for step in sel_steps if step.count("_") == 1]
-    mod = min(st_order - 1, len(sel_steps) - 1)
+    mod = min(step_order - 1, len(sel_steps) - 1)
     # loop
     while mod > -1:
         st_name = sel_steps[mod].split("_")[1]
@@ -75,7 +78,6 @@ def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
             cns_step = sel_steps[mod]
             break
         mod -= 1
-
     return cns_step
 
 
@@ -1121,7 +1123,7 @@ class CAPRIError(Exception):
 
 def dump_weights(order: int) -> None:
     sel_steps = get_module_steps_folders(Path(".."))
-    cns_step = get_previous_cns_step(sel_steps=sel_steps, st_order=order)
+    cns_step = get_previous_cns_step(sel_steps=sel_steps, step_order=order)
     if cns_step:
         log.info(f"Found previous CNS step: {cns_step}")
         scoring_params_fname = save_scoring_weights(cns_step)

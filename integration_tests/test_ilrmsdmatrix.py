@@ -22,7 +22,7 @@ def ilrmsdmatrix_module():
     """Provide a parametrized IL-RMSD matrix module."""
     with tempfile.TemporaryDirectory() as tmpdir:
         ilrmsdmatrix = IlrmsdmatrixModule(
-            order=0, path=tmpdir, initial_params=DEFAULT_ILRMSD_CONFIG
+            order=1, path=Path(tmpdir), initial_params=DEFAULT_ILRMSD_CONFIG
             )
         yield ilrmsdmatrix
 

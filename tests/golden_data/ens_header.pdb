@@ -8,3 +8,4 @@ REMARK     MODEL 2 FROM T161-hybrid-fit-C2-NCS_complex_101w.pdb
 REMARK     MODEL 3 FROM T161-hybrid-fit-C2-NCS_complex_102w.pdb
 REMARK     MODEL 4 FROM T161-hybrid-fit-C2-NCS_complex_103w.pdb
 REMARK     MODEL 5 FROM T161-hybrid-fit-C2-NCS_complex_104w.pdb
+REMARK    4    MODEL     6 FROM ./hguiw/fewjfo/efewfhewiof/73b07fb2ab6b3245_t264_1.pdb

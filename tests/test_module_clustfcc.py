@@ -115,7 +115,7 @@ def test_io_json(fcc_module, prot_input_list):
 
     # check the content of io.json
     io = ModuleIO()
-    io.load("io.json")
+    io.load(Path("io.json"))
     assert io.input[0].file_name == prot_input_list[0].file_name
     assert io.output[1].file_name == prot_input_list[1].file_name
 

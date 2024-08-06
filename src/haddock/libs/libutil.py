@@ -1,6 +1,7 @@
 """General utilities."""
 import collections.abc
 import contextlib
+import os
 import re
 import shutil
 import subprocess
@@ -379,3 +380,15 @@ def recursive_convert_paths_to_strings(params: ParamMapT) -> ParamMapT:
             params[param] = value
 
     return params
+
+
+# thanks to @brianjimenez
+@contextlib.contextmanager
+def working_directory(path: FilePath) -> Generator[None, None, None]:
+    """Change working directory and returns to previous on exit."""
+    prev_cwd = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)

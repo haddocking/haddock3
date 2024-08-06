@@ -64,5 +64,26 @@ def test_sasascore_default(sasascore_module, mocker):
     exp_shape = (2, 3)
     df = pd.read_csv(expected_violations_csv, sep="\t", comment="#")
     assert df.shape == exp_shape, f"{expected_violations_csv} has wrong shape ({df.shape} instead of {exp_shape})"
-    assert df.loc[df["structure"] == "protprot_complex_1.pdb"].iloc[0,:]["acc_A"] == "39"
+    assert df.loc[df["structure"] == "protprot_complex_1.pdb"].iloc[0,:]["bur_A"] == "39"
+
+
+def test_sasascore_no_residues(sasascore_module, mocker):
+    sasascore_module.previous_io = MockPreviousIO(path=sasascore_module.path)
+    # adding a non existing chain
+    sasascore_module.params["resdic_buried_C"] = [1]
+    sasascore_module.run()
+    expected_sasascore_csv = Path(sasascore_module.path, "sasascore.tsv")
+    exp_shape = (2, 4)
+    df = pd.read_csv(expected_sasascore_csv, sep="\t", comment="#")
+    assert df.shape == exp_shape, f"{expected_sasascore_csv} has wrong shape ({df.shape} instead of {exp_shape})"
+    assert df.loc[df["structure"] == "protprot_complex_2.pdb"].iloc[0,:]["score"] == 0
+    assert df.loc[df["structure"] == "protprot_complex_1.pdb"].iloc[0,:]["score"] == 1
+    # now the violations df
+    expected_violations_csv = Path(sasascore_module.path, "violations.tsv")
+    exp_shape = (2, 4)
+    df = pd.read_csv(expected_violations_csv, sep="\t", comment="#")
+    assert df.shape == exp_shape, f"{expected_violations_csv} has wrong shape ({df.shape} instead of {exp_shape})"
+    assert df.columns.tolist() == ["structure", "bur_A", "bur_C", "acc_A"]
+    assert df.loc[df["structure"] == "protprot_complex_1.pdb"].iloc[0,:]["bur_A"] == "39"
+    assert df.loc[df["structure"] == "protprot_complex_1.pdb"].iloc[0,:]["bur_C"] == "None"
 

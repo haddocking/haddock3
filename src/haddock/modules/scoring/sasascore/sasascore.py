@@ -137,12 +137,19 @@ class AccScore:
             self.data.append([mod.file_name, mod.ori_name, mod.md5, acc_sc])
             # now violations data
             violations_data = [mod.file_name]
-            for ch in b_viols:
-                buried_str = ",".join([str(res) for res in sorted(b_viols[ch])])
-                violations_data.append(buried_str)
-            for ch in a_viols:
-                acc_str = ",".join([str(res) for res in sorted(a_viols[ch])])
-                violations_data.append(acc_str)
+            for ch in self.buried_resdic:
+                if ch in b_viols:
+                    buried_str = ",".join([str(res) for res in sorted(b_viols[ch])])
+                    violations_data.append(buried_str)
+                else:
+                    violations_data.append("None")
+            
+            for ch in self.acc_resdic:
+                if ch in a_viols:
+                    acc_str = ",".join([str(res) for res in sorted(a_viols[ch])])
+                    violations_data.append(acc_str)
+                else:
+                    violations_data.append("None")
             self.violations.append(violations_data)
         return
 

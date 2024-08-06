@@ -40,15 +40,25 @@ def buried_resdic():
 
 @pytest.fixture
 def acc_resdic():
-    """Provide example buried_resdic."""
+    """Provide example acc_resdic."""
     return {
         "A": [43],
         "B": [35, 36]  # dna will always be accessible
         }
 
+@pytest.fixture
+def acc_resdic_more_chains():
+    """Provide example acc_resdic with chains that are not in the model."""
+    return {
+        "A": [43],
+        "B": [35, 36],
+        "C": [1, 2, 3],
+        "D": [4, 5, 6],
+    }
+
 
 def test_accscore(scoring_models, buried_resdic, acc_resdic):
-    """Test emscoring expected output."""
+    """Test accscore expected output."""
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         output_name = Path(tmpdir, "sasascore")
         viol_output_name = Path(tmpdir, "violations")

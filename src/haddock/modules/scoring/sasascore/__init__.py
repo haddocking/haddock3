@@ -1,7 +1,8 @@
-"""Surface accessibility scoring module.
+"""
+Surface accessibility scoring module.
 
-This module performs a solvent accessibility analysis based on some
- user-defined residues that should be buried or accessible.
+This module performs a solvent accessibility analysis based on 
+some user-defined residues that should be buried or accessible.
 
 If a supposedly buried (resp. accessible) residue is accessible (resp. buried),
 the score should increase by one. The lower the final score the more consistent
@@ -90,8 +91,7 @@ class HaddockModule(BaseHaddockModule):
         # finding the chains
         buried_violations_chains = [f"acc_{ch}" for ch in acc_resdic.keys()]
         acc_violations_chains = [f"bur_{ch}" for ch in buried_resdic.keys()]
-        violations_chains = buried_violations_chains + acc_violations_chains
-
+        violations_chains = acc_violations_chains + buried_violations_chains
         # initialize jobs
         sasascore_jobs: list[AccScoreJob] = []
 

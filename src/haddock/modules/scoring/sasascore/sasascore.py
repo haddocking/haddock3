@@ -83,7 +83,7 @@ class AccScoreJob:
         self.accscore_obj = accscore_obj
         self.output = accscore_obj.output_name
 
-    def run(self):
+    def run(self) -> None:
         """Run this AccScoreJob."""
         log.info(f"core {self.accscore_obj.core}, running AccScore...")
         self.accscore_obj.run()

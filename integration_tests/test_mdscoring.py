@@ -28,6 +28,7 @@ def mdscoring_module():
         mdscoring_module.params["waterheatsteps"] = 25
         yield mdscoring_module
 
+
 class MockPreviousIO():
     def __init__(self, path):
         self.path = path

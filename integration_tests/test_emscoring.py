@@ -43,7 +43,7 @@ class MockPreviousIO():
         ]
         return model_list
 
-    def output(self):
+    def output(self) -> None:
         return None
 
 

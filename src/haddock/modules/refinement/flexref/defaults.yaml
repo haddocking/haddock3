@@ -458,7 +458,7 @@ rswi_cool3:
 masy_hot:
   default: -1.0
   type: float
-  min: 0
+  min: -9999
   max: 9999
   precision: 3
   title: No title yet

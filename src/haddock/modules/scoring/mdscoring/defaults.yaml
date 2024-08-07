@@ -88,7 +88,7 @@ w_elec:
   title: Weight of the intermolecular electrostatic energy
   short: Weight of the intermolecular electrostatic energy in the scoring function
   long: Weight of the intermolecular electrostatic energy in the scoring function.
-    Note that this does not affect the electostatic energy during the EM minimization.
+    Note that this does not affect the electostatic energy during the MD refinement.
   group: 'scoring'
   explevel: expert
 w_lcc:
@@ -323,9 +323,9 @@ epsilon:
 dihedflag:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: Use torsion angle dihedral energy term
+  short: Turns on the torsion angle dihedral energy terms of the force field.
+  long: Turns on the torsion angle dihedral energy terms of the force field.
   group: 'force field'
   explevel: expert
 #

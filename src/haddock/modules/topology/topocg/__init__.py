@@ -45,6 +45,8 @@ from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
 
+import haddock.modules.topology.topocg.aa2cg
+
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -52,6 +54,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 def generate_topology(
     input_pdb: Path,
+    output_path: str,
     recipe_str: str,
     defaults: ParamMap,
     mol_params: ParamMap,
@@ -68,6 +71,9 @@ def generate_topology(
     link, trans_vec, tensor, scatter, axis, water_box = generate_default_header(
         path=default_params_path
     )
+
+    # AA to CG
+    aa2cg.martinize(input_pdb, output_path, True)
 
     output = prepare_output(
         output_pdb_filename=f"{input_pdb.stem}_haddock{input_pdb.suffix}",
@@ -248,6 +254,7 @@ class HaddockModule(BaseCNSModule):
                 # Prepare generation of topologies jobs
                 topoaa_input = generate_topology(
                     model,
+                    self.path,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,

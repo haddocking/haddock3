@@ -26,7 +26,7 @@ from Bio.PDB import PDBParser
 from Bio.PDB.DSSP import DSSP
 from Bio.PDB.StructureBuilder import StructureBuilder
 
-from helper import *
+from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
 
@@ -481,20 +481,20 @@ def rename_nucbases(structure):
                         r.resname = ref_dic[r.resname]
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input_pdb", help="Input PDB to be converted")
-    parser.add_argument("--skipss", help="Skip SS assignment, use only for xNA structures", action="store_true")
-    args = parser.parse_args()
+def martinize(input_pdb, output_path, skipss):
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument("input_pdb", help="Input PDB to be converted")
+    #parser.add_argument("--skipss", help="Skip SS assignment, use only for xNA structures", action="store_true")
+    #args = parser.parse_args()
 
-    if not args.input_pdb:
+    if not input_pdb:
         exit()
 
     p = PDBParser()
     io = PDBIO()
 
     # Parse PDB and run DSSP
-    pdbf_path = os.path.realpath(args.input_pdb)
+    pdbf_path = os.path.realpath(input_pdb)
     aa_model = p.get_structure("aa_model", pdbf_path)
 
     # set ALL bfactors to 0
@@ -508,7 +508,7 @@ def main():
                     atom.bfactor = 0.0
 
     # Assign HADDOCK code according to SS (1-9)
-    determine_ss(structure=aa_model, skipss=args.skipss, pdbf_path=pdbf_path)
+    determine_ss(structure=aa_model, skipss=skipss, pdbf_path=pdbf_path)
 
     # Strandardize naming
     # WARNING, THIS ASSUMES THAT INPUT DNA/RNA IS 3-LETTER CODE
@@ -565,13 +565,15 @@ def main():
     cg_model = structure_builder.get_structure()
 
     # Write CG structure
+    #cg_pdb_name = os.path.realpath(f"{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb")
+    cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
     io.set_structure(cg_model)
-    io.save(f"{pdbf_path[:-4]}_cg.pdb", write_end=1)
+    io.save(cg_pdb_name, write_end=1)
 
     # make sure atom names are in the correct place
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
     out = open("temp.pdb", "w")
-    for line in open(f"{pdbf_path[:-4]}_cg.pdb"):
+    for line in open(cg_pdb_name):
         if "ATOM" in line[:4]:
             atom_name = line[12:16].split()[0]
             # mind the spacing
@@ -587,10 +589,10 @@ def main():
             n_l = line
         out.write(n_l)
     out.close()
-    subprocess.call(f"mv temp.pdb {pdbf_path[:-4]}_cg.pdb", shell=True)
+    subprocess.call(f"mv temp.pdb {cg_pdb_name}", shell=True)
 
     # Write Restraints
-    tbl_file = open(f"{pdbf_path[:-4]}_cg_to_aa.tbl", "w")
+    tbl_file = open(f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl", "w")
     tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
     tbl_file.write(f"\n{tbl_str}")
     tbl_file.close()

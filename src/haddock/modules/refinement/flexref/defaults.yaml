@@ -469,7 +469,7 @@ masy_hot:
 masy_cool1:
   default: -1.0
   type: float
-  min: 0
+  min: -9999
   max: 9999
   precision: 3
   title: No title yet
@@ -480,7 +480,7 @@ masy_cool1:
 masy_cool2:
   default: -0.1
   type: float
-  min: 0
+  min: -9999
   max: 9999
   precision: 3
   title: No title yet
@@ -491,7 +491,7 @@ masy_cool2:
 masy_cool3:
   default: -0.1
   type: float
-  min: 0
+  min: -9999
   max: 9999
   precision: 3
   title: No title yet

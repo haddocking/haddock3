@@ -45,6 +45,7 @@ class MockPreviousIO():
     def output(self):
         return None
 
+
 @has_cns
 def test_mdscoring_default(mdscoring_module):
     """Test the mdscoring module."""

@@ -7,6 +7,15 @@ some user-defined residues that should be buried or accessible.
 If a supposedly buried (resp. accessible) residue is accessible (resp. buried),
 the score should increase by one. The lower the final score the more consistent
 the model with the user data.
+
+To run this module, the user must provide a dictionary with the buried and/or accessible
+residues. The keys of the dictionary should be the chain identifiers and the values
+should be lists of residue numbers.
+
+Example:
+
+>>> resdic_buried_A: [1, 2, 3]
+>>> resdic_accessible_B: [4, 5, 6]
 """
 from pathlib import Path
 

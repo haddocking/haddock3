@@ -25,6 +25,7 @@ def emscoring_module():
         emscoring_module.params["nemsteps"] = 5
         yield emscoring_module
 
+
 class MockPreviousIO():
     def __init__(self, path):
         self.path = path

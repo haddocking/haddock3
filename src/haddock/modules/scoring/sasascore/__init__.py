@@ -23,6 +23,7 @@ from haddock.modules.scoring.sasascore.sasascore import (
 from haddock.modules.analysis import (
     get_analysis_exec_mode,
     )
+from typing import Optional
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")

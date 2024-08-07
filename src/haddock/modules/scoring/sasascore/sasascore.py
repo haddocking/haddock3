@@ -7,6 +7,7 @@ from haddock.clis.restraints.calc_accessibility import (
     apply_cutoff,
     get_accessibility,
     )
+from typing import Optional
 
 
 def prettify_df(output_fname: str, columns: list[str], sortby: Optional[str] = None) -> None:

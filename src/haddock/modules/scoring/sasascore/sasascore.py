@@ -9,7 +9,7 @@ from haddock.clis.restraints.calc_accessibility import (
     )
 
 
-def prettify_df(output_fname, columns, sortby=None):
+def prettify_df(output_fname: str, columns: list[str], sortby: Optional[str] = None) -> None:
     """Prettify the output dataframe.
 
     Parameters

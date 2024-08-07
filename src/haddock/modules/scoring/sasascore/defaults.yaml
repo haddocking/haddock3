@@ -42,8 +42,8 @@ probe_radius:
   min: 0.0
   max: 10.0
   precision: 3
-  title: probe radius
-  short: probe radius
-  long: probe radius
-  group: 'scoring'
+  title: Probe radius
+  short: Probe radius
+  long: Sets the probe radius (in Angstrom) used to compute solvent accessible surface area.
+  group: analysis
   explevel: easy

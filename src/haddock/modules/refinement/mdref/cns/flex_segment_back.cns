@@ -12,7 +12,6 @@
 
 do (store5 = 0) (all)
 do (store6 = 0) (all)
-do (store7 = 0) (all)
 
 !first flexible segments for docking
 evaluate($nchain1 = 0)

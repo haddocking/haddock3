@@ -35,7 +35,11 @@ class MockPreviousIO():
         
         # add the topology to the models
         model_list = [
-            PDBFile(file_name="prot.pdb", path=".", topology=TopologyFile(Path(golden_data, "prot.psf"))),
+            PDBFile(
+                file_name="prot.pdb",
+                path=".",
+                topology=TopologyFile(Path(golden_data, "prot.psf")),
+                ),
         ]
         return model_list
 

@@ -55,9 +55,9 @@ def calc_acc_score(result_dict, buried_resdic, acc_resdic):
         The accessibility score.
     """
     # filter the residues
-    acc_score = 0
-    b_viols = {}
-    a_viols = {}
+    acc_score: int = 0
+    b_viols: dict[str, set] = {}
+    a_viols: dict[str, set] = {}
     for ch in result_dict:
         if ch in buried_resdic:
             # for every supposedly buried residue that is not buried,

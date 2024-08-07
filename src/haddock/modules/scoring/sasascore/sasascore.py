@@ -153,7 +153,7 @@ class AccScore:
             self.violations.append(violations_data)
         return
 
-    def output(self):
+    def output(self) -> None:
         """Write down accessibility scores to file."""
         output_fname = Path(self.path, self.output_name)
         df = pd.DataFrame(self.data)

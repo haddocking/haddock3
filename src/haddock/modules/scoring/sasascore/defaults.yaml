@@ -46,4 +46,4 @@ probe_radius:
   short: Probe radius
   long: Sets the probe radius (in Angstrom) used to compute solvent accessible surface area.
   group: analysis
-  explevel: easy
+  explevel: expert

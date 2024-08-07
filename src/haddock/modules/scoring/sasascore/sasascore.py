@@ -119,7 +119,7 @@ class AccScore:
         self.viol_output_name = viol_output_name
         self.probe_radius = probe_radius
 
-    def run(self):
+    def run(self) -> None:
         """Run accessibility calculations."""
         for mod in self.model_list:
             mod_path = str(Path(mod.path, mod.file_name))

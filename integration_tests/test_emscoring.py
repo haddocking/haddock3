@@ -1,3 +1,4 @@
+"""integration test for emscoring module"""
 import tempfile
 from pathlib import Path
 
@@ -6,10 +7,12 @@ import shutil
 import pandas as pd
 
 from haddock.modules.scoring.emscoring import HaddockModule as EmscoringModule
-from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG
+from haddock.modules.scoring.emscoring import (
+    DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG)
 from haddock.libs.libontology import PDBFile, TopologyFile
+from haddock.modules.analysis.caprieval.capri import load_contacts
 
-from . import CNS_EXEC, DATA_DIR, has_cns
+from . import has_cns
 from . import golden_data
 
 
@@ -30,14 +33,18 @@ class MockPreviousIO:
         self.path = path
 
     def retrieve_models(self, individualize: bool = False):
-        shutil.copy(Path(golden_data, "prot.pdb"), Path(".", "prot.pdb"))
+        shutil.copy(
+            Path(golden_data, "protglyc_complex_1.pdb"),
+            Path(".", "protglyc_complex_1.pdb")
+            )
         
         # add the topology to the models
+        psf_file = Path(golden_data, "protglyc_complex_1.psf")
         model_list = [
             PDBFile(
-                file_name="prot.pdb",
+                file_name="protglyc_complex_1.pdb",
                 path=".",
-                topology=TopologyFile(Path(golden_data, "prot.psf")),
+                topology=TopologyFile(psf_file),
                 ),
         ]
         return model_list
@@ -62,5 +69,14 @@ def test_emscoring_default(emscoring_module):
     assert df.columns.tolist() == ["structure", "original_name", "md5", "score"]
     assert df.shape == (1, 4)
     assert df["score"].dtype == float
-    # the model should have highly negative score
-    assert all(df["score"] < -500)
+    # the model should have a negative score (lower than 10)
+    assert all(df["score"] < -10)
+    # the model should not be too different from the original.
+    # we calculated fnat with respect to the new structure, that could have new
+    # weird contacts.
+    start_pdb = PDBFile(Path(emscoring_module.path, "protglyc_complex_1.pdb"))
+    start_contact = load_contacts(start_pdb)
+    end_contact = load_contacts(expected_pdb1)
+    intersection = start_contact & end_contact
+    fnat = len(intersection) / float(len(end_contact))
+    assert fnat > 0.95

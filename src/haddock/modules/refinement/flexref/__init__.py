@@ -1,4 +1,25 @@
-"""Flexible refinement with CNS."""
+"""Flexible refinement with CNS.
+
+The ``[flexref]`` module (also known as ``it1`` stage in HADDOCK2.X series),
+is a semi-flexible simulated annealing (SA) protocol based on molecular
+dynamics in torsion angle space.
+
+
+This semi-flexible SA consists of several stages:
+- High temperature rigid body molecular dynamics
+- Rigid body SA
+- Semi-flexible SA with flexible side-chains at the interface
+- Semi-flexible SA with fully flexible interface (both backbone and side-chains)
+
+By default, only the interface regions is treated as flexible. It is automatically
+defined based on the intermolecular contacts made. It is also possible to manually
+define the semi-flexible regions, and also define fully flexible regions that are
+allowed to move throughout the entire protocol from the high temperature rigid
+body molecular dynamics on.
+
+The temperature and number of steps for the various stages can be tuned.
+"""
+
 from pathlib import Path
 
 from haddock.core.typing import FilePath
@@ -19,10 +40,9 @@ class HaddockModule(BaseCNSModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self,
-                 order: int,
-                 path: Path,
-                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
+    def __init__(
+        self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
+    ) -> None:
         cns_script = Path(RECIPE_PATH, "cns", "flexref.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
@@ -60,7 +80,7 @@ class HaddockModule(BaseCNSModule):
                 f"Too many models ({nmodels}) to refine, max_nmodels ="
                 f" {max_nmodels}. Please reduce the number of models or"
                 " decrease the sampling_factor."
-                )
+            )
 
         # checking the ambig_fname:
         try:
@@ -81,9 +101,9 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
-            for _ in range(self.params['sampling_factor']):
+            for _ in range(self.params["sampling_factor"]):
                 # prepare cns input
-                inp_file = prepare_cns_input(
+                flexref_input = prepare_cns_input(
                     idx,
                     model,
                     self.path,
@@ -92,14 +112,14 @@ class HaddockModule(BaseCNSModule):
                     "flexref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
-                    )
+                    less_io=self.params["less_io"],
+                    seed=model.seed if isinstance(model, PDBFile) else None,
+                )
 
                 out_file = f"flexref_{idx}.out"
 
                 # create the expected PDBobject
-                expected_pdb = prepare_expected_pdb(
-                    model, idx, ".", "flexref"
-                    )
+                expected_pdb = prepare_expected_pdb(model, idx, ".", "flexref")
                 expected_pdb.restr_fname = ambig_fname
                 try:
                     expected_pdb.ori_name = model.file_name
@@ -107,7 +127,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(inp_file, out_file, envvars=self.envvars)
+                job = CNSJob(flexref_input, out_file, envvars=self.envvars)
 
                 jobs.append(job)
 
@@ -115,7 +135,7 @@ class HaddockModule(BaseCNSModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        Engine = get_engine(self.params['mode'], self.params)
+        Engine = get_engine(self.params["mode"], self.params)
         engine = Engine(jobs)
         engine.run()
         self.log("CNS jobs have finished")

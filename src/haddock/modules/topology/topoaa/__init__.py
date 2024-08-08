@@ -1,11 +1,35 @@
-"""Create and manage CNS all-atom topology."""
+"""Create and manage CNS all-atom topology.
+
+The ``[topoaa]`` module is dedicated to the generation of CNS compatible
+parameters (.param) and topologies (.psf) for each of the input structures.
+
+It will:
+- Detect missing atoms, including hydrogens
+- Re-build them when missing
+- Build and write out topologies (psf) and coordinates (pdb) files
+
+This module is a pre-requisite to run any downstream modules using CNS.
+Having access to parameters and topology is mandatory for any kind
+of EM/MD related tasks.
+Therefore this is the reason why the module [topoaa] is often used as first
+module in a workflow.
+
+Note that for non-standard bio-molecules
+(apart from standard amino-acids, some modified ones, DNA, RNA, ions
+and carbohydrates ... see `detailed list of supported molecules 
+<https://wenmr.science.uu.nl/haddock2.4/library>`_),
+such as small-molecules, parameters and topology must be obtained and provided
+by the user, as there is currently no built-in solution to generate
+them on the fly.
+"""
+
 import operator
 import os
 import re
 from functools import partial
 from pathlib import Path
 
-from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap
+from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
@@ -30,7 +54,8 @@ def generate_topology(
     defaults: ParamMap,
     mol_params: ParamMap,
     default_params_path: Optional[FilePath] = None,
-) -> Path:
+    write_to_disk: Optional[bool] = True,
+) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
     general_param = load_workflow_params(**defaults)
@@ -64,10 +89,12 @@ def generate_topology(
 
     inp = "".join(inp_parts)
 
-    output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
-    output_inp_filename.write_text(inp)
-
-    return output_inp_filename
+    if write_to_disk:
+        output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
+        output_inp_filename.write_text(inp)
+        return output_inp_filename
+    else:
+        return inp
 
 
 class HaddockModule(BaseCNSModule):
@@ -113,6 +140,35 @@ class HaddockModule(BaseCNSModule):
 
         return md5_dic
 
+    @staticmethod
+    def get_ensemble_origin(ensemble_f: FilePath) -> dict[int, str]:
+        """Try to find origin for each model in ensemble.
+
+        Parameters
+        ----------
+        ensemble_f : FilePath
+            Path to a pdb file containing an ensemble.
+
+        Returns
+        -------
+        origin_dic : dict[int, str]
+            Dictionary holding as keys the modelID and values its origin.
+        """
+        origin_dic: dict[int, str] = {}
+        text = Path(ensemble_f).read_text()
+        lines = text.split(os.linesep)
+        REMARK_lines = (line for line in lines if line.startswith("REMARK"))
+        re_origin = re.compile(
+            "REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
+        )  # noqa : E501
+        for line in REMARK_lines:
+            if match := re_origin.search(line):
+                model_num = int(match.group(1).strip())
+                original_path = match.group(3).strip()
+                original_name = Path(original_path).stem
+                origin_dic[model_num] = original_name
+        return origin_dic
+
     def _run(self) -> None:
         """Execute module."""
         if self.order == 0:
@@ -133,8 +189,8 @@ class HaddockModule(BaseCNSModule):
             if k.startswith("mol") and k[3:].isdigit():
                 mol_params[k] = self.params.pop(k)
 
-        # to facilite the for loop down the line, we create a list with the keys
-        # of `mol_params` with inverted order (we will use .pop)
+        # to facilitate the for loop down the line, we create a list with the
+        #  keys of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
         # limit is only useful when order == 0
@@ -150,6 +206,7 @@ class HaddockModule(BaseCNSModule):
 
         models_dic: dict[int, list[Path]] = {}
         ens_dic: dict[int, dict[int, str]] = {}
+        origi_ens_dic: dict[int, dict[int, str]] = {}
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
@@ -168,39 +225,44 @@ class HaddockModule(BaseCNSModule):
 
             # get the MD5 hash of each model
             ens_dic[i] = self.get_md5(molecule.with_parent)
-
+            origi_ens_dic[i] = self.get_ensemble_origin(molecule.with_parent)
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
-            for model in splited_models:
+            for task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
                     self.log(f"Using custom topology {custom_top}")
-                    libpdb.sanitize(model, overwrite=True, custom_topology=custom_top)
+                    libpdb.sanitize(
+                        model,
+                        overwrite=True,
+                        custom_topology=custom_top,
+                    )
 
                 else:
                     libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topology_filename = generate_topology(
+                topoaa_input = generate_topology(
                     model,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
+                    write_to_disk=not self.params["less_io"],
                 )
 
-                self.log(f"Topology CNS input created in {topology_filename.name}")
+                self.log("Topology CNS input created")
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
 
                 job = CNSJob(
-                    topology_filename,
+                    topoaa_input,
                     output_filename,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
@@ -221,6 +283,7 @@ class HaddockModule(BaseCNSModule):
         for i in models_dic:
             expected[i] = {}
             md5_dic = ens_dic[i]
+            origin_names = origi_ens_dic[i]
             for j, model in enumerate(models_dic[i]):
                 md5_hash = None
                 try:
@@ -235,9 +298,31 @@ class HaddockModule(BaseCNSModule):
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
                 processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
 
+                # Check if origin or md5 is available
+                if md5_hash or model_id in origin_names.keys():
+                    # Select prefix
+                    if md5_hash:
+                        prefix_name = md5_hash
+                    else:
+                        prefix_name = origin_names[model_id]
+                    # Check if topology and file created
+                    if processed_pdb.exists() and processed_topology.exists():
+                        # Build new filename
+                        model_name = f"{prefix_name}_from_{model_name}"
+                        # Rename files
+                        processed_pdb = processed_pdb.rename(
+                            f"{model_name}_haddock.{Format.PDB}"
+                        )
+                        processed_topology = processed_topology.rename(
+                            f"{model_name}_haddock.{Format.TOPOLOGY}"
+                        )
+
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(
-                    file_name=processed_pdb, topology=topology, path=".", md5=md5_hash
+                    file_name=processed_pdb,
+                    topology=topology,
+                    path=".",
+                    md5=md5_hash,
                 )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb

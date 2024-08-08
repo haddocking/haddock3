@@ -8,7 +8,6 @@ import pandas as pd
 from haddock.modules.scoring.emscoring import HaddockModule as EmscoringModule
 from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG
 from haddock.libs.libontology import PDBFile, TopologyFile
-from integration_tests.test_alascan import MockPreviousIO
 
 from . import CNS_EXEC, DATA_DIR, has_cns
 from . import golden_data
@@ -17,16 +16,16 @@ from . import golden_data
 @pytest.fixture
 def emscoring_module():
     """Return a default emscoring module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         emscoring_module = EmscoringModule(
-            order=0, path=".", initial_params=DEFAULT_EMSCORING_CONFIG
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_EMSCORING_CONFIG
         )
         # lower number of steps for faster testing
         emscoring_module.params["nemsteps"] = 5
         yield emscoring_module
 
 
-class MockPreviousIO():
+class MockPreviousIO:
     def __init__(self, path):
         self.path = path
 

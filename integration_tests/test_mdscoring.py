@@ -8,7 +8,6 @@ import pandas as pd
 from haddock.modules.scoring.mdscoring import HaddockModule as mdscoringModule
 from haddock.modules.scoring.mdscoring import DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
 from haddock.libs.libontology import PDBFile, TopologyFile
-from integration_tests.test_alascan import MockPreviousIO
 
 from . import CNS_EXEC, DATA_DIR, has_cns
 from . import golden_data
@@ -17,9 +16,9 @@ from . import golden_data
 @pytest.fixture
 def mdscoring_module():
     """Return a default mdscoring module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         mdscoring_module = mdscoringModule(
-            order=0, path=".", initial_params=DEFAULT_MDSCORING_CONFIG
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_MDSCORING_CONFIG
         )
         # lower number of steps for faster testing
         mdscoring_module.params["nemsteps"] = 25
@@ -29,7 +28,7 @@ def mdscoring_module():
         yield mdscoring_module
 
 
-class MockPreviousIO():
+class MockPreviousIO:
     def __init__(self, path):
         self.path = path
 

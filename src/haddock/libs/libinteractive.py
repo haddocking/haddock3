@@ -9,6 +9,7 @@ from pathlib import Path
 from haddock.libs.libplots import read_capri_table
 from haddock.modules import get_module_steps_folders
 
+
 def handle_ss_file(
         df_ss: pd.DataFrame,
         ) -> tuple[pd.DataFrame, dict]:
@@ -35,13 +36,14 @@ def handle_ss_file(
     df_ss_grouped = df_ss.groupby("cluster_id")
     # calculate the mean and standard deviation of the first 4 elements
     # of each group
-    new_values = np.zeros((len(df_ss_grouped), 3))
+    new_values = []
     # loop over df_ss_grouped with enumerate
-    for i, clt_id in enumerate(df_ss_grouped):
+    for clt_id in df_ss_grouped:
         ave_score = np.mean(clt_id[1]["score"].iloc[:4])
         std_score = np.std(clt_id[1]["score"].iloc[:4])
-        new_values[i] = [ave_score, std_score, clt_id[0]]
+        new_values.append([ave_score, std_score, clt_id[0]])
     # get the index that sorts the array by the first column
+    new_values = np.array(new_values)
     clt_ranks = np.argsort(new_values[:, 0])
     # the ranked clusters are the third column of the new_values array
     clt_sorted = new_values[clt_ranks, 2]

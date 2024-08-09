@@ -482,10 +482,6 @@ def rename_nucbases(structure):
 
 
 def martinize(input_pdb, output_path, skipss):
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument("input_pdb", help="Input PDB to be converted")
-    #parser.add_argument("--skipss", help="Skip SS assignment, use only for xNA structures", action="store_true")
-    #args = parser.parse_args()
 
     if not input_pdb:
         exit()
@@ -592,11 +588,11 @@ def martinize(input_pdb, output_path, skipss):
     subprocess.call(f"mv temp.pdb {cg_pdb_name}", shell=True)
 
     # Write Restraints
-    tbl_file = open(f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl", "w")
+    tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl"
+    tbl_file = open(tbl_file_name, "w")
     tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
     tbl_file.write(f"\n{tbl_str}")
     tbl_file.close()
 
+    return(cg_pdb_name)
 
-if __name__ == "__main__":
-    main()

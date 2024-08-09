@@ -1,6 +1,6 @@
 """Create and manage CNS all-atom topology.
 
-The ``[topoaa]`` module is dedicated to the generation of CNS compatible
+The ``[topocg]`` module is dedicated to the generation of CNS compatible
 parameters (.param) and topologies (.psf) for each of the input structures.
 
 It will:
@@ -11,7 +11,7 @@ It will:
 This module is a pre-requisite to run any downstream modules using CNS.
 Having access to parameters and topology is mandatory for any kind
 of EM/MD related tasks.
-Therefore this is the reason why the module [topoaa] is often used as first
+Therefore this is the reason why the module [topocg] is often used as first
 module in a workflow.
 
 Note that for non-standard bio-molecules
@@ -73,14 +73,14 @@ def generate_topology(
     )
 
     # AA to CG
-    aa2cg.martinize(input_pdb, output_path, True)
+    cg_pdb_name = aa2cg.martinize(input_pdb, output_path, True)
 
     output = prepare_output(
-        output_pdb_filename=f"{input_pdb.stem}_haddock{input_pdb.suffix}",
-        output_psf_filename=f"{input_pdb.stem}_haddock.{Format.TOPOLOGY}",
+        output_pdb_filename=f"{cg_pdb_name[:-4]}_TEST{input_pdb.suffix}",
+        output_psf_filename=f"{cg_pdb_name[:-4]}_TEST.{Format.TOPOLOGY}",
     )
 
-    input_str = prepare_single_input(str(input_pdb))
+    input_str = prepare_single_input(str(cg_pdb_name))
 
     inp_parts = (
         general_param,
@@ -96,6 +96,9 @@ def generate_topology(
     )
 
     inp = "".join(inp_parts)
+    inp = inp.replace('protein-allhdg5-4.top','protein-CG-Martini.top')
+    inp = inp.replace('protein-allhdg5-4-noter.link','protein-CG-Martini.link')
+    inp = inp.replace('protein-allhdg5-4.param','protein-CG-Martini.param')
 
     if write_to_disk:
         output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
@@ -252,7 +255,7 @@ class HaddockModule(BaseCNSModule):
                     libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topoaa_input = generate_topology(
+                topocg_input = generate_topology(
                     model,
                     self.path,
                     self.recipe_str,
@@ -262,17 +265,21 @@ class HaddockModule(BaseCNSModule):
                     write_to_disk=not self.params["less_io"],
                 )
 
+                print(topocg_input)
+
                 self.log("Topology CNS input created")
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
 
                 job = CNSJob(
-                    topoaa_input,
+                    topocg_input,
                     output_filename,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
                 )
+
+                print(f"{model.stem}.{Format.CNS_OUTPUT}")
 
                 jobs.append(job)
 
@@ -301,8 +308,9 @@ class HaddockModule(BaseCNSModule):
                     md5_hash = md5_dic[model_id]
 
                 model_name = model.stem
-                processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
+                processed_pdb = Path(f"{model_name}_cg_TEST.{Format.PDB}")
+                processed_topology = Path(f"{model_name}_cg_TEST.{Format.TOPOLOGY}")
+                print(processed_pdb, processed_topology)
 
                 # Check if origin or md5 is available
                 if md5_hash or model_id in origin_names.keys():
@@ -312,15 +320,16 @@ class HaddockModule(BaseCNSModule):
                     else:
                         prefix_name = origin_names[model_id]
                     # Check if topology and file created
+                    print(processed_pdb.exists(),processed_topology.exists() )
                     if processed_pdb.exists() and processed_topology.exists():
                         # Build new filename
                         model_name = f"{prefix_name}_from_{model_name}"
                         # Rename files
                         processed_pdb = processed_pdb.rename(
-                            f"{model_name}_haddock.{Format.PDB}"
+                            f"{model_name}_haddock_cg_TEST.{Format.PDB}"
                         )
                         processed_topology = processed_topology.rename(
-                            f"{model_name}_haddock.{Format.TOPOLOGY}"
+                            f"{model_name}_haddock_cg_TEST.{Format.TOPOLOGY}"
                         )
 
                 topology = TopologyFile(processed_topology, path=".")

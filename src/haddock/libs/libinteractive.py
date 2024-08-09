@@ -43,10 +43,10 @@ def handle_ss_file(
         std_score = np.std(clt_id[1]["score"].iloc[:4])
         new_values.append([ave_score, std_score, clt_id[0]])
     # get the index that sorts the array by the first column
-    new_values = np.array(new_values)
-    clt_ranks = np.argsort(new_values[:, 0])
+    new_values_arr = np.array(new_values)
+    clt_ranks = np.argsort(new_values_arr[:, 0])
     # the ranked clusters are the third column of the new_values array
-    clt_sorted = new_values[clt_ranks, 2]
+    clt_sorted = new_values_arr[clt_ranks, 2]
     clt_ranks_dict = {clt_sorted[i]: i + 1 for i in range(len(clt_sorted))}
     # adjust clustering values if there are clusters
     if list(np.unique(df_ss["cluster_id"])) != ["-"]:

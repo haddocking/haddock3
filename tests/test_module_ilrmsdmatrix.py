@@ -30,7 +30,7 @@ def params():
 
 @pytest.fixture
 def contact_obj(protprot_input_list, params):  # noqa : F811    
-    """Return example alascan module."""
+    """Return example Contact object."""
     contact_obj = Contact(
         model_list=protprot_input_list,
         output_name="contact",
@@ -45,7 +45,7 @@ def contact_obj(protprot_input_list, params):  # noqa : F811
 
 @pytest.fixture
 def contact_job_obj(contact_obj, params):
-    """Return example alascan module."""
+    """Return example ContactJob object."""
     contact_job_obj = ContactJob(
         Path("contact_output"),
         params,
@@ -131,6 +131,25 @@ def test_ilrmsdmatrix_run(ilrmsdmatrix, mocker):
         lines = f.readlines()
         assert lines[0] == f"A 37 38 39 40 43 44 45 69 71 72 75 90 93 94 96 132{os.linesep}"  # noqa : E501
         assert lines[1] == f"B 10 11 12 16 17 48 51 52 53 54 56 57{os.linesep}"
+
+def test_ilrmsdmatrix_run_swappedchains(ilrmsdmatrix, mocker):
+    """Test ilrmsdmatrix run method."""
+    ilrmsdmatrix.previous_io = MockPreviousIO(path=ilrmsdmatrix.path)
+    ilrmsdmatrix.params["receptor_chain"] = "B"
+    ilrmsdmatrix.params["ligand_chains"] = ["A"]
+    mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models",
+        return_value=None,
+        )
+    ilrmsdmatrix.run()
+    assert Path(ilrmsdmatrix.path, "ilrmsd.matrix").exists()
+    assert Path(ilrmsdmatrix.path, "receptor_contacts.con").exists()
+    with open(Path(ilrmsdmatrix.path, "ilrmsd.matrix")) as f:
+        assert f.readline() == f"1 2 15.166{os.linesep}"
+    with open(Path(ilrmsdmatrix.path, "receptor_contacts.con")) as f:
+        lines = f.readlines()
+        assert lines[0] == f"B 10 11 12 16 17 48 51 52 53 54 56 57{os.linesep}"
+        assert lines[1] == f"A 37 38 39 40 43 44 45 69 71 72 75 90 93 94 96 132{os.linesep}"  # noqa : E501
 
 
 class MockPreviousIO:

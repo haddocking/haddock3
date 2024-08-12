@@ -11,6 +11,7 @@ from haddock.libs.libalign import (
     align_seq,
     check_common_atoms,
     calc_rmsd,
+    check_chains,
     centroid,
     dump_as_izone,
     get_align,
@@ -528,3 +529,34 @@ def test_rearrange_xyz_files():
         exp_content = os.linesep.join([f"{i} 0 0 0" for i in range(ncores)])
         exp_content += os.linesep
         assert obs_content == exp_content
+
+
+def test_check_chains():
+    """Test correct checking of chains."""
+    obs_ch = [["A", "C"],
+              ["A", "B"],
+              ["S", "E", "B", "A"],
+              ["S", "E", "P", "A"],
+              ["C", "D"]]
+    
+    inp_receptor_chains = ["A", "A", "A", "A", "C"]
+    inp_ligand_chains = [
+        ["B"],
+        ["B"],
+        ["B", "E"],
+        ["B"],
+        ["B"],
+    ]
+
+    # assuming exp chains are A and B
+    exp_ch = [["A", ["C"]], # B is not there, C becomes the ligand
+              ["A", ["B"]],
+              ["A", ["B", "E"]],  # S is ignored (B,E are present)
+              ["A", ["S", "E", "P"]], # B is not there, S-E-P become the ligands
+              ["C", ["D"]]] # B is not there, D becomes the ligand
+
+    for n in range(len(obs_ch)):
+        obs_r_chain, obs_l_chain = check_chains(obs_ch[n], inp_receptor_chains[n], inp_ligand_chains[n])
+        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
+        assert obs_r_chain == exp_r_chain
+        assert obs_l_chain == exp_l_chain

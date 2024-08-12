@@ -659,28 +659,6 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     Path('capri_clt.txt').unlink()
 
 
-def test_check_chains(protprot_caprimodule):
-    """Test correct checking of chains."""
-    obs_ch = [["A", "C"],
-              ["A", "B"],
-              ["S", "E", "B", "A"],
-              ["S", "E", "P", "A"],
-              ["C", "D"]]
-    
-    # assuming exp chains are A and B
-    exp_ch = [["A", ["C"]],
-              ["A", ["B"]],
-              ["A", ["B"]],  # S and E are ignored when B is present
-              ["A", ["S", "E", "P"]],
-              ["C", ["D"]]]
-
-    for n in range(len(obs_ch)):
-        obs_r_chain, obs_l_chain = protprot_caprimodule.check_chains(obs_ch[n])
-        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
-        assert obs_r_chain == exp_r_chain
-        assert obs_l_chain == exp_l_chain
-
-
 @pytest.fixture
 def protprot_onechain_ref_caprimodule(protprot_input_list,
                                       protprot_onechain_list,
@@ -765,3 +743,13 @@ def test_get_previous_cns_step():
     assert get_previous_cns_step(mock_steps, 2) == "1_emscoring"
     mock_steps_2 = ["bla", "test"]
     assert get_previous_cns_step(mock_steps_2, 1) is None
+
+
+def test_protprot_1bkd_swapped_chains(protprot_1bkd_caprimodule):
+    """Test protein-protein l-rmsd and ilrmsd calculation with swapped chains."""
+    protprot_1bkd_caprimodule.r_chain = "S"
+    protprot_1bkd_caprimodule.l_chain = "R"
+    protprot_1bkd_caprimodule.calc_lrmsd()
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 19.21, atol=0.01)
+    protprot_1bkd_caprimodule.calc_ilrmsd()
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 16.33, atol=0.01)

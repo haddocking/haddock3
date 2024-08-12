@@ -1360,3 +1360,46 @@ def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
             )
         raise ALIGNError(_err_msg)
     return n_atoms, list(common_keys)
+
+
+def check_chains(obs_chains, inp_r_chain, inp_l_chains):
+    """Check observed chains against the expected ones.
+
+    Logic: if chain B is among the observed chains and is not selected as
+     the receptor chain, then ligand_chains = ["B"] (default behaviour).
+    Otherwise, ligand_chains becomes equal to all the other chains (once
+     receptor chain is removed).
+
+    Parameters
+    ----------
+    obs_chains : list
+        List of observed chains.
+
+    r_chain : str
+        Receptor chain.
+    
+    l_chains : list
+        List of ligand chains.
+    """
+    r_found, l_found = False, False
+    if inp_r_chain in obs_chains:
+        r_chain = inp_r_chain
+        obs_chains.remove(inp_r_chain)
+        r_found = True
+    l_chains = []
+    for inp_l_chain in inp_l_chains:
+        if inp_l_chain in obs_chains:
+            l_chains.append(inp_l_chain)
+            obs_chains.remove(inp_l_chain)
+            l_found = True
+    # if receptor chain is not among the observed chains, then
+    # it is the first chain in the list
+    if not r_found:
+        r_chain = obs_chains[0]
+        obs_chains.remove(r_chain)
+    # if no element in ligand_chains is not among the observed chains, then
+    # ligand_chains is the list of observed chains (the receptor chain has
+    # already been removed)
+    if not l_found:
+        l_chains = [el for el in obs_chains]
+    return r_chain, l_chains

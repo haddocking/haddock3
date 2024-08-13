@@ -541,16 +541,16 @@ def test_check_chains():
     
     inp_receptor_chains = ["A", "A", "A", "A", "C"]
     inp_ligand_chains = [
-        ["B"],
-        ["B"],
+        [],
+        [],
         ["B", "E"],
         ["B"],
         ["B"],
     ]
 
     # assuming exp chains are A and B
-    exp_ch = [["A", ["C"]], # B is not there, C becomes the ligand
-              ["A", ["B"]],
+    exp_ch = [["A", ["C"]], # C becomes the ligand
+              ["A", ["B"]], # C becomes the ligand
               ["A", ["B", "E"]],  # S is ignored (B,E are present)
               ["A", ["S", "E", "P"]], # B is not there, S-E-P become the ligands
               ["C", ["D"]]] # B is not there, D becomes the ligand

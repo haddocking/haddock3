@@ -49,6 +49,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_dendrogram,
     get_matrix_path,
     iterate_min_population,
+    order_clusters,
     read_matrix,
     write_clusters,
     write_clustrmsd_file,
@@ -116,21 +117,7 @@ class HaddockModule(BaseHaddockModule):
                 )
             self.params['min_population'] = min_population
         
-        # assign cluster IDs by population. The most populated cluster will be
-        # assigned the ID 1, the second most populated the ID 2, and so on.
-        cluster_pops = np.unique(cluster_arr, return_counts=True)
-        
-        sorted_indices = np.argsort(-cluster_pops[1])
-        sorted_clusters = cluster_pops[0][sorted_indices]
-        
-        # delete -1 from sorted_clusters if present
-        sorted_clusters = sorted_clusters[sorted_clusters != -1]
-        clusters = []
-        for c in sorted_clusters:
-            cluster_arr[cluster_arr == c] = -c
-        for i, c in enumerate(sorted_clusters):
-            clusters.append(i+1)
-            cluster_arr[cluster_arr == -c] = i+1
+        clusters, cluster_arr = order_clusters(cluster_arr)
         log.info(f"clusters = {clusters}")
         log.info(f"cluster_arr = {cluster_arr}")
         

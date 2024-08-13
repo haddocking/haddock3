@@ -356,3 +356,37 @@ def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_s
     log.info('Saving detailed output to clustrmsd.txt')
     with open(output_fname, 'w') as out_fh:
         out_fh.write(output_str)
+
+
+def order_clusters(cluster_arr):
+    """
+    Order the clusters by population. The most populated cluster will be
+    # assigned the ID 1, the second most populated the ID 2, and so on.
+
+    Parameters
+    ----------
+    cluster_arr : np.ndarray
+        Array of clusters.
+    
+    Returns
+    -------
+    clusters : list
+        List of clusters.
+    
+    cluster_arr : np.ndarray
+        Array of clusters.
+    """
+    cluster_pops = np.unique(cluster_arr, return_counts=True)
+    
+    sorted_indices = np.argsort(-cluster_pops[1])
+    sorted_clusters = cluster_pops[0][sorted_indices]
+    
+    # delete -1 from sorted_clusters if present
+    sorted_clusters = sorted_clusters[sorted_clusters != -1]
+    clusters = []
+    for c in sorted_clusters:
+        cluster_arr[cluster_arr == c] = -c
+    for i, c in enumerate(sorted_clusters):
+        clusters.append(i+1)
+        cluster_arr[cluster_arr == -c] = i+1
+    return clusters, cluster_arr

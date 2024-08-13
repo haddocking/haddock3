@@ -360,8 +360,10 @@ def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_s
 
 def order_clusters(cluster_arr):
     """
-    Order the clusters by population. The most populated cluster will be
-    # assigned the ID 1, the second most populated the ID 2, and so on.
+    Order the clusters by population.
+    
+    The most populated cluster will be assigned the ID 1, the second most
+     populated the ID 2, and so on.
 
     Parameters
     ----------
@@ -387,6 +389,6 @@ def order_clusters(cluster_arr):
     for c in sorted_clusters:
         cluster_arr[cluster_arr == c] = -c
     for i, c in enumerate(sorted_clusters):
-        clusters.append(i+1)
-        cluster_arr[cluster_arr == -c] = i+1
+        clusters.append(i + 1)
+        cluster_arr[cluster_arr == -c] = i + 1
     return clusters, cluster_arr

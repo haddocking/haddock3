@@ -30,8 +30,6 @@ matrix.
 """  # noqa: E501
 from pathlib import Path
 
-import numpy as np
-
 from haddock import log
 # from haddock.core.typing import FilePath
 from haddock.libs.libclust import (

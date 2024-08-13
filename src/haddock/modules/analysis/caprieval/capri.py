@@ -962,7 +962,7 @@ def capri_cluster_analysis(
     path: FilePath,
 ) -> None:
     """Consider the cluster results for the CAPRI evaluation."""
-    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq"]
+    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data

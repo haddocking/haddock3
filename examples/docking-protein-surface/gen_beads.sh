@@ -21,8 +21,8 @@
   --residues 98,101,126,129 \
   data/protein.pdb \
   data/protein_z_restraints_smallspacing_beads_new.pdb \
-  20 \
-  4  > data/protein_z_restraints_smallspacing_new.tbl
+  4 \
+  6  > data/protein_z_restraints_smallspacing_new.tbl
 
 # Generates three plans based on the three residues selections
 ./haddock-restraints z \

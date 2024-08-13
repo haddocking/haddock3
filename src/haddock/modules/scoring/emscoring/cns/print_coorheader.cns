@@ -10,7 +10,6 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-
 if ($Data.flags.dihed eq false) then evaluate ($dihe = 0) end if
 if ($Data.flags.sani  eq false) then evaluate ($sani = 0) end if
 if ($Data.flags.xrdc  eq false) then evaluate ($xrdc = 0) end if
@@ -133,9 +132,11 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     surface mode=access accu=0.075 rh2o=1.4 sele=(segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA)) end
     show sum (rmsd) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
     evaluate ($saafree = $saafree + $result)
+    evaluate ($saafree_$nchain1 = $result)
     do (store2 = rmsd * store1) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
     show sum (store2) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
     evaluate ($esolfree = $esolfree + $result)
+    evaluate ($esolfree_$nchain1 = $result)
 end loop nloop1
 
 do (rmsd = 0) (all)
@@ -184,6 +185,59 @@ evaluate ($procwat = false)
 if ($refine.keepwater eq true) then
     evaluate ($procwat = true)
 end if  
+
+{====>} {* calculate interface-specific scores *}
+if ($data.ncomponents > 2) then
+    if ($per_interface_scoring eq true) then
+
+        {====>} {* define ASA-based solvation parameters *}
+        do (store1 = 0) (all)
+        evaluate ($nrstscore= 0.0)
+        inline @MODULE:def_solv_param.cns
+
+        eval($nchain1 = 1)
+
+        while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain2 = $nchain1 + 1)
+            while ($nchain2 <= $data.ncomponents) loop nloop2
+                igroup
+                    interaction (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS)) 
+                                (segid $prot_segid_$nchain2 and not (resn WAT or resn HOH or resn TIP* or resn DMS)) weight * 1.0 end
+                end
+                energy end
+                evaluate ($vdw_$nchain1_$nchain2 = $vdw)
+                evaluate ($elec_$nchain1_$nchain2 = $elec)
+
+                do (rmsd = 0) (all)
+                do (store2 = 0) (all)
+                surface mode=access accu=0.075 rh2o=1.4 
+                        sele=((segid $prot_segid_$nchain1 or segid $prot_segid_$nchain2) and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA)) end
+                show sum (rmsd) ((segid $prot_segid_$nchain1 or segid $prot_segid_$nchain2) and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+                evaluate ($bsa_$nchain1_$nchain2 = $saafree_$nchain1 + $saafree_$nchain2 - $result)
+                if ($bsa_$nchain1_$nchain2 < 0) then
+                    evaluate ($bsa_$nchain1_$nchain2 = 0)
+                end if
+
+                do (store2 = rmsd * store1) ((segid $prot_segid_$nchain1 or segid $prot_segid_$nchain2) and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+                show sum (store2) ((segid $prot_segid_$nchain1 or segid $prot_segid_$nchain2) and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+                evaluate ($edesol_$nchain1_$nchain2 = $result - $esolfree_$nchain1 - $esolfree_$nchain2)
+
+                evaluate ($haddockscore_$nchain1_$nchain2 = $w_vdw * $vdw_$nchain1_$nchain2 
+                                                          + $w_elec* $elec_$nchain1_$nchain2 
+                                                          + $w_bsa * $bsa_$nchain1_$nchain2 
+                                                          + $w_desolv * $edesol_$nchain1_$nchain2)
+
+                evaluate ($nrstscore = $nrstscore + $haddockscore_$nchain1_$nchain2)
+
+                eval($nchain2 = $nchain2 + 1)
+            end loop nloop2
+            eval($nchain1 = $nchain1 + 1)
+        end loop nloop1
+    end if
+else
+    evaluate ($nrstscore = $w_vdw * $vdwall + $w_elec * $elecall + $w_bsa * $saburied + $w_desolv * $edesolv)
+end if
+
 
 if ($procwat eq true) then
     ident (store3) (not all)
@@ -248,11 +302,29 @@ else
     evaluate ($elec_water_water = 0.0)
 end if
 
+! calculate the HADDOCK score
+evaluate ($hscore = $w_vdw  * $vdwall)
+evaluate ($hscore = $hscore + $w_elec * $elecall)
+evaluate ($hscore = $hscore + $w_air  * $noeall)
+evaluate ($hscore = $hscore + $w_rg   * $rgall)
+evaluate ($hscore = $hscore + $w_cdih * $cdihall)
+evaluate ($hscore = $hscore + $w_sani * $saniall)
+evaluate ($hscore = $hscore + $w_xpcs * $xpcsall)
+evaluate ($hscore = $hscore + $w_dani * $daniall)
+evaluate ($hscore = $hscore + $w_vean * $veanall)
+evaluate ($hscore = $hscore + $w_sym  * $esym)
+evaluate ($hscore = $hscore + $w_bsa  * $saburied)
+evaluate ($hscore = $hscore + $w_desolv * $edesolv)
+evaluate ($hscore = $hscore + $w_lcc * $lcc)
+
 set message=on echo=on end
 set remarks=reset end
 set remarks=accumulate end
 remarks ===============================================================
 remarks HADDOCK stats for $output_pdb_filename
+remarks ===============================================================
+remarks HADDOCK score: $hscore
+remarks ===============================================================
 
 !list input molecules
 evaluate ($nmol=1)
@@ -292,11 +364,30 @@ remarks Binding energy: $dhbinding
 remarks ===============================================================
 remarks buried surface area: $saburied
 remarks ===============================================================
-set remark accumulate end
+if ($data.ncomponents > 2) then
+    if ($per_interface_scoring eq true) then
+        evaluate($nchain1 = 1)
+        if ($data.ncomponents > 1) then
+            remarks Interface Chain1 Chain2 HADDOCKscore Evdw Eelec Edesol BSA
+            while ($nchain1 < $data.ncomponents) loop nloop1
+                eval($nchain2 = $nchain1 + 1)
+                while ($nchain2 <= $data.ncomponents) loop nloop2
+                    remarks Interface: $prot_segid_$nchain1 $prot_segid_$nchain2 $haddockscore_$nchain1_$nchain2 $vdw_$nchain1_$nchain2 $elec_$nchain1_$nchain2 $edesol_$nchain1_$nchain2 $bsa_$nchain1_$nchain2
+                    eval($nchain2 = $nchain2 + 1)
+                end loop nloop2
+                eval($nchain1 = $nchain1 + 1)
+            end loop nloop1
+            remarks Total HADDOCK score without restraints: $nrstscore
+        end if
+    end if
+else
+    remarks Total HADDOCK score without restraints: $nrstscore
+end if
+remarks ===============================================================
 evaluate($ncount = 0)
 while ($ncount < $data.ncomponents) loop waterremark
     evaluate ($ncount = $ncount +1)
-    remarks water - chain_$ncount: $ener_water_$ncount $vdw_water_$ncount $elec_water_$ncount
+    remarks water - chain-$prot_segid_$ncount: $ener_water_$ncount $vdw_water_$ncount $elec_water_$ncount
 end loop waterremark
 remarks ===============================================================
 remarks water - water: $ener_water_water $vdw_water_water $elec_water_water

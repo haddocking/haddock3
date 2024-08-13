@@ -1,7 +1,7 @@
-"""
-Test general functions of haddock3 analysis modules.
-"""
+"""Test general functions of haddock3 analysis modules."""
+
 from haddock.modules.analysis import get_analysis_exec_mode
+
 
 def test_get_analysis_exec_mode():
     """Test the get_analysis_exec_mode function."""

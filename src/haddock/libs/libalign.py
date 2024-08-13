@@ -144,32 +144,35 @@ DNA_ATOMS = [
     "O6",
     ]
 
-RNA_RES = ["A", "G", "C", "U"]
-RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
-
 DNA_FULL_DICT = {
-    "DA": [
-        "P",
-        "O1P",
-        "O2P",
+    'DA': [
+        'P',
+        'O1P',
+        'O2P',
         "O5'",
         "C5'",
         "C4'",
         "O4'",
         "C1'",
-        "N9",
-        "C4",
-        "N3",
-        "C2",
-        "N1",
-        "C6",
-        "N6",
-        "C5",
-        "N7",
-        "C8",
+        'N9',
+        'C4',
+        'N3',
+        'C2',
+        'N1',
+        'C6',
+        'N6',
+        'C5',
+        'N7',
+        'C8',
         "C2'",
         "C3'",
         "O3'",
+        'N2',
+        'O2',
+        'N4',
+        'C7',
+        'O4',
+        'O6',
         ],
     "DG": [
         "P",
@@ -180,20 +183,25 @@ DNA_FULL_DICT = {
         "C4'",
         "O4'",
         "C1'",
-        "N9",
-        "C4",
-        "N3",
-        "C2",
-        "N2",
-        "N1",
-        "C6",
-        "O6",
-        "C5",
-        "N7",
-        "C8",
+        'N9',
+        'C4',
+        'N3',
+        'C2',
+        'N2',
+        'N1',
+        'C6',
+        'O6',
+        'C5',
+        'N7',
+        'C8',
         "C2'",
         "C3'",
         "O3'",
+        'O2',
+        'N4',
+        'C7',
+        'N6',
+        'O4',
         ],
     "DC": [
         "P",
@@ -204,17 +212,25 @@ DNA_FULL_DICT = {
         "C4'",
         "O4'",
         "C1'",
-        "N1",
-        "C6",
-        "C2",
-        "O2",
-        "N3",
-        "C4",
-        "N4",
-        "C5",
+        'N1',
+        'C6',
+        'C2',
+        'O2',
+        'N3',
+        'C4',
+        'N4',
+        'C5',
         "C2'",
         "C3'",
         "O3'",
+        'N9',
+        'N2',
+        'C8',
+        'N7',
+        'C7',
+        'N6',
+        'O4',
+        'O6',
         ],
     "DT": [
         "P",
@@ -225,20 +241,30 @@ DNA_FULL_DICT = {
         "C4'",
         "O4'",
         "C1'",
-        "N1",
-        "C6",
-        "C2",
-        "O2",
-        "N3",
-        "C4",
-        "O4",
-        "C5",
-        "C7",
+        'N1',
+        'C6',
+        'C2',
+        'O2',
+        'N3',
+        'C4',
+        'O4',
+        'C5',
+        'C7',
         "C2'",
         "C3'",
         "O3'",
-        ],
+        'N9',
+        'N2',
+        'C8',
+        'N4',
+        'N7',
+        'N6',
+        'O6',
+        ]
     }
+
+RNA_RES = ["A", "G", "C", "U"]
+RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 
 RNA_FULL_DICT = {
     "A": [
@@ -460,28 +486,37 @@ def load_coords(
             # Extract PDB line data
             atom_name = line[slc_name].strip()
             resname = line[slc_resname].strip()
+            # Skip entries to be ignored
+            if resname in RES_TO_BE_IGNORED:
+                continue
+            else:
+                if atom_name not in atoms[resname]:
+                    continue
+            # Continue parsing of the PDB line
             chain = line[slc_chainid]
-            if model2ref_chain_dict:
-                chain = model2ref_chain_dict[chain]
             resnum = int(line[slc_resseq])
             x = float(line[slc_x])
             y = float(line[slc_y])
             z = float(line[slc_z])
             coords = np.asarray([x, y, z])
-            if numbering_dic and model2ref_chain_dict:
-                try:
-                    resnum = numbering_dic[chain][resnum]
-                except KeyError:
-                    # this residue is not matched, and so it should
-                    #  not be considered
-                    # self.log(
-                    #     f"WARNING: {chain}.{resnum}.{atom_name}"
-                    #     " was not matched!"
-                    #     )
+            # Remap chain name
+            if model2ref_chain_dict:
+                # Skip chain matching if not present in reference structure
+                if chain not in model2ref_chain_dict.keys():
                     continue
-            # Filter entries to be ignored
-            if resname in RES_TO_BE_IGNORED or atom_name not in atoms[resname]:
-                continue
+                chain = model2ref_chain_dict[chain]
+
+                if numbering_dic:
+                    try:
+                        resnum = numbering_dic[chain][resnum]
+                    except KeyError:
+                        # this residue is not matched, and so it should
+                        #  not be considered
+                        # self.log(
+                        #     f"WARNING: {chain}.{resnum}.{atom_name}"
+                        #     " was not matched!"
+                        #     )
+                        continue
 
             # Create identifier tuple
             if add_resname is True:
@@ -543,6 +578,10 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     ----------
     pdb : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
         PDB file to have its atoms identified
+    full : bool
+        Weather or not to take `full` atoms into consideration.
+        If False, only main-chain atoms retrieved.
+        If True, all heavy atoms retrieved.
 
     Returns
     -------
@@ -1140,16 +1179,16 @@ def align_seq(reference, model, output_path):
             matches += 1
         log.info(f"model2ref chain matching is {SeqAln.model2ref_chain_dict}")
     else:
-        # chains do match. no need to do chain matching
+        # chains do match. no need to do chain matching. Chains are the same.
+        # of course if the structures do not correspond the output will be a
+        # mess
         matches = 0
-        for ref_ch, mod_ch in zip(SeqAln.seqdic_ref, SeqAln.seqdic_model):
-            SeqAln.model2ref_chain_dict[mod_ch] = ref_ch
-            SeqAln.ref2model_chain_dict[ref_ch] = mod_ch
-            if ref_ch != mod_ch:
-                raise ALIGNError(f"Chain mismatch: {ref_ch} != {mod_ch}")
+        for ref_ch in SeqAln.seqdic_ref.keys():
+            SeqAln.model2ref_chain_dict[ref_ch] = ref_ch
+            SeqAln.ref2model_chain_dict[ref_ch] = ref_ch
             # extract sequences
             seq_ref = SeqAln.seqs_ref[ref_ch]
-            seq_model = SeqAln.seqs_model[mod_ch]
+            seq_model = SeqAln.seqs_model[ref_ch]
             # sequence alignment
             identity, top_aln, aln_ref_seg, aln_mod_seg = sequence_alignment(
                 seq_ref,
@@ -1163,7 +1202,7 @@ def align_seq(reference, model, output_path):
             # write alignment
             write_alignment(top_aln, output_path, ref_ch)
             # postprocess alignment
-            SeqAln.postprocess_alignment(ref_ch, mod_ch, matches)
+            SeqAln.postprocess_alignment(ref_ch, ref_ch, matches)
             matches += 1
     # dump the .izone file
     izone_fname = Path(output_path, "blosum62.izone")
@@ -1224,3 +1263,100 @@ def dump_as_izone(fname, numbering_dic, model2ref_chain_dict=None):
                     f"{os.linesep}"
                     )
                 fh.write(izone_str)
+
+
+def rearrange_xyz_files(output_name: FilePath, path: FilePath,
+                             ncores: int) -> None:
+    """Combine different xyz outputs in a single file.
+    
+    Parameters
+    ----------
+    output_name : FilePath
+        output name
+    
+    path : FilePath
+        path to the output files
+    
+    ncores : int
+        number of cores
+    """
+    output_fname = Path(path, output_name)
+    # take the name without the xyz extension
+    output_fname_str = output_fname.stem
+    log.info(f"rearranging xyz files into {output_fname}")
+    # Combine files
+    with open(output_fname, 'w') as out_file:
+        for core in range(ncores):
+            tmp_file = Path(path, output_fname_str + "_" + str(core) + ".xyz")
+            with open(tmp_file) as infile:
+                out_file.write(infile.read())
+            log.debug(f"File number {core} written")
+            tmp_file.unlink()
+    log.info("Completed reconstruction of xyz files.")
+    log.info(f"{output_fname} created.")
+
+
+def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
+    """
+    Check if the models share the same atoms.
+
+    Parameters
+    ----------
+    models : list
+        list of models
+    
+    filter_resdic : dict
+        dictionary of residues to be loaded (one list per chain)
+    
+    allatoms : bool
+        use all the heavy atoms
+
+    atom_similarity : float
+        minimum atom similarity required between models
+
+    Returns
+    -------
+    n_atoms : int
+        number of common atoms
+    
+    common_keys : list
+        list of common atom keys
+    """
+    # checking the common keys
+    common_keys : list[str] = []    
+    coord_keys_lengths = []
+    for mod in models:
+        atoms: AtomsDict = get_atoms(mod, allatoms)
+        
+        ref_coord_dic, _ = load_coords(
+        mod, atoms, filter_resdic
+        )
+        coord_keys_lengths.append(len(ref_coord_dic.keys()))
+        if common_keys != []:
+            common_keys = set(ref_coord_dic.keys()).intersection(common_keys)
+        else:
+            common_keys = ref_coord_dic.keys()
+
+    # checking the common atoms
+    n_atoms = len(common_keys) #common atoms
+    max_n_atoms = max(coord_keys_lengths)
+    perc = (n_atoms / max_n_atoms) * 100
+    if perc == 100.0:
+        log.info("All the models share the same atoms.")
+    elif perc > atom_similarity and perc < 100.0:
+        # if it's between 0.9 and 1, it's likely that the models share the same atoms
+        # but still the user may want to see a warning
+        log.warning(
+            "Not all the atoms are common to all the models."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) higher than allowed ({atom_similarity:.2f}%)."
+            )
+    else:
+        # common keys are less than 90% of the previous keys
+        # something is likely wrong
+        _err_msg = (
+            "Input atoms are not the same for all the models."
+            f" Common atoms ({n_atoms}) != max_n_atoms {max_n_atoms}. Similarity ({perc:.2f}%) lower than allowed ({atom_similarity:.2f}%)."
+            " Please check the input ensemble."
+            )
+        raise ALIGNError(_err_msg)
+    return n_atoms, list(common_keys)

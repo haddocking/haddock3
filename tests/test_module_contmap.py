@@ -122,6 +122,7 @@ def params() -> dict:
         "cluster_heatmap_datatype": 'shortest-cont-probability',
         "generate_chordchart": True,
         "chordchart_datatype": 'shortest-dist',
+        "offline": False,
         }
 
 

@@ -42,14 +42,22 @@ min_population:
 clust_cutoff:
   default: 7.5
   type: float
-  min: 1
-  max: 9999
+  min: 0.1
+  max: 100
   precision: 3
   title: Clustering cutoff distance
   short: Value of cutoff cophenetic distance. 
   long: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.
   group: analysis
   explevel: easy
+plot_matrix:
+  default: false
+  type: boolean
+  title: Plot matrix of members
+  short: Plot matrix of members. By default is false.
+  long: Plot matrix of members. By default is false.
+  explevel: easy
+  group: analysis
 n_clusters:
   default: 4
   type: integer

@@ -27,7 +27,6 @@ evaluate ($saprotocol.crossdock=$crossdock)
 evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.rigidtrans=$rigidtrans)
 evaluate ($saprotocol.ntrials=$ntrials)
-evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.inter_rigid=$inter_rigid)
 evaluate ($saprotocol.rotate180=$rotate180)
 
@@ -122,11 +121,6 @@ while ($nmol1 <=$data.ncomponents) loop mol1
     evaluate ($nmol1 = $nmol1 + 1)
 end loop mol1
 
-
-! Restraints
-evaluate ($npart = $npart)
-
-
 ! Unsupported restraints
 evaluate ($Data.flags.cdih = false)
 evaluate ($Data.flags.em   = false)
@@ -156,24 +150,6 @@ end
 
 flag include bond angle impr vdw end
 
-if ($Data.randremoval eq true) then
-    evaluate ($npart = 1 + mod($count,$Data.npart))
-    evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-    set display=$fileseed end
-    display module(seed;npart)
-    display define (
-    display currentseed = $seed;
-    display currentpart = $npart;
-    display )
-    display evaluate (&seed=&currentseed)
-    display evaluate (&npart=&currentpart)
-    close $fileseed end
-else
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-end if
-set seed $seed end
-
 do (refx=x) (all)
 do (refy=y) (all)
 do (refz=z) (all)
@@ -183,17 +159,22 @@ set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_noes.cns  ! rigidbody version with only distance restraints support
 
+{* random removal of restaints ================================== *}
+if ($Data.randremoval eq true) then
+    noe cv $npart ? end
+end if
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
 {* set distance restraint energy flag =========================== *}
 if ($Data.flags.noe  =  TRUE) then
      flags include noe end
-end if
-
-{* random removal of restaints ================================== *}
-if ($Data.randremoval eq true) then
-    set message=on echo=on end
-    noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 {* ============================================================== *}
@@ -516,7 +497,7 @@ end if
 energy end
 
 evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
-evaluate ($eintfree = $eintcplx) 
+evaluate ($eintfree = $eintcplx)
 {* at this stage the two are similar since rigid-body EM only *}
 
 {* =========================== write out structure after rigid body refinement *}
@@ -545,28 +526,21 @@ if ($Data.flags.sym eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read again the NOE data, needed to remove the symmetry restraints
     inline @@MODULE:read_noes.cns
-    if ( $log_level = "verbose" ) then
-        set message=normal echo=on end
-    elseif ( $log_level = "normal" ) then
-        set message=normal echo=off end
-    else
-        set message=off echo=off end
+    !random removal of restaints
+    if ($Data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
     end if
 else
-    if ($Data.randremoval eq true) then
-        set message=on echo=on end
-        noe cv $ncvbest ? end
-    end if
-    if ( $log_level = "verbose" ) then
-        set message=normal echo=on end
-    elseif ( $log_level = "normal" ) then
-        set message=normal echo=off end
-    else
-        set message=off echo=off end
-    end if
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)

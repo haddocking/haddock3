@@ -285,14 +285,18 @@ class BaseHaddockModule(ABC):
         io.add(self.previous_io.output, "i")
         # add the output models
         io.add(self.output_models, "o")
+        # Removes un-generated outputs and compute percentage of ungenerated
         faulty = io.check_faulty()
+        # Save outputs
+        io.save()
+        # Check if number of generated outputs is under the tolerance threshold
         if faulty > faulty_tolerance:
             _msg = (
                 f"{faulty:.2f}% of output was not generated for this module "
                 f"and tolerance was set to {faulty_tolerance:.2f}%."
                 )
             self.finish_with_error(_msg)
-        io.save()
+        
 
     def finish_with_error(self, reason: object = "Module has failed.") -> None:
         """Finish with error message."""

@@ -20,6 +20,7 @@ from typing import Any
 from haddock import log
 from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
+from haddock.libs.libplots import make_traceback_plot
 from haddock.modules import get_module_steps_folders
 
 
@@ -140,6 +141,81 @@ def traceback_dataframe(
     return df_ord
 
 
+def order_traceback_df(df_output, sel_step):
+    """
+    Order the traceback dataframe. Each step is ordered by rank.
+
+    Parameters
+    ----------
+    df_output : pandas.DataFrame
+        Dataframe containing the traceback data.
+    
+    sel_step : list
+        List of selected steps.
+    
+    Returns
+    -------
+    df_output : pandas.DataFrame
+        Dataframe containing the ordered traceback data.
+    """
+    # loop over sel_step in reverse order
+    sorted_list = []
+    indexes = []
+    for n in range(len(sel_step) - 1, -1, -1):
+        rank_col = sel_step[n] + "_rank"
+        # take only models with a rank
+        df_last = df_output[df_output[rank_col] != "-"]
+        # remove from df_last the indexes that are already in the dataframe
+        df_last = df_last[~df_last.index.isin(indexes)]
+        # sorting the dataframe by rank
+        sorted_df_last = df_last.sort_values(by=rank_col)
+        sorted_list.append(sorted_df_last)
+        # concat the current indexes with the previous ones
+        indexes = sorted_df_last.index.tolist() + indexes
+    df_output = pd.concat(sorted_list)
+    return df_output
+
+
+def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.DataFrame:
+    """
+    Generate a subset the traceback dataframe with the top 40 models.
+
+    Parameters
+    ----------
+    traceback_df : pandas.DataFrame
+        Dataframe containing the traceback data.
+    
+    cons_filename : pathlib.Path
+        name of the consensus file.
+    
+    Returns
+    -------
+    rank_data_subset : pandas.DataFrame
+        Dataframe containing the subset of the traceback data.
+    """
+    red_traceback_df = traceback_df.head(40)
+    rank_data = red_traceback_df.filter(regex='rank$')
+    # get the last column: this will define the name of the models
+    last_column = red_traceback_df.columns[-2]
+    last_column_data = red_traceback_df[last_column]
+    # concat the ranks with the model name
+    rank_data = pd.concat([last_column_data, rank_data], axis=1)
+    # the rank of the last column must be defined
+    last_column_rank = last_column + "_rank"
+    # copy avoids SettingWithCopyWarning
+    rank_data_subset = rank_data[rank_data[last_column_rank] != '-'].copy()
+    rank_columns = rank_data_subset.columns[1:].tolist()
+    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(pd.to_numeric, errors='coerce')
+    rank_data_subset = rank_data_subset.sort_values(by=last_column_rank, ascending=True)
+    
+    # rename the columns
+    rank_data_subset.columns = ["Model"] + rank_columns
+    # sum the ranks
+    rank_data_subset["Sum-of-Ranks"] = rank_data_subset[rank_columns].sum(axis=1)
+    rank_data_subset.to_csv(cons_filename, index=False, sep="\t")
+    return rank_data_subset
+
+
 # Command line interface parser
 ap = argparse.ArgumentParser(
     prog="haddock3-traceback",
@@ -168,7 +244,7 @@ def maincli():
 
 def main(run_dir):
     """
-    Analyse CLI.
+    Traceback CLI.
 
     Parameters
     ----------
@@ -234,20 +310,22 @@ def main(run_dir):
                     # this is the first step in which the pdbfile appears.
                     # This means that it was discarded for the subsequent steps
                     # We need to add the pdbfile to the data_dict
-                    key = f"unk{unk_idx}"
-                    data_dict[key] = ["-" for el in range(delta - 1)]
-                    data_dict[key].append(str(pdbfile.rel_path))
-                    rank_dict[key] = ["-" for el in range(delta)]
+                    keys = [f"unk{unk_idx}"]
+                    data_dict[keys[0]] = ["-" for el in range(delta - 1)]
+                    data_dict[keys[0]].append(str(pdbfile.rel_path))
+                    rank_dict[keys[0]] = ["-" for el in range(delta)]
                     unk_idx += 1
                 else:
                     # we've already seen this pdb before.
-                    idx = ls_values.index(str(pdbfile.rel_path))
-                    key = list(data_dict.keys())[idx // delta]
+                    idxs = [i for i, el in enumerate(ls_values) if el==str(pdbfile.rel_path)]
+                    keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
 
                 # assignment
                 for el in ori_names:
-                    data_dict[key].append(el)
-                rank_dict[key].append(rank)
+                    for key in keys:
+                        data_dict[key].append(el)
+                for key in keys:
+                    rank_dict[key].append(rank)
             else:  # last step of the workflow
                 data_dict[str(pdbfile.rel_path)] = [on for on in ori_names]
                 rank_dict[str(pdbfile.rel_path)] = [rank]
@@ -268,12 +346,23 @@ def main(run_dir):
     df_output = traceback_dataframe(
         final_data_dict, final_rank_dict, sel_step, max_topo_len
     )
+
+    # ordering the dataframe
+    df_output = order_traceback_df(df_output, sel_step)
     # dumping the dataframe
     track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
     log.info(
         f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
     )
     df_output.to_csv(track_filename, sep="\t", index=False)
+
+    # taking (and writing) a subset of the dataframe
+    consensus_filename = Path(run_dir, TRACK_FOLDER, "consensus.tsv")
+    rank_data_subset = subset_traceback(df_output, consensus_filename)
+
+    # plotting the traceback dataframe
+    plot_filename = Path(run_dir, TRACK_FOLDER, "traceback.html")
+    make_traceback_plot(rank_data_subset, plot_filename)
     return
 
 

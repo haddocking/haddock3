@@ -28,12 +28,15 @@ much better and the sampling can be limited. In *ab-initio* mode, however, very
 diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
 """
+
+from datetime import datetime
 from pathlib import Path
 
-from haddock.core.typing import FilePath
+from haddock.core.typing import FilePath, Sequence, Union
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libparallel import GenericTask, Scheduler
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -58,6 +61,111 @@ class HaddockModule(BaseCNSModule):
     def confirm_installation(cls) -> None:
         """Confirm module is installed."""
         return
+
+    def make_cns_jobs(
+        self,
+        inp_list: Sequence[
+            tuple[list[PDBFile], Union[Path, str], Union[str, None], int]
+        ],
+    ) -> list[CNSJob]:
+        jobs = []
+        for idx, e in enumerate(inp_list, start=1):
+            combination, inp_input, ambig_fname, seed = e
+
+            log_fname = f"rigidbody_{idx}.out"
+            output_pdb_fname = f"rigidbody_{idx}.pdb"
+
+            # Create a model for the expected output
+            model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
+            model.topology = [e.topology for e in combination]
+            model.seed = seed  # type: ignore
+            self.output_models.append(model)
+
+            job = CNSJob(inp_input, log_fname, envvars=self.envvars)
+            jobs.append(job)
+        return jobs
+
+    def prepare_cns_input_sequential(
+        self,
+        models_to_dock: list[list[PDBFile]],
+        sampling_factor: int,
+        ambig_fnames: Union[list, None],
+    ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
+        _l = []
+        idx = 1
+        for combination in models_to_dock:
+            for _ in range(sampling_factor):
+                # assign ambig_fname
+                if ambig_fnames:
+                    ambig_fname = ambig_fnames[idx - 1]
+                else:
+                    ambig_fname = self.params["ambig_fname"]
+                # prepare cns input
+                seed = self.params["iniseed"] + idx
+                rigidbody_input = prepare_cns_input(
+                    idx,
+                    combination,
+                    self.path,
+                    self.recipe_str,
+                    self.params,
+                    "rigidbody",
+                    ambig_fname=ambig_fname,
+                    default_params_path=self.toppar_path,
+                    native_segid=True,
+                    less_io=self.params["less_io"],
+                    seed=seed,
+                )
+                _l.append((combination, rigidbody_input, ambig_fname, seed))
+
+                idx += 1
+        return _l
+
+    def prepare_cns_input_parallel(
+        self,
+        models_to_dock: list[list[PDBFile]],
+        sampling_factor: int,
+        ambig_fnames: Union[list, None],
+    ) -> list[tuple[list[PDBFile], Union[Path, str], Union[str, None], int]]:
+        prepare_tasks = []
+        _l = []
+        idx = 1
+        for combination in models_to_dock:
+            for _ in range(sampling_factor):
+                ambig_fname = (
+                    ambig_fnames[idx - 1]
+                    if ambig_fnames
+                    else self.params["ambig_fname"]
+                )
+                seed = self.params["iniseed"] + idx
+                task = GenericTask(
+                    function=prepare_cns_input,
+                    model_number=idx,
+                    input_element=combination,
+                    step_path=self.path,
+                    recipe_str=self.recipe_str,
+                    defaults=self.params,
+                    identifier="rigidbody",
+                    ambig_fname=ambig_fname,
+                    native_segid=True,
+                    default_params_path=self.toppar_path,
+                    less_io=self.params["less_io"],
+                    seed=seed,
+                )
+
+                prepare_tasks.append(task)
+                _l.append((combination, task, ambig_fname, seed))
+                idx += 1
+        Engine = get_engine(self.params["mode"], self.params)
+        prepare_engine = Engine(prepare_tasks)
+        prepare_engine.run()
+
+        # Replace the task with the result of the task
+        l = []
+        assert isinstance(prepare_engine, Scheduler)
+        for element, task_result in zip(_l, prepare_engine.results):
+            l.append((element[0], task_result, element[2], element[3]))
+
+        return l
 
     def _run(self) -> None:
         """Execute module."""
@@ -87,7 +195,7 @@ class HaddockModule(BaseCNSModule):
 
         # get all the different ambig files
         prev_ambig_fnames = [None for model in range(self.params["sampling"])]
-        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
         # if no files are found, we will stick to self.params["ambig_fname"]
         if diff_ambig_fnames:
             n_diffs = len(diff_ambig_fnames)
@@ -97,44 +205,23 @@ class HaddockModule(BaseCNSModule):
         else:
             ambig_fnames = None
 
-        # Prepare the jobs
-        idx = 1
+        start = datetime.now()
         self.output_models: list[PDBFile] = []
         self.log("Preparing jobs...")
-        for combination in models_to_dock:
-            for _i in range(sampling_factor):
-                # assign ambig_fname
-                if ambig_fnames:
-                    ambig_fname = ambig_fnames[idx - 1]
-                else:
-                    ambig_fname = self.params["ambig_fname"]
-                # prepare cns input
-                inp_file = prepare_cns_input(
-                    idx,
-                    combination,
-                    self.path,
-                    self.recipe_str,
-                    self.params,
-                    "rigidbody",
-                    ambig_fname=ambig_fname,
-                    default_params_path=self.toppar_path,
-                    native_segid=True,
-                )
+        if self.params["mode"] == "batch":
+            cns_input = self.prepare_cns_input_sequential(
+                models_to_dock, sampling_factor, ambig_fnames  # type: ignore
+            )
 
-                log_fname = f"rigidbody_{idx}.out"
-                output_pdb_fname = f"rigidbody_{idx}.pdb"
+        else:
+            cns_input = self.prepare_cns_input_parallel(
+                models_to_dock, sampling_factor, ambig_fnames  # type: ignore
+            )
+        end = datetime.now()
 
-                # Create a model for the expected output
-                model = PDBFile(
-                    output_pdb_fname, path=".", restr_fname=ambig_fname
-                )
-                model.topology = [e.topology for e in combination]
-                self.output_models.append(model)
+        self.log(f"Preparation took {(end - start).total_seconds()} seconds")
 
-                job = CNSJob(inp_file, log_fname, envvars=self.envvars)
-                jobs.append(job)
-
-                idx += 1
+        jobs = self.make_cns_jobs(cns_input)
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")

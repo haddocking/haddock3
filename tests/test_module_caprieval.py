@@ -851,6 +851,16 @@ def test_protprot_1bkd_swapped_chains(protprot_1bkd_caprimodule):
     protprot_1bkd_caprimodule.calc_ilrmsd()
     assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 16.33, atol=0.01)
 
+
+def test_protdna_swapped_chains(protdna_caprimodule):
+    """Test protein-dna l-rmsd and ilrmsd calculation with swapped chains."""
+    protdna_caprimodule.r_chain = "B"
+    protdna_caprimodule.l_chain = "A"
+    protdna_caprimodule.calc_lrmsd()
+    assert np.isclose(protdna_caprimodule.lrmsd, 4.81, atol=0.01)
+    protdna_caprimodule.calc_ilrmsd()
+    assert np.isclose(protdna_caprimodule.ilrmsd, 4.91, atol=0.01)
+
     
 def test_capri_run(mocker):
 

@@ -1,14 +1,11 @@
 """Test the rmsdmatrix module."""
-import os
 from pathlib import Path
 
 import numpy as np
 import pytest
 import pytest_mock  # noqa : F401
-import shutil
 import tempfile
 
-from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.ilrmsdmatrix import DEFAULT_CONFIG as ilrmsd_pars
 from haddock.modules.analysis.ilrmsdmatrix import (
     HaddockModule as IlrmsdmatrixModule,
@@ -17,8 +14,6 @@ from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     ContactJob,
     Contact,
     )
-
-from . import golden_data
 
 from .test_module_caprieval import protprot_input_list, protprot_onechain_list  # noqa : F401
 

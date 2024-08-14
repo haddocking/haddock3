@@ -2096,7 +2096,7 @@ nfle:
     If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables
     and segment ID (segid) in the fle_seg_* variable.
   group: 'flexibility'
-  explevel: expert
+  explevel: hidden
 fle_sta_1:
   default: .nan
   type: integer

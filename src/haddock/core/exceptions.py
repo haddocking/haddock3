@@ -53,3 +53,25 @@ class HaddockTermination(HaddockError):
     """Terminates HADDOCK."""
 
     pass
+
+
+class DependencyError(ModuleError):
+    """Error throw when required dependency not satisfied."""
+
+    def __init__(
+            self,
+            msg: str = "",
+            module: str = "",
+            dependency: str = "",
+            ):
+        self.message = msg
+        self.module = module
+        self.dependency = dependency
+
+    def __str__(self) -> str:
+        additions: str = ""
+        if self.module:
+            additions += f"Module `{self.module}` -> "
+        if self.dependency:
+            additions += f"Required dependency `{self.dependency}`"
+        return f"{self.message} {additions}"

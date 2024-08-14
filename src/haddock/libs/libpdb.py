@@ -17,8 +17,11 @@ from haddock.core.typing import (
     Optional,
     Union,
     )
-from haddock.libs.libio import working_directory
-from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
+from haddock.libs.libutil import (
+    get_result_or_same_in_list,
+    sort_numbered_paths,
+    working_directory,
+    )
 
 
 slc_record = slice(0, 6)
@@ -110,8 +113,10 @@ _to_rename = {
 _to_keep = list(supported_residues)
 
 
-def split_ensemble(pdb_file_path: Path,
-                   dest: Optional[FilePath] = None) -> list[Path]:
+def split_ensemble(
+        pdb_file_path: Path,
+        dest: Optional[FilePath] = None,
+        ) -> list[Path]:
     """
     Split a multimodel PDB file into different structures.
 
@@ -119,15 +124,53 @@ def split_ensemble(pdb_file_path: Path,
     ----------
     dest : str or pathlib.Path
         Destination folder.
+    
+    Returns
+    -------
+    pdb_files_list : list[Path]
+        List of pdb file(s).
     """
     if dest is None:
         dest = Path.cwd()
-    assert pdb_file_path.is_file(), pdb_file_path
+    assert pdb_file_path.is_file(), \
+        f"File '{pdb_file_path}' could not be found in file system."
     with open(pdb_file_path) as input_handler:
         with working_directory(dest):
             split_model(input_handler)
+            pdb_files_list = sort_numbered_paths(
+                *get_new_models(pdb_file_path)
+                )
+    pdb_files_path = [Path(dest, pdb_fname) for pdb_fname in pdb_files_list]
+    return pdb_files_path
 
-    return sort_numbered_paths(*get_new_models(pdb_file_path))
+
+def count_models(pdb_file_path: FilePath) -> int:
+    """Count number of models in a pdb file.
+    
+    Read filepath and return number of models found in it.
+    If none (not an ensemble), 1 is returned.
+
+    Parameters
+    ----------
+    pdb_file_path : FilePath (Union[str, Path])
+        Path to the pdb file to analyse.
+    
+    Returns
+    -------
+    nb_models : int
+        The number of models found in this pdb file.
+    """
+    models_starts: int = 0
+    model_ends: int = 0
+    with open(pdb_file_path, 'r') as filin:
+        for line in filin:
+            if line.startswith("ENDMDL"):
+                model_ends += 1
+            elif line.startswith("MODEL"):
+                models_starts += 1
+    nb_models = max(1, model_ends)
+    assert max(1, models_starts) == nb_models
+    return nb_models
 
 
 def split_by_chain(pdb_file_path: FilePath) -> list[Path]:
@@ -164,7 +207,8 @@ def swap_segid_chain(pdb_file_path: FilePath,
 def sanitize(
         pdb_file_path: FilePathT,
         overwrite: bool = True,
-        custom_topology: Optional[FilePath] = None) -> Union[FilePathT, Path]:
+        custom_topology: Optional[FilePath] = None,
+        ) -> Union[FilePathT, Path]:
     """Sanitize a PDB file."""
     if custom_topology:
         custom_res_to_keep = get_supported_residues(custom_topology)
@@ -179,7 +223,7 @@ def sanitize(
                 for tag, new_tag in _to_rename.items():
                     line = line.replace(tag, new_tag)
                 # check if this residue is known
-                res = line[17:20].strip()
+                res = line[slc_resname].strip()
                 if res and res in _to_keep:
                     good_lines.append(line)
         if len(good_lines) > 0 and good_lines[-1] != "END":
@@ -206,11 +250,11 @@ def identify_chainseg(pdb_file_path: FilePath,
         for line in input_handler:
             if line.startswith(("ATOM  ", "HETATM")):
                 try:
-                    segid = line[72:76].strip()[:1]
+                    segid = line[slc_segid].strip()[:1]
                 except IndexError:
                     segid = ""
                 try:
-                    chainid = line[21].strip()
+                    chainid = line[slc_chainid].strip()
                 except IndexError:
                     chainid = ""
 
@@ -221,7 +265,8 @@ def identify_chainseg(pdb_file_path: FilePath,
                 
                 if not segid and not chainid:
                     raise ValueError(
-                        f"Could not identify chainID or segID in pdb {pdb_file_path}, line {line}"
+                        "Could not identify chainID or segID"
+                        f" in pdb {pdb_file_path}, line {line}"
                         )
 
     if sort:
@@ -246,8 +291,10 @@ def get_new_models(pdb_file_path: FilePath) -> list[Path]:
     return new_models
 
 
-def get_pdb_file_suffix_variations(file_name: FilePath,
-                                   sep: str = "_") -> list[Path]:
+def get_pdb_file_suffix_variations(
+        file_name: FilePath,
+        sep: str = "_",
+        ) -> list[Path]:
     """
     List suffix variations of a PDB file in the current path.
 

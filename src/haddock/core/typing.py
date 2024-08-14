@@ -31,6 +31,7 @@ from typing import (
     Iterable,
     Iterator,
     Literal,
+    List,
     Mapping,
     MutableMapping,
     Optional,

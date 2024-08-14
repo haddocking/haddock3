@@ -1,6 +1,10 @@
 """Test yaml2cfg gear."""
 import filecmp
+import re
+import os
+import pytest
 from pathlib import Path
+from fnmatch import fnmatch
 
 from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
@@ -10,6 +14,17 @@ from . import (
     haddock3_yaml_converted,
     haddock3_yaml_converted_no_header,
     )
+
+@pytest.fixture
+def default_yaml_files():
+    """Return list of defaults.yaml file withing the haddock src directory."""
+    all_defaults_yaml: list[str] = []
+    default_yaml_fname = "defaults.yaml"
+    for path, _subdirs, files in os.walk('../src/haddock/'):
+        for name in files:
+            if fnmatch(name, default_yaml_fname):
+                all_defaults_yaml.append(f"{path}/{default_yaml_fname}")
+    return all_defaults_yaml
 
 
 complex_cfg = {
@@ -97,3 +112,19 @@ def test_yaml2cfg_test_no_header():
         shallow=False,
         )
     p.unlink()
+
+
+def test_yaml_duplicated_params(default_yaml_files):
+    """Make sure no duplicated parameters are present in a ymal file."""
+    # Build regular expression
+    yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
+    for yaml_fpath in default_yaml_files:
+        # Loop over default yaml files
+        parsed_param_names: dict[str, int] = {}
+        with open(yaml_fpath, 'r') as filin:
+            yaml_content = filin.readlines()
+        for i, line in enumerate(yaml_content, start=1):
+            if (match := yaml_param_regex.search(line)):
+                param_name = match.group(1)
+                assert param_name not in parsed_param_names.keys(), f"Parameter '{param_name}' in {yaml_fpath} has duplicates: l.{parsed_param_names[param_name]} and l.{i}"  # noqa : E501
+                parsed_param_names[param_name] = i

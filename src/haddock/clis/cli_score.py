@@ -18,8 +18,8 @@ Usage::
 """
 import argparse
 import sys
-import tempfile
 
+from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -103,7 +103,72 @@ def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
 
 def maincli() -> None:
     """Execute main client."""
-    cli(ap, main)
+    cli(_ap(), main)
+
+
+def get_parameters(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Obtain and validate command line arguments and add defaults one.
+
+    Parameters
+    ----------
+    kwargs : dict[str, Any]
+        Command line arguments (supposed to be emsocring parameters)
+
+    Return
+    ------
+    ems_dict : dict[str, Any]
+        Default parameters updated by command line arguments.
+    """
+    from os import linesep
+    from haddock.gear.yaml2cfg import read_from_yaml_config
+    from haddock.modules.scoring.emscoring import DEFAULT_CONFIG
+    # check all parameters are correctly spelled.
+    default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
+    ems_dict = default_emscoring.copy()
+    n_warnings = 0
+    for param, value in kwargs.items():
+        if param not in default_emscoring:
+            raise ConfigurationError(
+                f"* ERROR * Parameter {param!r} is not a "
+                f"valid `emscoring` parameter.{linesep}"
+                "Valid emscoring parameters are: "
+                f"{', '.join(sorted(default_emscoring))}"
+                )
+        if value != default_emscoring[param]:
+            print(
+                f"* ATTENTION * Value ({value}) of parameter {param} "
+                f"different from default ({default_emscoring[param]})"
+                )
+            # convert the value to the same type
+            if isinstance(default_emscoring[param], bool):
+                # In the case of boolean type
+                if value.lower() not in ["true", "false"]:
+                    raise ConfigurationError(
+                        f"* ERROR * Boolean parameter {param} "
+                        "should be True or False"
+                        )
+                # convert into pythonic True or False
+                value = value.lower() == "true"
+            else:
+                # Cast value into specific python3 type
+                default_type = type(default_emscoring[param])
+                try:
+                    value = default_type(value)
+                except ValueError:
+                    raise ConfigurationError(
+                        f"* ERROR * parameter '{param}' must be of "
+                        f"type '{default_type.__name__}'"
+                        )
+            ems_dict[param] = value
+            n_warnings += 1
+    if n_warnings != 0:
+        print(
+            "* ATTENTION * Non-default parameter values were used. "
+            "They should be properly reported if the output "
+            "data are used for publication."
+            )
+        print(f"used emscoring parameters: {ems_dict}")
+    return ems_dict
 
 
 def main(
@@ -143,19 +208,16 @@ def main(
         Any additional arguments that will be passed to the ``emscoring``
         module.
     """
-    import os
     import logging
     import shutil
     from contextlib import suppress
     from pathlib import Path
 
     from haddock import log
+    from haddock.core.defaults import DATA_DIRNAME
     from haddock.gear.haddockmodel import HaddockModel
-    from haddock.gear.yaml2cfg import read_from_yaml_config
-    from haddock.gear.zerofill import zero_fill
     from haddock.libs.libio import working_directory
     from haddock.libs.libworkflow import WorkflowManager
-    from haddock.modules.scoring.emscoring import DEFAULT_CONFIG
 
     log.setLevel(logging.ERROR)
 
@@ -163,81 +225,49 @@ def main(
     if not input_pdb.exists():
         sys.exit(f"* ERROR * Input PDB file {str(input_pdb)!r} does not exist")
 
-    # config all parameters are correctly spelled.
-    default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
-    ems_dict = default_emscoring.copy()
-    n_warnings = 0
-    for param, value in kwargs.items():
-        if param not in default_emscoring:
-            sys.exit(
-                f"* ERROR * Parameter {param!r} is not a "
-                f"valid `emscoring` parameter.{os.linesep}"
-                f"Valid emscoring parameters are: {', '.join(sorted(default_emscoring))}"
-                )
-        if value != default_emscoring[param]:
-            print(
-                f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})"
-            )  # noqa:E501
-            # get the type of default value
-            default_type = type(default_emscoring[param])
-            # convert the value to the same type
-            if default_type == bool:
-                if value.lower() not in ["true", "false"]:
-                    sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
-                value = value.lower() == "true"
-            else:
-                value = default_type(value)
-            ems_dict[param] = value
-            n_warnings += 1
-    if n_warnings != 0:
-        print(
-            "* ATTENTION * Non-default parameter values were used. "
-            "They should be properly reported if the output "
-            "data are used for publication."
-            )
-        print(f"used emscoring parameters: {ems_dict}")
+    # Get parameters
+    try:
+        ems_dict = get_parameters(kwargs)
+    except ConfigurationError as config_error:
+        sys.exit(config_error)
 
     # create run directory
     run_dir = Path(run_dir)
     with suppress(FileNotFoundError):
         shutil.rmtree(run_dir)
     run_dir.mkdir()
-    zero_fill.set_zerofill_number(2)
+    # create a copy of the input pdb in run directory
+    input_molecule_dir = Path(run_dir, DATA_DIRNAME, "0_topoaa")
+    input_molecule_dir.mkdir(parents=True, exist_ok=True)
+    input_pdb_copy = Path(input_molecule_dir, input_pdb.name)
+    shutil.copy(input_pdb, input_pdb_copy)
 
-    # create temporary file
-    with tempfile.NamedTemporaryFile(prefix=input_pdb.stem, suffix=".pdb") as tmp:
-
-        # create a copy of the input pdb
-        input_pdb_copy = Path(tmp.name)
-        shutil.copy(input_pdb, input_pdb_copy)
-    
-        params = {
-            "topoaa": {"molecules": [input_pdb_copy]},
-            "emscoring": ems_dict,
+    # Set workflow parameters
+    params = {
+        "topoaa": {"molecules": [input_pdb_copy]},
+        "emscoring": ems_dict,
         }
-
+    # run workflow
+    with working_directory(run_dir):
+        workflow = WorkflowManager(
+            workflow_params=params,
+            start=0,
+            run_dir=run_dir,
+        )
         print("> starting calculations...")
+        workflow.run()
 
-        # run workflow
-        with working_directory(run_dir):
-            workflow = WorkflowManager(
-                workflow_params=params,
-                start=0,
-                run_dir=run_dir,
-            )
-
-            workflow.run()
-
-    minimized_mol = Path(run_dir, "1_emscoring", "emscoring_1.pdb")
-    haddock_score_component_dic = HaddockModel(minimized_mol).energies
-
+    # Point generated structure path
+    minimized_mol_path = Path(run_dir, "1_emscoring", "emscoring_1.pdb")
+    haddock_score_component_dic = HaddockModel(minimized_mol_path).energies
+    # Gather haddock score components
     vdw = haddock_score_component_dic["vdw"]
     elec = haddock_score_component_dic["elec"]
     desolv = haddock_score_component_dic["desolv"]
     air = haddock_score_component_dic["air"]
     bsa = haddock_score_component_dic["bsa"]
 
-    # emscoring is equivalent to itw
+    # Weight the components to obtain the HADDOCK score
     haddock_score_itw = (
         ems_dict["w_vdw"] * vdw
         + ems_dict["w_elec"] * elec

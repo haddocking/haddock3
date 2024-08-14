@@ -386,14 +386,15 @@ def process_pdbs(
             residues=set.union(
                 supported_HETATM,
                 user_supported_residues or set(),
+                ),
             ),
-        ),
         convert_HETATM_to_ATOM,
         partial(wrep_pdb_fixinsert, option_list=[]),
         #####
         partial(
-            remove_unsupported_hetatm, user_defined=user_supported_residues
-        ),  # noqa: E501
+            remove_unsupported_hetatm,
+            user_defined=user_supported_residues,
+            ),
         partial(remove_unsupported_atom),
         ####
         # partial(wrep_pdb_shiftres, shifting_factor=0),
@@ -401,7 +402,7 @@ def process_pdbs(
         wrep_pdb_tidy,
         ###
         wrep_rstrip,
-    ]
+        ]
 
     # these functions take the whole PDB content, evaluate it, and
     # modify it if needed.
@@ -455,7 +456,7 @@ wrep_pdb_tidy = _report("pdb_tidy")(pdb_tidy.run)
 wrep_pdb_tidy_strict = _report("pdb_tidy")(partial(pdb_tidy.run, strict=True))
 wrep_rstrip = _report("str.rstrip")(
     partial(map, lambda x: x.rstrip(linesep))
-)  # noqa: E501
+    )
 
 
 @_report("Replacing HETATM to ATOM for residue {!r}")

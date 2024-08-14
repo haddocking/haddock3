@@ -16,7 +16,7 @@ from tests import golden_data
 def rigidbody_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         rigidbody = RigidbodyModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_RIGIDBODY_CONFIG
+            order=1, path=Path(tmpdir), initial_params=DEFAULT_RIGIDBODY_CONFIG
         )
         yield rigidbody
 

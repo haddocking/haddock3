@@ -1,31 +1,57 @@
 import tempfile
-from pathlib import Path
-
 import pytest
+from pathlib import Path
+from shutil import copyfile
 
-from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
-from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
+from haddock.core.defaults import DATA_DIRNAME
+from haddock.libs.libio import working_directory
+from haddock.modules.topology.topoaa import (
+    DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG,
+    HaddockModule as TopoaaModule,
+    )
 
 from . import CNS_EXEC, DATA_DIR, has_cns
 
 
 @pytest.fixture
-def topoaa_module():
-    with tempfile.TemporaryDirectory() as tmpdir:
-        topoaa = TopoaaModule(
-            order=0, path=tmpdir, initial_params=DEFAULT_TOPOAA_CONFIG
-        )
-        topoaa.__init__(path=tmpdir, order=0)
-        topoaa.params["molecules"] = [
-            Path(DATA_DIR, "docking-protein-protein/data/e2aP_1F3G.pdb"),
-            Path(DATA_DIR, "docking-protein-protein/data/hpr_ensemble.pdb"),
+def molecules():
+    return [
+        Path(DATA_DIR, "docking-protein-protein/data/e2aP_1F3G.pdb"),
+        Path(DATA_DIR, "docking-protein-protein/data/hpr_ensemble.pdb"),
         ]
-        topoaa.params["mol1"] = {"prot_segid": "A"}
-        topoaa.params["mol2"] = {"prot_segid": "B"}
 
-        topoaa.params["cns_exec"] = CNS_EXEC
 
-        yield topoaa
+@pytest.fixture
+def prepare_topoaa_run(molecules):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with working_directory(tmpdir):
+            modulename_path = Path("0_topoaa")
+            modulename_path.mkdir(parents=True)
+            input_dir_path = Path(DATA_DIRNAME, modulename_path)
+            input_dir_path.mkdir(parents=True)
+            mol_copies = [
+                copyfile(mol, Path(input_dir_path, mol.name))
+                for mol in molecules
+                ]
+            yield modulename_path, mol_copies
+
+
+@pytest.fixture
+def topoaa_module(prepare_topoaa_run):
+    modulename_path = prepare_topoaa_run[0]
+    mol_copies = prepare_topoaa_run[1]
+    topoaa = TopoaaModule(
+        order=0,
+        path=modulename_path,
+        initial_params=DEFAULT_TOPOAA_CONFIG,
+        )
+    topoaa.params["molecules"] = mol_copies
+    topoaa.params["mol1"] = {"prot_segid": "A"}
+    topoaa.params["mol2"] = {"prot_segid": "B"}
+
+    topoaa.params["cns_exec"] = CNS_EXEC
+
+    yield topoaa
 
 
 @has_cns

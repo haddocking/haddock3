@@ -96,6 +96,7 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libplots</span> <span class="kn">import</span> <span class="n">read_capri_table</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
 
+
 <div class="viewcode-block" id="handle_ss_file"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libinteractive.html#haddock.libs.libinteractive.handle_ss_file">[docs]</a><span class="k">def</span> <span class="nf">handle_ss_file</span><span class="p">(</span>
         <span class="n">df_ss</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
@@ -122,16 +123,17 @@
     <span class="n">df_ss_grouped</span> <span class="o">=</span> <span class="n">df_ss</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;cluster_id&quot;</span><span class="p">)</span>
     <span class="c1"># calculate the mean and standard deviation of the first 4 elements</span>
     <span class="c1"># of each group</span>
-    <span class="n">new_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">df_ss_grouped</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">new_values</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># loop over df_ss_grouped with enumerate</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">clt_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_ss_grouped</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">clt_id</span> <span class="ow">in</span> <span class="n">df_ss_grouped</span><span class="p">:</span>
         <span class="n">ave_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">clt_id</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
         <span class="n">std_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">clt_id</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>
-        <span class="n">new_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ave_score</span><span class="p">,</span> <span class="n">std_score</span><span class="p">,</span> <span class="n">clt_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">new_values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ave_score</span><span class="p">,</span> <span class="n">std_score</span><span class="p">,</span> <span class="n">clt_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
     <span class="c1"># get the index that sorts the array by the first column</span>
-    <span class="n">clt_ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">new_values</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">new_values_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_values</span><span class="p">)</span>
+    <span class="n">clt_ranks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">new_values_arr</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
     <span class="c1"># the ranked clusters are the third column of the new_values array</span>
-    <span class="n">clt_sorted</span> <span class="o">=</span> <span class="n">new_values</span><span class="p">[</span><span class="n">clt_ranks</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">clt_sorted</span> <span class="o">=</span> <span class="n">new_values_arr</span><span class="p">[</span><span class="n">clt_ranks</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
     <span class="n">clt_ranks_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">clt_sorted</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clt_sorted</span><span class="p">))}</span>
     <span class="c1"># adjust clustering values if there are clusters</span>
     <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df_ss</span><span class="p">[</span><span class="s2">&quot;cluster_id&quot;</span><span class="p">]))</span> <span class="o">!=</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]:</span>
@@ -295,7 +297,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 05, 2024.
+      <span class="lastupdated">Last updated on Aug 14, 2024.
       </span></p>
   </div>
 

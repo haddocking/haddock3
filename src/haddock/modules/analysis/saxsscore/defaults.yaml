@@ -69,7 +69,7 @@ cst:
   group: "scoring"
   explevel: expert
 atsas_path:
-  default: ""
+  default: "~/software/ATSAS"
   type: string
   minchars: 5
   maxchars: 4095

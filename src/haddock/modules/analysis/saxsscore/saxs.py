@@ -6,13 +6,14 @@ from os import linesep
 from haddock.libs.libontology import PDBFile
 
 
-def run_crysol(
-    atsas_path: Path, input_f: Path, saxs_data: Path, lm: float, ns: float
-) -> None:
+def run_crysol(atsas_path: Path, input_f: Path, saxs_data: Path, 
+               lm: float, ns: float, cst: bool) -> None:
     """Use CRYSOL to calculate fit of a HADDOCK model to SAXS data."""
     
     crysol_exec = f"{atsas_path}/bin/crysol"
     cmd = f"{crysol_exec} {input_f} {saxs_data} -lm {lm} -ns {ns}"
+    if cst:
+        cmd += " --constant"
     subprocess.call(
         cmd,
         shell=True,
@@ -41,8 +42,8 @@ def read_chi2(fit_file: Path) -> float:
     return chi2
 
 
-def calculate_haddocksaxs_score(
-    score: float, chi2: float, w_haddock: float, w_saxs: float) -> float:
+def calculate_haddocksaxs_score(score: float, chi2: float, 
+                                w_haddock: float, w_saxs: float) -> float:
     """Calculate HADDOCKsaxs based on previous HADDOCK score and Chi^2."""
 
     chi = math.sqrt(chi2)

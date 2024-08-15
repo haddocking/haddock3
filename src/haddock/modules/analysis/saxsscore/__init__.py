@@ -75,6 +75,7 @@ class HaddockModule(BaseHaddockModule):
                 saxs_data=saxs_data,
                 lm=lm,
                 ns=ns,
+                cst=cst,
             )
 
             # Read Chi^2 value

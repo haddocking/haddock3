@@ -76,8 +76,8 @@ def generate_topology(
     cg_pdb_name = aa2cg.martinize(input_pdb, output_path, True)
 
     output = prepare_output(
-        output_pdb_filename=f"{cg_pdb_name[:-4]}_TEST{input_pdb.suffix}",
-        output_psf_filename=f"{cg_pdb_name[:-4]}_TEST.{Format.TOPOLOGY}",
+        output_pdb_filename=f"{cg_pdb_name[:-4]}_processed{input_pdb.suffix}",
+        output_psf_filename=f"{cg_pdb_name[:-4]}_processed.{Format.TOPOLOGY}",
     )
 
     input_str = prepare_single_input(str(cg_pdb_name))
@@ -265,8 +265,6 @@ class HaddockModule(BaseCNSModule):
                     write_to_disk=not self.params["less_io"],
                 )
 
-                print(topocg_input)
-
                 self.log("Topology CNS input created")
 
                 # Add new job to the pool
@@ -278,8 +276,6 @@ class HaddockModule(BaseCNSModule):
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
                 )
-
-                print(f"{model.stem}.{Format.CNS_OUTPUT}")
 
                 jobs.append(job)
 
@@ -308,9 +304,8 @@ class HaddockModule(BaseCNSModule):
                     md5_hash = md5_dic[model_id]
 
                 model_name = model.stem
-                processed_pdb = Path(f"{model_name}_cg_TEST.{Format.PDB}")
-                processed_topology = Path(f"{model_name}_cg_TEST.{Format.TOPOLOGY}")
-                print(processed_pdb, processed_topology)
+                processed_pdb = Path(f"{model_name}_cg_processed.{Format.PDB}")
+                processed_topology = Path(f"{model_name}_cg_processed.{Format.TOPOLOGY}")
 
                 # Check if origin or md5 is available
                 if md5_hash or model_id in origin_names.keys():
@@ -320,16 +315,15 @@ class HaddockModule(BaseCNSModule):
                     else:
                         prefix_name = origin_names[model_id]
                     # Check if topology and file created
-                    print(processed_pdb.exists(),processed_topology.exists() )
                     if processed_pdb.exists() and processed_topology.exists():
                         # Build new filename
                         model_name = f"{prefix_name}_from_{model_name}"
                         # Rename files
                         processed_pdb = processed_pdb.rename(
-                            f"{model_name}_haddock_cg_TEST.{Format.PDB}"
+                            f"{model_name}_haddock_cg_processed.{Format.PDB}"
                         )
                         processed_topology = processed_topology.rename(
-                            f"{model_name}_haddock_cg_TEST.{Format.TOPOLOGY}"
+                            f"{model_name}_haddock_cg_processed.{Format.TOPOLOGY}"
                         )
 
                 topology = TopologyFile(processed_topology, path=".")

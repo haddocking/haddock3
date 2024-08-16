@@ -561,7 +561,6 @@ def martinize(input_pdb, output_path, skipss):
     cg_model = structure_builder.get_structure()
 
     # Write CG structure
-    #cg_pdb_name = os.path.realpath(f"{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb")
     cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
     io.set_structure(cg_model)
     io.save(cg_pdb_name, write_end=1)

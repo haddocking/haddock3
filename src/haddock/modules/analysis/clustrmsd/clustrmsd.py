@@ -385,10 +385,10 @@ def order_clusters(cluster_arr):
     
     # delete -1 from sorted_clusters if present
     sorted_clusters = sorted_clusters[sorted_clusters != -1]
-    clusters = []
     for c in sorted_clusters:
         cluster_arr[cluster_arr == c] = -c
-    for i, c in enumerate(sorted_clusters):
-        clusters.append(i + 1)
-        cluster_arr[cluster_arr == -c] = i + 1
+    clusters = []
+    for ci, c in enumerate(sorted_clusters, start=1):
+        clusters.append(ci)
+        cluster_arr[cluster_arr == -c] = ci
     return clusters, cluster_arr

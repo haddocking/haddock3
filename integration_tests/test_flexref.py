@@ -66,7 +66,7 @@ class MockPreviousIO:
         return None
 
 
-def test_flexref_defaults(flexref_module):
+def test_flexref_defaults(flexref_module, run_dockq_analysis):
 
     flexref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -75,8 +75,17 @@ def test_flexref_defaults(flexref_module):
     assert Path(flexref_module.path, "flexref_1.pdb").exists()
     assert Path(flexref_module.path, "flexref_1.out.gz").exists()
 
+    dockq_analysis = run_dockq_analysis(
+        model=Path(flexref_module.path, "flexref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.65, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(1.4, abs=0.5)
+    assert dockq_analysis["fnat"] == pytest.approx(0.9, abs=0.1)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(7.1, abs=0.1)
 
-def test_flexref_fle(flexref_module):
+
+def test_flexref_fle(flexref_module, run_dockq_analysis):
 
     flexref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -90,8 +99,17 @@ def test_flexref_fle(flexref_module):
     assert Path(flexref_module.path, "flexref_1.pdb").exists()
     assert Path(flexref_module.path, "flexref_1.out.gz").exists()
 
+    dockq_analysis = run_dockq_analysis(
+        model=Path(flexref_module.path, "flexref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.65, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(1.4, abs=0.5)
+    assert dockq_analysis["fnat"] == pytest.approx(0.9, abs=0.1)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(6.0, abs=1.0)
 
-def test_flexref_mutliple_fle(flexref_module):
+
+def test_flexref_mutliple_fle(flexref_module, run_dockq_analysis):
 
     flexref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -108,3 +126,12 @@ def test_flexref_mutliple_fle(flexref_module):
 
     assert Path(flexref_module.path, "flexref_1.pdb").exists()
     assert Path(flexref_module.path, "flexref_1.out.gz").exists()
+
+    dockq_analysis = run_dockq_analysis(
+        model=Path(flexref_module.path, "flexref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.65, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(1.4, abs=0.5)
+    assert dockq_analysis["fnat"] == pytest.approx(0.9, abs=0.1)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(7.1, abs=0.1)

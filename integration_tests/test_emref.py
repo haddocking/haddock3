@@ -5,9 +5,7 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.modules.refinement.emref import (
-    DEFAULT_CONFIG as DEFAULT_EMREF_CONFIG,
-)
+from haddock.modules.refinement.emref import DEFAULT_CONFIG as DEFAULT_EMREF_CONFIG
 from haddock.modules.refinement.emref import HaddockModule as FlexrefModule
 
 from . import golden_data
@@ -66,7 +64,7 @@ class MockPreviousIO:
         return None
 
 
-def test_emref_defaults(emref_module):
+def test_emref_defaults(emref_module, run_dockq_analysis):
 
     emref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -75,8 +73,17 @@ def test_emref_defaults(emref_module):
     assert Path(emref_module.path, "emref_1.pdb").exists()
     assert Path(emref_module.path, "emref_1.out.gz").exists()
 
+    dockq_analysis = run_dockq_analysis(
+        model=Path(emref_module.path, "emref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.95, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(0.45, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.90, abs=0.05)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(0.50, abs=0.05)
 
-def test_emref_fle(emref_module):
+
+def test_emref_fle(emref_module, run_dockq_analysis):
 
     emref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -90,8 +97,17 @@ def test_emref_fle(emref_module):
     assert Path(emref_module.path, "emref_1.pdb").exists()
     assert Path(emref_module.path, "emref_1.out.gz").exists()
 
+    dockq_analysis = run_dockq_analysis(
+        model=Path(emref_module.path, "emref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.95, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(0.45, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.90, abs=0.05)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(0.50, abs=0.05)
 
-def test_emref_mutliple_fle(emref_module):
+
+def test_emref_mutliple_fle(emref_module, run_dockq_analysis):
 
     emref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -108,3 +124,12 @@ def test_emref_mutliple_fle(emref_module):
 
     assert Path(emref_module.path, "emref_1.pdb").exists()
     assert Path(emref_module.path, "emref_1.out.gz").exists()
+
+    dockq_analysis = run_dockq_analysis(
+        model=Path(emref_module.path, "emref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.95, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(0.45, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.90, abs=0.05)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(0.50, abs=0.05)

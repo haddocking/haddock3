@@ -5,9 +5,7 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.modules.refinement.mdref import (
-    DEFAULT_CONFIG as DEFAULT_MDREF_CONFIG,
-)
+from haddock.modules.refinement.mdref import DEFAULT_CONFIG as DEFAULT_MDREF_CONFIG
 from haddock.modules.refinement.mdref import HaddockModule as FlexrefModule
 
 from . import golden_data
@@ -66,7 +64,7 @@ class MockPreviousIO:
         return None
 
 
-def test_mdref_defaults(mdref_module):
+def test_mdref_defaults(mdref_module, run_dockq_analysis):
 
     mdref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -75,8 +73,17 @@ def test_mdref_defaults(mdref_module):
     assert Path(mdref_module.path, "mdref_1.pdb").exists()
     assert Path(mdref_module.path, "mdref_1.out.gz").exists()
 
+    dockq_analysis = run_dockq_analysis(
+        model=Path(mdref_module.path, "mdref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.85, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(0.75, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.85, abs=0.05)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(0.85, abs=0.05)
 
-def test_mdref_fle(mdref_module):
+
+def test_mdref_fle(mdref_module, run_dockq_analysis):
 
     mdref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -90,8 +97,17 @@ def test_mdref_fle(mdref_module):
     assert Path(mdref_module.path, "mdref_1.pdb").exists()
     assert Path(mdref_module.path, "mdref_1.out.gz").exists()
 
+    dockq_analysis = run_dockq_analysis(
+        model=Path(mdref_module.path, "mdref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.85, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(0.75, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.85, abs=0.05)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(0.85, abs=0.05)
 
-def test_mdref_mutliple_fle(mdref_module):
+
+def test_mdref_mutliple_fle(mdref_module, run_dockq_analysis):
 
     mdref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -108,3 +124,12 @@ def test_mdref_mutliple_fle(mdref_module):
 
     assert Path(mdref_module.path, "mdref_1.pdb").exists()
     assert Path(mdref_module.path, "mdref_1.out.gz").exists()
+
+    dockq_analysis = run_dockq_analysis(
+        model=Path(mdref_module.path, "mdref_1.pdb"),
+        native=Path(golden_data, "protprot_complex.pdb"),
+    )
+    # assert dockq_analysis["DockQ"] == pytest.approx(0.85, abs=0.05)
+    # assert dockq_analysis["iRMSD"] == pytest.approx(0.75, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.85, abs=0.05)
+    # assert dockq_analysis["LRMSD"] == pytest.approx(0.85, abs=0.05)

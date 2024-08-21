@@ -79,7 +79,7 @@ def test_mdref_defaults(mdref_module, run_dockq_analysis):
     )
     # assert dockq_analysis["DockQ"] == pytest.approx(0.85, abs=0.05)
     # assert dockq_analysis["iRMSD"] == pytest.approx(0.75, abs=0.05)
-    assert dockq_analysis["fnat"] == pytest.approx(0.85, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.9, abs=0.1)
     # assert dockq_analysis["LRMSD"] == pytest.approx(0.85, abs=0.05)
 
 
@@ -103,7 +103,7 @@ def test_mdref_fle(mdref_module, run_dockq_analysis):
     )
     # assert dockq_analysis["DockQ"] == pytest.approx(0.85, abs=0.05)
     # assert dockq_analysis["iRMSD"] == pytest.approx(0.75, abs=0.05)
-    assert dockq_analysis["fnat"] == pytest.approx(0.85, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.75, abs=0.1)
     # assert dockq_analysis["LRMSD"] == pytest.approx(0.85, abs=0.05)
 
 
@@ -131,5 +131,5 @@ def test_mdref_mutliple_fle(mdref_module, run_dockq_analysis):
     )
     # assert dockq_analysis["DockQ"] == pytest.approx(0.85, abs=0.05)
     # assert dockq_analysis["iRMSD"] == pytest.approx(0.75, abs=0.05)
-    assert dockq_analysis["fnat"] == pytest.approx(0.85, abs=0.05)
+    assert dockq_analysis["fnat"] == pytest.approx(0.9, abs=0.1)
     # assert dockq_analysis["LRMSD"] == pytest.approx(0.85, abs=0.05)

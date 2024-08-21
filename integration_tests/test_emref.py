@@ -64,7 +64,7 @@ class MockPreviousIO:
         return None
 
 
-def test_emref_defaults(emref_module, run_dockq_analysis):
+def test_emref_defaults(emref_module, calc_fnat):
 
     emref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -73,17 +73,15 @@ def test_emref_defaults(emref_module, run_dockq_analysis):
     assert Path(emref_module.path, "emref_1.pdb").exists()
     assert Path(emref_module.path, "emref_1.out.gz").exists()
 
-    dockq_analysis = run_dockq_analysis(
+    fnat = calc_fnat(
         model=Path(emref_module.path, "emref_1.pdb"),
         native=Path(golden_data, "protprot_complex.pdb"),
     )
-    # assert dockq_analysis["DockQ"] == pytest.approx(0.95, abs=0.05)
-    # assert dockq_analysis["iRMSD"] == pytest.approx(0.45, abs=0.05)
-    assert dockq_analysis["fnat"] == pytest.approx(0.90, abs=0.05)
-    # assert dockq_analysis["LRMSD"] == pytest.approx(0.50, abs=0.05)
+
+    assert fnat == pytest.approx(0.90, abs=0.05)
 
 
-def test_emref_fle(emref_module, run_dockq_analysis):
+def test_emref_fle(emref_module, calc_fnat):
 
     emref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -97,17 +95,15 @@ def test_emref_fle(emref_module, run_dockq_analysis):
     assert Path(emref_module.path, "emref_1.pdb").exists()
     assert Path(emref_module.path, "emref_1.out.gz").exists()
 
-    dockq_analysis = run_dockq_analysis(
+    fnat = calc_fnat(
         model=Path(emref_module.path, "emref_1.pdb"),
         native=Path(golden_data, "protprot_complex.pdb"),
     )
-    # assert dockq_analysis["DockQ"] == pytest.approx(0.95, abs=0.05)
-    # assert dockq_analysis["iRMSD"] == pytest.approx(0.45, abs=0.05)
-    assert dockq_analysis["fnat"] == pytest.approx(0.90, abs=0.05)
-    # assert dockq_analysis["LRMSD"] == pytest.approx(0.50, abs=0.05)
+
+    assert fnat == pytest.approx(0.90, abs=0.05)
 
 
-def test_emref_mutliple_fle(emref_module, run_dockq_analysis):
+def test_emref_mutliple_fle(emref_module, calc_fnat):
 
     emref_module.previous_io = MockPreviousIO(Path(golden_data))
 
@@ -125,11 +121,9 @@ def test_emref_mutliple_fle(emref_module, run_dockq_analysis):
     assert Path(emref_module.path, "emref_1.pdb").exists()
     assert Path(emref_module.path, "emref_1.out.gz").exists()
 
-    dockq_analysis = run_dockq_analysis(
+    fnat = calc_fnat(
         model=Path(emref_module.path, "emref_1.pdb"),
         native=Path(golden_data, "protprot_complex.pdb"),
     )
-    # assert dockq_analysis["DockQ"] == pytest.approx(0.95, abs=0.05)
-    # assert dockq_analysis["iRMSD"] == pytest.approx(0.45, abs=0.05)
-    assert dockq_analysis["fnat"] == pytest.approx(0.90, abs=0.05)
-    # assert dockq_analysis["LRMSD"] == pytest.approx(0.50, abs=0.05)
+
+    assert fnat == pytest.approx(0.90, abs=0.05)

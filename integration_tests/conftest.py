@@ -1,20 +1,24 @@
 from pathlib import Path
 
 import pytest
-from DockQ.DockQ import load_PDB, run_on_all_native_interfaces
+
+from haddock.modules.analysis.caprieval.capri import load_contacts
+from haddock.libs.libontology import PDBFile
 
 
-def dockq_wrapper(model: Path, native: Path) -> dict[str, float]:
-    """Wrapper to run DockQ analysis on a model and a native structure."""
-    native_structure = load_PDB(str(model))
-    model_structure = load_PDB(str(native))
-    dockq_analysis = run_on_all_native_interfaces(
-        model_structure=model_structure, native_structure=native_structure
-    )[0]
+def calc_fnat_with_caprieval(model: Path, native: Path) -> float:
+    model_pdb = PDBFile(model)
+    native_pdb = PDBFile(native)
 
-    return dockq_analysis["AB"]
+    model_contacts = load_contacts(model_pdb)
+    native_contacts = load_contacts(native_pdb)
+
+    intersection = native_contacts & model_contacts
+    fnat = len(intersection) / float(len(model_contacts))
+
+    return fnat
 
 
 @pytest.fixture
-def run_dockq_analysis():
-    return dockq_wrapper
+def calc_fnat():
+    return calc_fnat_with_caprieval

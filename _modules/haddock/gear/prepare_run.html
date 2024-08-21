@@ -86,6 +86,7 @@
              
   <h1>Source code for haddock.gear.prepare_run</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Logic pertraining to preparing the run files and folders.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">difflib</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
@@ -163,6 +164,7 @@
     <span class="n">modules_category</span><span class="p">,</span>
     <span class="n">modules_names</span><span class="p">,</span>
     <span class="n">non_mandatory_general_parameters_defaults</span><span class="p">,</span>
+    <span class="n">incompatible_defaults_params</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">confirm_resdic_chainid_length</span><span class="p">,</span>
@@ -355,6 +357,8 @@
         <span class="n">general_params</span><span class="p">,</span>
         <span class="n">reference_parameters</span><span class="o">=</span><span class="n">ALL_POSSIBLE_GENERAL_PARAMETERS</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="n">validate_parameters_are_not_incompatible</span><span class="p">(</span><span class="n">general_params</span><span class="p">)</span>
 
     <span class="c1"># --extend-run configs do not define the run directory</span>
     <span class="c1"># in the config file. So we take it from the argument.</span>
@@ -1027,6 +1031,32 @@
     <span class="k">return</span></div>
 
 
+<div class="viewcode-block" id="validate_parameters_are_not_incompatible"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.prepare_run.html#haddock.gear.prepare_run.validate_parameters_are_not_incompatible">[docs]</a><span class="k">def</span> <span class="nf">validate_parameters_are_not_incompatible</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validate parameters are not incompatible.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : ParamMap</span>
+<span class="sd">        A mapping of parameter names to their values.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">limiting_param</span><span class="p">,</span> <span class="n">incompatibilities</span> <span class="ow">in</span> <span class="n">incompatible_defaults_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Check if the limiting parameter is present in the parameters</span>
+        <span class="k">if</span> <span class="n">limiting_param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="c1"># Check each incompatibility for the limiting parameter</span>
+            <span class="k">for</span> <span class="n">incompatible_param</span><span class="p">,</span> <span class="n">incompatible_value</span> <span class="ow">in</span> <span class="n">incompatibilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># Check if the incompatible parameter is present and has the incompatible value</span>
+                <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">incompatible_param</span><span class="p">)</span> <span class="o">==</span> <span class="n">incompatible_value</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Parameter `</span><span class="si">{</span><span class="n">limiting_param</span><span class="si">}</span><span class="s2">` is incompatible with `</span><span class="si">{</span><span class="n">incompatible_param</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">incompatible_value</span><span class="si">}</span><span class="s2">`.&quot;</span>
+                    <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="validate_parameters_are_not_misspelled"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.prepare_run.html#haddock.gear.prepare_run.validate_parameters_are_not_misspelled">[docs]</a><span class="k">def</span> <span class="nf">validate_parameters_are_not_misspelled</span><span class="p">(</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">reference_parameters</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1354,7 +1384,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 14, 2024.
+      <span class="lastupdated">Last updated on Aug 21, 2024.
       </span></p>
   </div>
 

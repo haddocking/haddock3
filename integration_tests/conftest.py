@@ -14,7 +14,10 @@ def calc_fnat_with_caprieval(model: Path, native: Path) -> float:
     native_contacts = load_contacts(native_pdb)
 
     intersection = native_contacts & model_contacts
-    fnat = len(intersection) / float(len(model_contacts))
+    try:
+        fnat = len(intersection) / float(len(model_contacts))
+    except ZeroDivisionError:
+        fnat = 0.0
 
     return fnat
 

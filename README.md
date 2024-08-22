@@ -26,7 +26,13 @@ HADDOCK stands for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**ing
 
 ## Installation
 
-Please check the [INSTALL](docs/INSTALL.md) file for instructions
+Please check the [INSTALL](docs/INSTALL.md) file for instructions.
+
+You might also want to check the following utilities:
+
+- [`haddock-restraints`](https://github.com/haddocking/haddock-restraints): Tool to generate restraints to be used in `haddock3`.
+- [`haddock-runner`](https://github.com/haddocking/haddock-runner): Tool to run large scale `haddock3` simulations using multiple input molecules in different scenarios
+- [`haddock-tools`](https://github.com/haddocking/haddock-tools): Set of useful utility scripts developed over the years by the BonvinLab group members
 
 ## Usage
 

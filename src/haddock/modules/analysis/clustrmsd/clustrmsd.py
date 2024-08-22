@@ -378,10 +378,10 @@ def order_clusters(cluster_arr):
     cluster_arr : np.ndarray
         Array of clusters.
     """
-    cluster_pops = np.unique(cluster_arr, return_counts=True)
+    unique_clusters, cluster_counts = np.unique(cluster_arr, return_counts=True)
     
-    sorted_indices = np.argsort(-cluster_pops[1])
-    sorted_clusters = cluster_pops[0][sorted_indices]
+    sorted_indices = np.argsort(-cluster_counts)  # must use negative to sort ascending
+    sorted_clusters = unique_clusters[sorted_indices]
     
     # delete -1 from sorted_clusters if present
     sorted_clusters = sorted_clusters[sorted_clusters != -1]

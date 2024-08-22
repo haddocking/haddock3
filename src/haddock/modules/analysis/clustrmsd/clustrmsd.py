@@ -386,9 +386,15 @@ def order_clusters(cluster_arr):
     # delete -1 from sorted_clusters if present
     sorted_clusters = sorted_clusters[sorted_clusters != -1]
     clusters = []
+    # for every element of sorted_clusters I want to assign a new ID
+    # to the elements of cluster_arr that match the order of sorted_clusters
+    index_dict = {}
     for c in sorted_clusters:
-        cluster_arr[cluster_arr == c] = -c
+        # index of cluster_arr where the cluster is equal to c
+        idx = np.where(cluster_arr == c)
+        index_dict[c] = idx
+    # now the assignment
     for i, c in enumerate(sorted_clusters):
         clusters.append(i + 1)
-        cluster_arr[cluster_arr == -c] = i + 1
+        cluster_arr[index_dict[c]] = i + 1
     return clusters, cluster_arr

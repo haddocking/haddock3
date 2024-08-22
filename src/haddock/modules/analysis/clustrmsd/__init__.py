@@ -117,7 +117,6 @@ class HaddockModule(BaseHaddockModule):
         
         clusters, cluster_arr = order_clusters(cluster_arr)
         log.info(f"clusters = {clusters}")
-        log.info(f"cluster_arr = {cluster_arr}")
         
         out_filename = Path('cluster.out')
         clt_dic, cluster_centers = write_clusters(

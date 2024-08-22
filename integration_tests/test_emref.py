@@ -8,7 +8,7 @@ from haddock.libs.libontology import Format, PDBFile, Persistent
 from haddock.modules.refinement.emref import DEFAULT_CONFIG as DEFAULT_EMREF_CONFIG
 from haddock.modules.refinement.emref import HaddockModule as FlexrefModule
 
-from . import golden_data
+from . import GOLDEN_DATA
 
 
 @pytest.fixture
@@ -26,39 +26,39 @@ class MockPreviousIO:
 
     def retrieve_models(self, crossdock: bool = False):
         shutil.copy(
-            Path(golden_data, "protprot_complex.pdb"),
-            Path(self.path, "protprot_complex.pdb"),
+            Path(GOLDEN_DATA, "2oob.pdb"),
+            Path(self.path, "2oob.pdb"),
         )
         shutil.copy(
-            Path(golden_data, "e2aP_1F3G_haddock.psf"),
-            Path(self.path, "e2aP_1F3G_haddock.psf"),
+            Path(GOLDEN_DATA, "2oob_A.psf"),
+            Path(self.path, "2oob_A.psf"),
         )
 
         shutil.copy(
-            Path(golden_data, "hpr_ensemble_1_haddock.psf"),
-            Path(self.path, "hpr_ensemble_1_haddock.psf"),
+            Path(GOLDEN_DATA, "2oob_B.psf"),
+            Path(self.path, "2oob_B.psf"),
         )
 
-        model_list = [
-            PDBFile(
-                file_name="protprot_complex.pdb",
-                path=self.path,
-                topology=(
-                    Persistent(
-                        file_name="hpr_ensemble_1_haddock.psf",
-                        path=self.path,
-                        file_type=Format.TOPOLOGY,
-                    ),
-                    Persistent(
-                        file_name="e2aP_1F3G_haddock.psf",
-                        path=self.path,
-                        file_type=Format.TOPOLOGY,
-                    ),
+        model = PDBFile(
+            file_name="2oob.pdb",
+            path=self.path,
+            topology=(
+                Persistent(
+                    file_name="2oob_A.psf",
+                    path=self.path,
+                    file_type=Format.TOPOLOGY,
+                ),
+                Persistent(
+                    file_name="2oob_B.psf",
+                    path=self.path,
+                    file_type=Format.TOPOLOGY,
                 ),
             ),
-        ]
+        )
 
-        return model_list
+        model.seed = 42  # type: ignore
+
+        return [model]
 
     def output(self):
         return None
@@ -75,10 +75,10 @@ def test_emref_defaults(emref_module, calc_fnat):
 
     fnat = calc_fnat(
         model=Path(emref_module.path, "emref_1.pdb"),
-        native=Path(golden_data, "protprot_complex.pdb"),
+        native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.90, abs=0.05)
+    assert fnat == pytest.approx(0.95, abs=0.05)
 
 
 def test_emref_fle(emref_module, calc_fnat):
@@ -86,9 +86,10 @@ def test_emref_fle(emref_module, calc_fnat):
     emref_module.previous_io = MockPreviousIO(path=emref_module.path)
 
     emref_module.params["nfle "] = 1
-    emref_module.params["fle_sta_1 "] = 141
-    emref_module.params["fle_end_1 "] = 146
-    emref_module.params["fle_seg_1  "] = "A"
+
+    emref_module.params["fle_sta_1 "] = 66
+    emref_module.params["fle_end_1 "] = 77
+    emref_module.params["fle_seg_1  "] = "B"
 
     emref_module.run()
 
@@ -97,10 +98,10 @@ def test_emref_fle(emref_module, calc_fnat):
 
     fnat = calc_fnat(
         model=Path(emref_module.path, "emref_1.pdb"),
-        native=Path(golden_data, "protprot_complex.pdb"),
+        native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.90, abs=0.05)
+    assert fnat == pytest.approx(0.95, abs=0.05)
 
 
 def test_emref_mutliple_fle(emref_module, calc_fnat):
@@ -108,12 +109,13 @@ def test_emref_mutliple_fle(emref_module, calc_fnat):
     emref_module.previous_io = MockPreviousIO(path=emref_module.path)
 
     emref_module.params["nfle "] = 2
-    emref_module.params["fle_sta_1 "] = 141
-    emref_module.params["fle_end_1 "] = 146
-    emref_module.params["fle_seg_1  "] = "A"
 
-    emref_module.params["fle_sta_2 "] = 66
-    emref_module.params["fle_end_2 "] = 71
+    emref_module.params["fle_sta_1 "] = 66
+    emref_module.params["fle_end_1 "] = 77
+    emref_module.params["fle_seg_1  "] = "B"
+
+    emref_module.params["fle_sta_2 "] = 41
+    emref_module.params["fle_end_2 "] = 47
     emref_module.params["fle_seg_2  "] = "B"
 
     emref_module.run()
@@ -123,7 +125,7 @@ def test_emref_mutliple_fle(emref_module, calc_fnat):
 
     fnat = calc_fnat(
         model=Path(emref_module.path, "emref_1.pdb"),
-        native=Path(golden_data, "protprot_complex.pdb"),
+        native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.90, abs=0.05)
+    assert fnat == pytest.approx(0.95, abs=0.05)

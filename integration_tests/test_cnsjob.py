@@ -4,7 +4,7 @@ from haddock.libs.libsubprocess import CNSJob
 from pathlib import Path
 from typing import Generator
 
-from . import golden_data, CNS_EXEC, has_cns
+from . import GOLDEN_DATA, CNS_EXEC
 
 
 @pytest.fixture
@@ -48,9 +48,9 @@ def cns_seed_filename(cns_output_filename) -> Generator[str, None, None]:
 def cns_inp_str(cns_seed_filename, cns_output_pdb_filename):
     yield f"""
 structure
-    @@{golden_data}/prot.psf
+    @@{GOLDEN_DATA}/prot.psf
 end
-coor @@{golden_data}/prot.pdb
+coor @@{GOLDEN_DATA}/prot.pdb
 
 write coordinates format=pdbo output={cns_output_pdb_filename} end
 

@@ -46,8 +46,6 @@ If you have any other questions or need help, please contact us at [ask.bioexcel
 
 If you clone this repository and use `haddock3` for your research, please support us by signing up in [this form](https://forms.gle/LCUHiYHh1hE9rd8L6). This will allow us contact you when needed for `haddock3`-related issues, and also provide us a mean to demonstrate impact when reporting for grants - which grealty helps us to keep the project alive!
 
-[googleform]: https://docs.google.com/forms/d/e/1FAIpQLScDcd0rWtuzJ_4nftkDAHoLVwr1IAVwNJGhbaZdTYZ4vWu25w/viewform
-
 ## Development
 
 🚧 _Coming soon! We are currently working on the development guide_ 🚧

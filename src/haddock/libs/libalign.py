@@ -1381,25 +1381,13 @@ def check_chains(obs_chains, inp_r_chain, inp_l_chains):
     inp_l_chains : list
         List of ligand chains.
     """
-    r_found, l_found = False, False
-    if inp_r_chain in obs_chains:
-        r_chain = inp_r_chain
-        obs_chains.remove(inp_r_chain)
-        r_found = True
-    l_chains = []
-    for inp_l_chain in inp_l_chains:
-        if inp_l_chain in obs_chains:
-            l_chains.append(inp_l_chain)
-            obs_chains.remove(inp_l_chain)
-            l_found = True
-    # if receptor chain is not among the observed chains, then
-    # it is the first chain in the list
-    if not r_found:
-        r_chain = obs_chains[0]
-        obs_chains.remove(r_chain)
-    # if no element in inp_l_chains is among the observed chains, then
-    # ligand_chains is the list of observed chains (the receptor chain has
-    # already been removed)
-    if not l_found:
+    # Find receptor chain
+    r_chain = inp_r_chain if inp_r_chain in obs_chains else obs_chains[0]
+    # Remove it so cannot be selected as ligand chain
+    obs_chains.remove(r_chain)
+    # Define ligand chain(s)
+    l_chains = [el for el in inp_l_chains if el in obs_chains]
+    # If empty, select all remaining chains
+    if not l_chains:
         l_chains = [el for el in obs_chains]
     return r_chain, l_chains

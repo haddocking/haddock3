@@ -22,7 +22,7 @@
 
 ## Introduction
 
-HADDOCK stands for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**ing, it is a widely used computational tool for modeling protein-protein interactions. Developed by researchers at [Utrecht University](https://uu.nl) in the [BonvinLab](https://bonvinlab.org) it integrates various types of experimental data to guide the docking process, including biochemical, biophysical, and bioinformatics information.
+HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**ing, is a widely used computational tool for the integrative modeling of biomolecular interactions. Developed by researchers at [Utrecht University](https://uu.nl) in the [BonvinLab](https://bonvinlab.org) for more than 20 years, it integrates various types of experimental data, biochemical, biophysical, bioinformatic prediction and knowledge to guide the docking process.
 
 ## Installation
 
@@ -36,7 +36,7 @@ You might also want to check the following utilities:
 
 ## Usage
 
-The most basic usage is;
+The most basic usage is:
 
 ```bash
 haddock3 <configuration-file.toml>
@@ -51,6 +51,19 @@ If you encounter any code-related issues, [please open an issue](https://github.
 If you have any other questions or need help, please contact us at [ask.bioexcel.eu](https://ask.bioexcel.eu/).
 
 If you clone this repository and use `haddock3` for your research, please support us by signing up in [this form](https://forms.gle/LCUHiYHh1hE9rd8L6). This will allow us contact you when needed for `haddock3`-related issues, and also provide us a mean to demonstrate impact when reporting for grants - which grealty helps us to keep the project alive!
+
+## Cite us
+
+If you used `haddock3` for your research, please cite us:
+
+- **Research article**: (_coming soon!_)
+- **Cite this repository**: M.C. Teixeira, J., Vargas Honorato, R., Giulini, M., Bonvin, A., SarahAlidoost, Reys, V., Jimenez, B., Schulte, D., van Noort, C., Verhoeven, S., Vreede, B., SSchott, & Tsai, R. (2024). haddocking/haddock3: v3.0.0-beta.5 (Version 3.0.0-beta.5) [Computer software]. [https://doi.org/10.5281/zenodo.10527751](https://doi.org/10.5281/zenodo.10527751)
+
+## Useful resources
+
+- [User manual]() (_coming soon!_)
+- [Best practice guide](https://www.bonvinlab.org/software/bpg/)
+- [The HADDOCK2.4 web server: A leap forward in integrative modelling of biomolecular complexes. Nature Prot. 2024](https://www.nature.com/articles/s41596-024-01011-0)
 
 ## Development
 

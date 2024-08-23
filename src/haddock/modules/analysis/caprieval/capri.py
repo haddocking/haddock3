@@ -224,6 +224,9 @@ class CAPRI:
         self.identificator = identificator
         self.core_model_idx = identificator
         self.less_io = less_io
+        self.cluster_id = None
+        self.cluster_ranking = None
+        self.model_cluster_ranking = None
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -942,9 +945,11 @@ def extract_data_from_capri_class(
             "lrmsd": c.lrmsd,
             "ilrmsd": c.ilrmsd,
             "dockq": c.dockq,
-            "cluster_id": None,
-            "cluster_ranking": None,
-            "model-cluster_ranking": None,
+            "cluster_id": c.model.clt_id if c.model.clt_id else None,
+            "cluster_ranking": c.model.clt_rank if c.model.clt_rank else None,
+            "model-cluster_ranking": (
+                c.model.clt_model_rank if c.model.clt_model_rank else None
+            ),
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)

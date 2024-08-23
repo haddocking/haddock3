@@ -130,7 +130,7 @@ class HaddockModule(BaseHaddockModule):
             resids = np.concatenate(res_resdic[ch])
             resids_npu = np.unique(resids)
             npu_resdic[ch] = resids_npu
-        log.info(f"Overall interface residues: {npu_resdic}")        
+        log.info(f"Overall interface residues: {npu_resdic}")
 
         # Write to file
         with open(output_fname, 'w') as out_file:

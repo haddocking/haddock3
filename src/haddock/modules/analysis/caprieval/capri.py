@@ -224,9 +224,6 @@ class CAPRI:
         self.identificator = identificator
         self.core_model_idx = identificator
         self.less_io = less_io
-        self.cluster_id = None
-        self.cluster_ranking = None
-        self.model_cluster_ranking = None
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.

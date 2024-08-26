@@ -15,6 +15,7 @@ from haddock.modules.analysis.ilrmsdmatrix import (
     )
 
 from . import golden_data
+# TODO: Consolidate test data to avoid contamination
 from tests import golden_data as tests_golden_data
 
 

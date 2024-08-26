@@ -67,7 +67,7 @@ class MockPreviousIO_protprot:
             )
         shutil.copy(
             Path(tests_golden_data, "protprot_complex_2.pdb"),
-            Path(".", "protprot_complex_2.pdb"),
+            Path(self.path, "protprot_complex_2.pdb"),
             )
         model_list = [
             PDBFile(file_name="protprot_complex_1.pdb", path=self.path),

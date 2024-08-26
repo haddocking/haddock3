@@ -1362,6 +1362,7 @@ def check_common_atoms(models, filter_resdic, allatoms, atom_similarity):
     return n_atoms, list(common_keys)
 
 
+# TODO: Add type signature
 def check_chains(obs_chains, inp_r_chain, inp_l_chains):
     """Check observed chains against the expected ones.
 

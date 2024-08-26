@@ -1032,9 +1032,11 @@
             <span class="s2">&quot;lrmsd&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">lrmsd</span><span class="p">,</span>
             <span class="s2">&quot;ilrmsd&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">ilrmsd</span><span class="p">,</span>
             <span class="s2">&quot;dockq&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">dockq</span><span class="p">,</span>
-            <span class="s2">&quot;cluster_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;cluster_ranking&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;model-cluster_ranking&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;cluster_id&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clt_id</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clt_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;cluster_ranking&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clt_rank</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clt_rank</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;model-cluster_ranking&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clt_model_rank</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">clt_model_rank</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">unw_energies</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">unw_energies</span><span class="p">)</span>
@@ -1277,7 +1279,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 21, 2024.
+      <span class="lastupdated">Last updated on Aug 26, 2024.
       </span></p>
   </div>
 

@@ -90,6 +90,13 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
+
+        # FIXME: TEMPORARY FIX TO AVOID BATCH MODE
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+        if exec_mode == "batch":
+            self.finish_with_error("Batch mode not supported for this module")
+        Engine = get_engine(exec_mode, self.params)
+
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
@@ -134,8 +141,6 @@ class HaddockModule(BaseHaddockModule):
             )
 
         # run jobs
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
-        Engine = get_engine(exec_mode, self.params)
         engine = Engine(xyzwriter_jobs)
         engine.run()
 
@@ -144,17 +149,30 @@ class HaddockModule(BaseHaddockModule):
             input=engine.results, output_fname=self.traj_filename  # type: ignore
         )
 
-        # Parallelisation : optimal dispatching of models
+        # ============================================================================== #
+        # ============================================================================== #
+        # TODO: Refactor the code below into a FastRMSDMatrix class
+        #  Explanation: `fast-rmsdmatrix` is a standalone executable that
+        # calculates a RMSD matrix. It takes as arguments a trajectory file
+        # and a "slice" of the matrix to be calculated. The slice is defined by
+        # the code below via `rmsd_dispatcher`. Because Python does not do zero-cost
+        # abstraction, calculating each line of the matrix in parallel using
+        # systems calls to `fast-rmsdmatrix` is NOT the most efficient way to do it.
+        # Hence why the logic of the code below should be refactored into a class.
+        #
+        # This class must work with the Schedulers.
+        #
+        # ============================================================================== #
+
         tot_npairs = nmodels * (nmodels - 1) // 2
         log.info(f"total number of pairs {tot_npairs}")
         ncores = parse_ncores(n=self.params["ncores"], njobs=tot_npairs)
-        # TODO: Rework this logic of argument parsing to be based on models
         npairs, ref_structs, mod_structs = rmsd_dispatcher(
             nmodels=nmodels, tot_npairs=tot_npairs, ncores=tot_npairs
         )
 
         # Calculate the rmsd for each set of models
-        rmsd_jobs: list[RMSDJob] = []
+        fast_rmsdmatrix_jobs: list[RMSDJob] = []
         self.log(f"running RmsdFast Jobs with {ncores} cores")
         for core in range(ncores):
             output_name = Path("rmsd_" + str(core) + ".matrix")
@@ -169,9 +187,11 @@ class HaddockModule(BaseHaddockModule):
                 len(models),
                 n_atoms,
             )
-            rmsd_jobs.append(job)
+            fast_rmsdmatrix_jobs.append(job)
+        # ============================================================================== #
+        # ==============================================================================#
 
-        engine = Engine(rmsd_jobs)
+        engine = Engine(fast_rmsdmatrix_jobs)
         engine.run()
 
         # FIXME: This does not work with `HPCSheduler`!
@@ -179,30 +199,8 @@ class HaddockModule(BaseHaddockModule):
             input=engine.results, output_fname=self.rmsd_matrix_fname  # type: ignore
         )
 
-        # FIXME: Add error handling
-
-        # rmsd_file_l: list[str] = []
-        # not_found: list[str] = []
-        # for job in rmsd_jobs:
-        #     if not job.output.exists():
-        #         # NOTE: If there is no output, most likely the RMSD calculation
-        #         # timed out
-        #         not_found.append(job.output.name)
-        #         wrn = f"Rmsd results were not calculated for {job.output.name}"
-        #         log.warning(wrn)
-        #     else:
-        #         rmsd_file_l.append(str(job.output))
-
-        # if not_found:
-        #     # Not all distances were calculated, cannot create the full matrix
-        #     self.finish_with_error("Several files were not generated:" f" {not_found}")
-
-        # # Post-processing : single file
-        # final_output_name = "rmsd.matrix"
-        # self._rearrange_output(final_output_name, path=Path("."), ncores=ncores)
-        # # Delete the trajectory file
-        # if traj_filename.exists():
-        #     os.unlink(traj_filename)
+        if not self.rmsd_matrix_fname.exists():
+            self.finish_with_error("RMSD matrix file was not generated")
 
         # Sending models to the next step of the workflow
         self.output_models = models  # type: ignore

@@ -848,6 +848,7 @@ def test_get_previous_cns_step():
     assert get_previous_cns_step(mock_steps_2, 1) is None
 
 
+# TODO: Move to integration tests
 def test_protprot_1bkd_swapped_chains(protprot_1bkd_caprimodule):
     """Test protein-protein l-rmsd and ilrmsd calculation with swapped chains."""
     protprot_1bkd_caprimodule.r_chain = "S"

@@ -70,8 +70,8 @@ class MockPreviousIO_protprot:
             Path(".", "protprot_complex_2.pdb"),
             )
         model_list = [
-            PDBFile(file_name="protprot_complex_1.pdb", path="."),
-            PDBFile(file_name="protprot_complex_2.pdb", path="."),
+            PDBFile(file_name="protprot_complex_1.pdb", path=self.path),
+            PDBFile(file_name="protprot_complex_2.pdb", path=self.path),
             ]
         return model_list
 

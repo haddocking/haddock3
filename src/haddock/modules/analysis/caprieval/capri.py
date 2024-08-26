@@ -942,9 +942,11 @@ def extract_data_from_capri_class(
             "lrmsd": c.lrmsd,
             "ilrmsd": c.ilrmsd,
             "dockq": c.dockq,
-            "cluster_id": None,
-            "cluster_ranking": None,
-            "model-cluster_ranking": None,
+            "cluster_id": c.model.clt_id if c.model.clt_id else None,
+            "cluster_ranking": c.model.clt_rank if c.model.clt_rank else None,
+            "model-cluster_ranking": (
+                c.model.clt_model_rank if c.model.clt_model_rank else None
+            ),
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)

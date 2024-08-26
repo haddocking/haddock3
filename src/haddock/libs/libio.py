@@ -1,4 +1,5 @@
 """Lib I/O."""
+
 import contextlib
 import glob
 import gzip
@@ -576,3 +577,12 @@ def make_writeable_recursive(path: FilePath) -> None:
 
         for file_ in (os.path.join(root, f) for f in files):
             os.chmod(file_, get_perm(file_) | stat.S_IWUSR)
+
+
+def dump_output_data_to_file(input: list[Any], output_fname: Path) -> None:
+    """Dump the output to a file."""
+    output_fname.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_fname, "w") as out_file:
+        for element in input:
+            out_file.write(element.output_data)
+    log.info(f"Output written to {output_fname}")

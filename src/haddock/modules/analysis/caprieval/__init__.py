@@ -144,6 +144,10 @@ class HaddockModule(BaseHaddockModule):
             )
 
         else:
+            self.log(
+                msg="DEPRECATION NOTICE: This execution mode (less_io=False) will no longer be supported in the next version.",
+                level="warning",
+            )
             jobs = merge_data(jobs)
 
             # Each job created one .tsv, unify them:

@@ -986,6 +986,10 @@ def test_extract_data_from_capri_class(mocker):
     random_model = PDBFile(
         file_name=str(uuid.uuid4()), score=42, unw_energies={"energy": random_energy}
     )
+
+    random_clt_id = random.randint(0, 100)
+    random_clt_rank = random.randint(0, 100)
+    random_clt_model_rank = random.randint(0, 100)
     random_md5 = str(uuid.uuid4())
     random_score = random.random()
     random_irmsd = random.random()
@@ -995,6 +999,9 @@ def test_extract_data_from_capri_class(mocker):
     random_dockq = random.random()
 
     c.model = random_model
+    c.model.clt_id = random_clt_id
+    c.model.clt_rank = random_clt_rank
+    c.model.clt_model_rank = random_clt_model_rank
     c.md5 = random_md5
     c.score = random_score
     c.irmsd = random_irmsd
@@ -1018,3 +1025,6 @@ def test_extract_data_from_capri_class(mocker):
     assert observed_data[1]["ilrmsd"] == random_ilrmsd
     assert observed_data[1]["dockq"] == random_dockq
     assert observed_data[1]["energy"] == random_energy
+    assert observed_data[1]["cluster_id"] == random_clt_id
+    assert observed_data[1]["cluster_ranking"] == random_clt_rank
+    assert observed_data[1]["model-cluster_ranking"] == random_clt_model_rank

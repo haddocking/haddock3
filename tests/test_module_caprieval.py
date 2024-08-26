@@ -858,6 +858,7 @@ def test_protprot_1bkd_swapped_chains(protprot_1bkd_caprimodule):
     assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 16.33, atol=0.01)
 
 
+# TODO: Move to integration tests
 def test_protdna_swapped_chains(protdna_caprimodule):
     """Test protein-dna l-rmsd and ilrmsd calculation with swapped chains."""
     protdna_caprimodule.r_chain = "B"

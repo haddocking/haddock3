@@ -63,7 +63,7 @@ class MockPreviousIO_protprot:
         """Retrieve models."""
         shutil.copy(
             Path(tests_golden_data, "protprot_complex_1.pdb"),
-            Path(".", "protprot_complex_1.pdb"),
+            Path(self.path, "protprot_complex_1.pdb"),
             )
         shutil.copy(
             Path(tests_golden_data, "protprot_complex_2.pdb"),

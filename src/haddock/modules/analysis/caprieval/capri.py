@@ -32,6 +32,7 @@ from haddock.libs.libalign import (
     ALIGNError,
     calc_rmsd,
     centroid,
+    check_chains,
     get_align,
     get_atoms,
     kabsch,
@@ -314,7 +315,7 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
         else:
-            r_chain, l_chains = self.check_chains(obs_chains)
+            r_chain, l_chains = check_chains(obs_chains, self.r_chain, self.l_chains)
             r_start, r_end = chain_ranges[r_chain]
             l_starts = [chain_ranges[_l][0] for _l in l_chains]
             l_ends = [chain_ranges[_l][1] for _l in l_chains]
@@ -439,7 +440,7 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
         else:
-            r_chain, l_chains = self.check_chains(obs_chains)
+            r_chain, l_chains = check_chains(obs_chains, self.r_chain, self.l_chains)
             r_start, r_end = chain_ranges[r_chain]
             l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
             l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
@@ -617,42 +618,6 @@ class CAPRI:
             # The scheduler will use the return of the `run` method as the output of the tasks
             #  Here to avoid writing a file, return a copy of this instance
             return copy.deepcopy(self)
-
-    def check_chains(self, obs_chains):
-        """Check observed chains against the expected ones.
-
-        Logic: if chain B is among the observed chains and is not selected as
-         the receptor chain, then ligand_chains = ["B"] (default behaviour).
-        Otherwise, ligand_chains becomes equal to all the other chains (once
-         receptor chain is removed).
-
-        Parameters
-        ----------
-        obs_chains : list
-            List of observed chains.
-        """
-        r_found, l_found = False, False
-        if self.r_chain in obs_chains:
-            r_chain = self.r_chain
-            obs_chains.remove(r_chain)
-            r_found = True
-        l_chains = []
-        for l_chain in self.l_chains:
-            if l_chain in obs_chains:
-                l_chains.append(l_chain)
-                obs_chains.remove(l_chain)
-                l_found = True
-        # if receptor chain is not among the observed chains, then
-        # it is the first chain in the list
-        if not r_found:
-            r_chain = obs_chains[0]
-            obs_chains.remove(r_chain)
-        # if no element in ligand_chains is not among the observed chains, then
-        # ligand_chains is the list of observed chains (the receptor chain has
-        # already been removed)
-        if not l_found:
-            l_chains = [el for el in obs_chains]
-        return r_chain, l_chains
 
     @staticmethod
     def _load_atoms(
@@ -942,9 +907,11 @@ def extract_data_from_capri_class(
             "lrmsd": c.lrmsd,
             "ilrmsd": c.ilrmsd,
             "dockq": c.dockq,
-            "cluster_id": None,
-            "cluster_ranking": None,
-            "model-cluster_ranking": None,
+            "cluster_id": c.model.clt_id if c.model.clt_id else None,
+            "cluster_ranking": c.model.clt_rank if c.model.clt_rank else None,
+            "model-cluster_ranking": (
+                c.model.clt_model_rank if c.model.clt_model_rank else None
+            ),
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)

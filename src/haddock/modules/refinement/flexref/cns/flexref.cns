@@ -321,12 +321,12 @@ evaluate ($failure = $result)
 
 
 {* Define initial weights for distance restraints ============================== *}
-evaluate ($unamb_scale = $Data.unamb_hot)
+evaluate ($unambig_scale = $Data.unamb_hot)
 evaluate ($ambig_scale = $Data.amb_hot)
 evaluate ($hbond_scale = $Data.hbond_hot)
 
 noe
-    scale dist $unamb_scale
+    scale dist $unambig_scale
     scale ambi $ambig_scale
     scale hbon $hbond_scale
 end

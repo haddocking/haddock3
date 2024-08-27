@@ -86,8 +86,8 @@ evaluate ($Data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_scale=$amb_scale)
-evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.ambig_scale=$ambig_scale)
+evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
 
@@ -322,7 +322,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
         @MODULE:random_rotations.cns
     end if
 
-    evaluate ($unamb_scale = 1.0)
+    evaluate ($unambig_scale = 1.0)
     evaluate ($ambig_scale = 1.0)
     evaluate ($hbond_scale = 1.0)
     evaluate ($symm_scale = 1.0)
@@ -330,7 +330,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
     evaluate ($surf_scale = 0.0)
 
     noe
-        scale dist $unamb_scale
+        scale dist $unambig_scale
         scale ambi $ambig_scale
         scale hbon $hbond_scale
         scale symm $symm_scale
@@ -373,13 +373,13 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             flag include elec end
         end if
 
-        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_scale))
-        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_scale))
+        evaluate ($unambig_scale = min(($unambig_scale * 2),$Data.unambig_scale))
+        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.ambig_scale))
         evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_scale))
         evaluate ($symm_scale = min(($symm_scale * 2),$Data.ksym))
 
         noe
-            scale dist $unamb_scale
+            scale dist $unambig_scale
             scale ambi $ambig_scale
             scale hbon $hbond_scale
             scale symm $symm_scale
@@ -387,7 +387,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     end loop rigmin
 
-    evaluate ($unamb_scale_store = $unamb_scale)
+    evaluate ($unambig_scale_store = $unambig_scale)
     evaluate ($ambig_scale_store = $ambig_scale)
     evaluate ($hbond_scale_store = $hbond_scale)
     evaluate ($symm_scale_store = $symm_scale)
@@ -550,12 +550,12 @@ else
     end if
 end if
 
-evaluate ($unamb_scale = $Data.unamb_scale)
-evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($unambig_scale = $Data.unambig_scale)
+evaluate ($ambig_scale = $Data.ambig_scale)
 evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe
-    scale dist $unamb_scale
+    scale dist $unambig_scale
     scale ambi $ambig_scale
     scale hbon 0.0
     scale cont 0.0

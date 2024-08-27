@@ -762,32 +762,6 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     Path("capri_clt.txt").unlink()
 
 
-def test_check_chains(protprot_caprimodule):
-    """Test correct checking of chains."""
-    obs_ch = [
-        ["A", "C"],
-        ["A", "B"],
-        ["S", "E", "B", "A"],
-        ["S", "E", "P", "A"],
-        ["C", "D"],
-    ]
-
-    # assuming exp chains are A and B
-    exp_ch = [
-        ["A", ["C"]],
-        ["A", ["B"]],
-        ["A", ["B"]],  # S and E are ignored when B is present
-        ["A", ["S", "E", "P"]],
-        ["C", ["D"]],
-    ]
-
-    for n in range(len(obs_ch)):
-        obs_r_chain, obs_l_chain = protprot_caprimodule.check_chains(obs_ch[n])
-        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
-        assert obs_r_chain == exp_r_chain
-        assert obs_l_chain == exp_l_chain
-
-
 @pytest.fixture
 def protprot_onechain_ref_caprimodule(
     protprot_input_list, protprot_onechain_list, params
@@ -874,6 +848,28 @@ def test_get_previous_cns_step():
     assert get_previous_cns_step(mock_steps_2, 1) is None
 
 
+# TODO: Move to integration tests
+def test_protprot_1bkd_swapped_chains(protprot_1bkd_caprimodule):
+    """Test protein-protein l-rmsd and ilrmsd calculation with swapped chains."""
+    protprot_1bkd_caprimodule.r_chain = "S"
+    protprot_1bkd_caprimodule.l_chain = "R"
+    protprot_1bkd_caprimodule.calc_lrmsd()
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 19.21, atol=0.01)
+    protprot_1bkd_caprimodule.calc_ilrmsd()
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 16.33, atol=0.01)
+
+
+# TODO: Move to integration tests
+def test_protdna_swapped_chains(protdna_caprimodule):
+    """Test protein-dna l-rmsd and ilrmsd calculation with swapped chains."""
+    protdna_caprimodule.r_chain = "B"
+    protdna_caprimodule.l_chain = "A"
+    protdna_caprimodule.calc_lrmsd()
+    assert np.isclose(protdna_caprimodule.lrmsd, 4.81, atol=0.01)
+    protdna_caprimodule.calc_ilrmsd()
+    assert np.isclose(protdna_caprimodule.ilrmsd, 4.91, atol=0.01)
+
+    
 def test_capri_run(mocker):
 
     mock_get_align_func = mocker.Mock(

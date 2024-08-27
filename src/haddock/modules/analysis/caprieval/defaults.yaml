@@ -99,7 +99,7 @@ receptor_chain:
   explevel: easy
 
 ligand_chains:
-  default: ["B"]
+  default: []
   type: list
   minitems: 0
   maxitems: 100

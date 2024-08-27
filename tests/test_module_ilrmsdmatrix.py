@@ -1,15 +1,12 @@
 """Test the rmsdmatrix module."""
-
 import os
 from pathlib import Path
 
 import numpy as np
 import pytest
 import pytest_mock  # noqa : F401
-import shutil
 import tempfile
 
-from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.ilrmsdmatrix import DEFAULT_CONFIG as ilrmsd_pars
 from haddock.modules.analysis.ilrmsdmatrix import (
     HaddockModule as IlrmsdmatrixModule,
@@ -20,11 +17,7 @@ from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
 )
 
 from . import golden_data
-
-from .test_module_caprieval import (
-    protprot_input_list,
-    protprot_onechain_list,
-)  # noqa : F401
+from .test_module_caprieval import protprot_input_list, protprot_onechain_list  # noqa : F401
 
 
 @pytest.fixture
@@ -33,8 +26,8 @@ def params():
 
 
 @pytest.fixture
-def contact_obj(protprot_input_list, params):  # noqa : F811
-    """Return example alascan module."""
+def contact_obj(protprot_input_list, params):  # noqa : F811    
+    """Return example Contact object."""
     contact_obj = Contact(
         model_list=protprot_input_list,
         output_name="contact",
@@ -49,7 +42,7 @@ def contact_obj(protprot_input_list, params):  # noqa : F811
 
 @pytest.fixture
 def contact_job_obj(contact_obj, params):
-    """Return example alascan module."""
+    """Return example ContactJob object."""
     contact_job_obj = ContactJob(
         Path("contact_output"),
         params,
@@ -118,7 +111,6 @@ def test_ilrmsdmatrix_init(ilrmsdmatrix):
     assert ilrmsdmatrix._origignal_config_file == ilrmsd_pars
     assert type(ilrmsdmatrix.params) == dict
     assert len(ilrmsdmatrix.params) != 0
-
 
 @pytest.mark.skip(reason="BEING REFACTORED")
 def test_ilrmsdmatrix_run(ilrmsdmatrix, mocker):

@@ -245,6 +245,25 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libalign.check_chains">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">check_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_chains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_r_chain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inp_l_chains</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#check_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.check_chains" title="Permalink to this definition"></a></dt>
+<dd><p>Check observed chains against the expected ones.</p>
+<p>Logic: if at least one of inp_l_chains is among the observed chains and is
+not selected as the receptor chain, then ligand_chains is equal to this
+interesection. Otherwise, ligand_chains becomes equal to all the other
+chains (once receptor chain is removed).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_chains</strong> (<em>list</em>) – List of observed chains.</p></li>
+<li><p><strong>inp_r_chain</strong> (<em>str</em>) – Receptor chain.</p></li>
+<li><p><strong>inp_l_chains</strong> (<em>list</em>) – List of ligand chains.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libalign.check_common_atoms">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">check_common_atoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_resdic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allatoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_similarity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#check_common_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.check_common_atoms" title="Permalink to this definition"></a></dt>
 <dd><p>Check if the models share the same atoms.</p>
@@ -452,7 +471,7 @@ If True, all heavy atoms retrieved.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 26, 2024.
+      <span class="lastupdated">Last updated on Aug 27, 2024.
       </span></p>
   </div>
 

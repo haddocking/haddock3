@@ -43,11 +43,11 @@ contact_distance_cutoff
 ligand_chains
 ~~~~~~~~~~~~~
 
-| *default*: ['B']
+| *default*: []
 | *type*: list
 | *title*: Ligand ChainIDs
 | *short description*: Ligand ChainIDs to be considered for the IL-RMSD calculations.
-| *long description*: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be treated as the ligand for the IL-RMSD.
+| *long description*: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be treated as the ligand for the IL-RMSD. By default, all chains are considered with the exception of the receptor chain.
 | *group*: analysis
 | *explevel*: easy
 

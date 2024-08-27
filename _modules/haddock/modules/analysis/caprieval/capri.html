@@ -122,6 +122,7 @@
     <span class="n">ALIGNError</span><span class="p">,</span>
     <span class="n">calc_rmsd</span><span class="p">,</span>
     <span class="n">centroid</span><span class="p">,</span>
+    <span class="n">check_chains</span><span class="p">,</span>
     <span class="n">get_align</span><span class="p">,</span>
     <span class="n">get_atoms</span><span class="p">,</span>
     <span class="n">kabsch</span><span class="p">,</span>
@@ -404,7 +405,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough chains for calculating lrmsd&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">)</span>
+            <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span> <span class="o">=</span> <span class="n">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_chain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_chains</span><span class="p">)</span>
             <span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span> <span class="o">=</span> <span class="n">chain_ranges</span><span class="p">[</span><span class="n">r_chain</span><span class="p">]</span>
             <span class="n">l_starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_ranges</span><span class="p">[</span><span class="n">_l</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_l</span> <span class="ow">in</span> <span class="n">l_chains</span><span class="p">]</span>
             <span class="n">l_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_ranges</span><span class="p">[</span><span class="n">_l</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">_l</span> <span class="ow">in</span> <span class="n">l_chains</span><span class="p">]</span>
@@ -529,7 +530,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not enough chains for calculating ilrmsd&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">)</span>
+            <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span> <span class="o">=</span> <span class="n">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_chain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_chains</span><span class="p">)</span>
             <span class="n">r_start</span><span class="p">,</span> <span class="n">r_end</span> <span class="o">=</span> <span class="n">chain_ranges</span><span class="p">[</span><span class="n">r_chain</span><span class="p">]</span>
             <span class="n">l_starts</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_ranges</span><span class="p">[</span><span class="n">l_chain</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">l_chain</span> <span class="ow">in</span> <span class="n">l_chains</span><span class="p">]</span>
             <span class="n">l_ends</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_ranges</span><span class="p">[</span><span class="n">l_chain</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">l_chain</span> <span class="ow">in</span> <span class="n">l_chains</span><span class="p">]</span>
@@ -707,42 +708,6 @@
             <span class="c1"># The scheduler will use the return of the `run` method as the output of the tasks</span>
             <span class="c1">#  Here to avoid writing a file, return a copy of this instance</span>
             <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="CAPRI.check_chains"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.check_chains">[docs]</a>    <span class="k">def</span> <span class="nf">check_chains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_chains</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check observed chains against the expected ones.</span>
-
-<span class="sd">        Logic: if chain B is among the observed chains and is not selected as</span>
-<span class="sd">         the receptor chain, then ligand_chains = [&quot;B&quot;] (default behaviour).</span>
-<span class="sd">        Otherwise, ligand_chains becomes equal to all the other chains (once</span>
-<span class="sd">         receptor chain is removed).</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        obs_chains : list</span>
-<span class="sd">            List of observed chains.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">r_found</span><span class="p">,</span> <span class="n">l_found</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_chain</span> <span class="ow">in</span> <span class="n">obs_chains</span><span class="p">:</span>
-            <span class="n">r_chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_chain</span>
-            <span class="n">obs_chains</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r_chain</span><span class="p">)</span>
-            <span class="n">r_found</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">l_chains</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">l_chain</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_chains</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">l_chain</span> <span class="ow">in</span> <span class="n">obs_chains</span><span class="p">:</span>
-                <span class="n">l_chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l_chain</span><span class="p">)</span>
-                <span class="n">obs_chains</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">l_chain</span><span class="p">)</span>
-                <span class="n">l_found</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="c1"># if receptor chain is not among the observed chains, then</span>
-        <span class="c1"># it is the first chain in the list</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">r_found</span><span class="p">:</span>
-            <span class="n">r_chain</span> <span class="o">=</span> <span class="n">obs_chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">obs_chains</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r_chain</span><span class="p">)</span>
-        <span class="c1"># if no element in ligand_chains is not among the observed chains, then</span>
-        <span class="c1"># ligand_chains is the list of observed chains (the receptor chain has</span>
-        <span class="c1"># already been removed)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">l_found</span><span class="p">:</span>
-            <span class="n">l_chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obs_chains</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_load_atoms</span><span class="p">(</span>
@@ -1279,7 +1244,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 26, 2024.
+      <span class="lastupdated">Last updated on Aug 27, 2024.
       </span></p>
   </div>
 

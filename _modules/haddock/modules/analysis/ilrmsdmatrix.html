@@ -110,7 +110,13 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">RMSD_path</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">rearrange_xyz_files</span><span class="p">,</span> <span class="n">check_common_atoms</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_chains</span><span class="p">,</span>
+    <span class="n">check_common_atoms</span><span class="p">,</span>
+    <span class="n">get_atoms</span><span class="p">,</span>
+    <span class="n">load_coords</span><span class="p">,</span>
+    <span class="n">rearrange_xyz_files</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">RMSDFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">get_index_list</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">parse_ncores</span>
@@ -249,6 +255,26 @@
                 <span class="s2">&quot;for ilRMSD matrix calculation&quot;</span>
                 <span class="p">)</span>
 
+        <span class="c1"># find the existing chains</span>
+        <span class="n">model_atoms</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">mod_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
+                <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">model_atoms</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">obs_chains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">([</span><span class="n">el</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">mod_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="n">obs_chains</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Observed chains: </span><span class="si">{</span><span class="n">obs_chains</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># assigning the chains to the receptor and ligand</span>
+        <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span> <span class="o">=</span> <span class="n">check_chains</span><span class="p">(</span>
+            <span class="n">obs_chains</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Receptor chain: </span><span class="si">{</span><span class="n">r_chain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ligand chains: </span><span class="si">{</span><span class="n">l_chains</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_chain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l_chains</span>
+
         <span class="c1"># Find the common residues making contacts for the receptor and ligand.</span>
         <span class="n">index_list</span> <span class="o">=</span> <span class="n">get_index_list</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">ncores</span><span class="p">)</span>
         <span class="c1"># contact jobs</span>
@@ -301,6 +327,14 @@
             <span class="n">path</span><span class="o">=</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
             <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span>
             <span class="p">)</span>
+
+        <span class="c1"># if the receptor chain in res_resdic is empty, then the receptor has made no contacts and</span>
+        <span class="c1"># the ilrmsd matrix cannot be calculated. This probably means that single chains structures</span>
+        <span class="c1"># reached this step or that something went (very) wrong in the docking process.</span>
+        <span class="k">if</span> <span class="n">res_resdic</span><span class="p">[</span><span class="n">r_chain</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No contacts found for receptor chain </span><span class="si">{</span><span class="n">r_chain</span><span class="si">}</span><span class="s2">. Impossible to calculate ilRMSD matrix.&quot;</span>
+            <span class="n">_msg</span> <span class="o">+=</span> <span class="s2">&quot; Please check your input and make sure that there are at least two chains in contact.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
         
         <span class="n">rec_traj_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_rec.xyz&quot;</span><span class="p">)</span>
         <span class="n">lig_traj_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;traj_lig.xyz&quot;</span><span class="p">)</span>
@@ -308,14 +342,15 @@
         <span class="n">res_resdic_rec</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res_resdic</span>
-            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;receptor_chain&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">r_chain</span>
             <span class="p">}</span>
         <span class="c1"># ligand_chains is a list of chains</span>
         <span class="n">res_resdic_lig</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">res_resdic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ligand_chains&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">l_chains</span>
             <span class="p">}</span>
 
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Check common atoms for receptor (chain </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">res_resdic_rec</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
         <span class="n">n_atoms_rec</span><span class="p">,</span> <span class="n">common_keys_rec</span> <span class="o">=</span> <span class="n">check_common_atoms</span><span class="p">(</span>
             <span class="n">models</span><span class="p">,</span>
             <span class="n">res_resdic_rec</span><span class="p">,</span>
@@ -323,6 +358,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;atom_similarity&quot;</span><span class="p">]</span>
             <span class="p">)</span>
         
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Check common atoms for ligand (chains </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">res_resdic_lig</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
         <span class="n">n_atoms_lig</span><span class="p">,</span> <span class="n">common_keys_lig</span> <span class="o">=</span> <span class="n">check_common_atoms</span><span class="p">(</span>
             <span class="n">models</span><span class="p">,</span>
             <span class="n">res_resdic_lig</span><span class="p">,</span>
@@ -467,7 +503,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 26, 2024.
+      <span class="lastupdated">Last updated on Aug 27, 2024.
       </span></p>
   </div>
 

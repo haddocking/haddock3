@@ -1447,6 +1447,38 @@
             <span class="p">)</span>
         <span class="k">raise</span> <span class="n">ALIGNError</span><span class="p">(</span><span class="n">_err_msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">n_atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: Add type signature</span>
+<div class="viewcode-block" id="check_chains"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_chains">[docs]</a><span class="k">def</span> <span class="nf">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="n">inp_r_chain</span><span class="p">,</span> <span class="n">inp_l_chains</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check observed chains against the expected ones.</span>
+
+<span class="sd">    Logic: if at least one of inp_l_chains is among the observed chains and is</span>
+<span class="sd">    not selected as the receptor chain, then ligand_chains is equal to this </span>
+<span class="sd">    interesection. Otherwise, ligand_chains becomes equal to all the other</span>
+<span class="sd">    chains (once receptor chain is removed).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obs_chains : list</span>
+<span class="sd">        List of observed chains.</span>
+
+<span class="sd">    inp_r_chain : str</span>
+<span class="sd">        Receptor chain.</span>
+<span class="sd">    </span>
+<span class="sd">    inp_l_chains : list</span>
+<span class="sd">        List of ligand chains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find receptor chain</span>
+    <span class="n">r_chain</span> <span class="o">=</span> <span class="n">inp_r_chain</span> <span class="k">if</span> <span class="n">inp_r_chain</span> <span class="ow">in</span> <span class="n">obs_chains</span> <span class="k">else</span> <span class="n">obs_chains</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Remove it so cannot be selected as ligand chain</span>
+    <span class="n">obs_chains</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r_chain</span><span class="p">)</span>
+    <span class="c1"># Define ligand chain(s)</span>
+    <span class="n">l_chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">inp_l_chains</span> <span class="k">if</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obs_chains</span><span class="p">]</span>
+    <span class="c1"># If empty, select all remaining chains</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">l_chains</span><span class="p">:</span>
+        <span class="n">l_chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obs_chains</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span></div>
 </pre></div>
 
            </div>
@@ -1457,7 +1489,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 26, 2024.
+      <span class="lastupdated">Last updated on Aug 27, 2024.
       </span></p>
   </div>
 

@@ -112,7 +112,7 @@ irmsd_cutoff
 ligand_chains
 ~~~~~~~~~~~~~
 
-| *default*: ['B']
+| *default*: []
 | *type*: list
 | *title*: Ligand ChainIDs
 | *short description*: Ligand ChainIDs to be considered for the RMSD calculations.

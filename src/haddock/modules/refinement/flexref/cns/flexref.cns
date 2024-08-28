@@ -69,17 +69,17 @@ evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.unamb_hot=$unamb_hot)
-evaluate ($data.unamb_cool1=$unamb_cool1)
-evaluate ($data.unamb_cool2=$unamb_cool2)
-evaluate ($data.unamb_cool3=$unamb_cool3)
+evaluate ($data.unambig_hot=$unambig_hot)
+evaluate ($data.unambig_cool1=$unambig_cool1)
+evaluate ($data.unambig_cool2=$unambig_cool2)
+evaluate ($data.unambig_cool3=$unambig_cool3)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_hot=$amb_hot)
-evaluate ($data.amb_cool1=$amb_cool1)
-evaluate ($data.amb_cool2=$amb_cool2)
-evaluate ($data.amb_cool3=$amb_cool3)
+evaluate ($data.ambig_hot=$ambig_hot)
+evaluate ($data.ambig_cool1=$ambig_cool1)
+evaluate ($data.ambig_cool2=$ambig_cool2)
+evaluate ($data.ambig_cool3=$ambig_cool3)
 
 evaluate ($data.hbond_hot=$hbond_hot)
 evaluate ($data.hbond_cool1=$hbond_cool1)
@@ -321,8 +321,8 @@ evaluate ($failure = $result)
 
 
 {* Define initial weights for distance restraints ============================== *}
-evaluate ($unambig_scale = $Data.unamb_hot)
-evaluate ($ambig_scale = $Data.amb_hot)
+evaluate ($unambig_scale = $Data.unambig_hot)
+evaluate ($ambig_scale = $Data.ambig_hot)
 evaluate ($hbond_scale = $Data.hbond_hot)
 
 noe
@@ -500,8 +500,8 @@ else
 end if
 
 noe
-    scale dist $Data.unamb_cool3
-    scale ambi $Data.amb_cool3
+    scale dist $Data.unambig_cool3
+    scale ambi $Data.ambig_cool3
     scale hbon $Data.hbond_cool3
     scale symm 0.0
     scale cont 0.0
@@ -532,8 +532,8 @@ if ($Data.flags.sym eq true) then
         noe cv $npart ? end
     end if
     noe
-        scale dist $Data.unamb_cool3
-        scale ambi $Data.amb_cool3
+        scale dist $Data.unambig_cool3
+        scale ambi $Data.ambig_cool3
         scale hbon $Data.hbond_cool3
     end
     print threshold=0.3 noe

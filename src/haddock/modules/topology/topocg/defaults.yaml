@@ -1,4 +1,4 @@
-ffversion:
+cgffversion:
   default: martini2
   type: string
   minchars: 0

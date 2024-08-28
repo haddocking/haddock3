@@ -64,7 +64,6 @@ def generate_topology(
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
     general_param = load_workflow_params(**defaults)
-    print(general_param)
     input_mols_params = load_workflow_params(param_header="", **mol_params)
     general_param = general_param + input_mols_params
 
@@ -98,9 +97,6 @@ def generate_topology(
 
     inp = "".join(inp_parts)
     # change the parameter files as function of the force-field version
-    inp = inp.replace('protein-allhdg5-4.top','protein-CG-Martini.top')
-    inp = inp.replace('protein-allhdg5-4-noter.link','protein-CG-Martini.link')
-    inp = inp.replace('protein-allhdg5-4.param','protein-CG-Martini.param')
 
     if write_to_disk:
         output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")

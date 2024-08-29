@@ -38,7 +38,7 @@ assign ( resid 33  and segid A)
 !
 ! HADDOCK AIR restraints for 2nd partner
 !
-assign ( resid 3  and segid B and (name OP1 or name OP2 or name OP1 or name OP2))
+assign ( resid 3  and segid B and (name OP1 or name OP2))
        (
         ( resid 10  and segid A)
        )  2.0 2.0 0.0

@@ -63,7 +63,7 @@ assign ( resid 6  and segid B and (name N1 or name N3 or name N7 or name H61 or 
         ( resid 29  and segid A)
        )  2.0 2.0 0.0
 !
-assign ( resid 30  and segid B and (name OP1 or name OP2 or name OP1 or name OP2))
+assign ( resid 30  and segid B and (name OP1 or name OP2))
        (
         ( resid 40  and segid A)
      or

@@ -43,7 +43,7 @@ assign ( resid 3  and segid B and (name OP1 or name OP2))
         ( resid 10  and segid A)
        )  2.0 2.0 0.0
 !
-assign ( resid 4  and segid B and (name OP1 or name OP2 or name OP1 or name OP2))
+assign ( resid 4  and segid B and (name OP1 or name OP2))
        (
         ( resid 10  and segid A)
        )  2.0 2.0 0.0

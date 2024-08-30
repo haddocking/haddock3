@@ -51,7 +51,7 @@ On __OSX__, use rather [brew](https://brew.sh) to install Python 3.9:
 brew install python@3.9
 ```
 
-Then `python3.9 should be available on your system at `/opt/homebrew/bin/python3.9`
+Then `python3.9` should be available on your system at `/opt/homebrew/bin/python3.9`
 
 
 #### CNS

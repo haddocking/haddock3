@@ -392,19 +392,26 @@ def test_param_value_error(defaultparams, key, value):
 def test_validate_parameters_are_not_incompatible(mocker):
     mocker.patch(
         "haddock.gear.prepare_run.incompatible_defaults_params",
-        {"limiting_parameter": {"incompatible_parameter": "incompatible_value"}},
+        {
+            "limiting_parameter": {
+                "value": True,
+                "incompatible_parameter": "incompatible_value",
+            }
+        },
     )
 
+    # Test 1 successfully fail
     params = {
-        "limiting_parameter": "",
+        "limiting_parameter": True,
         "incompatible_parameter": "incompatible_value",
     }
 
     with pytest.raises(ValueError):
         validate_parameters_are_not_incompatible(params)
 
+    # Test 2 - successfully pass
     params = {
-        "limiting_parameter": "limiting_value",
+        "limiting_parameter": False,
         "ok_parameter": "ok_value",
     }
 

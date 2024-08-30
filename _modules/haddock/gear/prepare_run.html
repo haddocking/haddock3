@@ -1049,15 +1049,9 @@
         <span class="c1"># Check if the limiting parameter is present in the parameters</span>
         <span class="k">if</span> <span class="n">limiting_param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="c1"># Check each incompatibility for the limiting parameter</span>
-            <span class="n">incompatible_value_of_limiting_param</span> <span class="o">=</span> <span class="n">incompatibilities</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">incompatible_param</span><span class="p">,</span> <span class="n">incompatible_value</span> <span class="ow">in</span> <span class="n">incompatibilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">incompatible_param</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
-                    <span class="k">continue</span>
                 <span class="c1"># Check if the incompatible parameter is present and has the incompatible value</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">incompatible_param</span><span class="p">)</span> <span class="o">==</span> <span class="n">incompatible_value</span>
-                    <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="n">limiting_param</span><span class="p">]</span> <span class="o">==</span> <span class="n">incompatible_value_of_limiting_param</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">incompatible_param</span><span class="p">)</span> <span class="o">==</span> <span class="n">incompatible_value</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Parameter `</span><span class="si">{</span><span class="n">limiting_param</span><span class="si">}</span><span class="s2">` is incompatible with `</span><span class="si">{</span><span class="n">incompatible_param</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">incompatible_value</span><span class="si">}</span><span class="s2">`.&quot;</span>
                     <span class="p">)</span></div>

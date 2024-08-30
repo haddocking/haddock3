@@ -60,17 +60,23 @@ Please refer to the [CNS installation instructions](docs/CNS.md).
 
 #### Git
 
+On a __Linux-based__ system:
+
 ```bash
 sudo apt-get install git
 ```
 
 #### gcc
 
+On a __Linux-based__ system:
+
 ```bash
 sudo apt-get install gcc
 ```
 
 #### OpenMPI 
+
+On a __Linux-based__ system:
 
 ```bash
 sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev

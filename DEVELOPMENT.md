@@ -71,7 +71,7 @@ sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ### Clone the repository
 
 ```bash
-git clone --recursive git://github.com/haddocking/haddock3.git
+git clone --recursive https://github.com/haddocking/haddock3.git
 ```
 
 ### Link CNS binary

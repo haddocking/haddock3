@@ -88,6 +88,7 @@ ln -s /path/to/cns_solve_1.3/bin/cns haddock3/bin/cns
 ```bash
 cd src/fcc/src
 make
+cd ../../
 ```
 
 #### fast-rmsdmatrix
@@ -95,6 +96,7 @@ make
 ```bash
 cd src/fast-rmsdmatrix/src
 make fast-rmsdmatrix
+cd ../../
 ```
 
 ### Python environment

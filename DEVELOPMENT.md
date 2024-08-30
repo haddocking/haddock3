@@ -88,7 +88,7 @@ ln -s /path/to/cns_solve_1.3/bin/cns haddock3/bin/cns
 ```bash
 cd src/fcc/src
 make
-cd ../../
+cd ../../../
 ```
 
 #### fast-rmsdmatrix

@@ -32,8 +32,9 @@ Below the instructions are provided for a Ubuntu system using `apt-get`. If you 
 
 #### Python3.9
 
-Conda is NOT recomended for development. Instead, install and compile Python 3.9 from source.
+Conda is NOT recommended for development. Instead, install and compile Python 3.9 from source.
 
+On a __Linux-based system__ you can install Python 3.9 with the following commands:
 ```bash
 wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz
 tar -xf Python-3.9.6.tgz
@@ -42,7 +43,16 @@ cd Python-3.9.6
 sudo make altinstall -j 8
 ```
 
-Then `python3.9` should be available on your system, at `/usr/local/bin/python3.9`
+Then `python3.9` should be available on your system at `/usr/local/bin/python3.9`
+
+On __OSX__, use rather [brew](https://brew.sh) to install Python 3.9:
+
+```bash
+brew install python@3.9
+```
+
+Then `python3.9 should be available on your system at `/opt/homebrew/bin/python3.9`
+
 
 #### CNS
 
@@ -60,11 +70,13 @@ sudo apt-get install git
 sudo apt-get install gcc
 ```
 
-#### OpenMPI
+#### OpenMPI 
 
 ```bash
 sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ```
+__Note__ that this step is not required on OSX.
+
 
 ## Setting up the development environment
 
@@ -96,7 +108,7 @@ cd ../../../
 ```bash
 cd src/fast-rmsdmatrix/src
 make fast-rmsdmatrix
-cd ../../
+cd ../../../
 ```
 
 ### Python environment
@@ -107,6 +119,14 @@ We recomend you use Python's native virtual environment to manage the dependenci
 /usr/local/bin/python3.9 -m venv .venv
 source .venv/bin/activate
 ```
+
+On __OSX__ the command would be:
+
+```bash
+/opt/homebrew/bin/python3.9 -m venv .venv
+source .venv/bin/activate
+```
+
 
 ### Install Python dependencies
 

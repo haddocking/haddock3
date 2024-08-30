@@ -962,9 +962,15 @@ def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
         # Check if the limiting parameter is present in the parameters
         if limiting_param in params:
             # Check each incompatibility for the limiting parameter
+            incompatible_value_of_limiting_param = incompatibilities["value"]
             for incompatible_param, incompatible_value in incompatibilities.items():
+                if incompatible_param == "value":
+                    continue
                 # Check if the incompatible parameter is present and has the incompatible value
-                if params.get(incompatible_param) == incompatible_value:
+                if (
+                    params.get(incompatible_param) == incompatible_value
+                    and params[limiting_param] == incompatible_value_of_limiting_param
+                ):
                     raise ValueError(
                         f"Parameter `{limiting_param}` is incompatible with `{incompatible_param}={incompatible_value}`."
                     )

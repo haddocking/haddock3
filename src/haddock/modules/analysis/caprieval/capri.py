@@ -213,6 +213,7 @@ class CAPRI:
         self.ilrmsd = float("nan")
         self.fnat = float("nan")
         self.dockq = float("nan")
+        self.rmsd = float("nan")
         self.allatoms = params["allatoms"]
         self.atoms = self._load_atoms(model, reference, full=self.allatoms)
         self.r_chain = params["receptor_chain"]
@@ -507,6 +508,42 @@ class CAPRI:
                 self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
+    
+    def calc_global_rmsd(self) -> None:
+        """Calculate the full structure RMSD."""
+        # Load reference atomic coordinates
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
+        # Load model atomic coordinates
+        try:
+            model_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
+        # Obtain list of coordinates
+        Q = []
+        P = []
+        for k in ref_coord_dic.keys() & model_coord_dic.keys():
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = model_coord_dic[k]
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
+        # Cast indo array
+        Q = np.asarray(Q)
+        P = np.asarray(P)
+        # Center to 0
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
+        # Obtain rotation matrix
+        U = kabsch(P, Q)
+        # Rotate model (the actual superimposition)
+        P = np.dot(P, U)
+        # Compute full RMSD
+        self.rmsd = calc_rmsd(P, Q)
 
     def calc_dockq(self) -> None:
         """Calculate the DockQ metric."""
@@ -549,6 +586,7 @@ class CAPRI:
         data["lrmsd"] = self.lrmsd
         data["ilrmsd"] = self.ilrmsd
         data["dockq"] = self.dockq
+        data["rmsd"] = self.rmsd
 
         if self.has_cluster_info():
             data["cluster_id"] = self.model.clt_id
@@ -611,6 +649,10 @@ class CAPRI:
         if self.params["dockq"]:
             log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
+        
+        if self.params["global_rmsd"]:
+            log.debug(f"id {self.identificator}, calculating global RMSD")
+            self.calc_global_rmsd()
 
         if not self.less_io:
             self.make_output()
@@ -964,7 +1006,7 @@ def capri_cluster_analysis(
     path: FilePath,
 ) -> None:
     """Consider the cluster results for the CAPRI evaluation."""
-    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd"]
+    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd", "rmsd"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data

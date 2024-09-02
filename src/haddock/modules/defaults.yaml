@@ -149,5 +149,5 @@ less_io:
   group: "execution"
   explevel: easy
   incompatible:
-    value: true
-    mode: batch
+    true:
+      mode: batch

@@ -271,7 +271,11 @@ def setup_run(
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
     )
 
-    validate_parameters_are_not_incompatible(general_params)
+    # Validate there is no incompatible parameters in global parameters
+    validate_parameters_are_not_incompatible(
+        general_params,
+        incompatible_defaults_params,
+        )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -944,7 +948,10 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
     return
 
 
-def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
+def validate_parameters_are_not_incompatible(
+        params: ParamMap,
+        incompatible_params: ParamMap,
+        ) -> None:
     """
     Validate parameters are not incompatible.
 
@@ -956,24 +963,21 @@ def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
     Raises
     ------
     ValueError
-        If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.
+        If any parameter in `params` is incompatible with another parameter
+        as defined by `incompatible_params`.
     """
-    for limiting_param, incompatibilities in incompatible_defaults_params.items():
+    for limiting_param, incompatibilities in incompatible_params.items():
         # Check if the limiting parameter is present in the parameters
         if limiting_param in params:
             # Check each incompatibility for the limiting parameter
-            incompatible_value_of_limiting_param = incompatibilities["value"]
-            for incompatible_param, incompatible_value in incompatibilities.items():
-                if incompatible_param == "value":
-                    continue
+            active_incompatibilities = incompatibilities[params[limiting_param]]
+            for incompatible_param, incompatible_value in active_incompatibilities.items():
                 # Check if the incompatible parameter is present and has the incompatible value
-                if (
-                    params.get(incompatible_param) == incompatible_value
-                    and params[limiting_param] == incompatible_value_of_limiting_param
-                ):
+                if params.get(incompatible_param) == incompatible_value:
                     raise ValueError(
-                        f"Parameter `{limiting_param}` is incompatible with `{incompatible_param}={incompatible_value}`."
-                    )
+                        f"Parameter `{limiting_param}` is incompatible with "
+                        f"`{incompatible_param}={incompatible_value}`."
+                        )
 
 
 def validate_parameters_are_not_misspelled(

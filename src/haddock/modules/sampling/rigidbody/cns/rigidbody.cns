@@ -267,9 +267,11 @@ if ($Data.ranair eq true) then
     @MODULE:randomairs.cns
 
     !Read back in hbond data
-    fileexist $hbond_fname end
-    if ($result eq true) then
-        noe @@$hbond_fname end
+    if ($hbond_fname # "") then
+        fileexist $hbond_fname end
+        if ($result eq true) then
+            noe @@$hbond_fname end
+        end if
     end if
 
     noe

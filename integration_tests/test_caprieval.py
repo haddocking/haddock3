@@ -62,6 +62,8 @@ def expected_clt_data() -> list[dict[str, Union[int, str, float]]]:
             "dockq_std": 0.463,
             "ilrmsd": 9.124,
             "ilrmsd_std": 9.124,
+            "rmsd": 4.311,
+            "rmsd_std": 4.311,
             "air": float("nan"),
             "air_std": float("nan"),
             "bsa": float("nan"),
@@ -92,6 +94,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "lrmsd": 0.000,
             "ilrmsd": 0.000,
             "dockq": 1.000,
+            "rmsd": 0.000,
             "cluster_id": "-",
             "cluster_ranking": "-",
             "model-cluster_ranking": "-",
@@ -107,6 +110,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "lrmsd": 20.937,
             "ilrmsd": 18.248,
             "dockq": 0.074,
+            "rmsd": 8.622,
             "cluster_id": "-",
             "cluster_ranking": "-",
             "model-cluster_ranking": "-",
@@ -209,9 +213,9 @@ def _check_capri_ss_tsv(
     expected_header_cols = list(expected_data[0].keys())
     observed_header_cols = lines[0].strip().split("\t")
 
-    # Check if all they have the same lenght
+    # Check if all of them have the same lenght
     assert len(observed_header_cols) == len(expected_header_cols), "Header mismatch"
-
+    # Make sure column names are the same
     for col_name in expected_header_cols:
         assert col_name in observed_header_cols, f"{col_name} not found in the header"
 

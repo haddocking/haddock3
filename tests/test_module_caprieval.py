@@ -257,6 +257,12 @@ def test_protprot_dockq(protprot_caprimodule):
     assert np.isclose(protprot_caprimodule.dockq, 0.10, atol=0.01)
 
 
+def test_protprot_global_rmsd(protprot_caprimodule):
+    """Test protein-protein l-rmsd calculation."""
+    protprot_caprimodule.calc_global_rmsd()
+    assert np.isclose(protprot_caprimodule.rmsd, 8.62, atol=0.01)
+
+
 def test_protprot_bb_vs_all_atoms(
     protprot_caprimodule,
     protprot_allatm_caprimodule,
@@ -443,9 +449,10 @@ def test_make_output(protprot_caprimodule):
     protprot_caprimodule.make_output()
 
     ss_fname = Path(
-        protprot_caprimodule.path, f"capri_ss_{protprot_caprimodule.identificator}.tsv"
+        protprot_caprimodule.path,
+        f"capri_ss_{protprot_caprimodule.identificator}.tsv"
     )
-
+    # Check that the file contains something
     assert ss_fname.stat().st_size != 0
 
     # remove the model column since its name will depend on where we are running
@@ -461,12 +468,16 @@ def test_make_output(protprot_caprimodule):
             "lrmsd",
             "ilrmsd",
             "dockq",
+            "rmsd",
             "cluster_id",
             "cluster_ranking",
             "model-cluster_ranking",
             "something",
         ],
-        ["-", "-", "nan", "nan", "nan", "nan", "nan", "nan", "1", "1", "10", "0.000"],
+        [
+            "-", "-", "nan", "nan", "nan", "nan", "nan", "nan",
+            "nan", "1", "1", "10", "0.000",
+        ],
     ]
 
     assert observed_outf_l == expected_outf_l
@@ -892,6 +903,7 @@ def test_capri_run(mocker):
             "lrmsd": True,
             "ilrmsd": True,
             "dockq": True,
+            "global_rmsd": True,
             "allatoms": True,
             "receptor_chain": "A",
             "ligand_chains": ["B"],
@@ -926,6 +938,13 @@ def test_capri_run(mocker):
         capri, "calc_dockq", side_effect=lambda: setattr(capri, "dockq", rand_dockq)
     )
 
+    rand_global_rmsd = random.random()
+    mocker.patch.object(
+        capri,
+        "calc_global_rmsd",
+        side_effect=lambda: setattr(capri, "rmsd", rand_global_rmsd)
+    )
+
     mocker.patch.object(capri, "make_output")
 
     capri.run()
@@ -936,6 +955,7 @@ def test_capri_run(mocker):
     assert capri.lrmsd == pytest.approx(rand_lrmsd)
     assert capri.ilrmsd == pytest.approx(rand_ilrmsd)
     assert capri.dockq == pytest.approx(rand_dockq)
+    assert capri.rmsd == pytest.approx(rand_global_rmsd)
 
 
 def test_rank_according_to_score():

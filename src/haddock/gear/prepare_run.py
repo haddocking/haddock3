@@ -969,8 +969,9 @@ def validate_parameters_are_not_incompatible(
     for limiting_param, incompatibilities in incompatible_params.items():
         # Check if the limiting parameter is present in the parameters
         if limiting_param in params:
-            # Check each incompatibility for the limiting parameter
+            # Point incompatibilities for the value of the limiting parameter
             active_incompatibilities = incompatibilities[params[limiting_param]]
+            # Check each incompatibility for the limiting parameter
             for incompatible_param, incompatible_value in active_incompatibilities.items():
                 # Check if the incompatible parameter is present and has the incompatible value
                 if params.get(incompatible_param) == incompatible_value:

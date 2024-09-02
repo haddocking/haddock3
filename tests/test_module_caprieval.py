@@ -1019,6 +1019,7 @@ def test_extract_data_from_capri_class(mocker):
     random_lrmsd = random.random()
     random_ilrmsd = random.random()
     random_dockq = random.random()
+    random_rmsd = random.random()
 
     c.model = random_model
     c.model.clt_id = random_clt_id
@@ -1031,6 +1032,7 @@ def test_extract_data_from_capri_class(mocker):
     c.lrmsd = random_lrmsd
     c.ilrmsd = random_ilrmsd
     c.dockq = random_dockq
+    c.rmsd = random_rmsd
 
     observed_data = extract_data_from_capri_class(
         capri_objects=[c], sort_key="score", sort_ascending=True, output_fname=Path("")
@@ -1046,6 +1048,7 @@ def test_extract_data_from_capri_class(mocker):
     assert observed_data[1]["lrmsd"] == random_lrmsd
     assert observed_data[1]["ilrmsd"] == random_ilrmsd
     assert observed_data[1]["dockq"] == random_dockq
+    assert observed_data[1]["rmsd"] == random_rmsd
     assert observed_data[1]["energy"] == random_energy
     assert observed_data[1]["cluster_id"] == random_clt_id
     assert observed_data[1]["cluster_ranking"] == random_clt_rank

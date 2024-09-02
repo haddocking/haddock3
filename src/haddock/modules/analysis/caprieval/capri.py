@@ -949,6 +949,7 @@ def extract_data_from_capri_class(
             "lrmsd": c.lrmsd,
             "ilrmsd": c.ilrmsd,
             "dockq": c.dockq,
+            "rmsd": c.rmsd,
             "cluster_id": c.model.clt_id if c.model.clt_id else None,
             "cluster_ranking": c.model.clt_rank if c.model.clt_rank else None,
             "model-cluster_ranking": (

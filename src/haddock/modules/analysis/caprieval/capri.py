@@ -755,34 +755,36 @@ class CAPRI:
 
 def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
     """Merge CAPRI data."""
+    # Set of attributes/keys we want to extract
+    target_keys = ("irmsd", "fnat", "ilrmsd", "lrmsd", "dockq", "rmsd", )
+    # Initiate holder
     capri_dic: dict[str, dict[str, float]] = {}
+    # Loop over jobs ids
     for ident in range(1, len(capri_jobs) + 1):
+        # Point tsv file
         out_file = Path(f"capri_ss_{ident}.tsv")
         if not out_file.exists():
             continue
+        # Read it
         header, content = out_file.read_text().split(os.linesep, 1)
-
         header_data = header.split("\t")
         content_data = content.split("\t")
-
+        # Find model name
         model_name = Path(content_data[header_data.index("model")]).name
-        capri_dic[model_name] = {}
-        target_keys = ["irmsd", "fnat", "ilrmsd", "lrmsd", "dockq"]
-        for key in target_keys:
-            val = float(content_data[header_data.index(key)])
-            capri_dic[model_name][key] = val
-
+        # Gather data for this model
+        capri_dic[model_name] = {
+            key: float(content_data[header_data.index(key)])
+            for key in target_keys
+            }
+    
     for j in capri_jobs:
         for m in capri_dic:
             jm = j.model
             file_name = jm.name if isinstance(jm, Path) else jm.file_name
             if m == file_name:
                 # add the data
-                j.irmsd = capri_dic[m]["irmsd"]
-                j.fnat = capri_dic[m]["fnat"]
-                j.lrmsd = capri_dic[m]["lrmsd"]
-                j.ilrmsd = capri_dic[m]["ilrmsd"]
-                j.dockq = capri_dic[m]["dockq"]
+                for target_key in target_keys:
+                    j.__setattr__(target_key, capri_dic[m][target_key])
 
     return capri_jobs
 
@@ -994,7 +996,7 @@ def calc_stats(data: list) -> tuple[float, float]:
 # Define dict types
 CltData = dict[
     tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]
-]  # noqa : E501
+]
 
 
 def capri_cluster_analysis(
@@ -1043,7 +1045,12 @@ def capri_cluster_analysis(
         # capri keys
         for key in capri_keys:
             std_key = f"{key}_std"
+            print(key)
+            print(clt_data[element])
             try:
+                if key == "rmsd":
+                    for e in clt_data[element][:clt_threshold]:
+                        print(vars(e[0]))
                 key_array = [vars(e[0])[key] for e in clt_data[element][:clt_threshold]]
                 data[key], data[std_key] = calc_stats(key_array)
             except KeyError:

@@ -30,7 +30,7 @@ international_good_byes = [
 # Do not hesitate to update / comment one of these
 feedback_urls = {
     "GitHub issues": "https://github.com/haddocking/haddock3/issues",
-    "BioExcel feedback": "https://ask.bioexcel.eu/c/bioexcel-feedback/66",
+    "BioExcel feedback": "https://www.bonvinlab.org/feedback",
     "BioExcel survey": "https://bioexcel.eu/bioexcel-survey-2024/",
     }
 

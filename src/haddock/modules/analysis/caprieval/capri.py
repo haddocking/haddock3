@@ -776,7 +776,7 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
             key: float(content_data[header_data.index(key)])
             for key in target_keys
             }
-    
+
     for j in capri_jobs:
         for m in capri_dic:
             jm = j.model
@@ -1045,12 +1045,7 @@ def capri_cluster_analysis(
         # capri keys
         for key in capri_keys:
             std_key = f"{key}_std"
-            print(key)
-            print(clt_data[element])
             try:
-                if key == "rmsd":
-                    for e in clt_data[element][:clt_threshold]:
-                        print(vars(e[0]))
                 key_array = [vars(e[0])[key] for e in clt_data[element][:clt_threshold]]
                 data[key], data[std_key] = calc_stats(key_array)
             except KeyError:

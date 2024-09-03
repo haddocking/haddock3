@@ -636,6 +636,7 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     protprot_caprimodule.fnat = 1.0
     protprot_caprimodule.lrmsd = 1.2
     protprot_caprimodule.ilrmsd = 4.3
+    protprot_caprimodule.rmsd = 0.01,
     capri_cluster_analysis(
         capri_list=[protprot_caprimodule, protprot_caprimodule],
         model_list=[model1, model2],
@@ -666,6 +667,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "dockq_std",
             "ilrmsd",
             "ilrmsd_std",
+            "rmsd",
+            "rmsd_std",
             "caprieval_rank",
         ],
         [
@@ -684,6 +687,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "nan",
             "4.300",
             "0.000",
+            "0.010",
+            "0.000",
             "1",
         ],
         [
@@ -701,6 +706,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "nan",
             "nan",
             "4.300",
+            "0.000",
+            "0.010",
             "0.000",
             "2",
         ],
@@ -734,6 +741,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "lrmsd_std",
             "dockq",
             "dockq_std",
+            "rmsd",
+            "rmsd_std",
             "caprieval_rank",
         ],
         [
@@ -750,6 +759,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "0.000",
             "nan",
             "nan",
+            "0.010",
+            "0.000",
             "2",
         ],
         [
@@ -766,6 +777,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "0.000",
             "nan",
             "nan",
+            "0.010",
+            "0.000",
             "1",
         ],
     ]

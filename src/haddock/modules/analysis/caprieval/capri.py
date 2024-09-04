@@ -784,6 +784,7 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
             if m == file_name:
                 # add the data
                 for target_key in target_keys:
+                   # Set a new target_key attribute to object with capri_dic[m][target_key] value
                     j.__setattr__(target_key, capri_dic[m][target_key])
 
     return capri_jobs

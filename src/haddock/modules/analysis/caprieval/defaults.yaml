@@ -71,7 +71,8 @@ global_rmsd:
         after superimposition. Note that a sequence alignment is performed to
         obtain the mapping between the reference and the model. If the one of
         the structure contain a 'small-molecule', we assume that the compared
-        structure atoms are in the same order.
+        structure atoms are in the same order. With default parameters `allatoms = false`, only
+        backbone RMSD will be computed.
   group: analysis
   explevel: easy
 

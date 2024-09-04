@@ -196,7 +196,11 @@
     <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
     <span class="kn">from</span> <span class="nn">haddock.gear.extend_run</span> <span class="kn">import</span> <span class="n">WorkflowManagerExtend</span>
-    <span class="kn">from</span> <span class="nn">haddock.gear.greetings</span> <span class="kn">import</span> <span class="n">get_adieu</span><span class="p">,</span> <span class="n">get_initial_greeting</span>
+    <span class="kn">from</span> <span class="nn">haddock.gear.greetings</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">get_adieu</span><span class="p">,</span>
+        <span class="n">get_initial_greeting</span><span class="p">,</span>
+        <span class="n">gen_feedback_messages</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="kn">from</span> <span class="nn">haddock.gear.prepare_run</span> <span class="kn">import</span> <span class="n">setup_run</span>
     <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">working_directory</span>
     <span class="kn">from</span> <span class="nn">haddock.libs.liblog</span> <span class="kn">import</span> <span class="p">(</span>
@@ -247,6 +251,7 @@
 
     <span class="k">if</span> <span class="n">setup_only</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;We have setup the run, only.&quot;</span><span class="p">)</span>
+        <span class="n">gen_feedback_messages</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">get_adieu</span><span class="p">())</span>
         <span class="k">return</span>
 
@@ -280,6 +285,7 @@
     <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
     <span class="n">elapsed</span> <span class="o">=</span> <span class="n">convert_seconds_to_min_sec</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This HADDOCK3 run took: </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">gen_feedback_messages</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">get_adieu</span><span class="p">())</span></div>
 
 
@@ -295,7 +301,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 30, 2024.
+      <span class="lastupdated">Last updated on Sep 04, 2024.
       </span></p>
   </div>
 

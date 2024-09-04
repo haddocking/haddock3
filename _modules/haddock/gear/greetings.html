@@ -92,7 +92,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Callable</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">contact_us</span><span class="p">,</span> <span class="n">version</span>
 
@@ -112,6 +112,14 @@
     <span class="s2">&quot;Tchau&quot;</span><span class="p">,</span>
     <span class="s2">&quot;再见&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+
+<span class="c1"># List of urls to be printed to the screen at the end of a workflow</span>
+<span class="c1"># Do not hesitate to update / comment one of these</span>
+<span class="n">feedback_urls</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;GitHub issues&quot;</span><span class="p">:</span> <span class="s2">&quot;https://github.com/haddocking/haddock3/issues&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BioExcel feedback&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.bonvinlab.org/feedback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BioExcel survey&quot;</span><span class="p">:</span> <span class="s2">&quot;https://bioexcel.eu/bioexcel-survey-2024/&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
 
 <div class="viewcode-block" id="get_initial_greeting"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.greetings.html#haddock.gear.greetings.get_initial_greeting">[docs]</a><span class="k">def</span> <span class="nf">get_initial_greeting</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -153,8 +161,28 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create good-bye message with help.&quot;&quot;&quot;</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S&quot;</span><span class="p">)</span>
     <span class="n">bye</span> <span class="o">=</span> <span class="n">get_goodbye_greetings</span><span class="p">()</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Finished at </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">. For any help contact us at </span><span class="si">{</span><span class="n">contact_us</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">bye</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Finished at </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">. For any help contact us at </span><span class="si">{</span><span class="n">contact_us</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">bye</span><span class="si">}</span><span class="s2">.&quot;</span>
     <span class="k">return</span> <span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="gen_feedback_messages"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.greetings.html#haddock.gear.greetings.gen_feedback_messages">[docs]</a><span class="k">def</span> <span class="nf">gen_feedback_messages</span><span class="p">(</span><span class="n">print_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print list of feedbacks urls.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    print_function : Callable</span>
+<span class="sd">        The function used to print message on screen.</span>
+<span class="sd">        This function must accept str as first argument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">print_function</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="s2">&quot;Your feedback matters in Haddock3!&quot;</span>
+            <span class="s2">&quot; Share your experience and help us grow:&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">feedback_urls</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">print_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <span class="n">get_goodbye_greetings</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">get_greetings</span><span class="p">,</span> <span class="n">international_good_byes</span><span class="p">)</span>
@@ -168,7 +196,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 30, 2024.
+      <span class="lastupdated">Last updated on Sep 04, 2024.
       </span></p>
   </div>
 

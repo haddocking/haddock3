@@ -1,13 +1,13 @@
 cgffversion:
-  default: martini2
-  type: string
-  minchars: 0
-  maxchars: 100
+  default: 2
+  type: integer
+  min: 2
+  max: 3
   choices:
-    - martini2
-    - martini3
-  title: CG Force-field version
-  short: Force-field version for the coarse-graining mapping and parameters
+    - 2
+    - 3
+  title: MARTINI Force-field version
+  short: Force-field version for the coarse-grain mapping and parameters
   long: CNS, the computational engine used by HADDOCK can generate a lot of output
     messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
   group: module

@@ -1,11 +1,11 @@
 cgffversion:
-  default: 2
-  type: integer
-  min: 2
-  max: 3
+  default: martini2
+  type: string
+  min: martini2
+  max: martini3
   choices:
-    - 2
-    - 3
+    - martini2
+    - martini3
   title: MARTINI Force-field version
   short: Force-field version for the coarse-grain mapping and parameters
   long: CNS, the computational engine used by HADDOCK can generate a lot of output

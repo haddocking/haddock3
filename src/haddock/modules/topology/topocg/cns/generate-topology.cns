@@ -222,26 +222,26 @@ define(
 
  ) {- end block parameter definition -}
 
-if ( $cgffversion eq 2 ) then
+if ( $cgffversion eq "martini2" ) then
     {* protein topology file *}
     eval ($prot_topology_infile="TOPPAR:protein-CG-Martini.top")
     {* protein linkage file *}
     eval ($prot_link_infile="TOPPAR:protein-CG-Martini.link")
     {* protein parameter file *}
     eval ($prot_parameter_infile="TOPPAR:protein-CG-Martini.param")
-elseif ( $cgffversion eq 3 ) then
+elseif ( $cgffversion eq "martini3" ) then
     display "CG force field version not yet implemented - stopping..."
     stop
 end if
 
-if ( $cgffversion eq 2 ) then
+if ( $cgffversion eq "martini2" ) then
     {* nucleic acid topology file *}
     eval ($nucl_topology_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.top")
     {* nucleic acid linkage file *}
     eval ($nucl_link_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.link")
     {* nucleic acid parameter file *}
     eval ($nucl_parameter_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.param")
-elseif ( $cgffversion eq 3 ) then
+elseif ( $cgffversion eq "martini3" ) then
     display "CG force field version not yet implemented - stopping..."
     stop
 end if

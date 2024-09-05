@@ -234,6 +234,18 @@ elseif ( $cgffversion eq 3 ) then
     stop
 end if
 
+if ( $cgffversion eq 2 ) then
+    {* nucleic acid topology file *}
+    eval ($nucl_topology_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.top")
+    {* nucleic acid linkage file *}
+    eval ($nucl_link_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.link")
+    {* nucleic acid parameter file *}
+    eval ($nucl_parameter_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.param")
+elseif ( $cgffversion eq 3 ) then
+    display "CG force field version not yet implemented - stopping..."
+    stop
+end if
+
 evaluate ($chain = 1)
 evaluate($coor_infile= $file)
 

@@ -11,6 +11,7 @@ from haddock.libs.libalign import (
     align_seq,
     check_common_atoms,
     calc_rmsd,
+    check_chains,
     centroid,
     dump_as_izone,
     get_align,
@@ -430,6 +431,23 @@ def test_align_seq_chm():
         assert observed_chm_dict == expected_chm_dict
 
 
+def test_align_seq_inverted():
+    """Test the sequence alignment with inverted chain."""
+    ref = Path(golden_data, "protprot_complex_1.pdb")
+    mod = Path(golden_data, "protprot_complex_2_inverted.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
+        print(f"observed_numb_dic: {observed_numb_dic}")
+        print(f"observed_chm_dict: {observed_chm_dict}")
+        expected_numb_keys = ["A", "B"]
+        expected_chm_dict = {"A" : "A", "B": "B"}
+
+        assert list(observed_numb_dic.keys()) == expected_numb_keys
+        assert observed_chm_dict == expected_chm_dict    
+
+
 def test_make_range():
     """Test the expansion of a chain dic into ranges."""
     chain_range_dic = {"A": [1, 2, 4], "B": [100, 110, 200]}
@@ -511,3 +529,34 @@ def test_rearrange_xyz_files():
         exp_content = os.linesep.join([f"{i} 0 0 0" for i in range(ncores)])
         exp_content += os.linesep
         assert obs_content == exp_content
+
+
+def test_check_chains():
+    """Test correct checking of chains."""
+    obs_ch = [["A", "C"],
+              ["A", "B"],
+              ["S", "E", "B", "A"],
+              ["S", "E", "P", "A"],
+              ["C", "D"]]
+    
+    inp_receptor_chains = ["A", "A", "A", "A", "C"]
+    inp_ligand_chains = [
+        [],
+        [],
+        ["B", "E"],
+        ["B"],
+        ["B"],
+    ]
+
+    # assuming exp chains are A and B
+    exp_ch = [["A", ["C"]], # C becomes the ligand
+              ["A", ["B"]], # C becomes the ligand
+              ["A", ["B", "E"]],  # S is ignored (B,E are present)
+              ["A", ["S", "E", "P"]], # B is not there, S-E-P become the ligands
+              ["C", ["D"]]] # B is not there, D becomes the ligand
+
+    for n in range(len(obs_ch)):
+        obs_r_chain, obs_l_chain = check_chains(obs_ch[n], inp_receptor_chains[n], inp_ligand_chains[n])
+        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
+        assert obs_r_chain == exp_r_chain
+        assert obs_l_chain == exp_l_chain

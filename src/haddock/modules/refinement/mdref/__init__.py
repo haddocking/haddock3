@@ -1,4 +1,25 @@
-"""Water refinement with CNS."""
+"""Explicit solvent MD refinement with CNS.
+
+The ``[mdref]`` module (also known as ``itw`` in HADDOCK2.X series), is a small
+molecular dynamics simulation, in cartesian space, using explicit solvent.
+
+A layer of solvent (8A for water, 12.5A for DMSO) is generated around
+surface residues.
+
+The `mdref` protocol is composed of 4 sequential steps:
+- Short energy minimization
+- 3 stages of molecular dynamics to reach 300K (at 100, 200 and 300K)
+- Molecular dynamics at 300K.
+- 3 stages of molecular dynamics, to reach 100K (at 300, 200 and 100K)
+
+Using this protocol, with default parameters, no spectacular changes are
+expected, however, the scoring of the various structures might be improved.
+
+
+Number of MD steps can be modified using the ``waterheatsteps``, ``watersteps``
+and ``watercoolsteps``.
+"""
+
 from pathlib import Path
 
 from haddock.core.typing import FilePath
@@ -81,7 +102,7 @@ class HaddockModule(BaseCNSModule):
             model_idx += 1
 
             for _ in range(self.params["sampling_factor"]):
-                inp_file = prepare_cns_input(
+                mdref_input = prepare_cns_input(
                     idx,
                     model,
                     self.path,
@@ -90,6 +111,8 @@ class HaddockModule(BaseCNSModule):
                     "mdref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
+                    less_io=self.params["less_io"],
+                    seed=model.seed if isinstance(model, PDBFile) else None,
                 )
                 out_file = f"mdref_{idx}.out"
 
@@ -102,7 +125,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(inp_file, out_file, envvars=self.envvars)
+                job = CNSJob(mdref_input, out_file, envvars=self.envvars)
 
                 jobs.append(job)
 

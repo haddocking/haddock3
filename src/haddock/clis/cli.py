@@ -109,7 +109,11 @@ def main(
     from time import time
 
     from haddock.gear.extend_run import WorkflowManagerExtend
-    from haddock.gear.greetings import get_adieu, get_initial_greeting
+    from haddock.gear.greetings import (
+        get_adieu,
+        get_initial_greeting,
+        gen_feedback_messages,
+        )
     from haddock.gear.prepare_run import setup_run
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
@@ -160,6 +164,7 @@ def main(
 
     if setup_only:
         log.info("We have setup the run, only.")
+        gen_feedback_messages(log.info)
         log.info(get_adieu())
         return
 
@@ -193,6 +198,7 @@ def main(
     end = time()
     elapsed = convert_seconds_to_min_sec(end - start)
     log.info(f"This HADDOCK3 run took: {elapsed}")
+    gen_feedback_messages(log.info)
     log.info(get_adieu())
 
 

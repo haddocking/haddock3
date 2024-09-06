@@ -1,4 +1,18 @@
-"""Compute contacts and generate heatmaps."""
+"""Compute contacts between chains in complexes.
+
+The ``[contactmap]`` module aims at generating heatmaps and chordcharts of
+the contacts observed in the input complexes.
+
+If complexes are clustered, the analysis of contacts will be performed
+based on all structures from each cluster.
+
+**Heatmaps** are describing the probability of contacts (<5A) between two
+residues (both intramolecular and intermolecular).
+
+**Chordcharts** are describing only intermolecular contacts in circles,
+connecting with *chords* the two residues that are contacting.
+"""
+
 from copy import deepcopy
 from pathlib import Path
 

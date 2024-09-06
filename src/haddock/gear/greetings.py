@@ -5,7 +5,7 @@ import random
 import sys
 from datetime import datetime
 from functools import partial
-from typing import Sequence
+from typing import Sequence, Callable
 
 from haddock import contact_us, version
 
@@ -25,6 +25,14 @@ international_good_byes = [
     "Tchau",
     "再见",
 ]
+
+# List of urls to be printed to the screen at the end of a workflow
+# Do not hesitate to update / comment one of these
+feedback_urls = {
+    "GitHub issues": "https://github.com/haddocking/haddock3/issues",
+    "BioExcel feedback": "https://www.bonvinlab.org/feedback",
+    "BioExcel survey": "https://bioexcel.eu/bioexcel-survey-2024/",
+    }
 
 
 def get_initial_greeting() -> str:
@@ -66,8 +74,28 @@ def get_goodbye_help() -> str:
     """Create good-bye message with help."""
     end = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     bye = get_goodbye_greetings()
-    message = f"Finished at {end}. For any help contact us at {contact_us}. {bye}."
+    message = f"Finished at {end}. For any help contact us at {contact_us}."
+    message += f" {bye}."
     return message
+
+
+def gen_feedback_messages(print_function: Callable) -> None:
+    """Print list of feedbacks urls.
+    
+    Parameters
+    ----------
+    print_function : Callable
+        The function used to print message on screen.
+        This function must accept str as first argument.
+    """
+    print_function(
+        (
+            "Your feedback matters in Haddock3!"
+            " Share your experience and help us grow:"
+            )
+        )
+    for name, url in feedback_urls.items():
+        print_function(f"{name}: {url}")
 
 
 get_goodbye_greetings = partial(get_greetings, international_good_byes)

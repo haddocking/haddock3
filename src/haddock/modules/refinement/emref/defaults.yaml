@@ -58,7 +58,7 @@ hbond_fname:
   long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
   group: 'distance restraints'
   explevel: easy
-amb_scale:
+ambig_scale:
   default: 50
   type: integer
   min: 0
@@ -68,7 +68,7 @@ amb_scale:
   long: Force constant applied to the distance restraints defined in ambig_fname.
   group: 'distance restraints'
   explevel: expert
-unamb_scale:
+unambig_scale:
   default: 50
   type: integer
   min: 0

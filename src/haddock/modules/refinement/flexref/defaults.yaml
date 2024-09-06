@@ -58,7 +58,7 @@ hbond_fname:
   long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
   group: 'distance restraints'
   explevel: easy
-amb_hot:
+ambig_hot:
   default: 10
   type: integer
   min: 0
@@ -68,7 +68,7 @@ amb_hot:
   long: Force constant applied to the distance restraints defined in ambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-amb_cool1:
+ambig_cool1:
   default: 10
   type: integer
   min: 0
@@ -78,7 +78,7 @@ amb_cool1:
   long: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-amb_cool2:
+ambig_cool2:
   default: 50
   type: integer
   min: 0
@@ -88,7 +88,7 @@ amb_cool2:
   long: Force constant applied to the distance restraints defined in ambig_fname during the second cooling phase of the simulatd annealing protocol. Side-chains at the interface are treated as flexible and any region defined in fully flexible segments as fully flexible (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-amb_cool3:
+ambig_cool3:
   default: 50
   type: integer
   min: 0
@@ -98,7 +98,7 @@ amb_cool3:
   long: Force constant applied to the distance restraints defined in ambig_fname during the third cooling phase of the simulatd annealing protocol. Side-chains and backbone at the interface are treated as flexible and any region defined in fully flexible segments as fully flexible (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-unamb_hot:
+unambig_hot:
   default: 10
   type: integer
   min: 0
@@ -108,7 +108,7 @@ unamb_hot:
   long: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-unamb_cool1:
+unambig_cool1:
   default: 10
   type: integer
   min: 0
@@ -118,7 +118,7 @@ unamb_cool1:
   long: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-unamb_cool2:
+unambig_cool2:
   default: 50
   type: integer
   min: 0
@@ -128,7 +128,7 @@ unamb_cool2:
   long: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle parameter).
   group: 'distance restraints'
   explevel: expert
-unamb_cool3:
+unambig_cool3:
   default: 50
   type: integer
   min: 0

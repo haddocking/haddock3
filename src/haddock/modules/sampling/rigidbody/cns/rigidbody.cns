@@ -399,8 +399,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     if ($SaProtocol.rigidtrans eq true) then
 
-        evaluate ($cont_scale = $Data.kcm)
-        evaluate ($surf_scale = $Data.ksurf)
+        evaluate ($cont_scale = $data.kcm)
+        evaluate ($surf_scale = $data.ksurf)
         noe
             scale contact $cont_scale
             scale surface $surf_scale

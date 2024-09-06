@@ -85,7 +85,7 @@ set_bfactor:
   group: module
   explevel: expert
 tolerance:
-  default: 10
+  default: 0
   type: integer
   min: 0
   max: 99

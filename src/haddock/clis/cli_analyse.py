@@ -615,6 +615,7 @@ def main(
                 f"""Could not execute the analysis for step {step}.
                 The following error occurred {e}"""
             )
+            log.exception(e)
         if error:
             bad_folder_paths.append(target_path)
         else:

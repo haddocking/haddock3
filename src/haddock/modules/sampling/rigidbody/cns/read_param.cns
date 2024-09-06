@@ -46,9 +46,11 @@ parameter
     @@$cofac_parameter_infile
     @@$heme_parameter_infile
     @@$shape_parameter_infile
-    fileexist $ligand_param_fname end
-    if ($result eq true) then
-        @@$ligand_param_fname
+    if ($ligand_param_fname # "") then 
+        fileexist $ligand_param_fname end
+        if ($result eq true) then
+            @@$ligand_param_fname
+        end if
     end if
 end
 

@@ -108,6 +108,7 @@ evaluate ($data.asy_cool3=$asy_cool3)
 
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
+evaluate ($data.kcm=$kcm)
 evaluate ($data.kcont=$kcont)
 evaluate ($data.contactairs=$contactairs)
 if ($data.contactairs eq true) then

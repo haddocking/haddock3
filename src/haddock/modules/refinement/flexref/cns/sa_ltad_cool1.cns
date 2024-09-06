@@ -47,17 +47,17 @@ evaluate ($calcsteps = int($SaProtocol.cool1_steps/$ncycle))
 evaluate ($printsteps = int($calcsteps / 4))
 evaluate ($timestep = $SaProtocol.timestep*$SaProtocol.tadfactor)
 
-if ($Data.unamb_hot = 0) then
-    evaluate ($Data.unamb_hot = 0.000001)
+if ($Data.unambig_hot = 0) then
+    evaluate ($Data.unambig_hot = 0.000001)
 end if
-if ($Data.unamb_cool1 = 0) then
-    evaluate ($Data.unamb_cool1 = 0.000001)
+if ($Data.unambig_cool1 = 0) then
+    evaluate ($Data.unambig_cool1 = 0.000001)
 end if
-if ($Data.amb_hot = 0)then
-    evaluate ($Data.amb_hot = 0.000001)
+if ($Data.ambig_hot = 0)then
+    evaluate ($Data.ambig_hot = 0.000001)
 end if
-if ($Data.amb_cool1 = 0) then
-    evaluate ($Data.amb_cool1 = 0.000001)
+if ($Data.ambig_cool1 = 0) then
+    evaluate ($Data.ambig_cool1 = 0.000001)
 end if
 if ($Data.hbond_hot = 0) then
     evaluate ($Data.hbond_hot = 0.000001)
@@ -66,10 +66,10 @@ if ($Data.hbond_cool1 = 0) then
     evaluate ($Data.hbond_cool1 = 0.000001)
 end if
 
-evaluate ($k_unamb= $Data.unamb_hot)
-evaluate ($unamb_fac = ($Data.unamb_cool1/$Data.unamb_hot)^(1/$ncycle))
-evaluate ($k_amb= $Data.amb_hot)
-evaluate ($amb_fac = ($Data.amb_cool1/$Data.amb_hot)^(1/$ncycle))
+evaluate ($k_unamb= $Data.unambig_hot)
+evaluate ($unambig_fac = ($Data.unambig_cool1/$Data.unambig_hot)^(1/$ncycle))
+evaluate ($k_amb= $Data.ambig_hot)
+evaluate ($ambig_fac = ($Data.ambig_cool1/$Data.ambig_hot)^(1/$ncycle))
 evaluate ($k_hbond= $Data.hbond_hot)
 evaluate ($hbond_fac = ($Data.hbond_cool1/$Data.hbond_hot)^(1/$ncycle))
 
@@ -88,8 +88,8 @@ while ($i_cool < $ncycle) loop cool
     evaluate ($i_cool=$i_cool+1)
 
     evaluate ($bath  = $bath  - $tempstep)
-    evaluate ($k_unamb = $k_unamb*$unamb_fac)
-    evaluate ($k_amb = $k_amb*$amb_fac)
+    evaluate ($k_unamb = $k_unamb*$unambig_fac)
+    evaluate ($k_amb = $k_amb*$ambig_fac)
     evaluate ($k_hbond = $k_hbond*$hbond_fac)
     evaluate ($asy=$asy+$asy_add)
     evaluate ($masy=$masy+$masy_add)

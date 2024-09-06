@@ -2,7 +2,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-import gzip
 
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
@@ -99,7 +98,6 @@ def test_topoaa_cyclic(topoaa_module_with_peptide):
     assert expected_psf.exists(), f"{expected_psf} does not exist"
     assert expected_gz.exists(), f"{expected_gz} does not exist"
     assert expected_pdb.exists(), f"{expected_pdb} does not exist"
-    with gzip.open(expected_gz, 'rt') as f:
-        file_content = f.read()
+    file_content = open(expected_psf).read()
     assert 'detected' in file_content
     assert 'disulphide' in file_content

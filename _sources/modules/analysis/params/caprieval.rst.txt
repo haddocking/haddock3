@@ -74,6 +74,17 @@ fnat_cutoff
 | *group*: analysis
 | *explevel*: easy
 
+global_rmsd
+~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Calculate global RMSD
+| *short description*: Calculate full structure RMSD.
+| *long description*: Compute full structure RMSD between reference structure and the model after superimposition. Note that a sequence alignment is performed to obtain the mapping between the reference and the model. If the one of the structure contain a 'small-molecule', we assume that the compared structure atoms are in the same order. With default parameters `allatoms = false`, only backbone RMSD will be computed.
+| *group*: analysis
+| *explevel*: easy
+
 ilrmsd
 ~~~~~~
 

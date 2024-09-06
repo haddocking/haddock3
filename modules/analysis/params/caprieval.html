@@ -163,6 +163,18 @@
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
+<section id="global-rmsd">
+<h2>global_rmsd<a class="headerlink" href="#global-rmsd" title="Permalink to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate global RMSD</div>
+<div class="line"><em>short description</em>: Calculate full structure RMSD.</div>
+<div class="line"><em>long description</em>: Compute full structure RMSD between reference structure and the model after superimposition. Note that a sequence alignment is performed to obtain the mapping between the reference and the model. If the one of the structure contain a ‘small-molecule’, we assume that the compared structure atoms are in the same order. With default parameters <cite>allatoms = false</cite>, only backbone RMSD will be computed.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="ilrmsd">
 <h2>ilrmsd<a class="headerlink" href="#ilrmsd" title="Permalink to this heading"></a></h2>
 <div class="line-block">
@@ -297,7 +309,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 04, 2024.
+      <span class="lastupdated">Last updated on Sep 06, 2024.
       </span></p>
   </div>
 

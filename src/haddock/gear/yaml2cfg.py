@@ -97,9 +97,10 @@ def _yaml2cfg_text(
     exp_level_idx = exp_levels[explevel]
 
     # define set of undesired parameter keys
-    undesired = ("default", "explevel", "type")
+    undesired = ["default", "explevel", "type", "group"]
     if not details:
-        undesired = undesired + ("long",)  # type: ignore
+        # Add long description to undesired if not asked for detailed info
+        undesired.append("long")
 
     for param_name, param in ymlcfg.items():
         # treats parameters that are subdictionaries of parameters

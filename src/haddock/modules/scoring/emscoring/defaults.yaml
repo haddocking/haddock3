@@ -277,7 +277,7 @@ nemsteps:
   group: 'sampling'
   explevel: expert
 tolerance:
-  default: 0
+  default: 10
   type: integer
   min: 0
   max: 99

@@ -257,6 +257,12 @@ def test_protprot_dockq(protprot_caprimodule):
     assert np.isclose(protprot_caprimodule.dockq, 0.10, atol=0.01)
 
 
+def test_protprot_global_rmsd(protprot_caprimodule):
+    """Test protein-protein l-rmsd calculation."""
+    protprot_caprimodule.calc_global_rmsd()
+    assert np.isclose(protprot_caprimodule.rmsd, 8.62, atol=0.01)
+
+
 def test_protprot_bb_vs_all_atoms(
     protprot_caprimodule,
     protprot_allatm_caprimodule,
@@ -443,9 +449,10 @@ def test_make_output(protprot_caprimodule):
     protprot_caprimodule.make_output()
 
     ss_fname = Path(
-        protprot_caprimodule.path, f"capri_ss_{protprot_caprimodule.identificator}.tsv"
+        protprot_caprimodule.path,
+        f"capri_ss_{protprot_caprimodule.identificator}.tsv"
     )
-
+    # Check that the file contains something
     assert ss_fname.stat().st_size != 0
 
     # remove the model column since its name will depend on where we are running
@@ -461,12 +468,16 @@ def test_make_output(protprot_caprimodule):
             "lrmsd",
             "ilrmsd",
             "dockq",
+            "rmsd",
             "cluster_id",
             "cluster_ranking",
             "model-cluster_ranking",
             "something",
         ],
-        ["-", "-", "nan", "nan", "nan", "nan", "nan", "nan", "1", "1", "10", "0.000"],
+        [
+            "-", "-", "nan", "nan", "nan", "nan", "nan", "nan",
+            "nan", "1", "1", "10", "0.000",
+        ],
     ]
 
     assert observed_outf_l == expected_outf_l
@@ -625,6 +636,7 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     protprot_caprimodule.fnat = 1.0
     protprot_caprimodule.lrmsd = 1.2
     protprot_caprimodule.ilrmsd = 4.3
+    protprot_caprimodule.rmsd = 0.01,
     capri_cluster_analysis(
         capri_list=[protprot_caprimodule, protprot_caprimodule],
         model_list=[model1, model2],
@@ -655,6 +667,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "dockq_std",
             "ilrmsd",
             "ilrmsd_std",
+            "rmsd",
+            "rmsd_std",
             "caprieval_rank",
         ],
         [
@@ -673,6 +687,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "nan",
             "4.300",
             "0.000",
+            "0.010",
+            "0.000",
             "1",
         ],
         [
@@ -690,6 +706,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "nan",
             "nan",
             "4.300",
+            "0.000",
+            "0.010",
             "0.000",
             "2",
         ],
@@ -723,6 +741,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "lrmsd_std",
             "dockq",
             "dockq_std",
+            "rmsd",
+            "rmsd_std",
             "caprieval_rank",
         ],
         [
@@ -739,6 +759,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "0.000",
             "nan",
             "nan",
+            "0.010",
+            "0.000",
             "2",
         ],
         [
@@ -755,6 +777,8 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
             "0.000",
             "nan",
             "nan",
+            "0.010",
+            "0.000",
             "1",
         ],
     ]
@@ -892,6 +916,7 @@ def test_capri_run(mocker):
             "lrmsd": True,
             "ilrmsd": True,
             "dockq": True,
+            "global_rmsd": True,
             "allatoms": True,
             "receptor_chain": "A",
             "ligand_chains": ["B"],
@@ -926,6 +951,13 @@ def test_capri_run(mocker):
         capri, "calc_dockq", side_effect=lambda: setattr(capri, "dockq", rand_dockq)
     )
 
+    rand_global_rmsd = random.random()
+    mocker.patch.object(
+        capri,
+        "calc_global_rmsd",
+        side_effect=lambda: setattr(capri, "rmsd", rand_global_rmsd)
+    )
+
     mocker.patch.object(capri, "make_output")
 
     capri.run()
@@ -936,6 +968,7 @@ def test_capri_run(mocker):
     assert capri.lrmsd == pytest.approx(rand_lrmsd)
     assert capri.ilrmsd == pytest.approx(rand_ilrmsd)
     assert capri.dockq == pytest.approx(rand_dockq)
+    assert capri.rmsd == pytest.approx(rand_global_rmsd)
 
 
 def test_rank_according_to_score():
@@ -999,6 +1032,7 @@ def test_extract_data_from_capri_class(mocker):
     random_lrmsd = random.random()
     random_ilrmsd = random.random()
     random_dockq = random.random()
+    random_rmsd = random.random()
 
     c.model = random_model
     c.model.clt_id = random_clt_id
@@ -1011,6 +1045,7 @@ def test_extract_data_from_capri_class(mocker):
     c.lrmsd = random_lrmsd
     c.ilrmsd = random_ilrmsd
     c.dockq = random_dockq
+    c.rmsd = random_rmsd
 
     observed_data = extract_data_from_capri_class(
         capri_objects=[c], sort_key="score", sort_ascending=True, output_fname=Path("")
@@ -1026,6 +1061,7 @@ def test_extract_data_from_capri_class(mocker):
     assert observed_data[1]["lrmsd"] == random_lrmsd
     assert observed_data[1]["ilrmsd"] == random_ilrmsd
     assert observed_data[1]["dockq"] == random_dockq
+    assert observed_data[1]["rmsd"] == random_rmsd
     assert observed_data[1]["energy"] == random_energy
     assert observed_data[1]["cluster_id"] == random_clt_id
     assert observed_data[1]["cluster_ranking"] == random_clt_rank

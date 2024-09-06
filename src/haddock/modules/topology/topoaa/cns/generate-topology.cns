@@ -257,9 +257,11 @@ topology
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile
     end if
-    fileexist $ligand_top_fname end
-    if ($result eq true) then
-        @@$ligand_top_fname
+    if ($ligang_top_fname # "") then
+        fileexist $ligand_top_fname end
+        if ($result eq true) then
+            @@$ligand_top_fname
+        end if
     end if
 end
 
@@ -291,9 +293,11 @@ parameter
     if ( &BLANK%shape_parameter_infile = false ) then
         @@&shape_parameter_infile
     end if
-    fileexist $ligand_param_fname end
-    if ($result eq true) then
-        @@$ligand_param_fname
+    if ($ligand_param_fname # "") then
+        fileexist $ligand_param_fname end
+        if ($result eq true) then
+            @@$ligand_param_fname
+        end if
     end if
 end
 

@@ -132,8 +132,8 @@ unambig_fname
 Expert
 ``````
 
-amb_scale
-~~~~~~~~~
+ambig_scale
+~~~~~~~~~~~
 
 | *default*: 50
 | *type*: integer
@@ -3021,8 +3021,8 @@ tolerance
 | *group*: module
 | *explevel*: expert
 
-unamb_scale
-~~~~~~~~~~~
+unambig_scale
+~~~~~~~~~~~~~
 
 | *default*: 50
 | *type*: integer

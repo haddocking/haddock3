@@ -84,7 +84,7 @@ def test_topoaa_default(topoaa_module):
 
 def test_topoaa_cyclic(topoaa_module_with_peptide):
 
-    topoaa_module_with_peptide.params["cyclicpept_dist"] = 3.5 
+    topoaa_module_with_peptide.params["cyclicpept_dist"] = 3.5
     topoaa_module_with_peptide.params["disulphide_dist"]= 4.0
     topoaa_module_with_peptide.params["mol1"] = {"cyclicpept": True}
 

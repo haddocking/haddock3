@@ -133,6 +133,7 @@ assign ( resid 500  and segid B)
         ( resid 118  and segid A)
        )  2.0 2.0 0.0
 
+
 ! HADDOCK AIR restraints for 3rd selection
 !
 
@@ -144,5 +145,4 @@ assign ( resid 500  and segid B)
 
 ! HADDOCK AIR restraints for 6th selection
 !
-
 

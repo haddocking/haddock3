@@ -10,7 +10,7 @@ from haddock.libs.libparallel import (
     Worker,
     get_index_list,
     split_tasks,
-    )
+)
 
 
 class Task:
@@ -43,6 +43,14 @@ class FileTask:
 
     def run(self):
         Path(self.input_file).touch()
+
+class TaskWithException:
+
+    def __init__(self):
+        pass
+
+    def run(self):
+        raise ValueError("Test error")
 
 
 @pytest.fixture
@@ -83,6 +91,19 @@ def scheduler_files():
             Path(f).unlink()
         except FileNotFoundError:
             pass
+
+
+@pytest.fixture
+def scheduler_with_exception():
+    """Return a scheduler with 3 tasks, one of them raises an exception."""
+    yield Scheduler(
+        ncores=1,
+        tasks=[
+            Task(1),
+            TaskWithException(),
+            Task(3),
+        ],
+    )
 
 
 def test_split_tasks():
@@ -136,6 +157,15 @@ def test_scheduler(scheduler):
     assert scheduler.results[0] == 2
     assert scheduler.results[1] == 3
     assert scheduler.results[2] == 4
+
+
+def test_scheduler_with_exception(scheduler_with_exception):
+
+    _ = scheduler_with_exception.run()
+
+    assert scheduler_with_exception.results[0] == 2
+    assert scheduler_with_exception.results[1] is None
+    assert scheduler_with_exception.results[2] == 4
 
 
 def test_generic_task_init():

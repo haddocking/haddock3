@@ -1,7 +1,15 @@
-Welcome to the HADDOCK3-Beta version.
+# `haddock3`
 
-The `main` branch represents the latest state of HADDOCK v3. Currently,
-stable beta version.
+<!-- <p align="center">
+
+  <img src="docs/figs/HADDOCK3-logo.png" alt="haddock3-logo" style="vertical-align: middle;">
+</p>
+<src > -->
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
+[![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)
+[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8844/badge)](https://www.bestpractices.dev/projects/8844)
 
 [![unit tests](https://github.com/haddocking/haddock3/workflows/tests/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=tests)
 [![build](https://github.com/haddocking/haddock3/workflows/build/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=build)
@@ -10,67 +18,77 @@ stable beta version.
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
+![haddock3-logo](docs/figs/HADDOCK3-logo.png)
 
-[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8844/badge)](https://www.bestpractices.dev/projects/8844)
+## Introduction
 
-[![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
+HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**ing, is a widely used computational tool for the integrative modeling of biomolecular interactions. Developed by researchers at [Utrecht University](https://uu.nl) in the [BonvinLab](https://bonvinlab.org) for more than 20 years, it integrates various types of experimental data, biochemical, biophysical, bioinformatic prediction and knowledge to guide the docking process.
 
-* * *
+## Installation
 
-# HADDOCK3
+Please check the [INSTALL](docs/INSTALL.md) file for instructions.
 
-## 1. Installation
+You might also want to check the following utilities:
 
-To install HADDOCK3 follow the instructions in the [INSTALL](docs/INSTALL.md)
-file.
+- [`haddock-restraints`](https://github.com/haddocking/haddock-restraints): Tool to generate restraints to be used in `haddock3`.
+- [`haddock-runner`](https://github.com/haddocking/haddock-runner): Tool to run large scale `haddock3` simulations using multiple input molecules in different scenarios
+- [`haddock-tools`](https://github.com/haddocking/haddock-tools): Set of useful utility scripts developed over the years by the BonvinLab group members
 
-## 2. Documentation
+## Usage
 
-HADDOCK3-beta documentation is hosted online at https://www.bonvinlab.org/haddock3/.
-The documentation is rendered and update at every commit to the `main` branch. So,
-you will always find the latest version in the link above.
+The most basic usage is:
 
-If you want to compile the HADDOCK3 documentation pages locally (offline),
-install HADDOCK3 and activate the `haddock3` python environment as explained in
-the [installation instructions](docs/INSTALL.md). Then, in your terminal
-window, run:
+```bash
+haddock3 <configuration-file.toml>
+```
+
+Check the [EXAMPLES](examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
+
+## Support
+
+If you encounter any code-related issues, [please open an issue](https://github.com/haddocking/haddock3/issues/new/choose).
+
+If you have any other questions or need help, please contact us at [ask.bioexcel.eu](https://ask.bioexcel.eu/).
+
+If you clone this repository and use `haddock3` for your research, please support us by signing up in [this form](https://forms.gle/LCUHiYHh1hE9rd8L6). This will allow us contact you when needed for `haddock3`-related issues, and also provide us a mean to demonstrate impact when reporting for grants - which grealty helps us to keep the project alive!
+
+## Cite us
+
+If you used `haddock3` for your research, please cite us:
+
+- **Research article**: (_coming soon!_)
+- **Cite this repository**: M.C. Teixeira, J., Vargas Honorato, R., Giulini, M., Bonvin, A., SarahAlidoost, Reys, V., Jimenez, B., Schulte, D., van Noort, C., Verhoeven, S., Vreede, B., SSchott, & Tsai, R. (2024). haddocking/haddock3: v3.0.0-beta.5 (Version 3.0.0-beta.5) [Computer software]. [https://doi.org/10.5281/zenodo.10527751](https://doi.org/10.5281/zenodo.10527751)
+
+## Useful resources
+
+- [User manual]() (_coming soon!_)
+- [Best practice guide](https://www.bonvinlab.org/software/bpg/)
+- [The HADDOCK2.4 web server: A leap forward in integrative modelling of biomolecular complexes. Nature Prot. 2024](https://www.nature.com/articles/s41596-024-01011-0)
+
+## Development
+
+🚧 _Coming soon! We are currently working on the development guide_ 🚧
+
+### Code Documentation
+
+The code documentation is automatically built and hosted at [bonvinlab.org/haddock3](https://www.bonvinlab.org/haddock3/).
+
+To build it locally (considering you have followed the installation instructions):
 
 ```bash
 tox -e docs
 ```
 
-*Ignore any warning messages.* After, use your favorite browser to open the
-file `haddock3-docs/index.html`. This will open a local webpage with the
-complete HADDOCK3 documentation. Exactly the same you will find online.
-Navigate around, enjoy, and contribute.
+> Warning messages are expected, but the documentation should be built successfully.
 
-## 3. Examples
+The rendered documentation will be available at `haddock3-docs/index.html`. This will open a local webpage with the
 
-### 3.1. Basic scoring of an ensemble of 5 structures:
+### Contributing
 
-In the `examples/` folder you find several examples for you to test and
-learn HADDOCK3. Additional information is in the documentation pages.
+Check the [CONTRIBUTING](CONTRIBUTING.md) file for instructions on how to contribute with the project!
 
-```bash
-cd examples/scoring/
-haddock3 emscoring-test.cfg
-```
+<!-- ---
 
-## 4. Contribute
+Happy HADDOCking!
 
-If you want to contribute to HADDOCK3's development, read the
-[CONTRIBUTING](CONTRIBUTING.md) file for instructions.
-
-## 5. Keep in contact and support us
-
-HADDOCK3 is an academic project supported by various grants, including the EU
-BioExcel Center of Excellence for Computational Biomolecular Research. HADDOCK3
-is fully open-source and free to download. If you clone this repository and use
-HADDOCK3 for your research, please support us by signing [this Google
-form][googleform] if you have not yet done so. This will allow us contact you
-when needed for HADDOCK3-related issues, and also provide us a mean to
-demonstrate impact when reporting for grants.
-
-[googleform]: https://docs.google.com/forms/d/e/1FAIpQLScDcd0rWtuzJ_4nftkDAHoLVwr1IAVwNJGhbaZdTYZ4vWu25w/viewform
+<img src="https://www.bonvinlab.org/images/bio-haddock.png" alt="haddock" width="50px"> -->

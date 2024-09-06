@@ -22,7 +22,13 @@ import numpy as np
 
 from haddock import log, RMSD_path
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.libs.libalign import rearrange_xyz_files, check_common_atoms
+from haddock.libs.libalign import (
+    check_chains,
+    check_common_atoms,
+    get_atoms,
+    load_coords,
+    rearrange_xyz_files,
+    )
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
@@ -161,6 +167,26 @@ class HaddockModule(BaseHaddockModule):
                 "for ilRMSD matrix calculation"
                 )
 
+        # find the existing chains
+        model_atoms = get_atoms(models[0])
+        mod_coord_dic, _ = load_coords(
+                models[0],
+                model_atoms,
+        )
+        obs_chains = np.unique([el[0] for el in mod_coord_dic.keys()])
+        obs_chains = list(obs_chains)
+        log.info(f"Observed chains: {obs_chains}")
+        # assigning the chains to the receptor and ligand
+        r_chain, l_chains = check_chains(
+            obs_chains,
+            self.params["receptor_chain"],
+            self.params["ligand_chains"]
+            )
+        log.info(f"Receptor chain: {r_chain}")
+        log.info(f"Ligand chains: {l_chains}")
+        self.params["receptor_chain"] = r_chain
+        self.params["ligand_chains"] = l_chains
+
         # Find the common residues making contacts for the receptor and ligand.
         index_list = get_index_list(nmodels, ncores)
         # contact jobs
@@ -213,6 +239,14 @@ class HaddockModule(BaseHaddockModule):
             path=contact_obj.path,
             ncores=ncores
             )
+
+        # if the receptor chain in res_resdic is empty, then the receptor has made no contacts and
+        # the ilrmsd matrix cannot be calculated. This probably means that single chains structures
+        # reached this step or that something went (very) wrong in the docking process.
+        if res_resdic[r_chain].size == 0:
+            _msg = f"No contacts found for receptor chain {r_chain}. Impossible to calculate ilRMSD matrix."
+            _msg += " Please check your input and make sure that there are at least two chains in contact."
+            self.finish_with_error(_msg)
         
         rec_traj_filename = Path("traj_rec.xyz")
         lig_traj_filename = Path("traj_lig.xyz")
@@ -220,14 +254,15 @@ class HaddockModule(BaseHaddockModule):
         res_resdic_rec = {
             k: res_resdic[k]
             for k in res_resdic
-            if k[0] == self.params["receptor_chain"]
+            if k[0] == r_chain
             }
         # ligand_chains is a list of chains
         res_resdic_lig = {
             k: res_resdic[k]
-            for k in self.params["ligand_chains"]
+            for k in l_chains
             }
 
+        log.info(f"Check common atoms for receptor (chain {list(res_resdic_rec.keys())})")
         n_atoms_rec, common_keys_rec = check_common_atoms(
             models,
             res_resdic_rec,
@@ -235,6 +270,7 @@ class HaddockModule(BaseHaddockModule):
             self.params["atom_similarity"]
             )
         
+        log.info(f"Check common atoms for ligand (chains {list(res_resdic_lig.keys())})")
         n_atoms_lig, common_keys_lig = check_common_atoms(
             models,
             res_resdic_lig,

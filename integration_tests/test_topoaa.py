@@ -2,6 +2,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import gzip
 
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
@@ -38,7 +39,7 @@ def topoaa_module_with_peptide():
         )
         topoaa.__init__(path=Path(tmpdir), order=0)
         topoaa.params["molecules"] = [
-            Path(GOLDEN_DATA, "peptide-ensemble.pdb"),
+            Path(GOLDEN_DATA, "cyclic-peptide.pdb"),
         ]
 
         topoaa.params["cns_exec"] = CNS_EXEC
@@ -83,16 +84,22 @@ def test_topoaa_default(topoaa_module):
 
 def test_topoaa_cyclic(topoaa_module_with_peptide):
 
+    topoaa_module_with_peptide.params["cyclicpept_dist"] = 3.5 
+    topoaa_module_with_peptide.params["disulphide_dist"]= 4.0
     topoaa_module_with_peptide.params["mol1"] = {"cyclicpept": True}
 
     topoaa_module_with_peptide.run()
 
-    expected_inp = Path(topoaa_module_with_peptide.path, "peptide-ensemble.inp")
-    expected_psf = Path(topoaa_module_with_peptide.path, "peptide-ensemble_haddock.psf")
-    expected_pdb = Path(topoaa_module_with_peptide.path, "peptide-ensemble_haddock.pdb")
-    expected_gz = Path(topoaa_module_with_peptide.path, "peptide-ensemble.out.gz")
+    expected_inp = Path(topoaa_module_with_peptide.path, "cyclic-peptide.inp")
+    expected_psf = Path(topoaa_module_with_peptide.path, "cyclic-peptide_haddock.psf")
+    expected_pdb = Path(topoaa_module_with_peptide.path, "cyclic-peptide_haddock.pdb")
+    expected_gz = Path(topoaa_module_with_peptide.path, "cyclic-peptide.out.gz")
 
     assert expected_inp.exists(), f"{expected_inp} does not exist"
     assert expected_psf.exists(), f"{expected_psf} does not exist"
     assert expected_gz.exists(), f"{expected_gz} does not exist"
     assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+    with gzip.open(expected_gz, 'rt') as f:
+        file_content = f.read()
+    assert 'detected' in file_content
+    assert 'disulphide' in file_content

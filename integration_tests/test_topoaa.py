@@ -46,6 +46,22 @@ def topoaa_module_with_peptide():
         yield topoaa
 
 
+@pytest.fixture
+def topoaa_module_with_ligand():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        topoaa = TopoaaModule(
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
+        )
+        topoaa.__init__(path=Path(tmpdir), order=0)
+        topoaa.params["molecules"] = [
+            Path(GOLDEN_DATA, "oseltamivir.pdb"),
+        ]
+
+        topoaa.params["cns_exec"] = CNS_EXEC
+
+        yield topoaa
+
+
 @has_cns
 def test_topoaa_default(topoaa_module):
     """Test the topoaa module."""
@@ -101,3 +117,17 @@ def test_topoaa_cyclic(topoaa_module_with_peptide):
     file_content = open(expected_psf).read()
     assert 'detected' in file_content
     assert 'disulphide' in file_content
+
+
+def test_topoaa_ligand(topoaa_module_with_ligand):
+
+    topoaa_module_with_ligand.params["ligand_param_fname"] = Path(GOLDEN_DATA, "ligand.param")
+    topoaa_module_with_ligand.params["ligand_top_fname"] = Path(GOLDEN_DATA, "ligand.top")
+    topoaa_module_with_ligand.params["delenph"] = False
+
+    topoaa_module_with_ligand.run()
+
+    expected_inp = Path(topoaa_module_with_ligand.path, "oseltamivir.inp")
+    expected_psf = Path(topoaa_module_with_ligand.path, "oseltamivir_haddock.psf")
+    expected_pdb = Path(topoaa_module_with_ligand.path, "oseltamivir_haddock.pdb")
+    expected_gz = Path(topoaa_module_with_ligand.path, "oseltamivir.out.gz")

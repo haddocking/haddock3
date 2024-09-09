@@ -257,7 +257,7 @@ topology
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile
     end if
-    if ($ligang_top_fname # "") then
+    if ($ligand_top_fname # "") then
         fileexist $ligand_top_fname end
         if ($result eq true) then
             @@$ligand_top_fname

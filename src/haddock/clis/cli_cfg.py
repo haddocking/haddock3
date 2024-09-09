@@ -154,25 +154,30 @@ def main(
             )
         general_comment = os.linesep.join(
             (
+                "#" * 50,
                 "# The parameters below are optional parameters. ",
                 "# They can either be used as global parameters or as part ",
                 "# of the module's parameters",
+                "#" * 50,
                 )
             )
+
         # Read mandatory parmeters
         mandatory_cfg_path = Path(core_path, "mandatory.yaml")
         general_mandatory_cfg = read_from_yaml(mandatory_cfg_path)
-        print(general_mandatory_cfg)
         general_mandatory_params_str = yaml2cfg_text(
             general_mandatory_cfg,
             module=None,
             explevel="all",
             details=details,
+            mandatory_param=True,
             )
         mandatory_comment = os.linesep.join(
             (
+                "#" * 50,
                 "# The parameters below are mandatory parameters.",
                 "# They must be specified in your configuration file!",
+                "#" * 50,
                 )
             )
 
@@ -187,7 +192,9 @@ def main(
             )
         optional_comment = os.linesep.join(
             (
-                "# The parameters below are optional parameters. ",
+                "#" * 50,
+                "# The parameters below are optional global parameters.",
+                "#" * 50,
                 )
             )
         # Concatenate all of them
@@ -195,10 +202,10 @@ def main(
             (
                 mandatory_comment,
                 general_mandatory_params_str,
-                general_comment,
-                general_params_str,
                 optional_comment,
                 general_optional_params_str,
+                general_comment,
+                general_params_str,
                 )
             )
 

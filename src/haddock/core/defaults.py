@@ -1,21 +1,21 @@
 """All default parameters used by the framework."""
+
+import importlib.resources
 import string
 import sys
 from pathlib import Path
 
 import yaml
 
-from haddock import core_path, haddock3_repository_path, log
+import haddock
+from haddock import core_path, log
 
 
 # Locate the CNS binary
-cns_exec = Path(haddock3_repository_path, "bin", "cns")
+cns_exec = Path(importlib.resources.files(haddock) / "bin" / "cns")  # type: ignore
 if not cns_exec.exists():
-    log.error(
-        'CNS executable `bin/cns` not found. '
-        'Please check the install instructions.'
-        )
-    sys.exit()
+    log.error(f"CNS binary not found at {cns_exec}")
+    sys.exit(1)
 
 
 MODULE_PATH_NAME = "step_"
@@ -40,16 +40,11 @@ INTERACTIVE_RE_SUFFIX = "interactive"
 MODULE_DEFAULT_YAML = "defaults.yaml"
 """Default name of the yaml default parameters file."""
 
-CNS_MODULES = ["rigidbody",
-               "flexref",
-               "emscoring",
-               "mdscoring",
-               "mdref",
-               "emref"]
+CNS_MODULES = ["rigidbody", "flexref", "emscoring", "mdscoring", "mdref", "emref"]
 """List of CNS modules available in HADDOCK3."""
 
 
-with open(Path(core_path, "mandatory.yaml"), 'r') as fin:
+with open(Path(core_path, "mandatory.yaml"), "r") as fin:
     _ycfg = yaml.safe_load(fin)
 max_molecules_allowed = _ycfg["molecules"]["maxitems"]
 del _ycfg

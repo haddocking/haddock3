@@ -49,10 +49,10 @@ def yaml2cfg_text(
         parameters will be considered.
 
     details : bool
-        Wheather to add the 'long' description of each parameter.
+        Whether to add the 'long' description of each parameter.
     
     mandatory_param : bool
-        Wheather this current parameters are mandatory ones. Special case where
+        Whether this current parameters are mandatory ones. Special case where
         this must be set as they do not contain `default` value, therefore the
         downstream functions are not valid anymore.
 
@@ -110,7 +110,7 @@ def _yaml2cfg_text(
         Whether to add the 'long' description of each parameter.
 
     mandatory_param : bool
-        Wheather this current parameters are mandatory ones. Special case where
+        Whether this current parameters are mandatory ones. Special case where
         this must be set as they do not contain `default` value, therefore the
         downstream functions are not valid anymore.
 

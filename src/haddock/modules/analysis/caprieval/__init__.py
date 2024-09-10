@@ -17,6 +17,7 @@ By default the following metrics are calculated:
 - ILRMSD (interface ligand root mean square deviation), the RMSD of the
     ligand of the docked complex with respect to the reference complex
     upon superposition of the interface of the receptor.
+- GLOBAL_RMSD, the full RMSD between the reference and the model.
 
 The following files are generated:
 
@@ -144,6 +145,10 @@ class HaddockModule(BaseHaddockModule):
             )
 
         else:
+            self.log(
+                msg="DEPRECATION NOTICE: This execution mode (less_io=False) will no longer be supported in the next version.",
+                level="warning",
+            )
             jobs = merge_data(jobs)
 
             # Each job created one .tsv, unify them:

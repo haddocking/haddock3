@@ -7,6 +7,8 @@ import pytest
 from haddock.clis.cli_mpi import main as cli_mpi_main
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libsubprocess import CNSJob
+import subprocess
+import os
 
 from . import CNS_EXEC
 
@@ -75,3 +77,25 @@ def test_run_cli_mpi_main_task(task):
         cli_mpi_main(pickled_tasks)
 
         assert scheduler.tasks[0].output_fname.exists()
+
+
+@pytest.fixture(autouse=True)
+def cleanup():
+    """Cleanup the MPI environment after each test."""
+    # IMPORTANT! #####################################################################
+    # `mpi4py` when imported, sets up the MPI environment. This environment is
+    # shared across all tests, so we need to clean it up after each test. to
+    # avoid interference between tests.
+    # IMPORTANT! #####################################################################
+    yield
+    import haddock.clis.cli_mpi
+
+    haddock.clis.cli_mpi.MPI = None
+    haddock.clis.cli_mpi.COMM = None
+
+    result = subprocess.run(["env"], capture_output=True, text=True)
+    mpi_vars = [
+        line.split("=")[0] for line in result.stdout.split("\n") if "MPI" in line
+    ]
+    for var in mpi_vars:
+        os.environ[var] = ""

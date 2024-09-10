@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-from haddock.fcc.scripts import cluster_fcc
+from haddock.fcc import cluster_fcc
 
 
 def iterate_clustering(pool, min_population_param):

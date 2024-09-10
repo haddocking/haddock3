@@ -6,6 +6,7 @@ For more information, please check: https://github.com/kliment-olechnovic/ftdmp
 It is a third party module, and requires the appropriate set up and intallation
 for it to run without issue.
 """
+
 from os import linesep
 from pathlib import Path
 
@@ -92,3 +93,4 @@ class HaddockModule(ScoringModule):
             )
         # Export to next module
         self.export_io_models()
+

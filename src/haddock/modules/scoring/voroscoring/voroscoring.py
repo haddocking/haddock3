@@ -8,7 +8,6 @@ It is a third party module, and requires the appropriate set up and intallation
 for it to run without issue.
 """
 
-
 import os
 import subprocess
 import glob
@@ -347,7 +346,8 @@ def update_models_with_scores(
             model.rank = ranking_mapper[model.file_name]
         # In some cases computation may fail
         else:
-            # Go for (garlic) cheese naans
+            # Go for (garlic cheese) naans
             model.score = NaN
             model.rank = NaN
+        model.ori_name = model.file_name
     return models

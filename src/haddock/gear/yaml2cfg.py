@@ -148,7 +148,7 @@ def _yaml2cfg_text(
                     module=curr_module,
                     explevel=explevel,
                     details=details,
-                )
+                    )
                 params.append(_)
 
             # treats normal parameters
@@ -168,11 +168,12 @@ def _yaml2cfg_text(
 
                     comment.append(f"${_comment} {cvalue}")
 
-                if not mandatory_param:
-                    default_value = param["default"]
-                else:
+                # In the case of mandatory global parameters, there is
+                # no defined default parameters, so we create a `fake` one
+                if mandatory_param:
                     default_value = "Must be defined!"
-
+                else:
+                    default_value = param["default"]
 
                 # boolean values have to be lower for compatibility
                 # with toml cfg
@@ -187,8 +188,8 @@ def _yaml2cfg_text(
                         param_name,
                         default_value,
                         " / ".join(comment),
+                        )
                     )
-                )
 
                 if param["type"] == "list":
                     params.append(os.linesep)

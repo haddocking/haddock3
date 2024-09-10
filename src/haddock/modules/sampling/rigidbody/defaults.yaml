@@ -900,7 +900,7 @@ inter_rigid:
   group: 'sampling'
   explevel: expert
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

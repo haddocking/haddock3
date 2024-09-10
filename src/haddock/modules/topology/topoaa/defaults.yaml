@@ -106,10 +106,11 @@ cyclicpept_dist:
   group: molecule
   explevel: guru
 disulphide_dist:
-  default: 2.0
-  type: integer
-  min: 0
-  max: 9999999999999999
+  default: 2.20
+  type: float
+  precision: 2
+  min: 0.00
+  max: 999999.99
   title: Cutoff distance for S-S bonds
   short: Cutoff distance in Angstroms for identification of disulphide bonds
   long: Cutoff distance in Angstroms for identification of cdisulphide bonds

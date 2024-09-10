@@ -15,6 +15,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     get_dendrogram,
     iterate_min_population,
+    order_clusters,
     read_matrix,
     )
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
@@ -25,7 +26,7 @@ from . import golden_data
 
 @pytest.fixture
 def output_list():
-    """Clustfcc output list."""
+    """Clustrmsd output list."""
     return [
         "rmsd.matrix",
         "rmsd_matrix.json",
@@ -351,4 +352,28 @@ def test_iterate_min_population():
         )
     exp_cluster_arr = np.array([1, 1, -1, -1, -1])
     assert obs_min_population == 2
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+
+
+def test_order_clusters():
+    """Test order_clusters function."""
+    cluster_arr = np.array([1, 1, 2, 3, 4])
+    obs_clusters, obs_cluster_arr = order_clusters(cluster_arr)
+    exp_clusters = [1, 2, 3, 4]
+    exp_cluster_arr = np.array([1, 1, 2, 3, 4])
+    assert obs_clusters == exp_clusters
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+    # now with a less trivial cluster_arr
+    cluster_arr = np.array([3, 3, 2, 4, 3, 1, 3, 3, 1, 3, 4])
+    obs_clusters, obs_cluster_arr = order_clusters(cluster_arr)
+    exp_clusters = [1, 2, 3, 4]
+    exp_cluster_arr = np.array([1, 1, 4, 3, 1, 2, 1, 1, 2, 1, 3])
+    assert obs_clusters == exp_clusters
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+    # yet another cluster_arr with unclustered structures
+    cluster_arr = np.array([3, 3, 2, 4, -1, -1, 3, 3, -1, -1, 4, 1])
+    obs_clusters, obs_cluster_arr = order_clusters(cluster_arr)
+    exp_clusters = [1, 2, 3, 4]
+    exp_cluster_arr = np.array([1, 1, 4, 2, -1, -1, 1, 1, -1, -1, 2, 3])
+    assert obs_clusters == exp_clusters
     assert (obs_cluster_arr == exp_cluster_arr).all()

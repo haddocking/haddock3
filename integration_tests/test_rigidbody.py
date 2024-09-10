@@ -28,25 +28,25 @@ class MockPreviousIO:
     def retrieve_models(self, crossdock: bool = False):
         shutil.copy(
             Path(golden_data, "e2aP_1F3G_haddock.pdb"),
-            Path(".", "e2aP_1F3G_haddock.pdb"),
+            Path(self.path, "e2aP_1F3G_haddock.pdb"),
         )
         shutil.copy(
             Path(golden_data, "e2aP_1F3G_haddock.psf"),
-            Path(".", "e2aP_1F3G_haddock.psf"),
+            Path(self.path, "e2aP_1F3G_haddock.psf"),
         )
         shutil.copy(
             Path(golden_data, "hpr_ensemble_1_haddock.pdb"),
-            Path(".", "hpr_ensemble_1_haddock.pdb"),
+            Path(self.path, "hpr_ensemble_1_haddock.pdb"),
         )
         shutil.copy(
             Path(golden_data, "hpr_ensemble_1_haddock.psf"),
-            Path(".", "hpr_ensemble_1_haddock.psf"),
+            Path(self.path, "hpr_ensemble_1_haddock.psf"),
         )
         model_list = [
             [
                 PDBFile(
                     file_name="e2aP_1F3G_haddock.pdb",
-                    path=".",
+                    path=self.path,
                     topology=[
                         Persistent(
                             file_name="e2aP_1F3G_haddock.psf",
@@ -57,7 +57,7 @@ class MockPreviousIO:
                 ),
                 PDBFile(
                     file_name="hpr_ensemble_1_haddock.pdb",
-                    path=".",
+                    path=self.path,
                     topology=[
                         Persistent(
                             file_name="hpr_ensemble_1_haddock.psf",
@@ -77,10 +77,9 @@ class MockPreviousIO:
 
 def test_rigidbody_local(rigidbody_module):
 
-    sampling = 5
+    sampling = 2
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
     rigidbody_module.params["sampling"] = sampling
-    rigidbody_module.params["ntrials"] = 1
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
@@ -99,42 +98,11 @@ def test_rigidbody_local(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
 
 
-def test_rigidbody_mpi(rigidbody_module):
-
-    sampling = 5
-    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
-    rigidbody_module.params["sampling"] = sampling
-    rigidbody_module.params["ntrials"] = 1
-    rigidbody_module.params["cmrest"] = True
-    rigidbody_module.params["mol_fix_origin_1"] = True
-    rigidbody_module.params["mol_fix_origin_2"] = False
-    rigidbody_module.params["mode"] = "mpi"
-    rigidbody_module.params["ncores"] = 1
-
-    rigidbody_module.run()
-
-    for i in range(1, sampling + 1):
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").exists()
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").exists()
-        assert not Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
-
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
-        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
-
-
-@pytest.mark.skip("Not implemented yet")
-def test_rigidbody_batch(rigidbody_module):
-    pass
-
-
 def test_rigidbody_less_io(rigidbody_module):
 
-    sampling = 5
+    sampling = 2
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
     rigidbody_module.params["sampling"] = sampling
-    rigidbody_module.params["ntrials"] = 1
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False

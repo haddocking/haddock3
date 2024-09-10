@@ -37,6 +37,9 @@ RUNDIR = "run_dir"
 INTERACTIVE_RE_SUFFIX = "interactive"
 """Suffix added to interactive haddock3-re runs."""
 
+MODULE_DEFAULT_YAML = "defaults.yaml"
+"""Default name of the yaml default parameters file."""
+
 CNS_MODULES = ["rigidbody",
                "flexref",
                "emscoring",

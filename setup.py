@@ -7,55 +7,35 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
-import warnings
 from os.path import dirname, join
 from pathlib import Path
 
-from setuptools import SetuptoolsDeprecationWarning, find_packages, setup
+from setuptools import find_packages, setup
 from setuptools.command.build_ext import build_ext
-from setuptools.command.easy_install import EasyInstallDeprecationWarning
 from setuptools.command.install import install
-
-
-# Add warnings filtering to the Setup Deprecation Warnings
-warnings.filterwarnings("ignore", category=SetuptoolsDeprecationWarning)
-warnings.filterwarnings("ignore", category=EasyInstallDeprecationWarning)
-
-with open("requirements.txt") as f:
-    requirements = f.read().splitlines()
-
-
-def read(*names, **kwargs) -> str:
-    """Read description files."""
-    path = join(dirname(__file__), *names)
-    with open(path, encoding=kwargs.get("encoding", "utf8")) as fh:
-        return fh.read()
-
-
-# activate once added, do not remove
-long_description = "{}\n{}".format(
-    read("README.md"),
-    read("CHANGELOG.md"),
-)
 
 
 CNS_BINARY_URL = ""
 
 
 class CustomBuildInstall(install):
+    """Custom Build and Install class"""
+
     def run(self):
         self.run_command("build_ext")
         install.run(self)
 
 
 class CustomBuild(build_ext):
+    """CustomBuild handles the build of the C++ dependencies"""
+
     def run(self):
-        # Ensure bin directory exists
-        self.bin_dir = os.path.join(self.get_install_dir(), "haddock", "bin")
-        os.makedirs(self.bin_dir, exist_ok=True)
+        # TODO: Find a smarter way of passing this `bin_dir` without defining it outside `__init__`
+        self.bin_dir = Path(self.get_install_dir(), "haddock", "bin")
+        self.bin_dir.mkdir(exist_ok=True, parents=True)
 
         # Build FCC
-        self.build_submodule(
+        self.clone_and_build_submodule(
             name="FCC",
             repo_url="https://github.com/haddocking/fcc.git",
             build_cmd="make",
@@ -64,7 +44,7 @@ class CustomBuild(build_ext):
         )
 
         # Build fast-rmsdmatrix
-        self.build_submodule(
+        self.clone_and_build_submodule(
             name="fast-rmsdmatrix",
             repo_url="https://github.com/mgiulini/fast-rmsdmatrix.git",
             build_cmd="make fast-rmsdmatrix",
@@ -76,10 +56,14 @@ class CustomBuild(build_ext):
         build_ext.run(self)
 
     def get_install_dir(self):
+        """Get the directory in which HADDOCK was installed"""
         install_cmd = self.get_finalized_command("install")
-        return install_cmd.install_lib
+        return install_cmd.install_lib  # type: ignore
 
-    def build_submodule(self, name, repo_url, build_cmd, src_dir, binary_name):
+    def clone_and_build_submodule(
+        self, name, repo_url, build_cmd, src_dir, binary_name
+    ):
+        """Clone a repository and build."""
         print(f"Building {name}...")
         with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -96,7 +80,8 @@ class CustomBuild(build_ext):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
             )
-            print("pass!")
+
+            # TODO: Add error handling
 
             # Move the binary
             src_bin = Path(build_dir, binary_name)
@@ -104,58 +89,71 @@ class CustomBuild(build_ext):
 
             shutil.copy2(src_bin, dst_bin)
 
-            print(dst_bin)
-
 
 class CNSInstall(CustomBuildInstall):
     """Custom class to handle the download of the CNS binary"""
 
     def run(self):
-
-        CustomBuildInstall.run(self)
+        """Run the installation"""
 
         # Run the standard installation
-        # install.run(self)
+        CustomBuildInstall.run(self)
 
         # Get the installation directory
         if self.install_lib is None:
-            # Something went wrong with the installation
+            print("Something went wrong during installation.")
             sys.exit(1)
 
+        # Set where the cns binary needs to be
         bin_dir = Path(self.install_lib, "haddock", "bin")
-        cns_exec = Path(bin_dir, "cns")
 
         # Create the `bin/` directory
         bin_dir.mkdir(exist_ok=True)
 
         # Download the binary
+        cns_exec = Path(bin_dir, "cns")
         if cns_exec.exists():
             cns_exec.unlink()
 
         urllib.request.urlretrieve(CNS_BINARY_URL, cns_exec)
 
+        # TODO: Handle failed download
+
         os.chmod(cns_exec, 0o755)
+
+
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    requirements = f.read().splitlines()
+
+
+def read_description(*names, **kwargs) -> str:
+    """Read description files."""
+    path = join(dirname(__file__), *names)
+    with open(path, encoding=kwargs.get("encoding", "utf8")) as fh:
+        return fh.read()
+
+
+readme = read_description("README.md")
+changelog = read_description("CHANGELOG.md")
+long_description = f"{readme}{os.linesep}{changelog}"
 
 
 setup(
     name="haddock3",
     version="3.0.0",
-    description="Haddock 3.",
+    description="HADDOCK3",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license="Apache License 2.0",
-    author="HADDOCK",
-    author_email="A.M.J.J.Bonvin@uu.nl",
+    author="BonvinLab",
+    author_email="bonvinlab.support@uu.nl",
     url="https://github.com/haddocking/haddock3",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    # py_modules=[splitext(basename(i))[0] for i in glob("src/*.py")],
     include_package_data=True,
-    # package_data={"haddock3": ["fcc/src/*", "fast-rmsdmatrix/src/*"]},
     zip_safe=False,
     classifiers=[
-        # complete classifier list:
-        # http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        # TODO: Update the classifiers - http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",
         "Natural Language :: English",
@@ -165,7 +163,7 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     project_urls={
-        "webpage": "https://github.com/haddocking/haddock3",
+        "webpage": "https://bonvinlab.org/haddock3",
         "Documentation": "https://github.com/haddocking/haddock3#readme",
         "Changelog": "",
         "Issue Tracker": "https://github.com/haddocking/haddock3/issues",
@@ -201,14 +199,4 @@ setup(
         ]
     },
     cmdclass={"build_ext": CustomBuild, "install": CNSInstall},
-    # cmdclass={'build_ext': optional_build_ext},
-    # ext_modules=[
-    #    Extension(
-    #        splitext(relpath(path, 'src').replace(os.sep, '.'))[0],
-    #        sources=[path],
-    #        include_dirs=[dirname(path)]
-    #    )
-    #    for root, _, _ in os.walk('src')
-    #    for path in glob(join(root, '*.c'))
-    # ],
 )

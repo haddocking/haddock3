@@ -2964,7 +2964,7 @@ symtbl_fname
 tolerance
 ~~~~~~~~~
 
-| *default*: 0
+| *default*: 5
 | *type*: integer
 | *title*: Failure tolerance percentage
 | *min*: 0

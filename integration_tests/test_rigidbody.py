@@ -80,6 +80,7 @@ def test_rigidbody_local(rigidbody_module):
     sampling = 5
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
     rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["ntrials"] = 1
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
@@ -103,6 +104,7 @@ def test_rigidbody_mpi(rigidbody_module):
     sampling = 5
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
     rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["ntrials"] = 1
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
@@ -132,6 +134,7 @@ def test_rigidbody_less_io(rigidbody_module):
     sampling = 5
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
     rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["ntrials"] = 1
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False

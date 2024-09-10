@@ -162,6 +162,32 @@ tolerance
 Guru
 ````
 
+cyclicpept_dist
+~~~~~~~~~~~~~~~
+
+| *default*: 2.0
+| *type*: float
+| *title*: Cutoff distance for cyclisation
+| *min*: 0.0
+| *max*: 999999.99
+| *short description*: Cutoff distance in Angstroms for identification of backbone cyclic peptide
+| *long description*: Cutoff distance in Angstroms for identification of backbone cyclic peptide (N - C)
+| *group*: molecule
+| *explevel*: guru
+
+disulphide_dist
+~~~~~~~~~~~~~~~
+
+| *default*: 2.2
+| *type*: float
+| *title*: Cutoff distance for S-S bonds
+| *min*: 0.0
+| *max*: 999999.99
+| *short description*: Cutoff distance in Angstroms for identification of disulphide bonds
+| *long description*: Cutoff distance in Angstroms for identification of disulphide bonds (SH - SH)
+| *group*: molecule
+| *explevel*: guru
+
 iniseed
 ~~~~~~~
 

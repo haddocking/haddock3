@@ -446,6 +446,48 @@
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Saving detailed output to clustrmsd.txt&#39;</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_fh</span><span class="p">:</span>
         <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="order_clusters"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.order_clusters">[docs]</a><span class="k">def</span> <span class="nf">order_clusters</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Order the clusters by population.</span>
+<span class="sd">    </span>
+<span class="sd">    The most populated cluster will be assigned the ID 1, the second most</span>
+<span class="sd">     populated the ID 2, and so on.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cluster_arr : np.ndarray</span>
+<span class="sd">        Array of clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clusters : list</span>
+<span class="sd">        List of clusters.</span>
+<span class="sd">    </span>
+<span class="sd">    cluster_arr : np.ndarray</span>
+<span class="sd">        Array of clusters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_clusters</span><span class="p">,</span> <span class="n">cluster_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">cluster_counts</span><span class="p">)</span>  <span class="c1"># must use negative to sort ascending</span>
+    <span class="n">sorted_clusters</span> <span class="o">=</span> <span class="n">unique_clusters</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">]</span>
+    
+    <span class="c1"># delete -1 from sorted_clusters if present</span>
+    <span class="n">sorted_clusters</span> <span class="o">=</span> <span class="n">sorted_clusters</span><span class="p">[</span><span class="n">sorted_clusters</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># for every element of sorted_clusters I want to assign a new ID</span>
+    <span class="c1"># to the elements of cluster_arr that match the order of sorted_clusters</span>
+    <span class="n">index_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">sorted_clusters</span><span class="p">:</span>
+        <span class="c1"># index of cluster_arr where the cluster is equal to c</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cluster_arr</span> <span class="o">==</span> <span class="n">c</span><span class="p">)</span>
+        <span class="n">index_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+    <span class="c1"># now the assignment</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_clusters</span><span class="p">):</span>
+        <span class="n">clusters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">cluster_arr</span><span class="p">[</span><span class="n">index_dict</span><span class="p">[</span><span class="n">c</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">cluster_arr</span></div>
 </pre></div>
 
            </div>

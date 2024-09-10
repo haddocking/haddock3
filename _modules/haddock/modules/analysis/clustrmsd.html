@@ -119,8 +119,6 @@
 <span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="c1"># from haddock.core.typing import FilePath</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
@@ -138,6 +136,7 @@
     <span class="n">get_dendrogram</span><span class="p">,</span>
     <span class="n">get_matrix_path</span><span class="p">,</span>
     <span class="n">iterate_min_population</span><span class="p">,</span>
+    <span class="n">order_clusters</span><span class="p">,</span>
     <span class="n">read_matrix</span><span class="p">,</span>
     <span class="n">write_clusters</span><span class="p">,</span>
     <span class="n">write_clustrmsd_file</span><span class="p">,</span>
@@ -204,10 +203,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
-
-        <span class="c1"># print clusters</span>
-        <span class="n">unq_clusters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">)</span>  <span class="c1"># contains -1 (unclustered)</span>
-        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unq_clusters</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="n">clusters</span><span class="p">,</span> <span class="n">cluster_arr</span> <span class="o">=</span> <span class="n">order_clusters</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;clusters = </span><span class="si">{</span><span class="n">clusters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
         <span class="n">out_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;cluster.out&#39;</span><span class="p">)</span>

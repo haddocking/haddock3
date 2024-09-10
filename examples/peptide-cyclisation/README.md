@@ -9,7 +9,7 @@ create the covalent cyclic bond and refining again.
 50 clusters are generated and the best model of
 each is selected.
 
-Protocol described in: <https://doi.org/10.1021/acs.jctc.2c00075>
+Protocol described in: [https://doi.org/10.1021/acs.jctc.2c00075](https://doi.org/10.1021/acs.jctc.2c00075)
 
 ==================================================
 

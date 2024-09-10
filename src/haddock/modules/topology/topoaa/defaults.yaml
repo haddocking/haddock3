@@ -103,7 +103,7 @@ cyclicpept_dist:
   max: 999999.99
   title: Cutoff distance for cyclisation
   short: Cutoff distance in Angstroms for identification of backbone cyclic peptide
-  long: Cutoff distance in Angstroms for identification of backbone cyclic peptide
+  long: Cutoff distance in Angstroms for identification of backbone cyclic peptide (N - C)
   group: molecule
   explevel: guru
 disulphide_dist:

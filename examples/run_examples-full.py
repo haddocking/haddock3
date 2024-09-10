@@ -63,6 +63,7 @@ examples = (
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-full.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-full.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-full.cfg"),  # noqa: E203, E501
+    ("peptide-cyclisation"         , "cyclise-peptide-full.cfg"),  # noqa: E203, E501
     )
 
 

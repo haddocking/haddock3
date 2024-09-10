@@ -1,0 +1,4 @@
+assign (resid 1 and name N) (resid 14 and name C) 1.3 0.1 0.1
+assign (resid 1 and name N) (resid 14 and name O) 2.3 0.1 0.1
+assign (resid 3 and name CA) (resid 11 and name CA) 4.2 0.1 0.1
+assign (resid 3 and name SG) (resid 11 and name SG) 2.0 0.1 0.1

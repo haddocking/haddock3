@@ -31,6 +31,22 @@ def topoaa_module():
 
 
 @pytest.fixture
+def topoaa_module_with_peptide():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        topoaa = TopoaaModule(
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
+        )
+        topoaa.__init__(path=Path(tmpdir), order=0)
+        topoaa.params["molecules"] = [
+            Path(GOLDEN_DATA, "cyclic-peptide.pdb"),
+        ]
+
+        topoaa.params["cns_exec"] = CNS_EXEC
+
+        yield topoaa
+
+
+@pytest.fixture
 def topoaa_module_with_ligand():
     with tempfile.TemporaryDirectory() as tmpdir:
         topoaa = TopoaaModule(
@@ -81,6 +97,28 @@ def test_topoaa_default(topoaa_module):
         assert expected_gz.stat().st_size > 0, f"{expected_gz} is empty"
 
 
+def test_topoaa_cyclic(topoaa_module_with_peptide):
+
+    topoaa_module_with_peptide.params["cyclicpept_dist"] = 3.5
+    topoaa_module_with_peptide.params["disulphide_dist"]= 4.0
+    topoaa_module_with_peptide.params["mol1"] = {"cyclicpept": True}
+
+    topoaa_module_with_peptide.run()
+
+    expected_inp = Path(topoaa_module_with_peptide.path, "cyclic-peptide.inp")
+    expected_psf = Path(topoaa_module_with_peptide.path, "cyclic-peptide_haddock.psf")
+    expected_pdb = Path(topoaa_module_with_peptide.path, "cyclic-peptide_haddock.pdb")
+    expected_gz = Path(topoaa_module_with_peptide.path, "cyclic-peptide.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+    file_content = open(expected_psf).read()
+    assert 'detected' in file_content
+    assert 'disulphide' in file_content
+
+
 def test_topoaa_ligand(topoaa_module_with_ligand):
 
     topoaa_module_with_ligand.params["ligand_param_fname"] = Path(GOLDEN_DATA, "ligand.param")
@@ -93,8 +131,3 @@ def test_topoaa_ligand(topoaa_module_with_ligand):
     expected_psf = Path(topoaa_module_with_ligand.path, "oseltamivir_haddock.psf")
     expected_pdb = Path(topoaa_module_with_ligand.path, "oseltamivir_haddock.pdb")
     expected_gz = Path(topoaa_module_with_ligand.path, "oseltamivir.out.gz")
-
-    assert expected_inp.exists(), f"{expected_inp} does not exist"
-    assert expected_psf.exists(), f"{expected_psf} does not exist"
-    assert expected_gz.exists(), f"{expected_gz} does not exist"
-    assert expected_pdb.exists(), f"{expected_pdb} does not exist"

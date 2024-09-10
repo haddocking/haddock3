@@ -95,6 +95,28 @@ tolerance:
   long: Percentage of allowed failures for a module to successfully complete
   group: module
   explevel: expert
+cyclicpept_dist:
+  default: 2.00
+  type: float
+  precision: 2
+  min: 0.00
+  max: 999999.99
+  title: Cutoff distance for cyclisation
+  short: Cutoff distance in Angstroms for identification of backbone cyclic peptide
+  long: Cutoff distance in Angstroms for identification of backbone cyclic peptide (N - C)
+  group: molecule
+  explevel: guru
+disulphide_dist:
+  default: 2.20
+  type: float
+  precision: 2
+  min: 0.00
+  max: 999999.99
+  title: Cutoff distance for S-S bonds
+  short: Cutoff distance in Angstroms for identification of disulphide bonds
+  long: Cutoff distance in Angstroms for identification of disulphide bonds (SH - SH)
+  group: molecule
+  explevel: guru
 mol1:
   cyclicpept:
     default: false

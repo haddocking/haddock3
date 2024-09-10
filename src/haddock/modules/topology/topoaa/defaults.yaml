@@ -96,10 +96,11 @@ tolerance:
   group: module
   explevel: expert
 cyclicpept_dist:
-  default: 2.0
-  type: integer
-  min: 0
-  max: 9999999999999999
+  default: 2.00
+  type: float
+  precision: 2
+  min: 0.00
+  max: 999999.99
   title: Cutoff distance for cyclisation
   short: Cutoff distance in Angstroms for identification of backbone cyclic peptide
   long: Cutoff distance in Angstroms for identification of backbone cyclic peptide

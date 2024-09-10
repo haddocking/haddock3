@@ -30,8 +30,6 @@ matrix.
 """  # noqa: E501
 from pathlib import Path
 
-import numpy as np
-
 from haddock import log
 # from haddock.core.typing import FilePath
 from haddock.libs.libclust import (
@@ -49,6 +47,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_dendrogram,
     get_matrix_path,
     iterate_min_population,
+    order_clusters,
     read_matrix,
     write_clusters,
     write_clustrmsd_file,
@@ -115,10 +114,8 @@ class HaddockModule(BaseHaddockModule):
                 self.params['min_population'],
                 )
             self.params['min_population'] = min_population
-
-        # print clusters
-        unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
-        clusters = [c for c in unq_clusters if c != -1]
+        
+        clusters, cluster_arr = order_clusters(cluster_arr)
         log.info(f"clusters = {clusters}")
         
         out_filename = Path('cluster.out')

@@ -15,9 +15,9 @@ from . import has_cns
 def topoaa_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         topoaa = TopoaaModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
+            order=0, path=tmpdir, initial_params=DEFAULT_TOPOAA_CONFIG
         )
-        topoaa.__init__(path=Path(tmpdir), order=0)
+        topoaa.__init__(path=tmpdir, order=0)
         topoaa.params["molecules"] = [
             Path(DATA_DIR, "docking-protein-protein/data/e2aP_1F3G.pdb"),
             Path(DATA_DIR, "docking-protein-protein/data/hpr_ensemble.pdb"),

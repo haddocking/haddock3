@@ -51,8 +51,8 @@ evaluate ($Data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_scale=$amb_scale)
-evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.ambig_scale=$ambig_scale)
+evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
 evaluate ($data.cmrest=$cmrest)
@@ -215,8 +215,8 @@ noe
     averaging  * sum
     potential  * soft
     scale      * 1.0
-    scale ambi $amb_scale
-    scale dist $unamb_scale
+    scale ambi $ambig_scale
+    scale dist $unambig_scale
     scale hbon $hbond_scale
     sqconstant * 1.0
     sqexponent * 2
@@ -494,8 +494,8 @@ else
 end if
 
 noe
-    scale dist $Data.unamb_scale
-    scale ambi $Data.amb_scale
+    scale dist $Data.unambig_scale
+    scale ambi $Data.ambig_scale
     scale hbon $Data.hbond_scale
     scale symm 0.0
     scale cont 0.0
@@ -526,8 +526,8 @@ if ($Data.flags.sym eq true) then
         noe cv $npart ? end
     end if
     noe
-        scale dist $Data.unamb_scale
-        scale ambi $Data.amb_scale
+        scale dist $Data.unambig_scale
+        scale ambi $Data.ambig_scale
         scale hbon $Data.hbond_scale
     end
     print threshold=0.3 noe

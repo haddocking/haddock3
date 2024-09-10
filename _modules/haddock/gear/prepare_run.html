@@ -147,7 +147,10 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.preprocessing</span> <span class="kn">import</span> <span class="n">process_pdbs</span><span class="p">,</span> <span class="n">read_additional_residues</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.restart_run</span> <span class="kn">import</span> <span class="n">remove_folders_after_number</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.validations</span> <span class="kn">import</span> <span class="n">v_rundir</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.validations</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">v_rundir</span><span class="p">,</span>
+    <span class="n">validate_defaults_yaml</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.zerofill</span> <span class="kn">import</span> <span class="n">zero_fill</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">not_none</span>
@@ -215,6 +218,9 @@
         <span class="n">PosixPath</span><span class="p">,</span>
         <span class="n">EmptyPath</span><span class="p">,</span>
     <span class="p">),</span>
+    <span class="s2">&quot;dict&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="p">}</span>
 
 
@@ -267,6 +273,7 @@
         <span class="n">module_name_</span><span class="p">,</span>
         <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">,</span>
     <span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">validate_defaults_yaml</span><span class="p">(</span><span class="n">pdef</span><span class="p">)</span>
     <span class="n">mod_default_config</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">pdef</span><span class="p">,</span> <span class="n">default_only</span><span class="o">=</span><span class="n">default_only</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mod_default_config</span>
 

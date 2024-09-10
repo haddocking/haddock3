@@ -94,25 +94,21 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
-
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">_hidden_level</span><span class="p">,</span> <span class="n">config_expert_levels</span>
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span><span class="p">,</span> <span class="n">_hidden_level</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ExpertLevel</span><span class="p">,</span>
-    <span class="n">FilePath</span><span class="p">,</span>
-    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
     <span class="n">ParamDict</span><span class="p">,</span>
     <span class="n">ParamMap</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="yaml2cfg_text"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.yaml2cfg_text">[docs]</a><span class="k">def</span> <span class="nf">yaml2cfg_text</span><span class="p">(</span>
-    <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert HADDOCK3 YAML config to HADDOCK3 user config text.</span>
 
@@ -144,15 +140,15 @@
             <span class="n">module</span><span class="p">,</span>
             <span class="n">explevel</span><span class="p">,</span>
             <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="p">)</span>
-    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_config</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span></div>
 
 
 <span class="k">def</span> <span class="nf">_yaml2cfg_text</span><span class="p">(</span>
-    <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert HADDOCK3 YAML config to HADDOCK3 user config text.</span>
 
@@ -179,8 +175,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">exp_levels</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">_el</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">_hidden_level</span><span class="p">))</span>
-    <span class="p">}</span>
+        <span class="n">_el</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">_hidden_level</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
     <span class="n">exp_level_idx</span> <span class="o">=</span> <span class="n">exp_levels</span><span class="p">[</span><span class="n">explevel</span><span class="p">]</span>
 
     <span class="c1"># define set of undesired parameter keys</span>
@@ -202,7 +200,7 @@
                 <span class="n">module</span><span class="o">=</span><span class="n">curr_module</span><span class="p">,</span>
                 <span class="n">explevel</span><span class="o">=</span><span class="n">explevel</span><span class="p">,</span>
                 <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
-            <span class="p">)</span>
+                <span class="p">)</span>
             <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
 
         <span class="c1"># treats normal parameters</span>
@@ -236,8 +234,8 @@
                     <span class="n">param_name</span><span class="p">,</span>
                     <span class="n">default_value</span><span class="p">,</span>
                     <span class="s2">&quot; / &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comment</span><span class="p">),</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
                 <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
@@ -250,8 +248,8 @@
 
 
 <div class="viewcode-block" id="read_from_yaml_config"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.read_from_yaml_config">[docs]</a><span class="k">def</span> <span class="nf">read_from_yaml_config</span><span class="p">(</span>
-    <span class="n">cfg_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">default_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">cfg_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">default_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read config from yaml by collapsing the expert levels.</span>
 
 <span class="sd">    Parameters</span>

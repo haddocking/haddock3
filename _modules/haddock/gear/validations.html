@@ -86,9 +86,25 @@
              
   <h1>Source code for haddock.gear.validations</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module to define specific validations in Haddock3.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span><span class="p">,</span> <span class="n">_hidden_level</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">RUNDIR</span><span class="p">,</span> <span class="n">valid_run_dir_chars</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ParamDict</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span><span class="p">,</span> <span class="n">check_yaml_duplicated_parameters</span>
+
+<span class="n">_allowed_expert_levels</span> <span class="o">=</span> <span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">_hidden_level</span><span class="p">)</span>
+<span class="n">YAML_PARAMETER_BASE_SCHEME</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;short&#39;</span><span class="p">,</span> <span class="s1">&#39;long&#39;</span><span class="p">,</span> <span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="s1">&#39;explevel&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="n">TYPE_SPECIFIC_SCHEMES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;integer&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="p">),</span>
+    <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="p">),</span>
+    <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;minchars&quot;</span><span class="p">,</span> <span class="s2">&quot;maxchars&quot;</span><span class="p">,</span> <span class="p">),</span>
+    <span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;minitems&quot;</span><span class="p">,</span> <span class="s2">&quot;maxitems&quot;</span><span class="p">,</span> <span class="p">),</span>
+    <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s2">&quot;dict&quot;</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="p">}</span>
 
 
 <div class="viewcode-block" id="v_rundir"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.v_rundir">[docs]</a><span class="k">def</span> <span class="nf">v_rundir</span><span class="p">(</span><span class="n">rundir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -99,6 +115,83 @@
             <span class="sa">r</span><span class="s2">&quot;[a-zA-Z0-9._-/\] characters.&quot;</span>
             <span class="p">)</span>
         <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate_yaml_params_scheme"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.validate_yaml_params_scheme">[docs]</a><span class="k">def</span> <span class="nf">validate_yaml_params_scheme</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a defaults.yaml file module parameters schemes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yaml_fpath : str</span>
+<span class="sd">        Path to the defaults.yaml file to check.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ycfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">)</span>
+    <span class="c1"># Loop over parameters</span>
+    <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">ycfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">validate_parameter_scheme</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2"> (in </span><span class="si">{</span><span class="n">yaml_fpath</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate_parameter_scheme"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.validate_parameter_scheme">[docs]</a><span class="k">def</span> <span class="nf">validate_parameter_scheme</span><span class="p">(</span>
+        <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">ParamDict</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a parameter scheme.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    param_name : str</span>
+<span class="sd">        Name of this parameter.</span>
+<span class="sd">    parameters : dict[str, Any]</span>
+<span class="sd">        Dictionary of param, value for this parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">base_subparam</span> <span class="ow">in</span> <span class="n">YAML_PARAMETER_BASE_SCHEME</span><span class="p">:</span>
+        <span class="c1"># Check that this parameter contain the basic subparameters</span>
+        <span class="k">assert</span> <span class="n">base_subparam</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&#39; is missing base subparam &#39;</span><span class="si">{</span><span class="n">base_subparam</span><span class="si">}</span><span class="s2">&#39;&quot;</span>  <span class="c1"># noqa : E501</span>
+        <span class="c1"># Point avlue of this parameter</span>
+        <span class="n">param_value</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">base_subparam</span><span class="p">]</span>
+        <span class="c1"># Evaluate expertize level</span>
+        <span class="k">if</span> <span class="n">base_subparam</span> <span class="o">==</span> <span class="s2">&quot;explevel&quot;</span><span class="p">:</span>
+            <span class="c1"># Check if expert level is ok</span>
+            <span class="k">assert</span> <span class="n">parameters</span><span class="p">[</span><span class="n">base_subparam</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_allowed_expert_levels</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&#39; do not contain appropriate expert level&quot;</span>  <span class="c1"># noqa : E501</span>
+        <span class="c1"># Once we know the type, we can make parameter type specific checks</span>
+        <span class="k">elif</span> <span class="n">base_subparam</span> <span class="o">==</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span>
+            <span class="c1"># Check if known type</span>
+            <span class="k">assert</span> <span class="n">param_value</span> <span class="ow">in</span> <span class="n">TYPE_SPECIFIC_SCHEMES</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&#39; contain an unknown parameter type: &#39;</span><span class="si">{</span><span class="n">param_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>  <span class="c1"># noqa : E501</span>
+            <span class="c1"># Skip subsequent checks in case of type: dict</span>
+            <span class="k">if</span> <span class="n">param_value</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+                <span class="c1"># Loop over nested parameters</span>
+                <span class="k">for</span> <span class="n">dict_param_name</span><span class="p">,</span> <span class="n">dict_param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="c1"># Make sure they are parameters and not base ones</span>
+                    <span class="k">if</span> <span class="n">dict_param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">YAML_PARAMETER_BASE_SCHEME</span><span class="p">:</span>
+                        <span class="c1"># Recursive calls for nested parameters</span>
+                        <span class="n">validate_parameter_scheme</span><span class="p">(</span><span class="n">dict_param_name</span><span class="p">,</span> <span class="n">dict_param</span><span class="p">)</span>
+                <span class="c1"># Special case of dict, they do not have a default value...</span>
+                <span class="c1"># So we skip the presence of &#39;default&#39; in this type of params.</span>
+                <span class="c1"># We break the loop before this check</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Check if all specific param for this type of parameter</span>
+            <span class="c1"># are properly specified</span>
+            <span class="k">for</span> <span class="n">specific_param</span> <span class="ow">in</span> <span class="n">TYPE_SPECIFIC_SCHEMES</span><span class="p">[</span><span class="n">param_value</span><span class="p">]:</span>
+                <span class="k">assert</span> <span class="n">specific_param</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2"> is missing specific subparam &#39;</span><span class="si">{</span><span class="n">specific_param</span><span class="si">}</span><span class="s2">&#39; for type &#39;</span><span class="si">{</span><span class="n">base_subparam</span><span class="si">}</span><span class="s2">&#39;&quot;</span>  <span class="c1"># noqa : E501</span></div>
+
+
+<div class="viewcode-block" id="validate_defaults_yaml"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.validate_defaults_yaml">[docs]</a><span class="k">def</span> <span class="nf">validate_defaults_yaml</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a defaults.yaml file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yaml_fpath : str</span>
+<span class="sd">        Path to the defaults.yaml file to validate.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">check_yaml_duplicated_parameters</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">)</span>
+        <span class="n">validate_yaml_params_scheme</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">assert_error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">assert_error</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

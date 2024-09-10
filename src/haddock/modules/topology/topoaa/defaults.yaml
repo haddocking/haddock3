@@ -171,6 +171,7 @@ mol1:
     long: Residue number of the Histidine to be defined as HISE
     group: molecule
     explevel: expert
+  type: dict
   group: input molecules
   explevel: easy
   title: Input molecule configuration

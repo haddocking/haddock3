@@ -114,7 +114,7 @@ disulphide_dist:
   max: 999999.99
   title: Cutoff distance for S-S bonds
   short: Cutoff distance in Angstroms for identification of disulphide bonds
-  long: Cutoff distance in Angstroms for identification of cdisulphide bonds
+  long: Cutoff distance in Angstroms for identification of disulphide bonds (SH - SH)
   group: molecule
   explevel: guru
 mol1:

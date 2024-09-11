@@ -4,6 +4,8 @@ Inspired from:
 https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh
 """
 
+from pathlib import Path
+
 from haddock.core.exceptions import KnownCNSError
 from haddock.core.typing import Optional
 
@@ -125,3 +127,15 @@ def _find_cns_errors(
                             )
             # Update number of parsed lines so we do not check them again
             parsed_lines = -len(lines)
+
+
+def find_all_cns_errors(directory_path: str):
+    all_errors = {}
+    for fpath in Path(directory_path).glob("*.out"):
+        if (detected_error := find_cns_errors(fpath)):
+            error_type = all_errors.setdefault(
+                detected_error.cns_error,
+                {"count": 0, "error": detected_error}
+                )
+            error_type["count"] += 1
+    return all_errors

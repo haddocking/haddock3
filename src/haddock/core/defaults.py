@@ -2,20 +2,21 @@
 
 import importlib.resources
 import string
-import sys
 from pathlib import Path
 
 import yaml
 
 import haddock
-from haddock import core_path, log
+from haddock import core_path
 
 
-# Locate the CNS binary
-cns_exec = Path(importlib.resources.files(haddock) / "bin" / "cns")  # type: ignore
+BINARY_DIR = Path(importlib.resources.files(haddock) / "bin")  # type: ignore
+
+cns_exec = Path(BINARY_DIR, "cns")
 if not cns_exec.exists():
-    log.error(f"CNS binary not found at {cns_exec}")
-    sys.exit(1)
+    # This means the CNS binary is not in the default location
+    #  and should be set manually in the configuration file
+    cns_exec = None
 
 
 MODULE_PATH_NAME = "step_"

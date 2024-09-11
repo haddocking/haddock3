@@ -94,21 +94,29 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span><span class="p">,</span> <span class="n">_hidden_level</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">_hidden_level</span><span class="p">,</span> <span class="n">config_expert_levels</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">ExpertLevel</span><span class="p">,</span>
+    <span class="n">FilePath</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
     <span class="n">ParamDict</span><span class="p">,</span>
     <span class="n">ParamMap</span><span class="p">,</span>
-    <span class="n">Mapping</span><span class="p">,</span>
-    <span class="p">)</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
 
 
 <div class="viewcode-block" id="yaml2cfg_text"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.yaml2cfg_text">[docs]</a><span class="k">def</span> <span class="nf">yaml2cfg_text</span><span class="p">(</span>
-        <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">mandatory_param</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert HADDOCK3 YAML config to HADDOCK3 user config text.</span>
 
@@ -129,6 +137,16 @@
 
 <span class="sd">    details : bool</span>
 <span class="sd">        Whether to add the &#39;long&#39; description of each parameter.</span>
+<span class="sd">    </span>
+<span class="sd">    mandatory_param : bool</span>
+<span class="sd">        Whether this current parameters are mandatory ones. Special case where</span>
+<span class="sd">        this must be set as they do not contain `default` value, therefore the</span>
+<span class="sd">        downstream functions are not valid anymore.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    textual_config : str</span>
+<span class="sd">        Textual representation of a YAML configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_config</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -140,15 +158,20 @@
             <span class="n">module</span><span class="p">,</span>
             <span class="n">explevel</span><span class="p">,</span>
             <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">mandatory_param</span><span class="o">=</span><span class="n">mandatory_param</span><span class="p">,</span>
         <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_config</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span></div>
+    <span class="p">)</span>
+    <span class="n">textual_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_config</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
+    <span class="k">return</span> <span class="n">textual_config</span></div>
 
 
 <span class="k">def</span> <span class="nf">_yaml2cfg_text</span><span class="p">(</span>
-        <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">mandatory_param</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert HADDOCK3 YAML config to HADDOCK3 user config text.</span>
 
@@ -172,84 +195,104 @@
 
 <span class="sd">    details : bool</span>
 <span class="sd">        Whether to add the &#39;long&#39; description of each parameter.</span>
+
+<span class="sd">    mandatory_param : bool</span>
+<span class="sd">        Whether this current parameters are mandatory ones. Special case where</span>
+<span class="sd">        this must be set as they do not contain `default` value, therefore the</span>
+<span class="sd">        downstream functions are not valid anymore.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str_config : str</span>
+<span class="sd">        String representation of the YAML configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">exp_levels</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">_el</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-            <span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">_hidden_level</span><span class="p">)</span>
-            <span class="p">)</span>
-        <span class="p">}</span>
+        <span class="n">_el</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">_hidden_level</span><span class="p">))</span>
+    <span class="p">}</span>
     <span class="n">exp_level_idx</span> <span class="o">=</span> <span class="n">exp_levels</span><span class="p">[</span><span class="n">explevel</span><span class="p">]</span>
 
     <span class="c1"># define set of undesired parameter keys</span>
-    <span class="n">undesired</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;explevel&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="n">undesired</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;explevel&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="p">:</span>
-        <span class="n">undesired</span> <span class="o">=</span> <span class="n">undesired</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;long&quot;</span><span class="p">,)</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># Add long description to undesired if not asked for detailed info</span>
+        <span class="n">undesired</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;long&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">ymlcfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="c1"># treats parameters that are subdictionaries of parameters</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;default&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># give extra space</span>
-            <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">curr_module</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">curr_module</span> <span class="o">=</span> <span class="n">param_name</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">curr_module</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">_yaml2cfg_text</span><span class="p">(</span>
-                <span class="n">param</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-                <span class="n">module</span><span class="o">=</span><span class="n">curr_module</span><span class="p">,</span>
-                <span class="n">explevel</span><span class="o">=</span><span class="n">explevel</span><span class="p">,</span>
-                <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-
-        <span class="c1"># treats normal parameters</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">exp_levels</span><span class="p">[</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;explevel&quot;</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">exp_level_idx</span><span class="p">:</span>
-                <span class="c1"># ignore this parameter because is of an expert level</span>
-                <span class="c1"># superior to the one request:</span>
-                <span class="k">continue</span>
-
-            <span class="n">comment</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">_comment</span><span class="p">,</span> <span class="n">cvalue</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">_comment</span> <span class="ow">in</span> <span class="n">undesired</span><span class="p">:</span>
-                    <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">cvalue</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                    <span class="k">continue</span>
-
-                <span class="n">comment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">_comment</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cvalue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">default_value</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
-
-            <span class="c1"># boolean values have to be lower for compatibility with toml cfg</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-                <span class="n">default_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-                <span class="n">param_line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">param_line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{!r}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span>
-
-            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">param_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">param_name</span><span class="p">,</span>
-                    <span class="n">default_value</span><span class="p">,</span>
-                    <span class="s2">&quot; / &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comment</span><span class="p">),</span>
+        <span class="c1"># Check if param is a dictionary</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="c1"># Without `default` key parameter, assumes this `param`</span>
+            <span class="c1"># is a subdictionaries of parameters</span>
+            <span class="k">if</span> <span class="s2">&quot;default&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">param</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">mandatory_param</span><span class="p">:</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># give extra space</span>
+                <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">curr_module</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">curr_module</span> <span class="o">=</span> <span class="n">param_name</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">curr_module</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+                <span class="n">_</span> <span class="o">=</span> <span class="n">_yaml2cfg_text</span><span class="p">(</span>
+                    <span class="n">param</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">module</span><span class="o">=</span><span class="n">curr_module</span><span class="p">,</span>
+                    <span class="n">explevel</span><span class="o">=</span><span class="n">explevel</span><span class="p">,</span>
+                    <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
-                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+            <span class="c1"># treats normal parameters</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">exp_levels</span><span class="p">[</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;explevel&quot;</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">exp_level_idx</span><span class="p">:</span>
+                    <span class="c1"># ignore this parameter because is of an expert level</span>
+                    <span class="c1"># superior to the one request:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">comment</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">_comment</span><span class="p">,</span> <span class="n">cvalue</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">_comment</span> <span class="ow">in</span> <span class="n">undesired</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="k">if</span> <span class="n">cvalue</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">comment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">_comment</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cvalue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># In the case of mandatory global parameters, there is</span>
+                <span class="c1"># no defined default parameters, so we create a `fake` one</span>
+                <span class="k">if</span> <span class="n">mandatory_param</span><span class="p">:</span>
+                    <span class="n">default_value</span> <span class="o">=</span> <span class="s2">&quot;Must be defined!&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">default_value</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
+
+                <span class="c1"># boolean values have to be lower for compatibility</span>
+                <span class="c1"># with toml cfg</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                    <span class="n">default_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">param_line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">param_line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{!r}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+
+                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">param_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">param_name</span><span class="p">,</span>
+                        <span class="n">default_value</span><span class="p">,</span>
+                        <span class="s2">&quot; / &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comment</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+                    <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># ignore some other parameters that are defined for sections.</span>
             <span class="k">continue</span>
 
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="c1"># Generate one single string containing all parameters representation</span>
+    <span class="n">str_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">str_config</span>
 
 
 <div class="viewcode-block" id="read_from_yaml_config"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.read_from_yaml_config">[docs]</a><span class="k">def</span> <span class="nf">read_from_yaml_config</span><span class="p">(</span>
-        <span class="n">cfg_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">default_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">cfg_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">default_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read config from yaml by collapsing the expert levels.</span>
 
 <span class="sd">    Parameters</span>
@@ -339,7 +382,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 10, 2024.
+      <span class="lastupdated">Last updated on Sep 11, 2024.
       </span></p>
   </div>
 

@@ -105,7 +105,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span><span class="p">,</span> <span class="n">core_path</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ArgumentParser</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
@@ -229,27 +231,70 @@
     <span class="n">new_config</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">global_params</span><span class="p">:</span>
+        <span class="c1"># Read general parameters</span>
         <span class="n">general_cfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">modules_defaults_path</span><span class="p">)</span>
         <span class="n">general_params_str</span> <span class="o">=</span> <span class="n">yaml2cfg_text</span><span class="p">(</span>
             <span class="n">general_cfg</span><span class="p">,</span>
             <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">explevel</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
             <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">comment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">)</span>
+        <span class="n">general_comment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">(</span>
+                <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
                 <span class="s2">&quot;# The parameters below are optional parameters. &quot;</span><span class="p">,</span>
                 <span class="s2">&quot;# They can either be used as global parameters or as part &quot;</span><span class="p">,</span>
                 <span class="s2">&quot;# of the module&#39;s parameters&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="p">)</span>
-        <span class="p">)</span>
 
+        <span class="c1"># Read mandatory parmeters</span>
+        <span class="n">mandatory_cfg_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">core_path</span><span class="p">,</span> <span class="s2">&quot;mandatory.yaml&quot;</span><span class="p">)</span>
+        <span class="n">general_mandatory_cfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">mandatory_cfg_path</span><span class="p">)</span>
+        <span class="n">general_mandatory_params_str</span> <span class="o">=</span> <span class="n">yaml2cfg_text</span><span class="p">(</span>
+            <span class="n">general_mandatory_cfg</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">explevel</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+            <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+            <span class="n">mandatory_param</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">mandatory_comment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="s2">&quot;# The parameters below are mandatory parameters.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;# They must be specified in your configuration file!&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Read optional parameters</span>
+        <span class="n">optional_cfg_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">core_path</span><span class="p">,</span> <span class="s2">&quot;optional.yaml&quot;</span><span class="p">)</span>
+        <span class="n">general_optional_cfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">optional_cfg_path</span><span class="p">)</span>
+        <span class="n">general_optional_params_str</span> <span class="o">=</span> <span class="n">yaml2cfg_text</span><span class="p">(</span>
+            <span class="n">general_optional_cfg</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">explevel</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+            <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">optional_comment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="s2">&quot;# The parameters below are optional global parameters.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="c1"># Concatenate all of them</span>
         <span class="n">new_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">(</span>
-                <span class="n">comment</span><span class="p">,</span>
+                <span class="n">mandatory_comment</span><span class="p">,</span>
+                <span class="n">general_mandatory_params_str</span><span class="p">,</span>
+                <span class="n">optional_comment</span><span class="p">,</span>
+                <span class="n">general_optional_params_str</span><span class="p">,</span>
+                <span class="n">general_comment</span><span class="p">,</span>
                 <span class="n">general_params_str</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="p">)</span>
-        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">module</span><span class="p">:</span>
         <span class="n">module_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -286,7 +331,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 10, 2024.
+      <span class="lastupdated">Last updated on Sep 11, 2024.
       </span></p>
   </div>
 

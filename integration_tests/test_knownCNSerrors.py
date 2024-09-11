@@ -13,7 +13,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.sampling.rigidbody import (
     DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG,
     HaddockModule as RigidbodyModule
-)
+    )
 
 
 @pytest.fixture
@@ -42,6 +42,7 @@ def gen_fake_cns_errors(gen_random_text):
 
 @pytest.fixture
 def rigidbody_module(gen_fake_cns_errors):
+    """Generate a failed rigidbody module."""
     rigidbody = RigidbodyModule(
         order=1,
         path=Path(gen_fake_cns_errors),
@@ -55,12 +56,15 @@ def rigidbody_module(gen_fake_cns_errors):
 
 
 class MockPreviousIO:
+    """Mock proviousIO function."""
+
     def __init__(self, path):
         self.path = path
         self.output = []
 
 
 def test_detection_when_faulty(rigidbody_module):
+    """Test failure of run and detection of CNS errors."""
     rigidbody_module.previous_io = MockPreviousIO(rigidbody_module.path)
     # Check that the run will fail
     with pytest.raises(RuntimeError) as error_info:

@@ -3,7 +3,6 @@ import logging
 import sys
 from pathlib import Path
 
-
 log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)

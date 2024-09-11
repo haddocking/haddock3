@@ -22,6 +22,7 @@ The temperature and number of steps for the various stages can be tuned.
 
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
@@ -32,7 +33,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseCNSModule):

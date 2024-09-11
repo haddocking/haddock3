@@ -581,9 +581,6 @@ end if ! check for cyclic peptide
 inline @MODULE:covalheme.cns
 
 
-! check for covalently-linked Acetylated Nter to CYS
-
-inline @MODULE:coval-ace-cys.cns
 
 evaluate ($ironclus=0)
  

@@ -1,4 +1,4 @@
-"""This file contains functions to detect known/common CNS errors.
+"""Detect known/common CNS errors.
 
 Inspired from:
 https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh
@@ -16,8 +16,8 @@ KNOWN_ERRORS = {
     "CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH": (
         "Missmatch between chain length for symmetry restraints. "
         "Check your input molecules and symmetry restraints."
-    ),
-    "NCS-restraints error encountered: Improperly defined non-crystallographic symmetry": (
+        ),
+    "NCS-restraints error encountered: Improperly defined non-crystallographic symmetry": (  # noqa : E501
         "Improperly defined non-crystallographic symmetry (NCS). "
         "Check your symmetry restraints definition."
         ),
@@ -32,11 +32,11 @@ KNOWN_ERRORS = {
         ),
     "SELRPN error encountered: parsing error": (
         "Check your restraint files."
-    ),
+        ),
     "PARSER error encountered: Encountered too many parsing errors": (
         "Encountered too many parsing errors."
         ),
-    "XMREAD error encountered:  sectioning of map incompatible with resolution": (
+    "XMREAD error encountered:  sectioning of map incompatible with resolution": (  # noqa : E501
         "Check your EM map resolution and sectioning"
         ),
     "ALLHP error encountered: not enough memory available": (
@@ -53,7 +53,7 @@ KNOWN_ERRORS = {
         "Check your input parameters and restraints"
         "Possibly try turning off the sampling of 180 degrees rotattion"
         )
-    }  # noqa : E501
+    }
 
 
 def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:

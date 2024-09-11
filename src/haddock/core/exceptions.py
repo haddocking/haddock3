@@ -46,8 +46,8 @@ class KnownCNSError(CNSRunningError):
     def __str__(self) -> str:
         """Generate custom string representation of this exception."""
         full_msg = (
-            f"A CNS error occured: `{self.cns_message}`.\n"
-            f"Here is a hint on how to solve it:\n{self.msg}"
+            f"A CNS error occured: `{self.cns_error}`.\n"
+            f"Here is a hint on how to solve it:\n{self.hint}"
             )
         return full_msg
 

@@ -7,7 +7,7 @@ https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh
 from pathlib import Path
 
 from haddock.core.exceptions import KnownCNSError
-from haddock.core.typing import Optional
+from haddock.core.typing import FilePath, Optional, Union
 
 # Dictionary of known errors
 # as key:    How to catch it in the cns.out
@@ -56,12 +56,12 @@ KNOWN_ERRORS = {
     }  # noqa : E501
 
 
-def find_cns_errors(cns_out_fpath: str) -> Optional[KnownCNSError]:
+def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:
     """Detect if a known CNS error is in a cns.out file.
 
     Parameters
     ----------
-    cns_out_fpath : str
+    cns_out_fpath : FilePath -> Union[str, Path]
         Path to the cns.out file to check.
 
     Returns
@@ -78,7 +78,7 @@ def find_cns_errors(cns_out_fpath: str) -> Optional[KnownCNSError]:
 
 
 def _find_cns_errors(
-        cns_out_fpath: str,
+        cns_out_fpath: FilePath,
         known_errors: dict[str, str],
         chunk_size: int = 4096,
         ) -> None:
@@ -86,7 +86,7 @@ def _find_cns_errors(
 
     Parameters
     ----------
-    cns_out_fpath : str
+    cns_out_fpath : FilePath -> Union[str, Path]
         Path to the cns.out file to check.
     known_errors : dict[str, str]
         Dict of known errors and their hints
@@ -129,9 +129,25 @@ def _find_cns_errors(
             parsed_lines = -len(lines)
 
 
-def find_all_cns_errors(directory_path: str):
-    all_errors = {}
+def find_all_cns_errors(
+        directory_path: FilePath,
+        ) -> dict[str, dict[str, Union[int, KnownCNSError]]]:
+    """Find all errors in a directory.
+
+    Parameters
+    ----------
+    directory_path : FilePath
+        Path to the directory to be checked
+
+    Returns
+    -------
+    all_errors : dict[str, dict[str, Union[int, KnownCNSError]]]
+        _description_
+    """
+    all_errors: dict[str, dict[str, Union[int, KnownCNSError]]] = {}
+    # Loop over all .out files
     for fpath in Path(directory_path).glob("*.out"):
+        # Try to dectect an error
         if (detected_error := find_cns_errors(fpath)):
             error_type = all_errors.setdefault(
                 detected_error.cns_error,

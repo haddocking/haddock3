@@ -300,10 +300,12 @@ class BaseHaddockModule(ABC):
                 f"{faulty:.2f}% of output was not generated for this module "
                 f"and tolerance was set to {faulty_tolerance:.2f}%."
             )
-            # try to detect errors
+            # Try to detect CNS errors
             if detected_errors := find_all_cns_errors(self.path):
+                _msg += linesep
                 for error in detected_errors.values():
-                    _msg += f"{linesep}{str(error["error"])}"
+                    _msg += f'{str(error["error"])}{linesep}'
+            # Show final error message
             self.finish_with_error(_msg)
 
     def finish_with_error(self, reason: object = "Module has failed.") -> None:

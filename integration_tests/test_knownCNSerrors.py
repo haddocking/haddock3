@@ -41,8 +41,8 @@ def gen_fake_cns_errors(gen_random_text):
 
 
 @pytest.fixture
-def rigidbody_module(gen_fake_cns_errors):
-    """Generate a failed rigidbody module."""
+def rigidbody_module_with_cns_errors(gen_fake_cns_errors):
+    """Generate a failed rigidbody module with CNS errors."""
     rigidbody = RigidbodyModule(
         order=1,
         path=Path(gen_fake_cns_errors),
@@ -55,6 +55,22 @@ def rigidbody_module(gen_fake_cns_errors):
     yield rigidbody
 
 
+@pytest.fixture
+def rigidbody_module_without_cns_errors():
+    """Generate a failed rigidbody module without CNS errors."""
+    with tempfile.TemporaryDirectory("moduleoutputs") as tmp:
+        rigidbody = RigidbodyModule(
+            order=1,
+            path=Path(tmp),
+            initial_params=DEFAULT_RIGIDBODY_CONFIG,
+            )
+        rigidbody.output_models = [
+            PDBFile(Path(tmp, f"none_generated_output_{i}.pdb"))
+            for i in range(10)
+            ]
+        yield rigidbody
+
+
 class MockPreviousIO:
     """Mock proviousIO function."""
 
@@ -63,12 +79,14 @@ class MockPreviousIO:
         self.output = []
 
 
-def test_detection_when_faulty(rigidbody_module):
+def test_detection_when_faulty(rigidbody_module_with_cns_errors):
     """Test failure of run and detection of CNS errors."""
-    rigidbody_module.previous_io = MockPreviousIO(rigidbody_module.path)
+    rigidbody_module_with_cns_errors.previous_io = MockPreviousIO(
+        rigidbody_module_with_cns_errors.path
+        )
     # Check that the run will fail
     with pytest.raises(RuntimeError) as error_info:
-        rigidbody_module.export_io_models()
+        rigidbody_module_with_cns_errors.export_io_models()
     # Get final error string
     string_error = str(error_info.value)
     # Loop over known errors
@@ -77,3 +95,21 @@ def test_detection_when_faulty(rigidbody_module):
         assert cns_error_string in string_error
         # Check user hint is present in error message
         assert user_hint in string_error
+
+
+def test_undetected_when_faulty(rigidbody_module_without_cns_errors):
+    """Test failure of run and detection of CNS errors."""
+    rigidbody_module_without_cns_errors.previous_io = MockPreviousIO(
+        rigidbody_module_without_cns_errors.path
+        )
+    # Check that the run will fail
+    with pytest.raises(RuntimeError) as error_info:
+        rigidbody_module_without_cns_errors.export_io_models()
+    # Get final error string
+    string_error = str(error_info.value)
+    # Loop over known errors
+    for cns_error_string, user_hint in KNOWN_ERRORS.items():
+        # Check it was NOT detected
+        assert cns_error_string not in string_error
+        # Check user hint NOT is present in error message
+        assert user_hint not in string_error

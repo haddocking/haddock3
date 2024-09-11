@@ -1,19 +1,19 @@
 """integration test for emscoring module"""
+
+import shutil
 import tempfile
 from pathlib import Path
 
-import pytest
-import shutil
 import pandas as pd
+import pytest
 
-from haddock.modules.scoring.emscoring import HaddockModule as EmscoringModule
-from haddock.modules.scoring.emscoring import (
-    DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG)
 from haddock.libs.libontology import PDBFile, TopologyFile
 from haddock.modules.analysis.caprieval.capri import load_contacts
+from haddock.modules.scoring.emscoring import \
+    DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG
+from haddock.modules.scoring.emscoring import HaddockModule as EmscoringModule
 
-from . import has_cns
-from . import golden_data
+from . import GOLDEN_DATA, has_cns
 
 
 @pytest.fixture
@@ -34,18 +34,18 @@ class MockPreviousIO:
 
     def retrieve_models(self, individualize: bool = False):
         shutil.copy(
-            Path(golden_data, "protglyc_complex_1.pdb"),
-            Path(".", "protglyc_complex_1.pdb")
-            )
-        
+            Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
+            Path(self.path, "protglyc_complex_1.pdb"),
+        )
+
         # add the topology to the models
-        psf_file = Path(golden_data, "protglyc_complex_1.psf")
+        psf_file = Path(GOLDEN_DATA, "protglyc_complex_1.psf")
         model_list = [
             PDBFile(
                 file_name="protglyc_complex_1.pdb",
-                path=".",
+                path=self.path,
                 topology=TopologyFile(psf_file),
-                ),
+            ),
         ]
         return model_list
 
@@ -53,7 +53,6 @@ class MockPreviousIO:
         return None
 
 
-@has_cns
 def test_emscoring_default(emscoring_module):
     """Test the emscoring module."""
     emscoring_module.previous_io = MockPreviousIO(path=emscoring_module.path)
@@ -79,4 +78,5 @@ def test_emscoring_default(emscoring_module):
     end_contact = load_contacts(expected_pdb1)
     intersection = start_contact & end_contact
     fnat = len(intersection) / float(len(end_contact))
+    fnat = calc_fnat()
     assert fnat > 0.95

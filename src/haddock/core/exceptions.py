@@ -36,6 +36,19 @@ class CNSRunningError(HaddockError):
 
     pass
 
+class KnownCNSError(CNSRunningError):
+    """Detected CNS output error."""
+
+    def __init__(self, message):
+        self.msg = message
+    
+    def __str__(self) -> str:
+        full_msg = (
+            "An error occured in CNS. "
+            f"Here is a hint on how to solve it:\n{self.msg}"
+            )
+        return full_msg
+
 
 class HaddockModuleError(HaddockError):
     """General error in a HADDOCK3 module."""

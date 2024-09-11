@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 """Setup dot py."""
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -15,21 +16,43 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 
 
-CNS_BINARY_URL = ""
-
-
 class CustomBuildInstall(install):
     """Custom Build and Install class"""
 
     def run(self):
+
+        issues = self.flycheck()
+        if issues:
+            print("Issues found, installation cannot continue:")
+            for issue in issues:
+                print(f"  - {issue}")
+            sys.exit(1)
         self.run_command("build_ext")
         install.run(self)
+
+    @staticmethod
+    def flycheck() -> list[str]:
+        """Helper method to make sure all system dependencies are installed"""
+        issues = []
+
+        if shutil.which("git") is None:
+            issues.append("git not found in $PATH")
+
+        if shutil.which("make") is None:
+            issues.append("make not found in $PATH")
+
+        python_version = sys.version_info
+        if python_version.major != 3 or python_version.minor < 9:
+            issues.append("Python 3.9+ is required, found: {sys.version}")
+
+        return issues
 
 
 class CustomBuild(build_ext):
     """CustomBuild handles the build of the C++ dependencies"""
 
     def run(self):
+        print("Building HADDOCK3 C++ dependencies...")
         # TODO: Find a smarter way of passing this `bin_dir` without defining it outside `__init__`
         self.bin_dir = Path(self.get_install_dir(), "haddock", "bin")
         self.bin_dir.mkdir(exist_ok=True, parents=True)
@@ -60,7 +83,7 @@ class CustomBuild(build_ext):
         install_cmd = self.get_finalized_command("install")
         return install_cmd.install_lib  # type: ignore
 
-    def clone_and_build_submodule(
+    def clone_and_build_submodule(  # pylint: disable=too-many-arguments
         self, name, repo_url, build_cmd, src_dir, binary_name
     ):
         """Clone a repository and build."""
@@ -90,7 +113,16 @@ class CustomBuild(build_ext):
             shutil.copy2(src_bin, dst_bin)
 
 
-class CNSInstall(CustomBuildInstall):
+CNS_BINARIES = {
+    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/o8X7zZezIM3P0cE",  # linux
+    "x86_64-darwin": "",  # macOs
+    "arm64-darwin": "",  # Mac M1/M2
+    "aarch64-linux": "",  # linux ARM
+    "armv7l-linux": "",  # 32-bit ARM linux, like raspberryPi
+}
+
+
+class CustomInstall(CustomBuildInstall):
     """Custom class to handle the download of the CNS binary"""
 
     def run(self):
@@ -115,11 +147,43 @@ class CNSInstall(CustomBuildInstall):
         if cns_exec.exists():
             cns_exec.unlink()
 
-        urllib.request.urlretrieve(CNS_BINARY_URL, cns_exec)
+        arch = self.get_arch()
 
-        # TODO: Handle failed download
+        if arch not in CNS_BINARIES:
+            print(f"Unknown architecture: {arch}")
+            print(
+                "Please set the CNS binary manually inside your configuration file as `cns_exec`",
+            )
+            return
+
+        cns_binary_url = CNS_BINARIES[arch]
+
+        status, msg = self.download_file(cns_binary_url, cns_exec)
+        if not status:
+            print(msg)
+            print(
+                "Please set the CNS binary manually inside your configuration file as `cns_exec`"
+            )
+            return
 
         os.chmod(cns_exec, 0o755)
+
+    @staticmethod
+    def download_file(url, dest) -> tuple[bool, str]:
+        """Download a file from a URL"""
+        try:
+            urllib.request.urlretrieve(url, dest)
+            return True, "Download successful"
+        except Exception as e:  # pylint: disable=broad-except
+            return False, f"Download failed: {e}"
+
+    @staticmethod
+    def get_arch():
+        """Helper function to figure out the architetchure"""
+        system = platform.system().lower()
+        machine = platform.machine().lower()
+
+        return f"{machine}-{system}"
 
 
 with open("requirements.txt", "r", encoding="utf-8") as f:
@@ -196,7 +260,8 @@ setup(
             "haddock3-traceback = haddock.clis.cli_traceback:maincli",
             "haddock3-re = haddock.clis.cli_re:maincli",
             "haddock3-restraints = haddock.clis.cli_restraints:maincli",
+            "haddock3-check = haddock.clis.cli_check_install:main",
         ]
     },
-    cmdclass={"build_ext": CustomBuild, "install": CNSInstall},
+    cmdclass={"build_ext": CustomBuild, "install": CustomInstall},
 )

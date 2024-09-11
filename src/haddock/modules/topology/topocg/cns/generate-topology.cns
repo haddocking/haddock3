@@ -576,11 +576,6 @@ $seg1.$counter[a4] $res1.$counter[a4] and $seg2.$counter[a4] $res2.$counter[a4]
 end if ! check for cyclic peptide
 
 
-! check for covalently-linked hemeC
-
-inline @MODULE:covalheme.cns
-
-
 
 evaluate ($ironclus=0)
  

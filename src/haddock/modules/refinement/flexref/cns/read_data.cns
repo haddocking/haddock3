@@ -44,7 +44,7 @@ end if
 if ($hbond_fname # "") then
     fileexist $hbond_fname end
     if ($result eq true) then
-        noe @@$hbond_fname end
+        noe class hbon @@$hbond_fname end
     end if
 end if
 
@@ -61,7 +61,6 @@ noe
     msoexponent * 1
     masymptote  * -0.1
     mrswitch    * 1.0
-    avexpo hbond 20
 end
 
 

@@ -10,7 +10,7 @@ from haddock.core.typing import Optional
 # Dictionary of known errors
 # as key:    How to catch it in the cns.out
 # as value:  Message to user
-known_errors = {
+KNOWN_ERRORS = {
     "CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH": (
         "Missmatch between chain length for symmetry restraints. "
         "Check your input molecules and symmetry restraints."
@@ -55,15 +55,47 @@ known_errors = {
 
 
 def find_cns_errors(cns_out_fpath: str) -> Optional[KnownCNSError]:
-    if (detected_error := _find_cns_errors(cns_out_fpath, known_errors)):
-        return KnownCNSError(known_errors[detected_error])
+    """Detect if a known CNS error is in a cns.out file.
+
+    Parameters
+    ----------
+    cns_out_fpath : str
+        Path to the cns.out file to check.
+
+    Returns
+    -------
+    Optional[KnownCNSError]
+        An exception for known CNS errors, with its hint on how to solve it!
+    """
+    try:
+        _find_cns_errors(cns_out_fpath, KNOWN_ERRORS)
+    except KnownCNSError as err:
+        return err
+    else:
+        return None
 
 
 def _find_cns_errors(
         cns_out_fpath: str,
         known_errors: dict[str, str],
         chunk_size: int = 4096,
-        ) -> Optional[str]:
+        ) -> None:
+    """Backward reading and detect first known CNS error in file.
+
+    Parameters
+    ----------
+    cns_out_fpath : str
+        Path to the cns.out file to check.
+    known_errors : dict[str, str]
+        Dict of known errors and their hints
+    chunk_size : int, optional
+        Check size (in bytes) to read the file backwards, by default 4096
+
+    Raises
+    ------
+    KnownCNSError
+        An exception for known CNS errors, with its hint on how to solve it!
+    """
     # Read file
     with open(cns_out_fpath, 'rb') as file:
         # Find file size
@@ -83,10 +115,13 @@ def _find_cns_errors(
             for line in reversed(lines[-len(lines):parsed_lines]):
                 decoded_line = line.decode('utf-8', errors='replace')
                 # Loop over known errors
-                for error_string in known_errors.keys():
+                for error_string, hint in known_errors.items():
                     # Check if this error is known
                     if error_string in decoded_line:
                         # return the cause
-                        return error_string
+                        raise KnownCNSError(
+                            error_string,
+                            hint,
+                            )
             # Update number of parsed lines so we do not check them again
             parsed_lines = -len(lines)

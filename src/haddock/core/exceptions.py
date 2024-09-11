@@ -39,12 +39,14 @@ class CNSRunningError(HaddockError):
 class KnownCNSError(CNSRunningError):
     """Detected CNS output error."""
 
-    def __init__(self, message):
-        self.msg = message
+    def __init__(self, cns_message, hint):
+        self.cns_error = cns_message
+        self.hint = hint
     
     def __str__(self) -> str:
+        """Generate custom string representation of this exception."""
         full_msg = (
-            "An error occured in CNS. "
+            f"A CNS error occured: `{self.cns_message}`.\n"
             f"Here is a hint on how to solve it:\n{self.msg}"
             )
         return full_msg

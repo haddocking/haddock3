@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from haddock.libs.libontology import ModuleIO, PDBFile
+from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.clustfcc import DEFAULT_CONFIG as clustfcc_pars
 from haddock.modules.analysis.clustfcc import HaddockModule as ClustFCCModule
 
@@ -78,8 +78,8 @@ def test_clustfcc_output_existence(fcc_module, output_list):
     # Test the fcc matrix contents
     with open(Path(fcc_module.path, "fcc.matrix"), encoding="utf-8", mode="r") as f:
         observed_fcc_matrix = f.read()
-    expected_fcc_output = "1 2 0.05 0.062" + os.linesep
 
+    expected_fcc_output = "1 2 0.05 0.062" + os.linesep
     assert observed_fcc_matrix == expected_fcc_output
 
     # Check .con files.
@@ -90,13 +90,10 @@ def test_clustfcc_output_existence(fcc_module, output_list):
         Path(fcc_module.path, "protprot_complex_2.con"),
     ]
 
-    for exp_output_len, observed_con_file in zip(
-        expected_output_length, observed_contact_files
-    ):
-        with open(observed_con_file, encoding="utf-8", mode="r") as f:
-            observed_output_len = len(f.read().splitlines())
-
-        assert observed_output_len == exp_output_len
+    for exp, obs_f in zip(expected_output_length, observed_contact_files):
+        with open(obs_f, encoding="utf-8", mode="r") as f:
+            obs = len(f.read().splitlines())
+            assert obs == exp
 
     # Check cluster.out file.
     expected_cluster_output = [

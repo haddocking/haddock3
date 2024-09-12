@@ -5,6 +5,7 @@ https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh
 """
 
 import gzip
+from io import BufferedReader
 from pathlib import Path
 
 from haddock.core.exceptions import KnownCNSError
@@ -29,7 +30,7 @@ KNOWN_ERRORS = {
         "Too many distance restraints defined. "
         "Try to reduce this number by checking your definition of active "
         "and passive residues. "
-        "Make sure to filter those for solvent accessibility. " 
+        "Make sure to filter those for solvent accessibility. "
         "Or alternatively increase the nres parameter in the noe statements"
         " in the relevant CNS scripts."
         ),
@@ -87,7 +88,7 @@ def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:
 
 
 def _find_cns_errors(
-        file,
+        file_handle: Union[gzip.GzipFile, BufferedReader],
         known_errors: dict[str, str],
         chunk_size: int = 4096,
         filepath: FilePath = "",
@@ -96,12 +97,14 @@ def _find_cns_errors(
 
     Parameters
     ----------
-    cns_out_fpath : FilePath -> Union[str, Path]
-        Path to the cns.out file to check.
+    file_handle: Union[gzip.GzipFile, BufferedReader]
+        An opened file in read bytes mode.
     known_errors : dict[str, str]
         Dict of known errors and their hints
     chunk_size : int, optional
         Check size (in bytes) to read the file backwards, by default 4096
+    filepath : FilePath -> Union[str, Path]
+        Path to the cns.out file currently checked.
 
     Raises
     ------
@@ -109,15 +112,15 @@ def _find_cns_errors(
         An exception for known CNS errors, with its hint on how to solve it!
     """
     # Find file size
-    file.seek(0, 2)
-    size = file.tell()
+    file_handle.seek(0, 2)
+    size = file_handle.tell()
     buffer = b''
     parsed_lines = 99999
     for i in range(size - 1, -1, -chunk_size):
         # Go to location in file
-        file.seek(max(i - chunk_size, 0))
+        file_handle.seek(max(i - chunk_size, 0))
         # Read next chunk
-        chunk = file.read(min(chunk_size, i + 1))
+        chunk = file_handle.read(min(chunk_size, i + 1))
         # Increment buffer
         buffer = chunk + buffer
         lines = buffer.split(b'\n')
@@ -146,20 +149,22 @@ def find_all_cns_errors(
     Parameters
     ----------
     directory_path : FilePath
-        Path to the directory to be checked
+        Path to the directory to be checked.
 
     Returns
     -------
     all_errors : dict[str, dict[str, Union[list[FilePath], KnownCNSError]]]
-        _description_
+        Dictionary containing all errors found in this directory.
     """
     all_errors: dict[str, dict[str, Union[int, KnownCNSError]]] = {}
-    # Loop over all .out files
+    # Gather list of all `.out` and `.out.gz` files present in directory
     all_cns_out_files = list(Path(directory_path).glob("*.out.gz"))
     all_cns_out_files += list(Path(directory_path).glob("*.out"))
+    # Loop over all .out files
     for fpath in all_cns_out_files:
         # Try to dectect an error
         if (detected_error := find_cns_errors(fpath)):
+            # Hold data if an error is present in that file
             error_type = all_errors.setdefault(
                 detected_error.cns_error,
                 {"files": [], "error": detected_error}

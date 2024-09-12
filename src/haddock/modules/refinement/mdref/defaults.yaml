@@ -2223,7 +2223,7 @@ fle_seg_1:
   maxchars: 4
   title: Segment ID (segid)
   short: Segment ID of the molecule for which this flexible segment is defined.
-  long: Segment ID of the molecule for which this flexible segment is defined.
+  long: Segment ID of the molecule for which this (1st) flexible segment is defined.
   group: 'flexibility'
   explevel: expert
 #

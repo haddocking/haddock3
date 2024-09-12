@@ -59,7 +59,7 @@ class MockPreviousIO:
                 ),
                 PDBFile(
                     file_name="hpr_ensemble_1_haddock.pdb",
-                    path=".",
+                    path=self.path,
                     topology=[
                         Persistent(
                             file_name="hpr_ensemble_1_haddock.psf",

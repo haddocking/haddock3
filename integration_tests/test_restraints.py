@@ -90,13 +90,13 @@ def test_restraints_rigidbody(rigidbody_module):
 
     rigidbody_module.run()
 
-    assert Path(rigidbody_module.path, f'{"rigidbody_1.pdb"}').exists()
-    assert Path(rigidbody_module.path, f'{"rigidbody_1.out.gz"}').exists()
-    assert Path(rigidbody_module.path, f'{"rigidbody_1.inp"}').exists()
+    assert Path(rigidbody_module.path, "rigidbody_1.pdb").exists()
+    assert Path(rigidbody_module.path, "rigidbody_1.out.gz").exists()
+    assert Path(rigidbody_module.path, "rigidbody_1.inp").exists()
 
-    assert Path(rigidbody_module.path, f'{"rigidbody_1.pdb"}').stat().st_size > 0
-    assert Path(rigidbody_module.path, f'{"rigidbody_1.out.gz"}').stat().st_size > 0
-    assert Path(rigidbody_module.path, f'{"rigidbody_1.inp"}').stat().st_size > 0
+    assert Path(rigidbody_module.path, "rigidbody_1.pdb").stat().st_size > 0
+    assert Path(rigidbody_module.path, "rigidbody_1.out.gz").stat().st_size > 0
+    assert Path(rigidbody_module.path, "rigidbody_1.inp").stat().st_size > 0
 
     file_content = gzip.open(Path(rigidbody_module.path, "rigidbody_1.out.gz"), 'rt').read()
     assert 'NOEPRI: RMS diff. class AMBI' in file_content

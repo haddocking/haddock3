@@ -2636,8 +2636,8 @@ nfle:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for all molecules.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables
-    and segment ID (segid) in the fle_seg_* variable.
+    If >=1 then those must be defined manually with segment ID (segid) in the fle_seg_* variable, 
+    followed by the starting and ending residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_1:

@@ -94,9 +94,9 @@ dihedflag
 
 | *default*: True
 | *type*: boolean
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
+| *title*: Use torsion angle dihedral energy term
+| *short description*: Turns on the torsion angle dihedral energy terms of the force field.
+| *long description*: Turns on the torsion angle dihedral energy terms of the force field.
 | *group*: force field
 | *explevel*: expert
 
@@ -244,7 +244,7 @@ w_elec
 | *min*: -9999
 | *max*: 9999
 | *short description*: Weight of the intermolecular electrostatic energy in the scoring function
-| *long description*: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.
+| *long description*: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the MD refinement.
 | *group*: scoring
 | *explevel*: expert
 

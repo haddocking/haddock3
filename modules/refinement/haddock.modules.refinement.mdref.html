@@ -185,6 +185,20 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
+<section id="dihedrals-scale">
+<h4>dihedrals_scale<a class="headerlink" href="#dihedrals-scale" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 200</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Force constant for dihedral angle restraints</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname.</div>
+<div class="line"><em>long description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname.</div>
+<div class="line"><em>group</em>: dihedral restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="dnarest-on">
 <h4>dnarest_on<a class="headerlink" href="#dnarest-on" title="Permalink to this heading"></a></h4>
 <div class="line-block">
@@ -216,7 +230,7 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Force constant for backbone dihedral angle restraints</div>
 <div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>max</em>: 180</div>
 <div class="line"><em>short description</em>: Force constant for backbone dihedral angle restraints (ssdihed option)</div>
 <div class="line"><em>long description</em>: Force constant for backbone dihedral angle restraints (ssdihed option)</div>
 <div class="line"><em>group</em>: dihedral restraints</div>
@@ -1163,20 +1177,6 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="dihedrals-scale">
-<h4>dihedrals_scale<a class="headerlink" href="#dihedrals-scale" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 200</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Force constant for dihedral angle restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname.</div>
-<div class="line"><em>long description</em>: Force constant applied to the dihedral angle restraints read from dihe_fname.</div>
-<div class="line"><em>group</em>: dihedral restraints</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
 <section id="epsilon">
 <h4>epsilon<a class="headerlink" href="#epsilon" title="Permalink to this heading"></a></h4>
 <div class="line-block">
@@ -1191,8 +1191,8 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="fle-end-10-1">
-<h4>fle_end_10_1<a class="headerlink" href="#fle-end-10-1" title="Permalink to this heading"></a></h4>
+<section id="fle-end-1">
+<h4>fle_end_1<a class="headerlink" href="#fle-end-1" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1200,279 +1200,25 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>min</em>: -9999</div>
 <div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of this (1st) fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="fle-end-11-1">
-<h4>fle_end_11_1<a class="headerlink" href="#fle-end-11-1" title="Permalink to this heading"></a></h4>
+<section id="fle-seg-1">
+<h4>fle_seg_1<a class="headerlink" href="#fle-seg-1" title="Permalink to this heading"></a></h4>
 <div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
+<div class="line"><em>default</em>: ‘none’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID (segid)</div>
+<div class="line"><em>short description</em>: Segment ID of the molecule for which this flexible segment is defined.</div>
+<div class="line"><em>long description</em>: Segment ID of the molecule for which this (1st) flexible segment is defined.</div>
 <div class="line"><em>group</em>: flexibility</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="fle-end-12-1">
-<h4>fle_end_12_1<a class="headerlink" href="#fle-end-12-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-13-1">
-<h4>fle_end_13_1<a class="headerlink" href="#fle-end-13-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-14-1">
-<h4>fle_end_14_1<a class="headerlink" href="#fle-end-14-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-15-1">
-<h4>fle_end_15_1<a class="headerlink" href="#fle-end-15-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-16-1">
-<h4>fle_end_16_1<a class="headerlink" href="#fle-end-16-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-17-1">
-<h4>fle_end_17_1<a class="headerlink" href="#fle-end-17-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-18-1">
-<h4>fle_end_18_1<a class="headerlink" href="#fle-end-18-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-19-1">
-<h4>fle_end_19_1<a class="headerlink" href="#fle-end-19-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-1-1">
-<h4>fle_end_1_1<a class="headerlink" href="#fle-end-1-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-20-1">
-<h4>fle_end_20_1<a class="headerlink" href="#fle-end-20-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-2-1">
-<h4>fle_end_2_1<a class="headerlink" href="#fle-end-2-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-3-1">
-<h4>fle_end_3_1<a class="headerlink" href="#fle-end-3-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-4-1">
-<h4>fle_end_4_1<a class="headerlink" href="#fle-end-4-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-5-1">
-<h4>fle_end_5_1<a class="headerlink" href="#fle-end-5-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-6-1">
-<h4>fle_end_6_1<a class="headerlink" href="#fle-end-6-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-7-1">
-<h4>fle_end_7_1<a class="headerlink" href="#fle-end-7-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-8-1">
-<h4>fle_end_8_1<a class="headerlink" href="#fle-end-8-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-end-9-1">
-<h4>fle_end_9_1<a class="headerlink" href="#fle-end-9-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: End residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the end of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-10-1">
-<h4>fle_sta_10_1<a class="headerlink" href="#fle-sta-10-1" title="Permalink to this heading"></a></h4>
+<section id="fle-sta-1">
+<h4>fle_sta_1<a class="headerlink" href="#fle-sta-1" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1480,273 +1226,7 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>min</em>: -9999</div>
 <div class="line"><em>max</em>: 9999</div>
 <div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-11-1">
-<h4>fle_sta_11_1<a class="headerlink" href="#fle-sta-11-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-12-1">
-<h4>fle_sta_12_1<a class="headerlink" href="#fle-sta-12-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-13-1">
-<h4>fle_sta_13_1<a class="headerlink" href="#fle-sta-13-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-14-1">
-<h4>fle_sta_14_1<a class="headerlink" href="#fle-sta-14-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-15-1">
-<h4>fle_sta_15_1<a class="headerlink" href="#fle-sta-15-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-16-1">
-<h4>fle_sta_16_1<a class="headerlink" href="#fle-sta-16-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-17-1">
-<h4>fle_sta_17_1<a class="headerlink" href="#fle-sta-17-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-18-1">
-<h4>fle_sta_18_1<a class="headerlink" href="#fle-sta-18-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-19-1">
-<h4>fle_sta_19_1<a class="headerlink" href="#fle-sta-19-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-1-1">
-<h4>fle_sta_1_1<a class="headerlink" href="#fle-sta-1-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-20-1">
-<h4>fle_sta_20_1<a class="headerlink" href="#fle-sta-20-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-2-1">
-<h4>fle_sta_2_1<a class="headerlink" href="#fle-sta-2-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-3-1">
-<h4>fle_sta_3_1<a class="headerlink" href="#fle-sta-3-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-4-1">
-<h4>fle_sta_4_1<a class="headerlink" href="#fle-sta-4-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-5-1">
-<h4>fle_sta_5_1<a class="headerlink" href="#fle-sta-5-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-6-1">
-<h4>fle_sta_6_1<a class="headerlink" href="#fle-sta-6-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-7-1">
-<h4>fle_sta_7_1<a class="headerlink" href="#fle-sta-7-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-8-1">
-<h4>fle_sta_8_1<a class="headerlink" href="#fle-sta-8-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="fle-sta-9-1">
-<h4>fle_sta_9_1<a class="headerlink" href="#fle-sta-9-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Starting residue number</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
-<div class="line"><em>long description</em>: Residue number defining the start of the fully flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of this (1st) fully flexible segment.</div>
 <div class="line"><em>group</em>: flexibility</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
@@ -1848,11 +1328,11 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <section id="max-nmodels">
 <h4>max_nmodels<a class="headerlink" href="#max-nmodels" title="Permalink to this heading"></a></h4>
 <div class="line-block">
-<div class="line"><em>default</em>: 10000</div>
+<div class="line"><em>default</em>: 50000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Maximum number of models to refine</div>
 <div class="line"><em>min</em>: 1</div>
-<div class="line"><em>max</em>: 50000</div>
+<div class="line"><em>max</em>: 100000</div>
 <div class="line"><em>short description</em>: This parameter controls the maximum number of models to refine.</div>
 <div class="line"><em>long description</em>: This parameter controls the maximum number of models to refine.</div>
 <div class="line"><em>group</em>: sampling</div>
@@ -1977,8 +1457,8 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="nfle1">
-<h4>nfle1<a class="headerlink" href="#nfle1" title="Permalink to this heading"></a></h4>
+<section id="nfle">
+<h4>nfle<a class="headerlink" href="#nfle" title="Permalink to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1986,273 +1466,7 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>min</em>: 0</div>
 <div class="line"><em>max</em>: 1000</div>
 <div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle10">
-<h4>nfle10<a class="headerlink" href="#nfle10" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle11">
-<h4>nfle11<a class="headerlink" href="#nfle11" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle12">
-<h4>nfle12<a class="headerlink" href="#nfle12" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle13">
-<h4>nfle13<a class="headerlink" href="#nfle13" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle14">
-<h4>nfle14<a class="headerlink" href="#nfle14" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle15">
-<h4>nfle15<a class="headerlink" href="#nfle15" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle16">
-<h4>nfle16<a class="headerlink" href="#nfle16" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle17">
-<h4>nfle17<a class="headerlink" href="#nfle17" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle18">
-<h4>nfle18<a class="headerlink" href="#nfle18" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle19">
-<h4>nfle19<a class="headerlink" href="#nfle19" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle2">
-<h4>nfle2<a class="headerlink" href="#nfle2" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle20">
-<h4>nfle20<a class="headerlink" href="#nfle20" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle3">
-<h4>nfle3<a class="headerlink" href="#nfle3" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle4">
-<h4>nfle4<a class="headerlink" href="#nfle4" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle5">
-<h4>nfle5<a class="headerlink" href="#nfle5" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle6">
-<h4>nfle6<a class="headerlink" href="#nfle6" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle7">
-<h4>nfle7<a class="headerlink" href="#nfle7" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle8">
-<h4>nfle8<a class="headerlink" href="#nfle8" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nfle9">
-<h4>nfle9<a class="headerlink" href="#nfle9" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for the specified molecule. If &gt;=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.</div>
+<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for all molecules. If &gt;=1 then those must be defined manually with segment ID (segid) in the fle_seg_* variable, followed by the starting and ending residue numbers in the fle_sta_* and fle_end_* variables.</div>
 <div class="line"><em>group</em>: flexibility</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
@@ -2656,7 +1870,7 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>type</em>: boolean</div>
 <div class="line"><em>title</em>: Boolean condition on the previous ambiguous distance restraints file</div>
 <div class="line"><em>short description</em>: Boolean condition on the previous ambiguous distance restraints file. If true, use the the restraint information coming from the previous CNS module. If false, don’t use previous information.</div>
-<div class="line"><em>long description</em>: Boolean condition on the ambiguous distance restraints file. If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module. If False, don’t use previous information.</div>
+<div class="line"><em>long description</em>: Boolean condition on the ambiguous distance restraints file. If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module. If false, don’t use previous information.</div>
 <div class="line"><em>group</em>: distance restraints</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
@@ -2800,7 +2014,7 @@ and <code class="docutils literal notranslate"><span class="pre">watercoolsteps<
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Sampling factor for each starting model</div>
 <div class="line"><em>min</em>: 1</div>
-<div class="line"><em>max</em>: 400</div>
+<div class="line"><em>max</em>: 500</div>
 <div class="line"><em>short description</em>: This parameter control how many times a model will be refined.</div>
 <div class="line"><em>long description</em>: This parameter control how many times a model will be refined.</div>
 <div class="line"><em>group</em>: sampling</div>

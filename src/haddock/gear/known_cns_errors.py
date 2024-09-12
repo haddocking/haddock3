@@ -13,7 +13,7 @@ from haddock.core.typing import FilePath, Optional, Union
 # as key:    How to catch it in the cns.out
 # as value:  Message to user
 KNOWN_ERRORS = {
-    "CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH": (
+    "CHAIN LENGTH FOR SYMMETRY RESTRAINTS DOES NOT MATCH": (
         "Mismatch between chain length for symmetry restraints. "
         "Check your input molecules and symmetry restraints."
         ),
@@ -37,7 +37,7 @@ KNOWN_ERRORS = {
         "Encountered too many parsing errors."
         ),
     "XMREAD error encountered:  sectioning of map incompatible with resolution": (  # noqa : E501
-        "Check your EM map resolution and sectioning"
+        "Check your EM map resolution and sectioning."
         ),
     "ALLHP error encountered: not enough memory available": (
         "Too many distance restraints defined. "
@@ -47,11 +47,11 @@ KNOWN_ERRORS = {
         "Try to decrease the size of your system where possible."
         ),
     "error encountered: missing SCATter definition for SELEcted atoms": (
-        "Unsupported atoms/molecules for cryo-EM restraints"
+        "Unsupported atoms/molecules for cryo-EM restraints."
         ),
     "ROTMAT error encountered: rotation vector has zero length": (
-        "Check your input parameters and restraints"
-        "Possibly try turning off the sampling of 180 degrees rotation"
+        "Check your input parameters and restraints. "
+        "Possibly try turning off the sampling of 180 degrees rotation."
         )
     }
 

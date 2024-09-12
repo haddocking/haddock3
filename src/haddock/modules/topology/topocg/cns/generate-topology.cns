@@ -433,8 +433,6 @@ else
     set message=off echo=off end
 end if
 
-inline @MODULE:build-missing.cns
-
 if ( &auto_break = true ) then
     inline @MODULE:prot_break.cns
     inline @MODULE:dna_break.cns

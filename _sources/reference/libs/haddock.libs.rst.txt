@@ -11,6 +11,7 @@ Submodules
    haddock.libs.libcli
    haddock.libs.libclust
    haddock.libs.libcns
+   haddock.libs.libfcc
    haddock.libs.libfunc
    haddock.libs.libhpc
    haddock.libs.libinteractive

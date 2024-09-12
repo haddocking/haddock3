@@ -99,8 +99,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">fcc.scripts</span> <span class="kn">import</span> <span class="n">calc_fcc_matrix</span><span class="p">,</span> <span class="n">cluster_fcc</span>
-
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">FCC_path</span><span class="p">,</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
@@ -110,6 +108,11 @@
     <span class="n">plot_cluster_matrix</span><span class="p">,</span>
     <span class="n">rank_clusters</span><span class="p">,</span>
     <span class="n">write_structure_list</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libfcc</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">calculate_pairwise_matrix</span><span class="p">,</span>
+    <span class="n">parse_contact_file</span><span class="p">,</span>
+    <span class="n">read_matrix</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">JobInputFirst</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span><span class="p">,</span> <span class="n">read_from_yaml_config</span>
@@ -197,13 +200,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="s2">&quot;Several files were not generated:&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating the FCC matrix&quot;</span><span class="p">)</span>
-        <span class="n">parsed_contacts</span> <span class="o">=</span> <span class="n">calc_fcc_matrix</span><span class="o">.</span><span class="n">parse_contact_file</span><span class="p">(</span>
+        <span class="n">parsed_contacts</span> <span class="o">=</span> <span class="n">parse_contact_file</span><span class="p">(</span>
             <span class="n">contact_file_l</span><span class="p">,</span>
             <span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Imporant: matrix is a generator object, be careful with it</span>
-        <span class="n">matrix</span> <span class="o">=</span> <span class="n">calc_fcc_matrix</span><span class="o">.</span><span class="n">calculate_pairwise_matrix</span><span class="p">(</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">calculate_pairwise_matrix</span><span class="p">(</span>
             <span class="n">parsed_contacts</span><span class="p">,</span>
             <span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
@@ -219,7 +222,7 @@
 
         <span class="c1"># Cluster</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clustering...&quot;</span><span class="p">)</span>
-        <span class="n">pool</span> <span class="o">=</span> <span class="n">cluster_fcc</span><span class="o">.</span><span class="n">read_matrix</span><span class="p">(</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">read_matrix</span><span class="p">(</span>
             <span class="n">fcc_matrix_f</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;clust_cutoff&quot;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;strictness&quot;</span><span class="p">],</span>

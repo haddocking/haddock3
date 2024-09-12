@@ -87,10 +87,8 @@
   <h1>Source code for haddock.clis.re.clustfcc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;haddock3-re clustfcc subcommand.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">fcc.scripts</span> <span class="kn">import</span> <span class="n">cluster_fcc</span>
-
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
@@ -104,8 +102,9 @@
     <span class="n">rank_clusters</span><span class="p">,</span>
     <span class="n">write_structure_list</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libfcc</span> <span class="kn">import</span> <span class="n">read_matrix</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libinteractive</span> <span class="kn">import</span> <span class="n">look_for_capri</span><span class="p">,</span> <span class="n">rewrite_capri_tables</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustfcc.clustfcc</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_cluster_centers</span><span class="p">,</span>
     <span class="n">iterate_clustering</span><span class="p">,</span>
@@ -119,7 +118,7 @@
     <span class="n">clustfcc_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;clustfcc_dir&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The clustfcc directory to recluster.&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">clustfcc_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
@@ -127,7 +126,7 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Minimum fraction of common contacts to be considered in a cluster.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E501</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
 
     <span class="n">clustfcc_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
@@ -135,56 +134,56 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Strictness factor.&quot;</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-        <span class="p">)</span>
-    
+    <span class="p">)</span>
+
     <span class="n">clustfcc_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--min_population&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Clustering population threshold.&quot;</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-        <span class="p">)</span>
-    
+    <span class="p">)</span>
+
     <span class="n">clustfcc_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--plot_matrix&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate the matrix plot with the clusters.&quot;</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-        <span class="p">)</span>
-    
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">clustfcc_subcommand</span></div>
 
 
 <div class="viewcode-block" id="reclustfcc"><a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustfcc.html#haddock.clis.re.clustfcc.reclustfcc">[docs]</a><span class="k">def</span> <span class="nf">reclustfcc</span><span class="p">(</span>
-        <span class="n">clustfcc_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">clust_cutoff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">strictness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">min_population</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">plot_matrix</span> <span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="n">clustfcc_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">clust_cutoff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">strictness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">min_population</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_matrix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recluster the models in the clustfcc directory.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    clustfcc_dir : str</span>
 <span class="sd">        Path to the clustfcc directory.</span>
-<span class="sd">    </span>
+
 <span class="sd">    clust_cutoff : Union[bool, float]</span>
 <span class="sd">        Fraction of common contacts to not be considered a singleton model.</span>
-<span class="sd">    </span>
+
 <span class="sd">    strictness : Union[bool, float]</span>
 <span class="sd">        Fraction of common contacts to be considered to be part of the same</span>
 <span class="sd">         cluster.</span>
-<span class="sd">    </span>
+
 <span class="sd">    min_population : Union[bool, int]</span>
 <span class="sd">        Minimum cluster population.</span>
-<span class="sd">    </span>
+
 <span class="sd">    plot_matrix : bool</span>
 <span class="sd">        Should the corresponding matrix plot be generated.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    outdir : Path</span>
@@ -208,8 +207,8 @@
 
     <span class="c1"># load the original clustering parameters via json</span>
     <span class="n">clustfcc_params</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">clustfcc_dir</span><span class="p">,</span> <span class="s2">&quot;params.cfg&quot;</span><span class="p">))</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">clustfcc_params</span><span class="p">[</span><span class="s1">&#39;final_cfg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">clustfcc_params</span> <span class="o">=</span> <span class="n">clustfcc_params</span><span class="p">[</span><span class="s1">&#39;final_cfg&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;final_cfg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">clustfcc_params</span> <span class="o">=</span> <span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;final_cfg&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Previous clustering parameters: </span><span class="si">{</span><span class="n">clustfcc_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># adjust the parameters</span>
@@ -222,18 +221,17 @@
     <span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;plot_matrix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_matrix</span>
 
     <span class="c1"># load the fcc matrix</span>
-    <span class="n">pool</span> <span class="o">=</span> <span class="n">cluster_fcc</span><span class="o">.</span><span class="n">read_matrix</span><span class="p">(</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">read_matrix</span><span class="p">(</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">clustfcc_dir</span><span class="p">,</span> <span class="s2">&quot;fcc.matrix&quot;</span><span class="p">),</span>
-        <span class="n">clustfcc_params</span><span class="p">[</span><span class="s1">&#39;clust_cutoff&#39;</span><span class="p">],</span>
-        <span class="n">clustfcc_params</span><span class="p">[</span><span class="s1">&#39;strictness&#39;</span><span class="p">],</span>
-        <span class="p">)</span>
-    
+        <span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;clust_cutoff&quot;</span><span class="p">],</span>
+        <span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;strictness&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
     <span class="c1"># iterate clustering until at least one cluster is found</span>
     <span class="n">clusters</span><span class="p">,</span> <span class="n">min_population</span> <span class="o">=</span> <span class="n">iterate_clustering</span><span class="p">(</span>
-        <span class="n">pool</span><span class="p">,</span>
-        <span class="n">clustfcc_params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span>
-        <span class="p">)</span>
-    <span class="n">clustfcc_params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+        <span class="n">pool</span><span class="p">,</span> <span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">clustfcc_params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updated clustering parameters: </span><span class="si">{</span><span class="n">clustfcc_params</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Prepare output and read the elements</span>
@@ -247,20 +245,20 @@
         <span class="n">_score_dic</span><span class="p">,</span> <span class="n">sorted_score_dic</span> <span class="o">=</span> <span class="n">rank_clusters</span><span class="p">(</span><span class="n">clt_dic</span><span class="p">,</span> <span class="n">min_population</span><span class="p">)</span>
 
         <span class="n">output_models</span> <span class="o">=</span> <span class="n">add_cluster_info</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">)</span>
-        
+
         <span class="c1"># Write unclustered structures</span>
-        <span class="n">write_structure_list</span><span class="p">(</span><span class="n">models</span><span class="p">,</span>
-                             <span class="n">output_models</span><span class="p">,</span>
-                             <span class="n">out_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;clustfcc.tsv&quot;</span><span class="p">))</span>
-        
+        <span class="n">write_structure_list</span><span class="p">(</span>
+            <span class="n">models</span><span class="p">,</span> <span class="n">output_models</span><span class="p">,</span> <span class="n">out_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;clustfcc.tsv&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
         <span class="n">write_clustfcc_file</span><span class="p">(</span>
             <span class="n">clusters</span><span class="p">,</span>
             <span class="n">clt_centers</span><span class="p">,</span>
             <span class="n">clt_dic</span><span class="p">,</span>
             <span class="n">clustfcc_params</span><span class="p">,</span>
             <span class="n">sorted_score_dic</span><span class="p">,</span>
-            <span class="n">output_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;clustfcc.txt&#39;</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">output_fname</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;clustfcc.txt&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
 
         <span class="n">save_config</span><span class="p">(</span><span class="n">clustfcc_params</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;params.cfg&quot;</span><span class="p">))</span>
 
@@ -270,7 +268,7 @@
         <span class="k">if</span> <span class="n">caprieval_folder</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Rewriting capri tables&quot;</span><span class="p">)</span>
             <span class="n">rewrite_capri_tables</span><span class="p">(</span><span class="n">caprieval_folder</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
-    
+
     <span class="k">else</span><span class="p">:</span>
         <span class="n">output_models</span> <span class="o">=</span> <span class="n">models</span>
 
@@ -281,27 +279,25 @@
         <span class="n">final_order_idx</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cluster_ids</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">output_models</span><span class="p">:</span>
             <span class="n">final_order_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pdb</span><span class="p">))</span>
-            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
             <span class="n">cluster_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">clt_id</span><span class="p">)</span>
         <span class="c1"># Get custom cluster data</span>
-        <span class="n">matrix_cluster_dt</span><span class="p">,</span> <span class="n">cluster_limits</span> <span class="o">=</span> <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span>
-            <span class="n">cluster_ids</span>
-            <span class="p">)</span>
+        <span class="n">matrix_cluster_dt</span><span class="p">,</span> <span class="n">cluster_limits</span> <span class="o">=</span> <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span><span class="n">cluster_ids</span><span class="p">)</span>
         <span class="c1"># Define output filename</span>
-        <span class="n">html_matrix_basepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;fcc_matrix&#39;</span><span class="p">)</span>
+        <span class="n">html_matrix_basepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;fcc_matrix&quot;</span><span class="p">)</span>
         <span class="c1"># Plot matrix</span>
         <span class="n">html_matrixpath</span> <span class="o">=</span> <span class="n">plot_cluster_matrix</span><span class="p">(</span>
             <span class="n">Path</span><span class="p">(</span><span class="n">clustfcc_dir</span><span class="p">,</span> <span class="s2">&quot;fcc.matrix&quot;</span><span class="p">),</span>
             <span class="n">final_order_idx</span><span class="p">,</span>
             <span class="n">labels</span><span class="p">,</span>
-            <span class="n">dttype</span><span class="o">=</span><span class="s1">&#39;FCC&#39;</span><span class="p">,</span>
+            <span class="n">dttype</span><span class="o">=</span><span class="s2">&quot;FCC&quot;</span><span class="p">,</span>
             <span class="n">diag_fill</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">output_fname</span><span class="o">=</span><span class="n">html_matrix_basepath</span><span class="p">,</span>
             <span class="n">matrix_cluster_dt</span><span class="o">=</span><span class="n">matrix_cluster_dt</span><span class="p">,</span>
             <span class="n">cluster_limits</span><span class="o">=</span><span class="n">cluster_limits</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plotting matrix in </span><span class="si">{</span><span class="n">html_matrixpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            
+
     <span class="k">return</span> <span class="n">outdir</span></div>
 </pre></div>
 

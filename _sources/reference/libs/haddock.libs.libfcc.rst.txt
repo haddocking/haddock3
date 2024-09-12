@@ -1,0 +1,7 @@
+haddock.libs.libfcc module
+==========================
+
+.. automodule:: haddock.libs.libfcc
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -305,8 +305,8 @@ class BaseHaddockModule(ABC):
                 _msg += linesep
                 for error in detected_errors.values():
                     _msg += (
-                        f'An error was detected in {len(error["files"])} files'
-                        f'({",".join(error["files"][:3])}...).{linesep}'
+                        # f'An error was detected in {len(error["files"])} files'
+                        # f'({",".join(error["files"][:3])}...).{linesep}'
                         f'{str(error["error"])}{linesep}'
                         )
             # Show final error message

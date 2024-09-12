@@ -2213,7 +2213,7 @@ fle_end_1:
   max: 9999
   title: End residue number
   short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
+  long: Residue number defining the end of this (1st) fully flexible segment.
   group: 'flexibility'
   explevel: expert
 fle_seg_1:

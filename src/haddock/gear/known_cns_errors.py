@@ -51,7 +51,7 @@ KNOWN_ERRORS = {
         ),
     "ROTMAT error encountered: rotation vector has zero length": (
         "Check your input parameters and restraints"
-        "Possibly try turning off the sampling of 180 degrees rotattion"
+        "Possibly try turning off the sampling of 180 degrees rotation"
         )
     }
 

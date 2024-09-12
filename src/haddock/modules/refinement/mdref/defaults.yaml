@@ -2203,7 +2203,7 @@ fle_sta_1:
   max: 9999
   title: Starting residue number
   short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
+  long: Residue number defining the start of this (1st) fully flexible segment.
   group: 'flexibility'
   explevel: expert
 fle_end_1:

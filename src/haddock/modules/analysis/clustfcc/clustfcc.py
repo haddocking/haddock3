@@ -4,9 +4,9 @@ import os
 from pathlib import Path
 
 import numpy as np
-from fcc.scripts import cluster_fcc
 
 from haddock import log
+from haddock.libs.libfcc import cluster_elements, output_clusters
 
 
 def iterate_clustering(pool, min_population_param):
@@ -33,7 +33,7 @@ def iterate_clustering(pool, min_population_param):
     while not cluster_check:
         for min_population in range(min_population_param, 0, -1):
             log.info(f"Clustering with min_population={min_population}")
-            _, clusters = cluster_fcc.cluster_elements(
+            _, clusters = cluster_elements(
                 pool,
                 threshold=min_population,
             )
@@ -70,7 +70,7 @@ def write_clusters(clusters, out_filename="cluster.out"):
     log.info(f"Saving output to {out_filename}")
     cluster_out = Path(out_filename)
     with open(cluster_out, "w") as fh:
-        cluster_fcc.output_clusters(fh, clusters)
+        output_clusters(fh, clusters)
     fh.close()
 
 

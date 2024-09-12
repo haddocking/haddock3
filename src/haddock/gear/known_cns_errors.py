@@ -34,7 +34,8 @@ KNOWN_ERRORS = {
         "Check your restraint files."
         ),
     "PARSER error encountered: Encountered too many parsing errors": (
-        "Encountered too many parsing errors."
+        "Encountered too many parsing errors. "
+        "Check your input molecules and symmetry restraints."
         ),
     "XMREAD error encountered:  sectioning of map incompatible with resolution": (  # noqa : E501
         "Check your EM map resolution and sectioning."

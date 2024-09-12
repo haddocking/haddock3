@@ -52,7 +52,7 @@ class MockPreviousIO:
                     topology=[
                         Persistent(
                             file_name="e2aP_1F3G_haddock.psf",
-                            path=".",
+                            path=self.path,
                             file_type=Format.TOPOLOGY,
                         )
                     ],

@@ -115,6 +115,10 @@ def _find_cns_errors(
     file_handle.seek(0, 2)
     size = file_handle.tell()
     buffer = b''
+    # Set the number of lines to parse
+    # initiated with high value to read all lines the first time
+    # updated to the number of lines that were already parsed
+    # after each chunk iteration, so we do not parse the same lines
     parsed_lines = 99999
     for i in range(size - 1, -1, -chunk_size):
         # Go to location in file

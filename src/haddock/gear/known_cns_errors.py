@@ -124,6 +124,7 @@ def _find_cns_errors(
                         raise KnownCNSError(
                             error_string,
                             hint,
+                            cns_out_fpath,
                             )
             # Update number of parsed lines so we do not check them again
             parsed_lines = -len(lines)
@@ -151,7 +152,7 @@ def find_all_cns_errors(
         if (detected_error := find_cns_errors(fpath)):
             error_type = all_errors.setdefault(
                 detected_error.cns_error,
-                {"count": 0, "error": detected_error}
+                {"files": [], "error": detected_error}
                 )
-            error_type["count"] += 1
+            error_type["files"].append(detected_error.filepath)
     return all_errors

@@ -31,9 +31,10 @@ def gen_fake_cns_errors(gen_random_text):
     """Generate directory full of CNS.out file with errors."""
     with tempfile.TemporaryDirectory("moduleoutputs") as tmp:
         for i, error in enumerate(KNOWN_ERRORS.keys()):
+            # Generate an error string in the middle of the file
             error_text = gen_random_text + error + gen_random_text
             # Create two files with same error
-            for j in range(2):
+            for j in range(1, 3):
                 errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.out")
                 # Write error in a file
                 errored_filepath.write_text(error_text)
@@ -48,9 +49,10 @@ def rigidbody_module_with_cns_errors(gen_fake_cns_errors):
         path=Path(gen_fake_cns_errors),
         initial_params=DEFAULT_RIGIDBODY_CONFIG,
         )
+    # Generate 9 filepath that were not created
     rigidbody.output_models = [
-        PDBFile(Path(gen_fake_cns_errors, f"none_generated_output_{i}.pdb"))
-        for i in range(10)
+        PDBFile(Path(gen_fake_cns_errors, f"not_generated_output_{i}.pdb"))
+        for i in range(1, 10)
         ]
     yield rigidbody
 
@@ -64,9 +66,10 @@ def rigidbody_module_without_cns_errors():
             path=Path(tmp),
             initial_params=DEFAULT_RIGIDBODY_CONFIG,
             )
+        # Generate 9 filepath that were not created
         rigidbody.output_models = [
-            PDBFile(Path(tmp, f"none_generated_output_{i}.pdb"))
-            for i in range(10)
+            PDBFile(Path(tmp, f"not_generated_output_{i}.pdb"))
+            for i in range(1, 10)
             ]
         yield rigidbody
 
@@ -98,7 +101,7 @@ def test_detection_when_faulty(rigidbody_module_with_cns_errors):
 
 
 def test_undetected_when_faulty(rigidbody_module_without_cns_errors):
-    """Test failure of run and detection of CNS errors."""
+    """Test failure of run and undetection of CNS errors."""
     rigidbody_module_without_cns_errors.previous_io = MockPreviousIO(
         rigidbody_module_without_cns_errors.path
         )

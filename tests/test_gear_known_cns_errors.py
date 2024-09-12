@@ -68,6 +68,6 @@ def test_find_all_cns_errors(gen_fake_cns_errors):
     for cns_error in all_errors.keys():
         error = all_errors[cns_error]
         # Check that we detected both files
-        assert error["count"] == 2
+        assert len(error["files"]) == 2
         # Check that error hint is well reported
         assert KNOWN_ERRORS[cns_error] in str(error["error"])

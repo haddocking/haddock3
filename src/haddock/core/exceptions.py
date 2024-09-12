@@ -1,5 +1,8 @@
 """HADDOCK library custom errors."""
 
+from os import linesep
+
+from haddock.core.typing import FilePath
 
 class HaddockError(Exception):
     """Error in HADDOCK3."""
@@ -39,15 +42,16 @@ class CNSRunningError(HaddockError):
 class KnownCNSError(CNSRunningError):
     """Detected CNS output error."""
 
-    def __init__(self, cns_message, hint):
+    def __init__(self, cns_message: str, hint: str, filepath: FilePath):
         self.cns_error = cns_message
         self.hint = hint
+        self.filepath = filepath
     
     def __str__(self) -> str:
         """Generate custom string representation of this exception."""
         full_msg = (
-            f"A CNS error occured: `{self.cns_error}`.\n"
-            f"Here is a hint on how to solve it:\n{self.hint}"
+            f"A CNS error occured: `{self.cns_error}`.{linesep}"
+            f"Here is a hint on how to solve it:{linesep}{self.hint}"
             )
         return full_msg
 

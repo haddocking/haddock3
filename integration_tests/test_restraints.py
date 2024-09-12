@@ -42,7 +42,7 @@ class MockPreviousIO:
         )
         shutil.copy(
             Path(golden_data, "hpr_ensemble_1_haddock.psf"),
-            Path(".", "hpr_ensemble_1_haddock.psf"),
+            Path(self.path, "hpr_ensemble_1_haddock.psf"),
         )
         model_list = [
             [

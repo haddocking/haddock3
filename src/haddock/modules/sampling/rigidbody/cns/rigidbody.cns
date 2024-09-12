@@ -559,7 +559,7 @@ evaluate ($hbond_scale = $Data.hbond_scale)
 noe
     scale dist $unambig_scale
     scale ambi $ambig_scale
-    scale hbon 0.0
+    scale hbon $hbond_scale
     scale cont 0.0
 end
 

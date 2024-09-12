@@ -13,6 +13,8 @@ from . import golden_data
 
 
 class MockPreviousIO:
+    """MockPreviousIO injects models into the test class"""
+
     def __init__(self, path):
         self.path = path
 
@@ -27,7 +29,6 @@ class MockPreviousIO:
             Path(self.path, "protprot_complex_2.pdb"),
         )
 
-        # add the topology to the models
         model_list = [
             PDBFile(
                 file_name="protprot_complex_1.pdb",
@@ -41,11 +42,12 @@ class MockPreviousIO:
         return model_list
 
     def output(self) -> None:
+        """Placeholder for the output method"""
         return None
 
 
-@pytest.fixture
-def output_list():
+@pytest.fixture(name="output_list")
+def fixture_output_list():
     """Clustfcc output list."""
     return [
         "fcc.matrix",
@@ -55,25 +57,32 @@ def output_list():
         "clustfcc.txt",
         "io.json",
         "clustfcc.tsv",
+        "fcc_matrix.html",
     ]
 
 
-@pytest.fixture
-def fcc_module():
+@pytest.fixture(name="fcc_module")
+def fixture_fcc_module():
     """Clustfcc module."""
     with tempfile.TemporaryDirectory() as tempdir:
         yield ClustFCCModule(order=1, path=Path(tempdir), initial_params=clustfcc_pars)
 
 
-def test_clustfcc_output_existence(fcc_module, output_list):
+def test_clustfcc(fcc_module, output_list):
     """Test clustfcc output."""
     fcc_module.previous_io = MockPreviousIO(path=fcc_module.path)
+    fcc_module.params["plot_matrix"] = True
 
     fcc_module.run()
 
     for _f in output_list:
         expected_file = Path(fcc_module.path, _f)
+
+        # Check that the file exists
         assert expected_file.exists()
+
+        # check if the file is not empty
+        assert expected_file.stat().st_size > 0
 
     # Test the fcc matrix contents
     with open(Path(fcc_module.path, "fcc.matrix"), encoding="utf-8", mode="r") as f:
@@ -82,7 +91,7 @@ def test_clustfcc_output_existence(fcc_module, output_list):
     expected_fcc_output = "1 2 0.05 0.062" + os.linesep
     assert observed_fcc_matrix == expected_fcc_output
 
-    # Check .con files.
+    # Check .con files
     expected_output_length = [100, 119]
 
     observed_contact_files = [
@@ -95,7 +104,7 @@ def test_clustfcc_output_existence(fcc_module, output_list):
             obs = len(f.read().splitlines())
             assert obs == exp
 
-    # Check cluster.out file.
+    # Check cluster.out file
     expected_cluster_output = [
         "Cluster 1 -> 2 " + os.linesep,
         "Cluster 2 -> 1 " + os.linesep,

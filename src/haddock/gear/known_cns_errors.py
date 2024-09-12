@@ -4,6 +4,7 @@ Inspired from:
 https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh
 """
 
+import gzip
 from pathlib import Path
 
 from haddock.core.exceptions import KnownCNSError
@@ -28,7 +29,9 @@ KNOWN_ERRORS = {
         "Too many distance restraints defined. "
         "Try to reduce this number by checking your definition of active "
         "and passive residues. "
-        "Make sure to filter those for solvent accessibility."
+        "Make sure to filter those for solvent accessibility. " 
+        "Or alternatively increase the nres parameter in the noe statements"
+        " in the relevant CNS scripts."
         ),
     "SELRPN error encountered: parsing error": (
         "Check your restraint files."
@@ -70,8 +73,13 @@ def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:
     Optional[KnownCNSError]
         An exception for known CNS errors, with its hint on how to solve it!
     """
+    # Check for file extension
+    if Path(cns_out_fpath).suffix == ".gz":
+        file_handle = gzip.open(cns_out_fpath, "rb")
+    else:
+        file_handle = open(cns_out_fpath, "rb")
     try:
-        _find_cns_errors(cns_out_fpath, KNOWN_ERRORS)
+        _find_cns_errors(file_handle, KNOWN_ERRORS, filepath=cns_out_fpath)
     except KnownCNSError as err:
         return err
     else:
@@ -79,9 +87,10 @@ def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:
 
 
 def _find_cns_errors(
-        cns_out_fpath: FilePath,
+        file,
         known_errors: dict[str, str],
         chunk_size: int = 4096,
+        filepath: FilePath = "",
         ) -> None:
     """Backward reading and detect first known CNS error in file.
 
@@ -99,36 +108,34 @@ def _find_cns_errors(
     KnownCNSError
         An exception for known CNS errors, with its hint on how to solve it!
     """
-    # Read file
-    with open(cns_out_fpath, 'rb') as file:
-        # Find file size
-        file.seek(0, 2)
-        size = file.tell()
-        buffer = b''
-        parsed_lines = 9999
-        for i in range(size - 1, -1, -chunk_size):
-            # Go to location in file
-            file.seek(max(i - chunk_size, 0))
-            # Read next chunk
-            chunk = file.read(min(chunk_size, i + 1))
-            # Increment buffer
-            buffer = chunk + buffer
-            lines = buffer.split(b'\n')
-            # Read lines
-            for line in reversed(lines[-len(lines):parsed_lines]):
-                decoded_line = line.decode('utf-8', errors='replace')
-                # Loop over known errors
-                for error_string, hint in known_errors.items():
-                    # Check if this error is known
-                    if error_string in decoded_line:
-                        # return the cause
-                        raise KnownCNSError(
-                            error_string,
-                            hint,
-                            cns_out_fpath,
-                            )
-            # Update number of parsed lines so we do not check them again
-            parsed_lines = -len(lines)
+    # Find file size
+    file.seek(0, 2)
+    size = file.tell()
+    buffer = b''
+    parsed_lines = 99999
+    for i in range(size - 1, -1, -chunk_size):
+        # Go to location in file
+        file.seek(max(i - chunk_size, 0))
+        # Read next chunk
+        chunk = file.read(min(chunk_size, i + 1))
+        # Increment buffer
+        buffer = chunk + buffer
+        lines = buffer.split(b'\n')
+        # Read lines
+        for line in reversed(lines[-len(lines):parsed_lines]):
+            decoded_line = line.decode('utf-8', errors='replace')
+            # Loop over known errors
+            for error_string, hint in known_errors.items():
+                # Check if this error is known
+                if error_string in decoded_line:
+                    # return the cause
+                    raise KnownCNSError(
+                        error_string,
+                        hint,
+                        filepath,
+                        )
+        # Update number of parsed lines so we do not check them again
+        parsed_lines = -len(lines)
 
 
 def find_all_cns_errors(
@@ -143,12 +150,14 @@ def find_all_cns_errors(
 
     Returns
     -------
-    all_errors : dict[str, dict[str, Union[int, KnownCNSError]]]
+    all_errors : dict[str, dict[str, Union[list[FilePath], KnownCNSError]]]
         _description_
     """
     all_errors: dict[str, dict[str, Union[int, KnownCNSError]]] = {}
     # Loop over all .out files
-    for fpath in Path(directory_path).glob("*.out"):
+    all_cns_out_files = list(Path(directory_path).glob("*.out.gz"))
+    all_cns_out_files += list(Path(directory_path).glob("*.out"))
+    for fpath in all_cns_out_files:
         # Try to dectect an error
         if (detected_error := find_cns_errors(fpath)):
             error_type = all_errors.setdefault(

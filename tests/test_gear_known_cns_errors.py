@@ -1,5 +1,6 @@
 """Unitests related to haddock.gear.known_cns_errors.py."""
 
+import gzip
 import pytest
 import tempfile
 import random
@@ -33,10 +34,16 @@ def gen_fake_cns_errors(gen_random_text):
         for i, error in enumerate(KNOWN_ERRORS.keys()):
             error_text = gen_random_text + error + gen_random_text
             # Create two files with same error
-            for j in range(2):
+            for j in range(1, 3):
                 errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.out")
                 # Write error in a file
                 errored_filepath.write_text(error_text)
+            # Create two compressed files with same error
+            for j in range(1, 3):
+                errored_gz_file = Path(tmp, f"with_error_cns_{i}_{j}.out.gz")
+                # Write error in a file
+                with gzip.open(errored_gz_file, mode="wb") as gout:
+                    gout.write(bytes(error_text, encoding="utf-8"))
         yield tmp
 
 
@@ -68,6 +75,6 @@ def test_find_all_cns_errors(gen_fake_cns_errors):
     for cns_error in all_errors.keys():
         error = all_errors[cns_error]
         # Check that we detected both files
-        assert len(error["files"]) == 2
+        assert len(error["files"]) == 4  # 2 * 2
         # Check that error hint is well reported
         assert KNOWN_ERRORS[cns_error] in str(error["error"])

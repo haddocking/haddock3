@@ -1,5 +1,6 @@
 """Integration tests related to haddock.gear.known_cns_errors.py."""
 
+import gzip
 import pytest
 import tempfile
 import random
@@ -38,6 +39,12 @@ def gen_fake_cns_errors(gen_random_text):
                 errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.out")
                 # Write error in a file
                 errored_filepath.write_text(error_text)
+            # Create two compressed files with same error
+            for j in range(1, 3):
+                errored_gz_file = Path(tmp, f"with_error_cns_{i}_{j}.out.gz")
+                # Write error in a file
+                with gzip.open(errored_gz_file, mode="wb") as gout:
+                    gout.write(bytes(error_text, encoding="utf-8"))
         yield tmp
 
 

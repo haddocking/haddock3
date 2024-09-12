@@ -48,7 +48,7 @@ class MockPreviousIO:
             [
                 PDBFile(
                     file_name="e2aP_1F3G_haddock.pdb",
-                    path=".",
+                    path=self.path,
                     topology=[
                         Persistent(
                             file_name="e2aP_1F3G_haddock.psf",

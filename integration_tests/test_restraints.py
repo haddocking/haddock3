@@ -38,7 +38,7 @@ class MockPreviousIO:
         )
         shutil.copy(
             Path(golden_data, "hpr_ensemble_1_haddock.pdb"),
-            Path(".", "hpr_ensemble_1_haddock.pdb"),
+            Path(self.path, "hpr_ensemble_1_haddock.pdb"),
         )
         shutil.copy(
             Path(golden_data, "hpr_ensemble_1_haddock.psf"),

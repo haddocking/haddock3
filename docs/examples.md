@@ -62,7 +62,7 @@ A protein-glycan docking example making use of the knowledge of the binding site
 
 1) 1000 rigidbody docking models, RMSD clustering to select 50 clusters, flexible refinement of the top 5 models of each cluster, final RMSD clustering for cluster-based scoring ([docking-protein-glycan-full.cfg](../examples/docking-protein-glycan/docking-protein-glycan-full.cfg)). The RMSD clustering assumes a good knowledge of the interface, as the user has to define the residues involved in the binding site by means of the resdic_ parameter.
 2) 1000 rigidbody docking models, interface-ligand-RMSD (`ilrmsd`) clustering to select 50 clusters, flexible refinement of the top 5 models of each cluster, final ilRMSD clustering for cluster-based scoring ([docking-protein-glycan-ilrmsd-full.cfg](../examples/docking-protein-glycan/docking-protein-glycan-ilrmsd-full.cfg)). The interface-ligand-RMSD clustering is a more general approach, as it does not require the user to define the residues involved in the binding site. The interface is automatically defined by the residues involved in the protein-glycan interaction in the input models.
-3) 500 flexible docking runs + final RMSD clustering for cluster-based scoring [docking-flexref-protein-glycan-full.cfg](../examples/docking-protein-glycan/docking-flexref-protein-glycan-full.cfg). In this case, the rigidbody docking is skipped and the docking is performed at the flexible refinement level. In this case the flexible refinement has more steps than usual (`mdsteps_rigid = 5000`, `mdsteps_cool1 = 5000` and so on) and the glycan is defined as fully flexible (`nfle2 = 1` and associated parameters).
+3) 500 flexible docking runs + final RMSD clustering for cluster-based scoring [docking-flexref-protein-glycan-full.cfg](../examples/docking-protein-glycan/docking-flexref-protein-glycan-full.cfg). In this case, the rigidbody docking is skipped and the docking is performed at the flexible refinement level. In this case the flexible refinement has more steps than usual (`mdsteps_rigid = 5000`, `mdsteps_cool1 = 5000` and so on) and the glycan is defined as fully flexible (`fle_sta_1`, `fle_end_1`, `fle_seg_1`).
 
 __Note__ the modified weight of the van der Waals energy term for the scoring of the rigidbody docking models (`w_vdw = 1.0`), as in the [protein-ligand example](#docking-protein-ligand).
 
@@ -113,7 +113,7 @@ Three different workflows are illustrated:
 2) 3000 rigidbody docking models, selection of top400 and flexible refinement + final refinement in explicit solvent (water) of those ([docking-protein-peptide-mdref-full.cfg](../examples/docking-protein-peptide/docking-protein-peptide-mdref-full.cfg)
 3) 3000 rigidbody docking models, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM ([docking-protein-peptide-cltsel-full.cfg](../examples/docking-protein-peptide/docking-protein-peptide-cltsel-full.cfg)).
 
-__Note__ how the peptide is defined as fully flexible for the refinement phase (`nfle2 = 1` and associated parameters) and dihedral angle restraints are automatically defined to maintain secondary structure elements (`ssdihed = "alphabeta"`)
+__Note__ how the peptide is defined as fully flexible for the refinement phase (`fle_sta_1`, `fle_end_1`, `fle_seg_1`) and dihedral angle restraints are automatically defined to maintain secondary structure elements (`ssdihed = "alphabeta"`)
 
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 

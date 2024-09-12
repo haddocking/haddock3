@@ -1,6 +1,7 @@
-"""FCC related functions"""
+"""FCC related functions
 
-# scripts.cluster_fcc
+NOTE: This functions were ported directly from `https://github.com/haddocking/fcc`!
+"""
 
 
 class Element:

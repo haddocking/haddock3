@@ -227,7 +227,6 @@ noe
     msoexponent * 1
     masymptote  * -0.1
     mrswitch    * 0.5
-    avexpo hbond 20
 end
 
 {* set the energy flags ======================================================== *}

@@ -14,7 +14,7 @@ from haddock.core.typing import FilePath, Optional, Union
 # as value:  Message to user
 KNOWN_ERRORS = {
     "CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH": (
-        "Missmatch between chain length for symmetry restraints. "
+        "Mismatch between chain length for symmetry restraints. "
         "Check your input molecules and symmetry restraints."
         ),
     "NCS-restraints error encountered: Improperly defined non-crystallographic symmetry": (  # noqa : E501

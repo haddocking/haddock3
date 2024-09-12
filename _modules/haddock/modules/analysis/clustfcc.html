@@ -100,6 +100,7 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">fcc.scripts</span> <span class="kn">import</span> <span class="n">calc_fcc_matrix</span><span class="p">,</span> <span class="n">cluster_fcc</span>
+
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">FCC_path</span><span class="p">,</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
@@ -111,15 +112,15 @@
     <span class="n">write_structure_list</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">JobInputFirst</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">read_from_yaml_config</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span><span class="p">,</span> <span class="n">read_from_yaml_config</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis</span> <span class="kn">import</span> <span class="n">get_analysis_exec_mode</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustfcc.clustfcc</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_cluster_centers</span><span class="p">,</span>
     <span class="n">iterate_clustering</span><span class="p">,</span>
     <span class="n">write_clusters</span><span class="p">,</span>
     <span class="n">write_clustfcc_file</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis</span> <span class="kn">import</span> <span class="n">get_analysis_exec_mode</span>
+
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span><span class="p">)</span>
@@ -131,11 +132,11 @@
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-            <span class="n">initial_params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">initial_params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.clustfcc.html#haddock.modules.analysis.clustfcc.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
@@ -170,9 +171,9 @@
                 <span class="n">contact_f</span><span class="p">,</span>
                 <span class="n">contact_executable</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;contact_distance_cutoff&quot;</span><span class="p">],</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">contact_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
-            
+
         <span class="n">exec_mode</span> <span class="o">=</span> <span class="n">get_analysis_exec_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">])</span>
 
         <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">exec_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
@@ -193,22 +194,19 @@
 
         <span class="k">if</span> <span class="n">not_found</span><span class="p">:</span>
             <span class="c1"># No contacts were calculated, we cannot cluster</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span>
-                <span class="s2">&quot;Several files were not generated:&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="s2">&quot;Several files were not generated:&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating the FCC matrix&quot;</span><span class="p">)</span>
         <span class="n">parsed_contacts</span> <span class="o">=</span> <span class="n">calc_fcc_matrix</span><span class="o">.</span><span class="n">parse_contact_file</span><span class="p">(</span>
             <span class="n">contact_file_l</span><span class="p">,</span>
             <span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Imporant: matrix is a generator object, be careful with it</span>
         <span class="n">matrix</span> <span class="o">=</span> <span class="n">calc_fcc_matrix</span><span class="o">.</span><span class="n">calculate_pairwise_matrix</span><span class="p">(</span>
             <span class="n">parsed_contacts</span><span class="p">,</span>
             <span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># write the matrix to a file, so we can read it afterwards and don&#39;t</span>
         <span class="c1">#  need to reinvent the wheel handling this</span>
@@ -225,26 +223,26 @@
             <span class="n">fcc_matrix_f</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;clust_cutoff&quot;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;strictness&quot;</span><span class="p">],</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># iterate clustering until at least one cluster is found</span>
         <span class="n">clusters</span><span class="p">,</span> <span class="n">min_population</span> <span class="o">=</span> <span class="n">iterate_clustering</span><span class="p">(</span>
             <span class="n">pool</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">],</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
 
         <span class="c1"># Prepare output and read the elements</span>
         <span class="k">if</span> <span class="n">clusters</span><span class="p">:</span>
             <span class="c1"># Write the clusters</span>
             <span class="n">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
-            
+
             <span class="c1"># Get the cluster centers</span>
             <span class="n">clt_dic</span><span class="p">,</span> <span class="n">clt_centers</span> <span class="o">=</span> <span class="n">get_cluster_centers</span><span class="p">(</span>
                 <span class="n">clusters</span><span class="p">,</span>
                 <span class="n">models_to_clust</span><span class="p">,</span>
-                <span class="p">)</span>
-            
+            <span class="p">)</span>
+
             <span class="c1"># ranking clusters</span>
             <span class="n">_scores</span><span class="p">,</span> <span class="n">sorted_score_dic</span> <span class="o">=</span> <span class="n">rank_clusters</span><span class="p">(</span><span class="n">clt_dic</span><span class="p">,</span> <span class="n">min_population</span><span class="p">)</span>
 
@@ -256,45 +254,41 @@
                 <span class="n">models_to_clust</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span>
                 <span class="n">out_fname</span><span class="o">=</span><span class="s2">&quot;clustfcc.tsv&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
 
             <span class="n">write_clustfcc_file</span><span class="p">(</span>
-                <span class="n">clusters</span><span class="p">,</span>
-                <span class="n">clt_centers</span><span class="p">,</span>
-                <span class="n">clt_dic</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                <span class="n">sorted_score_dic</span>
-                <span class="p">)</span>
+                <span class="n">clusters</span><span class="p">,</span> <span class="n">clt_centers</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">sorted_score_dic</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No clusters were found&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_clust</span>  <span class="c1"># type: ignore</span>
 
         <span class="c1"># Draw the matrix</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;plot_matrix&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;plot_matrix&quot;</span><span class="p">]:</span>
             <span class="c1"># Obtain final models indices</span>
             <span class="n">final_order_idx</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cluster_ids</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
                 <span class="n">final_order_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">models_to_clust</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pdb</span><span class="p">))</span>
-                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
                 <span class="n">cluster_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">clt_id</span><span class="p">)</span>
             <span class="c1"># Get custom cluster data</span>
             <span class="n">matrix_cluster_dt</span><span class="p">,</span> <span class="n">cluster_limits</span> <span class="o">=</span> <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span>
                 <span class="n">cluster_ids</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
 
             <span class="c1"># Define output filename</span>
-            <span class="n">html_matrix_basepath</span> <span class="o">=</span> <span class="s1">&#39;fcc_matrix&#39;</span>
+            <span class="n">html_matrix_basepath</span> <span class="o">=</span> <span class="s2">&quot;fcc_matrix&quot;</span>
             <span class="c1"># Plot matrix</span>
             <span class="n">html_matrixpath</span> <span class="o">=</span> <span class="n">plot_cluster_matrix</span><span class="p">(</span>
                 <span class="n">fcc_matrix_f</span><span class="p">,</span>
                 <span class="n">final_order_idx</span><span class="p">,</span>
                 <span class="n">labels</span><span class="p">,</span>
-                <span class="n">dttype</span><span class="o">=</span><span class="s1">&#39;FCC&#39;</span><span class="p">,</span>
+                <span class="n">dttype</span><span class="o">=</span><span class="s2">&quot;FCC&quot;</span><span class="p">,</span>
                 <span class="n">diag_fill</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">output_fname</span><span class="o">=</span><span class="n">html_matrix_basepath</span><span class="p">,</span>
                 <span class="n">matrix_cluster_dt</span><span class="o">=</span><span class="n">matrix_cluster_dt</span><span class="p">,</span>
                 <span class="n">cluster_limits</span><span class="o">=</span><span class="n">cluster_limits</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plotting matrix in </span><span class="si">{</span><span class="n">html_matrixpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Export models for next module</span>

@@ -121,7 +121,7 @@ class HaddockModule(BaseHaddockModule):
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
-        fcc_matrix_f = Path(self.path, "fcc.matrix")
+        fcc_matrix_f = Path("fcc.matrix")
         with open(fcc_matrix_f, "w") as fh:
             for data in list(matrix):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
@@ -146,7 +146,7 @@ class HaddockModule(BaseHaddockModule):
         # Prepare output and read the elements
         if clusters:
             # Write the clusters
-            write_clusters(clusters, out_filename=str(Path(self.path, "cluster.out")))
+            write_clusters(clusters)
 
             # Get the cluster centers
             clt_dic, clt_centers = get_cluster_centers(

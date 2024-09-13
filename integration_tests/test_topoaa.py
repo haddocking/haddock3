@@ -7,68 +7,28 @@ from haddock.modules.topology.topoaa import \
     DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
-from . import CNS_EXEC, DATA_DIR, GOLDEN_DATA
+from . import CNS_EXEC
+from integration_tests import GOLDEN_DATA
 
 
-@pytest.fixture(name="topoaa_module")
-def fixture_topoaa_module():
+@pytest.fixture
+def topoaa_module():
+    with tempfile.TemporaryDirectory() as tmpdir:
+        topoaa = TopoaaModule(
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
+        )      
+        yield topoaa
+
+
+def test_topoaa_module_protein(topoaa_module):
     """Topoaa module with protein-protein input"""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        topoaa = TopoaaModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
-        )
-        topoaa.params["molecules"] = [
-            Path(DATA_DIR, "docking-protein-protein/data/e2aP_1F3G.pdb"),
-            Path(DATA_DIR, "docking-protein-protein/data/hpr_ensemble.pdb"),
-        ]
-        topoaa.params["mol1"] = {"prot_segid": "A"}
-        topoaa.params["mol2"] = {"prot_segid": "B"}
-
-        topoaa.params["cns_exec"] = CNS_EXEC
-
-        yield topoaa
-
-
-@pytest.fixture(name="topoaa_module_with_ligand")
-def fixture_topoaa_module_with_peptide():
-    """Topoaa fixture with peptide as input"""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        topoaa = TopoaaModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
-        )
-        topoaa.params["molecules"] = [
-            Path(GOLDEN_DATA, "cyclic-peptide.pdb"),
-        ]
-
-        topoaa.params["cns_exec"] = CNS_EXEC
-
-        yield topoaa
-
-
-@pytest.fixture(name="topoaa_module_with_peptide")
-def fixture_topoaa_module_with_ligand():
-    """Topoaa fixture with ligand as input"""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        topoaa = TopoaaModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
-        )
-        topoaa.params["molecules"] = [
-            Path(GOLDEN_DATA, "oseltamivir.pdb"),
-        ]
-
-        topoaa.params["cns_exec"] = CNS_EXEC
-
-        yield topoaa
-
-
-@pytest.fixture(name="ligand_toppar")
-def fixture_ligand_toppar():
-    """Fixture of a small molecule param/top"""
-    return (Path(GOLDEN_DATA, "ligand.param"), Path(GOLDEN_DATA, "ligand.top"))
-
-
-def test_topoaa_default(topoaa_module):
-    """Test the topoaa module with default values"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+        Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
+    ]
+    topoaa_module.params["mol1"] = {"prot_segid": "A"}
+    topoaa_module.params["mol2"] = {"prot_segid": "B"}
+    topoaa_module.params["cns_exec"] = CNS_EXEC
 
     topoaa_module.run()
 
@@ -101,19 +61,46 @@ def test_topoaa_default(topoaa_module):
         assert expected_gz.stat().st_size > 0, f"{expected_gz} is empty"
 
 
-def test_topoaa_cyclic(topoaa_module_with_peptide):
+def test_topoaa_module_ligand(topoaa_module):
+    """Topoaa with ligand as input"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "oseltamivir.pdb"),
+    ]
+    topoaa_module.params["ligand_top_fname"] = Path(GOLDEN_DATA, "ligand.top")
+    topoaa_module.params["ligand_param_fname"] = Path(GOLDEN_DATA, "ligand.param")
+    topoaa_module.params["delenph"] = False
+    topoaa_module.params["preprocess"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "oseltamivir.inp")
+    expected_psf = Path(topoaa_module.path, "oseltamivir_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "oseltamivir_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "oseltamivir.out.gz")
+
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+
+def test_topoaa_cyclic(topoaa_module):
     """Test the topoaa module to generate a cyclic peptide."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "cyclic-peptide.pdb"),
+    ]
+    topoaa_module.params["cyclicpept_dist"] = 3.5
+    topoaa_module.params["disulphide_dist"] = 4.0
+    topoaa_module.params["mol1"] = {"cyclicpept": True}
+    topoaa_module.params["cns_exec"] = CNS_EXEC
 
-    topoaa_module_with_peptide.params["cyclicpept_dist"] = 3.5
-    topoaa_module_with_peptide.params["disulphide_dist"] = 4.0
-    topoaa_module_with_peptide.params["mol1"] = {"cyclicpept": True}
+    topoaa_module.run()
 
-    topoaa_module_with_peptide.run()
-
-    expected_inp = Path(topoaa_module_with_peptide.path, "cyclic-peptide.inp")
-    expected_psf = Path(topoaa_module_with_peptide.path, "cyclic-peptide_haddock.psf")
-    expected_pdb = Path(topoaa_module_with_peptide.path, "cyclic-peptide_haddock.pdb")
-    expected_gz = Path(topoaa_module_with_peptide.path, "cyclic-peptide.out.gz")
+    expected_inp = Path(topoaa_module.path, "cyclic-peptide.inp")
+    expected_psf = Path(topoaa_module.path, "cyclic-peptide_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "cyclic-peptide_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "cyclic-peptide.out.gz")
 
     assert expected_inp.exists(), f"{expected_inp} does not exist"
     assert expected_psf.exists(), f"{expected_psf} does not exist"
@@ -125,25 +112,3 @@ def test_topoaa_cyclic(topoaa_module_with_peptide):
 
     assert "detected" in file_content
     assert "disulphide" in file_content
-
-
-def test_topoaa_ligand(topoaa_module_with_ligand, ligand_toppar):
-    """Test the topoaa module to generate topologies of a ligand"""
-
-    ligand_param_f, ligand_top_f = ligand_toppar
-
-    topoaa_module_with_ligand.params["ligand_param_fname"] = ligand_param_f
-    topoaa_module_with_ligand.params["ligand_top_fname"] = ligand_top_f
-    topoaa_module_with_ligand.params["delenph"] = False
-
-    topoaa_module_with_ligand.run()
-
-    expected_inp = Path(topoaa_module_with_ligand.path, "oseltamivir.inp")
-    expected_psf = Path(topoaa_module_with_ligand.path, "oseltamivir_haddock.psf")
-    expected_pdb = Path(topoaa_module_with_ligand.path, "oseltamivir_haddock.pdb")
-    expected_gz = Path(topoaa_module_with_ligand.path, "oseltamivir.out.gz")
-
-    assert expected_inp.exists()
-    assert expected_psf.exists()
-    assert expected_pdb.exists()
-    assert expected_gz.exists()

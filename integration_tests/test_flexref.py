@@ -11,7 +11,7 @@ from haddock.modules.refinement.flexref import (
 )
 from haddock.modules.refinement.flexref import HaddockModule as FlexrefModule
 
-from . import GOLDEN_DATA
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture

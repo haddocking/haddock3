@@ -13,7 +13,7 @@ from haddock.modules.analysis.ilrmsdmatrix import \
 from haddock.modules.analysis.ilrmsdmatrix import \
     HaddockModule as IlrmsdmatrixModule
 
-from . import GOLDEN_DATA
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture

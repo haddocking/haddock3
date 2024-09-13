@@ -8,12 +8,11 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile, TopologyFile
-from haddock.modules.analysis.caprieval.capri import load_contacts
 from haddock.modules.scoring.mdscoring import \
     DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
 from haddock.modules.scoring.mdscoring import HaddockModule as mdscoringModule
 
-from . import GOLDEN_DATA
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture
@@ -60,7 +59,7 @@ class MockPreviousIO:
         return None
 
 
-def test_mdscoring_default(mdscoring_module):
+def test_mdscoring_default(mdscoring_module, calc_fnat):
     """Test the mdscoring module."""
     mdscoring_module.previous_io = MockPreviousIO(path=mdscoring_module.path)
     mdscoring_module.run()
@@ -77,12 +76,9 @@ def test_mdscoring_default(mdscoring_module):
     assert df["score"].dtype == float
     # the model should have highly negative score
     assert all(df["score"] < -10)
-    # the model should not be too different from the original.
-    # we calculated fnat with respect to the new structure, that could have new
-    # weird contacts.
-    start_pdb = PDBFile(Path(mdscoring_module.path, "protglyc_complex_1.pdb"))
-    start_contact = load_contacts(start_pdb)
-    end_contact = load_contacts(expected_pdb1)
-    intersection = start_contact & end_contact
-    fnat = len(intersection) / float(len(end_contact))
-    assert fnat > 0.95
+    # the model should have a Fnat close to the starting structure
+    fnat = calc_fnat(
+        model=Path(mdscoring_module.path, "mdscoring_1.pdb"),
+        native=Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
+    )
+    assert fnat == pytest.approx(0.90, abs=0.1)

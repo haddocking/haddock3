@@ -4,7 +4,7 @@ from haddock.libs.libsubprocess import CNSJob
 from pathlib import Path
 from typing import Generator
 
-from . import GOLDEN_DATA, CNS_EXEC
+from integration_tests import GOLDEN_DATA, CNS_EXEC
 
 
 @pytest.fixture

@@ -8,7 +8,7 @@ from haddock.libs.libontology import Format, PDBFile, Persistent
 from haddock.modules.refinement.emref import DEFAULT_CONFIG as DEFAULT_EMREF_CONFIG
 from haddock.modules.refinement.emref import HaddockModule as FlexrefModule
 
-from . import GOLDEN_DATA
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture

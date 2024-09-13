@@ -9,7 +9,7 @@ from haddock.libs.libontology import PDBFile
 
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as DEFAULT_RMSD_CONFIG
 from haddock.modules.analysis.rmsdmatrix import HaddockModule as rmsdmatrixModule
-from . import GOLDEN_DATA
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture

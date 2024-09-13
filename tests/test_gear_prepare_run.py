@@ -389,17 +389,18 @@ def test_param_value_error(defaultparams, key, value):
         validate_value(defaultparams, key, value)
 
 
-def test_validate_parameters_are_not_incompatible(mocker):
-    mocker.patch(
-        "haddock.gear.prepare_run.incompatible_defaults_params",
-        {
-            "limiting_parameter": {
-                "value": True,
+def test_validate_parameters_are_not_incompatible():
+    """Test parameter incompatibilities."""
+    # Define an incompatible parameter
+    # when limiting_parameter has value `True`,
+    # `incompatible_parameter` cannot adopt `incompatible_value`
+    incompatible_params = {
+        "limiting_parameter": {
+            True: {
                 "incompatible_parameter": "incompatible_value",
             }
-        },
-    )
-
+        }
+    }
     # Test 1 successfully fail
     params = {
         "limiting_parameter": True,
@@ -407,12 +408,14 @@ def test_validate_parameters_are_not_incompatible(mocker):
     }
 
     with pytest.raises(ValueError):
-        validate_parameters_are_not_incompatible(params)
+        validate_parameters_are_not_incompatible(params, incompatible_params)
 
     # Test 2 - successfully pass
     params = {
         "limiting_parameter": False,
         "ok_parameter": "ok_value",
     }
-
-    assert validate_parameters_are_not_incompatible(params) is None
+    no_return = validate_parameters_are_not_incompatible(
+        params, incompatible_params
+        )
+    assert no_return is None

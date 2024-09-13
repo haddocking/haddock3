@@ -977,6 +977,8 @@ def validate_parameters_are_not_incompatible(
         # Check if the limiting parameter is present in the parameters
         if limiting_param in params:
             # Point incompatibilities for the value of the limiting parameter
+            if params[limiting_param] not in incompatibilities.keys():
+                continue
             active_incompatibilities = incompatibilities[params[limiting_param]]
             # Check each incompatibility for the limiting parameter
             for incompatible_param, incompatible_value in active_incompatibilities.items():

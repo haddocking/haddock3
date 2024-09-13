@@ -385,7 +385,10 @@ if ($failure eq false) then
             @MODULE:torsiontop.cns
             eval ($torsiondone = true)
         end if
-        evaluate ($SaProtocol.tadfactor = 4)
+        if ($nfle > 0) then
+            ! reduce timestep in case of fully flexible segments
+            evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+        end if
         @MODULE:sa_ltad_cool1.cns
     end if
 

@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+import gzip
 from pathlib import Path
 
 import pytest
@@ -80,7 +81,7 @@ def test_flexref_defaults(flexref_module, calc_fnat):
         native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.75, abs=0.1)
+    assert fnat == pytest.approx(0.9, abs=0.1)
 
 
 def test_flexref_fle(flexref_module, calc_fnat):
@@ -92,18 +93,21 @@ def test_flexref_fle(flexref_module, calc_fnat):
     flexref_module.params["fle_sta_1 "] = 66
     flexref_module.params["fle_end_1 "] = 77
     flexref_module.params["fle_seg_1  "] = "B"
+    flexref_module.params["log_level"] = "verbose"
 
     flexref_module.run()
 
     assert Path(flexref_module.path, "flexref_1.pdb").exists()
     assert Path(flexref_module.path, "flexref_1.out.gz").exists()
+    file_content = gzip.open(Path(flexref_module.path, "flexref_1.out.gz"), 'rt').read()
+    assert '$SAPROTOCOL.TADFACTOR set to    4.00000' in file_content
 
     fnat = calc_fnat(
         model=Path(flexref_module.path, "flexref_1.pdb"),
         native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.75, abs=0.1)
+    assert fnat == pytest.approx(0.9, abs=0.1)
 
 
 def test_flexref_mutliple_fle(flexref_module, calc_fnat):
@@ -130,4 +134,4 @@ def test_flexref_mutliple_fle(flexref_module, calc_fnat):
         native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.75, abs=0.1)
+    assert fnat == pytest.approx(0.9, abs=0.1)

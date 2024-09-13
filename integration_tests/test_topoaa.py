@@ -16,7 +16,7 @@ def topoaa_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         topoaa = TopoaaModule(
             order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
-        )      
+        )
         yield topoaa
 
 

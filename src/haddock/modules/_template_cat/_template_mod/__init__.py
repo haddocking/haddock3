@@ -15,6 +15,7 @@ You should use restructureText syntax:
 # Import here what you need
 from pathlib import Path
 from haddock.core.typing import FilePath, Any
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 
 # In case you need to import a Python library that is a run-time dependency,
 # you should import it inside the `_run` method to avoid import errors for those
@@ -29,7 +30,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 # this is mandatory, don't erase nor edit these lines
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 # this is the main class of the module. It should be named exactly as this.

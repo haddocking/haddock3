@@ -1,4 +1,5 @@
 """Logic pertraining to preparing the run files and folders."""
+
 import difflib
 import importlib
 import itertools as it
@@ -59,7 +60,10 @@ from haddock.gear.parameters import (
 )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.validations import v_rundir
+from haddock.gear.validations import (
+    v_rundir,
+    validate_defaults_yaml,
+    )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
@@ -76,6 +80,7 @@ from haddock.modules import (
     modules_category,
     modules_names,
     non_mandatory_general_parameters_defaults,
+    incompatible_defaults_params,
 )
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
@@ -126,6 +131,9 @@ TYPES_MAPPER = {
         PosixPath,
         EmptyPath,
     ),
+    "dict": (
+        dict,
+    )
 }
 
 
@@ -178,6 +186,7 @@ def _read_defaults(module_name, default_only=True):
         module_name_,
         "defaults.yaml",
     ).resolve()
+    validate_defaults_yaml(pdef)
     mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
     return mod_default_config
 
@@ -268,6 +277,8 @@ def setup_run(
         general_params,
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
     )
+
+    validate_parameters_are_not_incompatible(general_params)
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -938,6 +949,32 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
     )
 
     return
+
+
+def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
+    """
+    Validate parameters are not incompatible.
+
+    Parameters
+    ----------
+    params : ParamMap
+        A mapping of parameter names to their values.
+
+    Raises
+    ------
+    ValueError
+        If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.
+    """
+    for limiting_param, incompatibilities in incompatible_defaults_params.items():
+        # Check if the limiting parameter is present in the parameters
+        if limiting_param in params:
+            # Check each incompatibility for the limiting parameter
+            for incompatible_param, incompatible_value in incompatibilities.items():
+                # Check if the incompatible parameter is present and has the incompatible value
+                if params.get(incompatible_param) == incompatible_value:
+                    raise ValueError(
+                        f"Parameter `{limiting_param}` is incompatible with `{incompatible_param}={incompatible_value}`."
+                    )
 
 
 def validate_parameters_are_not_misspelled(

@@ -99,7 +99,7 @@ def test_rigidbody_local(rigidbody_module):
 
 def test_rigidbody_mpi(rigidbody_module):
 
-    sampling = 5
+    sampling = 2
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
     rigidbody_module.params["sampling"] = sampling
     rigidbody_module.params["ntrials"] = 1

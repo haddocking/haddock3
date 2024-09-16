@@ -751,18 +751,19 @@ def validate_ncs_params(params: dict) -> None:
     # At this stage, ncs_on == True
     base_ncs_param_names = ("ncs_sta", "ncs_end", "ncs_seg", )
     # Read and group ncs parameters together
-    groupped_ncs: dict[int, dict[str, dict[int, str]]] = {}
+    groupped_ncs: dict[int, dict[str, dict[int, Union[int, str]]]] = {}
     for paramname, value in params.items():
         # Check if this is a ncs parameter
         if paramname[:7] in base_ncs_param_names:
             # Point two interesting values here
             first_or_second = int(paramname[7])
             x = int(paramname[-1])
-            # Point param type
-            param_type = paramname[4:7]
-            # Create holding dict
+            # Point param type ("sta", "end", or "seg")
+            param_type = paramname.split('_')[1][:-1]
+            # Point/Create holding dict(s)
             ncs_group = groupped_ncs.setdefault(x, {})
             ncs_type = ncs_group.setdefault(param_type, {})
+            # Hold value
             ncs_type[first_or_second] = value
 
     # Validate them

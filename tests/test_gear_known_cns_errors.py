@@ -35,12 +35,12 @@ def gen_fake_cns_errors(gen_random_text):
             error_text = gen_random_text + error + gen_random_text
             # Create two files with same error
             for j in range(1, 3):
-                errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.out")
+                errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.err")
                 # Write error in a file
                 errored_filepath.write_text(error_text)
             # Create two compressed files with same error
             for j in range(1, 3):
-                errored_gz_file = Path(tmp, f"with_error_cns_{i}_{j}.out.gz")
+                errored_gz_file = Path(tmp, f"with_error_cns_{i}_{j}.err.gz")
                 # Write error in a file
                 with gzip.open(errored_gz_file, mode="wb") as gout:
                     gout.write(bytes(error_text, encoding="utf-8"))
@@ -50,7 +50,7 @@ def gen_fake_cns_errors(gen_random_text):
 def test_find_cns_errors(gen_random_text):
     """Test detection of error in a file."""
     with tempfile.TemporaryDirectory("errored_module") as tmp:
-        errored_filepath = Path(tmp, "with_error_cns.out")
+        errored_filepath = Path(tmp, "with_error_cns.err")
         for error, message in KNOWN_ERRORS.items():
             # Write error in a file
             error_text = gen_random_text + error + gen_random_text

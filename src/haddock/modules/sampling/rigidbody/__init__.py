@@ -74,6 +74,7 @@ class HaddockModule(BaseCNSModule):
             combination, inp_input, ambig_fname, seed = e
 
             log_fname = f"rigidbody_{idx}.out"
+            err_fname = f"rigidbody_{idx}.err"
             output_pdb_fname = f"rigidbody_{idx}.pdb"
 
             # Create a model for the expected output
@@ -82,7 +83,7 @@ class HaddockModule(BaseCNSModule):
             model.seed = seed  # type: ignore
             self.output_models.append(model)
 
-            job = CNSJob(inp_input, log_fname, envvars=self.envvars)
+            job = CNSJob(inp_input, log_fname, err_fname, envvars=self.envvars)
             jobs.append(job)
         return jobs
 

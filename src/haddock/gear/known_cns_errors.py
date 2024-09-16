@@ -12,7 +12,7 @@ from haddock.core.exceptions import KnownCNSError
 from haddock.core.typing import FilePath, Optional, Union
 
 # Dictionary of known errors
-# as key:    How to catch it in the cns.out
+# as key:    How to catch it in the cns.err
 # as value:  Message to user
 KNOWN_ERRORS = {
     "CHAIN LENGTH FOR SYMMETRY RESTRAINTS DOES NOT MATCH": (
@@ -62,12 +62,12 @@ KNOWN_ERRORS = {
 
 
 def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:
-    """Detect if a known CNS error is in a cns.out file.
+    """Detect if a known CNS error is in a cns.err file.
 
     Parameters
     ----------
     cns_out_fpath : FilePath -> Union[str, Path]
-        Path to the cns.out file to check.
+        Path to the cns.err file to check.
 
     Returns
     -------
@@ -104,7 +104,7 @@ def _find_cns_errors(
     chunk_size : int, optional
         Check size (in bytes) to read the file backwards, by default 4096
     filepath : FilePath -> Union[str, Path]
-        Path to the cns.out file currently checked.
+        Path to the cns.err file currently checked.
 
     Raises
     ------
@@ -161,10 +161,10 @@ def find_all_cns_errors(
         Dictionary containing all errors found in this directory.
     """
     all_errors: dict[str, dict[str, Union[int, KnownCNSError]]] = {}
-    # Gather list of all `.out` and `.out.gz` files present in directory
-    all_cns_out_files = list(Path(directory_path).glob("*.out.gz"))
-    all_cns_out_files += list(Path(directory_path).glob("*.out"))
-    # Loop over all .out files
+    # Gather list of all `.err` and `.err.gz` files present in directory
+    all_cns_out_files = list(Path(directory_path).glob("*.err.gz"))
+    all_cns_out_files += list(Path(directory_path).glob("*.err"))
+    # Loop over all .err files
     for fpath in all_cns_out_files:
         # Try to dectect an error
         if (detected_error := find_cns_errors(fpath)):

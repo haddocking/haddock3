@@ -580,6 +580,8 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         # Now that existence of the parameter was checked,
         # it is time to validate the type and value taken by this param
         validate_module_params_values(module_name, args)
+        # Validate ncs parameters
+        validate_ncs_params(args)
 
         # Update parameters with defaults ones
         _missing_defaults = {
@@ -719,6 +721,111 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
                 "permitted limit. It should range from "
                 f'{param["minchars"]} to {param["maxchars"]}'
             )
+
+
+def validate_ncs_params(params: dict) -> None:
+    """Validate Non-Crystallographic Symmetry parameters.
+
+    This is a particular case where:
+    - ncs_sta1_X == ncs_sta2_X
+    - ncs_end1_X == ncs_end2_X
+    - ncs_seg1_X != ncs_seg2_X
+
+    Parameters
+    ----------
+    params : dict
+        Dictionnary of key/value present in user config file for a module
+
+    Raises
+    ------
+    ConfigurationError
+        Issue detected when validating NCS parameters.
+    """
+    try:
+        # Check if ncs_on == False
+        if not params["ncs_on"]:
+            return None
+    # Maybe this module do not have ncs parameters, so we skip it
+    except KeyError:
+        return None
+    # At this stage, ncs_on == True
+    base_ncs_param_names = ("ncs_sta", "ncs_end", "ncs_seg", )
+    # Read and group ncs parameters together
+    groupped_ncs: dict[int, dict[str, dict[int, str]]] = {}
+    for paramname, value in params.items():
+        # Check if this is a ncs parameter
+        if paramname[:7] in base_ncs_param_names:
+            # Point two interesting values here
+            first_or_second = int(paramname[7])
+            x = int(paramname[-1])
+            # Point param type
+            param_type = paramname[4:7]
+            # Create holding dict
+            ncs_group = groupped_ncs.setdefault(x, {})
+            ncs_type = ncs_group.setdefault(param_type, {})
+            ncs_type[first_or_second] = value
+
+    # Validate them
+    error_list: list[str] = []
+    # Loop over number of definitions (_X)
+    for x, paramtype_values in groupped_ncs.items():
+        # Loop over parameter types
+        for paramtype, values in paramtype_values.items():
+            two_values = tuple(values.values())
+            # First make sure both are defined !
+            if len(two_values) != 2:
+                msg = f"Not two values set of `ncs_{paramtype}Y_{x}"
+                error_list.append(msg)
+                continue
+            if paramtype in ("sta", "end", ):
+                # Check they are not similar (wrong!)
+                if not len(set(two_values)) == 1:
+                    msg = (
+                        f"Values set of `ncs_{paramtype}Y_{x} must be equal: "
+                        f"we parsed `{two_values[0]}` and `{two_values[1]}`"
+                        )
+                    error_list.append(msg)
+            else:  # paramtype == "seg"
+                # Check they are similar (wrong!)
+                if len(set(values.values())) == 1:
+                    msg = (
+                        f"Chain/Segment IDs for `ncs_{paramtype}Y_{x} must be "
+                        f"different: we parsed `{two_values[0]}` and"
+                        f" `{two_values[1]}`"
+                        )
+                    error_list.append(msg)
+
+    # Validate value of `numncs`
+    ncs_suffixes = list(groupped_ncs.keys())
+    # Case when number of definition do not match
+    if params["numncs"] != len(ncs_suffixes):
+        msg = (
+            f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+            " do not match with the number of defined NCS restraints "
+            f"({len(ncs_suffixes)})"
+            )
+        error_list.append(msg)
+    else:
+        # Case when numbers do not match
+        if max(ncs_suffixes) != params["numncs"]:
+            msg = (
+                f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+                " do not match with the number of defined NCS restraints "
+                f"({', '.join([str(s) for s in ncs_suffixes])})"
+                )
+            error_list.append(msg)
+
+    # Here we fall into the error case
+    if len(error_list) > 0:
+        # Build user message
+        _msg = (
+            "Some errors were discovered in the NCS restraints definition:"
+            f"{os.linesep}"
+            f"{os.linesep.join(error_list)}"
+            )
+        # Raise error
+        raise ConfigurationError(_msg)
+    return None
 
 
 def check_if_modules_are_installed(params: ParamMap) -> None:

@@ -6,7 +6,6 @@ import platform
 import shutil
 import subprocess
 import sys
-import tempfile
 import urllib.request
 from os.path import dirname, join
 from pathlib import Path
@@ -21,59 +20,52 @@ class CustomBuildInstall(install):
 
     def run(self):
 
-        issues = self.flycheck()
-        if issues:
-            print("Issues found, installation cannot continue:")
-            for issue in issues:
-                print(f"  - {issue}")
-            sys.exit(1)
-        self.run_command("build_ext")
         install.run(self)
-
-    @staticmethod
-    def flycheck() -> list[str]:
-        """Helper method to make sure all system dependencies are installed"""
-        issues = []
-
-        if shutil.which("git") is None:
-            issues.append("git not found in $PATH")
-
-        if shutil.which("make") is None:
-            issues.append("make not found in $PATH")
-
-        python_version = sys.version_info
-        if python_version.major != 3 or python_version.minor < 9:
-            issues.append("Python 3.9+ is required, found: {sys.version}")
-
-        return issues
 
 
 class CustomBuild(build_ext):
-    """CustomBuild handles the build of the C++ dependencies"""
+    """CustomBuild handles the build of the C/C++ dependencies"""
 
     def run(self):
-        print("Building HADDOCK3 C++ dependencies...")
-        # TODO: Find a smarter way of passing this `bin_dir` without defining it outside `__init__`
-        self.bin_dir = Path(self.get_install_dir(), "haddock", "bin")
-        self.bin_dir.mkdir(exist_ok=True, parents=True)
+        print("Building HADDOCK3 C/C++ binary dependencies...")
+        bin_dir = Path(self.get_install_dir(), "haddock", "bin")
+        bin_dir.mkdir(exist_ok=True, parents=True)
+
+        dep_dir = Path("src", "haddock", "deps")
+        assert dep_dir.exists()
 
         # Build FCC
-        self.clone_and_build_submodule(
-            name="FCC",
-            repo_url="https://github.com/haddocking/fcc.git",
-            build_cmd="make",
-            src_dir="src",
-            binary_name="contact_fcc",
+        cmd = "g++ -O2 -o contact_fcc contact_fcc.cpp"
+
+        _ = subprocess.run(
+            cmd,
+            shell=True,
+            cwd=dep_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
         )
 
+        src = Path(dep_dir, "contact_fcc")
+        dst = Path(bin_dir, "contact_fcc")
+
+        shutil.move(src, dst)
+
         # Build fast-rmsdmatrix
-        self.clone_and_build_submodule(
-            name="fast-rmsdmatrix",
-            repo_url="https://github.com/mgiulini/fast-rmsdmatrix.git",
-            build_cmd="make fast-rmsdmatrix",
-            src_dir="src",
-            binary_name="fast-rmsdmatrix",
+        cmd = "gcc -Wall -O3 -march=native -std=c99 -o fast-rmsdmatrix fast-rmsdmatrix.c -lm"
+        _ = subprocess.run(
+            cmd,
+            shell=True,
+            cwd=dep_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
         )
+
+        src = Path(dep_dir, "fast-rmsdmatrix")
+        dst = Path(bin_dir, "fast-rmsdmatrix")
+
+        shutil.move(src, dst)
 
         # Run original build_ext
         build_ext.run(self)
@@ -82,35 +74,6 @@ class CustomBuild(build_ext):
         """Get the directory in which HADDOCK was installed"""
         install_cmd = self.get_finalized_command("install")
         return install_cmd.install_lib  # type: ignore
-
-    def clone_and_build_submodule(  # pylint: disable=too-many-arguments
-        self, name, repo_url, build_cmd, src_dir, binary_name
-    ):
-        """Clone a repository and build."""
-        print(f"Building {name}...")
-        with tempfile.TemporaryDirectory() as temp_dir:
-
-            # clone the repository
-            subprocess.run(["git", "clone", repo_url, temp_dir], check=True)
-
-            # Build
-            build_dir = Path(temp_dir, src_dir)
-            subprocess.run(
-                build_cmd,
-                shell=True,
-                cwd=build_dir,
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-
-            # TODO: Add error handling
-
-            # Move the binary
-            src_bin = Path(build_dir, binary_name)
-            dst_bin = Path(self.bin_dir, binary_name)
-
-            shutil.copy2(src_bin, dst_bin)
 
 
 CNS_BINARIES = {

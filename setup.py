@@ -10,74 +10,65 @@ import urllib.request
 from os.path import dirname, join
 from pathlib import Path
 
-from setuptools import find_packages, setup
+from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 
 
-class CustomBuildInstall(install):
-    """Custom Build and Install class"""
-
-    def run(self):
-
-        install.run(self)
+cpp_extensions = [
+    Extension(
+        "haddock.bin.contact_fcc",
+        sources=["src/haddock/deps/contact_fcc.cpp"],
+        extra_compile_args=["-O2"],
+    ),
+    Extension(
+        "haddock.bin.fast_rmsdmatrix",
+        sources=["src/haddock/deps/fast-rmsdmatrix.c"],
+        extra_compile_args=["-Wall", "-O3", "-march=native", "-std=c99"],
+        extra_link_args=["-lm"],
+    ),
+]
 
 
 class CustomBuild(build_ext):
-    """CustomBuild handles the build of the C/C++ dependencies"""
-
     def run(self):
         print("Building HADDOCK3 C/C++ binary dependencies...")
-        bin_dir = Path(self.get_install_dir(), "haddock", "bin")
-        bin_dir.mkdir(exist_ok=True, parents=True)
-
-        dep_dir = Path("src", "haddock", "deps")
-        assert dep_dir.exists()
-
-        # Build FCC
-        cmd = "g++ -O2 -o contact_fcc contact_fcc.cpp"
-
-        _ = subprocess.run(
-            cmd,
-            shell=True,
-            cwd=dep_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=True,
+        self.build_cpp_executable(
+            "contact_fcc",
+            ["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
+        )
+        self.build_cpp_executable(
+            "fast-rmsdmatrix",
+            [
+                "gcc",
+                "-Wall",
+                "-O3",
+                "-march=native",
+                "-std=c99",
+                "-o",
+                "fast-rmsdmatrix",
+                "src/haddock/deps/fast-rmsdmatrix.c",
+                "-lm",
+            ],
         )
 
-        src = Path(dep_dir, "contact_fcc")
-        dst = Path(bin_dir, "contact_fcc")
-
-        shutil.move(src, dst)
-
-        # Build fast-rmsdmatrix
-        cmd = "gcc -Wall -O3 -march=native -std=c99 -o fast-rmsdmatrix fast-rmsdmatrix.c -lm"
-        _ = subprocess.run(
-            cmd,
-            shell=True,
-            cwd=dep_dir,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=True,
-        )
-
-        src = Path(dep_dir, "fast-rmsdmatrix")
-        dst = Path(bin_dir, "fast-rmsdmatrix")
-
-        shutil.move(src, dst)
-
-        # Run original build_ext
+        # Run the standard build_ext
         build_ext.run(self)
 
-    def get_install_dir(self):
-        """Get the directory in which HADDOCK was installed"""
-        install_cmd = self.get_finalized_command("install")
-        return install_cmd.install_lib  # type: ignore
+    def build_cpp_executable(self, name, cmd):
+        try:
+            subprocess.check_call(cmd)
+            bin_dir = os.path.join("src", "haddock", "bin")
+            os.makedirs(bin_dir, exist_ok=True)
+            shutil.move(name, os.path.join(bin_dir, name))
+            print(f"Successfully built and moved {name}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error building {name}: {e}")
+            raise
 
 
 CNS_BINARIES = {
-    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/o8X7zZezIM3P0cE",  # linux
+    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/o8X7zZezIM3P0cE/download",  # linux
     "x86_64-darwin": "",  # macOs
     "arm64-darwin": "",  # Mac M1/M2
     "aarch64-linux": "",  # linux ARM
@@ -85,14 +76,14 @@ CNS_BINARIES = {
 }
 
 
-class CustomInstall(CustomBuildInstall):
+class CustomInstall(install):
     """Custom class to handle the download of the CNS binary"""
 
     def run(self):
         """Run the installation"""
 
         # Run the standard installation
-        CustomBuildInstall.run(self)
+        install.run(self)
 
         # Get the installation directory
         if self.install_lib is None:
@@ -101,6 +92,7 @@ class CustomInstall(CustomBuildInstall):
 
         # Set where the cns binary needs to be
         bin_dir = Path(self.install_lib, "haddock", "bin")
+        bin_dir = Path("src", "haddock", "bin")
 
         # Create the `bin/` directory
         bin_dir.mkdir(exist_ok=True)
@@ -177,6 +169,7 @@ setup(
     url="https://github.com/haddocking/haddock3",
     packages=find_packages("src"),
     package_dir={"": "src"},
+    package_data={"haddock": ["bin/*"]},
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -223,8 +216,8 @@ setup(
             "haddock3-traceback = haddock.clis.cli_traceback:maincli",
             "haddock3-re = haddock.clis.cli_re:maincli",
             "haddock3-restraints = haddock.clis.cli_restraints:maincli",
-            "haddock3-check = haddock.clis.cli_check_install:main",
         ]
     },
     cmdclass={"build_ext": CustomBuild, "install": CustomInstall},
+    ext_modules=cpp_extensions,
 )

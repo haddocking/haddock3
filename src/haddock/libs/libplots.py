@@ -1060,7 +1060,7 @@ def _generate_unclustered_table_html(
             <script type="module">
             import {{ createRoot }} from "https://esm.sh/react-dom";
             import {{ createElement }} from "https://esm.sh/react";
-            import {{ StructureTable }} from "https://esm.sh/@i-vresse/haddock3-ui@~0.2.2/dist/table/ClusterTable?bundle-deps";
+            import {{ StructureTable }} from "https://esm.sh/@i-vresse/haddock3-ui@~0.2.2/dist/table/StructureTable?bundle-deps";
 
             const props = JSON.parse(document.getElementById("data{table_id}").text)
 

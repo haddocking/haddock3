@@ -980,7 +980,7 @@ def _css_styles_for_report():
     }
 
     """
-    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1/dist/style.css"  # noqa:E501
+    css_link = "https://esm.sh/@i-vresse/haddock3-ui@~0.2.2/dist/index.css"
     table_css = f' <link href={css_link} rel="stylesheet" />'
     return f"{table_css}<style>{custom_css}</style>"
 
@@ -1028,16 +1028,6 @@ def _generate_html_head(step):
     head += f"<title>Analysis report of step {step}</title>"
     head += f"<p class='title'>Analysis report of step {step}</p>"
     head += _css_styles_for_report()
-    head += """
-            <script type="importmap">
-            {
-                "imports": {
-                    "react": "https://esm.sh/react@^18.2.0",
-                    "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                    "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1?bundle"
-                }
-            }
-            </script>"""  # noqa : E501
     head += "</head>"
     return head
 
@@ -1068,9 +1058,9 @@ def _generate_unclustered_table_html(
             }}
             </script>
             <script type="module">
-            import {{createRoot}} from "react-dom"
-            import {{createElement}} from "react"
-            import {{StructureTable}} from "@i-vresse/haddock3-analysis-components"
+            import {{ createRoot }} from "https://esm.sh/react-dom";
+            import {{ createElement }} from "https://esm.sh/react";
+            import {{ StructureTable }} from "https://esm.sh/@i-vresse/haddock3-ui@~0.2.2/dist/table/ClusterTable?bundle-deps";
 
             const props = JSON.parse(document.getElementById("data{table_id}").text)
 
@@ -1118,9 +1108,9 @@ def _generate_clustered_table_html(
             }}
             </script>
             <script type="module">
-            import {{createRoot}} from "react-dom"
-            import {{createElement}} from "react"
-            import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
+            import {{ createRoot }} from "https://esm.sh/react-dom";
+            import {{ createElement }} from "https://esm.sh/react";
+            import {{ ClusterTable }} from "https://esm.sh/@i-vresse/haddock3-ui@~0.2.2/dist/table/ClusterTable?bundle-deps";
 
             const props = JSON.parse(document.getElementById("data{table_id}").text)
 

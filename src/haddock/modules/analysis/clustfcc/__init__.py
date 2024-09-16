@@ -13,7 +13,11 @@ from pathlib import Path
 
 import haddock
 from haddock import FCC_path, log
-from haddock.core.defaults import BINARY_DIR, MODULE_DEFAULT_YAML
+from haddock.core.defaults import (
+    BINARY_DIR,
+    CONTACT_FCC_EXEC,
+    MODULE_DEFAULT_YAML,
+    )
 from haddock.core.typing import Union
 from haddock.fcc import calc_fcc_matrix, cluster_fcc
 from haddock.libs.libclust import (
@@ -57,29 +61,7 @@ class HaddockModule(BaseHaddockModule):
         # The FCC binary can be either in the default binary path or in the
 
         dcfg = read_from_yaml_config(DEFAULT_CONFIG)
-        default_binary = Path(BINARY_DIR, "contact_fcc")
-        user_supplied_binary = Path(dcfg["executable"])
-
-        if user_supplied_binary.exists():
-            log.info("Using user supplied FCC binary: %s", user_supplied_binary)
-        else:
-            log.warning("User supplied FCC binary not found: %s", user_supplied_binary)
-            if default_binary.exists():
-                log.info("Using default FCC binary: %s", default_binary)
-                dcfg["executable"] = default_binary
-            else:
-                log.error("Default FCC binary not found: %s", default_binary)
-                raise FileNotFoundError(
-                    f"Default FCC binary not found: {default_binary}"
-                )
-
-        # Check if the binary is executable
-        exec_path = Path(dcfg["executable"])
-        if not os.access(exec_path, mode=os.F_OK):
-            raise Exception(f"Required {str(exec_path)} file does not exist.")
-
-        if not os.access(exec_path, mode=os.X_OK):
-            raise Exception(f"Required {str(exec_path)} file is not executable")
+        dcfg["executable"] = CONTACT_FCC_EXEC
 
     def _run(self) -> None:
         """Execute module."""

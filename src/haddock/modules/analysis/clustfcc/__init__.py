@@ -11,7 +11,6 @@ import importlib.resources
 import os
 from pathlib import Path
 
-import haddock
 from haddock import FCC_path, log
 from haddock.core.defaults import (
     BINARY_DIR,
@@ -26,6 +25,11 @@ from haddock.libs.libclust import (
     plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
+    )
+from haddock.libs.libfcc import (
+    calculate_pairwise_matrix,
+    parse_contact_file,
+    read_matrix,
     )
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, get_engine, read_from_yaml_config
@@ -107,13 +111,13 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error("Several files were not generated:" f" {not_found}")
 
         log.info("Calculating the FCC matrix")
-        parsed_contacts = calc_fcc_matrix.parse_contact_file(
+        parsed_contacts = parse_contact_file(
             contact_file_l,
             False,
         )
 
         # Imporant: matrix is a generator object, be careful with it
-        matrix = calc_fcc_matrix.calculate_pairwise_matrix(
+        matrix = calculate_pairwise_matrix(
             parsed_contacts,
             False,
         )
@@ -129,7 +133,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Cluster
         log.info("Clustering...")
-        pool = cluster_fcc.read_matrix(
+        pool = read_matrix(
             fcc_matrix_f,
             self.params["clust_cutoff"],
             self.params["strictness"],

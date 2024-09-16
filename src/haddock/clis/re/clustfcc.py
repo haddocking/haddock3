@@ -16,6 +16,7 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
+from haddock.libs.libfcc import read_matrix
 from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.libs.libontology import ModuleIO
 from haddock.modules.analysis.clustfcc.clustfcc import (
@@ -134,7 +135,7 @@ def reclustfcc(
     clustfcc_params["plot_matrix"] = plot_matrix
 
     # load the fcc matrix
-    pool = cluster_fcc.read_matrix(
+    pool = read_matrix(
         Path(clustfcc_dir, "fcc.matrix"),
         clustfcc_params["clust_cutoff"],
         clustfcc_params["strictness"],

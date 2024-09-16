@@ -734,7 +734,7 @@ def validate_ncs_params(params: dict) -> None:
     Parameters
     ----------
     params : dict
-        Dictionnary of key/value present in user config file for a module
+        Dictionary of key/value present in user config file for a module
 
     Raises
     ------

@@ -189,6 +189,30 @@ them on the fly.</p>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
+<section id="ligand-param-fname">
+<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand parameter file</div>
+<div class="line"><em>short description</em>: Ligand parameter file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-top-fname">
+<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand topology file</div>
+<div class="line"><em>short description</em>: Ligand topology file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions…) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="mol1">
 <h4>mol1<a class="headerlink" href="#mol1" title="Permalink to this heading"></a></h4>
 <div class="line-block">
@@ -279,30 +303,6 @@ them on the fly.</p>
 <div class="line"><em>short description</em>: The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically set by HADDOCK</div>
 <div class="line"><em>long description</em>: If set to true, HADDOCK will automatically define the protonation state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest electrostatic energy</div>
 <div class="line"><em>group</em>: molecule</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ligand-param-fname">
-<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: ‘’</div>
-<div class="line"><em>type</em>: file</div>
-<div class="line"><em>title</em>: Custom ligand parameter file</div>
-<div class="line"><em>short description</em>: Ligand parameter file in CNS format</div>
-<div class="line"><em>long description</em>: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK</div>
-<div class="line"><em>group</em>: force field</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ligand-top-fname">
-<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: ‘’</div>
-<div class="line"><em>type</em>: file</div>
-<div class="line"><em>title</em>: Custom ligand topology file</div>
-<div class="line"><em>short description</em>: Ligand topology file in CNS format</div>
-<div class="line"><em>long description</em>: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions…) for any ligand not supported by default by HADDOCK</div>
-<div class="line"><em>group</em>: force field</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
@@ -418,7 +418,7 @@ them on the fly.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 13, 2024.
+      <span class="lastupdated">Last updated on Sep 16, 2024.
       </span></p>
   </div>
 

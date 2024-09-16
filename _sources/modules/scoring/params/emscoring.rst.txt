@@ -14,6 +14,28 @@ elecflag
 | *group*: force field
 | *explevel*: easy
 
+ligand_param_fname
+~~~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand parameter file
+| *short description*: Ligand parameter file in CNS format
+| *long description*: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: easy
+
+ligand_top_fname
+~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand topology file
+| *short description*: Ligand topology file in CNS format
+| *long description*: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: easy
+
 
 Expert
 ``````
@@ -63,28 +85,6 @@ individualize
 | *short description*: Treat each model in the PDB ensemble as a separate entity.
 | *long description*: Treat each model in the PDB ensemble as a separate entity. This means that for each a separate topology file will be generated. The models in the ensemble can thus correspond to different molecules.
 | *group*: sampling
-| *explevel*: expert
-
-ligand_param_fname
-~~~~~~~~~~~~~~~~~~
-
-| *default*: ''
-| *type*: file
-| *title*: Custom ligand parameter file
-| *short description*: Ligand parameter file in CNS format
-| *long description*: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
-| *group*: force field
-| *explevel*: expert
-
-ligand_top_fname
-~~~~~~~~~~~~~~~~
-
-| *default*: ''
-| *type*: file
-| *title*: Custom ligand topology file
-| *short description*: Ligand topology file in CNS format
-| *long description*: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
-| *group*: force field
 | *explevel*: expert
 
 nemsteps

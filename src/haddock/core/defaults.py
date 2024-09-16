@@ -14,10 +14,6 @@ from haddock import core_path
 BINARY_DIR = Path(importlib.resources.files(haddock) / "bin")  # type: ignore
 
 cns_exec = Path(resource_filename("haddock", "bin/cns"))
-if not cns_exec.exists():
-    # This means the CNS binary is not in the default location
-    #  and should be set manually in the configuration file
-    cns_exec = None
 
 CONTACT_FCC_EXEC = Path(resource_filename("haddock", "bin/contact_fcc"))
 FAST_RMSDMATRIX_EXEC = Path(resource_filename("haddock", "bin/fast-rmsdmatrix"))

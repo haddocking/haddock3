@@ -266,7 +266,7 @@ class HaddockModule(BaseCNSModule):
                 job = CNSJob(
                     topoaa_input,
                     output_filename,
-                    error_fname,
+                    err_fname,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
                 )

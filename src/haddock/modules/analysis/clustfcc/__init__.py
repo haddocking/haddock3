@@ -83,7 +83,7 @@ class HaddockModule(BaseHaddockModule):
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
-                contact_executable,
+                CONTACT_FCC_EXEC,
                 self.params["contact_distance_cutoff"],
             )
             contact_jobs.append(job)

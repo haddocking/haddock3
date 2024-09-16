@@ -203,7 +203,7 @@ ligand_param_fname:
   long: Ligand parameter file in CNS format containing all force field parameters 
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -212,7 +212,7 @@ ligand_top_fname:
   long: Ligand topology file in CNS format containing the ligand topologies 
     (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 elecflag:
   default: true
   type: boolean

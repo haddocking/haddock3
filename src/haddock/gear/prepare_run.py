@@ -799,18 +799,18 @@ def validate_ncs_params(params: dict) -> None:
     # Validate value of `numncs`
     ncs_suffixes = list(groupped_ncs.keys())
     # Case when number of definition do not match
-    if params["numncs"] != len(ncs_suffixes):
+    if params["nncs"] != len(ncs_suffixes):
         msg = (
-            f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+            f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
             " do not match with the number of defined NCS restraints "
             f"({len(ncs_suffixes)})"
             )
         error_list.append(msg)
     else:
         # Case when numbers do not match
-        if max(ncs_suffixes) != params["numncs"]:
+        if max(ncs_suffixes) != params["nncs"]:
             msg = (
-                f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+                f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
                 " do not match with the number of defined NCS restraints "
                 f"({', '.join([str(s) for s in ncs_suffixes])})"
                 )

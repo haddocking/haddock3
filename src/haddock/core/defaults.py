@@ -14,9 +14,13 @@ from haddock import core_path
 BINARY_DIR = Path(importlib.resources.files(haddock) / "bin")  # type: ignore
 
 cns_exec = Path(resource_filename("haddock", "bin/cns"))
+assert cns_exec.exists()
 
 CONTACT_FCC_EXEC = Path(resource_filename("haddock", "bin/contact_fcc"))
+assert CONTACT_FCC_EXEC.exists()
+
 FAST_RMSDMATRIX_EXEC = Path(resource_filename("haddock", "bin/fast-rmsdmatrix"))
+assert FAST_RMSDMATRIX_EXEC.exists()
 
 MODULE_PATH_NAME = "step_"
 """

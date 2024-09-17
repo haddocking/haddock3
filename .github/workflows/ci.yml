@@ -1,5 +1,5 @@
 ---
-name: tests
+name: ci
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  unit:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,8 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -30,20 +28,27 @@ jobs:
 
       - name: install test dependencies
         run: >-
-          pip install coverage pytest pytest-cov hypothesis pytest-mock
-          fastapi httpx mpi4py
+          pip install coverage pytest pytest-cov hypothesis pytest-mock mypy
+          fastapi==0.110.1 httpx==0.27.0 mpi4py==3.1.6
 
       - name: install haddock3
         run: pip install -v .
 
+      ## Disabled for now until we figure out a good configuration ##
       # - name: check types
       #   run: mypy src/
+      ###############################################################
 
       - name: run tests
         run: >-
           pytest . -x
           --cov --cov-report=term-missing --cov-append
-          --cov-config=.coveragerc --hypothesis-show-statistics
+          --hypothesis-show-statistics
+
+      - name: generate coverage report
+        run: |
+          coverage report
+          coverage xml
 
       - uses: codacy/codacy-coverage-reporter-action@v1
         if: >-

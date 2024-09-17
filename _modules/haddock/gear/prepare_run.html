@@ -667,6 +667,8 @@
         <span class="c1"># Now that existence of the parameter was checked,</span>
         <span class="c1"># it is time to validate the type and value taken by this param</span>
         <span class="n">validate_module_params_values</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="c1"># Validate ncs parameters</span>
+        <span class="n">validate_ncs_params</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># Update parameters with defaults ones</span>
         <span class="n">_missing_defaults</span> <span class="o">=</span> <span class="p">{</span>
@@ -806,6 +808,112 @@
                 <span class="s2">&quot;permitted limit. It should range from &quot;</span>
                 <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;minchars&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;maxchars&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
             <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate_ncs_params"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.prepare_run.html#haddock.gear.prepare_run.validate_ncs_params">[docs]</a><span class="k">def</span> <span class="nf">validate_ncs_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate Non-Crystallographic Symmetry parameters.</span>
+
+<span class="sd">    This is a particular case where:</span>
+<span class="sd">    - ncs_sta1_X == ncs_sta2_X</span>
+<span class="sd">    - ncs_end1_X == ncs_end2_X</span>
+<span class="sd">    - ncs_seg1_X != ncs_seg2_X</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        Dictionary of key/value present in user config file for a module</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ConfigurationError</span>
+<span class="sd">        Issue detected when validating NCS parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Check if ncs_on == False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncs_on&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># Maybe this module do not have ncs parameters, so we skip it</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># At this stage, ncs_on == True</span>
+    <span class="n">base_ncs_param_names</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ncs_sta&quot;</span><span class="p">,</span> <span class="s2">&quot;ncs_end&quot;</span><span class="p">,</span> <span class="s2">&quot;ncs_seg&quot;</span><span class="p">,</span> <span class="p">)</span>
+    <span class="c1"># Read and group ncs parameters together</span>
+    <span class="n">groupped_ncs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">paramname</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Check if this is a ncs parameter</span>
+        <span class="k">if</span> <span class="n">paramname</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span> <span class="ow">in</span> <span class="n">base_ncs_param_names</span><span class="p">:</span>
+            <span class="c1"># Point two interesting values here</span>
+            <span class="n">first_or_second</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">paramname</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">paramname</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># Point param type (&quot;sta&quot;, &quot;end&quot;, or &quot;seg&quot;)</span>
+            <span class="n">param_type</span> <span class="o">=</span> <span class="n">paramname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Point/Create holding dict(s)</span>
+            <span class="n">ncs_group</span> <span class="o">=</span> <span class="n">groupped_ncs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">ncs_type</span> <span class="o">=</span> <span class="n">ncs_group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">param_type</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="c1"># Hold value</span>
+            <span class="n">ncs_type</span><span class="p">[</span><span class="n">first_or_second</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="c1"># Validate them</span>
+    <span class="n">error_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop over number of definitions (_X)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">paramtype_values</span> <span class="ow">in</span> <span class="n">groupped_ncs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Loop over parameter types</span>
+        <span class="k">for</span> <span class="n">paramtype</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">paramtype_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">two_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="c1"># First make sure both are defined !</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">two_values</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Not two values set of `ncs_</span><span class="si">{</span><span class="n">paramtype</span><span class="si">}</span><span class="s2">Y_</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">paramtype</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;sta&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="p">):</span>
+                <span class="c1"># Check they are not similar (wrong!)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">two_values</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Values set of `ncs_</span><span class="si">{</span><span class="n">paramtype</span><span class="si">}</span><span class="s2">Y_</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> must be equal: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;we parsed `</span><span class="si">{</span><span class="n">two_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">` and `</span><span class="si">{</span><span class="n">two_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># paramtype == &quot;seg&quot;</span>
+                <span class="c1"># Check they are similar (wrong!)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Chain/Segment IDs for `ncs_</span><span class="si">{</span><span class="n">paramtype</span><span class="si">}</span><span class="s2">Y_</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> must be &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;different: we parsed `</span><span class="si">{</span><span class="n">two_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">` and&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; `</span><span class="si">{</span><span class="n">two_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Validate value of `numncs`</span>
+    <span class="n">ncs_suffixes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">groupped_ncs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="c1"># Case when number of definition do not match</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;numncs&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ncs_suffixes</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Number of NCS restraints (`numncs = </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;numncs&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">`) &#39;</span>
+            <span class="s2">&quot; do not match with the number of defined NCS restraints &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ncs_suffixes</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+        <span class="n">error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Case when numbers do not match</span>
+        <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">ncs_suffixes</span><span class="p">)</span> <span class="o">!=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;numncs&quot;</span><span class="p">]:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Number of NCS restraints (`numncs = </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;numncs&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">`) &#39;</span>
+                <span class="s2">&quot; do not match with the number of defined NCS restraints &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">ncs_suffixes</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="p">)</span>
+            <span class="n">error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Here we fall into the error case</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Build user message</span>
+        <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Some errors were discovered in the NCS restraints definition:&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># Raise error</span>
+        <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="check_if_modules_are_installed"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.prepare_run.html#haddock.gear.prepare_run.check_if_modules_are_installed">[docs]</a><span class="k">def</span> <span class="nf">check_if_modules_are_installed</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

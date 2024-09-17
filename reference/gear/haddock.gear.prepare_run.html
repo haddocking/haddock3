@@ -449,6 +449,24 @@ its files accordingly to the <cite>–restart</cite> feature.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.prepare_run.validate_ncs_params">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.prepare_run.</span></span><span class="sig-name descname"><span class="pre">validate_ncs_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/prepare_run.html#validate_ncs_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.prepare_run.validate_ncs_params" title="Permalink to this definition"></a></dt>
+<dd><p>Validate Non-Crystallographic Symmetry parameters.</p>
+<p>This is a particular case where:
+- ncs_sta1_X == ncs_sta2_X
+- ncs_end1_X == ncs_end2_X
+- ncs_seg1_X != ncs_seg2_X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary of key/value present in user config file for a module</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../core/haddock.core.exceptions.html#haddock.core.exceptions.ConfigurationError" title="haddock.core.exceptions.ConfigurationError"><strong>ConfigurationError</strong></a> – Issue detected when validating NCS parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.prepare_run.validate_param_range">
 <span class="sig-prename descclassname"><span class="pre">haddock.gear.prepare_run.</span></span><span class="sig-name descname"><span class="pre">validate_param_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/prepare_run.html#validate_param_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.prepare_run.validate_param_range" title="Permalink to this definition"></a></dt>
 <dd><p>Check if provided value is in range/choices defined for this parameter.</p>

@@ -8,7 +8,7 @@ as computational engine.
 
 While CNS is free of use for non-profit users, a proper license is required for commercial applications. 
 Biovia is handling those licenses (<https://www.3ds.com/how-to-buy/contact-sales>). 
-While they officially do not distribute CNS (CNX) anymore, they usally allow the use of the non-profit version 
+While they officially do not distribute CNS (CNX) anymore, they usually allow the use of the non-profit version 
 provided a proper license is purchased for some of their modelling software.
 
 The HADDOCK3 modules using CNS are:

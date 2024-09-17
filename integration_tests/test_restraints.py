@@ -10,8 +10,9 @@ from haddock.modules.sampling.rigidbody import (
     DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG,
 )
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
-from tests import golden_data
-from integration_tests import golden_data as GOLDEN_DATA
+
+from tests import golden_data as testgolden_data
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture
@@ -29,19 +30,19 @@ class MockPreviousIO:
 
     def retrieve_models(self, crossdock: bool = False):
         shutil.copy(
-            Path(golden_data, "e2aP_1F3G_haddock.pdb"),
+            Path(testgolden_data, "e2aP_1F3G_haddock.pdb"),
             Path(".", "e2aP_1F3G_haddock.pdb"),
         )
         shutil.copy(
-            Path(golden_data, "e2aP_1F3G_haddock.psf"),
+            Path(testgolden_data, "e2aP_1F3G_haddock.psf"),
             Path(self.path, "e2aP_1F3G_haddock.psf"),
         )
         shutil.copy(
-            Path(golden_data, "hpr_ensemble_1_haddock.pdb"),
+            Path(testgolden_data, "hpr_ensemble_1_haddock.pdb"),
             Path(self.path, "hpr_ensemble_1_haddock.pdb"),
         )
         shutil.copy(
-            Path(golden_data, "hpr_ensemble_1_haddock.psf"),
+            Path(testgolden_data, "hpr_ensemble_1_haddock.psf"),
             Path(self.path, "hpr_ensemble_1_haddock.psf"),
         )
         model_list = [

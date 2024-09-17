@@ -1,3 +1,4 @@
+---
 name: tests
 
 on:
@@ -28,25 +29,26 @@ jobs:
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install test dependencies
-        run: |
-          python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
-          pip install virtualenv==20.23.0 tox==4.5.1.1
-
-      - name: Print architecture
-        run: echo "Current architecture is ${{ runner.arch }}"
+        run: >-
+          pip install coverage pytest pytest-cov hypothesis pytest-mock
+          fastapi httpx mpi4py
 
       - name: install haddock3 (development mode)
-        run: |
-          python setup.py develop
+        run: python setup.py develop
 
       # - name: check types
       #   run: mypy src/
 
       - name: run tests
-        run: pytest . --cov --cov-report=term-missing --cov-append --cov-config=.coveragerc --hypothesis-show-statistics
+        run: >-
+          pytest .
+          --cov --cov-report=term-missing --cov-append
+          --cov-config=.coveragerc --hypothesis-show-statistics
 
       - uses: codacy/codacy-coverage-reporter-action@v1
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        if: >-
+          ${{ github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository }}
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml

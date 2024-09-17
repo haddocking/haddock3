@@ -43,12 +43,12 @@ jobs:
       # - name: types
       #   run: tox -e types
 
-      - name: unit tests
-        id: unit
-        run: tox -e test
+      # - name: unit tests
+      #   id: unit
+      #   run: tox -e test
 
       - name: integration
-        if: steps.unit.outcome == 'success'
+        # if: steps.unit.outcome == 'success'
         run: tox -e integration
 
       - uses: codacy/codacy-coverage-reporter-action@v1

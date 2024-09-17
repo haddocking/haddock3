@@ -102,9 +102,9 @@ while ($nchain1 < $data.ncomponents) loop nloop1
         do (store5 = $nchain1) (segid $prot_segid_$nchain1)
         display RANDOM AIRS SAMPLED FROM ENTIRE SURFACE FOR MOLECULE $nchain1
     else
-        evaluate ($numseg = abs($nrair_$nchain1))
+        evaluate ($nseg = abs($nrair_$nchain1))
         display RANDOM AIRS SAMPLED FROM SEGMENTS FOR MOLECULE $nchain1
-        while ($fcounter < $numseg) loop Xflex
+        while ($fcounter < $nseg) loop Xflex
             evaluate($fcounter=$fcounter + 1)
             do (store5 = $nchain1) ( resid $rair_sta_$nchain1_$fcounter : $rair_end_$nchain1_$fcounter
                                      and segid $prot_segid_$nchain1)

@@ -284,7 +284,7 @@ def _read_groups_in_user_config(
         A set with the new parameters in the user configuration file
         that are acceptable according to the expandable rules.
     param_name_counts : dict[str, int]
-        Count of expendable parameter parameter name
+        Count of expendable parameter parameter names
     """
     # minimum=1 is used to capture groups with missing parameters
     user_groups = get_user_groups(user_config, minimum=1, reference=False)

@@ -73,7 +73,7 @@ def test_integration_examples():
 def test_validate_cfg_files():
     """Test all the examples configuration files are valid."""
     for cfg_file in examples_cfg_files:
-        assert  validate_cfg_file(cfg_file), f"Error detected in {cfg_file}!"
+        assert validate_cfg_file(cfg_file), f"Error detected in {cfg_file}!"
 
 
 def validate_cfg_file(cfg_file: Path) -> bool:

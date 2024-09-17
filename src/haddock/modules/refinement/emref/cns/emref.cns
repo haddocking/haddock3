@@ -59,7 +59,7 @@ evaluate ($data.kcont=$kcont)
 ! NCS restraints
 evaluate ($data.kncs = $kncs)
 evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
+evaluate ($data.nncs = $nncs)
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)

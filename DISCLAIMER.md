@@ -1,7 +1,7 @@
 # HADDOCK3 DISCLAIMER
 
 The HADDOCK3 software is provided "as is" and without warranties.
-The authors of the software will not be held liable for any use of the HADDOCK package and derivatives/results. 
+The authors of the software will not be held liable for any use of the HADDOCK3 package and derivatives/results. 
 
 Some of HADDOCK3 modules use the CNS software (<http://cns-online.org/v1.3/>) (Crystallography and NMR System) 
 as computational engine.

@@ -330,7 +330,7 @@ def _read_groups_in_user_config(
         # Increment counts for this parameter
         if related_params:
             param_name_counts.setdefault(param_name, 0)
-            param_name_counts[param_name] = int(group_idx)
+            param_name_counts[param_name] += 1
         new.update(related_params)
     return new, param_name_counts
 

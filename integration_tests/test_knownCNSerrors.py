@@ -29,19 +29,19 @@ def gen_random_text():
 
 @pytest.fixture
 def gen_fake_cns_errors(gen_random_text):
-    """Generate directory full of CNS.err file with errors."""
+    """Generate directory full of CNS.cnserr file with errors."""
     with tempfile.TemporaryDirectory("moduleoutputs") as tmp:
         for i, error in enumerate(KNOWN_ERRORS.keys()):
             # Generate an error string in the middle of the file
             error_text = gen_random_text + error + gen_random_text
             # Create two files with same error
             for j in range(1, 3):
-                errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.err")
+                errored_filepath = Path(tmp, f"with_error_cns_{i}_{j}.cnserr")
                 # Write error in a file
                 errored_filepath.write_text(error_text)
             # Create two compressed files with same error
             for j in range(1, 3):
-                errored_gz_file = Path(tmp, f"with_error_cns_{i}_{j}.err.gz")
+                errored_gz_file = Path(tmp, f"with_error_cns_{i}_{j}.cnserr.gz")
                 # Write error in a file
                 with gzip.open(errored_gz_file, mode="wb") as gout:
                     gout.write(bytes(error_text, encoding="utf-8"))

@@ -39,8 +39,8 @@ jobs:
       - name: install HADDOCK
         run: python setup.py develop
 
-      # - name: types
-      #   run: tox -e types
+      - name: types
+         run: tox -e types
 
       - name: unit tests
         id: unit

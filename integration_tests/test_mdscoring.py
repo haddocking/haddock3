@@ -1,20 +1,18 @@
 """integration test for mdscoring module."""
+
+import shutil
 import tempfile
 from pathlib import Path
 
-import pytest
-import shutil
 import pandas as pd
+import pytest
 
-from haddock.modules.scoring.mdscoring import HaddockModule as mdscoringModule
-from haddock.modules.scoring.mdscoring import (
-    DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG)
 from haddock.libs.libontology import PDBFile, TopologyFile
-from haddock.modules.analysis.caprieval.capri import load_contacts
+from haddock.modules.scoring.mdscoring import \
+    DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
+from haddock.modules.scoring.mdscoring import HaddockModule as mdscoringModule
 
-
-from . import has_cns
-from . import golden_data
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture
@@ -23,34 +21,37 @@ def mdscoring_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         mdscoring_module = mdscoringModule(
             order=0, path=Path(tmpdir), initial_params=DEFAULT_MDSCORING_CONFIG
-            )
-        # lower number of steps for faster testing
-        mdscoring_module.params["nemsteps"] = 25
-        mdscoring_module.params["watersteps"] = 25
-        mdscoring_module.params["watercoolsteps"] = 25
-        mdscoring_module.params["waterheatsteps"] = 25
+        )
         yield mdscoring_module
 
 
 class MockPreviousIO:
     """Mock the previous IO module."""
+
     def __init__(self, path):
         self.path = path
 
     def retrieve_models(self, individualize: bool = False):
         shutil.copy(
-            Path(golden_data, "protglyc_complex_1.pdb"),
-            Path(".", "protglyc_complex_1.pdb")
-            )
-        
+            Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
+            Path(self.path, "protglyc_complex_1.pdb"),
+        )
+
+        shutil.copy(
+            Path(GOLDEN_DATA, "protglyc_complex_1.psf"),
+            Path(self.path, "protglyc_complex_1.psf"),
+        )
+
         # add the topology to the models
-        psf_file = Path(golden_data, "protglyc_complex_1.psf")
         model_list = [
             PDBFile(
                 file_name="protglyc_complex_1.pdb",
-                path=".",
-                topology=TopologyFile(psf_file),
+                path=self.path,
+                topology=TopologyFile(
+                    path=self.path,
+                    file_name="protglyc_complex_1.psf",
                 ),
+            ),
         ]
         return model_list
 
@@ -58,8 +59,7 @@ class MockPreviousIO:
         return None
 
 
-@has_cns
-def test_mdscoring_default(mdscoring_module):
+def test_mdscoring_default(mdscoring_module, calc_fnat):
     """Test the mdscoring module."""
     mdscoring_module.previous_io = MockPreviousIO(path=mdscoring_module.path)
     mdscoring_module.run()
@@ -76,12 +76,9 @@ def test_mdscoring_default(mdscoring_module):
     assert df["score"].dtype == float
     # the model should have highly negative score
     assert all(df["score"] < -10)
-    # the model should not be too different from the original.
-    # we calculated fnat with respect to the new structure, that could have new
-    # weird contacts.
-    start_pdb = PDBFile(Path(mdscoring_module.path, "protglyc_complex_1.pdb"))
-    start_contact = load_contacts(start_pdb)
-    end_contact = load_contacts(expected_pdb1)
-    intersection = start_contact & end_contact
-    fnat = len(intersection) / float(len(end_contact))
-    assert fnat > 0.95
+    # the model should have a Fnat close to the starting structure
+    fnat = calc_fnat(
+        model=Path(mdscoring_module.path, "mdscoring_1.pdb"),
+        native=Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
+    )
+    assert fnat == pytest.approx(0.90, abs=0.1)

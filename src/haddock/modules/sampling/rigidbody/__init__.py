@@ -74,7 +74,7 @@ class HaddockModule(BaseCNSModule):
             combination, inp_input, ambig_fname, seed = e
 
             log_fname = f"rigidbody_{idx}.out"
-            err_fname = f"rigidbody_{idx}.err"
+            err_fname = f"rigidbody_{idx}.cnserr"
             output_pdb_fname = f"rigidbody_{idx}.pdb"
 
             # Create a model for the expected output

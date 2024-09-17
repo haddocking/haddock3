@@ -61,7 +61,7 @@ class HaddockModule(CNSScoringModule):
             )
 
             scoring_out = f"mdscoring_{model_num}.out"
-            err_fname = f"mdscoring_{model_num}.err"
+            err_fname = f"mdscoring_{model_num}.cnserr"
 
             # create the expected PDBobject
             expected_pdb = prepare_expected_pdb(model, model_num, ".", "mdscoring")

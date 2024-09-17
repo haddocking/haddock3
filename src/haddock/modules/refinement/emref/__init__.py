@@ -103,7 +103,7 @@ class HaddockModule(BaseCNSModule):
                     seed=model.seed if isinstance(model, PDBFile) else None,
                 )
                 out_file = f"emref_{idx}.out"
-                err_fname = f"emref_{idx}.err"
+                err_fname = f"emref_{idx}.cnserr"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "emref")

@@ -27,7 +27,7 @@ def cns_output_filename() -> Generator[str, None, None]:
 
 @pytest.fixture(name="cns_error_filename")
 def fixture_cns_error_filename() -> Generator[str, None, None]:
-    with tempfile.NamedTemporaryFile(suffix=".err", delete=False) as err_f:
+    with tempfile.NamedTemporaryFile(suffix=".cnserr", delete=False) as err_f:
         yield err_f.name
 
 

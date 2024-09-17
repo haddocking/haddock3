@@ -118,7 +118,7 @@ class HaddockModule(BaseCNSModule):
                 )
 
                 out_file = f"flexref_{idx}.out"
-                err_fname = f"flexref_{idx}.err"
+                err_fname = f"flexref_{idx}.cnserr"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "flexref")

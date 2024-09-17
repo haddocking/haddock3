@@ -33,11 +33,11 @@ cpp_extensions = [
 class CustomBuild(build_ext):
     def run(self):
         print("Building HADDOCK3 C/C++ binary dependencies...")
-        self.build_cpp_executable(
+        self.build_executable(
             "contact_fcc",
             ["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
         )
-        self.build_cpp_executable(
+        self.build_executable(
             "fast-rmsdmatrix",
             [
                 "gcc",
@@ -55,7 +55,7 @@ class CustomBuild(build_ext):
         # Run the standard build_ext
         build_ext.run(self)
 
-    def build_cpp_executable(self, name, cmd):
+    def build_executable(self, name, cmd):
         try:
             subprocess.check_call(cmd)
             bin_dir = os.path.join("src", "haddock", "bin")
@@ -68,11 +68,10 @@ class CustomBuild(build_ext):
 
 
 CNS_BINARIES = {
-    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/o8X7zZezIM3P0cE/download",  # linux
-    "x86_64-darwin": "",  # macOs
-    "arm64-darwin": "",  # Mac M1/M2
-    "aarch64-linux": "",  # linux ARM
-    "armv7l-linux": "",  # 32-bit ARM linux, like raspberryPi
+    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
+    "x86_64-darwin": "https://surfdrive.surf.nl/files/index.php/s/3Fzzte0Zx0L8GTY/download",
+    "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
+    "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
 }
 
 

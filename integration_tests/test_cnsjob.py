@@ -9,7 +9,8 @@ from typing import Generator
 from haddock.gear.known_cns_errors import KNOWN_ERRORS
 from haddock.libs.libsubprocess import CNSJob
 
-from . import golden_data, CNS_EXEC, has_cns
+from integration_tests import GOLDEN_DATA, CNS_EXEC
+
 
 
 @pytest.fixture
@@ -58,16 +59,18 @@ def cnsjob_no_files(
 
 @pytest.fixture
 def cns_seed_filename(cns_output_filename) -> Generator[str, None, None]:
-    yield str(Path(Path(cns_output_filename).stem).with_suffix(".seed"))
+    seed_filename = Path(Path(cns_output_filename).stem).with_suffix(".seed")
+    yield str(seed_filename)
+    seed_filename.unlink(missing_ok=True)
 
 
 @pytest.fixture
 def cns_inp_str(cns_seed_filename, cns_output_pdb_filename):
     yield f"""
 structure
-    @@{golden_data}/prot.psf
+    @@{GOLDEN_DATA}/prot.psf
 end
-coor @@{golden_data}/prot.pdb
+coor @@{GOLDEN_DATA}/prot.pdb
 
 write coordinates format=pdbo output={cns_output_pdb_filename} end
 
@@ -184,6 +187,7 @@ def test_cnsjob_compress_seed(cnsjob, cns_output_pdb_filename, cns_seed_filename
 
     assert Path(f"{cns_seed_filename}.gz").exists()
     assert Path(f"{cns_seed_filename}.gz").stat().st_size > 0
+    Path(f"{cns_seed_filename}.gz").unlink()
 
     assert Path(cns_output_pdb_filename).exists()
     assert Path(cns_output_pdb_filename).stat().st_size > 0

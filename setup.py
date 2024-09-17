@@ -3,9 +3,9 @@
 """Setup dot py."""
 import os
 import platform
-import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from os.path import dirname, join
 from pathlib import Path
@@ -14,6 +14,13 @@ from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 
+
+CNS_BINARIES = {
+    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
+    "x86_64-darwin": "https://surfdrive.surf.nl/files/index.php/s/3Fzzte0Zx0L8GTY/download",
+    "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
+    "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
+}
 
 cpp_extensions = [
     Extension(
@@ -34,12 +41,12 @@ class CustomBuild(build_ext):
     def run(self):
         print("Building HADDOCK3 C/C++ binary dependencies...")
         self.build_executable(
-            "contact_fcc",
-            ["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
+            name="contact_fcc",
+            cmd=["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
         )
         self.build_executable(
-            "fast-rmsdmatrix",
-            [
+            name="fast-rmsdmatrix",
+            cmd=[
                 "gcc",
                 "-Wall",
                 "-O3",
@@ -58,69 +65,64 @@ class CustomBuild(build_ext):
     def build_executable(self, name, cmd):
         try:
             subprocess.check_call(cmd)
-            bin_dir = os.path.join("src", "haddock", "bin")
-            os.makedirs(bin_dir, exist_ok=True)
-            shutil.move(name, os.path.join(bin_dir, name))
+            # Ensure the source bin directory exists
+            src_bin_dir = Path("src", "haddock", "bin")
+            src_bin_dir.mkdir(exist_ok=True, parents=True)
+
+            # Move the built executable to the source bin directory
+            src_bin_exec = Path(src_bin_dir, name)
+            if src_bin_exec.exists():
+                src_bin_exec.unlink()
+
+            self.move_file(name, src_bin_exec)
+
+            # If build_lib exists, also copy to there
+            if hasattr(self, "build_lib"):
+                build_bin_dir = Path(self.build_lib, "haddock", "bin")
+                build_bin_dir.mkdir(exist_ok=True, parents=True)
+                self.copy_file(Path(src_bin_dir, name), Path(build_bin_dir, name))
+
             print(f"Successfully built and moved {name}")
         except subprocess.CalledProcessError as e:
             print(f"Error building {name}: {e}")
             raise
 
 
-CNS_BINARIES = {
-    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
-    "x86_64-darwin": "https://surfdrive.surf.nl/files/index.php/s/3Fzzte0Zx0L8GTY/download",
-    "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
-    "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
-}
-
-
 class CustomInstall(install):
     """Custom class to handle the download of the CNS binary"""
 
     def run(self):
-        """Run the installation"""
-
-        # Run the standard installation
         install.run(self)
 
-        # Get the installation directory
         if self.install_lib is None:
-            print("Something went wrong during installation.")
+            print("Something went wrong during installation")
             sys.exit(1)
-
-        # Set where the cns binary needs to be
-        bin_dir = Path(self.install_lib, "haddock", "bin")
-        bin_dir = Path("src", "haddock", "bin")
-
-        # Create the `bin/` directory
-        bin_dir.mkdir(exist_ok=True)
-
-        # Download the binary
-        cns_exec = Path(bin_dir, "cns")
-        if cns_exec.exists():
-            cns_exec.unlink()
 
         arch = self.get_arch()
 
         if arch not in CNS_BINARIES:
             print(f"Unknown architecture: {arch}")
-            print(
-                "Please set the CNS binary manually inside your configuration file as `cns_exec`",
-            )
-            return
+            sys.exit(1)
 
         cns_binary_url = CNS_BINARIES[arch]
 
+        src_bin_dir = Path("src", "haddock", "bin")
+        src_bin_dir.mkdir(exist_ok=True, parents=True)
+
+        cns_exec = Path(src_bin_dir, "cns")
         status, msg = self.download_file(cns_binary_url, cns_exec)
         if not status:
             print(msg)
-            print(
-                "Please set the CNS binary manually inside your configuration file as `cns_exec`"
-            )
-            return
+            sys.exit(1)
 
+        # Make it executable
         os.chmod(cns_exec, 0o755)
+
+        # check if this is being done via `pip install .`
+        if hasattr(self, "install_lib"):
+            install_bin_dir = Path(self.install_lib, "haddock", "bin")
+            install_bin_dir.mkdir(exist_ok=True, parents=True)
+            self.copy_file(cns_exec, Path(install_bin_dir, "cns"))
 
     @staticmethod
     def download_file(url, dest) -> tuple[bool, str]:

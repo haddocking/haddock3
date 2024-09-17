@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main, installation]
+    # branches: [main, installation]
 
 jobs:
   unit:
@@ -40,7 +40,7 @@ jobs:
         run: python setup.py develop
 
       - name: types
-         run: tox -e types
+        run: tox -e types
 
       - name: unit tests
         id: unit

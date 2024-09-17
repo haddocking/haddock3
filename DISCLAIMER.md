@@ -12,9 +12,10 @@ While they officially do not distribute CNS (CNX) anymore, they usually allow th
 provided a proper license is purchased for some of their modelling software.
 
 The HADDOCK3 modules using CNS are:
+
 - topology modules:
-    - topoaa
-    - topocg
+  - topoaa
+  - topocg
 
 - sampling modules:
   - rigidbody

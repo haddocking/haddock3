@@ -33,6 +33,9 @@ jobs:
           python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
           pip install virtualenv==20.23.0 tox==4.5.1.1
 
+      - name: Print architecture
+        run: echo "Current architecture is ${{ runner.arch }}"
+
       - name: install HADDOCK
         run: python setup.py develop
 

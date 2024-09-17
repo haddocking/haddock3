@@ -29,5 +29,5 @@ The HADDOCK3 modules using CNS are:
   - alascan
 
 Commercial use of any of the above module in a HADDOCK3 workflow will thus require a proper CNS license.
-It is your responsibility as a user to make sure you have such a licence.
+It is your responsibility as a user to make sure you have such a license.
 

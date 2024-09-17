@@ -33,15 +33,15 @@ jobs:
           pip install coverage pytest pytest-cov hypothesis pytest-mock
           fastapi httpx mpi4py
 
-      - name: install haddock3 (development mode)
-        run: python setup.py develop
+      - name: install haddock3
+        run: pip install -v .
 
       # - name: check types
       #   run: mypy src/
 
       - name: run tests
         run: >-
-          pytest .
+          pytest . -x
           --cov --cov-report=term-missing --cov-append
           --cov-config=.coveragerc --hypothesis-show-statistics
 

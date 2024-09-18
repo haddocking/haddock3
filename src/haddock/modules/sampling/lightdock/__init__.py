@@ -48,7 +48,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Check if multiple models are provided
         if len(models) > 1:
-            _msg = "Only one model allowed in LightDock sampling module"
+            _msg = "Only one model is allowed in LightDock sampling module"
             self.finish_with_error(_msg)
 
         model = models[0]

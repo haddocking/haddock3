@@ -132,11 +132,11 @@ class CNSJob:
         self.cns_exec = cns_exec
 
     def __repr__(self) -> str:
-        input_file = self.input_file
+        _input_file = self.input_file
         if isinstance(self.input_file, str):
-            input_file = "IO Stream"
+            _input_file = "IO Stream"
         return (
-            f"CNSJob({input_file}, {self.output_file}, "
+            f"CNSJob({_input_file}, {self.output_file}, "
             f"envvars={self.envvars}, cns_exec={self.cns_exec})"
         )
 
@@ -262,13 +262,12 @@ class CNSJob:
         # Decode end of STDOUT
         # Search in last 24000 characters (300 lines * 80 characters)
         sout = out[-24000:].split(bytes(os.linesep, "utf-8"))
-        print(sout)
-        print(type(sout))
-        print()
         # Reverse loop on lines (read backward)
         for bytes_line in reversed(sout):
             line = bytes_line.decode("utf-8")
-            if "         ^^^^^^^" in line:
+            # This checks for an unknown CNS error
+            # triggered when CNS is about to crash due to internal error
+            if "^^^^^" in line:
                 return True
             # Check if a known error is found
             elif any([error in line for error in KNOWN_CNS_ERRORS.keys()]):

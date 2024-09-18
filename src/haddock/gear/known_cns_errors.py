@@ -74,17 +74,23 @@ def find_cns_errors(cns_out_fpath: FilePath) -> Optional[KnownCNSError]:
     Optional[KnownCNSError]
         An exception for known CNS errors, with its hint on how to solve it!
     """
-    # Check for file extension
+    # Check for file extension to open it the appropriate way
     if Path(cns_out_fpath).suffix == ".gz":
         file_handle = gzip.open(cns_out_fpath, "rb")
     else:
         file_handle = open(cns_out_fpath, "rb")
+    # Read the file
     try:
         _find_cns_errors(file_handle, KNOWN_ERRORS, filepath=cns_out_fpath)
     except KnownCNSError as err:
         return err
     else:
-        return None
+        # return the cause
+        return KnownCNSError(
+            "An unfortunate CNS error occured at exection time...",
+            f"Manually check the file `{cns_out_fpath}` to understand why!",
+            cns_out_fpath,
+            )
 
 
 def _find_cns_errors(

@@ -304,11 +304,7 @@ class BaseHaddockModule(ABC):
             if detected_errors := find_all_cns_errors(self.path):
                 _msg += linesep
                 for error in detected_errors.values():
-                    _msg += (
-                        # f'An error was detected in {len(error["files"])} files'
-                        # f'({",".join(error["files"][:3])}...).{linesep}'
-                        f'{str(error["error"])}{linesep}'
-                        )
+                    _msg += f'{str(error["error"])}{linesep}'
             # Show final error message
             self.finish_with_error(_msg)
 

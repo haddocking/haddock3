@@ -67,6 +67,7 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
         ".out",
         ".out.gz",
         ".job",
+        ".err",
         ]
 
     for extension in files_to_delete:

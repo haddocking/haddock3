@@ -26,17 +26,32 @@ from haddock.core.typing import (
 from haddock.libs.libsubprocess import CNSJob
 
 
-try:
-    from mpi4py import MPI
-except ImportError as e:
-    _msg = (
-        f"{e} - To run this cli you must have mpi4py and "
-        "OpenMPI installed in the system"
-    )
-    sys.exit(_msg)
+# Note! ########################################################################################
+# It's important to not define `MPI` and `COMM` directly but to use the `get_mpi`
+#  function to ensure that the MPI module is only loaded when needed.
+# This is important for testing purposes, and this CLI should further be refactored to not use
+#  global variables.
+MPI = None
+COMM = None
+# Note! ########################################################################################
 
 
-COMM = MPI.COMM_WORLD
+def get_mpi():
+    """Lazy load MPI and COMM."""
+    global MPI, COMM
+    if MPI is None:
+        try:
+            from mpi4py import MPI as _MPI
+
+            MPI = _MPI
+            COMM = MPI.COMM_WORLD
+        except ImportError as e:
+            _msg = (
+                f"{e} - To run this cli you must have mpi4py and "
+                "OpenMPI installed in the system"
+            )
+            sys.exit(_msg)
+    return MPI, COMM
 
 
 def split_tasks(task_l: list[AnyT], n: int) -> list[list[AnyT]]:
@@ -83,6 +98,7 @@ def maincli() -> None:
 
 def main(pickled_tasks: FilePath) -> None:
     """Execute the tasks."""
+    MPI, COMM = get_mpi()
     if COMM.rank == 0:
         with open(pickled_tasks, "rb") as pkl:
             tasks = pickle.load(pkl)

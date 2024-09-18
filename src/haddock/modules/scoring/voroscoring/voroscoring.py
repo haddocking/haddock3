@@ -7,6 +7,8 @@ For more information, please check: https://github.com/kliment-olechnovic/ftdmp
 It is a third party module, and requires the appropriate set up and intallation
 for it to run without issue.
 """
+
+
 import os
 import subprocess
 import glob
@@ -24,8 +26,8 @@ VOROMQA_CFG_TEMPLATE = """#!/bin/bash
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:{GPUID}
-#SBATCH --mem-per-gpu=1GB
+#SBATCH --gres=gpu:1
+#SBATCH -J {JOBNAME}
 
 # Where to do the work
 WORKDIR="{WORKDIR}"
@@ -154,6 +156,7 @@ class VoroMQA():
             CONDA_INSTALL_DIR=self.params["conda_install_dir"],
             CONDA_ENV_NAME=self.params["conda_env_name"],
             FTDMP_INSTALL_DIR=self.params["ftdmp_install_dir"],
+            JOBNAME=f'hd3_voro_b{batch_index}',
             GPUID=gpuid,
             WORKDIR=batch_workdir,
             PDB_LIST_PATH=pdb_files_list_path,

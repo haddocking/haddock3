@@ -1,4 +1,5 @@
 """HADDOCK3 modules."""
+
 import re
 from abc import ABC, abstractmethod
 from contextlib import contextmanager, suppress
@@ -18,11 +19,11 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     Union,
-    )
+)
 from haddock.gear import config
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.parameters import config_mandatory_general_parameters
-from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.yaml2cfg import read_from_yaml_config, find_incompatible_parameters
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
@@ -39,7 +40,7 @@ modules_category = {
     module.name: category.name
     for category in modules_folder.glob(_folder_match_regex)
     for module in category.glob(_folder_match_regex)
-    }
+}
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
 
@@ -52,7 +53,7 @@ category_hierarchy = [
     "scoring",
     "analysis",
     "extras",
-    ]
+]
 
 # this dictionary defines non-mandatory general parameters that can be defined
 # as global parameters thus affect all modules, or, instead, can be defined per
@@ -60,17 +61,20 @@ category_hierarchy = [
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = read_from_yaml_config(modules_defaults_path)  # noqa : E501
+non_mandatory_general_parameters_defaults = read_from_yaml_config(
+    modules_defaults_path
+)  # noqa : E501
+
+incompatible_defaults_params = find_incompatible_parameters(modules_defaults_path)
 
 config_readers = {
     ".yaml": read_from_yaml_config,
     ".cfg": config.load,
-    }
+}
 
 _step_folder_regex = tuple(
-    r"[0-9]+_" + mod_name
-    for mod_name in modules_category.keys()
-    )
+    r"[0-9]+_" + mod_name for mod_name in modules_category.keys()
+)
 step_folder_regex = "(" + "|".join(_step_folder_regex) + ")"
 """
 String for regular expression to match module folders in a run directory.
@@ -100,7 +104,7 @@ def _not_valid_config() -> Generator[None, None, None]:
         emsg = (
             "The configuration file extension is not supported. "
             f"Supported types are {', '.join(config_readers.keys())}."
-            )
+        )
         raise ConfigurationError(emsg) from err
 
 
@@ -144,10 +148,10 @@ class BaseHaddockModule(ABC):
         self.update_params(**self._original_params)
 
     def update_params(
-            self,
-            update_from_cfg_file: Optional[FilePath] = None,
-            **params: Any,
-            ) -> None:
+        self,
+        update_from_cfg_file: Optional[FilePath] = None,
+        **params: Any,
+    ) -> None:
         """
         Update the modules parameters.
 
@@ -180,9 +184,8 @@ class BaseHaddockModule(ABC):
         """
         if update_from_cfg_file and params:
             _msg = (
-                "You can not provide both `update_from_cfg_file` "
-                "and key arguments."
-                )
+                "You can not provide both `update_from_cfg_file` " "and key arguments."
+            )
             raise TypeError(_msg)
 
         if update_from_cfg_file:
@@ -193,7 +196,7 @@ class BaseHaddockModule(ABC):
         # the updating order is relevant
         _n = recursive_dict_update(
             non_mandatory_general_parameters_defaults, self._params
-            )
+        )
         self._params = recursive_dict_update(_n, params)
         self._fill_emptypaths()
         self._confirm_fnames_exist()
@@ -226,8 +229,7 @@ class BaseHaddockModule(ABC):
         return
 
     @abstractmethod
-    def _run(self) -> None:
-        ...
+    def _run(self) -> None: ...
 
     def run(self, **params: Any) -> None:
         """Execute the module."""
@@ -285,17 +287,17 @@ class BaseHaddockModule(ABC):
         io.add(self.previous_io.output, "i")
         # add the output models
         io.add(self.output_models, "o")
+        # Removes un-generated outputs and compute percentage of ungenerated
+        faulty = io.check_faulty()
         # Save outputs
         io.save()
         # Check if number of generated outputs is under the tolerance threshold
-        faulty = io.check_faulty()
         if faulty > faulty_tolerance:
             _msg = (
                 f"{faulty:.2f}% of output was not generated for this module "
                 f"and tolerance was set to {faulty_tolerance:.2f}%."
-                )
+            )
             self.finish_with_error(_msg)
-        
 
     def finish_with_error(self, reason: object = "Module has failed.") -> None:
         """Finish with error message."""
@@ -306,9 +308,9 @@ class BaseHaddockModule(ABC):
             raise RuntimeError(reason)
 
     def _load_previous_io(
-            self,
-            filename: FilePath = MODULE_IO_FILE,
-            ) -> ModuleIO:
+        self,
+        filename: FilePath = MODULE_IO_FILE,
+    ) -> ModuleIO:
         if self.order == 0:
             self._num_of_input_molecules = 0
             return ModuleIO()
@@ -336,10 +338,7 @@ class BaseHaddockModule(ABC):
     @staticmethod
     def last_step_folder(folders, index):
         """Retrieve last step folder."""
-        with_ind = [
-            folder for folder in folders
-            if int(folder.split('_')[0]) == index
-            ]
+        with_ind = [folder for folder in folders if int(folder.split("_")[0]) == index]
         nb_with_ind = len(with_ind)
         # No matching index
         if nb_with_ind == 0:
@@ -350,7 +349,7 @@ class BaseHaddockModule(ABC):
         # Case of multiple matching index
         else:
             for folder in with_ind:
-                if folder.split('_')[-1] != INTERACTIVE_RE_SUFFIX:
+                if folder.split("_")[-1] != INTERACTIVE_RE_SUFFIX:
                     return folder
             return with_ind[0]
 
@@ -388,9 +387,9 @@ EngineMode = Literal["batch", "local", "mpi"]
 
 
 def get_engine(
-        mode: str,
-        params: dict[Any, Any],
-        ) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
+    mode: str,
+    params: dict[Any, Any],
+) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
     """
     Create an engine to run the jobs.
 
@@ -412,14 +411,14 @@ def get_engine(
             target_queue=params["queue"],
             queue_limit=params["queue_limit"],
             concat=params["concat"],
-            )
+        )
 
     elif mode == "local":
         return partial(  # type: ignore
             Scheduler,
             ncores=params["ncores"],
             max_cpus=params["max_cpus"],
-            )
+        )
     elif mode == "mpi":
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
 
@@ -428,13 +427,13 @@ def get_engine(
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"
-            )
+        )
 
 
 def get_module_steps_folders(
-        folder: FilePath,
-        modules: Optional[Container[int]] = None,
-        ) -> list[str]:
+    folder: FilePath,
+    modules: Optional[Container[int]] = None,
+) -> list[str]:
     """
     Return a sorted list of the step folders in a running directory.
 
@@ -467,16 +466,18 @@ def get_module_steps_folders(
     steps = sorted(
         (f for f in folders if step_folder_regex_re.search(f)),
         key=lambda x: int(x.split("_")[0]),
-        )
+    )
     if modules:
         steps = [
             st
             for st in steps
-            if all([
-                int(st.split("_")[0]) in modules,
-                st.split("_")[1] in modules_names,
-                ])
-            ]
+            if all(
+                [
+                    int(st.split("_")[0]) in modules,
+                    st.split("_")[1] in modules_names,
+                ]
+            )
+        ]
     return steps
 
 

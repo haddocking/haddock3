@@ -11,14 +11,14 @@ receptor_chain:
   explevel: easy
 
 ligand_chains:
-  default: ["B"]
+  default: []
   type: list
   minitems: 0
   maxitems: 100
   title: Ligand ChainIDs
   short: Ligand ChainIDs to be considered for the IL-RMSD calculations.
   long: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be
-    treated as the ligand for the IL-RMSD.
+    treated as the ligand for the IL-RMSD. By default, all chains are considered with the exception of the receptor chain.
   group: analysis
   explevel: easy
 
@@ -53,5 +53,19 @@ allatoms:
   short: Atoms to be considered during the analysis.
   long: Atoms to be considered during the analysis. If false (default), only
         backbone atoms will be considered, otherwise all the heavy-atoms.
+  group: analysis
+  explevel: easy
+
+contact_distance_cutoff:
+  default: 5.0
+  type: float
+  min: 0.1
+  max: 30.0
+  precision: 3
+  title: Distance cutoff defining a contact.
+  short: Cutoff distance (in Angstrom) defining a contact.
+  long: Distance (in Angstrom) cutoff defining a contact. Any atoms within this
+        cutoff range will be used to define the interface. Standard values are 
+        usually 3.9 A or 5.0 A.
   group: analysis
   explevel: easy

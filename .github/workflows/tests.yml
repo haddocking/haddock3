@@ -27,6 +27,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
+
       - name: install dependencies
         run: |
           python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
@@ -55,6 +60,7 @@ jobs:
         run: tox -e test
 
       - uses: codacy/codacy-coverage-reporter-action@v1
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
@@ -76,6 +82,11 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install dependencies
         run: |

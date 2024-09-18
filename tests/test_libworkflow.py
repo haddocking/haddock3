@@ -14,6 +14,8 @@ def test_WorkflowManager(caplog):
             'molecules': ['fake.pdb'],
             'clean': True,
             'offline': False,
+            'mode': "local",
+            'ncores': 2,
             }
         }
     with tempfile.TemporaryDirectory(dir=".") as _tmpdir:

@@ -42,8 +42,8 @@ min_population:
 clust_cutoff:
   default: 7.5
   type: float
-  min: 1
-  max: 9999
+  min: 0.1
+  max: 100
   precision: 3
   title: Clustering cutoff distance
   short: Value of cutoff cophenetic distance. 

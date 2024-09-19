@@ -36,10 +36,11 @@ feedback_urls = {
 
 
 DISCLAIMER = (
-    "Some of the HADDOCK3 components use CNS (Crystallographic and NMR System) which is"
-    "free of use for non-profit applications. For commercial use it is your own responsibility"
-    "to have a proper license. For details refer to the "
-    " DISCLAIMER file in the HADDOCK3 repository."
+    "!! Some of the HADDOCK3 components use CNS (Crystallographic and NMR System)"
+    f" which is free of use for non-profit applications. !!{os.linesep}"
+    "!! For commercial use it is your own responsibility"
+    f" to have a proper license. !!{os.linesep}"
+    "!! For details refer to the DISCLAIMER file in the HADDOCK3 repository. !!"
 )
 
 

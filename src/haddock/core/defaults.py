@@ -1,19 +1,31 @@
 """All default parameters used by the framework."""
 
 import importlib.resources
+import os
 import string
+import sys
 from pathlib import Path
 
 import yaml
 from pkg_resources import resource_filename
 
 import haddock
-from haddock import core_path
+from haddock import core_path, log
 
 
 BINARY_DIR = Path(importlib.resources.files(haddock) / "bin")  # type: ignore
 
-cns_exec = Path(resource_filename("haddock", "bin/cns"))
+cns_exec = Path(resource_filename("haddock", "bin/cns_"))
+if not cns_exec.exists():
+    log.warning("CNS executable not found at %s", cns_exec)
+    _cns_exec = os.environ.get("CNS_EXEC")
+    if _cns_exec is None:
+        log.error(
+            "Please define the location the CNS binary by setting a CNS_EXEC system variable"
+        )
+        sys.exit(1)
+    else:
+        cns_exec = Path(_cns_exec)
 
 CONTACT_FCC_EXEC = Path(resource_filename("haddock", "bin/contact_fcc"))
 FAST_RMSDMATRIX_EXEC = Path(resource_filename("haddock", "bin/fast-rmsdmatrix"))

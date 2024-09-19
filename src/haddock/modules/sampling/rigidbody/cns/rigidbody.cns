@@ -27,7 +27,6 @@ evaluate ($saprotocol.crossdock=$crossdock)
 evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.rigidtrans=$rigidtrans)
 evaluate ($saprotocol.ntrials=$ntrials)
-evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.inter_rigid=$inter_rigid)
 evaluate ($saprotocol.rotate180=$rotate180)
 
@@ -87,8 +86,8 @@ evaluate ($Data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_scale=$amb_scale)
-evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.ambig_scale=$ambig_scale)
+evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
 
@@ -122,11 +121,6 @@ while ($nmol1 <=$data.ncomponents) loop mol1
     evaluate ($nmol1 = $nmol1 + 1)
 end loop mol1
 
-
-! Restraints
-evaluate ($npart = $npart)
-
-
 ! Unsupported restraints
 evaluate ($Data.flags.cdih = false)
 evaluate ($Data.flags.em   = false)
@@ -156,24 +150,6 @@ end
 
 flag include bond angle impr vdw end
 
-if ($Data.randremoval eq true) then
-    evaluate ($npart = 1 + mod($count,$Data.npart))
-    evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-    set display=$fileseed end
-    display module(seed;npart)
-    display define (
-    display currentseed = $seed;
-    display currentpart = $npart;
-    display )
-    display evaluate (&seed=&currentseed)
-    display evaluate (&npart=&currentpart)
-    close $fileseed end
-else
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-end if
-set seed $seed end
-
 do (refx=x) (all)
 do (refy=y) (all)
 do (refz=z) (all)
@@ -183,17 +159,22 @@ set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_noes.cns  ! rigidbody version with only distance restraints support
 
+{* random removal of restaints ================================== *}
+if ($Data.randremoval eq true) then
+    noe cv $npart ? end
+end if
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
 {* set distance restraint energy flag =========================== *}
 if ($Data.flags.noe  =  TRUE) then
      flags include noe end
-end if
-
-{* random removal of restaints ================================== *}
-if ($Data.randremoval eq true) then
-    set message=on echo=on end
-    noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 {* ============================================================== *}
@@ -286,9 +267,11 @@ if ($Data.ranair eq true) then
     @MODULE:randomairs.cns
 
     !Read back in hbond data
-    fileexist $hbond_fname end
-    if ($result eq true) then
-        noe @@$hbond_fname end
+    if ($hbond_fname # "") then
+        fileexist $hbond_fname end
+        if ($result eq true) then
+            noe @@$hbond_fname end
+        end if
     end if
 
     noe
@@ -341,7 +324,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
         @MODULE:random_rotations.cns
     end if
 
-    evaluate ($unamb_scale = 1.0)
+    evaluate ($unambig_scale = 1.0)
     evaluate ($ambig_scale = 1.0)
     evaluate ($hbond_scale = 1.0)
     evaluate ($symm_scale = 1.0)
@@ -349,7 +332,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
     evaluate ($surf_scale = 0.0)
 
     noe
-        scale dist $unamb_scale
+        scale dist $unambig_scale
         scale ambi $ambig_scale
         scale hbon $hbond_scale
         scale symm $symm_scale
@@ -392,13 +375,13 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             flag include elec end
         end if
 
-        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_scale))
-        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_scale))
+        evaluate ($unambig_scale = min(($unambig_scale * 2),$Data.unambig_scale))
+        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.ambig_scale))
         evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_scale))
         evaluate ($symm_scale = min(($symm_scale * 2),$Data.ksym))
 
         noe
-            scale dist $unamb_scale
+            scale dist $unambig_scale
             scale ambi $ambig_scale
             scale hbon $hbond_scale
             scale symm $symm_scale
@@ -406,7 +389,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     end loop rigmin
 
-    evaluate ($unamb_scale_store = $unamb_scale)
+    evaluate ($unambig_scale_store = $unambig_scale)
     evaluate ($ambig_scale_store = $ambig_scale)
     evaluate ($hbond_scale_store = $hbond_scale)
     evaluate ($symm_scale_store = $symm_scale)
@@ -418,8 +401,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     if ($SaProtocol.rigidtrans eq true) then
 
-        evaluate ($cont_scale = $Data.kcm)
-        evaluate ($surf_scale = $Data.ksurf)
+        evaluate ($cont_scale = $data.kcm)
+        evaluate ($surf_scale = $data.ksurf)
         noe
             scale contact $cont_scale
             scale surface $surf_scale
@@ -516,7 +499,7 @@ end if
 energy end
 
 evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
-evaluate ($eintfree = $eintcplx) 
+evaluate ($eintfree = $eintcplx)
 {* at this stage the two are similar since rigid-body EM only *}
 
 {* =========================== write out structure after rigid body refinement *}
@@ -545,28 +528,21 @@ if ($Data.flags.sym eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read again the NOE data, needed to remove the symmetry restraints
     inline @@MODULE:read_noes.cns
-    if ( $log_level = "verbose" ) then
-        set message=normal echo=on end
-    elseif ( $log_level = "normal" ) then
-        set message=normal echo=off end
-    else
-        set message=off echo=off end
+    !random removal of restaints
+    if ($Data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
     end if
 else
-    if ($Data.randremoval eq true) then
-        set message=on echo=on end
-        noe cv $ncvbest ? end
-    end if
-    if ( $log_level = "verbose" ) then
-        set message=normal echo=on end
-    elseif ( $log_level = "normal" ) then
-        set message=normal echo=off end
-    else
-        set message=off echo=off end
-    end if
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
@@ -576,14 +552,14 @@ else
     end if
 end if
 
-evaluate ($unamb_scale = $Data.unamb_scale)
-evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($unambig_scale = $Data.unambig_scale)
+evaluate ($ambig_scale = $Data.ambig_scale)
 evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe
-    scale dist $unamb_scale
+    scale dist $unambig_scale
     scale ambi $ambig_scale
-    scale hbon 0.0
+    scale hbon $hbond_scale
     scale cont 0.0
 end
 

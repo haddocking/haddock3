@@ -14,17 +14,12 @@ Four parameters can be defined in this context:
   the dendrogram
 * `criterion`: defines the prescription to cut the dendrogram and obtain the
   desired clusters
-* `tolerance`:
-    * if `criterion` is ``maxclust``, this is the number of desired
-      clusters.
-    * if `criterion` is ``distance``, it must be the value of
-      distance that separates distinct clusters.
-      
-  If not specified, the default is calculated either as the total number of
-  models divided by four (`maxclust`) or as the average of the dendrogram height
-  (`distance`)
-* `threshold` : analogously to the `clustfcc` module, it is the minimum number
-  of models that should be present in a cluster to consider it
+* `n_clusters`: number of desired clusters (if `criterion` is `maxclust`).
+* `clust_cutoff`: value of distance that separates distinct clusters (if `criterion` is
+  ``distance``)
+* `min_population` : analogously to the `clustfcc` module, it is the minimum number
+  of models that should be present in a cluster to consider it. If criterion is
+  `maxclust`, the value is ignored.
 
 This module passes the path to the RMSD matrix is to the next step of the
 workflow through the `rmsd_matrix.json` file, thus allowing to execute several
@@ -33,26 +28,34 @@ matrix.
 
 .. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
 """  # noqa: E501
-import os
 from pathlib import Path
 
-import numpy as np
-
 from haddock import log
-from haddock.libs.libclust import write_structure_list
+from haddock.core.defaults import MODULE_DEFAULT_YAML
+from haddock.core.typing import Union
+from haddock.libs.libclust import (
+    add_cluster_info,
+    clustrmsd_tolerance_params,
+    get_cluster_matrix_plot_clt_dt,
+    plot_cluster_matrix,
+    rank_clusters,
+    write_structure_list,
+    )
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
-    get_cluster_center,
     get_clusters,
     get_dendrogram,
-    iterate_threshold,
+    get_matrix_path,
+    iterate_min_population,
+    order_clusters,
     read_matrix,
+    write_clusters,
+    write_clustrmsd_file,
     )
 
-
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -60,158 +63,125 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(
+            self,
+            order: int,
+            path: Path,
+            initial_params: Union[Path, str] = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
+
         # Cluster
-        rmsd_matrix = read_matrix(
-            self.matrix_json.input[0]
-            )
+        rmsd_matrix = read_matrix(self.matrix_json.input[0])
         # loading parameters
-        linkage_type = self.params["linkage"]
-        crit = self.params["criterion"]
-        threshold = self.params['threshold']
-        
+        min_population = self.params["min_population"]
+
         # getting clusters_list
-        dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
-        # setting tolerance
-        if np.isnan(self.params["tolerance"]):
-            self.log("tolerance is not defined")
-            if crit == "maxclust":
-                tol = max(len(models) // 4 + 1, 2)
-            else:
-                tol = np.mean(dendrogram[:, 2])
-            self.log(f"Setting tolerance to {tol:.2f} for criterion {crit}")
-        else:
-            if crit == "maxclust":
-                tol = int(self.params["tolerance"])
-            elif crit == "distance":
-                tol = float(self.params["tolerance"])
-            else:
-                raise Exception(f"unknown criterion {crit}")
-        log.info(f"tolerance {tol}")
-        cluster_arr = get_clusters(dendrogram, tol, crit)
+        dendrogram = get_dendrogram(rmsd_matrix, self.params["linkage"])
 
-        # when crit == distance, apply clustering threshold
-        if crit == "distance":
-            cluster_arr = iterate_threshold(cluster_arr, threshold)
+        # adjust the parameters
+        tolerance_param_name, tolerance = clustrmsd_tolerance_params(
+            self.params,
+            )
+        
+        log.info(
+            f"Clustering with {tolerance_param_name} = {tolerance}, "
+            f"and criterion {self.params['criterion']}"
+            )
+        
+        cluster_arr = get_clusters(
+            dendrogram,
+            tolerance,
+            self.params["criterion"],
+            )
 
-        # print clusters
-        unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
-        clusters = [c for c in unq_clusters if c != -1]
+        # when crit == distance, apply clustering min_population
+        if self.params['criterion'] == "distance":
+            cluster_arr, min_population = iterate_min_population(
+                cluster_arr,
+                self.params['min_population'],
+                )
+            self.params['min_population'] = min_population
+        
+        clusters, cluster_arr = order_clusters(cluster_arr)
         log.info(f"clusters = {clusters}")
         
-        # initialising cluster centers
-        n_obs = len(cluster_arr)
-        cluster_centers = {}
-        # preparing output
-        clt_dic = {}
-        log.info('Saving output to cluster.out')
-        cluster_out = Path('cluster.out')
-        with open(cluster_out, 'w') as fh:
-            for cl_id in clusters:
-                if cl_id != -1:
-                    npw = np.where(cluster_arr == cl_id)[0]
-                    clt_dic[cl_id] = [models[n] for n in npw]
-                    fh.write(f"Cluster {cl_id} -> ")
-                    clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
-                    cluster_centers[cl_id] = models[clt_center].file_name
-                    for el in npw[:-1]:
-                        fh.write(f"{el + 1} ")
-                    fh.write(f"{npw[-1] + 1}")
-                    fh.write(os.linesep)
-        # rank the clusters
-        score_dic = {}
-        for clt_id in clt_dic:
-            score_l = [p.score for p in clt_dic[clt_id]]
-            score_l.sort()
-            denom = float(min(threshold, len(score_l)))
-            top4_score = sum(score_l[:threshold]) / denom
-            score_dic[clt_id] = top4_score
-        
-        sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
+        out_filename = Path('cluster.out')
+        clt_dic, cluster_centers = write_clusters(
+            clusters,
+            cluster_arr,
+            models,
+            rmsd_matrix,
+            out_filename,
+            centers=True,
+            )
 
-        # Add this info to the models
-        self.output_models = []
-        for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-            cluster_id, _ = _e
-            # sort the models by score
-            clt_dic[cluster_id].sort()
-            # rank the models
-            for model_ranking, pdb in enumerate(clt_dic[cluster_id],
-                                                start=1):
-                pdb.clt_id = int(cluster_id)
-                pdb.clt_rank = cluster_rank
-                pdb.clt_model_rank = model_ranking
-                self.output_models.append(pdb)
+        # ranking clusters
+        score_dic, sorted_score_dic = rank_clusters(
+            clt_dic,
+            self.params['min_population'],
+            )
+
+        self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
         
         # Write unclustered structures
-        write_structure_list(models,
-                             self.output_models,
-                             out_fname="clustrmsd.tsv")
-
-        # Prepare clustrmsd.txt
-        output_fname = Path('clustrmsd.txt')
-        output_str = f'### clustrmsd output ###{os.linesep}'
-        output_str += os.linesep
-        output_str += f'Clustering parameters {os.linesep}'
-        output_str += f"> linkage_type={linkage_type}{os.linesep}"
-        output_str += f"> criterion={crit}{os.linesep}"
-        output_str += f"> tolerance={tol:.2f}{os.linesep}"
-        output_str += f"> threshold={threshold}{os.linesep}"
-        output_str += os.linesep
+        write_structure_list(
+            models,
+            self.output_models,
+            out_fname="clustrmsd.tsv",
+            )  # type: ignore
         
-        output_str += (
-            f"-----------------------------------------------{os.linesep}")
-        output_str += os.linesep
-        output_str += f'Total # of clusters: {len(clusters)}{os.linesep}'
-        for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-            cluster_id, _ = _e
-            
-            model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
-            model_score_l.sort()
-            top_score = score_dic[cluster_id]
+        write_clustrmsd_file(
+            clusters,
+            clt_dic,
+            cluster_centers,
+            score_dic,
+            sorted_score_dic,
+            self.params,
+            )
 
-            output_str += (
-                f"{os.linesep}"
-                "-----------------------------------------------"
-                f"{os.linesep}"
-                f"Cluster {cluster_rank} (#{cluster_id}, "
-                f"n={len(model_score_l)}, "
-                f"top{threshold}_avg_score = {top_score:.2f})"
-                f"{os.linesep}")
-            output_str += os.linesep
-            output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
-            for model_ranking, element in enumerate(model_score_l, start=1):
-                score, pdb = element
-                # is the model the cluster center?
-                if pdb.file_name == cluster_centers[cluster_id]:
-                    output_str += (
-                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
-                        f"{os.linesep}")
-                else:
-                    output_str += (
-                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                        f"{os.linesep}")
-        output_str += (
-            "-----------------------------------------------"
-            f"{os.linesep}")
-        log.info('Saving detailed output to clustrmsd.txt')
-        with open(output_fname, 'w') as out_fh:
-            out_fh.write(output_str)
+        # Draw the matrix
+        if self.params['plot_matrix']:
+            # Obtain final models indices
+            final_order_idx, labels, cluster_ids = [], [], []
+            for pdb in self.output_models:
+                final_order_idx.append(models.index(pdb))
+                labels.append(pdb.file_name.replace('.pdb', ''))
+                cluster_ids.append(pdb.clt_id)
+            # Get custom cluster data
+            matrix_cluster_dt, cluster_limits = get_cluster_matrix_plot_clt_dt(
+                cluster_ids
+                )
 
-        self.export_output_models()
+            # Define output filename
+            html_matrix_basepath = 'rmsd_matrix'
+            # Plot matrix
+            html_matrixpath = plot_cluster_matrix(
+                get_matrix_path(self.matrix_json.input[0]),
+                final_order_idx,
+                labels,
+                dttype='RMSD(Å)',
+                reverse=True,
+                diag_fill=0,
+                output_fname=html_matrix_basepath,
+                matrix_cluster_dt=matrix_cluster_dt,
+                cluster_limits=cluster_limits,
+                )
+            log.info(f"Plotting matrix in {html_matrixpath}")
+
+        self.export_io_models()
         # sending matrix to next step of the workflow
         matrix_io = ModuleIO()
         matrix_io.add(self.matrix_json.input[0])

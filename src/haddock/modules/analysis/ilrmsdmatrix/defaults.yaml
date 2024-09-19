@@ -1,0 +1,71 @@
+receptor_chain:
+  default: A
+  type: string
+  minchars: 1
+  maxchars: 1
+  title: Receptor ChainID
+  short: Receptor ChainID to be considered for the RMSD calculations.
+  long: Receptor ChainID to be considered for the RMSD calculations. This determines which chain will be
+    treated as the receptor for the L-RMSD and for I-L-RMSD.
+  group: analysis
+  explevel: easy
+
+ligand_chains:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: Ligand ChainIDs
+  short: Ligand ChainIDs to be considered for the IL-RMSD calculations.
+  long: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be
+    treated as the ligand for the IL-RMSD. By default, all chains are considered with the exception of the receptor chain.
+  group: analysis
+  explevel: easy
+
+max_models:
+  default: 10000
+  type: integer
+  min: 1
+  max: 20000
+  title: Maximum number of models
+  short: Maximum number of models to be considered when calculating the matrix.
+  long: Maximum number of models to be considered when calculating the matrix. If the number of models in the input file is larger than
+    this number, the execution will be aborted.
+  group: analysis
+  explevel: guru
+
+atom_similarity:
+  default: 90.0
+  type: float
+  min: 10.0
+  max: 100.0
+  precision: 3
+  title: Required atom similarity
+  short: Required similarity (in %) between the number of atoms in the input models.
+  long: Required similarity (in %) between the number of atoms in the input models. If the similarity is higher than this value, the RMSD calculation is performed on the common atoms. Otherwise, the calculation is stopped. The lower the value the looser the checks.
+  group: analysis
+  explevel: easy
+
+allatoms:
+  default: false
+  type: boolean
+  title: Atoms to be considered during the analysis.
+  short: Atoms to be considered during the analysis.
+  long: Atoms to be considered during the analysis. If false (default), only
+        backbone atoms will be considered, otherwise all the heavy-atoms.
+  group: analysis
+  explevel: easy
+
+contact_distance_cutoff:
+  default: 5.0
+  type: float
+  min: 0.1
+  max: 30.0
+  precision: 3
+  title: Distance cutoff defining a contact.
+  short: Cutoff distance (in Angstrom) defining a contact.
+  long: Distance (in Angstrom) cutoff defining a contact. Any atoms within this
+        cutoff range will be used to define the interface. Standard values are 
+        usually 3.9 A or 5.0 A.
+  group: analysis
+  explevel: easy

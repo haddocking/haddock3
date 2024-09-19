@@ -30,12 +30,14 @@ See examples in ``examples/docking-protein-protein/*-exit-test.cfg`` files.
 import shutil
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.exceptions import HaddockTermination
+from haddock.core.typing import Any, FilePath
 from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -45,20 +47,20 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(
             self,
-            order,
-            path,
-            *ignore,
-            init_params=DEFAULT_CONFIG,
-            **everything,
-            ):
+            order: int,
+            path: Path,
+            *ignore: Any,
+            init_params: FilePath = DEFAULT_CONFIG,
+            **everything: Any,
+            ) -> None:
         super().__init__(order, path, init_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         # removes the `exit` step folder
         self.log(self.params["message"])
         shutil.rmtree(Path.cwd())

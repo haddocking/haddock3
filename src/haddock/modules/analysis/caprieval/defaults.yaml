@@ -36,7 +36,7 @@ lrmsd:
   title: Calculate L-RMSD
   short: Performs Ligand RMSD calculations.
   long: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing
-    the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chain parameter). 
+    the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chains parameter). 
     Superposition and RMSD calculations are done on backbone heavy atoms.
   group: analysis
   explevel: easy
@@ -48,7 +48,7 @@ ilrmsd:
   short: Performs Interface Ligand RMSD calculations.
   long: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target
         on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms 
-        of the ligand (defined by the ligand_chain parameter).
+        of the ligand (defined by the ligand_chains parameter).
   group: analysis
   explevel: easy
 
@@ -59,6 +59,20 @@ dockq:
   short: Evaluate DockQ.
   long: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI criteria, 
         a combination of i-RMSD, l-RMSD and FNAT value. For details check the DockQ publication `DOI:10.1371/journal.pone.0161879`
+  group: analysis
+  explevel: easy
+
+global_rmsd:
+  default: true
+  type: boolean
+  title: Calculate global RMSD
+  short: Calculate full structure RMSD.
+  long: Compute full structure RMSD between reference structure and the model
+        after superimposition. Note that a sequence alignment is performed to
+        obtain the mapping between the reference and the model. If the one of
+        the structure contain a 'small-molecule', we assume that the compared
+        structure atoms are in the same order. With default parameters `allatoms = false`, only
+        backbone RMSD will be computed.
   group: analysis
   explevel: easy
 
@@ -98,14 +112,14 @@ receptor_chain:
   group: analysis
   explevel: easy
 
-ligand_chain:
-  default: B
-  type: string
-  minchars: 1
-  maxchars: 1
-  title: Ligand ChainID
-  short: Ligand ChainID to be considered for the RMSD calculations.
-  long: Ligand ChainID to be considered for the RMSD calculations. This determines which chain will be
+ligand_chains:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: Ligand ChainIDs
+  short: Ligand ChainIDs to be considered for the RMSD calculations.
+  long: Ligand ChainIDs to be considered for the RMSD calculations. This determines which chains will be
     treated as the ligand for the L-RMSD and for I-L-RMSD.
   group: analysis
   explevel: easy
@@ -171,5 +185,15 @@ clt_threshold:
   title: Threshold (n) used for the average evaluation in the cluster-based output
   short: Threshold (n) used for the average evaluation in the cluster-based output.
   long: Threshold (n) used for the average evaluation in the cluster-based output.
+  group: analysis
+  explevel: easy
+
+allatoms:
+  default: false
+  type: boolean
+  title: Atoms to be considered during the analysis.
+  short: Atoms to be considered during the analysis.
+  long: Atoms to be considered during the analysis. If false (default), only
+        backbone atoms will be considered, otherwise all the heavy-atoms.
   group: analysis
   explevel: easy

@@ -7,8 +7,11 @@ import numpy as np
 import pytest
 
 from haddock.libs.libalign import (
+    ALIGNError,
     align_seq,
+    check_common_atoms,
     calc_rmsd,
+    check_chains,
     centroid,
     dump_as_izone,
     get_align,
@@ -17,6 +20,7 @@ from haddock.libs.libalign import (
     load_coords,
     make_range,
     pdb2fastadic,
+    rearrange_xyz_files,
     )
 
 from . import golden_data
@@ -183,14 +187,22 @@ def test_load_coords():
     assert observed_chain_ranges == expected_chain_ranges
 
 
-def test_error_load_coords():
-    """Test the chain-matching error with an uncompatible resdic."""
-    filter_resdic = {'A': [1, 2, 3, 4, 5]}  # protein has only chain B
+def test_wrong_filtered_resid_error_load_coords():
+    """Test the residue matching error with an uncompatible resdic."""
+    filter_resdic_wrongres = {'B': [7, 8, 9]}  # protein has only residues 1-5
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
-    # FIXME: This should be a custom exception
-    with pytest.raises(Exception):  # noqa: B017
-        load_coords(pdb_f, atoms, filter_resdic)
+    with pytest.raises(ALIGNError):
+        load_coords(pdb_f, atoms, filter_resdic=filter_resdic_wrongres)
+
+
+def test_wrong_filtered_chain_error_load_coords():
+    """Test the chain matching error with an uncompatible resdic."""
+    filter_resdic_wrongchain = {'A': [1, 2, 3]}  # protein has only chain B
+    pdb_f = Path(golden_data, "protein.pdb")
+    atoms = get_atoms(pdb_f)
+    with pytest.raises(ALIGNError):
+        load_coords(pdb_f, atoms, filter_resdic=filter_resdic_wrongchain)
 
 
 def test_get_atoms():
@@ -383,10 +395,12 @@ def test_align_seq():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
 
-        observed_numb_dic = align_seq(ref, mod, tmpdirname)
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
         expected_numb_dic = {"B": {101: 1, 102: 2, 110: 3, 112: 5}}
+        expected_chm_dict = {"B": "B"}
 
         assert observed_numb_dic == expected_numb_dic
+        assert observed_chm_dict == expected_chm_dict
 
         expected_aln_f = Path(tmpdirname, "blosum62_B.aln")
 
@@ -400,6 +414,38 @@ def test_align_seq():
             ]
 
         assert observed_aln == expected_aln
+
+
+def test_align_seq_chm():
+    """Test the sequence alignment with chain matching."""
+    ref = Path(golden_data, "protein.pdb")
+    mod = Path(golden_data, "protein_segid.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
+        expected_numb_dic = {"B": {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}}
+        expected_chm_dict = {"X": "B"}
+
+        assert observed_numb_dic == expected_numb_dic
+        assert observed_chm_dict == expected_chm_dict
+
+
+def test_align_seq_inverted():
+    """Test the sequence alignment with inverted chain."""
+    ref = Path(golden_data, "protprot_complex_1.pdb")
+    mod = Path(golden_data, "protprot_complex_2_inverted.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
+        print(f"observed_numb_dic: {observed_numb_dic}")
+        print(f"observed_chm_dict: {observed_chm_dict}")
+        expected_numb_keys = ["A", "B"]
+        expected_chm_dict = {"A" : "A", "B": "B"}
+
+        assert list(observed_numb_dic.keys()) == expected_numb_keys
+        assert observed_chm_dict == expected_chm_dict    
 
 
 def test_make_range():
@@ -428,3 +474,89 @@ def test_dump_as_izone():
             ]
 
         assert observed_izone == expected_izone
+
+    chm_ref2model_dict = {"B": "X"}
+    with tempfile.NamedTemporaryFile() as fp:
+
+        dump_as_izone(fp.name, numb_dic, chm_ref2model_dict)
+
+        assert Path(fp.name).stat().st_size != 0
+
+        observed_izone = open(fp.name).readlines()
+        expected_izone = [
+            f"ZONE B1:X101{os.linesep}",
+            f"ZONE B2:X102{os.linesep}",
+            f"ZONE B3:X110{os.linesep}",
+            f"ZONE B5:X112{os.linesep}",
+            ]
+        
+        assert observed_izone == expected_izone
+
+
+def test_check_common_atoms():
+    """Test the identification of common atoms."""
+    ref = Path(golden_data, "protprot_complex_1.pdb")
+    mod = Path(golden_data, "protprot_complex_2.pdb")
+    models = [ref, mod]
+
+    n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)
+    assert n_atoms == 950
+    assert len(obs_common_keys) == 950
+    assert ('B', 74, 'N') in obs_common_keys
+
+    models.append(Path(golden_data, "protein.pdb"))
+    with pytest.raises(ALIGNError):
+        n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)
+
+def test_rearrange_xyz_files():
+    """Test the rearrange_xyz_files function."""
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        ncores = 4
+        # Create a temporary directory with some files
+        for i in range(ncores):
+            with open(Path(tmpdirname, f"file_{i}.xyz"), "w") as f:
+                f.write(f"{i} 0 0 0\n")
+
+        # Test the function
+        rearrange_xyz_files("file.xyz", path=tmpdirname, ncores=ncores)
+        
+        # Check the files have been renamed
+        assert not Path(tmpdirname, "file_0.xyz").exists()
+        assert Path(tmpdirname, "file.xyz").exists()
+        # Check the content of the file
+        with open(Path(tmpdirname, "file.xyz"), "r") as f:
+            obs_content = f.read()
+        exp_content = os.linesep.join([f"{i} 0 0 0" for i in range(ncores)])
+        exp_content += os.linesep
+        assert obs_content == exp_content
+
+
+def test_check_chains():
+    """Test correct checking of chains."""
+    obs_ch = [["A", "C"],
+              ["A", "B"],
+              ["S", "E", "B", "A"],
+              ["S", "E", "P", "A"],
+              ["C", "D"]]
+    
+    inp_receptor_chains = ["A", "A", "A", "A", "C"]
+    inp_ligand_chains = [
+        [],
+        [],
+        ["B", "E"],
+        ["B"],
+        ["B"],
+    ]
+
+    # assuming exp chains are A and B
+    exp_ch = [["A", ["C"]], # C becomes the ligand
+              ["A", ["B"]], # C becomes the ligand
+              ["A", ["B", "E"]],  # S is ignored (B,E are present)
+              ["A", ["S", "E", "P"]], # B is not there, S-E-P become the ligands
+              ["C", ["D"]]] # B is not there, D becomes the ligand
+
+    for n in range(len(obs_ch)):
+        obs_r_chain, obs_l_chain = check_chains(obs_ch[n], inp_receptor_chains[n], inp_ligand_chains[n])
+        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
+        assert obs_r_chain == exp_r_chain
+        assert obs_l_chain == exp_l_chain

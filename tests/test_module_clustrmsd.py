@@ -9,12 +9,13 @@ from haddock.libs.libontology import ModuleIO, PDBFile, RMSDFile
 from haddock.modules.analysis.clustrmsd import DEFAULT_CONFIG as clustrmsd_pars
 from haddock.modules.analysis.clustrmsd import HaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
-    apply_threshold,
+    apply_min_population,
     cond_index,
     get_cluster_center,
     get_clusters,
     get_dendrogram,
-    iterate_threshold,
+    iterate_min_population,
+    order_clusters,
     read_matrix,
     )
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
@@ -25,7 +26,7 @@ from . import golden_data
 
 @pytest.fixture
 def output_list():
-    """Clustfcc output list."""
+    """Clustrmsd output list."""
     return [
         "rmsd.matrix",
         "rmsd_matrix.json",
@@ -289,8 +290,7 @@ def test_correct_output(input_protdna_models, output_list):
 
     assert expected_txt_filename in ls
 
-    expected_out_content = f"Cluster 1 -> 1{os.linesep}Cluster 2 -> 2"
-    expected_out_content += os.linesep
+    expected_out_content = f"Cluster 1 -> 1 2{os.linesep}"
 
     observed_out_content = open(expected_out_filename).read()
 
@@ -329,23 +329,51 @@ def test_cond_index():
     assert obs_c_idxs == exp_c_idxs
 
 
-def test_apply_threshold():
-    """Test apply_threshold function."""
+def test_apply_min_population():
+    """Test apply_min_population function."""
     # defining cluster_arr
     cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
-    # using a threshold of 2
-    obs_cluster_arr = apply_threshold(cluster_arr, 2)
+    # using a min_population of 2
+    obs_cluster_arr = apply_min_population(cluster_arr, 2)
     exp_cluster_arr = np.array([1, 1, -1, 1, 1, -1, 1, 1, -1, 1])
     assert (obs_cluster_arr == exp_cluster_arr).all()
-    # using a threshold of 1
-    obs_cluster_arr = apply_threshold(cluster_arr, threshold=1)
+    # using a min_population of 1
+    obs_cluster_arr = apply_min_population(cluster_arr, min_population=1)
     exp_cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
     assert (obs_cluster_arr == exp_cluster_arr).all()
 
 
-def test_iterate_threshold():
-    """Test iterate_threshold function."""
+def test_iterate_min_population():
+    """Test iterate_min_population function."""
     cluster_arr = np.array([1, 1, 2, 3, 4])
-    obs_cluster_arr = iterate_threshold(cluster_arr, threshold=4)
+    obs_cluster_arr, obs_min_population = iterate_min_population(
+        cluster_arr,
+        min_population=4,
+        )
     exp_cluster_arr = np.array([1, 1, -1, -1, -1])
+    assert obs_min_population == 2
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+
+
+def test_order_clusters():
+    """Test order_clusters function."""
+    cluster_arr = np.array([1, 1, 2, 3, 4])
+    obs_clusters, obs_cluster_arr = order_clusters(cluster_arr)
+    exp_clusters = [1, 2, 3, 4]
+    exp_cluster_arr = np.array([1, 1, 2, 3, 4])
+    assert obs_clusters == exp_clusters
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+    # now with a less trivial cluster_arr
+    cluster_arr = np.array([3, 3, 2, 4, 3, 1, 3, 3, 1, 3, 4])
+    obs_clusters, obs_cluster_arr = order_clusters(cluster_arr)
+    exp_clusters = [1, 2, 3, 4]
+    exp_cluster_arr = np.array([1, 1, 4, 3, 1, 2, 1, 1, 2, 1, 3])
+    assert obs_clusters == exp_clusters
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+    # yet another cluster_arr with unclustered structures
+    cluster_arr = np.array([3, 3, 2, 4, -1, -1, 3, 3, -1, -1, 4, 1])
+    obs_clusters, obs_cluster_arr = order_clusters(cluster_arr)
+    exp_clusters = [1, 2, 3, 4]
+    exp_cluster_arr = np.array([1, 1, 4, 2, -1, -1, 1, 1, -1, -1, 2, 3])
+    assert obs_clusters == exp_clusters
     assert (obs_cluster_arr == exp_cluster_arr).all()

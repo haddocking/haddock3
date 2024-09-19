@@ -16,11 +16,13 @@ See also the command-line clients ``haddock3-clean`` and
 import gzip
 import shutil
 import tarfile
+
 from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import FilePath, FilePathT, Iterable
 from haddock.libs.libio import (
     archive_files_ext,
     compress_files_ext,
@@ -29,10 +31,10 @@ from haddock.libs.libio import (
     )
 
 
-UNPACK_FOLDERS = []
+UNPACK_FOLDERS: list[FilePath] = []
 
 
-def clean_output(path, ncores=1):
+def clean_output(path: FilePath, ncores: int = 1) -> None:
     """
     Clean the output of step folders.
 
@@ -60,10 +62,12 @@ def clean_output(path, ncores=1):
     # Files to delete
     # deletes all except the first one
     files_to_delete = [
-        '.inp',
-        '.inp.gz',
-        '.out',
-        '.out.gz',
+        ".inp",
+        ".inp.gz",
+        ".out",
+        ".out.gz",
+        ".job",
+        ".err",
         ]
 
     for extension in files_to_delete:
@@ -73,9 +77,9 @@ def clean_output(path, ncores=1):
 
     # files to archive (all files in single .gz)
     files_to_archive = [
-        '.seed',
-        '.seed.gz',
-        '.con',
+        ".seed",
+        ".seed.gz",
+        ".con",
         ]
 
     archive_ready = partial(_archive_and_remove_files, path=path)
@@ -87,10 +91,11 @@ def clean_output(path, ncores=1):
 
     # files to compress in .gz
     files_to_compress = [
-        '.inp',
-        '.out',
-        '.pdb',
-        '.psf',
+        ".inp",
+        ".out",
+        ".pdb",
+        ".psf",
+        ".cnserr",
         ]
 
     for ftc in files_to_compress:
@@ -99,14 +104,16 @@ def clean_output(path, ncores=1):
             remove_files_with_ext(path, ftc)
 
 
-def _archive_and_remove_files(fta, path):
+def _archive_and_remove_files(fta: str, path: FilePath) -> None:
     found = archive_files_ext(path, fta)
     if found:
         remove_files_with_ext(path, fta)
 
 
 # eventually this function can be moved to `libs.libio` in case of future need.
-def unpack_compressed_and_archived_files(folders, ncores=1, dec_all=False):
+def unpack_compressed_and_archived_files(folders: Iterable[FilePathT],
+                                         ncores: int = 1,
+                                         dec_all: bool = False) -> None:
     """
     Unpack compressed and archived files in a folders.
 
@@ -127,13 +134,13 @@ def unpack_compressed_and_archived_files(folders, ncores=1, dec_all=False):
     UNPACK_FOLDERS.clear()
 
     files_to_decompress = [
-        '.pdb.gz',
-        '.psf.gz',
-        '.seed.gz',
+        ".pdb.gz",
+        ".psf.gz",
+        ".seed.gz",
         ]
 
     for folder in folders:
-        gz_files = []
+        gz_files: list[Path] = []
         for file_to_dec in files_to_decompress:
             gz_files.extend(list(glob_folder(folder, file_to_dec)))
 
@@ -162,17 +169,18 @@ def unpack_compressed_and_archived_files(folders, ncores=1, dec_all=False):
             tar_file.unlink()
 
 
-def _unpack_gz(gz_file):
+def _unpack_gz(gz_file: Path) -> None:
     out_file = Path(gz_file.parent, gz_file.stem)
 
-    with gzip.open(gz_file, 'rb') as fin, \
-            open(out_file, 'wb') as fout:
+    with gzip.open(gz_file, "rb") as fin, \
+            open(out_file, "wb") as fout:
         shutil.copyfileobj(fin, fout, 2 * 10**8)
 
     gz_file.unlink()
 
 
-def update_unpacked_names(prev, new, original):
+def update_unpacked_names(prev: Iterable[FilePath], new: Iterable[FilePath],
+                          original: list[FilePath]) -> None:
     """
     Update the unpacked path names.
 
@@ -181,12 +189,12 @@ def update_unpacked_names(prev, new, original):
     :py:mod:`haddock.gear.clean_steps`, keeps registry of the folders
     unpacked to the correct funtioning of the `extend_run` module.
 
-    Given the original names and the new names of the step folders,
+    Given the : list[FilePath] names and the new names of the step folders,
     this function updates them in the storing list.
 
     Examples
     --------
-    >>> original = ['0_topoaa', '4_flexref']
+    >>> : list[FilePath] = ['0_topoaa', '4_flexref']
     >>> prev = ['0_topoaa', '4_flexref', '5_seletopclusts']
     >>> new = ['0_topoaa', '1_flexref', '5_seletopclusts']
     >>> update_unpacked_names(prev, new, original)
@@ -219,21 +227,17 @@ def update_unpacked_names(prev, new, original):
     None
         Edits ``original`` in place.
     """
-    prev = list(map(Path, prev))
-    new = list(map(Path, new))
+    prevs = map(Path, prev)
+    news = map(Path, new)
     original_names = [Path(o).name for o in original]
 
     # this is used to keep the original types of values in the ``original`` list
-    types = {
-        type("str"): str,
-        type(Path.cwd()): Path,
-        }
 
-    for prev_, new_ in zip(prev, new):
+    for prev_, new_ in zip(prevs, news):
         try:
             idx = original_names.index(prev_.name)
         except ValueError:  # not present
             continue
         else:
             _p = original[idx]
-            original[idx] = types[type(_p)](Path(Path(_p).parent, new_.name))
+            original[idx] = type(_p)(Path(Path(_p).parent, new_.name))

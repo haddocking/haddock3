@@ -63,32 +63,36 @@ import toml
 from haddock import EmptyPath
 from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError
+from haddock.core.typing import FilePath, ParamDict, ParamMap, ParamMapT, Union
 from haddock.libs.libutil import (
     recursive_convert_paths_to_strings,
     transform_to_list,
-    )
+)
 
 
 # the re.ASCII parameter makes sure non-ascii chars are rejected in the \w key
 
 # Captures the main headers.
 # https://regex101.com/r/9urqti/1
-_main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
+_main_header_re = re.compile(r"^ *\[(\w+)\]", re.ASCII)
 
 # regex by @sverhoeven
 # Matches ['<name>.<digit>']
-_main_quoted_header_re = re.compile(r'^ *\[\'(\w+)\.\d+\'\]', re.ASCII)
+_main_quoted_header_re = re.compile(r"^ *\[\'(\w+)\.\d+\'\]", re.ASCII)
 
 # Captures sub-headers
 # https://regex101.com/r/6OpJJ8/1
 # thanks https://stackoverflow.com/questions/39158902
-_sub_header_re = re.compile(r'^ *\[(\w+)((?:\.\w+)+)\]', re.ASCII)
+_sub_header_re = re.compile(r"^ *\[(\w+)((?:\.\w+)+)\]", re.ASCII)
 
 # regex by @sverhoeven
 _sub_quoted_header_re = re.compile(
-    r'^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]',
+    r"^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]",
     re.ASCII,
-    )
+)
+
+# Captures parameter uppercase boolean
+_uppercase_bool_re = re.compile(r"(_?\w+((_?\w+?)+)?\s*=\s*)(True|False)", re.ASCII)
 
 # Some parameters are paths. The configuration reader reads those as
 # pathlib.Path so that they are injected properly in the rest of the
@@ -99,7 +103,7 @@ _keys_that_accept_files = [
     "cns_exec",
     "executable",
     RUNDIR,
-    ]
+]
 
 
 class ConfigFormatError(Exception):
@@ -109,7 +113,7 @@ class ConfigFormatError(Exception):
 
 
 # main public API
-def load(fpath):
+def load(fpath: FilePath) -> ParamDict:
     """
     Load an HADDOCK3 configuration file to a dictionary.
 
@@ -133,10 +137,12 @@ def load(fpath):
     try:
         return loads(Path(fpath).read_text())
     except Exception as err:
-        raise ConfigurationError('Something is wrong with the config file.') from err  # noqa: E501
+        raise ConfigurationError(
+            "Something is wrong with the config file."
+        ) from err  # noqa: E501
 
 
-def loads(cfg_str):
+def loads(cfg_str: str) -> ParamDict:
     """
     Read a string representing a config file to a dictionary.
 
@@ -157,18 +163,22 @@ def loads(cfg_str):
 
     Returns
     -------
-    dict
-        The config in the form of a dictionary.
-        The order of the keys matters as it defines the order of the
-        steps in the workflow.
+    all_configs : dict
+        A dictionary holding all the configuration file steps:
+        
+        - 'raw_input': Original input file as provided by user.
+        - 'cleaned_input': Regex cleaned input file.
+        - 'loaded_cleaned_input': Dict of toml loaded cleaned input.
+        - 'final_cfg': The config in the form of a dictionary. In which
+          the order of the keys matters as it defines the order of the
+          steps in the workflow.
     """
-    new_lines = []
+    new_lines: list[str] = []
     cfg_lines = cfg_str.split(os.linesep)
-    counter = {}
+    counter: dict[str, int] = {}
 
     # this for-loop normalizes all headers regardless of their input format.
     for line in cfg_lines:
-
         if group := _main_header_re.match(line):
             name = group[1]
             counter.setdefault(name, 0)
@@ -193,27 +203,40 @@ def loads(cfg_str):
             count = counter[name]  # name should be already defined here
             new_line = f"['{name}.{count}'{group[2]}]"
 
+        elif group := _uppercase_bool_re.match(line):
+            param = group[1]  # Catches 'param = '
+            uppercase_bool = group[4]
+            new_line = f"{param}{uppercase_bool.lower()}"  # Lowercase bool
+
         else:
             new_line = line
 
         new_lines.append(new_line)
 
+    # Re-build workflow configuration file
     cfg = os.linesep.join(new_lines)
 
     try:
-        cfg_dict = toml.loads(cfg)
+        cfg_dict = toml.loads(cfg)  # Try to load it with the toml library
     except Exception as err:
         raise ConfigurationError(
-            "Some thing is wrong with the config file: "
-            f"{str(err)}"
-            ) from err
+            "Some thing is wrong with the config file: " f"{str(err)}"
+        ) from err
 
     final_cfg = convert_variables_to_paths(cfg_dict)
 
-    return final_cfg
+    all_configs = {
+        "raw_input": cfg_str,
+        "cleaned_input": cfg,
+        "loaded_cleaned_input": cfg_dict,
+        "final_cfg": final_cfg,
+    }
+
+    # Return all configuration steps
+    return all_configs
 
 
-def convert_variables_to_paths(cfg):
+def convert_variables_to_paths(cfg: ParamMapT) -> ParamMapT:
     """
     Convert config variables to paths.
 
@@ -237,12 +260,12 @@ def convert_variables_to_paths(cfg):
             cfg[param] = convert_to_path(value)
 
         elif isinstance(value, collections.abc.Mapping):
-            cfg[param] = convert_variables_to_paths(value)
+            cfg[param] = convert_variables_to_paths(value)  # type: ignore
 
     return cfg
 
 
-def convert_to_path(value):
+def convert_to_path(value: FilePath) -> Union[Path, EmptyPath]:
     """Convert a variable to Path if variable evaluates to true."""
     if value:
         return Path(value)
@@ -250,26 +273,26 @@ def convert_to_path(value):
         return EmptyPath()
 
 
-def match_path_criteria(param):
+def match_path_criteria(param: str) -> bool:
     """
     Confirm a parameter should be converted to path.
 
     This function contains the rules defining which parameter need to be
     converted to Path before be sent to HADDOCK3.
     """
-    return param.endswith('_fname') or param in _keys_that_accept_files
+    return param.endswith("_fname") or param in _keys_that_accept_files
 
 
-def get_module_name(name):
+def get_module_name(name: str) -> str:
     """
     Get the module name according to the config parser.
 
     Get the name without the integer suffix.
     """
-    return name.split('.')[0]
+    return name.split(".")[0]
 
 
-def save(params, path, pure_toml=False):
+def save(params: ParamMap, path: FilePath, pure_toml: bool = False) -> None:
     """
     Write a dictionary to a HADDOCK3 config file.
 
@@ -291,15 +314,14 @@ def save(params, path, pure_toml=False):
     params = recursive_convert_paths_to_strings(params)
 
     if pure_toml:
-        with open(path, 'w') as fout:
+        with open(path, "w") as fout:
             toml.dump(params, fout)
         return
 
     cfg_str = toml.dumps(params).split(os.linesep)
 
-    new_lines = []
+    new_lines: list[str] = []
     for line in cfg_str:
-
         if group := _main_quoted_header_re.match(line):
             name = group[1]
             new_line = f"[{name}]"
@@ -311,7 +333,7 @@ def save(params, path, pure_toml=False):
             new_line = line
         new_lines.append(new_line)
 
-    cfg_str = os.linesep.join(new_lines)
+    cfg_str = os.linesep.join(new_lines)  # type: ignore
 
     with open(path, "w") as fout:
-        fout.write(cfg_str)
+        fout.write(cfg_str)  # type: ignore

@@ -21,7 +21,6 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.timestep=$timestep)
 evaluate ($saprotocol.fbeta=100)
 evaluate ($saprotocol.mass=100)
@@ -52,8 +51,8 @@ evaluate ($Data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_scale=$amb_scale)
-evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.ambig_scale=$ambig_scale)
+evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
 evaluate ($data.cmrest=$cmrest)
@@ -175,41 +174,15 @@ elseif ($refine.solvent = "dmso") then
     do (segid = "    ") (segid "PROT")
 end if
 
-{* Read and write random seed in case randremoval=true ===============*}
-
-if ($Data.randremoval eq true) then
-    evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
-    fileexist $fileseed end
-    if ($result eq true) then
-        @@$fileseed (seed=$seed;npart=$npart )
-    else
-        evaluate ($seed = $count*$Saprotocol.iniseed)
-    end if
-    evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-    set display=$fileseed end
-    display module(seed;npart)
-    display define (
-    display currentseed = $seed;
-    display currentpart = $npart;
-    display )
-    display evaluate (&seed=&currentseed)
-    display evaluate (&npart=&currentpart)
-    close $fileseed end
-else
-    evaluate ($seed = $count*$Saprotocol.iniseed)
-end if
-set seed $seed end
-
 
 {* Read the distance restraints ================================ *}
+set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
 if ($Data.randremoval eq true) then
     noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 if ( $log_level = "verbose" ) then
@@ -228,20 +201,6 @@ evaluate ($numnoe = 0)
 evaluate ($numnoe = 999)
 noe ? end
 if ($NUMNOE = 0) then
-    if ($Data.ncomponents > 1) then
-        if ($Data.contactairs eq FALSE) then
-            if ($Data.cmrest eq FALSE) then
-                evaluate ($errfile = "MODDIR:WARNING")
-                fileexist $errfile end
-                if ($result eq false) then
-                    set display=$errfile end
-                    display TOTAL NUMBER OF DISTANCE RESTRAINTS FOR FLEXIBLE REFINEMENT IS ZERO!
-                    display CONTROL YOUR PARAMETER SETTINGS AND RESTRAINT DEFINITIONS
-                    close $errfile end
-                end if
-            end if
-        end if
-    end if
     evaluate ($Data.npart = 1)
     evaluate ($Data.randremoval = FALSE)
 end if
@@ -256,8 +215,8 @@ noe
     averaging  * sum
     potential  * soft
     scale      * 1.0
-    scale ambi $amb_scale 
-    scale dist $unamb_scale
+    scale ambi $ambig_scale
+    scale dist $unambig_scale
     scale hbon $hbond_scale
     sqconstant * 1.0
     sqexponent * 2
@@ -268,7 +227,6 @@ noe
     msoexponent * 1
     masymptote  * -0.1
     mrswitch    * 0.5
-    avexpo hbond 20
 end
 
 {* set the energy flags ======================================================== *}
@@ -325,7 +283,7 @@ fix sele = (not all) end
 ! fix the shape
 fix sele = (resn SHA) end
 
-! fix rigid molecules 
+! fix rigid molecules
 evaluate($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     evaluate($nchain1 = $nchain1 + 1)
@@ -342,7 +300,7 @@ do (refy=y) (all)
 do (refz=z) (all)
 
 ! Define harmonic restraints on heavy atoms of molecules
-restraints harmonic 
+restraints harmonic
     exponent = 2
 end
 do (harm = 0)  (all)
@@ -376,7 +334,7 @@ do (harm = 20) (resn DAN and name OO)
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1 and 
+    do (harm = 0)  (attribute store5 = $nchain1 and
                     not ( name CA or name BB or name C or name N or name P or name C# or name C## ))
 end loop nloop1
 
@@ -386,19 +344,19 @@ end loop nloop1
 do (mass =$Saprotocol.mass) (all)
 do (mass=1000) (resn ANI or resn DAN or resn XAN)
 do (fbeta = 0) (all)
-do (fbeta = $Saprotocol.fbeta {1/ps} ) ( all )                
+do (fbeta = $Saprotocol.fbeta {1/ps} ) ( all )
 
 ! heat to 300 K
 for $bath in (100 200 300) loop heat
 
     do (vx=maxwell($bath)) (all)
     do (vy=maxwell($bath)) (all)
-    do (vz=maxwell($bath)) (all)  
+    do (vz=maxwell($bath)) (all)
 
     dynamics cartesian
-        nstep=$refine.heatsteps timest=0.002{ps}       
+        nstep=$refine.heatsteps timest=0.002{ps}
         temperature=$bath  tcoupling = true
-        nprint=50 
+        nprint=50
     end
 
 end loop heat
@@ -416,17 +374,17 @@ do (harm = 1)  (not name h* and not resn ANI and not resn DAN and not resn XAN a
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1) 
+    do (harm = 0)  (attribute store5 = $nchain1)
 end loop nloop1
 do (harm = 20) (resn ANI and name OO)
 do (harm = 20) (resn DAN and name OO)
 
 ! MD refinement
 dynamics cartesian
-   nstep=$refine.steps timest=0.002{ps}      
+   nstep=$refine.steps timest=0.002{ps}
    temperature=$bath  tcoupling = true
-   nprint=50 
-end 
+   nprint=50
+end
 
 do (refx=x) (all)
 do (refy=y) (all)
@@ -440,21 +398,21 @@ do (harm = 1)  (name CA or name BB or name C or name N or name P or name C# or n
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1) 
+    do (harm = 0)  (attribute store5 = $nchain1)
 end loop nloop1
 do (harm = 20) (resn ANI and name OO)
 do (harm = 20) (resn DAN and name OO)
 
 
-! cooling phase 
+! cooling phase
 for $bath in (300 200 100) loop cool
 
     dynamics cartesian
-       nstep=$refine.coolsteps timest=0.002{ps}      
-       temperature=$bath  tcoupling = true                       
-       nprint=50 
+       nstep=$refine.coolsteps timest=0.002{ps}
+       temperature=$bath  tcoupling = true
+       nprint=50
     end
-    
+
 end loop cool
 
 
@@ -470,7 +428,7 @@ end if
 {* ======================= calculate free molecules internal energy *}
 
 igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
                 (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
 end
 
@@ -535,8 +493,8 @@ else
 end if
 
 noe
-    scale dist $Data.unamb_scale
-    scale ambi $Data.amb_scale
+    scale dist $Data.unambig_scale
+    scale ambi $Data.ambig_scale
     scale hbon $Data.hbond_scale
     scale symm 0.0
     scale cont 0.0
@@ -558,22 +516,26 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.randremoval eq true) then
-        evaluate ($violations_test_noe=0)
-        evaluate ($rms_test_noe=0.0)
-        display Print out of cross-validated violations and rms not
-        display possible in combination with symmetry restraints
-        display CV values set therefore to 0
-    end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
+    !random removal of restaints
+    if ($Data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
     noe
-        scale dist $Data.unamb_scale
-        scale ambi $Data.amb_scale
+        scale dist $Data.unambig_scale
+        scale ambi $Data.ambig_scale
         scale hbon $Data.hbond_scale
     end
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
 else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
@@ -582,7 +544,7 @@ else
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if
-end if 
+end if
 
 if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns

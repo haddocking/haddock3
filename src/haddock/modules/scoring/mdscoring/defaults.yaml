@@ -1,6 +1,14 @@
 #
 # Group scoring
 #
+per_interface_scoring:
+  default: false
+  type: boolean
+  title: Interchain scoring
+  short: Output scores per interface in the PDB header.
+  long: With this option true, the interface of all combinations of chains will be analysed and the corresponding HADDOCK scores (without restraints terms) and their components (Eelec, Evdw, Edesol, BSA) will be written to the header of each PDB file.
+  group: 'scoring'
+  explevel: expert
 w_air:
   default: 0.0
   type: float
@@ -80,13 +88,13 @@ w_elec:
   title: Weight of the intermolecular electrostatic energy
   short: Weight of the intermolecular electrostatic energy in the scoring function
   long: Weight of the intermolecular electrostatic energy in the scoring function.
-    Note that this does not affect the electostatic energy during the EM minimization.
+    Note that this does not affect the electostatic energy during the MD refinement.
   group: 'scoring'
   explevel: expert
 w_lcc:
   default: -10000.0
   type: float
-  min: -9999
+  min: -10000.0
   max: 0
   precision: 3
   title: Weight of the EM local correlation coefficient
@@ -213,12 +221,12 @@ kcont:
 # Group dihedral restraints
 #
 ssdihed:
-  default: ""
+  default: none
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - ""
+    - none
     - all
     - alpha
     - alphabeta
@@ -268,7 +276,7 @@ ligand_param_fname:
   long: Ligand parameter file in CNS format containing all force field parameters 
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -277,7 +285,7 @@ ligand_top_fname:
   long: Ligand topology file in CNS format containing the ligand topologies 
     (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 elecflag:
   default: true
   type: boolean
@@ -315,9 +323,9 @@ epsilon:
 dihedflag:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: Use torsion angle dihedral energy term
+  short: Turns on the torsion angle dihedral energy terms of the force field.
+  long: Turns on the torsion angle dihedral energy terms of the force field.
   group: 'force field'
   explevel: expert
 #

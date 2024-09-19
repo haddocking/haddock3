@@ -3,7 +3,6 @@ import logging
 import sys
 from pathlib import Path
 
-
 log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
@@ -19,6 +18,7 @@ toppar_path = Path(haddock3_source_path, "cns", "toppar")
 modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
+RMSD_path = Path(haddock3_source_path.parent, 'fast-rmsdmatrix')
 
 config_expert_levels = ("easy", "expert", "guru")
 # yaml parameters with this `explevel` should be ignored when reading the yaml
@@ -28,13 +28,13 @@ _hidden_level = "hidden"
 class EmptyPath:
     """Define the type EmptyPath."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ""
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ""
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return False
 
 

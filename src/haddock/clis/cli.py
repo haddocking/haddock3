@@ -18,6 +18,14 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import RUNDIR
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    FilePath,
+    LogLevel,
+    Namespace,
+    Optional,
+)
 from haddock.gear.extend_run import EXTEND_RUN_DEFAULT, add_extend_run
 from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
@@ -31,7 +39,7 @@ ap.add_argument(
     "recipe",
     type=arg_file_exist,
     help="The input recipe file path",
-    )
+)
 
 add_restart_arg(ap)
 add_extend_run(ap)
@@ -40,40 +48,40 @@ ap.add_argument(
     "--setup",
     help="Only setup the run, do not execute",
     action="store_true",
-    dest='setup_only',
-    )
+    dest="setup_only",
+)
 
 add_loglevel_arg(ap)
 add_version_arg(ap)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
 def main(
-        recipe,
-        restart=None,
-        extend_run=EXTEND_RUN_DEFAULT,
-        setup_only=False,
-        log_level="INFO",
-        ):
+    recipe: FilePath,
+    restart: Optional[int] = None,
+    extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
+    setup_only: bool = False,
+    log_level: LogLevel = "INFO",
+) -> None:
     """
     Run an HADDOCK3 workflow.
 
@@ -101,7 +109,11 @@ def main(
     from time import time
 
     from haddock.gear.extend_run import WorkflowManagerExtend
-    from haddock.gear.greetings import get_adieu, get_initial_greeting
+    from haddock.gear.greetings import (
+        get_adieu,
+        get_initial_greeting,
+        gen_feedback_messages,
+        )
     from haddock.gear.prepare_run import setup_run
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
@@ -109,7 +121,7 @@ def main(
         add_stringio_handler,
         log_file_name,
         log_formatters,
-        )
+    )
     from haddock.libs.libtimer import convert_seconds_to_min_sec
     from haddock.libs.libutil import log_error_and_exit
     from haddock.libs.libworkflow import WorkflowManager
@@ -127,7 +139,7 @@ def main(
         log,
         log_level=log_level,
         formatter=log_formatters[log_level],
-        )
+    )
 
     log.info(get_initial_greeting())
 
@@ -136,27 +148,30 @@ def main(
             recipe,
             restart_from=restart,
             extend_run=extend_run,
-            )
+        )
 
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.
-    log_temporary = log.handlers[-1].stream.getvalue()
-    _run_dir = other_params[RUNDIR]
+    log_temporary = log.handlers[-1].stream.getvalue()  # type: ignore
+    _run_dir: str = other_params[RUNDIR]
     log_file = Path(_run_dir, log_file_name)
     add_log_for_CLI(log, log_level, log_file)
 
     # here we append the log information in the previous io.StringIO()
     # handler in the log file already in the run_dir
-    with open(log_file, 'a') as fout:
+    with open(log_file, "a") as fout:
         fout.write(log_temporary)
 
     if setup_only:
-        log.info('We have setup the run, only.')
+        log.info("We have setup the run, only.")
+        gen_feedback_messages(log.info)
         log.info(get_adieu())
         return
 
     if extend_run:
-        restart_step = len(get_module_steps_folders(extend_run))
+        steps_folders = get_module_steps_folders(extend_run)
+        restart_step = max([int(fold.split('_')[0]) for fold in steps_folders])
+        restart_step += 1
         WorkflowManager_ = WorkflowManagerExtend
 
     else:
@@ -164,15 +179,14 @@ def main(
         WorkflowManager_ = WorkflowManager
 
     with (
-            working_directory(other_params[RUNDIR]),
-            log_error_and_exit(),
-            ):
-
+        working_directory(_run_dir),
+        log_error_and_exit(),
+    ):
         workflow = WorkflowManager_(
             workflow_params=params,
             start=restart_step,
             **other_params,
-            )
+        )
 
         # Main loop of execution
         workflow.run()
@@ -184,8 +198,9 @@ def main(
     end = time()
     elapsed = convert_seconds_to_min_sec(end - start)
     log.info(f"This HADDOCK3 run took: {elapsed}")
+    gen_feedback_messages(log.info)
     log.info(get_adieu())
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

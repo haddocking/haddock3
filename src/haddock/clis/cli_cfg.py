@@ -18,7 +18,16 @@ import importlib
 import os
 import sys
 
-from haddock import config_expert_levels
+from pathlib import Path
+
+from haddock import config_expert_levels, core_path
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    ExpertLevel,
+    Namespace,
+    Optional,
+)
 from haddock.modules import modules_category
 
 
@@ -26,7 +35,7 @@ ap = argparse.ArgumentParser(
     prog="HADDOCK3 config retriever",
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
     "-m",
@@ -34,38 +43,47 @@ ap.add_argument(
     help="The module for which you want to retrieve the default configuration.",
     choices=sorted(modules_category.keys()),
     default=None,
-    )
+)
 
 ap.add_argument(
     "-l",
     dest="explevel",
     required=False,
-    help="The expertise level of the parameters. Defaults to \"all\".",
+    help='The expertise level of the parameters. Defaults to "all".',
     default="all",
     choices=config_expert_levels + ("all",),
-    )
+)
 
 ap.add_argument(
-    '-g',
-    '--globals',
-    dest='global_params',
+    "-g",
+    "--globals",
+    dest="global_params",
     help="Add also the optional module's general parameters.",
     action="store_true",
-    )
+)
+
+ap.add_argument(
+    "-d",
+    "--details",
+    dest="details",
+    help="Add detailed parameter description found in 'long'.",
+    action="store_true",
+    default=False,
+)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
 # command-line client helper functions
 # load_args, cli, maincli
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
 
@@ -85,12 +103,17 @@ def cli(ap, main):
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def main(module=None, explevel="all", global_params=True):
+def main(
+    module: Optional[str] = None,
+    explevel: str = "all",
+    global_params: bool = True,
+    details: bool = False,
+) -> None:
     """
     Extract the defaults in the form of a run configuration file.
 
@@ -110,52 +133,104 @@ def main(module=None, explevel="all", global_params=True):
         Whether to add the module's general global parameter. If
         ``True`` and ``module`` is ``None``, outputs only the general
         parameters.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     from haddock import modules_defaults_path
     from haddock.gear.yaml2cfg import yaml2cfg_text
     from haddock.libs.libio import read_from_yaml
 
-    new_config = ''
+    new_config = ""
 
     if global_params:
+        # Read general parameters
         general_cfg = read_from_yaml(modules_defaults_path)
         general_params_str = yaml2cfg_text(
             general_cfg,
             module=None,
             explevel="all",
+            details=details,
             )
-        comment = os.linesep.join((
-            "# The parameters below are optional parameters. ",
-            "# They can either be used as global parameters or as part ",
-            "# of the module's parameters",
-            ))
+        general_comment = os.linesep.join(
+            (
+                "#" * 50,
+                "# The parameters below are optional parameters. ",
+                "# They can either be used as global parameters or as part ",
+                "# of the module's parameters",
+                "#" * 50,
+                )
+            )
 
-        new_config = os.linesep.join((
-            comment,
-            general_params_str,
-            ))
+        # Read mandatory parmeters
+        mandatory_cfg_path = Path(core_path, "mandatory.yaml")
+        general_mandatory_cfg = read_from_yaml(mandatory_cfg_path)
+        general_mandatory_params_str = yaml2cfg_text(
+            general_mandatory_cfg,
+            module=None,
+            explevel="all",
+            details=details,
+            mandatory_param=True,
+            )
+        mandatory_comment = os.linesep.join(
+            (
+                "#" * 50,
+                "# The parameters below are mandatory parameters.",
+                "# They must be specified in your configuration file!",
+                "#" * 50,
+                )
+            )
+
+        # Read optional parameters
+        optional_cfg_path = Path(core_path, "optional.yaml")
+        general_optional_cfg = read_from_yaml(optional_cfg_path)
+        general_optional_params_str = yaml2cfg_text(
+            general_optional_cfg,
+            module=None,
+            explevel="all",
+            details=details,
+            )
+        optional_comment = os.linesep.join(
+            (
+                "#" * 50,
+                "# The parameters below are optional global parameters.",
+                "#" * 50,
+                )
+            )
+        # Concatenate all of them
+        new_config = os.linesep.join(
+            (
+                mandatory_comment,
+                general_mandatory_params_str,
+                optional_comment,
+                general_optional_params_str,
+                general_comment,
+                general_params_str,
+                )
+            )
 
     if module:
-
-        module_name = ".".join((
-            'haddock',
-            'modules',
-            modules_category[module],
-            module,
-            ))
+        module_name = ".".join(
+            (
+                "haddock",
+                "modules",
+                modules_category[module],
+                module,
+            )
+        )
 
         module_lib = importlib.import_module(module_name)
         cfg = module_lib.DEFAULT_CONFIG
 
         ycfg = read_from_yaml(cfg)
-        module_config = yaml2cfg_text(ycfg, module, explevel)
+        module_config = yaml2cfg_text(ycfg, module, explevel, details=details)
 
         new_config = os.linesep.join((new_config, module_config))
 
     sys.stdout.write(new_config)
 
-    return 0
+    return
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

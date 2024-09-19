@@ -1,5 +1,5 @@
 """Features to allow run restart from a given step."""
-from argparse import ArgumentTypeError
+from argparse import ArgumentParser, ArgumentTypeError
 from functools import partial
 from pathlib import Path
 
@@ -18,7 +18,7 @@ _arg_non_neg_int = partial(
     )
 
 
-def add_restart_arg(parser):
+def add_restart_arg(parser: ArgumentParser) -> None:
     """Add `--restart` option to argument parser."""
     parser.add_argument(
         "--restart",
@@ -28,7 +28,7 @@ def add_restart_arg(parser):
         )
 
 
-def remove_folders_after_number(run_dir, num):
+def remove_folders_after_number(run_dir: Path, num: int) -> None:
     """
     Remove calculation folder after (included) a given number.
 
@@ -56,6 +56,12 @@ def remove_folders_after_number(run_dir, num):
     """
     num = _arg_non_neg_int(num)
     previous = get_module_steps_folders(run_dir.resolve())
-    for folder in previous[num:]:
-        remove_folder(Path(run_dir, folder))
+    # Filters step folders based on their indices
+    from_num_folders = [
+        folder for folder in previous
+        if int(folder.split('_')[0]) >= num
+        ]
+    # Loop over folders to remove
+    for torm_folder in from_num_folders:
+        remove_folder(Path(run_dir, torm_folder))
     return

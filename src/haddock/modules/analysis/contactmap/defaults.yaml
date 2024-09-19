@@ -1,0 +1,120 @@
+ca_ca_dist_threshold:
+  default: 9.0
+  min: 4.0
+  max: 1000.0
+  type: float
+  precision: 1
+  title: Ca-Ca distance defining a contact.
+  short: Distance between Ca atoms of two residues defining a contact.
+  long: Distance between Ca atoms of two residues defining a contact.
+  group: analysis
+  explevel: easy
+
+shortest_dist_threshold:
+  default: 4.5
+  type: float
+  min: 2.0
+  max: 1000.0
+  precision: 1
+  title: Distance defining a contact between two residues.
+  short: Shortest distance between any atom of two residues defining a contact.
+  long: Shortest distance between any atom of two residues defining a contact.
+  group: analysis
+  explevel: easy
+
+color_ramp:
+  default: 'Greys'
+  type: string
+  minchars: 3
+  maxchars: 10
+  choices:
+    - Greys
+    - Purples
+    - BuPu
+    - Blues
+    - BuGn
+    - Greens
+    - deep
+    - tempo
+    - algae
+    - dense
+    - amp
+  title: Color ramp used to color heatmap.
+  short: Color ramp used to color heatmap.
+  long: Color ramp used to color heatmap. Please refer to `plotly builtin-colorscales` for more information
+  group: analysis
+  explevel: easy
+
+single_model_analysis:
+  default: false
+  type: boolean
+  title: Analyse contacts at single model level.
+  short: Analyse contacts at single model level.
+  long: In addition to cluster analysis, also perform single model analyses.
+  group: analysis
+  explevel: easy
+
+generate_heatmap:
+  default: true
+  type: boolean
+  title: Generate contact heatmap.
+  short: Generate plotly heatmap matrix representation of the contacts.
+  long: Uses generated contact matrices files to generate heatmap.
+  group: analysis
+  explevel: easy
+
+generate_chordchart:
+  default: true
+  type: boolean
+  title: Generate chordchart.
+  short: Generate plotly chordchart representation of the contacts.
+  long: Uses generated contact matrices files to generate chord chart.
+  group: analysis
+  explevel: easy
+
+topX:
+  default: 10
+  type: integer
+  min: 1
+  max: 100
+  title: Number of unclustered models to analyse.
+  short: Number of unclustered models to analyse.
+  long: Top `X` unclustered models to analyse. Models are sorted based on
+     their score (if accessible) and only a subset defined
+     by this variable are analysed. If no score available, a random set of
+     `topX` models are analysed.
+  group: analysis
+  explevel: expert
+
+cluster_heatmap_datatype:
+  default: 'shortest-cont-probability'
+  type: string
+  minchars: 5
+  maxchars: 30
+  choices:
+    - ca-ca-dist
+    - ca-ca-cont-probability
+    - shortest-dist
+    - shortest-cont-probability
+  title: Type of data to be used in the heatmap.
+  short: Type of data to be used in the heatmap.
+  long: ca-ca-dist & shortest-dist are averages distances observed in cluster.
+    ca-ca-cont-probability & shortest-cont-probability are probability of
+    the distances to be observed under their respective thresholds.
+  group: analysis
+  explevel: easy
+
+chordchart_datatype:
+  default: 'shortest-dist'
+  type: string
+  minchars: 5
+  maxchars: 30
+  choices:
+    - ca-ca-dist
+    - shortest-dist
+  title: Type of data to be used in the chordchart.
+  short: Type of data to be used in the chordchart.
+  long: ca-ca-dist and shortest-dist are averages distances observed in
+    cluster.
+  group: analysis
+  explevel: easy

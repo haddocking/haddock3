@@ -67,7 +67,11 @@ examples = (
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-DNA"         , "docking-protein-DNA-cmrest-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-protein-glycan-ilrmsd-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
     ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501
@@ -75,14 +79,18 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-multiple-ambig"      , "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
+    ("peptide-cyclisation"         , "cyclise-peptide-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg")  # noqa: E203, E501
+#    ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-ilrmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "alascan-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "contmap-test.cfg"),  # noqa: E203, E501
     )
 
 
@@ -331,7 +339,7 @@ def compare_examples(examples, devel, reference):
     for folder, file_ in examples:
 
         params = read_config(Path(devel, folder, file_))
-        run_dir = params["run_dir"]
+        run_dir = params["final_cfg"]["run_dir"]
         run_name = str(Path(folder, run_dir))
 
         print(  # noqa: T201

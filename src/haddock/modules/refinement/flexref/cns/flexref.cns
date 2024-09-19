@@ -22,7 +22,7 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.iniseed=$iniseed)
+evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.tadhigh_t=$temp_high)
 evaluate ($saprotocol.t1_init=$temp_cool1_init)
 evaluate ($saprotocol.t2_init=$temp_cool2_init)
@@ -69,17 +69,17 @@ evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.unamb_hot=$unamb_hot)
-evaluate ($data.unamb_cool1=$unamb_cool1)
-evaluate ($data.unamb_cool2=$unamb_cool2)
-evaluate ($data.unamb_cool3=$unamb_cool3)
+evaluate ($data.unambig_hot=$unambig_hot)
+evaluate ($data.unambig_cool1=$unambig_cool1)
+evaluate ($data.unambig_cool2=$unambig_cool2)
+evaluate ($data.unambig_cool3=$unambig_cool3)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_hot=$amb_hot)
-evaluate ($data.amb_cool1=$amb_cool1)
-evaluate ($data.amb_cool2=$amb_cool2)
-evaluate ($data.amb_cool3=$amb_cool3)
+evaluate ($data.ambig_hot=$ambig_hot)
+evaluate ($data.ambig_cool1=$ambig_cool1)
+evaluate ($data.ambig_cool2=$ambig_cool2)
+evaluate ($data.ambig_cool3=$ambig_cool3)
 
 evaluate ($data.hbond_hot=$hbond_hot)
 evaluate ($data.hbond_cool1=$hbond_cool1)
@@ -108,6 +108,7 @@ evaluate ($data.asy_cool3=$asy_cool3)
 
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
+evaluate ($data.kcm=$kcm)
 evaluate ($data.kcont=$kcont)
 evaluate ($data.contactairs=$contactairs)
 if ($data.contactairs eq true) then
@@ -218,42 +219,20 @@ if ($select gt 0) then
     evaluate ($refine.keepwater = true)
 end if
 
-
-{* Read and write random seed in case randremoval=true ===============*}
-
-if ($Data.randremoval eq true) then
-    evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
-    fileexist $fileseed end
-    if ($result eq true) then
-        @@$fileseed (seed=$seed;npart=$npart )
-    else
-        evaluate ($seed = $count*$Saprotocol.iniseed)
-    end if
-    evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-    set display=$fileseed end
-    display module(seed;npart)
-    display define (
-    display currentseed = $seed;
-    display currentpart = $npart;
-    display )
-    display evaluate (&seed=&currentseed)
-    display evaluate (&npart=&currentpart)
-    close $fileseed end
-else
-    evaluate ($seed = $count*$Saprotocol.iniseed)
+! random placement of molecules
+if ($SaProtocol.randorien eq true) then
+    @MODULE:separate.cns
+    @MODULE:random_rotations.cns
 end if
-set seed $seed end
-
 
 {* Read the distance restraints ================================ *}
+set seed $seed end
 set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
 if ($Data.randremoval eq true) then
     noe cv $npart ? end
-else
-    evaluate ($npart = 0)
 end if
 
 if ( $log_level = "verbose" ) then
@@ -343,12 +322,12 @@ evaluate ($failure = $result)
 
 
 {* Define initial weights for distance restraints ============================== *}
-evaluate ($unamb_scale = $Data.unamb_hot)
-evaluate ($ambig_scale = $Data.amb_hot)
+evaluate ($unambig_scale = $Data.unambig_hot)
+evaluate ($ambig_scale = $Data.ambig_hot)
 evaluate ($hbond_scale = $Data.hbond_hot)
 
 noe
-    scale dist $unamb_scale
+    scale dist $unambig_scale
     scale ambi $ambig_scale
     scale hbon $hbond_scale
 end
@@ -382,13 +361,16 @@ fix sele=(resn SHA) end
 ! in cases where the number of steps is set to 0 (avoid issues with isolated atoms)
 eval ($torsiondone = false)
 
-! start SA in torsion angle unless a failure was detected 
+! start SA in torsion angle unless a failure was detected
 if ($failure eq false) then
 
     {* Stage 1 ======================================= rigid body high temperature search*}
 
+    if ($nfle > 0) then
+        ! reduce timestep in case of fully flexible segments
+        evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+    end if
     if ($SaProtocol.initiosteps > 0) then
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -399,12 +381,14 @@ if ($failure eq false) then
 
     if ($SaProtocol.cool1_steps > 0) then
         if ($torsiondone ne true) then
-            evaluate ($nfletot = 150)
             inline @MODULE:flex_segment.cns
             @MODULE:torsiontop.cns
             eval ($torsiondone = true)
         end if
-        evaluate ($SaProtocol.tadfactor = 4)
+        if ($nfle > 0) then
+            ! reduce timestep in case of fully flexible segments
+            evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+        end if
         @MODULE:sa_ltad_cool1.cns
     end if
 
@@ -415,7 +399,6 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment_side.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -430,14 +413,13 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment_back.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
         evaluate ($SaProtocol.tadfactor = 1)
         @MODULE:sa_ltad_cool3.cns
     end if
-    
+
 end if
 
 {* Stage 5 =========================== final minimization *}
@@ -457,7 +439,7 @@ fix sele=(not all) end
 {* ======================= calculate free molecules internal energy *}
 
 igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
                 (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
 end
 
@@ -522,8 +504,8 @@ else
 end if
 
 noe
-    scale dist $Data.unamb_cool3
-    scale ambi $Data.amb_cool3
+    scale dist $Data.unambig_cool3
+    scale ambi $Data.ambig_cool3
     scale hbon $Data.hbond_cool3
     scale symm 0.0
     scale cont 0.0
@@ -545,22 +527,26 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.randremoval eq true) then
-        evaluate ($violations_test_noe=0)
-        evaluate ($rms_test_noe=0.0)
-        display Print out of cross-validated violations and rms not
-        display possible in combination with symmetry restraints
-        display CV values set therefore to 0
-    end if
     noe reset end
-    set message=normal echo=on end
+    set seed=$seed end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
+    ! random removal of restaints
+    if ($Data.randremoval eq true) then
+        noe cv $npart ? end
+    end if
     noe
-        scale dist $Data.unamb_cool3
-        scale ambi $Data.amb_cool3
+        scale dist $Data.unambig_cool3
+        scale ambi $Data.ambig_cool3
         scale hbon $Data.hbond_cool3
     end
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
 else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
@@ -569,7 +555,7 @@ else
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if
-end if 
+end if
 
 if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns

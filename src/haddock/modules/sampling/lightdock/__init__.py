@@ -4,6 +4,8 @@ import subprocess
 from pathlib import Path
 
 from haddock import log
+from haddock.core.defaults import MODULE_DEFAULT_YAML
+from haddock.core.typing import Any, FilePath
 from haddock.libs import libpdb
 from haddock.libs.libio import working_directory
 from haddock.libs.libontology import Format, PDBFile
@@ -12,7 +14,7 @@ from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -22,23 +24,23 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(
             self,
-            order,
-            path,
-            *ignore,
-            initial_params=DEFAULT_CONFIG,
-            **everything,
-            ):
+            order: int,
+            path: Path,
+            *ignore: Any,
+            initial_params: FilePath = DEFAULT_CONFIG,
+            **everything: Any,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm this module is installed."""
         check_subprocess('lightdock3.py -h')
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        models = [
+        models: list[PDBFile] = [
             p
             for p in self.previous_io.output
             if p.file_type == Format.PDB
@@ -144,7 +146,7 @@ class HaddockModule(BaseHaddockModule):
             subprocess.call(cmd, shell=True)
 
         # Tidy top files
-        expected = []
+        expected: list[PDBFile] = []
         top = self.params["top"]
         for i in range(top):
             file_name = f"top_{i+1}.{Format.PDB}"
@@ -155,4 +157,4 @@ class HaddockModule(BaseHaddockModule):
                                     path=self.path))
 
         self.output_models = models
-        self.export_output_models()
+        self.export_io_models()

@@ -47,6 +47,7 @@ import os
 import sys
 
 from haddock import log
+from haddock.core.typing import ArgumentParser, Callable, FilePath, Namespace
 from haddock.libs.libcli import add_version_arg
 
 
@@ -67,7 +68,7 @@ ap.add_argument(
     "-m",
     "--modules",
     nargs="+",
-    help="The number of the steps to copy.",
+    help="The IDs of the steps to copy (separated by spaces).",
     required=True,
     type=int,
     )
@@ -82,27 +83,27 @@ ap.add_argument(
 add_version_arg(ap)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def main(run_dir, modules, output):
+def main(run_dir: FilePath, modules: list[int], output: FilePath) -> None:
     """
     Copy steps from a run directory to a new run directory.
 
@@ -152,7 +153,10 @@ def main(run_dir, modules, output):
     # `data_steps` are selected to avoid FileNotFoundError because some steps
     # do not have a `data` folder.
     # See https://github.com/haddocking/haddock3/issues/559
-    data_steps = [step for step in selected_steps if os.path.exists(Path(run_dir, "data", step))]  # noqa: E501
+    data_steps = [
+        step for step in selected_steps
+        if os.path.exists(Path(run_dir, "data", step))
+        ]
     copy_renum_step_folders(
         Path(run_dir, "data"),
         Path(outdir, "data"),
@@ -172,4 +176,4 @@ def main(run_dir, modules, output):
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

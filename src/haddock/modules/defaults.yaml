@@ -1,37 +1,37 @@
 cns_exec:
-  default: ''
+  default: ""
   type: file
   title: "Path to the CNS executable"
-  short:
-    If not provided, HADDOCK3 will use the cns path configured
+  short: If not provided, HADDOCK3 will use the cns path configured
     during the installation.
-  long: CNS is a required component to run HADDOCK. Ideally it should have been 
+  long: CNS is a required component to run HADDOCK. Ideally it should have been
     configured during installation. If not you can specify with the cns_exec parameter
     its path.
-  group: 'execution'
+  group: "execution"
   explevel: easy
 ncores:
-  default: 8
+  default: 4
   type: integer
   min: 1
   max: 500
   title: Number of CPU cores
-  short: Number of CPU cores to use for the CNS calculations. 
+  short: Number of CPU cores to use for the CNS calculations.
     It is truncated to max available CPUs  minus 1.
-  long: Number of CPU cores to use for the CNS calculations. 
+  long: Number of CPU cores to use for the CNS calculations.
     This will define the number of concurrent jobs being executed.
     Note that is truncated to the total number of available CPUs minus 1.
-  group: 'execution'
+  group: "execution"
   explevel: easy
 max_cpus:
   default: true
   type: boolean
   title: The max number of CPUs allowed.
   short: By default the max number of CPUs allowed is the max available on the system.
-  long: If you want to spare a minimum amount of resources for daily tasks, set max_cpus
+  long:
+    If you want to spare a minimum amount of resources for daily tasks, set max_cpus
     to false; in that case the maximum number of CPUs allowed will be the total available
     in the machine minus 1. This calculation is done automatically.
-  group: 'execution'
+  group: "execution"
   explevel: expert
 mode:
   default: local
@@ -40,16 +40,16 @@ mode:
   maxchars: 20
   choices:
     - local
-    - hpc
+    - batch
   title: Mode of execution
   short: Mode of execution of the jobs, either local or using a batch system.
-  long: Mode of execution of the jobs, either local or using a batch system. 
-    Currently slurm and torque are supported. For the HPC mode the queue command must be 
+  long: Mode of execution of the jobs, either local or using a batch system.
+    Currently slurm and torque are supported. For the batch mode the queue command must be
     specified in the queue parameter.
-  group: 'execution'
+  group: "execution"
   explevel: easy
 batch_type:
-  default: 'slurm'
+  default: "slurm"
   type: string
   minchars: 0
   maxchars: 100
@@ -59,17 +59,17 @@ batch_type:
   title: Batch system
   short: Type of batch system running on your server
   long: Type of batch system running on your server. Only slurm and torque are supported at this time
-  group: 'execution'
-  explevel: 'easy'
+  group: "execution"
+  explevel: "easy"
 queue:
-  default: ''
+  default: ""
   type: string
   minchars: 0
   maxchars: 100
   title: Queue name
   short: Name of the batch queue to which jobs will be submitted
   long: Name of the batch queue to which jobs will be submitted. If not defined the batch system default will be used.
-  group: 'execution'
+  group: "execution"
   explevel: easy
 queue_limit:
   default: 100
@@ -79,7 +79,7 @@ queue_limit:
   title: Number of jobs to submit to the batch system
   short: Number of jobs to submit to the batch system
   long: This parameter controls the number of jobs that will be submitted to the batch system. In combination with the concat parameter this allow to limit the load on the queueing system and also make sure jobs remain in the queue for some time (if concat > 1) to avoid high system loads on the batch system.
-  group: 'execution'
+  group: "execution"
   explevel: easy
 concat:
   default: 1
@@ -89,27 +89,30 @@ concat:
   precision: 0
   title: Number of models to produce per job.
   short: Multiple models can be calculated within one job
-  long: The defins the number of models that will be generated within on job script. 
-    This allows to concatenate the generation of models into one script. 
+  long:
+    This defines the number of models that will be generated within on job script.
+    This allows to concatenate the generation of models into one script.
     In that way jobs might run longer in the batch system and reduce the load on the scheduler.
-  group: 'execution'
+  group: "execution"
   explevel: easy
 self_contained:
   default: false
   type: boolean
   title: Create a self-contained run
   short: This option will copy the CNS scripts and executable to the run folder.
-  long: This option will copy the CNS scripts and executable to the run folder to ensure that all scripts are available within the run dir.
-    This can be useful for for example remote execution of a job or for debugging purpose to allow to edit the scripts without touching the 
+  long:
+    This option will copy the CNS scripts and executable to the run folder to ensure that all scripts are available within the run dir.
+    This can be useful for for example remote execution of a job or for debugging purpose to allow to edit the scripts without touching the
     main installation.
-  group: 'execution'
+  group: "execution"
   explevel: guru
 clean:
-  default: false
+  default: true
   type: boolean
   title: Clean the module output files.
   short: Clean the module if run succeeds by compressing or removing output files.
-  long: When running haddock through the command-line, the 'clean' parameter will
+  long:
+    When running haddock through the command-line, the 'clean' parameter will
     instruct the workflow to clean the output files of the module if the whole
     run succeeds. In this process, PDB and PSF files are compressed to gzip,
     with the extension `.gz`. While files with extension `.seed`, `.inp`, and
@@ -121,5 +124,29 @@ clean:
     by the user in the 'ncores' parameter. SSD disks will perform faster by
     definition. See also the 'haddock3-clean' and 'haddock3-unpack' command-line
     clients.
-  group: 'clean'
+  group: "clean"
   explevel: easy
+offline:
+  default: false
+  type: boolean
+  title: Isolate haddock3 from internet.
+  short: Completely isolate the haddock3 run & results from internet.
+  long: For interactive plots, we are using the plotly library. It can be
+    embedded as a link to the plotly.js library and fetched from the web,
+    or directly copied on the html files AT THE COST OF ~3Mb per file.
+    Setting this parameter to `true` will add the javascript library in
+    generated files, therefore completely isolating haddock3 from any web call.
+  group: "execution"
+  explevel: easy
+less_io:
+  default: false
+  type: boolean
+  title: Reduce the amount of I/O operations.
+  short: Reduce the amount of I/O operations.
+  long: This option will reduce the amount of I/O operations by writing
+    less files to disk. This can be useful for example when running on
+    a network file system where I/O operations are slow.
+  group: "execution"
+  explevel: easy
+  incompatible:
+    mode: batch

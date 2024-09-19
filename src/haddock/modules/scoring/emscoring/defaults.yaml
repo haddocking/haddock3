@@ -1,6 +1,14 @@
 #
 # Group scoring
 #
+per_interface_scoring:
+  default: false
+  type: boolean
+  title: Interchains scoring
+  short: Output scores per interface in the PDB header.
+  long: With this option true, the interface of all combinations of chains will be analysed and the corresponding HADDOCK scores (without restraints terms) and their components (Eelec, Evdw, Edesol, BSA) will be written to the header of each PDB file.
+  group: 'scoring'
+  explevel: expert
 w_air:
   default: 0.0
   type: float
@@ -12,7 +20,7 @@ w_air:
   long: Weight of the distance restraints energy in the scoring function.
     Note that this is different from the force constants used during the calculations.
   group: 'scoring'
-  explevel: hidden
+  explevel: expert
 w_bsa:
   default: 0.0
   type: float
@@ -86,7 +94,7 @@ w_elec:
 w_lcc:
   default: -10000.0
   type: float
-  min: -9999
+  min: -10000.0
   max: 0
   precision: 3
   title: Weight of the EM local correlation coefficient
@@ -195,7 +203,7 @@ ligand_param_fname:
   long: Ligand parameter file in CNS format containing all force field parameters 
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -204,7 +212,7 @@ ligand_top_fname:
   long: Ligand topology file in CNS format containing the ligand topologies 
     (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 elecflag:
   default: true
   type: boolean
@@ -269,7 +277,7 @@ nemsteps:
   group: 'sampling'
   explevel: expert
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

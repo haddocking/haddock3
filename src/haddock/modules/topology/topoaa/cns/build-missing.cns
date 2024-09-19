@@ -9,7 +9,6 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-! edited
 define(atom_build=(not(known)))
 
 identity (store9) (none)
@@ -59,6 +58,14 @@ if ( $tobuild > 0 ) then
  
         end loop avco 
 
+        ! Assign average b-factor of known atoms to unknown ones
+        if ($set_bfactor = false) then
+            for $id in id (tag and byres(store9)) loop bfac
+                show ave(b) (byres(id $id) and not store9)
+                do (b=$result) (byres(id $id) and store9)
+            end loop bfac 
+        end if
+
         ! Better initial position for rebuilding if atoms to which a missing atom is bonded to exist
         for $id in id (store9) loop bndto
 
@@ -74,9 +81,11 @@ if ( $tobuild > 0 ) then
  
         end loop bndto 
 
-        do (x=x+2*random(1.0)-1) (store9)
-        do (y=y+2*random(1.0)-1) (store9)
-        do (z=z+2*random(1.0)-1) (store9)
+        for $id in id (store9) loop radis
+            do (x=x+2*random(1.0)-1) (id $id)
+            do (y=y+2*random(1.0)-1) (id $id)
+            do (z=z+2*random(1.0)-1) (id $id)
+        end loop radis
 
         {- start parameter for the side chain building -}
         parameter
@@ -106,6 +115,8 @@ if ( $tobuild > 0 ) then
  
         minimize powell nstep=50  nprint=10 end
 
+        set seed=$iniseed end
+
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)
         do (vz=maxwell($bath)) (store9)
@@ -124,6 +135,8 @@ if ( $tobuild > 0 ) then
 
         minimize powell nstep=50 nprint=10 end
 
+        set seed=$iniseed end
+
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)
         do (vz=maxwell($bath)) (store9)
@@ -135,7 +148,7 @@ if ( $tobuild > 0 ) then
             nprint=$nstep
             cmremove=false
         end
-  
+
         parameter
             nbonds
                 rcon=2. nbxmod=-3 repel=0.75
@@ -143,6 +156,8 @@ if ( $tobuild > 0 ) then
         end
 
         minimize powell nstep=100 nprint=25 end
+
+        set seed=$iniseed end
 
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)
@@ -170,8 +185,12 @@ if ( $tobuild > 0 ) then
 
         flags exclude * include bond angl impr dihe vdw elec end
 
+        minimize powell nstep=500 nprint=50 end
+
         {- return masses to something sensible -}
         do (mass=refy) (store9)
+
+        set seed=$iniseed end
 
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)

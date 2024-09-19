@@ -64,9 +64,6 @@ define(
    structure has bad geometry it may be necessary to increase this distance *}
 {===>} dbreak_cutoff=4.5;
 
-{* file containing patches to delete peptide links *}
-{===>} prot_break_infile="TOPPAR:protein_break.top";
-
 {* file containing patches to delete nucleic acid links *}
 {===>} dna_break_infile="TOPPAR:dna_break.top";
 
@@ -129,10 +126,6 @@ define(
 {* selection of atoms to be deleted *}
 {* to delete no atoms use: (none) *}
 {===>} atom_delete=(none);
-
-{* set bfactor flag *}
-{+ choice: true false +}
-{===>} set_bfactor=true;
 
 {* set bfactor value *}
 {===>} bfactor=15.0;
@@ -261,15 +254,14 @@ topology
     if ( &BLANK%shape_topology_infile = false ) then
         @@&shape_topology_infile
     end if
-    if ( &BLANK%prot_break_infile = false ) then
-        @@&prot_break_infile
-    end if
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile
     end if
-    fileexist $ligand_top_fname end
-    if ($result eq true) then
-        @@$ligand_top_fname
+    if ($ligand_top_fname # "") then
+        fileexist $ligand_top_fname end
+        if ($result eq true) then
+            @@$ligand_top_fname
+        end if
     end if
 end
 
@@ -301,9 +293,11 @@ parameter
     if ( &BLANK%shape_parameter_infile = false ) then
         @@&shape_parameter_infile
     end if
-    fileexist $ligand_param_fname end
-    if ($result eq true) then
-        @@$ligand_param_fname
+    if ($ligand_param_fname # "") then
+        fileexist $ligand_param_fname end
+        if ($result eq true) then
+            @@$ligand_param_fname
+        end if
     end if
 end
 
@@ -413,7 +407,7 @@ if ( $select = 0 ) then
 end if
 
 if ( $log_level = "verbose" ) then
-    set message=normal echo=on end
+    set message=verbose echo=on end
 elseif ( $log_level = "normal") then
     set message=normal echo=off end
 else
@@ -451,7 +445,7 @@ for $id1 in id ( resn CYS and name SG ) loop dis1
 
         pick bond (id $id1) (id $id2) geometry
 
-        if ( $result <= &disulphide_dist ) then
+        if ( $result <= $disulphide_dist ) then
             evaluate ($disu=$disu+1)
             evaluate ($seg1.$disu=$segid1)
             evaluate ($seg2.$disu=$segid2)
@@ -505,7 +499,7 @@ if ($cyclicpept eq TRUE ) then
             if ($rdiff gt 2) then
 
                 pick bond (id $id1) (id $id2) geometry
-                if ( $result <= &cyclicpept_dist ) then
+                if ( $result <= $cyclicpept_dist ) then
                     evaluate ($cycp=$cycp+1)
                     evaluate ($seg1.$cycp=$segid1)
                     evaluate ($seg2.$cycp=$segid2)
@@ -718,10 +712,7 @@ end if
 
 delete selection=( &atom_delete ) end
 
-inline @MODULE:build-missing.cns
-
 !check for histidine protonation state if auto mode on
-!but only for the first model
 if ($autohis = true) then
     inline @MODULE:auto-his.cns
 end if
@@ -763,11 +754,8 @@ else
     end
 end if
 
-if (&set_bfactor=true) then
+if ($set_bfactor=true) then
     do (b=&bfactor) ( all )
-else
-    show ave(b) (known and not(store9))
-    do (b=$result) (store9 and (attr b < 0.01))
 end if
 
 if (&set_occupancy=true) then
@@ -809,9 +797,6 @@ buffer message
     dump
 end
 buffer message reset end
-
-!do (segid = "    ") (all)
-!do (segid = $prot_segid_1) (all)
 
 write structure output=$output_psf_filename end
 write coordinates format=pdbo output=$output_pdb_filename end

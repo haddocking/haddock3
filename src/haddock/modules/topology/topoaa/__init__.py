@@ -29,6 +29,7 @@ import re
 from functools import partial
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
@@ -45,7 +46,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 def generate_topology(
@@ -260,10 +261,12 @@ class HaddockModule(BaseCNSModule):
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
+                err_fname = f"{model.stem}.cnserr"
 
                 job = CNSJob(
                     topoaa_input,
                     output_filename,
+                    err_fname,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
                 )

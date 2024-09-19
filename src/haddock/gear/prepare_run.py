@@ -1,4 +1,5 @@
 """Logic pertraining to preparing the run files and folders."""
+
 import difflib
 import importlib
 import itertools as it
@@ -59,7 +60,10 @@ from haddock.gear.parameters import (
 )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.validations import v_rundir
+from haddock.gear.validations import (
+    v_rundir,
+    validate_defaults_yaml,
+    )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
@@ -76,6 +80,7 @@ from haddock.modules import (
     modules_category,
     modules_names,
     non_mandatory_general_parameters_defaults,
+    incompatible_defaults_params,
 )
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
@@ -126,6 +131,9 @@ TYPES_MAPPER = {
         PosixPath,
         EmptyPath,
     ),
+    "dict": (
+        dict,
+    )
 }
 
 
@@ -178,6 +186,7 @@ def _read_defaults(module_name, default_only=True):
         module_name_,
         "defaults.yaml",
     ).resolve()
+    validate_defaults_yaml(pdef)
     mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
     return mod_default_config
 
@@ -268,6 +277,8 @@ def setup_run(
         general_params,
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
     )
+
+    validate_parameters_are_not_incompatible(general_params)
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -569,6 +580,8 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         # Now that existence of the parameter was checked,
         # it is time to validate the type and value taken by this param
         validate_module_params_values(module_name, args)
+        # Validate ncs parameters
+        validate_ncs_params(args)
 
         # Update parameters with defaults ones
         _missing_defaults = {
@@ -708,6 +721,112 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
                 "permitted limit. It should range from "
                 f'{param["minchars"]} to {param["maxchars"]}'
             )
+
+
+def validate_ncs_params(params: dict) -> None:
+    """Validate Non-Crystallographic Symmetry parameters.
+
+    This is a particular case where:
+    - ncs_sta1_X == ncs_sta2_X
+    - ncs_end1_X == ncs_end2_X
+    - ncs_seg1_X != ncs_seg2_X
+
+    Parameters
+    ----------
+    params : dict
+        Dictionary of key/value present in user config file for a module
+
+    Raises
+    ------
+    ConfigurationError
+        Issue detected when validating NCS parameters.
+    """
+    try:
+        # Check if ncs_on == False
+        if not params["ncs_on"]:
+            return None
+    # Maybe this module do not have ncs parameters, so we skip it
+    except KeyError:
+        return None
+    # At this stage, ncs_on == True
+    base_ncs_param_names = ("ncs_sta", "ncs_end", "ncs_seg", )
+    # Read and group ncs parameters together
+    groupped_ncs: dict[int, dict[str, dict[int, Union[int, str]]]] = {}
+    for paramname, value in params.items():
+        # Check if this is a ncs parameter
+        if paramname[:7] in base_ncs_param_names:
+            # Point two interesting values here
+            first_or_second = int(paramname[7])
+            x = int(paramname[-1])
+            # Point param type ("sta", "end", or "seg")
+            param_type = paramname.split('_')[1][:-1]
+            # Point/Create holding dict(s)
+            ncs_group = groupped_ncs.setdefault(x, {})
+            ncs_type = ncs_group.setdefault(param_type, {})
+            # Hold value
+            ncs_type[first_or_second] = value
+
+    # Validate them
+    error_list: list[str] = []
+    # Loop over number of definitions (_X)
+    for x, paramtype_values in groupped_ncs.items():
+        # Loop over parameter types
+        for paramtype, values in paramtype_values.items():
+            two_values = tuple(values.values())
+            # First make sure both are defined !
+            if len(two_values) != 2:
+                msg = f"Not two values set of `ncs_{paramtype}Y_{x}"
+                error_list.append(msg)
+                continue
+            if paramtype in ("sta", "end", ):
+                # Check they are not similar (wrong!)
+                if not len(set(two_values)) == 1:
+                    msg = (
+                        f"Values set of `ncs_{paramtype}Y_{x} must be equal: "
+                        f"we parsed `{two_values[0]}` and `{two_values[1]}`"
+                        )
+                    error_list.append(msg)
+            else:  # paramtype == "seg"
+                # Check they are similar (wrong!)
+                if len(set(values.values())) == 1:
+                    msg = (
+                        f"Chain/Segment IDs for `ncs_{paramtype}Y_{x} must be "
+                        f"different: we parsed `{two_values[0]}` and"
+                        f" `{two_values[1]}`"
+                        )
+                    error_list.append(msg)
+
+    # Validate value of `numncs`
+    ncs_suffixes = list(groupped_ncs.keys())
+    # Case when number of definition do not match
+    if params["numncs"] != len(ncs_suffixes):
+        msg = (
+            f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+            " do not match with the number of defined NCS restraints "
+            f"({len(ncs_suffixes)})"
+            )
+        error_list.append(msg)
+    else:
+        # Case when numbers do not match
+        if max(ncs_suffixes) != params["numncs"]:
+            msg = (
+                f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+                " do not match with the number of defined NCS restraints "
+                f"({', '.join([str(s) for s in ncs_suffixes])})"
+                )
+            error_list.append(msg)
+
+    # Here we fall into the error case
+    if len(error_list) > 0:
+        # Build user message
+        _msg = (
+            "Some errors were discovered in the NCS restraints definition:"
+            f"{os.linesep}"
+            f"{os.linesep.join(error_list)}"
+            )
+        # Raise error
+        raise ConfigurationError(_msg)
+    return None
 
 
 def check_if_modules_are_installed(params: ParamMap) -> None:
@@ -938,6 +1057,32 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
     )
 
     return
+
+
+def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
+    """
+    Validate parameters are not incompatible.
+
+    Parameters
+    ----------
+    params : ParamMap
+        A mapping of parameter names to their values.
+
+    Raises
+    ------
+    ValueError
+        If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.
+    """
+    for limiting_param, incompatibilities in incompatible_defaults_params.items():
+        # Check if the limiting parameter is present in the parameters
+        if limiting_param in params:
+            # Check each incompatibility for the limiting parameter
+            for incompatible_param, incompatible_value in incompatibilities.items():
+                # Check if the incompatible parameter is present and has the incompatible value
+                if params.get(incompatible_param) == incompatible_value:
+                    raise ValueError(
+                        f"Parameter `{limiting_param}` is incompatible with `{incompatible_param}={incompatible_value}`."
+                    )
 
 
 def validate_parameters_are_not_misspelled(

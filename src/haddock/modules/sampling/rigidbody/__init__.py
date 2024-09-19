@@ -32,6 +32,7 @@ sure to sample enough the possible interaction space.
 from datetime import datetime
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath, Sequence, Union
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
@@ -43,7 +44,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseCNSModule):
@@ -73,6 +74,7 @@ class HaddockModule(BaseCNSModule):
             combination, inp_input, ambig_fname, seed = e
 
             log_fname = f"rigidbody_{idx}.out"
+            err_fname = f"rigidbody_{idx}.cnserr"
             output_pdb_fname = f"rigidbody_{idx}.pdb"
 
             # Create a model for the expected output
@@ -81,7 +83,7 @@ class HaddockModule(BaseCNSModule):
             model.seed = seed  # type: ignore
             self.output_models.append(model)
 
-            job = CNSJob(inp_input, log_fname, envvars=self.envvars)
+            job = CNSJob(inp_input, log_fname, err_fname, envvars=self.envvars)
             jobs.append(job)
         return jobs
 

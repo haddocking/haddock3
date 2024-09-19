@@ -7,8 +7,13 @@ from contextlib import suppress
 from pathlib import Path
 
 from haddock.core.defaults import cns_exec as global_cns_exec
-from haddock.core.exceptions import CNSRunningError, JobRunningError
+from haddock.core.exceptions import (
+    CNSRunningError,
+    JobRunningError,
+    KnownCNSError,
+    )
 from haddock.core.typing import Any, FilePath, Optional, ParamDict
+from haddock.gear.known_cns_errors import KNOWN_ERRORS as KNOWN_CNS_ERRORS
 from haddock.libs.libio import gzip_files
 
 
@@ -97,6 +102,7 @@ class CNSJob:
         self,
         input_file: FilePath,
         output_file: Optional[FilePath] = None,
+        error_file: Optional[FilePath] = None,
         envvars: Optional[ParamDict] = None,
         cns_exec: Optional[FilePath] = None,
     ) -> None:
@@ -121,12 +127,16 @@ class CNSJob:
         """
         self.input_file = input_file
         self.output_file = output_file
+        self.error_file = error_file
         self.envvars = envvars
         self.cns_exec = cns_exec
 
     def __repr__(self) -> str:
+        _input_file = self.input_file
+        if isinstance(self.input_file, str):
+            _input_file = "IO Stream"
         return (
-            f"CNSJob({self.input_file}, {self.output_file}, "
+            f"CNSJob({_input_file}, {self.output_file}, "
             f"envvars={self.envvars}, cns_exec={self.cns_exec})"
         )
 
@@ -172,6 +182,7 @@ class CNSJob:
         compress_inp: bool = False,
         compress_out: bool = True,
         compress_seed: bool = False,
+        compress_err: bool = True,
     ) -> bytes:
         """
         Run this CNS job script.
@@ -204,17 +215,20 @@ class CNSJob:
             p.kill()
 
         elif isinstance(self.input_file, Path) and self.output_file is not None:
-            with open(self.input_file) as inp, open(self.output_file, "w+") as outf:
+            with open(self.input_file) as inp:
                 p = subprocess.Popen(
                     self.cns_exec,
                     stdin=inp,
-                    stdout=outf,
+                    stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     close_fds=True,
                     env=self.envvars,
                 )
                 out, error = p.communicate()
                 p.kill()
+                # Write out file
+                with open(self.output_file, "wb+") as outf:
+                    outf.write(out)
 
             if compress_inp:
                 gzip_files(self.input_file, remove_original=True)
@@ -229,7 +243,33 @@ class CNSJob:
                         remove_original=True,
                     )
 
-        if error:
-            raise CNSRunningError(error)
+        # If undetected error or detect an error in the STDOUT
+        if error or self.contains_cns_stdout_error(out):
+            # Write .err file
+            with open(self.error_file, "wb+") as errf:
+                errf.write(out)
+            # Compress it
+            if compress_err:
+                gzip_files(self.error_file, remove_original=True)
+            if error:
+                raise CNSRunningError(error)
 
+        # Return STDOUT
         return out
+
+    @staticmethod
+    def contains_cns_stdout_error(out: bytes) -> bool:
+        # Decode end of STDOUT
+        # Search in last 24000 characters (300 lines * 80 characters)
+        sout = out[-24000:].split(bytes(os.linesep, "utf-8"))
+        # Reverse loop on lines (read backward)
+        for bytes_line in reversed(sout):
+            line = bytes_line.decode("utf-8")
+            # This checks for an unknown CNS error
+            # triggered when CNS is about to crash due to internal error
+            if "^^^^^" in line:
+                return True
+            # Check if a known error is found
+            elif any([error in line for error in KNOWN_CNS_ERRORS.keys()]):
+                return True
+        return False

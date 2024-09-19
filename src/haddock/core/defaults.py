@@ -15,7 +15,7 @@ from haddock import core_path, log
 
 BINARY_DIR = Path(importlib.resources.files(haddock) / "bin")  # type: ignore
 
-cns_exec = Path(resource_filename("haddock", "bin/cns_"))
+cns_exec = Path(resource_filename("haddock", "bin/cns"))
 if not cns_exec.exists():
     log.warning("CNS executable not found at %s", cns_exec)
     _cns_exec = os.environ.get("CNS_EXEC")

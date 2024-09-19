@@ -330,7 +330,7 @@ def test_caprieval_default(
     )
 
 
-def test_caprieval_debug(
+def test_caprieval_nodebug(
     caprieval_module, model_list, expected_ss_data, expected_clt_data
 ):
     caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)

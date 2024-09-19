@@ -112,7 +112,7 @@ class HaddockModule(BaseHaddockModule):
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
 
-        less_io = not self.params["debug"] and self.params["mode"] == "local"
+        _less_io = self.params["mode"] == "local" and not self.params["debug"]
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -133,14 +133,14 @@ class HaddockModule(BaseHaddockModule):
                     path=Path("."),
                     reference=reference,
                     params=self.params,
-                    debug=less_io,
+                    less_io=_less_io,
                 )
             )
 
         engine = Engine(jobs)
         engine.run()
 
-        if less_io and isinstance(engine, Scheduler):
+        if _less_io and isinstance(engine, Scheduler):
             jobs = engine.results
             extract_data_from_capri_class(
                 capri_objects=jobs,

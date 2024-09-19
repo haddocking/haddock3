@@ -37,6 +37,18 @@ explicit_solvent_model:
   group: 'force field'
   explevel: easy
 
+pH:
+  default: 7.0
+  type: float
+  precision: 1
+  min: -3.0
+  max: 12
+  title: pH of the buffer.
+  short: pH of the buffer.
+  long: pH of the buffer. This has an infulence on the protonation states of the resiudes.
+  group: simulation
+  explevel: expert
+
 keep_solvent:
   default: false
   type: boolean

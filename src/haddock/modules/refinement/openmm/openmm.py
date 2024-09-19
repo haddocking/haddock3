@@ -906,7 +906,7 @@ class OPENMM:
         log.info(f"starting {solvent} openMM simulation with file: {pdbPath}")
         
         # Loop over samplings/replicas
-        replicas_outputs: list[str] = []
+        replicas_outputs: list[dict[str, Union[str, list[str]]]] = []
         for replica_ind in range(self.params["sampling_factor"]):
             replica_struct = self.run_openmm(
                 pdbPath,
@@ -918,7 +918,7 @@ class OPENMM:
 
         # Solvent removal procedure
         if not self.params["implicit_solvent"] and \
-           not self.params["keep_solvent"]:
+                not self.params["keep_solvent"]:
             # Loop over replicas
             for replica_structs in replicas_outputs:
                 for outputtype in replica_structs.keys():
@@ -927,11 +927,11 @@ class OPENMM:
                         nosolv_out = [
                             self.remove_water_and_ions(pdb)
                             for pdb in replica_structs[outputtype]
-                            ]
+                            ]  # type: ignore
                     else:
                         nosolv_out = self.remove_water_and_ions(
                             replica_structs[outputtype]
-                            )
+                            )  # type: ignore
                     # Modify paths in files mapper
                     replica_structs[outputtype] = nosolv_out
 

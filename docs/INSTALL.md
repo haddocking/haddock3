@@ -187,7 +187,10 @@ information.
 ## `openmm`
 
 1. Install the latest version of openmm and pdbfixer
-```
+```bash
+# Activate the haddock3 env
+conda activate haddock3
+# Install OpenMM and related tools/binaries
 conda install -c conda-forge openmm pdbfixer libstdcxx-ng
 ```
 

@@ -39,9 +39,9 @@ jobs:
       #   run: mypy src/
       ###############################################################
 
-      - name: run tests
+      - name: run unit tests
         run: >-
-          pytest .
+          pytest tests/
           --cov --cov-report=term-missing --cov-append
           --hypothesis-show-statistics
 
@@ -57,3 +57,9 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
+
+      - name: run integration tests
+        run: >-
+          pytest integration_tests/
+          --cov --cov-report=term-missing --cov-append
+          --hypothesis-show-statistics

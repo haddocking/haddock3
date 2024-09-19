@@ -330,11 +330,11 @@ def test_caprieval_default(
     )
 
 
-def test_caprieval_less_io(
+def test_caprieval_debug(
     caprieval_module, model_list, expected_ss_data, expected_clt_data
 ):
     caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
-    caprieval_module.params["less_io"] = True
+    caprieval_module.params["debug"] = False
 
     caprieval_module.run()
 

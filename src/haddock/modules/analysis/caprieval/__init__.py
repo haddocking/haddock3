@@ -112,7 +112,7 @@ class HaddockModule(BaseHaddockModule):
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
 
-        less_io = self.params["less_io"] and self.params["mode"] == "local"
+        less_io = not self.params["debug"] and self.params["mode"] == "local"
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -133,7 +133,7 @@ class HaddockModule(BaseHaddockModule):
                     path=Path("."),
                     reference=reference,
                     params=self.params,
-                    less_io=less_io,
+                    debug=less_io,
                 )
             )
 
@@ -151,7 +151,10 @@ class HaddockModule(BaseHaddockModule):
 
         else:
             self.log(
-                msg="DEPRECATION NOTICE: This execution mode (less_io=False) will no longer be supported in the next version.",
+                msg=(
+                    "DEPRECATION NOTICE: This execution mode (debug=True) "
+                    "will no longer be supported in the next version."
+                    ),
                 level="warning",
             )
             jobs = merge_data(jobs)

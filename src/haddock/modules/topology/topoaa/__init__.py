@@ -261,10 +261,12 @@ class HaddockModule(BaseCNSModule):
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
+                err_fname = f"{model.stem}.cnserr"
 
                 job = CNSJob(
                     topoaa_input,
                     output_filename,
+                    err_fname,
                     envvars=self.envvars,
                     cns_exec=self.params["cns_exec"],
                 )

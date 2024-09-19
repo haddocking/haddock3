@@ -190,8 +190,10 @@ information.
 ```bash
 # Activate the haddock3 env
 conda activate haddock3
+# libstdxx must be installed, maybe already present in your system
+conda install -c conda-forge libstdcxx-ng
 # Install OpenMM and related tools/binaries
-conda install -c conda-forge openmm pdbfixer libstdcxx-ng
+conda install -c conda-forge openmm pdbfixer
 ```
 
 Openmm should automatically detect the fastest platform among those available

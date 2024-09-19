@@ -5,7 +5,6 @@ import os
 import platform
 import subprocess
 import sys
-import tempfile
 import urllib.request
 from os.path import dirname, join
 from pathlib import Path
@@ -38,6 +37,8 @@ cpp_extensions = [
 
 
 class CustomBuild(build_ext):
+    """Custom build handles the C/C++ dependencies"""
+
     def run(self):
         print("Building HADDOCK3 C/C++ binary dependencies...")
         self.build_executable(
@@ -63,6 +64,7 @@ class CustomBuild(build_ext):
         build_ext.run(self)
 
     def build_executable(self, name, cmd):
+        """Helper function to execute the build command"""
         try:
             subprocess.check_call(cmd)
             # Ensure the source bin directory exists
@@ -182,6 +184,9 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     project_urls={
         "webpage": "https://bonvinlab.org/haddock3",
@@ -197,7 +202,7 @@ setup(
         "Protein docking",
         "Proteins",
     ],
-    python_requires=">=3.9, <3.10",
+    python_requires=">=3.9, <3.13",
     install_requires=[requirements],
     extras_require={},
     setup_requires=[],

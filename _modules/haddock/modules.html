@@ -88,10 +88,12 @@
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 modules.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
+
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
@@ -109,6 +111,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.gear</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.clean_steps</span> <span class="kn">import</span> <span class="n">clean_output</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.known_cns_errors</span> <span class="kn">import</span> <span class="n">find_all_cns_errors</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.parameters</span> <span class="kn">import</span> <span class="n">config_mandatory_general_parameters</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span><span class="p">,</span> <span class="n">find_incompatible_parameters</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libhpc</span> <span class="kn">import</span> <span class="n">HPCScheduler</span>
@@ -384,6 +387,12 @@
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">faulty</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% of output was not generated for this module &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;and tolerance was set to </span><span class="si">{</span><span class="n">faulty_tolerance</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%.&quot;</span>
             <span class="p">)</span>
+            <span class="c1"># Try to detect CNS errors</span>
+            <span class="k">if</span> <span class="n">detected_errors</span> <span class="o">:=</span> <span class="n">find_all_cns_errors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+                <span class="n">_msg</span> <span class="o">+=</span> <span class="n">linesep</span>
+                <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">detected_errors</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">_msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">])</span><span class="si">}{</span><span class="n">linesep</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="c1"># Show final error message</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHaddockModule.finish_with_error"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.finish_with_error">[docs]</a>    <span class="k">def</span> <span class="nf">finish_with_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -603,7 +612,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 17, 2024.
+      <span class="lastupdated">Last updated on Sep 19, 2024.
       </span></p>
   </div>
 

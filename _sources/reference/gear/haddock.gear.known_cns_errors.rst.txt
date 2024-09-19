@@ -1,0 +1,7 @@
+haddock.gear.known\_cns\_errors module
+======================================
+
+.. automodule:: haddock.gear.known_cns_errors
+   :members:
+   :undoc-members:
+   :show-inheritance:

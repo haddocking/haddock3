@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.gear.known_cns_errors &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../haddock.html">haddock</a></li>
+      <li class="breadcrumb-item active">haddock.gear.known_cns_errors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.gear.known_cns_errors</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Detect known/common CNS errors.</span>
+
+<span class="sd">Inspired from:</span>
+<span class="sd">https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedReader</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">KnownCNSError</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="c1"># Dictionary of known errors</span>
+<span class="c1"># as key:    How to catch it in the cns.cnserr</span>
+<span class="c1"># as value:  Message to user</span>
+<span class="n">KNOWN_ERRORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;CHAIN LENGTH FOR SYMMETRY RESTRAINTS DOES NOT MATCH&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Mismatch between chain length for symmetry restraints. &quot;</span>
+        <span class="s2">&quot;Check your input molecules and symmetry restraints.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;NCS-restraints error encountered: Improperly defined non-crystallographic symmetry&quot;</span><span class="p">:</span> <span class="p">(</span>  <span class="c1"># noqa : E501</span>
+        <span class="s2">&quot;Improperly defined non-crystallographic symmetry (NCS). &quot;</span>
+        <span class="s2">&quot;Check your symmetry restraints definition.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;error in SYMMETRY potential, check NOE table&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Check your symmetry restraints definition.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;exceeded allocation for NOE-restraints&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Too many distance restraints defined. &quot;</span>
+        <span class="s2">&quot;Try to reduce this number by checking your definition of active &quot;</span>
+        <span class="s2">&quot;and passive residues. &quot;</span>
+        <span class="s2">&quot;Make sure to filter those for solvent accessibility. &quot;</span>
+        <span class="s2">&quot;Or alternatively increase the nres parameter in the noe statements&quot;</span>
+        <span class="s2">&quot; in the relevant CNS scripts.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;SELRPN error encountered: parsing error&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Check your restraint files.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;PARSER error encountered: Encountered too many parsing errors&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Encountered too many parsing errors. &quot;</span>
+        <span class="s2">&quot;Check your input molecules and symmetry restraints.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;XMREAD error encountered:  sectioning of map incompatible with resolution&quot;</span><span class="p">:</span> <span class="p">(</span>  <span class="c1"># noqa : E501</span>
+        <span class="s2">&quot;Check your EM map resolution and sectioning.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;ALLHP error encountered: not enough memory available&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Too many distance restraints defined. &quot;</span>
+        <span class="s2">&quot;Try to reduce this number by checking your definition of active and &quot;</span>
+        <span class="s2">&quot;passive residues. &quot;</span>
+        <span class="s2">&quot;Make sure to filter those for solvent accessibility. &quot;</span>
+        <span class="s2">&quot;Try to decrease the size of your system where possible.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;error encountered: missing SCATter definition for SELEcted atoms&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Unsupported atoms/molecules for cryo-EM restraints.&quot;</span>
+        <span class="p">),</span>
+    <span class="s2">&quot;ROTMAT error encountered: rotation vector has zero length&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;Check your input parameters and restraints. &quot;</span>
+        <span class="s2">&quot;Possibly try turning off the sampling of 180 degrees rotation.&quot;</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="find_cns_errors"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.known_cns_errors.html#haddock.gear.known_cns_errors.find_cns_errors">[docs]</a><span class="k">def</span> <span class="nf">find_cns_errors</span><span class="p">(</span><span class="n">cns_out_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KnownCNSError</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Detect if a known CNS error is in a cns.cnserr file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cns_out_fpath : FilePath -&gt; Union[str, Path]</span>
+<span class="sd">        Path to the cns.cnserr file to check.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Optional[KnownCNSError]</span>
+<span class="sd">        An exception for known CNS errors, with its hint on how to solve it!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check for file extension to open it the appropriate way</span>
+    <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">cns_out_fpath</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.gz&quot;</span><span class="p">:</span>
+        <span class="n">file_handle</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">cns_out_fpath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">file_handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">cns_out_fpath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+    <span class="c1"># Read the file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_find_cns_errors</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">KNOWN_ERRORS</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">cns_out_fpath</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">KnownCNSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># return the cause</span>
+        <span class="k">return</span> <span class="n">KnownCNSError</span><span class="p">(</span>
+            <span class="s2">&quot;An unfortunate CNS error occured at exection time...&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Manually check the file `</span><span class="si">{</span><span class="n">cns_out_fpath</span><span class="si">}</span><span class="s2">` to understand why!&quot;</span><span class="p">,</span>
+            <span class="n">cns_out_fpath</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_find_cns_errors</span><span class="p">(</span>
+        <span class="n">file_handle</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="p">,</span> <span class="n">BufferedReader</span><span class="p">],</span>
+        <span class="n">known_errors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span>
+        <span class="n">filepath</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Backward reading and detect first known CNS error in file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_handle: Union[gzip.GzipFile, BufferedReader]</span>
+<span class="sd">        An opened file in read bytes mode.</span>
+<span class="sd">    known_errors : dict[str, str]</span>
+<span class="sd">        Dict of known errors and their hints</span>
+<span class="sd">    chunk_size : int, optional</span>
+<span class="sd">        Check size (in bytes) to read the file backwards, by default 4096</span>
+<span class="sd">    filepath : FilePath -&gt; Union[str, Path]</span>
+<span class="sd">        Path to the cns.cnserr file currently checked.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    KnownCNSError</span>
+<span class="sd">        An exception for known CNS errors, with its hint on how to solve it!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find file size</span>
+    <span class="n">file_handle</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">file_handle</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+    <span class="c1"># Set the number of lines to parse</span>
+    <span class="c1"># initiated with high value to read all lines the first time</span>
+    <span class="c1"># updated to the number of lines that were already parsed</span>
+    <span class="c1"># after each chunk iteration, so we do not parse the same lines</span>
+    <span class="n">parsed_lines</span> <span class="o">=</span> <span class="mi">99999</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">chunk_size</span><span class="p">):</span>
+        <span class="c1"># Go to location in file</span>
+        <span class="n">file_handle</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="c1"># Read next chunk</span>
+        <span class="n">chunk</span> <span class="o">=</span> <span class="n">file_handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># Increment buffer</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">chunk</span> <span class="o">+</span> <span class="n">buffer</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># Read lines</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span><span class="n">parsed_lines</span><span class="p">]):</span>
+            <span class="n">decoded_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">)</span>
+            <span class="c1"># Loop over known errors</span>
+            <span class="k">for</span> <span class="n">error_string</span><span class="p">,</span> <span class="n">hint</span> <span class="ow">in</span> <span class="n">known_errors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># Check if this error is known</span>
+                <span class="k">if</span> <span class="n">error_string</span> <span class="ow">in</span> <span class="n">decoded_line</span><span class="p">:</span>
+                    <span class="c1"># return the cause</span>
+                    <span class="k">raise</span> <span class="n">KnownCNSError</span><span class="p">(</span>
+                        <span class="n">error_string</span><span class="p">,</span>
+                        <span class="n">hint</span><span class="p">,</span>
+                        <span class="n">filepath</span><span class="p">,</span>
+                        <span class="p">)</span>
+        <span class="c1"># Update number of parsed lines so we do not check them again</span>
+        <span class="n">parsed_lines</span> <span class="o">=</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="find_all_cns_errors"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.known_cns_errors.html#haddock.gear.known_cns_errors.find_all_cns_errors">[docs]</a><span class="k">def</span> <span class="nf">find_all_cns_errors</span><span class="p">(</span>
+        <span class="n">directory_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">KnownCNSError</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all errors in a directory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    directory_path : FilePath</span>
+<span class="sd">        Path to the directory to be checked.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_errors : dict[str, dict[str, Union[list[FilePath], KnownCNSError]]]</span>
+<span class="sd">        Dictionary containing all errors found in this directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_errors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">KnownCNSError</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Gather list of all `.cnserr` and `.cnserr.gz` files present in directory</span>
+    <span class="n">all_cns_out_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.cnserr.gz&quot;</span><span class="p">))</span>
+    <span class="n">all_cns_out_files</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.cnserr&quot;</span><span class="p">))</span>
+    <span class="c1"># Loop over all .cnserr files</span>
+    <span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="n">all_cns_out_files</span><span class="p">:</span>
+        <span class="c1"># Try to dectect an error</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">detected_error</span> <span class="o">:=</span> <span class="n">find_cns_errors</span><span class="p">(</span><span class="n">fpath</span><span class="p">)):</span>
+            <span class="c1"># Hold data if an error is present in that file</span>
+            <span class="n">error_type</span> <span class="o">=</span> <span class="n">all_errors</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
+                <span class="n">detected_error</span><span class="o">.</span><span class="n">cns_error</span><span class="p">,</span>
+                <span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="n">detected_error</span><span class="p">}</span>
+                <span class="p">)</span>
+            <span class="n">error_type</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">detected_error</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_errors</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Sep 19, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -349,10 +349,12 @@
 
                 <span class="c1"># Add new job to the pool</span>
                 <span class="n">output_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">Format</span><span class="o">.</span><span class="n">CNS_OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">err_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">.cnserr&quot;</span>
 
                 <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span>
                     <span class="n">topoaa_input</span><span class="p">,</span>
                     <span class="n">output_filename</span><span class="p">,</span>
+                    <span class="n">err_fname</span><span class="p">,</span>
                     <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">,</span>
                     <span class="n">cns_exec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cns_exec&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
@@ -429,7 +431,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 17, 2024.
+      <span class="lastupdated">Last updated on Sep 19, 2024.
       </span></p>
   </div>
 

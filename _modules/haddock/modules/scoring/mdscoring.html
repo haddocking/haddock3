@@ -150,6 +150,7 @@
             <span class="p">)</span>
 
             <span class="n">scoring_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;mdscoring_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.out&quot;</span>
+            <span class="n">err_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;mdscoring_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.cnserr&quot;</span>
 
             <span class="c1"># create the expected PDBobject</span>
             <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_num</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;mdscoring&quot;</span><span class="p">)</span>
@@ -160,7 +161,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expected_pdb</span><span class="p">)</span>
 
-            <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">scoring_inpyt</span><span class="p">,</span> <span class="n">scoring_out</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">scoring_inpyt</span><span class="p">,</span> <span class="n">scoring_out</span><span class="p">,</span> <span class="n">err_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
 
             <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 
@@ -201,7 +202,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 17, 2024.
+      <span class="lastupdated">Last updated on Sep 19, 2024.
       </span></p>
   </div>
 

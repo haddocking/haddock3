@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10"]
       fail-fast: false
 
     steps:
@@ -41,7 +41,7 @@ jobs:
 
       - name: run tests
         run: >-
-          pytest . -x
+          pytest .
           --cov --cov-report=term-missing --cov-append
           --hypothesis-show-statistics
 

@@ -45,6 +45,12 @@ jobs:
           --cov --cov-report=term-missing --cov-append
           --hypothesis-show-statistics
 
+      - name: run integration tests
+        run: >-
+          pytest integration_tests/
+          --cov --cov-report=term-missing --cov-append
+          --hypothesis-show-statistics
+
       - name: generate coverage report
         run: |
           coverage report
@@ -57,9 +63,3 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
-
-      - name: run integration tests
-        run: >-
-          pytest integration_tests/
-          --cov --cov-report=term-missing --cov-append
-          --hypothesis-show-statistics

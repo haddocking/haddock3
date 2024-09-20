@@ -208,7 +208,7 @@ class OPENMM:
             modeller = Modeller(openmmpdb.topology, openmmpdb.positions)
             usedForcefield = ForceField(forcefield, solvent_model)
             modeller.deleteWater()
-            modeller.addHydrogens(usedForcefield, pH=self.params["pH"])
+            modeller.addHydrogens(usedForcefield, pH=self.params["ph"])
             # check the existence of xray cell data
             padding = self.params["padding"] * nanometers
             ions_conc = self.params["ion_concentration"] * molar

@@ -37,8 +37,8 @@ explicit_solvent_model:
   group: 'force field'
   explevel: easy
 
-pH:
-  default: 7.0
+ph:
+  default: 7.4
   type: float
   precision: 1
   min: -3.0

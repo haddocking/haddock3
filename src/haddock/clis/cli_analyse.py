@@ -490,7 +490,7 @@ def analyse_step(
             offline=offline,
             )
         tables = clt_table_handler(clt_file, ss_file, is_cleaned)
-        report_generator(boxes, scatters, tables, step)
+        report_generator(boxes, scatters, tables, step, offline)
         # provide a zipped archive of the top ranked structures
         zip_top_ranked(ss_file, cluster_ranking, Path("summary.tgz"))
 

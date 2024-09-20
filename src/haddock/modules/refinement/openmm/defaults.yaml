@@ -224,7 +224,9 @@ iniseed:
   max: 1000000
   title: Simulation seed.
   short: Set a pseudo-random seed for the simulation.
-  long: Set a pseudo-random seed for the simulation. This defines how the initial velocities are created, but has no effect on the randomicity of the solvation box.
+  long: Set a pseudo-random seed for the simulation. This defines how the
+    initial velocities are created, but has no effect on the randomicity
+    of the solvation box.
   group: 'sampling'
   explevel: easy
 
@@ -245,7 +247,8 @@ solv_equilibration:
   type: boolean
   title: Process the solvent equilibration phase.
   short: Process the solvent equilibration phase.
-  long: Process the solvent equilibration phase. If 'true', the solvent will be equilibrated while constraining proteins positions to intial ones.
+  long: Process the solvent equilibration phase. 
+    If 'true', the solvent will be equilibrated while constraining proteins positions to intial ones.
   group: 'sampling'
   explevel: easy
 

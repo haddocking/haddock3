@@ -172,7 +172,7 @@ setup(
     url="https://github.com/haddocking/haddock3",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    package_data={"haddock": ["bin/*"]},
+    package_data={"haddock": ["bin/*"], "haddock.libs.assets": ["*.css", "*.js"]},
     include_package_data=True,
     zip_safe=False,
     classifiers=[

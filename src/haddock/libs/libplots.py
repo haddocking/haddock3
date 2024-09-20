@@ -1,6 +1,7 @@
 """Plotting functionalities."""
 
 import json
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -24,6 +25,7 @@ from haddock.core.typing import (
     Optional,
     Union,
     )
+from haddock.libs.assets import haddock_ui_path
 
 
 SCATTER_PAIRS = [
@@ -984,7 +986,9 @@ def _css_styles_for_report(offline: bool) -> str:
     """
     css_link = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/index.css"
     if offline:
-        # TODO copy the css file to the report directory
+        # copy the css file to the report directory
+        src = haddock_ui_path / 'index.css'
+        shutil.copyfile(str(src), "../data/ui/index.css")
         css_link = "../../data/ui/index.css"
     table_css = f' <link href="{css_link}" rel="stylesheet" />'
     return f"{table_css}<style>{custom_css}</style>"
@@ -1151,7 +1155,9 @@ def _generate_html_body(figures: list[Figure], offline: bool = False) -> str:
             is_unclustered = 'cluster_rank' not in figure
             bundle_url = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/report.bundle.js"
             if offline:
-                # TODO copy the bundle to the run_dir folder
+                # copy the bundle to the run_dir folder
+                src = haddock_ui_path / 'report.bundle.js'
+                shutil.copyfile(str(src), "../data/ui/report.bundle.js")
                 bundle_url = "../../data/ui/report.bundle.js"
             if is_unclustered:
                 inner_html = _generate_unclustered_table_html(table_id, figure, bundle_url)
@@ -1203,6 +1209,8 @@ def report_generator(boxes, scatters, tables, step, offline):
     # Combine boxes"
     figures.append(report_plots_handler(boxes))
 
+    if offline:
+        Path('../data/ui').mkdir(parents=True, exist_ok=True)
     # Write everything to a html file
     html_report = _generate_html_report(step, figures, offline)
     with open("report.html", "w", encoding="utf-8") as report:

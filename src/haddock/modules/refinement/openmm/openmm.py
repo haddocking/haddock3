@@ -78,7 +78,6 @@ class OPENMM:
             path: Path,
             directory_dict: dict[str, str],
             params: ParamDict,
-            logger: Optional,
             ):
         """
         Initialize the class.
@@ -111,14 +110,14 @@ class OPENMM:
         self.path = path
         self.directory_dict = directory_dict
         self.params = params
-        self.log = logger if logger else log
+        self.log = log
 
         # other parameters
         self.output = Path("output_openmm.log")
         self.constraints = self.import_constraints()
         self.output_filename = self.model.file_name.replace(".pdb", "_omm.pdb")
 
-    def import_constraints(self) -> Optional[Union[AllBonds, HAngles, HBonds]]:
+    def import_constraints(self):  # type: ignore
         """Cast parameter string to proper openmm constraints."""
         if self.params["constraints"] == "HBonds":
             return HBonds
@@ -365,7 +364,7 @@ class OPENMM:
                 simulation,
                 max_temperature,
                 statereporter._dof,
-                tolerence=10.0,
+                tolerance=10.0,
                 steps=50
                 )
             # Print log info
@@ -418,7 +417,7 @@ class OPENMM:
             simulation: Simulation,
             temperature: float,
             dof: int,
-            tolerence: float = 5.0,
+            tolerance: float = 5.0,
             steps: int = 50,
             ) -> None:
         """
@@ -432,16 +431,16 @@ class OPENMM:
             The temperature hoped to be reached
         dof : int
             The degree of freedom obtained from the statereporter._dof
-        tolerence : float
-            The tolerence allowed for the temperature
+        tolerance : float
+            The tolerance allowed for the temperature
         steps : int
             The number of steps to do before checking again that
             temperature was reached
         """
         # Makes sure temperature of the system is reached
-        while not ((temperature - tolerence)
+        while not ((temperature - tolerance)
                    <= self._get_simulation_temperature(simulation, dof)
-                   <= (temperature + tolerence)):
+                   <= (temperature + tolerance)):
             # Do several simulation steps
             simulation.step(steps)
 
@@ -721,7 +720,7 @@ class OPENMM:
             simulation,
             qtemp,
             statereporter._dof,
-            tolerence=5.0,
+            tolerance=5.0,
             steps=50
             )
         log.info(

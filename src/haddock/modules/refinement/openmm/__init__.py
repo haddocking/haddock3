@@ -1,12 +1,12 @@
 """OpenMM refinement module for HADDOCK3."""
 import os
 import shutil
+
 from contextlib import suppress
 from pathlib import Path
-
-from haddock.core.exceptions import ThirdPartyIntallationError
+from subprocess import run as subprocrun
+from haddock.core.exceptions import ThirdPartyIntallationError, HaddockModuleError
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libsubprocess import run_subprocess
 from haddock.modules import BaseHaddockModule, get_engine
 
 # allow general testing when OpenMM is not installed
@@ -68,6 +68,16 @@ class HaddockModule(BaseHaddockModule):
         ThirdPartyIntallationError
             When OpenMM pdbfixer is not installed
         """
+        def run_subprocess(command_to_run: str) -> str:
+            """Run subprocess."""
+            subprocess_output = subprocrun(
+                [command_to_run],
+                shell=True,
+                capture_output=True,
+                encoding='utf-8',
+                )
+            return subprocess_output.stdout.strip()
+
         checkOpenMM = run_subprocess("conda list openmm --json")
         checkPdbfixer = run_subprocess("conda list pdbfixer --json")
 
@@ -102,7 +112,6 @@ class HaddockModule(BaseHaddockModule):
                 Path("."),
                 directory_dict,
                 self.params,
-                self.log,
                 )
             # Hold it
             openmm_jobs.append(openmm_job_i)
@@ -118,21 +127,9 @@ class HaddockModule(BaseHaddockModule):
 
         # Check if at least one output file was generated
         if len(output_pdbs) == 0:
-            raise Exception("No output models generated. Check Openmm Execution.")  # noqa: E501
-        # ensemble_name = "openmm_ensemble.pdb"
-        # ensemble = make_ensemble(output_pdbs)  # ensemble is a generator
-        # with open(ensemble_name, "w") as wfile:
-        #     for line in ensemble:
-        #         wfile.write(line)
-        # self.log(f'Output ensemble {ensemble_name} created.')
-        
-        # Setting the output variable
-        self.output_models = [
-            PDBFile(openmmout)
-            for openmmout in sorted(output_pdbs)
-            ]
-        # Generating standardized haddock3 outputs
-        self.export_output_models()
+            raise HaddockModuleError(
+                "No output models generated. Check Openmm Execution."
+                )
 
         # deleting unnecessary directories
         self.log("Removing unnecessary directories...")
@@ -144,3 +141,11 @@ class HaddockModule(BaseHaddockModule):
             " the OpenMM module, the next module should be `[topoaa]`, "
             "to rebuild the CNS molecular topologies."
             )
+        
+        # Setting the output variable
+        self.output_models = [
+            PDBFile(openmmout)
+            for openmmout in sorted(output_pdbs)
+            ]
+        # Generating standardized haddock3 outputs
+        self.export_io_models()

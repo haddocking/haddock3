@@ -7,12 +7,18 @@ the models based on the calculated contacts.
 For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*
 """  # noqa: E501
 
+import importlib.resources
 import os
 from pathlib import Path
 
 from haddock import FCC_path, log
-from haddock.core.defaults import MODULE_DEFAULT_YAML
+from haddock.core.defaults import (
+    BINARY_DIR,
+    CONTACT_FCC_EXEC,
+    MODULE_DEFAULT_YAML,
+    )
 from haddock.core.typing import Union
+from haddock.fcc import calc_fcc_matrix, cluster_fcc
 from haddock.libs.libclust import (
     add_cluster_info,
     get_cluster_matrix_plot_clt_dt,
@@ -56,16 +62,10 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls) -> None:
         """Confirm if FCC is installed and available."""
+        # The FCC binary can be either in the default binary path or in the
+
         dcfg = read_from_yaml_config(DEFAULT_CONFIG)
-        exec_path = Path(FCC_path, dcfg["executable"])
-
-        if not os.access(exec_path, mode=os.F_OK):
-            raise Exception(f"Required {str(exec_path)} file does not exist.")
-
-        if not os.access(exec_path, mode=os.X_OK):
-            raise Exception(f"Required {str(exec_path)} file is not executable")
-
-        return
+        dcfg["executable"] = CONTACT_FCC_EXEC
 
     def _run(self) -> None:
         """Execute module."""
@@ -83,7 +83,7 @@ class HaddockModule(BaseHaddockModule):
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
-                contact_executable,
+                CONTACT_FCC_EXEC,
                 self.params["contact_distance_cutoff"],
             )
             contact_jobs.append(job)

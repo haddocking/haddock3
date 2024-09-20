@@ -949,39 +949,36 @@ def _css_styles_for_report():
         font-family: Arial, sans-serif;
         font-size: 32px;
         font-weight: bold;
-        }
-
+    }
+    body {
+      margin-left: 1em;
+    }
     table {
         border-collapse: collapse;
     }
-
     th {
         background-color: #f2f2f2;
         padding: 8px;
         border: 1px solid #ddd;
         text-align: left;
     }
-
     th[scope="row"] {
         position: sticky;
         min-width: 16rem;
         left: 0;
         z-index: 1
     }
-
     td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
     }
-
     tr:nth-child(even) {
         background-color: #f2f2f2
     }
-
     """
     css_link = "https://esm.sh/@i-vresse/haddock3-ui@~0.2.2/dist/index.css"
-    table_css = f' <link href={css_link} rel="stylesheet" />'
+    table_css = f' <link href="{css_link}" rel="stylesheet" />'
     return f"{table_css}<style>{custom_css}</style>"
 
 

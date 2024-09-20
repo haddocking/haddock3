@@ -88,6 +88,7 @@ def test_restraints_rigidbody(rigidbody_module):
     rigidbody_module.params["unambig_fname"] = Path(GOLDEN_DATA, "unambig.tbl")
     rigidbody_module.params["hbond_fname"] = Path(GOLDEN_DATA, "hbond.tbl")
     rigidbody_module.params["mode"] = "local"
+    rigidbody_module.params["debug"] = True
 
     rigidbody_module.run()
 

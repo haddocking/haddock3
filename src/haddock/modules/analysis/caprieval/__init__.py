@@ -133,7 +133,7 @@ class HaddockModule(BaseHaddockModule):
                     path=Path("."),
                     reference=reference,
                     params=self.params,
-                    less_io=_less_io,
+                    debug=not _less_io,
                 )
             )
 

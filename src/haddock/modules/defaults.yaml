@@ -139,7 +139,7 @@ offline:
   group: "execution"
   explevel: easy
 debug:
-  default: true
+  default: false
   type: boolean
   title: Write intermediate and stdout files.
   short: Write intermediate and stdout files.

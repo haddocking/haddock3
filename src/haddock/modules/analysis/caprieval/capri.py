@@ -179,7 +179,7 @@ class CAPRI:
         path: Path,
         reference: PDBPath,
         params: ParamMap,
-        less_io: Optional[bool] = True,
+        debug: Optional[bool] = False,
     ) -> None:
         """
         Initialize the class.
@@ -225,7 +225,7 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
-        self.less_io = less_io
+        self.debug = debug
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -654,7 +654,7 @@ class CAPRI:
             log.debug(f"id {self.identificator}, calculating global RMSD")
             self.calc_global_rmsd()
 
-        if not self.less_io:
+        if self.debug:
             self.make_output()
         else:
             # The scheduler will use the return of the `run` method as the output of the tasks

@@ -56,7 +56,7 @@ class HaddockModule(CNSScoringModule):
                 self.params,
                 "mdscoring",
                 native_segid=True,
-                less_io=self.params["less_io"],
+                debug=self.params["debug"],
                 seed=model.seed if isinstance(model, PDBFile) else None,
             )
 

@@ -83,6 +83,7 @@ def test_rigidbody_local(rigidbody_module):
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
     rigidbody_module.params["mode"] = "local"
+    rigidbody_module.params["debug"] = True
 
     rigidbody_module.run()
 
@@ -108,6 +109,7 @@ def test_rigidbody_mpi(rigidbody_module):
     rigidbody_module.params["mol_fix_origin_2"] = False
     rigidbody_module.params["mode"] = "mpi"
     rigidbody_module.params["ncores"] = 1
+    rigidbody_module.params["debug"] = True
 
     rigidbody_module.run()
 
@@ -122,7 +124,7 @@ def test_rigidbody_mpi(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
 
 
-def test_rigidbody_less_io(rigidbody_module):
+def test_rigidbody_debug(rigidbody_module):
 
     sampling = 2
     rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
@@ -130,7 +132,6 @@ def test_rigidbody_less_io(rigidbody_module):
     rigidbody_module.params["cmrest"] = True
     rigidbody_module.params["mol_fix_origin_1"] = True
     rigidbody_module.params["mol_fix_origin_2"] = False
-    rigidbody_module.params["less_io"] = True
 
     rigidbody_module.run()
 

@@ -45,7 +45,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --restart RESTART     Restart the run from a given step. Previous folders from the selected step onward will be deleted.
+  --restart RESTART     Restart the run from a given step. Previous folders from the selected step onwards will be deleted.
   --extend-run EXTEND_RUN
                         Start a run from a run directory previously prepared with the `haddock3-copy` CLI. Provide the run directory created with `haddock3-copy` CLI.
   --setup               Only setup the run, do not execute

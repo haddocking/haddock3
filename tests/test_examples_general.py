@@ -4,9 +4,9 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib.util
-from pathlib import Path
-
 import pytest
+
+from pathlib import Path
 
 from haddock.gear.config import load as read_config
 from haddock.gear.prepare_run import (
@@ -14,13 +14,10 @@ from haddock.gear.prepare_run import (
     identify_modules,
     validate_module_names_are_not_misspelled,
     validate_parameters_are_not_misspelled,
-    validate_modules_params
-)
-
+    validate_modules_params,
+    )
 from haddock.gear.parameters import config_optional_general_parameters_dict
-
 from haddock.libs.libutil import recursive_dict_update, remove_dict_keys
-
 from haddock.modules import non_mandatory_general_parameters_defaults
 
 
@@ -44,8 +41,8 @@ def test_there_are_test_config_examples():
     assert examples_cfg_files_test
 
 
-@pytest.fixture(params=examples_cfg_files)
-def example_config(request):
+@pytest.fixture(params=examples_cfg_files, name="example_config")
+def fixture_example_config(request):
     """Give Examples's configuration files."""
     return request.param
 
@@ -66,8 +63,7 @@ def test_integration_examples():
     spec2 = importlib.util.spec_from_file_location("compare", compare_runs)
     mod2 = importlib.util.module_from_spec(spec2)
     spec2.loader.exec_module(mod2)
-
-    assert mod1.examples == mod2.examples
+    assert mod1.examples == mod2.examples, f"{mod1.examples}!={mod2.examples}"
 
 
 def test_validate_cfg_files():

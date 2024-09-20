@@ -74,7 +74,6 @@ def test_flexref_defaults(flexref_module, calc_fnat):
     flexref_module.run()
 
     assert Path(flexref_module.path, "flexref_1.pdb").exists()
-    assert Path(flexref_module.path, "flexref_1.out.gz").exists()
 
     fnat = calc_fnat(
         model=Path(flexref_module.path, "flexref_1.pdb"),
@@ -94,6 +93,7 @@ def test_flexref_fle(flexref_module, calc_fnat):
     flexref_module.params["fle_end_1 "] = 77
     flexref_module.params["fle_seg_1  "] = "B"
     flexref_module.params["log_level"] = "verbose"
+    flexref_module.params["debug"] = True
 
     flexref_module.run()
 
@@ -123,6 +123,8 @@ def test_flexref_mutliple_fle(flexref_module, calc_fnat):
     flexref_module.params["fle_sta_2 "] = 41
     flexref_module.params["fle_end_2 "] = 47
     flexref_module.params["fle_seg_2  "] = "B"
+
+    flexref_module.params["debug"] = True
 
     flexref_module.run()
 

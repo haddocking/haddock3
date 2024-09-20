@@ -29,6 +29,7 @@ def test_topoaa_module_protein(topoaa_module):
     topoaa_module.params["mol1"] = {"prot_segid": "A"}
     topoaa_module.params["mol2"] = {"prot_segid": "B"}
     topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
 
     topoaa_module.run()
 
@@ -71,6 +72,7 @@ def test_topoaa_module_ligand(topoaa_module):
     topoaa_module.params["delenph"] = False
     topoaa_module.params["preprocess"] = False
     topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
 
     topoaa_module.run()
 
@@ -94,6 +96,7 @@ def test_topoaa_cyclic(topoaa_module):
     topoaa_module.params["disulphide_dist"] = 4.0
     topoaa_module.params["mol1"] = {"cyclicpept": True}
     topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
 
     topoaa_module.run()
 

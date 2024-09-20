@@ -67,7 +67,7 @@ class MockPreviousIO:
 def test_mdref_defaults(mdref_module, calc_fnat):
 
     mdref_module.previous_io = MockPreviousIO(path=mdref_module.path)
-
+    mdref_module.params["debug"] = True
     mdref_module.run()
 
     assert Path(mdref_module.path, "mdref_1.pdb").exists()
@@ -90,6 +90,8 @@ def test_mdref_fle(mdref_module, calc_fnat):
     mdref_module.params["fle_sta_1 "] = 66
     mdref_module.params["fle_end_1 "] = 77
     mdref_module.params["fle_seg_1  "] = "B"
+
+    mdref_module.params["debug"] = True
 
     mdref_module.run()
 
@@ -117,6 +119,8 @@ def test_mdref_mutliple_fle(mdref_module, calc_fnat):
     mdref_module.params["fle_sta_2 "] = 41
     mdref_module.params["fle_end_2 "] = 47
     mdref_module.params["fle_seg_2  "] = "B"
+
+    mdref_module.params["debug"] = True
 
     mdref_module.run()
 

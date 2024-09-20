@@ -34,6 +34,25 @@ cd haddock3
 pip install .
 ```
 
+Execute:
+
+```bash
+$ haddock3 -h
+usage: haddock3 [-h] [--restart RESTART] [--extend-run EXTEND_RUN] [--setup] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-v] recipe
+
+positional arguments:
+  recipe                The input recipe file path
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --restart RESTART     Restart the run from a given step. Previous folders from the selected step onward will be deleted.
+  --extend-run EXTEND_RUN
+                        Start a run from a run directory previously prepared with the `haddock3-copy` CLI. Provide the run directory created with `haddock3-copy` CLI.
+  --setup               Only setup the run, do not execute
+  --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
+  -v, --version         show version
+```
+
 For the installation of third-party additional software, please check the [INSTALL](docs/INSTALL.md).
 
 You might also want to check the following utilities:

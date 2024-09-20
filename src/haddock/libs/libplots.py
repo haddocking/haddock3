@@ -983,6 +983,9 @@ def _css_styles_for_report(offline: bool) -> str:
     tr:nth-child(even) {
         background-color: #f2f2f2
     }
+    .js-plotly-plot .plotly .modebar svg {
+	    display: inline;
+    }
     """
     css_link = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/index.css"
     if offline:

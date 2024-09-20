@@ -1072,11 +1072,11 @@ def _generate_unclustered_table_html(
             }}
             </script>
             <script type="module">
-            import {{ renderClusterTable }} from "{bundle_url}";
+            import {{ renderStructureTable }} from "{bundle_url}";
 
             const props = JSON.parse(document.getElementById("data{table_id}").text)
 
-            renderClusterTable(document.getElementById('{table_id}'), props.headers, props.structures)
+            renderStructureTable(document.getElementById('{table_id}'), props.headers, props.structures)
             </script>"""  # noqa : E501
 
 

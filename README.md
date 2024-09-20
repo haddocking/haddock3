@@ -26,7 +26,15 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Please check the [INSTALL](docs/INSTALL.md) file for instructions.
+Clone the repository and run `pip install`;
+
+```bash
+git clone https://github.com/haddocking/haddock3
+cd haddock3
+pip install .
+```
+
+For the installation of third-party additional software, please check the [INSTALL](docs/INSTALL.md).
 
 You might also want to check the following utilities:
 

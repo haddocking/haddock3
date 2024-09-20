@@ -1,0 +1,19 @@
+haddock.fcc package
+===================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.fcc.calc_fcc_matrix
+   haddock.fcc.cluster_fcc
+
+Module contents
+---------------
+
+.. automodule:: haddock.fcc
+   :members:
+   :undoc-members:
+   :show-inheritance:

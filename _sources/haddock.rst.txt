@@ -9,6 +9,7 @@ Subpackages
 
    haddock.clis
    haddock.core
+   haddock.fcc
    haddock.gear
    haddock.libs
    haddock.modules

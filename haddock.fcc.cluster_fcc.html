@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.fcc.cluster_fcc module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">haddock.fcc.cluster_fcc module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/haddock.fcc.cluster_fcc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.fcc.cluster_fcc">
+<span id="haddock-fcc-cluster-fcc-module"></span><h1>haddock.fcc.cluster_fcc module<a class="headerlink" href="#module-haddock.fcc.cluster_fcc" title="Permalink to this heading"></a></h1>
+<p>Asymmetric Taylor-Butina Disjoint Clustering Algorithm.</p>
+<dl class="simple">
+<dt>Authors:</dt><dd><p>RODRIGUES Joao
+TRELLET Mikael
+MELQUIOND Adrien</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Cluster">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.fcc.cluster_fcc.</span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#Cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.Cluster" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Defines a Cluster. A Cluster is created with a name and a center (Element class)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Cluster.add_member">
+<span class="sig-name descname"><span class="pre">add_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#Cluster.add_member"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.Cluster.add_member" title="Permalink to this definition"></a></dt>
+<dd><p>Adds one single element to the cluster.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Cluster.center">
+<span class="sig-name descname"><span class="pre">center</span></span><a class="headerlink" href="#haddock.fcc.cluster_fcc.Cluster.center" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Cluster.members">
+<span class="sig-name descname"><span class="pre">members</span></span><a class="headerlink" href="#haddock.fcc.cluster_fcc.Cluster.members" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Cluster.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#haddock.fcc.cluster_fcc.Cluster.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Cluster.populate">
+<span class="sig-name descname"><span class="pre">populate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#Cluster.populate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.Cluster.populate" title="Permalink to this definition"></a></dt>
+<dd><p>Populates the Cluster member list through the
+neighbor list of its center.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Element">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.fcc.cluster_fcc.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#Element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.Element" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Defines a ‘clusterable’ Element</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Element.add_neighbor">
+<span class="sig-name descname"><span class="pre">add_neighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#Element.add_neighbor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.Element.add_neighbor" title="Permalink to this definition"></a></dt>
+<dd><p>Adds another element to the neighbor list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Element.assign_cluster">
+<span class="sig-name descname"><span class="pre">assign_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clust_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#Element.assign_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.Element.assign_cluster" title="Permalink to this definition"></a></dt>
+<dd><p>Assigns the Element to Cluster. 0 if unclustered</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Element.cluster">
+<span class="sig-name descname"><span class="pre">cluster</span></span><a class="headerlink" href="#haddock.fcc.cluster_fcc.Element.cluster" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Element.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#haddock.fcc.cluster_fcc.Element.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.Element.neighbors">
+<span class="sig-name descname"><span class="pre">neighbors</span></span><a class="headerlink" href="#haddock.fcc.cluster_fcc.Element.neighbors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.cluster_elements">
+<span class="sig-prename descclassname"><span class="pre">haddock.fcc.cluster_fcc.</span></span><span class="sig-name descname"><span class="pre">cluster_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_pool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#cluster_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.cluster_elements" title="Permalink to this definition"></a></dt>
+<dd><p>Groups Elements within a given threshold
+together in the same cluster.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.output_clusters">
+<span class="sig-prename descclassname"><span class="pre">haddock.fcc.cluster_fcc.</span></span><span class="sig-name descname"><span class="pre">output_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#output_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.output_clusters" title="Permalink to this definition"></a></dt>
+<dd><p>Outputs the cluster name, center, and members.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.read_matrix">
+<span class="sig-prename descclassname"><span class="pre">haddock.fcc.cluster_fcc.</span></span><span class="sig-name descname"><span class="pre">read_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strictness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#read_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.read_matrix" title="Permalink to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Reads in a four column matrix (1 2 0.123 0.456</p>
+</div></blockquote>
+<dl>
+<dt>)</dt><dd><p>and creates an dictionary of Elements.</p>
+<p>The strictness factor is a &lt;float&gt; that multiplies by the cutoff
+to produce a new cutoff for the second half of the matrix. Used to
+allow some variability while keeping very small interfaces from clustering
+with anything remotely similar.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.fcc.cluster_fcc.remove_true_singletons">
+<span class="sig-prename descclassname"><span class="pre">haddock.fcc.cluster_fcc.</span></span><span class="sig-name descname"><span class="pre">remove_true_singletons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element_pool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/haddock/fcc/cluster_fcc.html#remove_true_singletons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.fcc.cluster_fcc.remove_true_singletons" title="Permalink to this definition"></a></dt>
+<dd><p>Removes from the pool elements without any neighbor</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Sep 20, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

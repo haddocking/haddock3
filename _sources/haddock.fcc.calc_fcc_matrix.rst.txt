@@ -1,0 +1,7 @@
+haddock.fcc.calc\_fcc\_matrix module
+====================================
+
+.. automodule:: haddock.fcc.calc_fcc_matrix
+   :members:
+   :undoc-members:
+   :show-inheritance:

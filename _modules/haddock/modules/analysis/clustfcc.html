@@ -96,12 +96,18 @@
 <span class="sd">For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*</span>
 <span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
 
+<span class="kn">import</span> <span class="nn">importlib.resources</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">FCC_path</span><span class="p">,</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BINARY_DIR</span><span class="p">,</span>
+    <span class="n">CONTACT_FCC_EXEC</span><span class="p">,</span>
+    <span class="n">MODULE_DEFAULT_YAML</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">haddock.fcc</span> <span class="kn">import</span> <span class="n">calc_fcc_matrix</span><span class="p">,</span> <span class="n">cluster_fcc</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">add_cluster_info</span><span class="p">,</span>
     <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">,</span>
@@ -145,16 +151,10 @@
 <div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.clustfcc.html#haddock.modules.analysis.clustfcc.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if FCC is installed and available.&quot;&quot;&quot;</span>
+        <span class="c1"># The FCC binary can be either in the default binary path or in the</span>
+
         <span class="n">dcfg</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span>
-        <span class="n">exec_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">FCC_path</span><span class="p">,</span> <span class="n">dcfg</span><span class="p">[</span><span class="s2">&quot;executable&quot;</span><span class="p">])</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">exec_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exec_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> file does not exist.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">exec_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Required </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exec_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> file is not executable&quot;</span><span class="p">)</span>
-
-        <span class="k">return</span></div>
+        <span class="n">dcfg</span><span class="p">[</span><span class="s2">&quot;executable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CONTACT_FCC_EXEC</span></div>
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
@@ -172,7 +172,7 @@
             <span class="n">job</span> <span class="o">=</span> <span class="n">JobInputFirst</span><span class="p">(</span>
                 <span class="n">pdb_f</span><span class="p">,</span>
                 <span class="n">contact_f</span><span class="p">,</span>
-                <span class="n">contact_executable</span><span class="p">,</span>
+                <span class="n">CONTACT_FCC_EXEC</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;contact_distance_cutoff&quot;</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="n">contact_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
@@ -306,7 +306,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 19, 2024.
+      <span class="lastupdated">Last updated on Sep 20, 2024.
       </span></p>
   </div>
 

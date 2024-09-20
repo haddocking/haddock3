@@ -1,0 +1,7 @@
+haddock.fcc.cluster\_fcc module
+===============================
+
+.. automodule:: haddock.fcc.cluster_fcc
+   :members:
+   :undoc-members:
+   :show-inheritance:

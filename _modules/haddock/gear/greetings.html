@@ -92,7 +92,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">contact_us</span><span class="p">,</span> <span class="n">version</span>
 
@@ -119,7 +119,16 @@
     <span class="s2">&quot;GitHub issues&quot;</span><span class="p">:</span> <span class="s2">&quot;https://github.com/haddocking/haddock3/issues&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BioExcel feedback&quot;</span><span class="p">:</span> <span class="s2">&quot;https://www.bonvinlab.org/feedback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BioExcel survey&quot;</span><span class="p">:</span> <span class="s2">&quot;https://bioexcel.eu/bioexcel-survey-2024/&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="n">DISCLAIMER</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;!! Some of the HADDOCK3 components use CNS (Crystallographic and NMR System)&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot; which is free of use for non-profit applications. !!</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;!! For commercial use it is your own responsibility&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot; to have a proper license. !!</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="s2">&quot;!! For details refer to the DISCLAIMER file in the HADDOCK3 repository. !!&quot;</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_initial_greeting"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.greetings.html#haddock.gear.greetings.get_initial_greeting">[docs]</a><span class="k">def</span> <span class="nf">get_initial_greeting</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -133,6 +142,8 @@
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#                 HADDOCK 3                  #</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#                                            #</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;##############################################</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">DISCLAIMER</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Starting HADDOCK </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">now</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
@@ -168,7 +179,7 @@
 
 <div class="viewcode-block" id="gen_feedback_messages"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.greetings.html#haddock.gear.greetings.gen_feedback_messages">[docs]</a><span class="k">def</span> <span class="nf">gen_feedback_messages</span><span class="p">(</span><span class="n">print_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Print list of feedbacks urls.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    print_function : Callable</span>
@@ -179,8 +190,8 @@
         <span class="p">(</span>
             <span class="s2">&quot;Your feedback matters in Haddock3!&quot;</span>
             <span class="s2">&quot; Share your experience and help us grow:&quot;</span>
-            <span class="p">)</span>
         <span class="p">)</span>
+    <span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">feedback_urls</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">print_function</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
@@ -196,7 +207,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 19, 2024.
+      <span class="lastupdated">Last updated on Sep 20, 2024.
       </span></p>
   </div>
 

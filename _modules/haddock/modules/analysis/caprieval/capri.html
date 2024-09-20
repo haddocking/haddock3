@@ -269,7 +269,7 @@
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
-        <span class="n">less_io</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">debug</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the class.</span>
@@ -315,7 +315,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_ss_fname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identificator</span> <span class="o">=</span> <span class="n">identificator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_model_idx</span> <span class="o">=</span> <span class="n">identificator</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">less_io</span> <span class="o">=</span> <span class="n">less_io</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
 
 <div class="viewcode-block" id="CAPRI.calc_irmsd"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_irmsd">[docs]</a>    <span class="k">def</span> <span class="nf">calc_irmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the I-RMSD.</span>
@@ -744,7 +744,7 @@
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating global RMSD&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_global_rmsd</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">less_io</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">make_output</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># The scheduler will use the return of the `run` method as the output of the tasks</span>
@@ -1290,7 +1290,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 19, 2024.
+      <span class="lastupdated">Last updated on Sep 20, 2024.
       </span></p>
   </div>
 

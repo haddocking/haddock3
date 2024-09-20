@@ -201,7 +201,7 @@
         <span class="n">exec_mode</span> <span class="o">=</span> <span class="n">get_analysis_exec_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">])</span>
         <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">exec_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 
-        <span class="n">less_io</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;less_io&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span>
+        <span class="n">_less_io</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">]</span>
 
         <span class="c1"># Each model is a job; this is not the most efficient way</span>
         <span class="c1">#  but by assigning each model to an individual job</span>
@@ -222,14 +222,14 @@
                     <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
                     <span class="n">reference</span><span class="o">=</span><span class="n">reference</span><span class="p">,</span>
                     <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                    <span class="n">less_io</span><span class="o">=</span><span class="n">less_io</span><span class="p">,</span>
+                    <span class="n">debug</span><span class="o">=</span><span class="ow">not</span> <span class="n">_less_io</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
         <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">less_io</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_less_io</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">):</span>
             <span class="n">jobs</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">results</span>
             <span class="n">extract_data_from_capri_class</span><span class="p">(</span>
                 <span class="n">capri_objects</span><span class="o">=</span><span class="n">jobs</span><span class="p">,</span>
@@ -240,7 +240,10 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-                <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;DEPRECATION NOTICE: This execution mode (less_io=False) will no longer be supported in the next version.&quot;</span><span class="p">,</span>
+                <span class="n">msg</span><span class="o">=</span><span class="p">(</span>
+                    <span class="s2">&quot;DEPRECATION NOTICE: This execution mode (debug=True) &quot;</span>
+                    <span class="s2">&quot;will no longer be supported in the next version.&quot;</span>
+                    <span class="p">),</span>
                 <span class="n">level</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">jobs</span> <span class="o">=</span> <span class="n">merge_data</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
@@ -279,7 +282,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 19, 2024.
+      <span class="lastupdated">Last updated on Sep 20, 2024.
       </span></p>
   </div>
 

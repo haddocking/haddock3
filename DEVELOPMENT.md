@@ -157,6 +157,12 @@ Install haddock3 in development mode.
 python setup.py develop
 ```
 
+## Installation in an HPC environment
+
+For installation in an HPC environment we recommend to check the installed Python versions on the system and also importantly if an openmpi (or other custom MPI) installation is available on the system. Those are often offered via the `module` command.
+If you only intend to test haddock3 in local mode, the above instructions should be fine. But to harvest the MPI capabilities of an HPC system it is best to build haddock3 using the installed MPI version on the HPC system.
+
+
 ## Running tests
 
 Simply run the following command to run the tests.

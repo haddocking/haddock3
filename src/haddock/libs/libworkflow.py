@@ -79,7 +79,7 @@ class WorkflowManager:
                 inter=False, is_cleaned=is_cleaned, offline=offline, mode=mode, ncores=ncores)
         # call cli_traceback. If it fails, it's not a big deal
         try:
-            cli_traceback("./")
+            cli_traceback("./", offline=offline)
         except Exception as e:
             log.warning(f"Error running traceback: {e}")
 

@@ -8,14 +8,14 @@ Commands are provided below:
 ### with `venv`
 
 ```bash
-virtualenv venv --python=3.19
+virtualenv venv --python=3.9
 source venv/bin/activate
 ```
 
 ### with `conda`
 
 ```bash
-conda create -n haddock3 python=3.19
+conda create -n haddock3 python=3.9
 conda activate haddock3
 ```
 

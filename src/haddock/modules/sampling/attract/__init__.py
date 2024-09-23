@@ -12,10 +12,15 @@ add short description of the protocol, including CG, NAlib, sampling,
 scoring (two ways) and assembly + possible restraints. 
 ."""
 import os
+import sys
 import subprocess
 import shutil
 import shlex
 from pathlib import Path
+from haddock.modules.sampling.attract.attractmodule import (
+    rename_and_coarse_grain,
+    process_rna_file,
+)
 
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
@@ -42,85 +47,24 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls) -> None:
-        """Confirm that ATTRACT is installed."""
-        attract_dir = os.environ['ATTRACTDIR']
+        """Confirm that ATTRACT and its environment variables are properly set."""
+        try:
+            attract_dir = os.environ['ATTRACTDIR']
+            attract_tools = os.environ['ATTRACTTOOLS']
+            nalib = os.environ['LIBRARY']
+        except KeyError as e:
+            raise EnvironmentError(f"Required environment variable not found: {e}")
+
         attract_exec = Path(attract_dir, 'attract')
-        cmd = f'{attract_exec}'
-        p = subprocess.run(shlex.split(cmd), capture_output=True)
-        err = p.stderr.decode('utf-8')
-        if "Too few arguments" in err and "usage:" in err:
-            # ATTRACT is installed correctly 
-            pass
-        else:
-            raise Exception('ATTRACT is not installed properly')
+        result = subprocess.run([str(attract_exec)], capture_output=True, text=True)
+        
+        if "Too few arguments" not in result.stderr:
+            raise RuntimeError('ATTRACT is not installed properly')
 
-    def determine_molecule_type(self, pdb_file, lines_to_check=10):
-        """Check sevelal last lines of pdb file to label it 
-        as rna, dna or protein."""
-        dna_residues = {'DA', 'DG', 'DC', 'DT'}  
-        rna_residues = {'A', 'U', 'G', 'C', 'RA', 'RU', 'RG', 'RC'}  
-        with open(pdb_file, 'r') as f:
-            lines = f.readlines()[-lines_to_check:]
-        for line in reversed(lines):
-            if line.startswith("ATOM"):
-                residue_name = line[17:20].strip()
-                if residue_name in dna_residues:
-                    return 'dna'
-                elif residue_name in rna_residues:
-                    return 'rna'
-        return 'protein'
-
-    def rename_and_coarse_grain(self, file_name, new_name, reduce_path, is_rna=False):
-        """Rename models to 'protein-aa.pdb' and 'rna-aa.pdb' and convert 
-        them to ATTRACT coarse-grained representation."""
-        os.rename(file_name, new_name)
-        cmd = ['python', reduce_path, '--rna', new_name] if is_rna else ['python', reduce_path, new_name]
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        return result
-
-    def get_frag_lists(self, file):
-        """Get list of fragments and list of motifs from rna-aar.pdb."""
-        tmp = []
-        seq = ''
-        # extract sequence from structure
-        for line in file:
-            if line.startswith("ATOM"):
-                residue_name = line[17:20].strip()[-1]
-                residue_id = int(line[22:26].strip())
-                if [residue_name, residue_id] not in tmp:
-                    tmp.append([residue_name, residue_id])
-                    seq = seq + residue_name
-        # get info for motif.list and boundfrag.list
-        prev_frag = seq[:3]
-        count = 1 
-        boundfrag_list = [[count, prev_frag]]
-        motif_list = [prev_frag]
-        for x in seq[3:]:
-            count += 1 
-            next_frag = prev_frag[1:] + x
-            prev_frag = next_frag
-            boundfrag_list.append([count, next_frag])
-            if prev_frag not in motif_list: motif_list.append(next_frag)
-        return motif_list, boundfrag_list
-
-    def get_frag_pdbs(self, file):
-        """Extract fragments from full rna"""
-        first_res_id = int(file[0][22:26].strip())
-        last_res_id = int(file[-1][22:26].strip())
-        frag_total = last_res_id - first_res_id - 1 
-        fragmens=[]
-        for curr_residue_id in range(first_res_id, first_res_id+frag_total):
-            curr_frag = []
-            for line in file:
-                if line.startswith("ATOM"):
-                    residue_id = int(line[22:26].strip())
-                    if residue_id in [curr_residue_id, curr_residue_id+1, curr_residue_id+2]:
-                        curr_frag.append(line)
-                    elif residue_id > curr_residue_id+2:
-                        fragmens.append([curr_frag])
-                        break
-        fragmens.append([curr_frag])
-        return fragmens
+        # pass paths to _run for further use
+        cls.attract_dir = attract_dir
+        cls.attract_tools = attract_tools
+        cls.nalib = nalib
 
     def _run(self) -> None:
         """Execute module.
@@ -129,20 +73,12 @@ class HaddockModule(BaseHaddockModule):
             1. check library + 
             2. process input +
             3. make folder +
-            4. run docking 
-            5. run lrmsd (optional)
-            6. HIPPO (optional)
+            4. run docking < currently working on > 
+            5. run lrmsd (eventually optional)
+            6. HIPPO (eventually optional)
             7. Assembly ?
             8. Scoring ?
             9. SeleTopChains ? """
-
-        # Check if $LIBRARY exists 
-        try:
-            nalib = os.environ['LIBRARY']
-        except:
-            _msg = "Environment variable $LIBRARY not found."
-            self.finish_with_error(_msg)
-        log.info("NAlib found")
 
         # Get the models generated in previous step
         models: list[PDBFile] = [
@@ -165,66 +101,54 @@ class HaddockModule(BaseHaddockModule):
         # Ensure we have exactly protein and RNA molecules
         model_1 = models[0]
         model_2 = models[1]
-        label_1 = self.determine_molecule_type(model_1.file_name) 
-        label_2 = self.determine_molecule_type(model_2.file_name) 
-        labels = {label_1, label_2}
+    
+        attracttools = self.attract_tools
+        attrac_reduce_path = Path(attracttools, 'reduce.py')
+
+        _, label_1 = rename_and_coarse_grain(model_1.file_name, attrac_reduce_path)
+        _, label_2 = rename_and_coarse_grain(model_2.file_name, attrac_reduce_path)
         
-        if labels != {'protein', 'rna'}:
+        if {label_1, label_2} != {'protein', 'rna'}:
             _msg = "ATTRACT requires protein and RNA molecules as input"
             self.finish_with_error(_msg)
-
-        # Convert each molecule to corse-grained representation
-        # using $ATTRACTTOOLD/reduce.py 
-        log.info("Converting to coarse-grain representation")
-        try:
-            attracttools = os.environ['ATTRACTTOOLS']
-            attrac_reduce_path = Path(attracttools, 'reduce.py')
-
-            if label_1 == 'protein':
-                self.rename_and_coarse_grain(model_1.file_name, 'protien-aa.pdb', attrac_reduce_path, is_rna=False)
-                self.rename_and_coarse_grain(model_2.file_name, 'rna-aa.pdb', attrac_reduce_path, is_rna=True)
-            else:
-                self.rename_and_coarse_grain(model_1.file_name, 'rna-aa.pdb', attrac_reduce_path, is_rna=True)
-                self.rename_and_coarse_grain(model_2.file_name, 'protien-aa.pdb', attrac_reduce_path, is_rna=False)
-        except:
-            _msg = "Convertation to coarse-grain representation failes"
-            self.finish_with_error(_msg)
         
-        # Add required by ATTRACT files:
+        # Add required by ATTRACT files: 
+        # - link fragment library          
+        # - get motif.list, boundfrag.list, and fragXr.pdb 
         log.info("Preparing docking directory")
-        # 1.link fragment library          
+        
+        nalib = self.nalib
         cmd = f"ln -s {nalib} nalib"
         p = subprocess.run(shlex.split(cmd), capture_output=True)
         err = p.stderr.decode('utf-8')
-        # 2. get motif.list and boundfrag.list
-        f = open('rna-aar.pdb','r')
-        file = f.readlines()
-        f.close()
-        motif, boundfrag = self.get_frag_lists(file)
-        with open('boundfrag.list', 'w') as f:
-            for item in boundfrag:
-                f.write(f"{item[0]} {item[1]}\n")
-        with open('motif.list', 'w') as f:
-            for item in motif:
-                f.write(f"{item}\n")
-        # 3. create fragXr.pdb (optional)
-        fragments = self.get_frag_pdbs(file)
-        for i in range(1, len(fragments)+1):
-            with open(f"frag{i}r.list", 'w') as f:
-                for fragment in fragments[i-1]:
-                    for line in fragment:
-                        f.write(line)
-        
-        # Run docking 
-        #log.info("Running ATTRACT")   
-        
-        
-        # ???
+
+        process_rna_file('rna-aar.pdb')
+
+        log.info("Running ATTRACT...")
+        cmd = [
+        'bash', '/trinity/login/arha/tools/scripts/attract/docking/dock-lrmsd-in-haddock.sh',
+        '.',
+        '10',
+        '/trinity/login/arha/dev-h3/test-attr/tmp'
+        ]
+
+        docking = subprocess.run(cmd, capture_output=True, text=True)
+
+        with open('log.txt','w') as f:
+            for item in docking.stdout:
+                f.write(f"{item}")
+
+        with open('err.txt', 'w') as f:
+                    for item in docking.stderr:
+                        f.write(f"{item}")
+
         list_of_created_models = []     
-        created_models = ['protien-aa.pdb','rna-aa.pdb']
+        created_models = ['protein-aa.pdb','rna-aa.pdb']
         for model in created_models:
             pdb_object = PDBFile(Path(model).name,  path=".")
             list_of_created_models.append(pdb_object)
+       
+        self.output_models = list_of_created_models
+        self.export_io_models()
 
-            self.output_models = list_of_created_models
-            self.export_io_models()
+            

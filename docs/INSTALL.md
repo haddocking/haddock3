@@ -1,6 +1,6 @@
 # Installation
 
-Create a virtual environment with Python 3.10:
+Create a virtual environment with Python 3.9:
 
 You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
@@ -8,14 +8,14 @@ Commands are provided below:
 ### with `venv`
 
 ```bash
-virtualenv venv --python=3.10
+virtualenv venv --python=3.19
 source venv/bin/activate
 ```
 
 ### with `conda`
 
 ```bash
-conda create -n haddock3 python=3.10
+conda create -n haddock3 python=3.19
 conda activate haddock3
 ```
 

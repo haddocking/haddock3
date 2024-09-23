@@ -94,7 +94,7 @@ def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int) -> tuple[list, in
 
 def traceback_dataframe(
     data_dict: dict, rank_dict: dict, sel_step: list, max_topo_len: int
-) -> None:
+) -> pd.DataFrame:
     """
     Create traceback dataframe by combining together ranks and data.
 

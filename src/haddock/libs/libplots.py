@@ -993,8 +993,8 @@ def _generate_html_report(
         step: str,
         figures: list[Union[Figure, pd.DataFrame]],
         report_path: FilePath,
-        offline = False,
-        ):
+        offline: bool = False,
+        ) -> str:
     """
     Generate an HTML report for a specific step of analysis, including figures.
 
@@ -1188,7 +1188,13 @@ def _generate_html_body(
     return body
 
 
-def report_generator(boxes, scatters, tables, step, directory = "."):
+def report_generator(
+        boxes: list[Figure],
+        scatters: list[Figure],
+        tables: list,
+        step: str,
+        directory: FilePath = ".",
+        ) -> None:
     """
     Create a figure include plots and tables.
 
@@ -1510,7 +1516,7 @@ def offline_js_manager(fpath: FilePath, offline: bool) -> str:
     return plotly_js_import
         
 
-def make_traceback_plot(tr_subset, plot_filename, offline = False):
+def make_traceback_plot(tr_subset, plot_filename, offline=False):
     """
     Create a traceback barplot with the 40 best ranked models.
 

@@ -1,12 +1,19 @@
 """Test finding the best structures in libplots."""
 
 from pathlib import Path
-import numpy as np
 
+import numpy as np
 import pandas as pd
 import pytest
+import tempfile
 
-from haddock.libs.libplots import create_other_cluster, find_best_struct, make_alascan_plot, read_capri_table
+from haddock.libs.libplots import (
+    create_other_cluster,
+    find_best_struct,
+    make_alascan_plot,
+    offline_js_manager,
+    read_capri_table,
+    )
 
 from . import data_folder, golden_data
 
@@ -241,3 +248,16 @@ def test_plotly_offline():
     from plotly.offline.offline import get_plotlyjs
     plotly_self_contained = get_plotlyjs()
     assert type(plotly_self_contained) == str
+
+
+def test_offline_js_manager():
+    """Test offline manager behavior."""
+    # Offline == True
+    with tempfile.TemporaryDirectory(".") as tmpdir:
+        offline_plotly_js = offline_js_manager(tmpdir, offline=True)
+        assert Path("plotly_bundle.js").exists()
+    # Offline == False
+    from plotly.io._utils import plotly_cdn_url
+    plotly_cdn_full_url = plotly_cdn_url()
+    offline_plotly_js = offline_js_manager(tmpdir, offline=False)
+    assert plotly_cdn_full_url in offline_plotly_js

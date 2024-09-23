@@ -1,25 +1,27 @@
 """Test related to the seletopclusts module."""
 
-import os
-import pytest
-import pytest_mock  # noqa : F401
-import tempfile
 import math
+import os
+import tempfile
 from pathlib import Path
 
-from . import golden_data
+import pytest
+import pytest_mock  # noqa : F401
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.seletopclusts import HaddockModule as SeleTopClustModule  # noqa : E501
 from haddock.modules.analysis.seletopclusts import DEFAULT_CONFIG
+from haddock.modules.analysis.seletopclusts import \
+    HaddockModule as SeleTopClustModule  # noqa : E501
 from haddock.modules.analysis.seletopclusts.seletopclusts import (
     map_clusters_models,
-    select_top_clusts_models,
     rank_clust_order,
+    select_top_clusts_models,
     size_clust_order,
     sort_models,
     write_selected_models,
     )
+
+from . import golden_data
 
 
 NB_CLUSTERS = 3
@@ -39,13 +41,13 @@ def clustered_models() -> list[PDBFile]:
             pdbfile = PDBFile(
                 Path(golden_data, "protprot_complex_1.pdb"),
                 path=golden_data,
-                )
+            )
             # Add attributes
             pdbfile.clt_rank = clt_rank
             pdbfile.clt_model_rank = mdl_rank
             models.append(pdbfile)
     return models
-    
+
 
 @pytest.fixture
 def unclustered_models() -> list[PDBFile]:
@@ -57,7 +59,7 @@ def unclustered_models() -> list[PDBFile]:
             pdbfile = PDBFile(
                 Path(golden_data, "protprot_complex_1.pdb"),
                 path=golden_data,
-                )
+            )
             # Do NOT add attributes
             models.append(pdbfile)
     return models
@@ -70,12 +72,12 @@ def unranked_models() -> list[PDBFile]:
         PDBFile(
             Path(golden_data, "protprot_complex_1.pdb"),
             path=golden_data,
-            ),
+        ),
         PDBFile(
             Path(golden_data, "protprot_complex_2.pdb"),
             path=golden_data,
-            ),
-        ]
+        ),
+    ]
 
 
 @pytest.fixture
@@ -86,7 +88,7 @@ def ranked_models() -> list[PDBFile]:
         pdbfile = PDBFile(
             Path(golden_data, f"protprot_complex_{ind}.pdb"),
             path=golden_data,
-            )
+        )
         # Add clt model rank attribute
         pdbfile.clt_model_rank = clt_model_rank
         pdbfile.clt_rank = 1
@@ -97,12 +99,12 @@ def ranked_models() -> list[PDBFile]:
 @pytest.fixture
 def seletopclust():
     """Test module __init__()."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         yield SeleTopClustModule(
             order=1,
             path=Path(tmpdir),
             initial_params=DEFAULT_CONFIG,
-            )
+        )
 
 
 class MockPreviousIO:
@@ -132,7 +134,7 @@ def test_init(seletopclust):
         order=42,
         path=Path("0_anything"),
         initial_params=DEFAULT_CONFIG,
-        )
+    )
 
     # Once a module is initialized, it should have the following attributes
     assert seletopclust.path == Path("0_anything")
@@ -148,7 +150,7 @@ def test_seletopclust_run(seletopclust, mocker, clustered_models):
     mocker.patch(
         "haddock.modules.BaseHaddockModule.export_io_models",
         return_value=None,
-        )
+    )
     # run main module _run() function
     module_sucess = seletopclust.run()
     assert module_sucess is None
@@ -162,32 +164,28 @@ def test_seletopclust_neg_nb_mdls(seletopclust, mocker, clustered_models):
     seletopclust.previous_io = MockPreviousIO(clustered_models)
     mocker.patch(
         "haddock.modules.BaseHaddockModule.finish_with_error",
-        side_effect=Exception('mocked error'),
-        )
+        side_effect=Exception("mocked error"),
+    )
     with pytest.raises(Exception) as moked_finish_with_error:
         # run main module _run() function
         seletopclust.run()
-    assert moked_finish_with_error.value.__str__() == 'mocked error'
+    assert moked_finish_with_error.value.__str__() == "mocked error"
 
 
-def test_seletopclust_wrong_clust_param_type(
-        seletopclust,
-        mocker,
-        clustered_models
-        ):
+def test_seletopclust_wrong_clust_param_type(seletopclust, mocker, clustered_models):
     """Test finish_with_error due to wrong cluster parameter type."""
     # Change parameter
-    seletopclust.params["top_cluster"] = '1'
+    seletopclust.params["top_cluster"] = "1"
     # Mock some functions
     seletopclust.previous_io = MockPreviousIO(clustered_models)
     mocker.patch(
         "haddock.modules.BaseHaddockModule.finish_with_error",
-        side_effect=Exception('mocked error'),
-        )
+        side_effect=Exception("mocked error"),
+    )
     with pytest.raises(Exception) as moked_finish_with_error:
         # run main module _run() function
         seletopclust.run()
-    assert moked_finish_with_error.value.__str__() == 'mocked error'
+    assert moked_finish_with_error.value.__str__() == "mocked error"
 
 
 def test_seletopclust_unclustered(seletopclust, mocker, unclustered_models):
@@ -196,12 +194,12 @@ def test_seletopclust_unclustered(seletopclust, mocker, unclustered_models):
     seletopclust.previous_io = MockPreviousIO(unclustered_models)
     mocker.patch(
         "haddock.modules.BaseHaddockModule.finish_with_error",
-        side_effect=Exception('mocked error'),
-        )
+        side_effect=Exception("mocked error"),
+    )
     with pytest.raises(Exception) as moked_finish_with_error:
         # run main module _run() function
         seletopclust.run()
-    assert moked_finish_with_error.value.__str__() == 'mocked error'
+    assert moked_finish_with_error.value.__str__() == "mocked error"
 
 
 #########################
@@ -248,7 +246,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
         clustered_models,
         1,
         1,
-        )
+    )
     assert len(selected_models) == 1
     assert selected_models[0].clt_rank == 1
     assert selected_models[0].clt_model_rank == 1
@@ -259,7 +257,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
         clustered_models,
         2,
         8,
-        )
+    )
     assert len(selected_models) == 5 + 6
 
     ind = 0
@@ -275,7 +273,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
         clustered_models,
         NB_CLUSTERS + 2,
         NB_CLUSTERS + MDL_RANK_INCREMENT + 1,
-        )
+    )
     assert len(selected_models) == len(clustered_models)
     ind = 0
     for clt_rank in range(1, NB_CLUSTERS + 1):
@@ -290,7 +288,7 @@ def test_select_top_ranked_clusts_models(clustered_models):
         clustered_models,
         NB_CLUSTERS + 2,
         math.nan,
-        )
+    )
     assert len(selected_models) == len(clustered_models)
     ind = 0
     for clt_rank in range(1, NB_CLUSTERS + 1):
@@ -308,7 +306,7 @@ def test_select_top_sized_clusts_models(clustered_models):
         clustered_models,
         1,
         1,
-        )
+    )
     assert len(selected_models) == 1
     assert selected_models[0].clt_rank == 3
     assert selected_models[0].clt_model_rank == 1
@@ -319,7 +317,7 @@ def test_select_top_sized_clusts_models(clustered_models):
         clustered_models,
         2,
         8,
-        )
+    )
     assert len(selected_models) == 7 + 6
 
     ind = 0
@@ -335,7 +333,7 @@ def test_select_top_sized_clusts_models(clustered_models):
         clustered_models,
         NB_CLUSTERS + 2,
         NB_CLUSTERS + MDL_RANK_INCREMENT + 1,
-        )
+    )
     assert len(selected_models) == len(clustered_models)
     ind = 0
     for clt_rank in range(NB_CLUSTERS, 0, -1):
@@ -350,7 +348,7 @@ def test_select_top_sized_clusts_models(clustered_models):
         clustered_models,
         NB_CLUSTERS + 2,
         math.nan,
-        )
+    )
     assert len(selected_models) == len(clustered_models)
     ind = 0
     for clt_rank in range(NB_CLUSTERS, 0, -1):
@@ -382,8 +380,8 @@ def test_write_selected_models(ranked_models):
         models = write_selected_models(
             outputfile,
             ranked_models,
-            './',
-            )
+            "./",
+        )
         # Validate file creation
         assert os.path.exists(outputfile)
         assert Path(outputfile).stat().st_size != 0

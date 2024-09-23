@@ -113,7 +113,7 @@ class HaddockModule(BaseCNSModule):
                     "flexref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
-                    less_io=self.params["less_io"],
+                    debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
                 )
 

@@ -69,19 +69,37 @@ def test_integration_examples():
 def test_validate_cfg_files():
     """Test all the examples configuration files are valid."""
     for cfg_file in examples_cfg_files:
+        assert validate_cfg_file(cfg_file), f"Error detected in {cfg_file}!"
+
+
+def validate_cfg_file(cfg_file: Path) -> bool:
+    """Handeler to validate a configuration file.
+
+    Parameters
+    ----------
+    cfg_file : Path
+        Path to the configuration file to check.
+
+    Returns
+    -------
+    bool
+        True if config file is OK else False
+    """
+    try:
         if cfg_file.name == "params.cfg":
             # skip the params.cfg files as they might be part of old runs
-            continue
+            return True
         config_files = read_config(cfg_file)
         # update default non-mandatory parameters with user params
         params = recursive_dict_update(
-            config_optional_general_parameters_dict, config_files["final_cfg"]
-        )
+            config_optional_general_parameters_dict,
+            config_files["final_cfg"],
+            )
 
         params = recursive_dict_update(
             non_mandatory_general_parameters_defaults,
             params,
-        )
+            )
 
         validate_module_names_are_not_misspelled(params)
 
@@ -93,6 +111,11 @@ def test_validate_cfg_files():
         validate_parameters_are_not_misspelled(
             general_params,
             reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
-        )
+            )
 
         validate_modules_params(modules_params, 20)
+    except Exception as e:
+        print(e)
+        return False
+    else:
+        return True

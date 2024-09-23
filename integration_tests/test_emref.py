@@ -67,6 +67,7 @@ class MockPreviousIO:
 def test_emref_defaults(emref_module, calc_fnat):
 
     emref_module.previous_io = MockPreviousIO(path=emref_module.path)
+    emref_module.params["debug"] = True
 
     emref_module.run()
 
@@ -90,6 +91,8 @@ def test_emref_fle(emref_module, calc_fnat):
     emref_module.params["fle_sta_1 "] = 66
     emref_module.params["fle_end_1 "] = 77
     emref_module.params["fle_seg_1  "] = "B"
+
+    emref_module.params["debug"] = True
 
     emref_module.run()
 
@@ -117,6 +120,8 @@ def test_emref_mutliple_fle(emref_module, calc_fnat):
     emref_module.params["fle_sta_2 "] = 41
     emref_module.params["fle_end_2 "] = 47
     emref_module.params["fle_seg_2  "] = "B"
+
+    emref_module.params["debug"] = True
 
     emref_module.run()
 

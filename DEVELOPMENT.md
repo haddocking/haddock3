@@ -4,16 +4,11 @@ This file provides information on how to setup a development environment for HAD
 
 - [System requirements](#system-requirements)
   - [Python3.9](#python39)
-  - [CNS](#cns)
   - [git](#git)
   - [gcc](#gcc)
   - [OpenMPI](#openmpi)
 - [Setting up the development environment](#setting-up-the-development-environment)
   - [Clone the repository](#clone-the-repository)
-  - [Link CNS binary](#link-cns-binary)
-  - [Install shipped C++ dependencies](#install-shipped-c-dependencies)
-    - [fcc](#fcc)
-    - [fast-rmsdmatrix](#fast-rmsdmatrix)
   - [Python environment](#python-environment)
   - [Install Python dependencies](#install-python-dependencies)
   - [Running tests](#running-tests)
@@ -32,9 +27,10 @@ Below the instructions are provided for a Ubuntu system using `apt-get`. If you 
 
 #### Python3.9
 
-Conda is NOT recommended for development. Instead, install and compile Python 3.9 from source.
+**Conda is NOT recommended for development. Instead, install and compile Python 3.9 from source.**
 
-On a __Linux-based system__ you can install Python 3.9 with the following commands:
+On a **Linux-based system** you can install Python 3.9 with the following commands:
+
 ```bash
 wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz
 tar -xf Python-3.9.6.tgz
@@ -45,7 +41,7 @@ sudo make altinstall -j 8
 
 Then `python3.9` should be available on your system at `/usr/local/bin/python3.9`
 
-On __OSX__, use rather [brew](https://brew.sh) to install Python 3.9:
+On **OSX**, use rather [brew](https://brew.sh) to install Python 3.9:
 
 ```bash
 brew install python@3.9
@@ -53,14 +49,9 @@ brew install python@3.9
 
 Then `python3.9` should be available on your system at `/opt/homebrew/bin/python3.9`
 
-
-#### CNS
-
-Please refer to the [CNS installation instructions](docs/CNS.md).
-
 #### Git
 
-On a __Linux-based__ system:
+On a **Linux-based** system:
 
 ```bash
 sudo apt-get install git
@@ -68,21 +59,21 @@ sudo apt-get install git
 
 #### gcc
 
-On a __Linux-based__ system:
+On a **Linux-based** system:
 
 ```bash
 sudo apt-get install gcc
 ```
 
-#### OpenMPI 
+#### OpenMPI
 
-On a __Linux-based__ system:
+On a **Linux-based** system:
 
 ```bash
 sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ```
-__Note__ that this step is not required on OSX.
 
+**Note** that this step is not required on OSX.
 
 ## Setting up the development environment
 
@@ -90,31 +81,6 @@ __Note__ that this step is not required on OSX.
 
 ```bash
 git clone --recursive https://github.com/haddocking/haddock3.git
-```
-
-### Link CNS binary
-
-```bash
-mkdir haddock3/bin
-ln -s /path/to/cns_solve_1.3/bin/cns haddock3/bin/cns
-```
-
-### Install shipped C++ dependencies
-
-#### fcc
-
-```bash
-cd src/fcc/src
-make
-cd ../../../
-```
-
-#### fast-rmsdmatrix
-
-```bash
-cd src/fast-rmsdmatrix/src
-make fast-rmsdmatrix
-cd ../../../
 ```
 
 ### Python environment
@@ -126,13 +92,12 @@ We recomend you use Python's native virtual environment to manage the dependenci
 source .venv/bin/activate
 ```
 
-On __OSX__ the command would be:
+On **OSX** the command would be:
 
 ```bash
 /opt/homebrew/bin/python3.9 -m venv .venv
 source .venv/bin/activate
 ```
-
 
 ### Install Python dependencies
 
@@ -159,13 +124,15 @@ python setup.py develop
 
 ## Installation in an HPC environment
 
-For installation in an HPC environment we recommend to check the installed Python versions on the system and also importantly if an openmpi (or other custom MPI) installation is available on the system. Those are often offered via the `module` command.
-If you only intend to test haddock3 in local mode, the above instructions should be fine. But to harvest the MPI capabilities of an HPC system it is best to build haddock3 using the installed MPI version on the HPC system.
+**Please get in contact with the system administrator before doing development in a shared HPC environment.**
 
+For installation in an HPC environment we recommend to check the installed Python versions on the system and also importantly if an `openmpi` (or other custom MPI) installation is available on the system.
+Those are often offered via the `module` command.
+If you only intend to develop haddock3 using the multiprocessing scheduler, the above instructions should be fine. But to harvest the MPI capabilities of an HPC system it is best to build haddock3 using the installed MPI version on the HPC system.
 
 ## Running tests
 
-Simply run the following command to run the tests.
+In `haddock3` we use the pytest framework, the tests are located in `tests/` (unit) and `integration_tests/` directories.
 
 ```bash
 pytest

@@ -1641,20 +1641,6 @@ body molecular dynamics on.</p>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="nfle">
-<h4>nfle<a class="headerlink" href="#nfle" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of fully flexible segments</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: This defines the number of fully flexible segments.</div>
-<div class="line"><em>long description</em>: This parameter defines the number of fully flexible segments for all molecules. If &gt;=1 then those must be defined manually with segment ID (segid) in the fle_seg_* variable, followed by the starting and ending residue numbers in the fle_sta_* and fle_end_* variables.</div>
-<div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
 <section id="npart">
 <h4>npart<a class="headerlink" href="#npart" title="Permalink to this heading"></a></h4>
 <div class="line-block">
@@ -1946,104 +1932,6 @@ body molecular dynamics on.</p>
 <div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
 <div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
 <div class="line"><em>group</em>: flexibility</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="numc2sym">
-<h4>numc2sym<a class="headerlink" href="#numc2sym" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of C2 symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 40</div>
-<div class="line"><em>short description</em>: Defines the number of C2 symmetry restraints.</div>
-<div class="line"><em>long description</em>: Defines the number of C2 symmetry restraints. For each, a pair of segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="numc3sym">
-<h4>numc3sym<a class="headerlink" href="#numc3sym" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of C3 symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 10</div>
-<div class="line"><em>short description</em>: Defines the number of C3 symmetry restraints.</div>
-<div class="line"><em>long description</em>: Defines the number of C3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="numc4sym">
-<h4>numc4sym<a class="headerlink" href="#numc4sym" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of C4 symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 10</div>
-<div class="line"><em>short description</em>: Defines the number of C4 symmetry restraints.</div>
-<div class="line"><em>long description</em>: Defines the number of C4 symmetry restraints. For each, four segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="numc5sym">
-<h4>numc5sym<a class="headerlink" href="#numc5sym" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of C5 symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 10</div>
-<div class="line"><em>short description</em>: Defines the number of C5 symmetry restraints.</div>
-<div class="line"><em>long description</em>: Defines the number of C5 symmetry restraints. For each, five segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="numc6sym">
-<h4>numc6sym<a class="headerlink" href="#numc6sym" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of C6 symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 10</div>
-<div class="line"><em>short description</em>: Defines the number of C6 symmetry restraints.</div>
-<div class="line"><em>long description</em>: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="numncs">
-<h4>numncs<a class="headerlink" href="#numncs" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of non-crystallographic symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 100</div>
-<div class="line"><em>short description</em>: Number of non-crystallographic symmetry restraints (NCS).</div>
-<div class="line"><em>long description</em>: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined. Note that those must contain exactly the same residues/atom combinations.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="nums3sym">
-<h4>nums3sym<a class="headerlink" href="#nums3sym" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 0</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of S3 symmetry restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 10</div>
-<div class="line"><em>short description</em>: Defines the number of S3 symmetry restraints.</div>
-<div class="line"><em>long description</em>: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
-<div class="line"><em>group</em>: symmetry</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
@@ -3223,7 +3111,7 @@ body molecular dynamics on.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 20, 2024.
+      <span class="lastupdated">Last updated on Sep 23, 2024.
       </span></p>
   </div>
 

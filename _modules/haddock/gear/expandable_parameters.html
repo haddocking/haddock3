@@ -196,8 +196,9 @@
 <span class="c1"># common error messages</span>
 <span class="n">_emsg_num_differ</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;The parameter block </span><span class="si">{!r}</span><span class="s2"> expects &quot;</span>
-    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> parameters, but </span><span class="si">{}</span><span class="s2"> are present &quot;</span>
-    <span class="s2">&quot;in the user configuration file: </span><span class="si">{}</span><span class="s2">.&quot;</span>
+    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> parameters (</span><span class="si">{}</span><span class="s2">), but </span><span class="si">{}</span><span class="s2"> are present &quot;</span>
+    <span class="s2">&quot;in the user configuration file: </span><span class="si">{}</span><span class="s2">. &quot;</span>
+    <span class="s2">&quot;Parameter(s) </span><span class="si">{}</span><span class="s2"> are missing.&quot;</span>
 <span class="p">)</span>
 
 
@@ -336,7 +337,7 @@
     <span class="n">extract_params</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">_emsg_no_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Parameter block is not a valid expandable group&quot;</span><span class="p">,</span>
     <span class="n">_emsg_unexpected_params</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Unexpected params for group&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read groups in user config.</span>
 
@@ -366,15 +367,18 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    set</span>
+<span class="sd">    new : set[str]</span>
 <span class="sd">        A set with the new parameters in the user configuration file</span>
 <span class="sd">        that are acceptable according to the expandable rules.</span>
+<span class="sd">    param_name_counts : dict[str, int]</span>
+<span class="sd">        Count of expendable parameter parameter names</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># minimum=1 is used to capture groups with missing parameters</span>
     <span class="n">user_groups</span> <span class="o">=</span> <span class="n">get_user_groups</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">default_group_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">default_groups</span><span class="p">)</span>
 
     <span class="n">new</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">param_name_counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">),</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">user_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_group_names</span><span class="p">:</span>
             <span class="n">emsg</span> <span class="o">=</span> <span class="n">_emsg_no_group</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">)</span>
@@ -398,34 +402,39 @@
         <span class="c1"># when num_found &gt; num_expected the error about in `diff` is</span>
         <span class="c1"># triggered instead</span>
         <span class="k">if</span> <span class="n">num_found</span> <span class="o">!=</span> <span class="n">num_expected</span><span class="p">:</span>
+            <span class="n">expected_missings</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expected_params</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
             <span class="n">emsg</span> <span class="o">=</span> <span class="n">_emsg_num_differ</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">param_name</span><span class="p">,</span>
                 <span class="n">num_expected</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expected_params</span><span class="p">),</span>
                 <span class="n">num_found</span><span class="p">,</span>
                 <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="p">),</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">`&quot;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">expected_missings</span><span class="p">]),</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
 
         <span class="n">related_params</span> <span class="o">=</span> <span class="n">extract_params</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">)</span>
+        <span class="c1"># Increment counts for this parameter</span>
+        <span class="k">if</span> <span class="n">related_params</span><span class="p">:</span>
+            <span class="n">param_name_counts</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">param_name_counts</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">new</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">related_params</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">new</span>
+    <span class="k">return</span> <span class="n">new</span><span class="p">,</span> <span class="n">param_name_counts</span>
 
 
 <div class="viewcode-block" id="read_simplest_expandable"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.read_simplest_expandable">[docs]</a><span class="k">def</span> <span class="nf">read_simplest_expandable</span><span class="p">(</span>
-    <span class="n">expparams</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">expparams</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> 
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read expandable parameters from config file of the type `param_1`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
+<span class="sd">    config : dict, dict.keys, set, or alike</span>
+<span class="sd">        The user configuration file.</span>
 <span class="sd">    expparams : dict, dict.keys, set, or alike</span>
 <span class="sd">        The parameter names that should be considered as expandable.</span>
 <span class="sd">        Usually, this is a module subdictionary of `type_simplest_ep`.</span>
-
-<span class="sd">    config : dict, dict.keys, set, or alike</span>
-<span class="sd">        The user configuration file.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1020,7 +1029,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 20, 2024.
+      <span class="lastupdated">Last updated on Sep 23, 2024.
       </span></p>
   </div>
 

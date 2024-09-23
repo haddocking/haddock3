@@ -1008,6 +1008,71 @@ mol_fix_origin_1
 | *group*: molecule
 | *explevel*: expert
 
+nc2sym
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C2 symmetry restraints
+| *min*: 0
+| *max*: 40
+| *short description*: Defines the number of C2 symmetry restraints.
+| *long description*: Defines the number of C2 symmetry restraints. For each, a pair of segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+nc3sym
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C3 symmetry restraints
+| *min*: 0
+| *max*: 10
+| *short description*: Defines the number of C3 symmetry restraints.
+| *long description*: Defines the number of C3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+nc4sym
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C4 symmetry restraints
+| *min*: 0
+| *max*: 10
+| *short description*: Defines the number of C4 symmetry restraints.
+| *long description*: Defines the number of C4 symmetry restraints. For each, four segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+nc5sym
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C5 symmetry restraints
+| *min*: 0
+| *max*: 10
+| *short description*: Defines the number of C5 symmetry restraints.
+| *long description*: Defines the number of C5 symmetry restraints. For each, five segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+nc6sym
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C6 symmetry restraints
+| *min*: 0
+| *max*: 10
+| *short description*: Defines the number of C6 symmetry restraints.
+| *long description*: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
 ncs_end1_1
 ~~~~~~~~~~
 
@@ -1366,6 +1431,19 @@ nrair_9
 | *group*: ab initio mode
 | *explevel*: expert
 
+ns3sym
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of S3 symmetry restraints
+| *min*: 0
+| *max*: 10
+| *short description*: Defines the number of S3 symmetry restraints.
+| *long description*: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
 ntrials
 ~~~~~~~
 
@@ -1377,97 +1455,6 @@ ntrials
 | *short description*: Number of internal docking trials. Only the best model will be written to disk.
 | *long description*: Number of internal docking trials. HADDOCK will repeat the docking internally multiple times, ranking them internally and only writing the best model to disk.
 | *group*: sampling
-| *explevel*: expert
-
-numc2sym
-~~~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of C2 symmetry restraints
-| *min*: 0
-| *max*: 40
-| *short description*: Defines the number of C2 symmetry restraints.
-| *long description*: Defines the number of C2 symmetry restraints. For each, a pair of segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
-| *explevel*: expert
-
-numc3sym
-~~~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of C3 symmetry restraints
-| *min*: 0
-| *max*: 10
-| *short description*: Defines the number of C3 symmetry restraints.
-| *long description*: Defines the number of C3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
-| *explevel*: expert
-
-numc4sym
-~~~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of C4 symmetry restraints
-| *min*: 0
-| *max*: 10
-| *short description*: Defines the number of C4 symmetry restraints.
-| *long description*: Defines the number of C4 symmetry restraints. For each, four segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
-| *explevel*: expert
-
-numc5sym
-~~~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of C5 symmetry restraints
-| *min*: 0
-| *max*: 10
-| *short description*: Defines the number of C5 symmetry restraints.
-| *long description*: Defines the number of C5 symmetry restraints. For each, five segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
-| *explevel*: expert
-
-numc6sym
-~~~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of C6 symmetry restraints
-| *min*: 0
-| *max*: 10
-| *short description*: Defines the number of C6 symmetry restraints.
-| *long description*: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
-| *explevel*: expert
-
-numncs
-~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of non-crystallographic symmetry restraints
-| *min*: 0
-| *max*: 100
-| *short description*: Number of non-crystallographic symmetry restraints (NCS).
-| *long description*: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined. Note that those must contain exactly the same residues/atom combinations.
-| *group*: symmetry
-| *explevel*: expert
-
-nums3sym
-~~~~~~~~
-
-| *default*: 0
-| *type*: integer
-| *title*: Number of S3 symmetry restraints
-| *min*: 0
-| *max*: 10
-| *short description*: Defines the number of S3 symmetry restraints.
-| *long description*: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
 | *explevel*: expert
 
 previous_ambig

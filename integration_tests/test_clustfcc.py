@@ -9,7 +9,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.clustfcc import DEFAULT_CONFIG as clustfcc_pars
 from haddock.modules.analysis.clustfcc import HaddockModule as ClustFCCModule
 
-from . import golden_data
+from integration_tests import GOLDEN_DATA
 
 
 class MockPreviousIO:
@@ -20,12 +20,12 @@ class MockPreviousIO:
 
     def retrieve_models(self, individualize: bool = False):
         shutil.copy(
-            Path(golden_data, "protprot_complex_1.pdb"),
+            Path(GOLDEN_DATA, "protprot_complex_1.pdb"),
             Path(self.path, "protprot_complex_1.pdb"),
         )
 
         shutil.copy(
-            Path(golden_data, "protprot_complex_2.pdb"),
+            Path(GOLDEN_DATA, "protprot_complex_2.pdb"),
             Path(self.path, "protprot_complex_2.pdb"),
         )
 

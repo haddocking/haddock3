@@ -127,7 +127,7 @@ def test_prepare_cns_input(pdbfile):
         ambig_fname="",
         native_segid=False,
         default_params_path=None,
-        less_io=True,
+        debug=False,
         seed=pdbfile.seed,
     )
 

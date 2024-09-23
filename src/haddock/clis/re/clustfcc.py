@@ -6,6 +6,7 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import Union
+from haddock.fcc import cluster_fcc
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (

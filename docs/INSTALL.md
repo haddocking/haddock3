@@ -8,8 +8,8 @@ Commands are provided below:
 ### with `venv`
 
 ```bash
-virtualenv venv --python=3.19
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 ```
 
 ### with `conda`

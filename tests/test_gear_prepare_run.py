@@ -413,6 +413,10 @@ def test_param_value_error(defaultparams, key, value):
 
 def test_validate_parameters_are_not_incompatible():
     """Test parameter incompatibilities."""
+    params = {
+        "limiting_parameter": True,
+        "incompatible_parameter": "incompatible_value",
+        }
     # Define an incompatible parameter
     # when limiting_parameter has value `True`,
     # `incompatible_parameter` cannot adopt `incompatible_value`
@@ -425,13 +429,16 @@ def test_validate_parameters_are_not_incompatible():
     }
     # Test 1 successfully fail
     with pytest.raises(ValueError):
-        validate_parameters_are_not_incompatible(params, incompatible_params)
+        validate_parameters_are_not_incompatible(
+            params,
+            incompatible_params,
+            )
 
     # Test 2 - successfully pass
     incompatible_params = {
         "limiting_parameter": {
             False: {
-                "ok_parameter": "ok_value",
+                "incompatible_parameter": "incompatible_value",
             }
         }
     }

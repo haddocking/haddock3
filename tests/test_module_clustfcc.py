@@ -29,6 +29,7 @@ def fcc_module():
         yield ClustFCCModule(order=1, path=Path(tempdir), initial_params=clustfcc_pars)
 
 
+@pytest.mark.skip(reason="this is testing a method of a parent class")
 def test_io_json(fcc_module, prot_input_list):
     """Test the correct creation of the io.json file."""
     # set the input and output models

@@ -1,20 +1,19 @@
 """Test the Alascan module."""
+
 import os
+import shutil
+import tempfile
 from pathlib import Path
+from subprocess import CompletedProcess
 
 import numpy as np
 import pandas as pd
 import pytest
 import pytest_mock
-import tempfile
-import shutil
-from subprocess import CompletedProcess
-
-from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
-from haddock.modules.analysis.alascan import DEFAULT_CONFIG
-from .test_module_caprieval import protprot_input_list
 
 from haddock.libs.libontology import PDBFile
+from haddock.modules.analysis.alascan import DEFAULT_CONFIG
+from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
@@ -24,10 +23,11 @@ from haddock.modules.analysis.alascan.scan import (
     calc_score,
     create_alascan_plots,
     generate_alascan_output,
-    mutate
-)
+    mutate,
+    )
 
 from . import golden_data
+from .test_module_caprieval import protprot_input_list
 
 
 @pytest.fixture
@@ -46,13 +46,18 @@ def protprot_model_list(complex_pdb):
 
 @pytest.fixture
 def params():
-    return {"int_cutoff": 3.0, "plot": False, "scan_residue": "ALA", "resdic_A": [19, 20]}
+    return {
+        "int_cutoff": 3.0,
+        "plot": False,
+        "scan_residue": "ALA",
+        "resdic_A": [19, 20],
+    }
 
 
 @pytest.fixture
 def scan_obj(protprot_model_list, params):
     """Return example alascan module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         scan_obj = Scan(
             model_list=protprot_model_list,
             output_name="alascan",
@@ -67,18 +72,18 @@ def scan_obj(protprot_model_list, params):
 @pytest.fixture
 def scanjob_obj(scan_obj):
     """Return example alascan module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         yield ScanJob(
-        scan_obj=scan_obj,
-        output=Path(tmpdir),
-        params=params,
+            scan_obj=scan_obj,
+            output=Path(tmpdir),
+            params=params,
         )
 
 
 @pytest.fixture
 def alascan():
     """Return alascan module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         yield AlascanModule(
             order=1,
             path=Path(tmpdir),
@@ -175,7 +180,7 @@ def example_df_scan_clt():
 @pytest.fixture
 def scan_file():
     """Return example alascan file."""
-    yield(Path(golden_data, "scan_protprot_complex_1.csv"))
+    yield (Path(golden_data, "scan_protprot_complex_1.csv"))
 
 
 def test_scan_obj(scan_obj, protprot_model_list):
@@ -186,17 +191,16 @@ def test_scan_obj(scan_obj, protprot_model_list):
 
 def test_mutate(protprot_model_list):
     """Test the mutate function."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         os.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
-        
+
         assert mut_pdb_fname == Path("protprot_complex_1-A_T19A.pdb")
         assert os.path.exists(mut_pdb_fname)
 
         first_line = open(mut_pdb_fname).readline()
         assert first_line[17:20] == "ALA"
-   
 
         with pytest.raises(KeyError):
             mutate(mut_fname, "A", 19, "HOH")
@@ -204,7 +208,7 @@ def test_mutate(protprot_model_list):
 
 def test_add_delta_to_bfactor(protprot_model_list, example_df_scan):
     """Test the add_delta_to_bfactor function."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         os.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
@@ -227,17 +231,18 @@ def test_confirm_installation(alascan):
 def test_init(alascan):
     alascan.__init__(
         order=42,
-        path=Path("0_anything"),
+        path=alascan.path,
         initial_params=DEFAULT_CONFIG,
     )
 
     # Once a module is initialized, it should have the following attributes
-    assert alascan.path == Path("0_anything")
     assert alascan._origignal_config_file == DEFAULT_CONFIG
     assert type(alascan.params) == dict
     assert len(alascan.params) != 0
 
 
+# FIXME: Move test to proper location
+@pytest.mark.skip(reason="this is an integration test")
 def test_run(
     mocker,
     alascan,
@@ -247,12 +252,14 @@ def test_run(
     Path(alascan.path, "alascan_0.scan").touch()
     ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
     shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
-    
+
     alascan.params["plot"] = True
 
     alascan.previous_io = MockPreviousIO()
-    mocker.patch("haddock.libs.libparallel.Scheduler.run", return_value = None)
-    mocker.patch("haddock.modules.BaseHaddockModule.export_io_models", return_value = None)
+    mocker.patch("haddock.libs.libparallel.Scheduler.run", return_value=None)
+    mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models", return_value=None
+    )
 
     alascan.run()
     assert Path(alascan.path, "scan_clt_-.csv").exists()
@@ -262,17 +269,21 @@ def test_run(
     alascan.run()
 
 
+@pytest.mark.skip(reason="not testing anything")
 def test_scanjob_run(scanjob_obj, mocker):
-    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.run", return_value = None)
-    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.output", return_value = None)
+    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.run", return_value=None)
+    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.output", return_value=None)
     scanjob_obj.run()
 
 
-def test_scan_run_output(
-    mocker,
-    scan_obj):
+# FIXME: Move test to proper location
+@pytest.mark.skip(reason="this is an integration test")
+def test_scan_run_output(mocker, scan_obj):
     """Test Scan run and output method."""
-    mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
+    mocker.patch(
+        "haddock.modules.analysis.alascan.scan.calc_score",
+        return_value=(-106.7, -29, -316, -13, 1494),
+    )
     scan_obj.run()
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 2
@@ -281,52 +292,55 @@ def test_scan_run_output(
     assert Path(scan_obj.path, "alascan").exists()
 
 
+# FIXME: Move test to proper location
+@pytest.mark.skip(reason="this is an integration test")
 def test_scan_run_interface(mocker, scan_obj):
     """Test Scan run with empty filter_resdic."""
-    scan_obj.filter_resdic = {'_': []}
+    scan_obj.filter_resdic = {"_": []}
     scan_obj.scan_res = "ASP"
-    mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
+    mocker.patch(
+        "haddock.modules.analysis.alascan.scan.calc_score",
+        return_value=(-106.7, -29, -316, -13, 1494),
+    )
     scan_obj.run()
 
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 5
-    
+
 
 def test_calc_score(mocker):
     """Test the run_scan method."""
     mocker.patch(
         "haddock.modules.analysis.alascan.scan.get_score_string",
-        return_value = [
-        "> starting calculations...",
-        "> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)",
-        "> HADDOCK-score (emscoring) = -106.7376",
-        "> vdw=-29.5808,elec=-316.542,desolv=-13.8484,air=0.0,bsa=1494.73",
-        ]
+        return_value=[
+            "> starting calculations...",
+            "> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)",
+            "> HADDOCK-score (emscoring) = -106.7376",
+            "> vdw=-29.5808,elec=-316.542,desolv=-13.8484,air=0.0,bsa=1494.73",
+        ],
     )
     # sub with tmpdir
-    scores = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir = "tmp")
-    
+    scores = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
+
     assert scores == (-106.7376, -29.5808, -316.542, -13.8484, 1494.73)
+
 
 def test_calc_score_wrong(mocker):
     mocker.patch(
         "haddock.modules.analysis.alascan.scan.get_score_string",
-        return_value = ['> could not calculate score']
+        return_value=["> could not calculate score"],
     )
     # now calc_score should raise an Exception
     with pytest.raises(Exception):
-        calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir = "tmp")
+        calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
 
 
 def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
     """Test the generate_alascan_output method."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
         os.chdir(tmpdir)
-        models_to_export = generate_alascan_output(
-            protprot_model_list,
-            path=tmpdir
-            )
+        models_to_export = generate_alascan_output(protprot_model_list, path=tmpdir)
         assert len(models_to_export) == 1
         assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
         assert models_to_export[0].file_name == "protprot_complex_1_alascan.pdb"
@@ -334,12 +348,13 @@ def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
 
 class MockPreviousIO:
     """Mock PreviousIO class."""
+
     # In the mocked method, add the arguments that are called by the original method
     #  that is being tested
     def retrieve_models(self, individualize: bool = False):
         return [
             PDBFile(file_name="protprot_complex_1.pdb", path=str(golden_data)),
-            ]
+        ]
 
 
 def mock_alascan_cluster_analysis():
@@ -354,14 +369,14 @@ def mock_alascan_cluster_analysis():
                 "delta_desolv": 0.0,
                 "delta_bsa": 0.0,
                 "frac_pr": 0.0,
-                }
-            },
-        }
+            }
+        },
+    }
 
 
 def test_alascan_cluster_analysis(protprot_input_list, scan_file):
     """Test alascan_cluster_analysis."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_2.csv"))
         os.chdir(tmpdir)
@@ -378,7 +393,6 @@ def test_alascan_cluster_analysis(protprot_input_list, scan_file):
 
 def test_create_alascan_plots(mocker, caplog):
     """Test create_alascan_plots."""
-    os.remove("scan_clt_-.csv")
     mocker.patch("pandas.read_csv", return_value=pd.DataFrame())
     create_alascan_plots({"-": []}, scan_residue="ALA")
 

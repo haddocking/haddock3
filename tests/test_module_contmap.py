@@ -1,39 +1,40 @@
 """Test the CONTact MAP module."""
+
 import os
-import pytest
-import pytest_mock  # noqa : F401
 import tempfile
 from pathlib import Path
 
 import numpy as np
+import pytest
+import pytest_mock  # noqa : F401
 from scipy.spatial.distance import pdist, squareform
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.contactmap import HaddockModule as ContactMapModule  # noqa : E501
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG
-from haddock.modules.analysis.contactmap.contmap import (
-    ContactsMap,
-    ClusteredContactMap,
-    datakey_to_colorscale,
-    write_res_contacts,
-    min_dist,
-    extract_submatrix,
-    compute_distance_matrix,
-    extract_pdb_coords,
-    topX_models,
-    gen_contact_dt,
-    # chord chart functions
-    moduloAB,
+from haddock.modules.analysis.contactmap import \
+    HaddockModule as ContactMapModule  # noqa : E501
+from haddock.modules.analysis.contactmap.contmap import (  # chord chart functions
     PI,
-    within_2PI,
+    ClusteredContactMap,
+    ContactsMap,
     check_square_matrix,
+    compute_distance_matrix,
+    control_pts,
+    ctrl_rib_chords,
+    datakey_to_colorscale,
+    extract_pdb_coords,
+    extract_submatrix,
+    gen_contact_dt,
+    invPerm,
+    make_chordchart,
+    make_ideogram_arc,
     make_q_bezier,
     make_ribbon_arc,
-    make_chordchart,
-    invPerm,
-    ctrl_rib_chords,
-    control_pts,
-    make_ideogram_arc,
+    min_dist,
+    moduloAB,
+    topX_models,
+    within_2PI,
+    write_res_contacts,
     )
 
 from . import golden_data
@@ -46,12 +47,12 @@ from . import golden_data
 def contactmap_output_ext():
     """List of generated files suffixes."""
     return (
-        'contacts.tsv',
-        'heatmap.html',
-        'chordchart.html',
-        'interchain_contacts.tsv',
-        'heavyatoms_interchain_contacts.tsv',
-        )
+        "contacts.tsv",
+        "heatmap.html",
+        "chordchart.html",
+        "interchain_contacts.tsv",
+        "heavyatoms_interchain_contacts.tsv",
+    )
 
 
 @pytest.fixture
@@ -66,7 +67,7 @@ def atoms_coordinates() -> list[list]:
         [1, 2, 3],
         [1, 2, 2],
         [0, 2, 3],
-        ]
+    ]
 
 
 @pytest.fixture
@@ -76,22 +77,24 @@ def ref_one_line_dist_half_matrix():
 
 @pytest.fixture
 def ref_dist_matrix():
-    return np.array([
-        [0, 1, 1],
-        [1, 0, np.sqrt(2)],
-        [1, np.sqrt(2), 0],
-        ])
+    return np.array(
+        [
+            [0, 1, 1],
+            [1, 0, np.sqrt(2)],
+            [1, np.sqrt(2), 0],
+        ]
+    )
 
 
 @pytest.fixture
 def contactmap():
     """Return contmap module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         yield ContactMapModule(
             order=1,
             path=Path(tmpdir),
             initial_params=DEFAULT_CONFIG,
-            )
+        )
 
 
 @pytest.fixture
@@ -100,7 +103,7 @@ def cluster_input_list() -> list:
     return [
         PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
         PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
-        ]
+    ]
 
 
 @pytest.fixture
@@ -119,11 +122,11 @@ def params() -> dict:
         "single_model_analysis": False,
         "topX": 10,
         "generate_heatmap": True,
-        "cluster_heatmap_datatype": 'shortest-cont-probability',
+        "cluster_heatmap_datatype": "shortest-cont-probability",
         "generate_chordchart": True,
-        "chordchart_datatype": 'shortest-dist',
+        "chordchart_datatype": "shortest-dist",
         "offline": False,
-        }
+    }
 
 
 @pytest.fixture
@@ -131,81 +134,122 @@ def protprot_contactmap(cluster_input_list, params):
     params["single_model_analysis"] = True
     return ContactsMap(
         Path(cluster_input_list[0].rel_path),
-        Path('./contmap_test'),
+        Path("./contmap_test"),
         params,
-        )
+    )
 
 
 @pytest.fixture
 def clustercontactmap(cluster_input_list, params):
     return ClusteredContactMap(
         [Path(m.rel_path) for m in cluster_input_list],
-        Path('./clustcontmap_test'),
+        Path("./clustcontmap_test"),
         params,
-        )
+    )
 
 
 @pytest.fixture
 def res_res_contacts():
     return [
-        {'res1': 'A-1-MET', 'res2': 'A-2-ALA', 'ca-ca-dist': 3.0},
-        {'res1': 'A-1-MET', 'res2': 'A-3-VAL', 'ca-ca-dist': 4.0},
-        ]
+        {"res1": "A-1-MET", "res2": "A-2-ALA", "ca-ca-dist": 3.0},
+        {"res1": "A-1-MET", "res2": "A-3-VAL", "ca-ca-dist": 4.0},
+    ]
 
 
 @pytest.fixture
 def contact_matrix():
-    return np.array([
-        [1, 0, 0, 1, 0, 0],
-        [0, 1, 0, 0, 0, 0],
-        [0, 0, 1, 0, 0, 0],
-        [1, 0, 0, 1, 1, 0],
-        [0, 0, 0, 1, 1, 1],
-        [0, 0, 0, 0, 1, 1],
-        ])
+    return np.array(
+        [
+            [1, 0, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0],
+            [1, 0, 0, 1, 1, 0],
+            [0, 0, 0, 1, 1, 1],
+            [0, 0, 0, 0, 1, 1],
+        ]
+    )
 
 
 @pytest.fixture
 def dist_matrix():
-    return np.array([
-        [0.0, 18.4, 16.0, 5.1, 11.4, 14.7],
-        [18.4, 0.0, 18.0, 15.2, 11.7, 20.1],
-        [16.0, 18.0, 0.0, 9.2, 12.8, 10.0],
-        [5.1, 15.2, 9.2, 0.0, 6.2, 9.3],
-        [11.4, 11.7, 12.8, 6.2, 0.0, 6.9],
-        [14.7, 20.1, 10.0, 9.3, 6.9, 0.0],
-        ])
+    return np.array(
+        [
+            [0.0, 18.4, 16.0, 5.1, 11.4, 14.7],
+            [18.4, 0.0, 18.0, 15.2, 11.7, 20.1],
+            [16.0, 18.0, 0.0, 9.2, 12.8, 10.0],
+            [5.1, 15.2, 9.2, 0.0, 6.2, 9.3],
+            [11.4, 11.7, 12.8, 6.2, 0.0, 6.9],
+            [14.7, 20.1, 10.0, 9.3, 6.9, 0.0],
+        ]
+    )
 
 
 @pytest.fixture
 def intertype_matrix():
-    return np.array([
-        ['self-self', 'polar-positive', 'polar-apolar',
-         'polar-apolar', 'polar-apolar', 'polar-negative'],
-        ['polar-positive', 'self-self', 'positive-apolar',
-         'positive-apolar', 'positive-apolar',
-         'positive-negative'],
-        ['polar-apolar', 'positive-apolar', 'self-self',
-         'apolar-apolar', 'apolar-apolar', 'apolar-negative'],
-        ['polar-apolar', 'positive-apolar', 'apolar-apolar',
-         'self-self', 'apolar-apolar', 'apolar-negative'],
-        ['polar-apolar', 'positive-apolar', 'apolar-apolar',
-         'apolar-apolar', 'self-self', 'apolar-negative'],
-        ['polar-negative', 'positive-negative', 'apolar-negative',
-         'apolar-negative', 'apolar-negative', 'self-self'],
-        ])
+    return np.array(
+        [
+            [
+                "self-self",
+                "polar-positive",
+                "polar-apolar",
+                "polar-apolar",
+                "polar-apolar",
+                "polar-negative",
+            ],
+            [
+                "polar-positive",
+                "self-self",
+                "positive-apolar",
+                "positive-apolar",
+                "positive-apolar",
+                "positive-negative",
+            ],
+            [
+                "polar-apolar",
+                "positive-apolar",
+                "self-self",
+                "apolar-apolar",
+                "apolar-apolar",
+                "apolar-negative",
+            ],
+            [
+                "polar-apolar",
+                "positive-apolar",
+                "apolar-apolar",
+                "self-self",
+                "apolar-apolar",
+                "apolar-negative",
+            ],
+            [
+                "polar-apolar",
+                "positive-apolar",
+                "apolar-apolar",
+                "apolar-apolar",
+                "self-self",
+                "apolar-negative",
+            ],
+            [
+                "polar-negative",
+                "positive-negative",
+                "apolar-negative",
+                "apolar-negative",
+                "apolar-negative",
+                "self-self",
+            ],
+        ]
+    )
 
 
 @pytest.fixture
 def protein_labels():
     return [
-        'A-69-THR',
-        'A-255-LYS',
-        'A-296-ILE',
-        'A-323-LEU',
-        'B-44-GLY',
-        'B-70-GLU',
-        ]
+        "A-69-THR",
+        "A-255-LYS",
+        "A-296-ILE",
+        "A-323-LEU",
+        "B-44-GLY",
+        "B-70-GLU",
+    ]
 
 
 ########################
@@ -243,12 +287,11 @@ def test_init(contactmap):
     """Test __init__ function."""
     contactmap.__init__(
         order=42,
-        path=Path("0_anything"),
+        path=contactmap.path,
         initial_params=DEFAULT_CONFIG,
-        )
+    )
 
     # Once a module is initialized, it should have the following attributes
-    assert contactmap.path == Path("0_anything")
     assert contactmap._origignal_config_file == DEFAULT_CONFIG
     assert type(contactmap.params) == dict
     assert len(contactmap.params.keys()) != 0
@@ -262,11 +305,9 @@ class MockPreviousIO:
     def retrieve_models(self, individualize: bool = False):
         """Provide a set of models."""
         models = [
-            PDBFile(Path(golden_data, "protprot_complex_1.pdb"),
-                    path=golden_data),
-            PDBFile(Path(golden_data, "protprot_complex_2.pdb"),
-                    path=golden_data),
-            ]
+            PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
+            PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
+        ]
         models[0].clt_id = None
         models[1].clt_id = 1
         return models
@@ -280,7 +321,7 @@ def test_contactmap_run(contactmap, mocker):
     mocker.patch(
         "haddock.modules.BaseHaddockModule.export_io_models",
         return_value=None,
-        )
+    )
     # run main module _run() function
     module_sucess = contactmap.run()
     assert module_sucess is None
@@ -320,7 +361,7 @@ def test_single_model(protprot_contactmap, contactmap_output_ext):
     # check generated output files
     output_bp = protprot_contactmap.output
     for output_ext in contactmap_output_ext:
-        fpath = f'{output_bp}_{output_ext}'
+        fpath = f"{output_bp}_{output_ext}"
         assert os.path.exists(fpath) is True
         assert Path(fpath).stat().st_size != 0
         Path(fpath).unlink(missing_ok=False)
@@ -335,7 +376,7 @@ def test_clustercontactmap_run(clustercontactmap, contactmap_output_ext):
     # check outputs
     output_bp = clustercontactmap.output
     for output_ext in contactmap_output_ext:
-        fpath = f'{output_bp}_{output_ext}'
+        fpath = f"{output_bp}_{output_ext}"
         assert os.path.exists(fpath) is True
         assert Path(fpath).stat().st_size != 0
         Path(fpath).unlink(missing_ok=False)
@@ -345,15 +386,15 @@ def test_write_res_contacts(res_res_contacts):
     """Test list of dict to tsv generation."""
     fpath = write_res_contacts(
         res_res_contacts,
-        ['res1', 'res2', 'ca-ca-dist'],
-        Path('./test-contacts.tsv'),
-        )
+        ["res1", "res2", "ca-ca-dist"],
+        Path("./test-contacts.tsv"),
+    )
     assert os.path.exists(fpath) is True
-    with open(fpath, 'r') as filin:
-        flines = [_ for _ in filin.readlines() if not _.startswith('#')]
-    assert flines[0].strip().split('\t') == ['res1', 'res2', 'ca-ca-dist']
-    assert flines[1].strip().split('\t') == ['A-1-MET', 'A-2-ALA', '3.0']
-    assert flines[2].strip().split('\t') == ['A-1-MET', 'A-3-VAL', '4.0']
+    with open(fpath, "r") as filin:
+        flines = [_ for _ in filin.readlines() if not _.startswith("#")]
+    assert flines[0].strip().split("\t") == ["res1", "res2", "ca-ca-dist"]
+    assert flines[1].strip().split("\t") == ["A-1-MET", "A-2-ALA", "3.0"]
+    assert flines[2].strip().split("\t") == ["A-1-MET", "A-3-VAL", "4.0"]
     fpath.unlink(missing_ok=True)
 
 
@@ -369,10 +410,10 @@ def test_topx_models(cluster_input_list):
 
 def test_topx_models_exception():
     """Test exception handling of non PDBFile type lists."""
-    topxmodels = topX_models(['pdbpath1.pdb', 'pdbpath2.pdb'], topX=1)
+    topxmodels = topX_models(["pdbpath1.pdb", "pdbpath2.pdb"], topX=1)
     assert len(topxmodels) == 1
-    assert topxmodels == ['pdbpath1.pdb']
-    assert topxmodels[0] == 'pdbpath1.pdb'
+    assert topxmodels == ["pdbpath1.pdb"]
+    assert topxmodels[0] == "pdbpath1.pdb"
 
 
 def test_compute_distance_matrix(atoms_coordinates, ref_dist_matrix):
@@ -406,20 +447,20 @@ def test_min_dist(ref_dist_matrix):
 
 def test_no_reverse_coloscale():
     """Test non reversed color scale."""
-    colorscale = 'color'
+    colorscale = "color"
     new_colorscale = datakey_to_colorscale(
-        'probability',
+        "probability",
         color_scale=colorscale,
-        )
+    )
     assert new_colorscale == colorscale
 
 
 def test_reverse_coloscale():
     """Test reversed color scale."""
-    colorscale = 'color'
-    new_colorscale = datakey_to_colorscale('anything', color_scale=colorscale)
-    assert new_colorscale == f'{colorscale}_r'
-    assert '_r' in new_colorscale
+    colorscale = "color"
+    new_colorscale = datakey_to_colorscale("anything", color_scale=colorscale)
+    assert new_colorscale == f"{colorscale}_r"
+    assert "_r" in new_colorscale
 
 
 def test_gen_contact_dt_ca_exception(ref_dist_matrix):
@@ -427,13 +468,13 @@ def test_gen_contact_dt_ca_exception(ref_dist_matrix):
     cont_dt = gen_contact_dt(
         ref_dist_matrix,
         {
-            'r1': {'atoms_indices': [0, 1], 'CA': 0, 'resname': 'ALA'},
-            'r2': {'atoms_indices': [2], 'resname': 'ALA'},
-            },
-        'r1',
-        'r2',
-        )
-    assert cont_dt['ca-ca-dist'] == 9999
+            "r1": {"atoms_indices": [0, 1], "CA": 0, "resname": "ALA"},
+            "r2": {"atoms_indices": [2], "resname": "ALA"},
+        },
+        "r1",
+        "r2",
+    )
+    assert cont_dt["ca-ca-dist"] == 9999
 
 
 #################################
@@ -486,16 +527,16 @@ def test_check_square_matrix(contact_matrix):
 def test_make_q_bezier_error():
     """Test error raising in make_q_bezier()."""
     with pytest.raises(ValueError):
-        noreturn = make_q_bezier([1., 2.])
+        noreturn = make_q_bezier([1.0, 2.0])
         assert noreturn is None
 
 
 def test_make_ribbon_arc_angle_error():
     """Test error raising in make_ribbon_arc()."""
     with pytest.raises(ValueError):
-        noreturn = make_ribbon_arc(-1., 1.)
+        noreturn = make_ribbon_arc(-1.0, 1.0)
         assert noreturn is None
-        noreturn2 = make_ribbon_arc(1., -1.)
+        noreturn2 = make_ribbon_arc(1.0, -1.0)
         assert noreturn2 is None
 
 
@@ -507,13 +548,13 @@ def test_make_ribbon_arc_angle_baddef_error():
 
 
 def test_make_chordchart(
-        contact_matrix,
-        dist_matrix,
-        intertype_matrix,
-        protein_labels,
-        ):
+    contact_matrix,
+    dist_matrix,
+    intertype_matrix,
+    protein_labels,
+):
     """Test main function."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         outputpath = f"{tmpdir}chord.html"
         graphpath = make_chordchart(
             contact_matrix,
@@ -522,7 +563,7 @@ def test_make_chordchart(
             protein_labels,
             output_fpath=outputpath,
             title="test",
-            )
+        )
         assert graphpath == outputpath
         assert os.path.exists(outputpath)
         assert Path(outputpath).stat().st_size != 0
@@ -553,10 +594,12 @@ def test_make_ideogram_arc_moduloAB():
     """Test usage of moduloAB while providing outranged angle values."""
     nb_points = 2
     arc_positions = make_ideogram_arc(1.1, (1, -1), nb_points=nb_points)
-    excpected_output = np.array([
-        0.5943325364549538 + 0.9256180832886862j,
-        0.5943325364549535 - 0.9256180832886863j,
-        ])
+    excpected_output = np.array(
+        [
+            0.5943325364549538 + 0.9256180832886862j,
+            0.5943325364549535 - 0.9256180832886863j,
+        ]
+    )
     assert arc_positions.shape == excpected_output.shape
     for i in range(nb_points):
         assert np.isclose(arc_positions[i], excpected_output[i], atol=0.0001)

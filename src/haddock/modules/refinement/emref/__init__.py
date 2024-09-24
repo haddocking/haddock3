@@ -99,10 +99,11 @@ class HaddockModule(BaseCNSModule):
                     "emref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
-                    less_io=self.params["less_io"],
+                    debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
                 )
                 out_file = f"emref_{idx}.out"
+                err_fname = f"emref_{idx}.cnserr"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "emref")
@@ -113,7 +114,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(emref_input, out_file, envvars=self.envvars)
+                job = CNSJob(emref_input, out_file, err_fname, envvars=self.envvars)
 
                 jobs.append(job)
 

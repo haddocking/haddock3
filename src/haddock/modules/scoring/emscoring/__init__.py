@@ -56,11 +56,12 @@ class HaddockModule(CNSScoringModule):
                 self.params,
                 "emscoring",
                 native_segid=True,
-                less_io=self.params["less_io"],
+                debug=self.params["debug"],
                 seed=model.seed if isinstance(model, PDBFile) else None,
             )
 
             scoring_out = f"emscoring_{model_num}.out"
+            err_fname = f"emscoring_{model_num}.cnserr"
 
             # create the expected PDBobject
             expected_pdb = prepare_expected_pdb(model, model_num, ".", "emscoring")
@@ -71,7 +72,7 @@ class HaddockModule(CNSScoringModule):
 
             self.output_models.append(expected_pdb)
 
-            job = CNSJob(scoring_input, scoring_out, envvars=self.envvars)
+            job = CNSJob(scoring_input, scoring_out, err_fname, envvars=self.envvars)
 
             jobs.append(job)
 

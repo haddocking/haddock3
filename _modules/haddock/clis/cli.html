@@ -47,7 +47,6 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
@@ -123,10 +122,13 @@
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
 
 <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-    <span class="s2">&quot;recipe&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;workflow&quot;</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="n">arg_file_exist</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The input recipe file path&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+    <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">&quot;The input configuration file path describing &quot;</span>
+        <span class="s2">&quot;the workflow to be performed&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 
 <span class="n">add_restart_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 <span class="n">add_extend_run</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
@@ -163,7 +165,7 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli.html#haddock.clis.cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
-    <span class="n">recipe</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+    <span class="n">workflow</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">restart</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extend_run</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="n">EXTEND_RUN_DEFAULT</span><span class="p">,</span>
     <span class="n">setup_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -174,8 +176,8 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    recipe : str or pathlib.Path</span>
-<span class="sd">        The path to the recipe (config file).</span>
+<span class="sd">    workflow : str or pathlib.Path</span>
+<span class="sd">        The path to the workflow (config file).</span>
 
 <span class="sd">    restart : int</span>
 <span class="sd">        The step to restart the run from (inclusive).</span>
@@ -232,7 +234,7 @@
 
     <span class="k">with</span> <span class="n">log_error_and_exit</span><span class="p">():</span>
         <span class="n">params</span><span class="p">,</span> <span class="n">other_params</span> <span class="o">=</span> <span class="n">setup_run</span><span class="p">(</span>
-            <span class="n">recipe</span><span class="p">,</span>
+            <span class="n">workflow</span><span class="p">,</span>
             <span class="n">restart_from</span><span class="o">=</span><span class="n">restart</span><span class="p">,</span>
             <span class="n">extend_run</span><span class="o">=</span><span class="n">extend_run</span><span class="p">,</span>
         <span class="p">)</span>
@@ -301,7 +303,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 23, 2024.
+      <span class="lastupdated">Last updated on Sep 24, 2024.
       </span></p>
   </div>
 

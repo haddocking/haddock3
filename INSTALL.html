@@ -50,22 +50,15 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#clone-this-repository">1. Clone this repository:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#with-venv">with <code class="docutils literal notranslate"><span class="pre">venv</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#with-conda">with <code class="docutils literal notranslate"><span class="pre">conda</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#with-venv">with <code class="docutils literal notranslate"><span class="pre">venv</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#with-conda">with <code class="docutils literal notranslate"><span class="pre">conda</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">(Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">(Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lightdock-outdated"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code> (outdated)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gdock-outdated"><code class="docutils literal notranslate"><span class="pre">gdock</span></code> (outdated)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#install-the-haddock3-package-and-command-line-clients">3. Install the HADDOCK3 package and command line clients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#make-a-cns-binary-shortcut-to-the-expected-path">4. Make a CNS binary shortcut to the expected path:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#keep-your-installation-up-to-date">5. Keep your installation up to date</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">7. (Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
@@ -105,113 +98,30 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<p>Open a <code class="docutils literal notranslate"><span class="pre">terminal</span></code> window and navigate to the folder where you want to
-install HADDOCK3; for example: <code class="docutils literal notranslate"><span class="pre">software</span></code>. The current installation
-instructions are local and will affect only your user.</p>
-<p>Before starting with the installation of HADDOCK3, make sure to properly <a class="reference internal" href="CNS.html"><span class="std std-doc">install CNS</span></a>.
-If you have installed a previous version of HADDOCK, you may already have a suitable version of CNS.
-Please do <a class="reference internal" href="CNS.html#5-Check-installation"><span class="std std-ref">check your CNS installation</span></a> before proceeding.</p>
-<section id="clone-this-repository">
-<h2>1. Clone this repository:<a class="headerlink" href="#clone-this-repository" title="Permalink to this heading"></a></h2>
-<p>Mind the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag when cloning!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/haddocking/haddock3.git
-</pre></div>
-</div>
-<p>Go to the <strong>haddock3</strong> directory</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>haddock3
-</pre></div>
-</div>
-<p>and type the following commands to first install the <a class="reference external" href="https://github.com/haddocking/fcc">FCC</a> source code provided</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>src/fcc/src
-chmod<span class="w"> </span>u+x<span class="w"> </span>Makefile
-make
-<span class="nb">cd</span><span class="w"> </span>-
-</pre></div>
-</div>
-<p>Then, follow the same logic to install the <a class="reference external" href="https://github.com/mgiulini/fast-rmsdmatrix">fast-rmsdmatrix</a> source code</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>src/fast-rmsdmatrix/src
-chmod<span class="w"> </span>u+x<span class="w"> </span>Makefile
-make<span class="w"> </span>fast-rmsdmatrix
-<span class="nb">cd</span><span class="w"> </span>-
-</pre></div>
-</div>
-<p>By the end of the above commands, you should be back to the <strong>haddock3</strong>
-main folder.</p>
-</section>
-<section id="create-a-virtual-environment-with-python-3-9-and-install-dependencies">
-<h2>2 Create a virtual environment with Python 3.9+ and install dependencies:<a class="headerlink" href="#create-a-virtual-environment-with-python-3-9-and-install-dependencies" title="Permalink to this heading"></a></h2>
+<p>Create a virtual environment with Python 3.9:</p>
 <p>You can use Python’s <code class="docutils literal notranslate"><span class="pre">venv</span></code> or <code class="docutils literal notranslate"><span class="pre">conda</span></code> depending on your choice.
 Commands are provided below:</p>
 <section id="with-venv">
-<h3>with <code class="docutils literal notranslate"><span class="pre">venv</span></code><a class="headerlink" href="#with-venv" title="Permalink to this heading"></a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv<span class="w"> </span>venv<span class="w"> </span>--python<span class="o">=</span><span class="m">3</span>.9
-<span class="nb">source</span><span class="w"> </span>venv/bin/activate
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<h2>with <code class="docutils literal notranslate"><span class="pre">venv</span></code><a class="headerlink" href="#with-venv" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 </pre></div>
 </div>
 </section>
 <section id="with-conda">
-<h3>with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#with-conda" title="Permalink to this heading"></a></h3>
+<h2>with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#with-conda" title="Permalink to this heading"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>haddock3<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
 conda<span class="w"> </span>activate<span class="w"> </span>haddock3
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
-</section>
-</section>
-<section id="install-the-haddock3-package-and-command-line-clients">
-<h2>3. Install the HADDOCK3 package and command line clients<a class="headerlink" href="#install-the-haddock3-package-and-command-line-clients" title="Permalink to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>setup.py<span class="w"> </span>develop<span class="w"> </span>--no-deps
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/haddocking/haddock3.git
+<span class="nb">cd</span><span class="w"> </span>haddock3
+pip<span class="w"> </span>install<span class="w"> </span>.
 </pre></div>
 </div>
-<p>Of note, here we are still using the depreacted <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> command due to HPC, GRID and LOCAL compabilities with CNS.</p>
-</section>
-<section id="make-a-cns-binary-shortcut-to-the-expected-path">
-<h2>4. Make a CNS binary shortcut to the expected path:<a class="headerlink" href="#make-a-cns-binary-shortcut-to-the-expected-path" title="Permalink to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>bin/
-
-<span class="c1"># on mac</span>
-ln<span class="w"> </span>-s<span class="w"> </span>/PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe<span class="w"> </span>bin/cns
-
-<span class="c1"># on linux</span>
-ln<span class="w"> </span>-s<span class="w"> </span>/PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe<span class="w"> </span>bin/cns
-</pre></div>
-</div>
-<p>As long as you have the <code class="docutils literal notranslate"><span class="pre">(haddock3)</span></code> python environment activated, you can
-navigate away from the <strong>haddock3</strong> installation folder. You can run
-HADDOCK3 from anywhere. To run HADDOCK3, follow the <a class="reference internal" href="USAGE.html"><span class="std std-doc">usage
-guidelines</span></a>.</p>
-</section>
-<section id="keep-your-installation-up-to-date">
-<h2>5. Keep your installation up to date<a class="headerlink" href="#keep-your-installation-up-to-date" title="Permalink to this heading"></a></h2>
-<p>Navigate to the <strong>haddock3</strong> installation folder (the one you cloned from
-GitHub). Ensure you have the <code class="docutils literal notranslate"><span class="pre">(haddock3)</span></code> python environment activated.
-Please keep in mind that HADDOCK3, as well as its
-dependencies, are under active development.
-If the updating processing fails, it is safest to reinstall
-from scratch. Always refer to the latest installation guidelines.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># if you used `venv`</span>
-<span class="nb">source</span><span class="w"> </span>venv/bin/activate
-
-<span class="c1"># if you used `conda`</span>
-conda<span class="w"> </span>activate<span class="w"> </span>haddock3
-</pre></div>
-</div>
-<p>Afterwards:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull the latest source code from our repository to your computer</span>
-git<span class="w"> </span>pull
-
-<span class="c1"># update the dependencies by running:</span>
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w">  </span>--upgrade
-
-<span class="c1"># ensure all command-lines clients are installed</span>
-python<span class="w"> </span>setup.py<span class="w"> </span>develop<span class="w"> </span>--no-deps
-</pre></div>
-</div>
-<p>Of note, here we are still using the depreacted <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> command due to HPC, GRID and LOCAL compabilities with CNS.</p>
 </section>
 <section id="optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">
-<h2>6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI<a class="headerlink" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi" title="Permalink to this heading"></a></h2>
+<h2>(Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI<a class="headerlink" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi" title="Permalink to this heading"></a></h2>
 <p>To use the mpi implementation of haddock3 you must have mpi4py installed in the <code class="docutils literal notranslate"><span class="pre">(haddock3)</span></code> python environment, and OpenMPI in the host system.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mpi4py
 <span class="c1"># or</span>
@@ -221,29 +131,28 @@ $<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </
 <p>Later, you can find <a class="reference external" href="https://www.bonvinlab.org/haddock3/tutorials/mpi.html">here</a> instructions on how to run HADDOCK3 with MPI.</p>
 </section>
 <section id="optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">
-<h2>7. (Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service<a class="headerlink" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service" title="Permalink to this heading"></a></h2>
+<h2>(Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service<a class="headerlink" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service" title="Permalink to this heading"></a></h2>
 <p>To run the restraints web service you must have the following dependencies installed in the <code class="docutils literal notranslate"><span class="pre">(haddock3)</span></code> python environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>uvicorn<span class="w"> </span>fastapi
 </pre></div>
 </div>
 <p>Information on the restraints web service can be found <a class="reference external" href="https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/restraints/webservice.py">here</a>.</p>
 </section>
-</section>
 <section id="installing-third-party-packages">
-<h1>Installing third-party packages<a class="headerlink" href="#installing-third-party-packages" title="Permalink to this heading"></a></h1>
+<h2>Installing third-party packages<a class="headerlink" href="#installing-third-party-packages" title="Permalink to this heading"></a></h2>
 <p>HADDOCK3 can integrate third-party software in its workflows.
 We are not responsible for the proper installation of such packages, but
 we help you install them. Below, you will find a list of all third-party
 packages HADDOCK3 can use and guidelines for their proper installation.</p>
-<section id="lightdock">
-<h2><code class="docutils literal notranslate"><span class="pre">lightdock</span></code><a class="headerlink" href="#lightdock" title="Permalink to this heading"></a></h2>
+<section id="lightdock-outdated">
+<h3><code class="docutils literal notranslate"><span class="pre">lightdock</span></code> (outdated)<a class="headerlink" href="#lightdock-outdated" title="Permalink to this heading"></a></h3>
 <p>To install <a class="reference external" href="https://github.com/lightdock/lightdock">lightdock</a> follow
 the instructions on the project’s website. Remember to install it under
 the same Python environment you created for HADDOCK3. If you have any
 doubts, please let us know.</p>
 </section>
-<section id="gdock">
-<h2><code class="docutils literal notranslate"><span class="pre">gdock</span></code><a class="headerlink" href="#gdock" title="Permalink to this heading"></a></h2>
+<section id="gdock-outdated">
+<h3><code class="docutils literal notranslate"><span class="pre">gdock</span></code> (outdated)<a class="headerlink" href="#gdock-outdated" title="Permalink to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Clone the latest version:</p></li>
 </ol>
@@ -269,6 +178,7 @@ instructions as only the model generation is used here. Please check the
 information.</p>
 </section>
 </section>
+</section>
 
 
            </div>
@@ -282,7 +192,7 @@ information.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 23, 2024.
+      <span class="lastupdated">Last updated on Sep 24, 2024.
       </span></p>
   </div>
 

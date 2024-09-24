@@ -68,7 +68,7 @@ cd haddock3
 We recommend you use Python's native virtual environment to manage the dependencies.
 
 ```bash
-python3.9 -m venv .venv
+/usr/local/bin/python3.9 -m venv .venv
 source .venv/bin/activate
 ```
 

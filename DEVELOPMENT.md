@@ -12,9 +12,6 @@ This file provides information on how to setup a development environment for HAD
 ## System requirements
 
 - Python 3.9
-- CNS
-- git
-- gcc
 - OpenMPI
 
 ### Installing system dependencies
@@ -35,7 +32,7 @@ sudo apt-get update &&
     sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ```
 
-After all the system-dependencies are in place, download and compile python:
+After all the system-dependencies are in place, download and compile python.
 
 **Conda is NOT recommended for development**
 
@@ -49,7 +46,9 @@ sudo make altinstall -j 8
 
 Then `python3.9` should be available on your system at `/usr/local/bin/python3.9`
 
-On **OSX**, use rather [brew](https://brew.sh) to install Python 3.9:
+On **OSX**, you can use a package-manager such as [brew](https://brew.sh) to install Python 3.9.
+
+> Please keep in mind installing python with a package manager can mask system dependencies that your development might add. That's why we recommended you install it from source.
 
 ```bash
 brew install python@3.9
@@ -73,7 +72,13 @@ python3.9 -m venv .venv
 source .venv/bin/activate
 ```
 
-### Install Python dependencies
+### Install haddock3 in development mode.
+
+```bash
+python setup.py develop
+```
+
+### Install test dependencies
 
 Install both project dependencies and test dependencies using pip.
 
@@ -90,12 +95,6 @@ pip install \
 ```
 
 > If you are using a Mac, if the installation of mpi4py fails, run first `brew install mpi4py`
-
-Install haddock3 in development mode.
-
-```bash
-python setup.py develop
-```
 
 ## Installation in an HPC environment
 

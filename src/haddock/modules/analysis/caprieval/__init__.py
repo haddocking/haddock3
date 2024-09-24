@@ -17,6 +17,7 @@ By default the following metrics are calculated:
 - ILRMSD (interface ligand root mean square deviation), the RMSD of the
     ligand of the docked complex with respect to the reference complex
     upon superposition of the interface of the receptor.
+- GLOBAL_RMSD, the full RMSD between the reference and the model.
 
 The following files are generated:
 
@@ -26,10 +27,15 @@ The following files are generated:
 
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import Any, FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
-from haddock.modules import BaseHaddockModule, get_engine
+from haddock.modules import (
+    BaseHaddockModule,
+    get_engine,
+    get_module_steps_folders,
+    )
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
@@ -42,7 +48,7 @@ from haddock.modules.analysis.caprieval.capri import (
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -106,7 +112,7 @@ class HaddockModule(BaseHaddockModule):
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
 
-        less_io = self.params["less_io"] and self.params["mode"] == "local"
+        _less_io = self.params["mode"] == "local" and not self.params["debug"]
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -127,14 +133,14 @@ class HaddockModule(BaseHaddockModule):
                     path=Path("."),
                     reference=reference,
                     params=self.params,
-                    less_io=less_io,
+                    debug=not _less_io,
                 )
             )
 
         engine = Engine(jobs)
         engine.run()
 
-        if less_io and isinstance(engine, Scheduler):
+        if _less_io and isinstance(engine, Scheduler):
             jobs = engine.results
             extract_data_from_capri_class(
                 capri_objects=jobs,
@@ -145,7 +151,10 @@ class HaddockModule(BaseHaddockModule):
 
         else:
             self.log(
-                msg="DEPRECATION NOTICE: This execution mode (less_io=False) will no longer be supported in the next version.",
+                msg=(
+                    "DEPRECATION NOTICE: This execution mode (debug=True) "
+                    "will no longer be supported in the next version."
+                    ),
                 level="warning",
             )
             jobs = merge_data(jobs)

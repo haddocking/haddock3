@@ -9,13 +9,14 @@ if more models should be refined.
 """
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import Any, FilePath
 from haddock.libs.libontology import Format, PDBFile
 from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):

@@ -69,17 +69,17 @@ evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.unamb_hot=$unamb_hot)
-evaluate ($data.unamb_cool1=$unamb_cool1)
-evaluate ($data.unamb_cool2=$unamb_cool2)
-evaluate ($data.unamb_cool3=$unamb_cool3)
+evaluate ($data.unambig_hot=$unambig_hot)
+evaluate ($data.unambig_cool1=$unambig_cool1)
+evaluate ($data.unambig_cool2=$unambig_cool2)
+evaluate ($data.unambig_cool3=$unambig_cool3)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_hot=$amb_hot)
-evaluate ($data.amb_cool1=$amb_cool1)
-evaluate ($data.amb_cool2=$amb_cool2)
-evaluate ($data.amb_cool3=$amb_cool3)
+evaluate ($data.ambig_hot=$ambig_hot)
+evaluate ($data.ambig_cool1=$ambig_cool1)
+evaluate ($data.ambig_cool2=$ambig_cool2)
+evaluate ($data.ambig_cool3=$ambig_cool3)
 
 evaluate ($data.hbond_hot=$hbond_hot)
 evaluate ($data.hbond_cool1=$hbond_cool1)
@@ -108,6 +108,7 @@ evaluate ($data.asy_cool3=$asy_cool3)
 
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
+evaluate ($data.kcm=$kcm)
 evaluate ($data.kcont=$kcont)
 evaluate ($data.contactairs=$contactairs)
 if ($data.contactairs eq true) then
@@ -117,17 +118,17 @@ end if
 ! NCS restraints
 evaluate ($data.kncs = $kncs)
 evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
+evaluate ($data.nncs = $nncs)
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($data.nums3sym = $nums3sym)
-evaluate ($data.numc4sym = $numc4sym)
-evaluate ($data.numc5sym = $numc5sym)
-evaluate ($data.numc6sym = $numc6sym)
+evaluate ($data.nc2sym = $nc2sym)
+evaluate ($data.nc3sym = $nc3sym)
+evaluate ($data.ns3sym = $ns3sym)
+evaluate ($data.nc4sym = $nc4sym)
+evaluate ($data.nc5sym = $nc5sym)
+evaluate ($data.nc6sym = $nc6sym)
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)
@@ -321,12 +322,12 @@ evaluate ($failure = $result)
 
 
 {* Define initial weights for distance restraints ============================== *}
-evaluate ($unamb_scale = $Data.unamb_hot)
-evaluate ($ambig_scale = $Data.amb_hot)
+evaluate ($unambig_scale = $Data.unambig_hot)
+evaluate ($ambig_scale = $Data.ambig_hot)
 evaluate ($hbond_scale = $Data.hbond_hot)
 
 noe
-    scale dist $unamb_scale
+    scale dist $unambig_scale
     scale ambi $ambig_scale
     scale hbon $hbond_scale
 end
@@ -365,8 +366,11 @@ if ($failure eq false) then
 
     {* Stage 1 ======================================= rigid body high temperature search*}
 
+    if ($nfle > 0) then
+        ! reduce timestep in case of fully flexible segments
+        evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+    end if
     if ($SaProtocol.initiosteps > 0) then
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -377,12 +381,14 @@ if ($failure eq false) then
 
     if ($SaProtocol.cool1_steps > 0) then
         if ($torsiondone ne true) then
-            evaluate ($nfletot = 150)
             inline @MODULE:flex_segment.cns
             @MODULE:torsiontop.cns
             eval ($torsiondone = true)
         end if
-        evaluate ($SaProtocol.tadfactor = 4)
+        if ($nfle > 0) then
+            ! reduce timestep in case of fully flexible segments
+            evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+        end if
         @MODULE:sa_ltad_cool1.cns
     end if
 
@@ -393,7 +399,6 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment_side.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -408,7 +413,6 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment_back.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -500,8 +504,8 @@ else
 end if
 
 noe
-    scale dist $Data.unamb_cool3
-    scale ambi $Data.amb_cool3
+    scale dist $Data.unambig_cool3
+    scale ambi $Data.ambig_cool3
     scale hbon $Data.hbond_cool3
     scale symm 0.0
     scale cont 0.0
@@ -532,8 +536,8 @@ if ($Data.flags.sym eq true) then
         noe cv $npart ? end
     end if
     noe
-        scale dist $Data.unamb_cool3
-        scale ambi $Data.amb_cool3
+        scale dist $Data.unambig_cool3
+        scale ambi $Data.ambig_cool3
         scale hbon $Data.hbond_cool3
     end
     print threshold=0.3 noe

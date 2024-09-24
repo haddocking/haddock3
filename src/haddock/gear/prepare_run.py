@@ -60,7 +60,10 @@ from haddock.gear.parameters import (
 )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.validations import v_rundir
+from haddock.gear.validations import (
+    v_rundir,
+    validate_defaults_yaml,
+    )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
@@ -128,6 +131,9 @@ TYPES_MAPPER = {
         PosixPath,
         EmptyPath,
     ),
+    "dict": (
+        dict,
+    )
 }
 
 
@@ -180,6 +186,7 @@ def _read_defaults(module_name, default_only=True):
         module_name_,
         "defaults.yaml",
     ).resolve()
+    validate_defaults_yaml(pdef)
     mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
     return mod_default_config
 
@@ -573,6 +580,8 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         # Now that existence of the parameter was checked,
         # it is time to validate the type and value taken by this param
         validate_module_params_values(module_name, args)
+        # Validate ncs parameters
+        validate_ncs_params(args)
 
         # Update parameters with defaults ones
         _missing_defaults = {
@@ -712,6 +721,112 @@ def validate_param_range(param: dict, val: Any) -> Optional[str]:
                 "permitted limit. It should range from "
                 f'{param["minchars"]} to {param["maxchars"]}'
             )
+
+
+def validate_ncs_params(params: dict) -> None:
+    """Validate Non-Crystallographic Symmetry parameters.
+
+    This is a particular case where:
+    - ncs_sta1_X == ncs_sta2_X
+    - ncs_end1_X == ncs_end2_X
+    - ncs_seg1_X != ncs_seg2_X
+
+    Parameters
+    ----------
+    params : dict
+        Dictionary of key/value present in user config file for a module
+
+    Raises
+    ------
+    ConfigurationError
+        Issue detected when validating NCS parameters.
+    """
+    try:
+        # Check if ncs_on == False
+        if not params["ncs_on"]:
+            return None
+    # Maybe this module do not have ncs parameters, so we skip it
+    except KeyError:
+        return None
+    # At this stage, ncs_on == True
+    base_ncs_param_names = ("ncs_sta", "ncs_end", "ncs_seg", )
+    # Read and group ncs parameters together
+    groupped_ncs: dict[int, dict[str, dict[int, Union[int, str]]]] = {}
+    for paramname, value in params.items():
+        # Check if this is a ncs parameter
+        if paramname[:7] in base_ncs_param_names:
+            # Point two interesting values here
+            first_or_second = int(paramname[7])
+            x = int(paramname[-1])
+            # Point param type ("sta", "end", or "seg")
+            param_type = paramname.split('_')[1][:-1]
+            # Point/Create holding dict(s)
+            ncs_group = groupped_ncs.setdefault(x, {})
+            ncs_type = ncs_group.setdefault(param_type, {})
+            # Hold value
+            ncs_type[first_or_second] = value
+
+    # Validate them
+    error_list: list[str] = []
+    # Loop over number of definitions (_X)
+    for x, paramtype_values in groupped_ncs.items():
+        # Loop over parameter types
+        for paramtype, values in paramtype_values.items():
+            two_values = tuple(values.values())
+            # First make sure both are defined !
+            if len(two_values) != 2:
+                msg = f"Not two values set of `ncs_{paramtype}Y_{x}"
+                error_list.append(msg)
+                continue
+            if paramtype in ("sta", "end", ):
+                # Check they are not similar (wrong!)
+                if not len(set(two_values)) == 1:
+                    msg = (
+                        f"Values set of `ncs_{paramtype}Y_{x} must be equal: "
+                        f"we parsed `{two_values[0]}` and `{two_values[1]}`"
+                        )
+                    error_list.append(msg)
+            else:  # paramtype == "seg"
+                # Check they are similar (wrong!)
+                if len(set(values.values())) == 1:
+                    msg = (
+                        f"Chain/Segment IDs for `ncs_{paramtype}Y_{x} must be "
+                        f"different: we parsed `{two_values[0]}` and"
+                        f" `{two_values[1]}`"
+                        )
+                    error_list.append(msg)
+
+    # Validate value of `numncs`
+    ncs_suffixes = list(groupped_ncs.keys())
+    # Case when number of definition do not match
+    if params["nncs"] != len(ncs_suffixes):
+        msg = (
+            f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
+            " do not match with the number of defined NCS restraints "
+            f"({len(ncs_suffixes)})"
+            )
+        error_list.append(msg)
+    else:
+        # Case when numbers do not match
+        if max(ncs_suffixes) != params["nncs"]:
+            msg = (
+                f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
+                " do not match with the number of defined NCS restraints "
+                f"({', '.join([str(s) for s in ncs_suffixes])})"
+                )
+            error_list.append(msg)
+
+    # Here we fall into the error case
+    if len(error_list) > 0:
+        # Build user message
+        _msg = (
+            "Some errors were discovered in the NCS restraints definition:"
+            f"{os.linesep}"
+            f"{os.linesep.join(error_list)}"
+            )
+        # Raise error
+        raise ConfigurationError(_msg)
+    return None
 
 
 def check_if_modules_are_installed(params: ParamMap) -> None:
@@ -1047,25 +1162,44 @@ def get_expandable_parameters(
 def _get_expandable(
     user_config: ParamMap, defaults: ParamMap, module_name: str, max_mols: int
 ) -> set[str]:
-    type_1 = get_single_index_groups(defaults)
-    type_2 = get_multiple_index_groups(defaults)
-    type_4 = get_mol_parameters(defaults)
-
+    # Set parsing vars
     allowed_params: set[str] = set()
-    allowed_params.update(
-        read_single_idx_groups_user_config(user_config, type_1)
-    )  # noqa: E501
-    allowed_params.update(
-        read_multiple_idx_groups_user_config(user_config, type_2)
-    )  # noqa: E501
+    all_counts: dict[str, int] = {}
+    # Read single indexed groups (terminating by `_X`)
+    news_t1, counts_t1 = read_single_idx_groups_user_config(
+        user_config,
+        get_single_index_groups(defaults),
+        )
+    allowed_params.update(news_t1)
+    all_counts.update(counts_t1)
+    # Read multiple indexed groups (terminating by `_X_Y`)
+    news_t2, counts_t2 = read_multiple_idx_groups_user_config(
+        user_config,
+        get_multiple_index_groups(defaults),
+        )
+    allowed_params.update(news_t2)
+    all_counts.update(counts_t2)
 
     with suppress(KeyError):
-        type_3 = type_simplest_ep[get_module_name(module_name)]
-        allowed_params.update(read_simplest_expandable(type_3, user_config))
-
-    _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
+        news_t3 = read_simplest_expandable(
+            user_config,
+            type_simplest_ep[get_module_name(module_name)],
+            )
+        allowed_params.update(news_t3)
+    # Read molecule paramters (starting by `mol_`)
+    _ = read_mol_parameters(
+        user_config,
+        get_mol_parameters(defaults),
+        max_mols=max_mols,
+        )
     allowed_params.update(_)
 
+    # Add counted parameters to hidden user parameters
+    for param, count in all_counts.items():
+        count_param_name = f"n{param}"
+        if count_param_name in defaults.keys():
+            user_config[count_param_name] = count
+    # Return new set of allowed parameters
     return allowed_params
 
 

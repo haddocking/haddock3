@@ -253,8 +253,10 @@ def test_offline_js_manager():
     """Test offline manager behavior."""
     # Offline == True
     with tempfile.TemporaryDirectory(".") as tmpdir:
-        offline_plotly_js = offline_js_manager(tmpdir, offline=True)
-        assert Path("plotly_bundle.js").exists()
+        figurepath = Path(tmpdir, "figure.html")
+        offline_plotly_js = offline_js_manager(figurepath, offline=True)
+        assert "plotly_bundle.js" in offline_plotly_js
+        assert Path(tmpdir, "plotly_bundle.js").exists()
     # Offline == False
     from plotly.io._utils import plotly_cdn_url
     plotly_cdn_full_url = plotly_cdn_url()

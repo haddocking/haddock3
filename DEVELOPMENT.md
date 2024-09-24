@@ -72,29 +72,32 @@ We recommend you use Python's native virtual environment to manage the dependenc
 source .venv/bin/activate
 ```
 
-### Install haddock3 in development mode.
-
-```bash
-python setup.py develop
-```
-
 ### Install test dependencies
 
 Install both project dependencies and test dependencies using pip.
 
 ```bash
-pip install \
-   coverage==7.2.5 \
-   pytest==7.3.1 \
-   pytest-cov==4.0.0 \
-   hypothesis==6.75.1 \
-   pytest-mock==3.12.0 \
-   fastapi==0.110.1 \
-   httpx==0.27.0 \
-   mpi4py==3.1.6
+pip install -r requirements.txt &&
+    pip install \
+       coverage==7.2.5 \
+       pytest==7.3.1 \
+       pytest-cov==4.0.0 \
+       hypothesis==6.75.1 \
+       pytest-mock==3.12.0 \
+       fastapi==0.110.1 \
+       httpx==0.27.0 \
+       mpi4py==3.1.6
 ```
 
 > If you are using a Mac, if the installation of mpi4py fails, run first `brew install mpi4py`
+
+### Install haddock3 in development mode.
+
+In this mode the files are linked to the appropriate paths inside the python environment;
+
+```bash
+python setup.py develop
+```
 
 ## Installation in an HPC environment
 

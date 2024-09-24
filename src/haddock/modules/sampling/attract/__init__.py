@@ -141,7 +141,8 @@ class HaddockModule(BaseHaddockModule):
         with open('err.txt', 'w') as f:
                     for item in docking.stderr:
                         f.write(f"{item}")
-
+        # dat2pdb:
+        # /trinity/login/arha/tools/attract/bin/collect $m-e7.dat /dev/null frag${x}r.pdb --ens 2 nalib/$m-clust1.0r.list > models_frag${X}r.pdb
         list_of_created_models = []     
         created_models = ['protein-aa.pdb','rna-aa.pdb']
         for model in created_models:

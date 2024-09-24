@@ -29,7 +29,7 @@ Below the instructions are provided for a Ubuntu system using `apt-get`. If you 
 
 **Conda is NOT recommended for development. Instead, install and compile Python 3.9 from source.**
 
-On a **Linux-based system** you can install Python 3.9 with the following commands:
+On a **Linux-based system** you can install Python 3.9 if needed with the following commands:
 
 ```bash
 wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz
@@ -73,7 +73,7 @@ On a **Linux-based** system:
 sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ```
 
-**Note** that this step is not required on OSX.
+**Note** that this step is not required on OSX but mpi4py
 
 ## Setting up the development environment
 
@@ -81,6 +81,7 @@ sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 
 ```bash
 git clone --recursive https://github.com/haddocking/haddock3.git
+cd haddock3
 ```
 
 ### Python environment
@@ -88,14 +89,7 @@ git clone --recursive https://github.com/haddocking/haddock3.git
 We recomend you use Python's native virtual environment to manage the dependencies.
 
 ```bash
-/usr/local/bin/python3.9 -m venv .venv
-source .venv/bin/activate
-```
-
-On **OSX** the command would be:
-
-```bash
-/opt/homebrew/bin/python3.9 -m venv .venv
+python3.9 -m venv .venv
 source .venv/bin/activate
 ```
 

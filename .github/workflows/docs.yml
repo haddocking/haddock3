@@ -1,3 +1,6 @@
+# ===================================================================================#
+# FIXME: Rework this action after release!
+# ===================================================================================#
 name: docs
 
 on:
@@ -21,8 +24,16 @@ jobs:
           python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
           pip install virtualenv==20.23.0 tox==4.5.1.1
 
+      - name: install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: install test dependencies
+        run: >-
+          pip install coverage pytest pytest-cov hypothesis pytest-mock mypy
+          fastapi==0.110.1 httpx==0.27.0 mpi4py==3.1.6
+
       - name: install haddock3
-        run: pip install -v .
+        run: python setup.py -v develop
 
       - name: docs
         run: tox -e docs

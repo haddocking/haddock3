@@ -72,7 +72,7 @@ We recommend you use Python's native virtual environment to manage the dependenc
 source .venv/bin/activate
 ```
 
-### Install test dependencies
+### Install python dependencies
 
 Install both project dependencies and test dependencies using pip.
 
@@ -99,14 +99,6 @@ In this mode the files are linked to the appropriate paths inside the python env
 python setup.py develop
 ```
 
-## Installation in an HPC environment
-
-**Please get in contact with the system administrator before doing development in a shared HPC environment.**
-
-For installation in an HPC environment we recommend to check the installed Python versions on the system and also importantly if an `openmpi` (or other custom MPI) installation is available on the system.
-Those are often offered via the `module` command.
-If you only intend to develop haddock3 using the multiprocessing scheduler, the above instructions should be fine. But to harvest the MPI capabilities of an HPC system it is best to build haddock3 using the installed MPI version on the HPC system.
-
 ## Running tests
 
 In `haddock3` we use the pytest framework, the tests are located in `tests/` (unit) and `integration_tests/` directories.
@@ -114,3 +106,11 @@ In `haddock3` we use the pytest framework, the tests are located in `tests/` (un
 ```bash
 pytest
 ```
+
+## Installation in an HPC environment
+
+**Please get in contact with the system administrator before doing development in a shared HPC environment.**
+
+For installation in an HPC environment we recommend to check the installed Python versions on the system and also importantly if an `openmpi` (or other custom MPI) installation is available on the system.
+Those are often offered via the `module` command.
+If you only intend to develop haddock3 using the multiprocessing scheduler, the above instructions should be fine. But to harvest the MPI capabilities of an HPC system it is best to build haddock3 using the installed MPI version on the HPC system.

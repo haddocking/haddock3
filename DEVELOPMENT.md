@@ -73,7 +73,7 @@ On a **Linux-based** system:
 sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ```
 
-**Note** that this step is not required on OSX but mpi4py
+**Note** that this step is not required on OSX.
 
 ## Setting up the development environment
 
@@ -109,6 +109,9 @@ pip install -r requirements.txt &&
     httpx==0.27.0 \
     mpi4py==3.1.6
 ```
+
+**Note**: On OSX, if the installation of mpi4py fails, use instead `brew install mpi4py`
+
 
 Install haddock3 in development mode.
 

@@ -3,10 +3,6 @@
 This file provides information on how to setup a development environment for HADDOCK3.
 
 - [System requirements](#system-requirements)
-  - [Python3.9](#python39)
-  - [git](#git)
-  - [gcc](#gcc)
-  - [OpenMPI](#openmpi)
 - [Setting up the development environment](#setting-up-the-development-environment)
   - [Clone the repository](#clone-the-repository)
   - [Python environment](#python-environment)
@@ -25,11 +21,23 @@ This file provides information on how to setup a development environment for HAD
 
 Below the instructions are provided for a Ubuntu system using `apt-get`. If you are using a different system, please refer to the respective package manager - `yum`, `dnf`, `pacman`, `homebrew`, `port`, etc.
 
-#### Python3.9
+```bash
+sudo apt-get update &&
+    # Needed for building Python
+    sudo apt-get install build-essential python-setuptools python-pip &&
+    sudo apt-get install libncursesw5-dev libgdbm-dev libc6-dev &&
+    sudo apt-get install zlib1g-dev libsqlite3-dev tk-dev &&
+    sudo apt-get install libssl-dev openssl &&
+    sudo apt-get install libffi-dev &&
+    # Needed for haddock3 installation
+    sudo apt-get install git gcc &&
+    # Needed to run the MPI related tests
+    sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
+```
 
-**Conda is NOT recommended for development. Instead, install and compile Python 3.9 from source.**
+After all the system-dependencies are in place, download and compile python:
 
-On a **Linux-based system** you can install Python 3.9 if needed with the following commands:
+**Conda is NOT recommended for development**
 
 ```bash
 wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz
@@ -47,46 +55,18 @@ On **OSX**, use rather [brew](https://brew.sh) to install Python 3.9:
 brew install python@3.9
 ```
 
-Then `python3.9` should be available on your system at `/opt/homebrew/bin/python3.9`
-
-#### Git
-
-On a **Linux-based** system:
-
-```bash
-sudo apt-get install git
-```
-
-#### gcc
-
-On a **Linux-based** system:
-
-```bash
-sudo apt-get install gcc
-```
-
-#### OpenMPI
-
-On a **Linux-based** system:
-
-```bash
-sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
-```
-
-**Note** that this step is not required on OSX.
-
 ## Setting up the development environment
 
 ### Clone the repository
 
 ```bash
-git clone --recursive https://github.com/haddocking/haddock3.git
+git clone https://github.com/haddocking/haddock3.git
 cd haddock3
 ```
 
 ### Python environment
 
-We recomend you use Python's native virtual environment to manage the dependencies.
+We recommend you use Python's native virtual environment to manage the dependencies.
 
 ```bash
 python3.9 -m venv .venv
@@ -98,20 +78,18 @@ source .venv/bin/activate
 Install both project dependencies and test dependencies using pip.
 
 ```bash
-pip install -r requirements.txt &&
-  pip install \
-    coverage==7.2.5 \
-    pytest==7.3.1 \
-    pytest-cov==4.0.0 \
-    hypothesis==6.75.1 \
-    pytest-mock==3.12.0 \
-    fastapi==0.110.1 \
-    httpx==0.27.0 \
-    mpi4py==3.1.6
+pip install \
+   coverage==7.2.5 \
+   pytest==7.3.1 \
+   pytest-cov==4.0.0 \
+   hypothesis==6.75.1 \
+   pytest-mock==3.12.0 \
+   fastapi==0.110.1 \
+   httpx==0.27.0 \
+   mpi4py==3.1.6
 ```
 
-**Note**: On OSX, if the installation of mpi4py fails, run first `brew install mpi4py`
-
+> If you are using a Mac, if the installation of mpi4py fails, run first `brew install mpi4py`
 
 Install haddock3 in development mode.
 

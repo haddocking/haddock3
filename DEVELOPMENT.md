@@ -110,7 +110,7 @@ pip install -r requirements.txt &&
     mpi4py==3.1.6
 ```
 
-**Note**: On OSX, if the installation of mpi4py fails, use instead `brew install mpi4py`
+**Note**: On OSX, if the installation of mpi4py fails, run first `brew install mpi4py`
 
 
 Install haddock3 in development mode.

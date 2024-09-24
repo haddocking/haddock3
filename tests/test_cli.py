@@ -10,7 +10,7 @@ from . import configs_data
 
 @pytest.fixture(name="workflow")
 def fixture_workflow():
-    yield Path(configs_data, "workflow.cfg")
+    yield Path(configs_data, "recipe.cfg")
 
 
 def test_cli_has_maincli():
@@ -49,7 +49,7 @@ def test_ap_setup_false(workflow):
     assert cmd.setup_only is False
 
 
-def test_ap_version(workflow):
+def test_ap_version():
     """Test -v version flag."""
     with pytest.raises(SystemExit) as exit:
         cli.ap.parse_args('-v'.split())

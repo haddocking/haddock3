@@ -73,7 +73,7 @@ def generate_topology(
     )
 
     # AA to CG
-    cg_pdb_name = aa2cg.martinize(input_pdb, output_path, True)
+    cg_pdb_name = aa2cg.martinize(input_pdb, output_path, False)
 
     output = prepare_output(
         output_pdb_filename=f"{cg_pdb_name[:-4]}_processed{input_pdb.suffix}",

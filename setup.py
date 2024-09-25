@@ -152,24 +152,7 @@ class CustomDevelop(develop):
         develop.run(self)
 
 
-with open("requirements.txt", "r", encoding="utf-8") as f:
-    requirements = f.read().splitlines()
-
-
-def read_description(*names, **kwargs) -> str:
-    """Read description files."""
-    path = join(dirname(__file__), *names)
-    with open(path, encoding=kwargs.get("encoding", "utf8")) as fh:
-        return fh.read()
-
-
-readme = read_description("README.md")
-changelog = read_description("CHANGELOG.md")
-long_description = f"{readme}{os.linesep}{changelog}"
-
-
 setup(
-    
     cmdclass={
         "build_ext": CustomBuild,
         "install": CustomInstall,

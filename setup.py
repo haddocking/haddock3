@@ -11,6 +11,7 @@ from pathlib import Path
 
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
+from setuptools.command.develop import develop
 from setuptools.command.install import install
 
 
@@ -144,6 +145,14 @@ class CustomInstall(install):
         return f"{machine}-{system}"
 
 
+class CustomDevelop(develop):
+
+    def run(self):
+        """Wrapper class to run the installation also when using `python setup.py develop`"""
+        self.run_command("install")
+        develop.run(self)
+
+
 with open("requirements.txt", "r", encoding="utf-8") as f:
     requirements = f.read().splitlines()
 
@@ -226,6 +235,10 @@ setup(
             "haddock3-restraints = haddock.clis.cli_restraints:maincli",
         ]
     },
-    cmdclass={"build_ext": CustomBuild, "install": CustomInstall},
+    cmdclass={
+        "build_ext": CustomBuild,
+        "install": CustomInstall,
+        "develop": CustomDevelop,
+    },
     ext_modules=cpp_extensions,
 )

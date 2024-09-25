@@ -27,20 +27,7 @@ jobs:
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install python dependencies
-        run: pip install -r requirements.txt
-
-      - name: install test dependencies
-        run: >-
-          pip install coverage pytest pytest-cov hypothesis pytest-mock mypy
-          fastapi==0.110.1 httpx==0.27.0 mpi4py==3.1.6
-
-      - name: install haddock3
-        run: python setup.py -v develop
-
-      ## Disabled for now until we figure out a good configuration ##
-      # - name: check types
-      #   run: mypy src/
-      ###############################################################
+        run: pip install -e . '.[dev]'
 
       - name: run unit tests
         run: >-

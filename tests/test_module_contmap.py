@@ -86,7 +86,7 @@ def ref_dist_matrix():
 @pytest.fixture
 def contactmap():
     """Return contmap module."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         yield ContactMapModule(
             order=1,
             path=Path(tmpdir),
@@ -513,7 +513,7 @@ def test_make_chordchart(
         protein_labels,
         ):
     """Test main function."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         outputpath = f"{tmpdir}chord.html"
         graphpath = make_chordchart(
             contact_matrix,

@@ -52,7 +52,7 @@ def params():
 @pytest.fixture
 def scan_obj(protprot_model_list, params):
     """Return example alascan module."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         scan_obj = Scan(
             model_list=protprot_model_list,
             output_name="alascan",
@@ -67,7 +67,7 @@ def scan_obj(protprot_model_list, params):
 @pytest.fixture
 def scanjob_obj(scan_obj):
     """Return example alascan module."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         yield ScanJob(
         scan_obj=scan_obj,
         output=Path(tmpdir),
@@ -78,7 +78,7 @@ def scanjob_obj(scan_obj):
 @pytest.fixture
 def alascan():
     """Return alascan module."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         yield AlascanModule(
             order=1,
             path=Path(tmpdir),
@@ -186,7 +186,7 @@ def test_scan_obj(scan_obj, protprot_model_list):
 
 def test_mutate(protprot_model_list):
     """Test the mutate function."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         os.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
@@ -204,7 +204,7 @@ def test_mutate(protprot_model_list):
 
 def test_add_delta_to_bfactor(protprot_model_list, example_df_scan):
     """Test the add_delta_to_bfactor function."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         os.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
@@ -320,7 +320,7 @@ def test_calc_score_wrong(mocker):
 
 def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
     """Test the generate_alascan_output method."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
         os.chdir(tmpdir)
         models_to_export = generate_alascan_output(
@@ -361,7 +361,7 @@ def mock_alascan_cluster_analysis():
 
 def test_alascan_cluster_analysis(protprot_input_list, scan_file):
     """Test alascan_cluster_analysis."""
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_2.csv"))
         os.chdir(tmpdir)

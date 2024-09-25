@@ -263,16 +263,9 @@ if ($Data.ranair eq true) then
         reset
         nrestraints = 100000     ! allocate space for NOEs
         ceiling 1000
+        class ambi
     end
     @MODULE:randomairs.cns
-
-    !Read back in hbond data
-    if ($hbond_fname # "") then
-        fileexist $hbond_fname end
-        if ($result eq true) then
-            noe @@$hbond_fname end
-        end if
-    end if
 
     noe
         averaging  * sum

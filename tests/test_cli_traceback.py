@@ -43,7 +43,7 @@ def expected_traceback():
 
 def test_main(rigid_json, flexref_json, expected_traceback):
     """Test haddock3-traceback client."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # build fake run_dir
         run_dir = Path(tmpdir, "example_dir")
         step_dirs = [os.path.join(run_dir, "1_rigidbody"),
@@ -80,7 +80,7 @@ def test_main(rigid_json, flexref_json, expected_traceback):
 def test_analysis():
     """Test traceback on a pure analysis run."""
     # build fake run_dir
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         run_dir = Path(tmpdir, "example_dir")
         step_dirs = [os.path.join(run_dir, "0_topoaa"),
                      os.path.join(run_dir, "1_caprieval")]
@@ -97,7 +97,7 @@ def test_analysis():
 
 def test_get_steps_without_pdbs():
     """Test get_steps_without_pdbs."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # build fake run_dir
         run_dir = Path(tmpdir)
         steps = ["0_topoaa", "1_rigidbody", "2_caprieval"]
@@ -127,7 +127,7 @@ def test_get_steps_without_pdbs():
 
 def test_subset_traceback(expected_traceback):
     """Test subset_traceback."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         cons_filename = Path(tmpdir, "consensus_example.tsv")
         # subset traceback
         obs_tr = subset_traceback(expected_traceback, cons_filename)

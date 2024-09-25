@@ -18,7 +18,7 @@ def test_WorkflowManager(caplog):
             'ncores': 2,
             }
         }
-    with tempfile.TemporaryDirectory(dir=".") as _tmpdir:
+    with tempfile.TemporaryDirectory() as _tmpdir:
         workflow = WorkflowManager(
             ParamDict,
             start=0,

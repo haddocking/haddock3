@@ -97,7 +97,7 @@ def ranked_models() -> list[PDBFile]:
 @pytest.fixture
 def seletopclust():
     """Test module __init__()."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         yield SeleTopClustModule(
             order=1,
             path=Path(tmpdir),
@@ -377,12 +377,12 @@ def test_sort_models_ranked(ranked_models):
 
 def test_write_selected_models(ranked_models):
     """Test writing of models names mapping file."""
-    with tempfile.TemporaryDirectory(dir="./") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         outputfile = f"{tmpdir}test-seletopclusts.txt"
         models = write_selected_models(
             outputfile,
             ranked_models,
-            './',
+            tmpdir,
             )
         # Validate file creation
         assert os.path.exists(outputfile)

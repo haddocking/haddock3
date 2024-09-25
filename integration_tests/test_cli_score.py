@@ -13,7 +13,7 @@ def test_cli_score():
     """Test the haddock3-score CLI."""
     pdb_f = Path(golden_data, "protprot_complex_1.pdb")
     # tempdir
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # parsing
         f = io.StringIO()
         with redirect_stdout(f):

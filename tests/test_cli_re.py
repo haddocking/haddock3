@@ -32,7 +32,7 @@ def test_cli_re_empty():
 
 def test_cli_rescore(weights_dict):
     """Test haddock3-re rescore subcommand."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         with tempfile.TemporaryDirectory(dir=tmpdir) as nested_tmpdir:
             # weights json file
             weights_json = Path(nested_tmpdir, "weights_params.json")
@@ -73,7 +73,7 @@ def test_cli_rescore(weights_dict):
 
 def test_cli_reclustfcc():
     """Test haddock3-re clustfcc subcommand."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         nested_tmpdir = Path(tmpdir, "03_clustfcc")
         os.mkdir(nested_tmpdir)
         # json file
@@ -119,7 +119,7 @@ def test_cli_reclustfcc():
 
 def test_cli_reclustrmsd():
     """Test haddock3-re clustrmsd subcommand."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # fake ilrmsdmatrix module files
         nested_tmpdir_previousstep = Path(tmpdir, "1_ilrmsdmatrix")
         os.mkdir(nested_tmpdir_previousstep)

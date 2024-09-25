@@ -73,7 +73,7 @@ def test_write_structure_list(protprot_input_models):
 
 def test_plot_cluster_matrix_big(big_distance_matrix_data):
     """Test test_plot_cluster_matrix_big function with big matrix."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # Write matrix
         matrix_path = f'{tmpdir}bigmatrix.mat'
         with open(matrix_path, 'w') as f:
@@ -99,7 +99,7 @@ def test_plot_cluster_matrix_big(big_distance_matrix_data):
 
 def test_plot_cluster_matrix(small_distance_matrix_data):
     """Test test_plot_cluster_matrix_big function with small matrix."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         # Write matrix
         matrix_path = f'{tmpdir}smallmatrix.mat'
         with open(matrix_path, 'w') as f:

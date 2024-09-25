@@ -88,7 +88,7 @@ def test_contact_job(contact_job_obj):
 @pytest.fixture
 def ilrmsdmatrix():
     """Return ilrmsdmatrix module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         yield IlrmsdmatrixModule(
             order=1,
             path=Path(tmpdir),

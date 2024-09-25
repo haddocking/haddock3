@@ -176,6 +176,9 @@ end if
 if ($Data.flags.sym eq true) then
     evaluate ($enerall = $enerall + $esym)
 end if
+if ($Data.flags.ncs eq true) then
+    evaluate ($enerall = $enerall + $ncs)
+end if
 
 evaluate ($procwat = false)
 if ($refine.keepwater eq true) then
@@ -291,6 +294,8 @@ remarks violations.: $violations_noe, $violations_cdih, $violations_coup, $viola
 remarks ===============================================================
 remarks                        CVpartition#,violations,rms
 remarks AIRs cross-validation: $npart, $violations_test_noe, $rms_test_noe
+remarks ===============================================================
+remarks NCS energy: $ncs
 remarks ===============================================================
 remarks Symmetry energy: $esym
 remarks ===============================================================

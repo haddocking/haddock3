@@ -6,7 +6,7 @@ This file provides information on how to setup a development environment for HAD
 - [Setting up the development environment](#setting-up-the-development-environment)
   - [Clone the repository](#clone-the-repository)
   - [Python environment](#python-environment)
-  - [Install Python dependencies](#install-python-dependencies)
+  - [Install haddock3 in development mode](#install-haddock3-in-development-mode)
   - [Running tests](#running-tests)
 
 ## System requirements
@@ -72,39 +72,26 @@ python3.9 -m venv .venv
 source .venv/bin/activate
 ```
 
-### Install python dependencies
+### Install haddock3 in development mode
 
 Install both project dependencies and test dependencies using pip.
 
 ```bash
-pip install -r requirements.txt &&
-    pip install \
-       coverage==7.2.5 \
-       pytest==7.3.1 \
-       pytest-cov==4.0.0 \
-       hypothesis==6.75.1 \
-       pytest-mock==3.12.0 \
-       fastapi==0.110.1 \
-       httpx==0.27.0 \
-       mpi4py==3.1.6
+pip install -e '.[dev,docs]'
 ```
 
 > If you are using a Mac, if the installation of mpi4py fails, run first `brew install mpi4py`
 
-### Install haddock3 in development mode.
-
-In this mode the files are linked to the appropriate paths inside the python environment;
-
-```bash
-python setup.py develop
-```
-
 ## Running tests
 
-In `haddock3` we use the pytest framework, the tests are located in `tests/` (unit) and `integration_tests/` directories.
+In `haddock3` we use the pytest framework, make sure you check it's [documentation](https://docs.pytest.org/en/6.2.x/contents.html) the tests are located in `tests/` (unit) and `integration_tests/` directories.
 
 ```bash
-pytest
+pytest tests/
+```
+
+```bash
+pytest integration_tests/
 ```
 
 ## Installation in an HPC environment

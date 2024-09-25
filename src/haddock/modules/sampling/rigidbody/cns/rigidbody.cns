@@ -242,6 +242,22 @@ else
     flag exclude elec end
 end if
 
+! check for the presence of a CG model
+! and adapt non-bonded parameters
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    parameter
+        nbonds
+            nbxmod=5 atom cdie shift
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=1.0 e14fac=0.4 inhibit 0.25
+            wmin=0.5 tolerance 0.5
+        end
+    end
+end if
+
+! no dihedral angle restraints as the molecule are rigid
 flag excl cdih end
 
 if ($Data.ranair eq true) then

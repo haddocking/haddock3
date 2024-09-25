@@ -36,10 +36,13 @@ from haddock.libs.liblog import add_loglevel_arg
 ap = argparse.ArgumentParser()
 
 ap.add_argument(
-    "recipe",
+    "workflow",
     type=arg_file_exist,
-    help="The input recipe file path",
-)
+    help=(
+        "The input configuration file path describing "
+        "the workflow to be performed"
+        ),
+    )
 
 add_restart_arg(ap)
 add_extend_run(ap)
@@ -76,7 +79,7 @@ def maincli() -> None:
 
 
 def main(
-    recipe: FilePath,
+    workflow: FilePath,
     restart: Optional[int] = None,
     extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
     setup_only: bool = False,
@@ -87,8 +90,8 @@ def main(
 
     Parameters
     ----------
-    recipe : str or pathlib.Path
-        The path to the recipe (config file).
+    workflow : str or pathlib.Path
+        The path to the workflow (config file).
 
     restart : int
         The step to restart the run from (inclusive).
@@ -145,7 +148,7 @@ def main(
 
     with log_error_and_exit():
         params, other_params = setup_run(
-            recipe,
+            workflow,
             restart_from=restart,
             extend_run=extend_run,
         )

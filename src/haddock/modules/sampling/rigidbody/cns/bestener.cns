@@ -13,12 +13,12 @@
 eval ($kinter = 1.0)
 @MODULE:scale_inter_mini.cns
 
-evaluate ($unamb_scale = $Data.unamb_scale)
-evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($unambig_scale = $Data.unambig_scale)
+evaluate ($ambig_scale = $Data.ambig_scale)
 evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe 
-    scale dist $unamb_scale 
+    scale dist $unambig_scale 
     scale ambi $ambig_scale
     scale hbon $hbond_scale
     scale symm 0.0
@@ -95,13 +95,13 @@ end if
 evaluate ($kinter = $SaProtocol.inter_rigid)
 @MODULE:scale_inter_mini.cns
 
-evaluate ($unamb_scale = $unamb_scale_store)
+evaluate ($unambig_scale = $unambig_scale_store)
 evaluate ($ambig_scale = $ambig_scale_store)
 evaluate ($hbond_scale = $hbond_scale_store)
 evaluate ($symm_scale = $symm_scale_store)
 
 noe 
-    scale dist $unamb_scale 
+    scale dist $unambig_scale 
     scale ambi $ambig_scale
     scale hbon $hbond_scale
     scale symm $symm_scale

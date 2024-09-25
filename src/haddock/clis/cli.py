@@ -36,10 +36,13 @@ from haddock.libs.liblog import add_loglevel_arg
 ap = argparse.ArgumentParser()
 
 ap.add_argument(
-    "recipe",
+    "workflow",
     type=arg_file_exist,
-    help="The input recipe file path",
-)
+    help=(
+        "The input configuration file path describing "
+        "the workflow to be performed"
+        ),
+    )
 
 add_restart_arg(ap)
 add_extend_run(ap)
@@ -76,7 +79,7 @@ def maincli() -> None:
 
 
 def main(
-    recipe: FilePath,
+    workflow: FilePath,
     restart: Optional[int] = None,
     extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
     setup_only: bool = False,
@@ -87,8 +90,8 @@ def main(
 
     Parameters
     ----------
-    recipe : str or pathlib.Path
-        The path to the recipe (config file).
+    workflow : str or pathlib.Path
+        The path to the workflow (config file).
 
     restart : int
         The step to restart the run from (inclusive).
@@ -109,7 +112,11 @@ def main(
     from time import time
 
     from haddock.gear.extend_run import WorkflowManagerExtend
-    from haddock.gear.greetings import get_adieu, get_initial_greeting
+    from haddock.gear.greetings import (
+        get_adieu,
+        get_initial_greeting,
+        gen_feedback_messages,
+        )
     from haddock.gear.prepare_run import setup_run
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
@@ -141,7 +148,7 @@ def main(
 
     with log_error_and_exit():
         params, other_params = setup_run(
-            recipe,
+            workflow,
             restart_from=restart,
             extend_run=extend_run,
         )
@@ -160,6 +167,7 @@ def main(
 
     if setup_only:
         log.info("We have setup the run, only.")
+        gen_feedback_messages(log.info)
         log.info(get_adieu())
         return
 
@@ -193,6 +201,7 @@ def main(
     end = time()
     elapsed = convert_seconds_to_min_sec(end - start)
     log.info(f"This HADDOCK3 run took: {elapsed}")
+    gen_feedback_messages(log.info)
     log.info(get_adieu())
 
 

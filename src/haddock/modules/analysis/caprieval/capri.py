@@ -32,6 +32,7 @@ from haddock.libs.libalign import (
     ALIGNError,
     calc_rmsd,
     centroid,
+    check_chains,
     get_align,
     get_atoms,
     kabsch,
@@ -178,7 +179,7 @@ class CAPRI:
         path: Path,
         reference: PDBPath,
         params: ParamMap,
-        less_io: Optional[bool] = False,
+        debug: Optional[bool] = False,
     ) -> None:
         """
         Initialize the class.
@@ -212,6 +213,7 @@ class CAPRI:
         self.ilrmsd = float("nan")
         self.fnat = float("nan")
         self.dockq = float("nan")
+        self.rmsd = float("nan")
         self.allatoms = params["allatoms"]
         self.atoms = self._load_atoms(model, reference, full=self.allatoms)
         self.r_chain = params["receptor_chain"]
@@ -223,7 +225,7 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
-        self.less_io = less_io
+        self.debug = debug
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -314,7 +316,7 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
         else:
-            r_chain, l_chains = self.check_chains(obs_chains)
+            r_chain, l_chains = check_chains(obs_chains, self.r_chain, self.l_chains)
             r_start, r_end = chain_ranges[r_chain]
             l_starts = [chain_ranges[_l][0] for _l in l_chains]
             l_ends = [chain_ranges[_l][1] for _l in l_chains]
@@ -439,7 +441,7 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
         else:
-            r_chain, l_chains = self.check_chains(obs_chains)
+            r_chain, l_chains = check_chains(obs_chains, self.r_chain, self.l_chains)
             r_start, r_end = chain_ranges[r_chain]
             l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
             l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
@@ -506,6 +508,42 @@ class CAPRI:
                 self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
+    
+    def calc_global_rmsd(self) -> None:
+        """Calculate the full structure RMSD."""
+        # Load reference atomic coordinates
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
+        # Load model atomic coordinates
+        try:
+            model_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+                )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
+        # Obtain list of coordinates
+        Q = []
+        P = []
+        for k in ref_coord_dic.keys() & model_coord_dic.keys():
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = model_coord_dic[k]
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
+        # Cast indo array
+        Q = np.asarray(Q)
+        P = np.asarray(P)
+        # Center to 0
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
+        # Obtain rotation matrix
+        U = kabsch(P, Q)
+        # Rotate model (the actual superimposition)
+        P = np.dot(P, U)
+        # Compute full RMSD
+        self.rmsd = calc_rmsd(P, Q)
 
     def calc_dockq(self) -> None:
         """Calculate the DockQ metric."""
@@ -548,6 +586,7 @@ class CAPRI:
         data["lrmsd"] = self.lrmsd
         data["ilrmsd"] = self.ilrmsd
         data["dockq"] = self.dockq
+        data["rmsd"] = self.rmsd
 
         if self.has_cluster_info():
             data["cluster_id"] = self.model.clt_id
@@ -610,49 +649,17 @@ class CAPRI:
         if self.params["dockq"]:
             log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
+        
+        if self.params["global_rmsd"]:
+            log.debug(f"id {self.identificator}, calculating global RMSD")
+            self.calc_global_rmsd()
 
-        if not self.less_io:
+        if self.debug:
             self.make_output()
         else:
             # The scheduler will use the return of the `run` method as the output of the tasks
             #  Here to avoid writing a file, return a copy of this instance
             return copy.deepcopy(self)
-
-    def check_chains(self, obs_chains):
-        """Check observed chains against the expected ones.
-
-        Logic: if chain B is among the observed chains and is not selected as
-         the receptor chain, then ligand_chains = ["B"] (default behaviour).
-        Otherwise, ligand_chains becomes equal to all the other chains (once
-         receptor chain is removed).
-
-        Parameters
-        ----------
-        obs_chains : list
-            List of observed chains.
-        """
-        r_found, l_found = False, False
-        if self.r_chain in obs_chains:
-            r_chain = self.r_chain
-            obs_chains.remove(r_chain)
-            r_found = True
-        l_chains = []
-        for l_chain in self.l_chains:
-            if l_chain in obs_chains:
-                l_chains.append(l_chain)
-                obs_chains.remove(l_chain)
-                l_found = True
-        # if receptor chain is not among the observed chains, then
-        # it is the first chain in the list
-        if not r_found:
-            r_chain = obs_chains[0]
-            obs_chains.remove(r_chain)
-        # if no element in ligand_chains is not among the observed chains, then
-        # ligand_chains is the list of observed chains (the receptor chain has
-        # already been removed)
-        if not l_found:
-            l_chains = [el for el in obs_chains]
-        return r_chain, l_chains
 
     @staticmethod
     def _load_atoms(
@@ -748,22 +755,27 @@ class CAPRI:
 
 def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
     """Merge CAPRI data."""
+    # Set of attributes/keys we want to extract
+    target_keys = ("irmsd", "fnat", "ilrmsd", "lrmsd", "dockq", "rmsd", )
+    # Initiate holder
     capri_dic: dict[str, dict[str, float]] = {}
+    # Loop over jobs ids
     for ident in range(1, len(capri_jobs) + 1):
+        # Point tsv file
         out_file = Path(f"capri_ss_{ident}.tsv")
         if not out_file.exists():
             continue
+        # Read it
         header, content = out_file.read_text().split(os.linesep, 1)
-
         header_data = header.split("\t")
         content_data = content.split("\t")
-
+        # Find model name
         model_name = Path(content_data[header_data.index("model")]).name
-        capri_dic[model_name] = {}
-        target_keys = ["irmsd", "fnat", "ilrmsd", "lrmsd", "dockq"]
-        for key in target_keys:
-            val = float(content_data[header_data.index(key)])
-            capri_dic[model_name][key] = val
+        # Gather data for this model
+        capri_dic[model_name] = {
+            key: float(content_data[header_data.index(key)])
+            for key in target_keys
+            }
 
     for j in capri_jobs:
         for m in capri_dic:
@@ -771,11 +783,9 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
             file_name = jm.name if isinstance(jm, Path) else jm.file_name
             if m == file_name:
                 # add the data
-                j.irmsd = capri_dic[m]["irmsd"]
-                j.fnat = capri_dic[m]["fnat"]
-                j.lrmsd = capri_dic[m]["lrmsd"]
-                j.ilrmsd = capri_dic[m]["ilrmsd"]
-                j.dockq = capri_dic[m]["dockq"]
+                for target_key in target_keys:
+                   # Set a new target_key attribute to object with capri_dic[m][target_key] value
+                    j.__setattr__(target_key, capri_dic[m][target_key])
 
     return capri_jobs
 
@@ -942,9 +952,12 @@ def extract_data_from_capri_class(
             "lrmsd": c.lrmsd,
             "ilrmsd": c.ilrmsd,
             "dockq": c.dockq,
-            "cluster_id": None,
-            "cluster_ranking": None,
-            "model-cluster_ranking": None,
+            "rmsd": c.rmsd,
+            "cluster_id": c.model.clt_id if c.model.clt_id else None,
+            "cluster_ranking": c.model.clt_rank if c.model.clt_rank else None,
+            "model-cluster_ranking": (
+                c.model.clt_model_rank if c.model.clt_model_rank else None
+            ),
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)
@@ -984,7 +997,7 @@ def calc_stats(data: list) -> tuple[float, float]:
 # Define dict types
 CltData = dict[
     tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]
-]  # noqa : E501
+]
 
 
 def capri_cluster_analysis(
@@ -997,7 +1010,7 @@ def capri_cluster_analysis(
     path: FilePath,
 ) -> None:
     """Consider the cluster results for the CAPRI evaluation."""
-    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd"]
+    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd", "rmsd"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data

@@ -60,6 +60,8 @@ class CustomBuild(build_ext):
             ],
         )
 
+        self.download_cns()
+
         # Run the standard build_ext
         build_ext.run(self)
 
@@ -89,16 +91,7 @@ class CustomBuild(build_ext):
             print(f"Error building {name}: {e}")
             raise
 
-
-class CustomInstall(install):
-    """Custom class to handle the download of the CNS binary"""
-
-    def run(self):
-        install.run(self)
-
-        if self.install_lib is None:
-            print("Something went wrong during installation")
-            sys.exit(1)
+    def download_cns(self):
 
         arch = self.get_arch()
 
@@ -121,8 +114,8 @@ class CustomInstall(install):
         os.chmod(cns_exec, 0o755)
 
         # check if this is being done via `pip install .`
-        if hasattr(self, "install_lib"):
-            install_bin_dir = Path(self.install_lib, "haddock", "bin")
+        if hasattr(self, "build_lib"):
+            install_bin_dir = Path(self.build_lib, "haddock", "bin")
             install_bin_dir.mkdir(exist_ok=True, parents=True)
             self.copy_file(cns_exec, Path(install_bin_dir, "cns"))
 
@@ -144,19 +137,9 @@ class CustomInstall(install):
         return f"{machine}-{system}"
 
 
-class CustomDevelop(develop):
-
-    def run(self):
-        """Wrapper class to run the installation also when using `python setup.py develop`"""
-        self.run_command("install")
-        develop.run(self)
-
-
 setup(
     cmdclass={
         "build_ext": CustomBuild,
-        "install": CustomInstall,
-        "develop": CustomDevelop,
     },
     ext_modules=cpp_extensions,
 )

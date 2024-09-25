@@ -126,21 +126,34 @@ class HaddockModule(BaseHaddockModule):
 
         log.info("Running ATTRACT...")
         cmd = [
-        'bash', '/trinity/login/arha/tools/scripts/attract/docking/dock-lrmsd-in-haddock.sh',
-        '.',
-        '10',
-        '/trinity/login/arha/dev-h3/test-attr/tmp'
+        'bash', 
+        '/trinity/login/arha/tools/scripts/attract/docking/dock-lrmsd-in-haddock.sh', # move this to haddock3/src/.../attract/
+        '.', # dir with input files 
+        '10', # number of starting points for sampling
+        '/trinity/login/arha/dev-h3/test-attr/tmp' # where to store tmp files
         ]
+        # need to add randsearch
 
         docking = subprocess.run(cmd, capture_output=True, text=True)
 
         with open('log.txt','w') as f:
             for item in docking.stdout:
                 f.write(f"{item}")
-
+        # here     
         with open('err.txt', 'w') as f:
                     for item in docking.stderr:
                         f.write(f"{item}")
+
+        # 
+        # score with HIPPO
+        
+        #
+        # assemble 
+        #
+
+        #
+        # score with attract? haddock? hippo (idk if possible)? 
+                
         # dat2pdb:
         # /trinity/login/arha/tools/attract/bin/collect $m-e7.dat /dev/null frag${x}r.pdb --ens 2 nalib/$m-clust1.0r.list > models_frag${X}r.pdb
         list_of_created_models = []     

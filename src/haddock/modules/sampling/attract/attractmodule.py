@@ -48,7 +48,7 @@ def rename_and_coarse_grain(pdb_file: str, reduce_path: str, lines_to_check: int
         if molecule_type in ('dna', 'rna'):
             cmd.append(f'--{molecule_type}')
         cmd.append(str(new_path))
-        
+        # this works in haddock3 env 
         return subprocess.run(cmd, capture_output=True, text=True), molecule_type
 
 def process_rna_file(pdb_file: str = 'rna-aar.pdb'):

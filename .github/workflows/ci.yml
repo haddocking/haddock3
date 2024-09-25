@@ -26,8 +26,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
-      - name: install python dependencies
-        run: pip install -e '.[dev]'
+      - name: install haddock3 with test dependencies
+        run: pip install '.[dev]'
 
       - name: run unit tests
         run: >-
@@ -54,7 +54,7 @@ jobs:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
 
-      - name: check if docs are buildable
-        # this step can fail
-        continue-on-error: true
-        run: tox -e docs
+      # - name: check if docs are buildable
+      #   # this step can fail
+      #   continue-on-error: true
+      #   run: tox -e docs

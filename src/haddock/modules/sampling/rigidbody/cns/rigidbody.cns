@@ -131,7 +131,6 @@ evaluate ($Data.flags.xrdc = false)
 evaluate ($Data.flags.xpcs = false)
 evaluate ($Data.flags.dani = false)
 evaluate ($Data.flags.vean = false)
-evaluate ($Data.flags.ncs  = false)
 
 ! Other parameters
 evaluate ($refine.keepwater = false)
@@ -301,7 +300,6 @@ if ($Data.surfrest eq true ) then
     @MODULE:surf-restraints.cns
 end if
 
-flag excl ncs end
 evaluate ($nrig = 0)
 evaluate ($nfirst = 1)
 evaluate ($bestair = 0)
@@ -510,7 +508,6 @@ do (y = refy) (not store3)
 do (z = refz) (not store3)
 
 evaluate ($esym = 0.0)
-evaluate ($ncs = 0.0)
 evaluate ($zhar = 0.0)
 evaluate ($rms_test_noe = 0.0)
 evaluate ($violations_test_noe = 0)

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
+from setuptools.command.develop import develop
 from setuptools.command.install import install
 
 
@@ -143,7 +144,36 @@ class CustomInstall(install):
         return f"{machine}-{system}"
 
 
+class CustomDevelop(develop):
+
+    def run(self):
+        """Wrapper class to run the installation also when using `python setup.py develop`"""
+        self.run_command("install")
+        develop.run(self)
+
+
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    requirements = f.read().splitlines()
+
+
+def read_description(*names, **kwargs) -> str:
+    """Read description files."""
+    path = join(dirname(__file__), *names)
+    with open(path, encoding=kwargs.get("encoding", "utf8")) as fh:
+        return fh.read()
+
+
+readme = read_description("README.md")
+changelog = read_description("CHANGELOG.md")
+long_description = f"{readme}{os.linesep}{changelog}"
+
+
 setup(
-    cmdclass={"build_ext": CustomBuild, "install": CustomInstall},
+    
+    cmdclass={
+        "build_ext": CustomBuild,
+        "install": CustomInstall,
+        "develop": CustomDevelop,
+    },
     ext_modules=cpp_extensions,
 )

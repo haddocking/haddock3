@@ -13,7 +13,6 @@ from haddock import core_path, log
 
 
 cns_exec = Path(files(haddock).joinpath("bin/cns"))  # type: ignore
-log.warning(cns_exec)
 if not cns_exec.exists():
     log.warning("CNS executable not found at %s", cns_exec)
     _cns_exec = os.environ.get("CNS_EXEC")
@@ -26,9 +25,7 @@ if not cns_exec.exists():
         cns_exec = Path(_cns_exec)
 
 CONTACT_FCC_EXEC = Path(files("haddock").joinpath("bin/contact_fcc"))  # type: ignore
-log.warning(CONTACT_FCC_EXEC)
 FAST_RMSDMATRIX_EXEC = Path(files("haddock").joinpath("bin/fast-rmsdmatrix"))  # type: ignore
-log.warning(FAST_RMSDMATRIX_EXEC)
 
 MODULE_PATH_NAME = "step_"
 """

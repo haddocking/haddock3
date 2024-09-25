@@ -10,8 +10,6 @@ from pathlib import Path
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
-from setuptools.command.develop import develop
-from setuptools.command.install import install
 
 
 CNS_BINARIES = {
@@ -40,6 +38,7 @@ class CustomBuild(build_ext):
     """Custom build handles the C/C++ dependencies"""
 
     def run(self):
+        """Run the custom build"""
         print("Building HADDOCK3 C/C++ binary dependencies...")
         self.build_executable(
             name="contact_fcc",
@@ -59,10 +58,10 @@ class CustomBuild(build_ext):
                 "-lm",
             ],
         )
-
+        print("Downloading the CNS binary...")
         self.download_cns()
 
-        # Run the standard build_ext
+        # Run the standard build
         build_ext.run(self)
 
     def build_executable(self, name, cmd):
@@ -92,6 +91,7 @@ class CustomBuild(build_ext):
             raise
 
     def download_cns(self):
+        """Helper function to download the CNS binary"""
 
         arch = self.get_arch()
 
@@ -113,7 +113,7 @@ class CustomBuild(build_ext):
         # Make it executable
         os.chmod(cns_exec, 0o755)
 
-        # check if this is being done via `pip install .`
+        # If build_lib exists, also copy to there
         if hasattr(self, "build_lib"):
             install_bin_dir = Path(self.build_lib, "haddock", "bin")
             install_bin_dir.mkdir(exist_ok=True, parents=True)

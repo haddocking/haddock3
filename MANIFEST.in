@@ -5,7 +5,6 @@ include *.rst
 include LICENSE
 include pyproject.toml
 include setup.py
-include requirements.txt
 exclude .gitmodules
 exclude .bumpversion.cfg
 exclude .coveragerc

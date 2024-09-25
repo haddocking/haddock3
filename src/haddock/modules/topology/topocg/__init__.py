@@ -260,7 +260,7 @@ class HaddockModule(BaseCNSModule):
                     self.params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
-                    write_to_disk=not self.params["less_io"],
+                    write_to_disk=not self.params["debug"],
                 )
 
                 self.log("Topology CNS input created")

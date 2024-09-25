@@ -1,5 +1,5 @@
 ! generate-topology.inp
-!     Generates missing coordinates and topology
+!     Generates missing coordinates and topology for coarse grained model
 !
 ! ***********************************************************************
 ! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
@@ -356,74 +356,7 @@ segment
     end
 end
 
-coordinates @@$coor_infile
-
-! next line to remove the MAP atom defined in the DUM residue
-! in case of use of dummy particles
-delete sele=(name MAP) end
-
-if ( &BLANK%ile_CD_becomes = false ) then
-    do (name=&ile_CD_becomes) (resn ILE and name CD)
-end if
-if ( &BLANK%OT1_becomes = false ) then
-    do (name=&OT1_becomes) (name OT1)
-end if
-if ( &BLANK%OT2_becomes = false ) then
-    do (name=&OT2_becomes) (name OT2)
-end if
-
-!for the histidine patches:
-if ($autohis = false) then
-    evaluate($hisd_counter=1)
-    while ($hisd_counter le $nhisd) loop hisd
-        show (resn) (tag and resid $hisd_$hisd_counter)
-        if ($result eq "HIS") then
-            patch hisd reference=nil=(resid $hisd_$hisd_counter) end
-        end if
-        evaluate($hisd_counter=$hisd_counter + 1)
-    end loop hisd
-
-    evaluate($hise_counter=1)
-    while ($hise_counter le $nhise) loop hise
-        show (resn) (tag and resid $hise_$hise_counter)
-        if ($result eq "HIS") then
-            patch hise reference=nil=(resid $hise_$hise_counter) end
-        end if
-        evaluate($hise_counter=$hise_counter + 1)
-    end loop hise
-end if
-
-! The following patches would define covalent bond between a CA+2 and oxygen ligands
-! from Asp and Glu (first selection is amino-acid, second is ion)
-! patch dca2 refe=1=(resid 25) refe=2=(resid 83) end
-! patch dca2 refe=1=(resid 29) refe=2=(resid 83) end
-! patch dca2 refe=1=(resid 35) refe=2=(resid 83) end
-! patch eca2 refe=1=(resid 36) refe=2=(resid 83) end
-!
-! following patch is to attach a heme (resid YY) CAB atom to a cys (resid XX)
-! patch phcb refe=1=(resid XX) refe=2=(resid YY) end
-! following patch is to attach a heme (resid YY) CAC atom to a cys (resid XX)
-! patch phcc refe=1=(resid XX) refe=2=(resid YY) end
-!
-! following patch is to define an isopeptide bond between a Cter and a Lys side-chain
-! patch clys refe=1=(resid 72) refe=2=(resid 148) end
-!
-! following patch is to define an isopeptide bond between a Cter and a Lys side-chain
-! patch clys refe=1=(resid 72) refe=2=(resid 148) end
-
-! N-linked glycosylation patches
-inline @MODULE:bondglycans.cns
-
-if ($delenph = true) then
-    delete sele=(name H* and attr charge = 0) end
-end if
-
 set seed=$iniseed end
-
-show sum(1) ( not(hydrogen) and not(known) )
-if ( $select = 0 ) then
-    display  %INFO: There are no coordinates missing for non-hydrogen atoms
-end if
 
 if ( $log_level = "verbose" ) then
     set message=normal echo=on end
@@ -433,11 +366,29 @@ else
     set message=off echo=off end
 end if
 
+coordinates @@$coor_infile
+
+! next line to remove the MAP atom defined in the DUM residue
+! in case of use of dummy particles
+delete sele=(name MAP) end
+
+inline @MODULE:build-missing.cns
+
 if ( &auto_break = true ) then
     inline @MODULE:prot_break.cns
     inline @MODULE:dna_break.cns
+    inline @MODULE:patch-breaks-cg-dna-rna.cns
 end if
 
+inline @MODULE:patch-types-cg.cns
+inline @MODULE:patch-bb-cg.cns
+inline @MODULE:patch-types-cg-hbond-dna-rna.cns
+inline @MODULE:charge-beads-interactions.cns
+
+show sum(1) ( not(hydrogen) and not(known) )
+if ( $select = 0 ) then
+    display  %INFO: There are no coordinates missing for non-hydrogen atoms
+end if
 
 ! checkfor disulphide bonds
 
@@ -485,246 +436,6 @@ $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
     end
     evaluate ($counter=$counter+1)
 end loop disu
-
-
-! check for cyclid peptidic bonds
-
-if ($cyclicpept eq TRUE ) then
-
-    evaluate ($cycp=0)
-
-    for $id1 in id ( tag and name N ) loop cyp1
-
-        show (segid) (id $id1)
-        evaluate ($segid1=$result)
-        show (resid) (id $id1)
-        evaluate ($resid1=$result)
-        show (resn) (id $id1)
-        evaluate ($resn1=$result)
-
-        for $id2 in id ( name C and bondedto (name O and not resid $resid1 ) ) loop cyp2
-
-            show (segid) (id $id2)
-            evaluate ($segid2=$result)
-            show (resid) (id $id2)
-            evaluate ($resid2=$result)
-            show (resn) (id $id2)
-            evaluate ($resn2=$result)
-
-            evaluate ($rdiff = decode($resid2) - decode($resid1))
-
-            if ($rdiff gt 2) then
-
-                pick bond (id $id1) (id $id2) geometry
-                if ( $result <= &cyclicpept_dist ) then
-                    evaluate ($cycp=$cycp+1)
-                    evaluate ($seg1.$cycp=$segid1)
-                    evaluate ($seg2.$cycp=$segid2)
-                    evaluate ($res1.$cycp=$resid1)
-                    evaluate ($res2.$cycp=$resid2)
-                    evaluate ($rsn1.$cycp=$resn1)
-                    evaluate ($rsn2.$cycp=$resn2)
-                end if
-
-            end if
-
-        end loop cyp2
-
-    end loop cyp1
-
-    evaluate ($counter=1)
-
-    while ( $counter <= $cycp ) loop cypep
-
-        evaluate ($ptype = PEPT)
-        evaluate ($patchdone = 0)
-        if ( $rsn2.$counter eq GLY) then
-            if ($rsn1.$counter eq PRO) then
-                evaluate ($ptype = PPGP)
-                evaluate ($patchdone = 1)
-            end if
-            if ($rsn1.$counter eq GLY) then
-                evaluate ($ptype = PPGG)
-                evaluate ($patchdone = 1)
-            end if
-            if ($patchdone eq 0) then
-                evaluate ($ptype = PPG1)
-            end if
-        else
-            if ($rsn1.$counter eq PRO) then
-                evaluate ($ptype = PEPP)
-            end if
-            if ($rsn1.$counter eq GLY) then
-                evaluate ($ptype = PPG2)
-            end if
-        end if
-
-        patch $ptype
-            reference=+=(segid $seg1.$counter and resid $res1.$counter)
-            reference=-=(segid $seg2.$counter and resid $res2.$counter)
-        end
-
-        buffer message
-            display cyclic peptide detected: peptidic bond added between \
-$seg1.$counter[a4] $res1.$counter[a4] and $seg2.$counter[a4] $res2.$counter[a4]
-        end
-        evaluate ($counter=$counter+1)
-    end loop cypep
-
-end if ! check for cyclic peptide
-
-
-
-evaluate ($ironclus=0)
- 
-! check for FE1 bonds in iron cluster
-for $id1 in id ( resname CFE and name SG ) loop fes1
-
-    show (segid) (id $id1)
-    evaluate ($segid1=$result)
-    show (resid) (id $id1)
-    evaluate ($resid1=$result)
-
-    identity (store9) (all)
-
-    for $id2 in id ( resname CYF and name SG ) loop fes2
-
-        show (segid) (id $id2)
-        evaluate ($segid2=$result)
-        show (resid) (id $id2)
-        evaluate ($resid2=$result)
-
-        pick bond (id $id1) (id $id2) geometry
-
-        if ( $result <= &iron1cluster_dist ) then
-            evaluate ($ironclus=$ironclus+1)
-            evaluate ($seg1.$ironclus=$segid1)
-            evaluate ($seg2.$ironclus=$segid2)
-            evaluate ($res1.$ironclus=$resid1)
-            evaluate ($res2.$ironclus=$resid2)
-        end if
-
-    end loop fes2
-
-end loop fes1
-
-evaluate ($counter=1)
-while ( $counter <= $ironclus ) loop iron1
-    patch sef1
-        reference=1=(segid $seg1.$counter and resid $res1.$counter)
-        reference=2=(segid $seg2.$counter and resid $res2.$counter)
-    end
-    buffer message
-        display iron FE1 sulphur bond added: from $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
-    end
-    evaluate ($counter=$counter+1)
-end loop iron1
-
-evaluate ($ironclus=0)
- 
-! check for FE2 bonds in iron cluster
-for $id1 in id ( resname CFE and name SG ) loop fes1
-
-    show (segid) (id $id1)
-    evaluate ($segid1=$result)
-    show (resid) (id $id1)
-    evaluate ($resid1=$result)
-
-    identity (store9) (all)
-
-    for $id2 in id ( resname CYF and name SG ) loop fes2
-
-        show (segid) (id $id2)
-        evaluate ($segid2=$result)
-        show (resid) (id $id2)
-        evaluate ($resid2=$result)
-
-        pick bond (id $id1) (id $id2) geometry
-
-        if ( $result <= &iron2cluster_dist ) then
-            if ($result > &iron1cluster_dist ) then
-                evaluate ($ironclus=$ironclus+1)
-                evaluate ($seg1.$ironclus=$segid1)
-                evaluate ($seg2.$ironclus=$segid2)
-                evaluate ($res1.$ironclus=$resid1)
-                evaluate ($res2.$ironclus=$resid2)
-            end if
-        end if
- 
-    end loop fes2
-
-end loop fes1
-
-evaluate ($counter=1)
-while ( $counter <= $ironclus ) loop iron2
-    patch sef2
-        reference=1=(segid $seg1.$counter and resid $res1.$counter)
-        reference=2=(segid $seg2.$counter and resid $res2.$counter)
-    end
-    buffer message
-        display iron FE2 sulphur bond added: from $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
-    end
-    evaluate ($counter=$counter+1)
-end loop iron2
-
-
-! Check for cis-PRO
-
-for $id in id ( &atom_select and name ca and resn PRO) loop cisp
-
-    show (segid) (id $id)
-    evaluate ($segid=$result)
-    show (resid) (id $id)
-    evaluate ($resid=$result)
-    show (resn) (id $id)
-    evaluate ($resn=$result)
-
-    identity (store9) ( &atom_select and ( name c and bondedto 
-             ( name n and resid $resid and segid $segid ) ) )
-    if ( $select = 1 ) then
-        show element (store9) (attribute store9 > 0)
-        evaluate ($id_prev=$result)
-        show (segid) (id $id_prev)
-        evaluate ($segid_prev=$result)
-        show (resid) (id $id_prev)
-        evaluate ($resid_prev=$result)
-        show (resn) (id $id_prev)
-        evaluate ($resn_prev=$result)
- 
-        pick dihedral
-            (name ca and segid $segid_prev and resid $resid_prev)
-            (name  c and segid $segid_prev and resid $resid_prev)
-            (name  n and segid $segid and resid $resid)
-            (name ca and segid $segid and resid $resid)
-            geometry
-       
-        evaluate ($dihedral=mod($result+360,360))
-
-        if ( $dihedral > 180 ) then
-            evaluate ($dihedral=$dihedral-360)
-        end if
-
-        evaluate ($absdihedral=abs($dihedral))
-
-        if ( $absdihedral < 25 ) then
-            patch cisp reference=NIL=(segid $segid_prev and resid $resid_prev) end
-            display CIS peptide bon detected for residue $resid_prev
-        end if
-
-    end if
-
-end loop cisp
-
-if (&hydrogen_flag=false) then
-    delete selection=( hydrogen ) end
-end if
-
-delete selection=( &atom_delete ) end
-
-!check for histidine protonation state if auto mode on
-if ($autohis = true) then
-    inline @MODULE:auto-his.cns
-end if
 
 energy end
 evaluate ($bonded = $bond + $angl + $impr)

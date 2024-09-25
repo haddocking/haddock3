@@ -418,8 +418,8 @@ def determine_ss(structure, skipss, pdbf_path):
                 dssp = DSSP(model, pdbf_path)
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
-                print("+ ERROR: SS could not be assigned, check under the hood or add --skipss")
-                exit()
+                print("+ ERROR: SS could not be assigned, assigning code 1 to all residues")
+                continue
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
@@ -493,7 +493,7 @@ def martinize(input_pdb, output_path, skipss):
     pdbf_path = os.path.realpath(input_pdb)
     aa_model = p.get_structure("aa_model", pdbf_path)
 
-    # set ALL bfactors to 0
+    # set ALL bfactors to 1
     for model in aa_model:
         for chain in model:
             if chain.id == " ":
@@ -501,7 +501,7 @@ def martinize(input_pdb, output_path, skipss):
                 exit()
             for residue in chain:
                 for atom in residue:
-                    atom.bfactor = 0.0
+                    atom.bfactor = 1.0
 
     # Assign HADDOCK code according to SS (1-9)
     determine_ss(structure=aa_model, skipss=skipss, pdbf_path=pdbf_path)

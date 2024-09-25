@@ -1,6 +1,6 @@
 import tempfile
 from haddock.libs.libplots import read_capri_table 
-from haddock.libs.libinteractive import handle_ss_file, rewrite_capri_tables, look_for_capri, handle_clt_file
+from haddock.libs.libinteractive import handle_ss_file, look_for_capri, handle_clt_file
 import pytest
 from pathlib import Path
 import numpy as np
@@ -26,7 +26,18 @@ def test_handle_ss_file(example_capri_df_ss):
     assert clt_ranks_dict[16] == 1
     assert clt_ranks_dict[1] == 2
     assert clt_ranks_dict[34] == 39
-    
+
+
+def test_handle_ss_file_unclustered(example_capri_df_ss):
+    """Test handle_ss_file function with unclustered data."""
+    df_ss = example_capri_df_ss.copy()
+    df_ss['cluster_id'] = '-'
+    df_ss['cluster_ranking'] = "-"
+    df_ss['model-cluster_ranking'] = "-"
+    df_ss, clt_ranks_dict = handle_ss_file(df_ss)
+    assert clt_ranks_dict == {"-": 1}
+    assert df_ss['cluster_ranking'].values[0] == "-"
+
 
 def test_handle_clt_file(example_capri_df_ss):
     """Test handle_clt_file function."""

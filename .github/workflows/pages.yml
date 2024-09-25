@@ -26,15 +26,7 @@ jobs:
       # needs to install hd3 so the command-line pages are
       # rendered properly
       - name: Install HADDOCK3
-        run: |
-          pwd
-          ls -lsa
-          mkdir bin
-          touch bin/cns
-          cd src/fcc/src
-          chmod u+x Makefile
-          ./Makefile 2>%1 >/dev/null || true
-          cd -
+        run: pip install -v .
 
       - name: Generate docs
         run: |

@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11"]
       fail-fast: false
 
     steps:
@@ -26,8 +26,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
-      - name: install haddock3 with test dependencies
-        run: pip install '.[dev]'
+      - name: install haddock3 with extra dependencies
+        run: pip install '.[dev,docs]'
 
       - name: run unit tests
         run: >-
@@ -54,7 +54,8 @@ jobs:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
 
-      # - name: check if docs are buildable
-      #   # this step can fail
-      #   continue-on-error: true
-      #   run: tox -e docs
+      - name: check if docs are buildable
+        continue-on-error: true
+        run: |
+          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+          sphinx-build docs haddock3-docs

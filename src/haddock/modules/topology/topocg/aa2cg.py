@@ -119,7 +119,7 @@ def map_cg(chain):
             if len(code) > 1:
                 emsg = "Something is wrong with HADDOCK codes"
                 raise ModuleError(emsg)
- 
+
             if not code:
                 code = 0.0
             else:

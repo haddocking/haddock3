@@ -21,7 +21,6 @@ from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML, cns_exec
 from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
-from haddock.core.exceptions import ModuleError
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,

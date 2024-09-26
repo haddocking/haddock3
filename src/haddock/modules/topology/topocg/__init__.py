@@ -1,26 +1,16 @@
-"""Create and manage CNS all-atom topology.
+"""Create and manage CNS coarse-grained topology.
 
 The ``[topocg]`` module is dedicated to the generation of CNS compatible
 parameters (.param) and topologies (.psf) for each of the input structures.
 
 It will:
-- Detect missing atoms, including hydrogens
+- Convert an all atom model to a Martini coarse-grained model
+- Detect missing atoms 
 - Re-build them when missing
 - Build and write out topologies (psf) and coordinates (pdb) files
+- Write out a restrain file to convert back the CG model to all atoms
 
-This module is a pre-requisite to run any downstream modules using CNS.
-Having access to parameters and topology is mandatory for any kind
-of EM/MD related tasks.
-Therefore this is the reason why the module [topocg] is often used as first
-module in a workflow.
-
-Note that for non-standard bio-molecules
-(apart from standard amino-acids, some modified ones, DNA, RNA, ions
-and carbohydrates ... see `detailed list of supported molecules 
-<https://wenmr.science.uu.nl/haddock2.4/library>`_),
-such as small-molecules, parameters and topology must be obtained and provided
-by the user, as there is currently no built-in solution to generate
-them on the fly.
+Only standard amino acids and nucleic acids are supported.
 """
 
 import operator
@@ -29,17 +19,18 @@ import re
 from functools import partial
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML, cns_exec
 from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
+from haddock.core.exceptions import ModuleError
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
-)
+    )
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
-from haddock.libs.libontology import PDBFile
 from haddock.libs.libstructure import Molecule
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -49,7 +40,7 @@ import haddock.modules.topology.topocg.aa2cg
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 def generate_topology(
@@ -260,19 +251,20 @@ class HaddockModule(BaseCNSModule):
                     self.params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
-                    write_to_disk=not self.params["debug"],
+                    write_to_disk=self.params["debug"],
                 )
 
                 self.log("Topology CNS input created")
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
-
+                err_fname = f"{model.stem}.cnserr"
                 job = CNSJob(
                     topocg_input,
                     output_filename,
+                    err_fname,
                     envvars=self.envvars,
-                    cns_exec=self.params["cns_exec"],
+                    cns_exec=cns_exec,
                 )
 
                 jobs.append(job)

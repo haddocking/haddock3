@@ -21,7 +21,7 @@ for $id in id (name BB) loop cg1
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
-   show (name) (bondedto (name $bdname_$bdnum and resid $bdresi_$bdnum))
+    show (name) (bondedto (name $bdname_$bdnum and resid $bdresi_$bdnum) and resid $bdresi_$bdnum and name SC1)
     if ($result NE 0) then
         evaluate ($sbdname_$bdnum = $result)
     else
@@ -52,33 +52,23 @@ while ($ncount < $nend) loop cg2
     evaluate ($bresi2 = $bdresi_$nat2)
     evaluate ($bresi3 = $bdresi_$nat3)
 
-    ! define atom names for patch
-    evaluate ($pat1 = "1"+$bname1)
-    evaluate ($pat2 = "2"+$bname2)
-    evaluate ($pat3 = "3"+$bname3)
-
     ! check for breaks before defining any angle
-    evaluate ($break = "FALSE")
+    evaluate ($break = FALSE)
     pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
     if ($result > $bdbreak) then
-        evaluate ($break = "TRUE")
+        evaluate ($break = TRUE)
     end if
     pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3) geometry
     if ($result > $bdbreak) then
-        evaluate ($break = "TRUE")
+        evaluate ($break = TRUE)
     end if
  
     if ($break EQ FALSE) then
 
-        ! define new backbone angle patch 
-        topology
-            presidue cgang  ! Patch to add an angle between three beads
-                add angle $pat1 $pat2 $pat3 
-            end
-        end
-
-        ! apply new patch to the selected three beads
-        patch cgang refe=1=(resid $bresi1) refe=2=(resid $bresi2) refe=3=(resid $bresi3) end
+        ! apply patch to the selected three beads
+        patch BBBA refe=1=(resid $bresi1 and name BB)
+                   refe=2=(resid $bresi2 and name BB)
+                   refe=3=(resid $bresi3 and name BB) end
         display PATCH-BB-CG: ADDED ONE ANGLE BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $bname3 $bresi3
 
     end if
@@ -86,13 +76,12 @@ while ($ncount < $nend) loop cg2
 end loop cg2
 
 
-!!! BBS Angles
+!!! BBS and SBB Angles
 evaluate ($ncount = 0)
 evaluate ($nend = $bdnum - 1)
 while ($ncount < $nend) loop cg3
     evaluate ($ncount = $ncount + 1)
 
-    !! BBA Angles
     ! define two consecutive backbone beads
     evaluate ($nat1 = $ncount)
     evaluate ($nat2 = $ncount + 1)
@@ -109,62 +98,33 @@ while ($ncount < $nend) loop cg3
     evaluate ($bresi1 = $bdresi_$nat1)
     evaluate ($bresi2 = $bdresi_$nat2)
 
-    ! define atom names for patch
-    evaluate ($pat1 = "1"+$bname1)
-    evaluate ($pat2 = "2"+$bname2)
-    evaluate ($pas1 = "1"+$sbname1)
-    evaluate ($pas2 = "2"+$sbname2)
-
     ! check for breaks before defining any angle
-    evaluate ($break = "FALSE")
-    evaluate ($pbreak = "FALSE")
+    evaluate ($break = FALSE)
     pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
     if ($result > $bdbreak) then
-        evaluate ($break = "TRUE")
-        evaluate ($pbreak = "TRUE")
+        evaluate ($break = TRUE)
     end if
  
     if ($break EQ FALSE) then
 
-        ! define new side-chain angle patch for 1st residue
-        if ($ncount EQ 1) then
-            if ($sbname1 NE "XXX") then
-                ! define SBB angle patch
-                topology
-                    presidue scgang  ! Patch to add an angle between three beads
-                        add angle $pas1 $pat1 $pat2 
-                    end
-                end
-                ! apply new patch to the selected three beads
-                patch scgang refe=1=(resid $bresi1) refe=2=(resid $bresi1) refe=3=(resid $bresi2) end
-                display PATCH-SBB-CG: ADDED ONE SIDE-CHAIN/BB ANGLE BETWEEN $sbname1 $bresi1 , $bname1 $bresi1 , $bname2 $bresi2
-            end if
-        end if
+        ! define new SBB side-chain angle patch 
+        if ($sbname1 NE "XXX") then
 
-        ! define new side-chain angle patch for 1st residue after chain break
-        if ($pbreak EQ TRUE) then
-            if ($sbname1 NE "XXX") then
-                ! define SBB angle patch
-                topology
-                    presidue scgsang  ! Patch to add an angle between three beads
-                        add angle $pas1 $pat1 $pat2 
-                    end
-                end
-                ! apply new patch to the selected three beads
-                patch scgsang refe=1=(resid $bresi1) refe=2=(resid $bresi1) refe=3=(resid $bresi2) end
-                display PATCH-SBB-CG: ADDED ONE SIDE-CHAIN/BB ANGLE BETWEEN $sbname1 $bresi1 , $bname1 $bresi1 , $bname2 $bresi2
-            end if
+            ! apply patch to the selected three beads
+            patch SBBA refe=1=(resid $bresi1 and name SC1)
+                       refe=2=(resid $bresi1 and name BB)
+                       refe=3=(resid $bresi2 and name BB) end
+            display PATCH-SBB-CG: ADDED ONE SIDE-CHAIN/BB ANGLE BETWEEN $sbname1 $bresi1 , $bname1 $bresi1 , $bname2 $bresi2
+
         end if
 
         ! define BBS angle patch
         if ($sbname2 NE "XXX") then
-            topology
-                presidue cgsang  ! Patch to add an angle between three beads
-                    add angle $pat1 $pat2 $pas2 
-                end
-            end
-            ! apply new patch to the selected three beads
-            patch cgsang refe=1=(resid $bresi1) refe=2=(resid $bresi2) refe=3=(resid $bresi2) end
+            
+            ! apply patch to the selected three beads
+            patch BBSA refe=1=(resid $bresi1 and name BB)
+                       refe=2=(resid $bresi2 and name BB)
+                       refe=3=(resid $bresi2 and name SC1) end
             display PATCH-BBS-CG: ADDED ONE BB/SIDE-CHAIN ANGLE BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $sbname2 $bresi2
         end if
 
@@ -173,7 +133,7 @@ while ($ncount < $nend) loop cg3
 end loop cg3
 
 
-!! BBB dihedral
+!! BBBB dihedral
 
 evaluate ($ncount = 0)
 evaluate ($nend = $bdnum - 3)
@@ -204,32 +164,28 @@ while ($ncount < $nend) loop cg4
     evaluate ($pat3 = "3"+$bname3)
     evaluate ($pat4 = "4"+$bname4)
 
-    evaluate ($break = "FALSE")
+    evaluate ($break = FALSE)
     ! check for breaks before defining any dihedral
     pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
     if ($result > $bdbreak) then
-        evaluate ($break = "TRUE")
+        evaluate ($break = TRUE)
     end if
     pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3) geometry
     if ($result > $bdbreak) then
-        evaluate ($break = "TRUE")
+        evaluate ($break = TRUE)
     end if
     pick bond (name $bname3 and resid $bresi3) (name $bname4 and resid $bresi4) geometry
     if ($result > $bdbreak) then
-        evaluate ($break = "TRUE")
+        evaluate ($break = TRUE)
     end if
  
     if ($break EQ FALSE) then
 
-        ! define new patch 
-        topology
-            presidue cgdihe  ! Patch to add a dihedral angle between four beads
-                add dihedral $pat1 $pat2 $pat3 $pat4
-            end
-        end
-
-        ! apply new patch to the selected four beads
-        patch cgdihe refe=1=(resid $bresi1) refe=2=(resid $bresi2) refe=3=(resid $bresi3) refe=4=(resid $bresi4) end
+        ! apply patch to the selected four BB beads
+        patch CGDI refe=1=(resid $bresi1 and name BB)
+                   refe=2=(resid $bresi2 and name BB)
+                   refe=3=(resid $bresi3 and name BB)
+                   refe=4=(resid $bresi4 and name BB) end
         display PATCH-BB-CG: ADDED ONE DIHEDRAL BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $bname3 $bresi3 , $bname4 $bresi4
 
     end if

@@ -56,16 +56,12 @@ define(
 {===>} auto_break=true;
 
 {* cutoff distance in Angstroms for identification of breaks *}
-{* the default of 2.5A for peptide bonds should be reasonable for most cases. If the input
+{* the default of 8A for CG peptide bonds should be reasonable for most cases. If the input
    structure has bad geometry it may be necessary to increase this distance *}
-{===>} pbreak_cutoff=3.5;
 {===>} pcgbreak_cutoff=8.0;
-{* the default of 2.5A for nucleic acid linkages should be reasonable for most cases. If the input
+{* the default of 10A for CG nucleic acid linkages should be reasonable for most cases. If the input
    structure has bad geometry it may be necessary to increase this distance *}
-{===>} dbreak_cutoff=4.5;
-
-{* file containing patches to delete nucleic acid links *}
-{===>} dna_break_infile="TOPPAR:dna_break.top";
+{===>} dnacgbreak_cutoff=10.0;
 
 {======================= automatic disulphide bonds ========================}
 
@@ -81,30 +77,12 @@ define(
    structure has bad geometry it may be necessary to increase this distance *}
 {===>} cyclicpept_dist=2.0;
 
-{======================= automatic iron cluster bonds ======================}
-
-{* cutoff distance in Angstroms for identification of iron cluster bonds *}
-{* the default of 8.0A should be reasonable for most cases. If the input
-   structure has bad geometry it may be necessary to increase this distance *}
-{===>} iron1cluster_dist=5.0;
-{===>} iron2cluster_dist=8.0;
-
 {======================= automatic cis peptide bonds =======================}
 
 {* select atoms to be included in calculation of omega angles *}
 {* to define cis peptides*}
 {===>} atom_select=(known and not hydrogen);
 
-{========================= RNA to DNA conversion  ==========================}
-
-{* All nucleic acid residues initially have ribose sugars (rather than
-   deoxyribose). A patch must be applied to convert the ribose to deoxyribose
-   for DNA residues. Select those residues which need to have the patch
-   applied to make them DNA. *}
-{* Make sure that the atom selection is specific for the nucleic acid
-   residues *}
-{===>} dna_sele=(none);
-            
 {========================= generate parameters =============================}
 
 {* hydrogen flag - determines whether hydrogens will be output *}
@@ -159,22 +137,6 @@ define(
 {* nucleic acid parameter file *}
 {===>} nucl_parameter_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.param";
 
-{================= carbohydrate topology and parameter files ===============}
-
-{* carbohydrate topology file *}
-{===>} carbo_topology_infile="TOPPAR:carbohydrate.top";
-
-{* carbohydrate parameter file *}
-{===>} carbo_parameter_infile="TOPPAR:carbohydrate.param";
-
-{================= solvent topology and parameter files ====================}
-
-{* solvent topology file *}
-{===>} solv_topology_infile="TOPPAR:solvent-allhdg5-4.top";
-
-{* solvent parameter file *}
-{===>} solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param";
-
 {================= cofactor topology and parameter files ===================}
 
 {* co-factor topology file *}
@@ -185,30 +147,6 @@ define(
 
 {* co-factor parameter file *}
 {===>} cofac_parameter_infile="TOPPAR:ligand.param";
-
-{================= known ligands topology and parameter files ==============}
-
-{* ligands topology file *}
-{===>} ligands_topology_infile="TOPPAR:fragment_probes.top";
-
-{* ligands parameter file *}
-{===>} ligands_parameter_infile="TOPPAR:fragment_probes.param";
-
-{===================== ion topology and parameter files ====================}
-
-{* ion topology file *}
-{===>} ion_topology_infile="TOPPAR:ion.top";
-
-{* ion parameter file *}
-{===>} ion_parameter_infile="TOPPAR:ion.param";
-
-{===================== heme topology and parameter files ==================}
-
-{* heme topology file *}
-{===>} heme_topology_infile="TOPPAR:hemes-allhdg.top";
-
-{* heme parameter file *}
-{===>} heme_parameter_infile="TOPPAR:hemes-allhdg.param";
 
 {================= shape topology and parameter files =====================}
 
@@ -253,32 +191,14 @@ topology
     if ( &BLANK%prot_topology_infile = false ) then
         @@&prot_topology_infile
     end if
-    if ( &BLANK%ion_topology_infile = false ) then
-        @@&ion_topology_infile
-    end if
     if ( &BLANK%nucl_topology_infile = false ) then
         @@&nucl_topology_infile
-    end if
-    if ( &BLANK%carbo_topology_infile = false ) then
-        @@&carbo_topology_infile
-    end if
-    if ( &BLANK%solv_topology_infile = false ) then
-        @@&solv_topology_infile
     end if
     if ( &BLANK%ligands_topology_infile = false ) then
         @@&ligands_topology_infile
     end if
-    if ( &BLANK%cofac_topology_infile = false ) then
-        @@&cofac_topology_infile
-    end if
-    if ( &BLANK%heme_topology_infile = false ) then
-        @@&heme_topology_infile
-    end if
     if ( &BLANK%shape_topology_infile = false ) then
         @@&shape_topology_infile
-    end if
-    if ( &BLANK%dna_break_infile = false ) then
-        @@&dna_break_infile
     end if
     fileexist $ligand_top_fname end
     if ($result eq true) then
@@ -290,26 +210,11 @@ parameter
     if ( &BLANK%prot_parameter_infile = false ) then
         @@&prot_parameter_infile
     end if
-    if ( &BLANK%ion_parameter_infile = false ) then
-        @@&ion_parameter_infile
-    end if
     if ( &BLANK%nucl_parameter_infile = false ) then
         @@&nucl_parameter_infile
     end if
-    if ( &BLANK%carbo_parameter_infile = false ) then
-        @@&carbo_parameter_infile
-    end if
-    if ( &BLANK%solv_parameter_infile = false ) then
-        @@&solv_parameter_infile
-    end if
     if ( &BLANK%ligands_parameter_infile = false ) then
         @@&ligands_parameter_infile
-    end if
-    if ( &BLANK%cofac_parameter_infile = false ) then
-        @@&cofac_parameter_infile
-    end if
-    if ( &BLANK%heme_parameter_infile = false ) then
-        @@&heme_parameter_infile
     end if
     if ( &BLANK%shape_parameter_infile = false ) then
         @@&shape_parameter_infile
@@ -331,26 +236,11 @@ segment
         if ( &BLANK%prot_link_infile = false ) then
             @@&prot_link_infile
         end if
-        if ( &BLANK%ion_link_infile = false ) then
-            @@&ion_link_infile
-        end if
         if ( &BLANK%nucl_link_infile = false ) then
             @@&nucl_link_infile
         end if
-        if ( &BLANK%carbo_link_infile = false ) then
-            @@&carbo_link_infile
-        end if
-        if ( &BLANK%solv_link_infile = false ) then
-            @@&solv_link_infile
-        end if
         if ( &BLANK%ligands_link_infile = false ) then
             @@&ligands_link_infile
-        end if
-        if ( &BLANK%cofac_link_infile = false ) then
-            @@&cofac_link_infile
-        end if
-        if ( &BLANK%heme_link_infile = false ) then
-            @@&heme_link_infile
         end if
         coordinates @@$coor_infile
     end
@@ -375,8 +265,6 @@ delete sele=(name MAP) end
 inline @MODULE:build-missing.cns
 
 if ( &auto_break = true ) then
-    inline @MODULE:prot_break.cns
-    inline @MODULE:dna_break.cns
     inline @MODULE:patch-breaks-cg-dna-rna.cns
 end if
 

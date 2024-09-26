@@ -26,6 +26,7 @@ from Bio.PDB import PDBParser
 from Bio.PDB.DSSP import DSSP
 from Bio.PDB.StructureBuilder import StructureBuilder
 
+from haddock.core.exceptions import ModuleError
 from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
@@ -116,8 +117,9 @@ def map_cg(chain):
             code = list(set([a.bfactor for a in aares if a.bfactor != 0]))
 
             if len(code) > 1:
-                print("Something is wrong with HADDOCK codes")
-                exit()
+                emsg = "Something is wrong with HADDOCK codes"
+                raise ModuleError(emsg)
+ 
             if not code:
                 code = 0.0
             else:
@@ -382,12 +384,12 @@ def extract_groups(pair_list):
     segid_b = list(set([a[0][1] for a in pair_list]))
 
     if len(segid_a) != 1:
-        print("Something is wrong with SEGID A")
-        exit()
+        emsg = "Something is wrong with SEGID A"
+        raise ModuleError(emsg)
 
     if len(segid_b) != 1:
-        print("Something is wrong with SEGID B")
-        exit()
+        emsg = "Something is wrong with SEGID B"
+        raise ModuleError(emsg)
 
     segid_a = segid_a[0]
     segid_b = segid_b[0]
@@ -484,7 +486,8 @@ def rename_nucbases(structure):
 def martinize(input_pdb, output_path, skipss):
 
     if not input_pdb:
-        exit()
+        emsg = "No input file detected"
+        raise ModuleError(emsg)
 
     p = PDBParser()
     io = PDBIO()
@@ -497,8 +500,9 @@ def martinize(input_pdb, output_path, skipss):
     for model in aa_model:
         for chain in model:
             if chain.id == " ":
-                print("+ ERROR: Empty chain id detected")
-                exit()
+                emsg = "Empty chain id detected"
+                raise ModuleError(emsg)
+
             for residue in chain:
                 for atom in residue:
                     atom.bfactor = 1.0

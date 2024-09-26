@@ -19,6 +19,7 @@ import os
 import random
 import subprocess
 import warnings
+import logging
 
 from Bio.PDB import Entity
 from Bio.PDB import PDBIO

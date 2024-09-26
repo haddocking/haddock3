@@ -64,7 +64,10 @@ from haddock.gear.validations import (
     v_rundir,
     validate_defaults_yaml,
     )
-from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.yaml2cfg import (
+    read_from_yaml_config,
+    find_incompatible_parameters,
+    )
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libio import make_writeable_recursive
@@ -179,16 +182,33 @@ def _read_defaults(module_name, default_only=True):
         default.yaml file of the module.
     """
     module_name_ = get_module_name(module_name)
-    pdef = Path(
+    pdef = gen_defaults_module_param_path(module_name_)
+    validate_defaults_yaml(pdef)
+    mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
+    return mod_default_config
+
+
+def gen_defaults_module_param_path(module_name_: str) -> Path:
+    """Build path to default parameters of a module.
+
+    Parameters
+    ----------
+    module_name_ : str
+        Name of the module
+
+    Returns
+    -------
+    Path
+        Path to the module YAML defaults parameter.
+    """
+    params_defaults_path = Path(
         haddock3_source_path,
         "modules",
         modules_category[module_name_],
         module_name_,
         "defaults.yaml",
     ).resolve()
-    validate_defaults_yaml(pdef)
-    mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
-    return mod_default_config
+    return params_defaults_path
 
 
 def setup_run(
@@ -535,8 +555,7 @@ def validate_modules_names(params: Iterable[str]) -> None:
 
 @with_config_error
 def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
-    """
-    Validate individual parameters for each module.
+    """Validate individual parameters for each module.
 
     Raises
     ------
@@ -549,6 +568,21 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         defaults = _read_defaults(module_name)
         if not defaults:
             continue
+
+        # Check for parameter incompatibilities
+        module_incompatibilities = find_incompatible_parameters(
+            gen_defaults_module_param_path(module_name)
+            )
+        try:
+            validate_parameters_are_not_incompatible(
+                args,
+                module_incompatibilities,
+                )
+        except ValueError as e:
+            raise ConfigurationError(
+                f"An issue was discovered in module [{module_name}]: "
+                f"{e.args[0]}"
+                )
 
         if module_name in modules_using_resdic:
             confirm_resdic_chainid_length(args)
@@ -1093,7 +1127,8 @@ def validate_parameters_are_not_incompatible(
                 # Check if the incompatible parameter is present and has the incompatible value
                 if params.get(incompatible_param) == incompatible_value:
                     raise ValueError(
-                        f"Parameter `{limiting_param}` is incompatible with "
+                        f"Parameter `{limiting_param}` with value "
+                        f"`{params[limiting_param]}` is incompatible with "
                         f"`{incompatible_param}={incompatible_value}`."
                         )
 

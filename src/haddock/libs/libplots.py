@@ -1491,7 +1491,7 @@ def offline_js_manager(fpath: FilePath, offline: bool) -> str:
     fpath : FilePath
         Path to the figure about to be written.
     offline : bool
-        Should this figure use the offline approache, or not.
+        if True use the offline approach.
 
     Returns
     -------

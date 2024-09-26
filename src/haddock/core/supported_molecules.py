@@ -19,7 +19,6 @@ not done automatically on purpose.
 * ``hemes-allhdg.top``
 * ``ion.top``
 * ``protein-CG-Martini-2-2.top``
-* ``protein-CG-Martini.top``
 * ``protein-allhdg5-4.top``
 * ``solvent-allhdg5-4.top``
 * ``shape.top``
@@ -281,7 +280,6 @@ def read_supported_residues(
     * ``hemes-allhdg.top``
     * ``ion.top``
     * ``protein-CG-Martini-2-2.top``
-    * ``protein-CG-Martini.top``
     * ``protein-allhdg5-4.top``
     * ``solvent-allhdg5-4.top``
     * ``shape.top``
@@ -306,7 +304,6 @@ def read_supported_residues(
     ions_top = Path(source_path, "ion.top")
     protein_5_4_top = Path(source_path, "protein-allhdg5-4.top")
     protein_martini_2_top = Path(source_path, "protein-CG-Martini-2-2.top")
-    protein_martini_top = Path(source_path, "protein-CG-Martini.top")
     solvent_top = Path(source_path, "solvent-allhdg5-4.top")
     shape_top = Path(source_path, "shape.top")
 
@@ -342,8 +339,7 @@ def read_supported_residues(
 
     _1 = read_residues_from_top_file(protein_5_4_top)
     _2 = read_residues_from_top_file(protein_martini_2_top)
-    _3 = read_residues_from_top_file(protein_martini_top)
-    supported_aminoacids = set(it.chain(_1, _2, _3))
+    supported_aminoacids = set(it.chain(_1, _2))
 
     supported_solvents = read_residues_from_top_file(solvent_top)
     supported_shape = read_residues_from_top_file(shape_top)

@@ -85,22 +85,6 @@ define(
 
 {========================= generate parameters =============================}
 
-{* hydrogen flag - determines whether hydrogens will be output *}
-{* must be true for NMR, atomic resolution X-ray crystallography 
-   or modelling.  Set to false for most X-ray crystallographic 
-   applications at resolution > 1A *}
-{+ choice: true false +}
-{===>} hydrogen_flag=true;
-
-{* which hydrogens to build *}
-{+ choice: "all" "unknown" +}
-{===>} hydrogen_build="all";
-
-{* selection of atoms other than hydrogens for which coordinates
-   will be generated *}
-{* to generate coordinates for all unknown atoms use: (not(known)) *}
-{===>} atom_build=(not(known));
-
 {* selection of atoms to be deleted *}
 {* to delete no atoms use: (none) *}
 {===>} atom_delete=(none);
@@ -262,8 +246,6 @@ coordinates @@$coor_infile
 ! in case of use of dummy particles
 delete sele=(name MAP) end
 
-inline @MODULE:build-missing.cns
-
 if ( &auto_break = true ) then
     inline @MODULE:patch-breaks-cg-dna-rna.cns
 end if
@@ -325,7 +307,19 @@ $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
     evaluate ($counter=$counter+1)
 end loop disu
 
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=10 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance 0.5
+    end
+end
+
+flag include bond angle impr dihe vdw elec end
+
 energy end
+minimize powell nstep=100 drop=10.0 nprint=10 end
+
 evaluate ($bonded = $bond + $angl + $impr)
 if ($bonded > 10000) then
     minimize powell nstep=100 drop=10.0 nprint=10 end
@@ -362,10 +356,6 @@ else
     end
 end if
 
-if ($set_bfactor=true) then
-    do (b=&bfactor) ( all )
-end if
-
 if (&set_occupancy=true) then
     if (&set_occupancy=true) then
         do (q=&occupancy) ( all )
@@ -376,35 +366,6 @@ else
         do (q=0.0) (store9)
     end if
 end if
-
-show sum(1) (store9)
-if ( $result < 100 ) then
-    for $id in id (store9) loop print
-        show (segid) (id $id)
-        evaluate ($segid=$result)
-        show (resn) (id $id)
-        evaluate ($resn=$result)
-        show (resid) (id $id)
-        evaluate ($resid=$result)
-        show (name) (id $id)
-        evaluate ($name=$result)
-        buffer message
-            display coordinates built for atom: $segid[a4] $resn[a4] $resid[a4] $name[a4]
-        end 
-    end loop print
-else
-    buffer message
-        display coordinates built for more than 100 hundred atoms
-    end
-end if
-
-set remarks=reset end
-
-buffer message
-    to=remarks
-    dump
-end
-buffer message reset end
 
 write structure output=$output_psf_filename end
 write coordinates format=pdbo output=$output_pdb_filename end

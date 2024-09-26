@@ -2,7 +2,7 @@
 ! Author: Jorge Roel, OCT-2017
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message=off echo=off end
+set message=on echo=on end
 
 !evaluate ($kbon = 500)
 
@@ -47162,4 +47162,4 @@ NBFIx HC4  SNd	88950138.154   14071.354	88950138.154   14071.354 ! almost interm
 !
 NBFIx WC4  SNd	88950138.154   14071.354	88950138.154   14071.354 ! almost intermediate (ring)
 !
-set message=$old_message echo=$old_echo end
+!set message=$old_message echo=$old_echo end

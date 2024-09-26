@@ -8,6 +8,8 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
+igroup interaction (all) (all) end
+
 for $id1 in id ( (resn SER or resn THR or resn ASN or resn GLN) and name BB ) loop c1beads
 
     show (segid) (id $id1)

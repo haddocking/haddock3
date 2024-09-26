@@ -70,3 +70,5 @@ parameter
     end
 end
 
+inline @RUN:charge-beads-interactions.cns
+

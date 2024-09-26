@@ -318,7 +318,6 @@ end
 flag include bond angle impr dihe vdw elec end
 
 energy end
-minimize powell nstep=100 drop=10.0 nprint=10 end
 
 evaluate ($bonded = $bond + $angl + $impr)
 if ($bonded > 10000) then

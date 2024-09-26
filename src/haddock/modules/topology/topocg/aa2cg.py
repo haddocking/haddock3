@@ -107,8 +107,8 @@ def map_cg(chain):
                             pass
 
             if not atoms:
-                print("Residue {} {:d} of chain {} cannot be processed: missing atoms {} ".
-                      format(resn, resi, aares.parent.id, atom_segment))
+                logging.warning('Residue {} {:d} of chain {} cannot be processed: missing atoms {} '.
+                                 format(resn, resi, aares.parent.id, atom_segment))
                 continue
 
             bead_name = cg_mapping[resn][atom_segment]
@@ -245,7 +245,7 @@ def determine_hbonds(structure):
                 dna_chain_l.append(chain)
 
         if len(dna_chain_l) == 1:
-            print("+ WARNING: Only one DNA/RNA chain detected, is this correct?")
+            logging.warning('Only one DNA/RNA chain detected, is this correct?')
 
             chain_a = dna_chain_l[0]
             reslist_a = [r for r in chain_a.get_residues()]
@@ -339,8 +339,6 @@ def identify_pairing(ra, rb):
 
                 ra[atom_a].bfactor = 1
                 rb[atom_b].bfactor = 1
-        if resnum_b == 201 and resnum_a == 88:
-            print(f"{distance_l:.2f} {resnum_a} {resnum_b}")
     return pair
 
 
@@ -420,7 +418,7 @@ def determine_ss(structure, skipss, pdbf_path):
                 dssp = DSSP(model, pdbf_path)
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
-                print("+ ERROR: SS could not be assigned, assigning code 1 to all residues")
+                logging.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
@@ -436,8 +434,8 @@ def determine_ss(structure, skipss, pdbf_path):
                     try:
                         r.xtra["SS_DSSP"]
                     except KeyError:
-                        print("+ WARNING: No SS definition found for residue: {} {} {:d}".
-                              format(chain.id, r.resname, r.id[1]))
+                        logging.warning('No SS definition found for residue: {} {} {:d}'.
+                                        format(chain.id, r.resname, r.id[1]))
                         r.xtra["SS_DSSP"] = "-"
                 dssp_dic = collections.OrderedDict([(r, r.xtra["SS_DSSP"]) for r in chain])
                 dssp_ss = "".join(dssp_dic.values())

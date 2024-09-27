@@ -1,18 +1,20 @@
+---
 # =======================
 # DISABLED UNTIL RELEASE #
 # =======================
 #
-# name: pages
-#
-# on:
-#   push:
-#     branches:
-#       - main
-#
-# jobs:
-#   pages:
-#     runs-on: ubuntu-latest
-#     steps:
+name: pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "temporarily disabled"
 #       - uses: actions/checkout@v2
 #         with:
 #           submodules: recursive

@@ -18,7 +18,7 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
 
 @pytest.fixture(name="rmsdmatrix")
 def fixture_rmsdmatrix():
-    """???"""
+    """rmsdmatrix module fixture"""
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
         yield Rmsdmatrix(

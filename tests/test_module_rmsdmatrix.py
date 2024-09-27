@@ -18,13 +18,12 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
 
 @pytest.fixture(name="rmsdmatrix")
 def fixture_rmsdmatrix():
-    """???"""
+    """rmsdmatrix module fixture"""
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
         yield Rmsdmatrix(
             order=2, path=Path("."), initial_params=DEFAULT_RMSDMATRIX_PARAMS
         )
-    # rmsd_module.previous_io.output = protdna_input_list
 
 
 def test_get_pair():

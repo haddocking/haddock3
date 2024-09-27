@@ -1,0 +1,133 @@
+! patch-types-hbond-dna.cns
+
+! patch residue according to its hbond capability (bfactor = 1)
+
+! encode for DA
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn DA) loop cgda
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "DA"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgda
+
+! encode for DC
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn DC) loop cgdc
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "DC"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgdc
+
+! encode for DG
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn DG) loop cgdc
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "DG"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgdc
+
+! encode for DT
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn DT) loop cgdt
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "DT"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgdt
+
+!------
+
+! encode for A
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn A) loop cga
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "A"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cga
+
+! encode for C
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn C) loop cgc
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "C"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgc
+
+! encode for G
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn G) loop cgc
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "G"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgc
+
+! encode for U
+evaluate ($bdnum = 0)
+for $id in id (name SC2 and resn U) loop cgu
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    if ($bfactor_$bdnum = 1 ) then  
+        evaluate ($ptype= "U"+encode($bfactor_$bdnum)) 
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+    end if
+end loop cgu

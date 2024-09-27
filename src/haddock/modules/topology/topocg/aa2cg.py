@@ -19,6 +19,7 @@ import os
 import random
 import subprocess
 import warnings
+from haddock import log
 
 from Bio.PDB import Entity
 from Bio.PDB import PDBIO
@@ -26,6 +27,7 @@ from Bio.PDB import PDBParser
 from Bio.PDB.DSSP import DSSP
 from Bio.PDB.StructureBuilder import StructureBuilder
 
+from haddock.core.exceptions import ModuleError
 from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
@@ -106,8 +108,8 @@ def map_cg(chain):
                             pass
 
             if not atoms:
-                print("Residue {} {:d} of chain {} cannot be processed: missing atoms {} ".
-                      format(resn, resi, aares.parent.id, atom_segment))
+                log.warning('Residue {} {:d} of chain {} cannot be processed: missing atoms {} '.
+                                 format(resn, resi, aares.parent.id, atom_segment))
                 continue
 
             bead_name = cg_mapping[resn][atom_segment]
@@ -116,8 +118,9 @@ def map_cg(chain):
             code = list(set([a.bfactor for a in aares if a.bfactor != 0]))
 
             if len(code) > 1:
-                print("Something is wrong with HADDOCK codes")
-                exit()
+                emsg = "Something is wrong with HADDOCK codes"
+                raise ModuleError(emsg)
+
             if not code:
                 code = 0.0
             else:
@@ -243,7 +246,7 @@ def determine_hbonds(structure):
                 dna_chain_l.append(chain)
 
         if len(dna_chain_l) == 1:
-            print("+ WARNING: Only one DNA/RNA chain detected, is this correct?")
+            log.warning('Only one DNA/RNA chain detected, is this correct?')
 
             chain_a = dna_chain_l[0]
             reslist_a = [r for r in chain_a.get_residues()]
@@ -337,8 +340,6 @@ def identify_pairing(ra, rb):
 
                 ra[atom_a].bfactor = 1
                 rb[atom_b].bfactor = 1
-        if resnum_b == 201 and resnum_a == 88:
-            print(f"{distance_l:.2f} {resnum_a} {resnum_b}")
     return pair
 
 
@@ -382,12 +383,12 @@ def extract_groups(pair_list):
     segid_b = list(set([a[0][1] for a in pair_list]))
 
     if len(segid_a) != 1:
-        print("Something is wrong with SEGID A")
-        exit()
+        emsg = "Something is wrong with SEGID A"
+        raise ModuleError(emsg)
 
     if len(segid_b) != 1:
-        print("Something is wrong with SEGID B")
-        exit()
+        emsg = "Something is wrong with SEGID B"
+        raise ModuleError(emsg)
 
     segid_a = segid_a[0]
     segid_b = segid_b[0]
@@ -418,8 +419,8 @@ def determine_ss(structure, skipss, pdbf_path):
                 dssp = DSSP(model, pdbf_path)
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
-                print("+ ERROR: SS could not be assigned, check under the hood or add --skipss")
-                exit()
+                log.warning('SS could not be assigned, assigning code 1 to all residues')
+                continue
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
@@ -434,8 +435,8 @@ def determine_ss(structure, skipss, pdbf_path):
                     try:
                         r.xtra["SS_DSSP"]
                     except KeyError:
-                        print("+ WARNING: No SS definition found for residue: {} {} {:d}".
-                              format(chain.id, r.resname, r.id[1]))
+                        log.warning('No SS definition found for residue: {} {} {:d}'.
+                                        format(chain.id, r.resname, r.id[1]))
                         r.xtra["SS_DSSP"] = "-"
                 dssp_dic = collections.OrderedDict([(r, r.xtra["SS_DSSP"]) for r in chain])
                 dssp_ss = "".join(dssp_dic.values())
@@ -484,7 +485,8 @@ def rename_nucbases(structure):
 def martinize(input_pdb, output_path, skipss):
 
     if not input_pdb:
-        exit()
+        emsg = "No input file detected"
+        raise ModuleError(emsg)
 
     p = PDBParser()
     io = PDBIO()
@@ -493,15 +495,16 @@ def martinize(input_pdb, output_path, skipss):
     pdbf_path = os.path.realpath(input_pdb)
     aa_model = p.get_structure("aa_model", pdbf_path)
 
-    # set ALL bfactors to 0
+    # set ALL bfactors to 1
     for model in aa_model:
         for chain in model:
             if chain.id == " ":
-                print("+ ERROR: Empty chain id detected")
-                exit()
+                emsg = "Empty chain id detected"
+                raise ModuleError(emsg)
+
             for residue in chain:
                 for atom in residue:
-                    atom.bfactor = 0.0
+                    atom.bfactor = 1.0
 
     # Assign HADDOCK code according to SS (1-9)
     determine_ss(structure=aa_model, skipss=skipss, pdbf_path=pdbf_path)

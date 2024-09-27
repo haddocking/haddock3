@@ -1,7 +1,7 @@
 ! patch-types-cg.cns
 !
 ! ***********************************************************************
-! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2024 Alexandre Bonvin, Utrecht University.           *
 ! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
 ! * and from the CNS distriution of Brunger and Adams                   *
 ! * All rights reserved.                                                *
@@ -66,10 +66,9 @@ for $id in id (name BB and resn HY3) loop cgt4
     patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
 end loop cgt4
 
-
 ! encode beads info for HYP
 evaluate ($bdnum = 0)
-for $id in id (name BB and resn HYP) loop cgt4
+for $id in id (name BB and resn HYP) loop cgt5
     evaluate ($bdnum = $bdnum + 1)
     show (name) (id $id)
     evaluate ($bdname_$bdnum = $result)
@@ -79,5 +78,5 @@ for $id in id (name BB and resn HYP) loop cgt4
     evaluate ($bfactor_$bdnum = $result)
     evaluate ($ptype= "PTH"+encode($bfactor_$bdnum))
     patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
-end loop cgt4
+end loop cgt5
 

@@ -16,8 +16,29 @@ from haddock.clis.restraints.calc_accessibility import (
     )
 from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.clis.restraints.restrain_bodies import restrain_bodies
-from haddock.clis.restraints.validate_tbl import validate_tbl
-from haddock.libs.libontology import PDBFile
+from haddock.clis.restraints.calc_accessibility import (
+    calc_accessibility,
+    REL_ASA,
+    )
+from haddock.clis.restraints.z_surface_restraints import (
+    compute_barycenter,
+    get_z_coords,
+    load_selected_resiudes_coords,
+    load_selections,
+    shape_bead,
+    step_coords,
+    )
+from haddock.libs.libpdb import (
+    slc_serial,
+    slc_name,
+    slc_resname,
+    slc_chainid,
+    slc_resseq,
+    slc_x,
+    slc_y,
+    slc_z,
+    slc_temp,
+    )
 
 from . import golden_data
 
@@ -161,7 +182,100 @@ def test_calc_accessibility(protdna_input_list, caplog):  # noqa : F811
     calc_accessibility(str(protdna_input_list[0].rel_path), cutoff=0.9)
     assert caplog.messages[-2].endswith("Chain A - 14,25,53")
     # DNA accessibility does not change with a higher cutoff!
-    assert caplog.messages[-1].endswith(
-        "Chain B - 2,3,4,5,6,7,8,9,10,11,28,29,30,31,32,33,34,35,36,37,38"
-    )  # noqa : E501
+    assert caplog.messages[-1].endswith("Chain B - 2,3,4,5,6,7,8,9,10,11,28,29,30,31,32,33,34,35,36,37,38")  # noqa : E501
 
+
+def test_step_coords():
+    """Test small size versus spacing."""
+    coords = [coord for coord in step_coords(20, 2)]
+    ref_coords = [coord for coord in range(-10, 12, 2)]
+    assert coords == ref_coords
+
+
+def test_step_coords_wrong_spacing():
+    """Test small size versus spacing."""
+    with pytest.raises(ValueError):
+        step_coords(2, 20)
+
+
+def test_shape_bead_valid_pdb_format():
+    """Test that the generated shape beads are well formated."""
+    bead = shape_bead(1, 1, 1, 1, chain='Z', atindex=1234, bfactor=100)
+    assert bead[slc_serial].strip() == '1234'
+    assert bead[slc_name].strip() == 'SHA'
+    assert bead[slc_chainid].strip() == 'Z'
+    assert bead[slc_resseq].strip() == '1'
+    assert bead[slc_resname].strip() == 'SHA'
+    assert bead[slc_x].strip() == '1.000'
+    assert bead[slc_y].strip() == '1.000'
+    assert bead[slc_z].strip() == '1.000'
+    assert bead[slc_temp].strip() == '100.00'
+
+
+def test_load_selections():
+    """Test residue selection loading."""
+    loaded = load_selections(["1,2,3", "4,5,6"])
+    assert list(loaded.values()) == [[1, 2, 3], [4, 5, 6]]
+    loaded = load_selections(["1,2,3", "4,5,a"])
+    assert list(loaded.values()) == [[1, 2, 3], [4, 5]]
+
+
+def test_compute_barycenter():
+    """Test center of mass computation."""
+    barycenter = compute_barycenter([[0, 0, 0], [1, 1, 1]])
+    assert barycenter == (0.5, 0.5, 0.5)
+    barycenter = compute_barycenter([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    assert barycenter == (1, 1, 1)
+
+
+def test_load_selected_resiudes_coords(example_pdb_file):
+    """Test loading of selected resiudes from pdb file."""
+    select_coords, _chainids, _atnames = load_selected_resiudes_coords(
+        example_pdb_file,
+        {
+            "select_1": [1],
+            "select_2": [2, 3],
+            },
+        )
+    assert select_coords["select_1"][0] == (3.439, 7.910, -11.913)
+    assert select_coords["select_2"][0] == (1.091, 9.158, -9.167)
+    assert select_coords["select_2"][1] == (2.045, 9.187, -5.471)
+
+
+def test_get_z_coords():
+    """Test return z positions for two selections."""
+    z_coords = get_z_coords(
+        {
+            "select_1": [(0, 0, 0)],
+            "select_2": [(0, 0, 0)],
+            },
+        padding=0,
+        )
+    assert any([
+        z_coords == {"select_1": 0.0, "select_2": -0.0},
+        z_coords == {"select_1": -0.0, "select_2": 0.0},
+        ])
+   
+    z_coords = get_z_coords(
+        {
+            "select_1": [(0, 0, 0)],
+            "select_2": [(0, 0, -3)],
+            },
+        padding=1,
+        )
+    assert any([
+        z_coords == {"select_1": 2, "select_2": -2},
+        z_coords == {"select_1": -2, "select_2": 2},
+        ])
+
+
+def test_get_z_coords_empty_select():
+    """Test return of position 0 if no selection."""
+    z_coords = get_z_coords({})
+    assert list(z_coords.values()) == [0]
+
+
+def test_get_z_coords_1_select():
+    """Test return of position 0 if only one selection."""
+    z_coords = get_z_coords({"select_1": [(1, 2, 3)]})
+    assert list(z_coords.values()) == [0]

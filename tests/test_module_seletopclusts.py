@@ -355,9 +355,6 @@ def test_sort_models_ranked(ranked_models):
     assert sorted_models[0].file_name == ranked_models[1].file_name
     assert sorted_models[1].file_name == ranked_models[0].file_name
 
-    # assert sorted_models[0].file_name == "protprot_complex_2.pdb"
-    # assert sorted_models[1].file_name == "protprot_complex_1.pdb"
-
 
 def test_write_selected_models(ranked_models):
     """Test writing of models names mapping file."""

@@ -425,7 +425,6 @@ def test_write_res_contacts(res_res_contacts):
         assert lines[0].strip().split("\t") == ["res1", "res2", "ca-ca-dist"]
         assert lines[1].strip().split("\t") == ["A-1-MET", "A-2-ALA", "3.0"]
         assert lines[2].strip().split("\t") == ["A-1-MET", "A-3-VAL", "4.0"]
-        res_contact_output_f.unlink(missing_ok=True)
 
 
 def test_topx_models(protprot_input_list):

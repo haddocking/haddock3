@@ -19,7 +19,7 @@ import os
 import random
 import subprocess
 import warnings
-import logging
+from haddock import log
 
 from Bio.PDB import Entity
 from Bio.PDB import PDBIO
@@ -108,7 +108,7 @@ def map_cg(chain):
                             pass
 
             if not atoms:
-                logging.warning('Residue {} {:d} of chain {} cannot be processed: missing atoms {} '.
+                log.warning('Residue {} {:d} of chain {} cannot be processed: missing atoms {} '.
                                  format(resn, resi, aares.parent.id, atom_segment))
                 continue
 
@@ -246,7 +246,7 @@ def determine_hbonds(structure):
                 dna_chain_l.append(chain)
 
         if len(dna_chain_l) == 1:
-            logging.warning('Only one DNA/RNA chain detected, is this correct?')
+            log.warning('Only one DNA/RNA chain detected, is this correct?')
 
             chain_a = dna_chain_l[0]
             reslist_a = [r for r in chain_a.get_residues()]
@@ -419,7 +419,7 @@ def determine_ss(structure, skipss, pdbf_path):
                 dssp = DSSP(model, pdbf_path)
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
-                logging.warning('SS could not be assigned, assigning code 1 to all residues')
+                log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
@@ -435,7 +435,7 @@ def determine_ss(structure, skipss, pdbf_path):
                     try:
                         r.xtra["SS_DSSP"]
                     except KeyError:
-                        logging.warning('No SS definition found for residue: {} {} {:d}'.
+                        log.warning('No SS definition found for residue: {} {} {:d}'.
                                         format(chain.id, r.resname, r.id[1]))
                         r.xtra["SS_DSSP"] = "-"
                 dssp_dic = collections.OrderedDict([(r, r.xtra["SS_DSSP"]) for r in chain])

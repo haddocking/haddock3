@@ -24,7 +24,6 @@ def fixture_rmsdmatrix():
         yield Rmsdmatrix(
             order=2, path=Path("."), initial_params=DEFAULT_RMSDMATRIX_PARAMS
         )
-    # rmsd_module.previous_io.output = protdna_input_list
 
 
 def test_get_pair():

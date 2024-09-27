@@ -13,7 +13,7 @@ from haddock.modules.scoring.mdscoring import HaddockModule as MDScoring
 
 @pytest.fixture(name="mdscoring")
 def fixture_mdscoring():
-    """???"""
+    """mdscoring module fixture"""
 
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
@@ -24,7 +24,7 @@ def fixture_mdscoring():
 
 @pytest.fixture(name="mdscoring_dna")
 def fixture_mdscoring_dna(mdscoring, protdna_input_list):
-    """???"""
+    """mdscoring module fixture protdna"""
 
     protdna_input_list[0].score = -28.0
     protdna_input_list[0].ori_name = "original_name_1.pdb"

@@ -236,7 +236,6 @@ if ($Data.flags.elec eq true) then
     else
         parameter nbonds eps=$Data.epsilon cdie shift end end
     end if
-    parameter nbonds ? end end
 else
     evaluate ($elec=0.0)
     flag exclude elec end
@@ -251,11 +250,13 @@ if ($result > 0) then
     parameter
         nbonds
             nbxmod=5 atom cdie shift
-            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon e14fac=0.4 inhibit 0.25
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
             wmin=0.5 tolerance 0.5
         end
     end
 end if
+
+parameter nbonds ? end end
 
 ! no dihedral angle restraints as the molecule are rigid
 flag excl cdih end

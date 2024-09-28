@@ -22,18 +22,6 @@ autohis:
     electrostatic energy'
   group: molecule
   explevel: expert
-delenph:
-  default: true
-  type: boolean
-  title: Keep or remove non-polar hydrogen atoms
-  short: If set to true, non-polar hydrogen atoms will be discarded to save computing
-    time
-  long: Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
-    can be in principle discarded. This saves computing time. However this should
-    not be done if you are defining distance restraints to specific hydrogen atoms
-    (e.g. when using NMR distance restraints).
-  group: molecule
-  explevel: easy
 log_level:
   default: quiet
   type: string
@@ -81,21 +69,12 @@ limit:
   default: true
   type: boolean
   title: Limit the number of input molecules.
-  short: When true, the topoaa module can accept any number of input molecules.
-  long: Enable/disable the limit of input molecules for the topoaa module.
-    Setting the limit to false is useful when the topoaa module is followed by
-    scoring modules such as emscoring, or other analysis modules. If topoaa is
+  short: When true, the topocg module can accept any number of input molecules.
+  long: Enable/disable the limit of input molecules for the topocg module.
+    Setting the limit to false is useful when the topocg module is followed by
+    scoring modules such as emscoring, or other analysis modules. If topocg is
     used in the middle of the workflow this parameter has no effect.
   group: sampling
-  explevel: expert
-set_bfactor:
-  default: true
-  type: boolean
-  title: Define if the b-factor column must be overwritten
-  short: When true (default), all b-factors are set to a default value of 15
-  long: Defines if the original b-factor values are kept (true) or 
-    all b-factors are set to a default value for 15 (false).
-  group: module
   explevel: expert
 tolerance:
   default: 0

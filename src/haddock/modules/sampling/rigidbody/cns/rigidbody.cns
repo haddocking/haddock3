@@ -251,7 +251,7 @@ if ($result > 0) then
     parameter
         nbonds
             nbxmod=5 atom cdie shift
-            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=1.0 e14fac=0.4 inhibit 0.25
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon e14fac=0.4 inhibit 0.25
             wmin=0.5 tolerance 0.5
         end
     end

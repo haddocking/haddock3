@@ -217,7 +217,6 @@ end if
 inline @MODULE:patch-types-cg.cns
 inline @MODULE:patch-bb-cg.cns
 inline @MODULE:patch-types-cg-hbond-dna-rna.cns
-inline @MODULE:charge-beads-interactions.cns
 
 show sum(1) ( not(hydrogen) and not(known) )
 if ( $select = 0 ) then

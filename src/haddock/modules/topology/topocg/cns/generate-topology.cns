@@ -231,7 +231,7 @@ parameter
     end
 end
 
-flag include bond angle impr dihe vdw elec end
+flag excl * include bond angle impr dihe vdw end
 
 energy end
 

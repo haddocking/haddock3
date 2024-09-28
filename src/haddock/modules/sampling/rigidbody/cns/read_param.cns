@@ -70,5 +70,13 @@ parameter
     end
 end
 
-inline @RUN:charge-beads-interactions.cns
+igroup
+  interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+               (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
+  interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
+               (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
+  interaction  (resn SHA) (not resn SHA) weight * 0 end
 
+end
+
+inline @MODULE:charge-beads-interactions.cns

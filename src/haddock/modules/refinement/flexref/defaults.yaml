@@ -1654,7 +1654,7 @@ dielec:
   short: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
   long: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
     A distance dependent dielectric constant will effectively scale down the electrostatic energy 
-    by having a 1/r**2 dependency instead of 1/r
+    by having a 1/r**2 dependency instead of 1/r. Note that with coarse graining cdie will be used.
   group: 'force field'
   explevel: expert
 epsilon:
@@ -1666,6 +1666,17 @@ epsilon:
   title: Dielectric constant
   short: Dielectric constant for the electrostatic Coulomb energy term.
   long: Dielectric constant for the electrostatic Coulomb energy term.
+  group: 'force field'
+  explevel: expert
+epsilon_cg:
+  default: 10.0
+  type: float
+  min: 1
+  max: 78
+  precision: 1
+  title: Dielectric constant for coarse-grained mode
+  short: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+  long: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
   group: 'force field'
   explevel: expert
 dihedflag:
@@ -1702,7 +1713,7 @@ max_nmodels:
 nemsteps:
   default: 200
   type: integer
-  min: 1
+  min: 0
   max: 10000
   title: Number of EM steps
   short: Number of energy minimisation steps to perform.

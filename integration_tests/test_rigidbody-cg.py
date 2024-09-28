@@ -1,6 +1,7 @@
 import shutil
 import tempfile
 from pathlib import Path
+import gzip
 
 import pytest
 
@@ -8,7 +9,7 @@ from haddock.libs.libontology import Format, PDBFile, Persistent
 from haddock.modules.sampling.rigidbody import \
     DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
-from tests import golden_data as testgolden_data
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture
@@ -26,19 +27,19 @@ class MockPreviousIO:
 
     def retrieve_models(self, crossdock: bool = False):
         shutil.copy(
-            Path(testgolden_data, "e2a_haddock_cg.pdb"),
+            Path(GOLDEN_DATA, "e2a_haddock_cg.pdb"),
             Path(self.path, "e2a_haddock_cg.pdb"),
         )
         shutil.copy(
-            Path(testgolden_data, "e2a_haddock_cg.psf"),
+            Path(GOLDEN_DATA, "e2a_haddock_cg.psf"),
             Path(self.path, "e2a_haddock_cg.psf"),
         )
         shutil.copy(
-            Path(testgolden_data, "hpr_haddock_cg.pdb"),
+            Path(GOLDEN_DATA, "hpr_haddock_cg.pdb"),
             Path(self.path, "hpr_haddock_cg.pdb"),
         )
         shutil.copy(
-            Path(testgolden_data, "hpr_haddock_cg.psf"),
+            Path(GOLDEN_DATA, "hpr_haddock_cg.psf"),
             Path(self.path, "hpr_haddock_cg.psf"),
         )
         model_list = [
@@ -96,6 +97,10 @@ def test_rigidbody_local(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
+
+    #check for correct definition of non-bonded options for CG
+    file_content = gzip.open(Path(rigidbody_module.path, "rigidbody_1.out.gz"), 'rt').read()
+    assert 'CTONNB=  12.000' in file_content
 
 
 def test_rigidbody_mpi(rigidbody_module):

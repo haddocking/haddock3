@@ -134,6 +134,7 @@ evaluate ($data.nc6sym = $nc6sym)
 evaluate ($Data.flags.dihed =$dihedflag)
 evaluate ($Data.flags.elec =$elecflag)
 evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.epsilon_cg =$epsilon_cg)
 evaluate ($Data.dielec  =$dielec)
 
 !Interaction matrix:
@@ -172,11 +173,9 @@ evaluate ($whichMD="torsion")
 @MODULE:read_param.cns
 
 parameter
-    bond  (resn WAT ) (resn WAT ) 1000 TOKEN
+    bond  (all) (all) 1000 TOKEN
     angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
-    bond  (resn HOH ) (resn HOH ) 1000 TOKEN
     angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
-    bond  (resn TIP*) (resn TIP*) 1000 TOKEN
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
@@ -186,6 +185,9 @@ igroup
     interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
                  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
     interaction  (resn SHA) (not resn SHA) weight * 0 end
+    ! turn off vdw interaction of CG charged beads with all other particles
+    interaction  (name SCD1) (all) weight vdw 0.0 end
+    interaction  (name SCD2) (all) weight vdw 0.0 end
 end
 
 flag include bond angle impr vdw end
@@ -202,11 +204,28 @@ if ($Data.flags.elec eq true) then
     else
         parameter nbonds eps=$Data.epsilon cdie end end
     end if
-    parameter nbonds ? end end
 else
     evaluate ($elec=0.0)
     flag exclude elec end
 end if
+
+! check for the presence of a CG model
+! and adapt non-bonded parameters
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    parameter
+        nbonds
+            nbxmod=5 atom cdie shift
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
+            wmin=0.5 tolerance 0.5
+        end
+    end
+    evaluate ($coarse = TRUE)
+end if
+
+parameter nbonds ? end end
 
 do (fbeta=$Saprotocol.fbeta) (all)
 do (mass=$Saprotocol.mass) (all)
@@ -458,13 +477,6 @@ if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($Data.dielec eq "rdie") then
-    parameter nbonds eps=$Data.epsilon rdie shift switch end end
-    ! shift statement needed first to activate switch (CNS bug?)
-else
-    parameter nbonds eps=$Data.epsilon cdie end end
-end if
-parameter nbonds ? end end
 inline @MODULE:calc_free-ene.cns
 
 fix sele=(not all) end

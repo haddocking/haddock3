@@ -105,6 +105,7 @@ evaluate ($data.ksurf=$ksurf)
 !Electrostatics:
 evaluate ($Data.flags.elec =$elecflag)
 evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.epsilon_cg =$epsilon_cg)
 evaluate ($Data.dielec  =$dielec)
 
 

@@ -32,21 +32,6 @@ define(
 {* separate chains by segid - a new segid starts a new chain *}
 {+ choice: true false +}
 {===>} separate=true;
-{============================ renaming atoms ===============================}
-
-{* some atoms may need to be renamed in the topology database to conform
-   to what is present in the coordinate file *}
-
-{* delta carbon in isoleucine is named CD in CNS
-   what is it currently called in the coordinate file? *}
-{* this will not be changed if left blank *}
-{===>} ile_CD_becomes="CD1";
-
-{* terminal oxygens are named OT1 and OT2 in CNS
-   what are they currently called in the coordinate file? *}
-{* these will not be changed if left blank *}
-{===>} OT1_becomes="O";
-{===>} OT2_becomes="OXT";
 
 {======================= automatic mainchain breaks ========================}
 
@@ -70,34 +55,12 @@ define(
    structure has bad geometry it may be necessary to increase this distance *}
 {===>} disulphide_dist=3.0;
 
-{======================= automatic cyclic peptidic bond ====================}
-
-{* cutoff distance in Angstroms for identification of cyclic peptide*}
-{* the default of 2.0A should be reasonable for most cases. If the input
-   structure has bad geometry it may be necessary to increase this distance *}
-{===>} cyclicpept_dist=2.0;
 
 {======================= automatic cis peptide bonds =======================}
 
 {* select atoms to be included in calculation of omega angles *}
 {* to define cis peptides*}
 {===>} atom_select=(known and not hydrogen);
-
-{========================= generate parameters =============================}
-
-{* selection of atoms to be deleted *}
-{* to delete no atoms use: (none) *}
-{===>} atom_delete=(none);
-
-{* set bfactor value *}
-{===>} bfactor=15.0;
-
-{* set occupancy flag *}
-{+ choice: true false +}
-{===>} set_occupancy=false;
-
-{* set occupancy value *}
-{===>} occupancy=1.0;
 
 {================== protein topology and parameter files ===================}
 
@@ -247,6 +210,7 @@ coordinates @@$coor_infile
 delete sele=(name MAP) end
 
 if ( &auto_break = true ) then
+    inline @MODULE:prot_break.cns
     inline @MODULE:patch-breaks-cg-dna-rna.cns
 end if
 
@@ -257,55 +221,8 @@ inline @MODULE:charge-beads-interactions.cns
 
 show sum(1) ( not(hydrogen) and not(known) )
 if ( $select = 0 ) then
-    display  %INFO: There are no coordinates missing for non-hydrogen atoms
+    display  %INFO: There are no coordinates missing
 end if
-
-! checkfor disulphide bonds
-
-evaluate ($disu=0)
-
-for $id1 in id ( resn CYS and name SG ) loop dis1
-
-    show (segid) (id $id1)
-    evaluate ($segid1=$result)
-    show (resid) (id $id1)
-    evaluate ($resid1=$result)
-
-    identity (store9) (all)
-
-    for $id2 in id ( resn CYS and name SG and 
-                   ( attr store9 > $id1 ) ) loop dis2
-
-        show (segid) (id $id2)
-        evaluate ($segid2=$result)
-        show (resid) (id $id2)
-        evaluate ($resid2=$result)
-
-        pick bond (id $id1) (id $id2) geometry
-
-        if ( $result <= &disulphide_dist ) then
-            evaluate ($disu=$disu+1)
-            evaluate ($seg1.$disu=$segid1)
-            evaluate ($seg2.$disu=$segid2)
-            evaluate ($res1.$disu=$resid1)
-            evaluate ($res2.$disu=$resid2)
-        end if
-
-    end loop dis2
-end loop dis1
-
-evaluate ($counter=1)
-while ( $counter <= $disu ) loop disu
-    patch disu
-        reference=1=(segid $seg1.$counter and resid $res1.$counter)
-        reference=2=(segid $seg2.$counter and resid $res2.$counter)
-    end
-    buffer message
-       display disulphide added: from \
-$seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
-    end
-    evaluate ($counter=$counter+1)
-end loop disu
 
 parameter
     nbonds
@@ -332,38 +249,6 @@ if ($bonded > 10000) then
     display Ebonded-total=$bonded Ebond=$bond Eangl=$angl Eimpr=$impr
     display Something is possibly wrong with your input structure
     close $dispfile end
-end if
-
-show sum(1) (not(known))
-if ( $result < 100 ) then
-    for $id in id (not(known)) loop print
-        show (segid) (id $id)
-        evaluate ($segid=$result)
-        show (resn) (id $id)
-        evaluate ($resn=$result)
-        show (resid) (id $id)
-        evaluate ($resid=$result)
-        show (name) (id $id)
-        evaluate ($name=$result)
-        buffer message
-            display unknown coordinates for atom: $segid[a4] $resn[a4] $resid[a4] $name[a4]
-        end
-    end loop print
-else
-    buffer message
-        display unknown coordinates for more than 100 atoms
-    end
-end if
-
-if (&set_occupancy=true) then
-    if (&set_occupancy=true) then
-        do (q=&occupancy) ( all )
-    end if
-else
-    if (&set_occupancy=true) then
-        do (q=&occupancy) ( not(store9) )
-        do (q=0.0) (store9)
-    end if
 end if
 
 write structure output=$output_psf_filename end

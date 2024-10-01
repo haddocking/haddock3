@@ -6,21 +6,21 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.modules.refinement.flexref import (
-    DEFAULT_CONFIG as DEFAULT_FLEXREF_CONFIG,
+from haddock.modules.refinement.emref import (
+    DEFAULT_CONFIG as DEFAULT_EMREF_CONFIG,
 )
-from haddock.modules.refinement.flexref import HaddockModule as FlexrefModule
+from haddock.modules.refinement.emref import HaddockModule as EmrefModule
 
 from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture
-def flexref_module():
+def emref_module():
     with tempfile.TemporaryDirectory() as tmpdir:
-        flexref = FlexrefModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_FLEXREF_CONFIG
+        emref = EmrefModule(
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_EMREF_CONFIG
         )
-        yield flexref
+        yield emref
 
 
 class MockPreviousIO:
@@ -67,23 +67,23 @@ class MockPreviousIO:
         return None
 
 
-def test_flexref_defaults(flexref_module, calc_fnat):
+def test_emref_defaults(emref_module, calc_fnat):
 
-    flexref_module.previous_io = MockPreviousIO(path=flexref_module.path)
-    flexref_module.params["epsilon"] = 10
-    flexref_module.params["debug"] = True
+    emref_module.previous_io = MockPreviousIO(path=emref_module.path)
+    emref_module.params["epsilon"] = 10
+    emref_module.params["debug"] = True
 
-    flexref_module.run()
+    emref_module.run()
 
-    expected_inp = Path(flexref_module.path, "flexref_1.inp")
-    expected_pdb = Path(flexref_module.path, "flexref_1.pdb")
-    expected_gz = Path(flexref_module.path, "flexref_1.out.gz")
+    expected_inp = Path(emref_module.path, "emref_1.inp")
+    expected_pdb = Path(emref_module.path, "emref_1.pdb")
+    expected_gz = Path(emref_module.path, "emref_1.out.gz")
 
     assert expected_inp.exists(), f"{expected_inp} does not exist"
     assert expected_gz.exists(), f"{expected_gz} does not exist"
     assert expected_pdb.exists(), f"{expected_pdb} does not exist"
 
     #check for correct definition of non-bonded options for CG
-    file_content = gzip.open(Path(flexref_module.path, expected_gz), 'rt').read()
+    file_content = gzip.open(Path(emref_module.path, expected_gz), 'rt').read()
     assert 'CTONNB=  12.000' in file_content
 

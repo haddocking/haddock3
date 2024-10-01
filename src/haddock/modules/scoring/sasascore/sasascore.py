@@ -1,36 +1,17 @@
 """Accessibility scoring calculations."""
-from haddock import log
+import copy
 from pathlib import Path
+
+from typing import Optional
 import pandas as pd
-from haddock.core.typing import FilePath
+
+from haddock.libs.libio import write_nested_dic_to_file
+from haddock import log
+from haddock.core.typing import ParamDict
 from haddock.clis.restraints.calc_accessibility import (
     apply_cutoff,
     get_accessibility,
     )
-from typing import Optional
-
-
-def prettify_df(output_fname: str, columns: list[str], sortby: Optional[str] = None) -> None:
-    """Prettify the output dataframe.
-
-    Parameters
-    ----------
-    output_fname : str
-        The name of the output file.
-    
-    columns : list
-        The columns of the dataframe.
-    
-    sortby : str
-        The column to sort by.
-    """
-    # dataframe conversion and sorting
-    df = pd.read_csv(output_fname, sep="\t", header=None)
-    df.columns = columns
-    if sortby:
-        df = df.sort_values(by=sortby, ascending=True)
-    df.to_csv(output_fname, sep="\t", index=False, na_rep="None", float_format="%.0f")
-    log.info(f"{output_fname} created.")
 
 
 def calc_acc_score(result_dict, buried_resdic, acc_resdic):
@@ -62,8 +43,8 @@ def calc_acc_score(result_dict, buried_resdic, acc_resdic):
     for ch in result_dict:
         if ch in buried_resdic:
             # for every supposedly buried residue that is not buried,
-            # the score should increase by one
-            b_viols[ch] = set(buried_resdic[ch]).difference(result_dict[ch])
+            # the score should increase by one.
+            b_viols[ch] = set(buried_resdic[ch]).intersection(result_dict[ch])
             buried_viol_sc = len(b_viols[ch])
             acc_score += buried_viol_sc
         if ch in acc_resdic:
@@ -74,92 +55,105 @@ def calc_acc_score(result_dict, buried_resdic, acc_resdic):
     return acc_score, b_viols, a_viols
 
 
-class AccScoreJob:
-    """A Job dedicated to the parallel running of Accscore jobs."""
-
-    def __init__(
-            self,
-            accscore_obj):
-        """Initialise AccScoreJob."""
-        self.accscore_obj = accscore_obj
-        self.output = accscore_obj.output_name
-
-    def run(self) -> None:
-        """Run this AccScoreJob."""
-        log.info(f"core {self.accscore_obj.core}, running AccScore...")
-        self.accscore_obj.run()
-        self.accscore_obj.output()
-        return
-
-
 class AccScore:
     """AccScore class."""
 
     def __init__(
             self,
-            model_list,
-            output_name,
-            core,
+            model,
             path,
             buried_resdic,
             acc_resdic,
             cutoff,
-            viol_output_name,
-            probe_radius
+            probe_radius,
             ):
         """Initialise AccScore class."""
-        self.model_list = model_list
-        self.output_name = output_name
-        self.core = core
+        self.model = model
         self.path = path
         self.buried_resdic = buried_resdic
         self.acc_resdic = acc_resdic
         self.cutoff = cutoff
         self.data = []
         self.violations = []
-        self.viol_output_name = viol_output_name
         self.probe_radius = probe_radius
+        self.violations_data = [self.model.file_name]
 
     def run(self) -> None:
         """Run accessibility calculations."""
-        for mod in self.model_list:
-            mod_path = str(Path(mod.path, mod.file_name))
-            try:
-                access_data = get_accessibility(mod_path,
-                                                probe_radius=self.probe_radius)
-                result_dic = apply_cutoff(access_data, self.cutoff)
-                acc_sc, b_viols, a_viols = calc_acc_score(result_dic,
-                                                          self.buried_resdic,
-                                                          self.acc_resdic)
-            except AssertionError as e:
-                log.warning(f"Error in get_accessibility for {mod_path}: {e}.")
-                acc_sc, b_viols, a_viols = None, None, None
-                continue
-            self.data.append([mod.file_name, mod.ori_name, mod.md5, acc_sc])
-            # now violations data
-            violations_data = [mod.file_name]
-            for ch in self.buried_resdic:
-                if ch in b_viols:
-                    buried_str = ",".join([str(res) for res in sorted(b_viols[ch])])
-                    violations_data.append(buried_str)
-                else:
-                    violations_data.append("None")
-            
-            for ch in self.acc_resdic:
-                if ch in a_viols:
-                    acc_str = ",".join([str(res) for res in sorted(a_viols[ch])])
-                    violations_data.append(acc_str)
-                else:
-                    violations_data.append("None")
-            self.violations.append(violations_data)
-        return
+        mod_path = str(Path(self.model.path, self.model.file_name))
+        try:
+            access_data = get_accessibility(mod_path,
+                                            probe_radius=self.probe_radius)
+            result_dic = apply_cutoff(access_data, self.cutoff)
+            acc_sc, b_viols, a_viols = calc_acc_score(result_dic,
+                                                      self.buried_resdic,
+                                                      self.acc_resdic)
+        except AssertionError as e:
+            log.warning(f"Error in get_accessibility for {self.model}: {e}.")
+            acc_sc, b_viols, a_viols = None, None, None
+        self.data = [self.model.file_name, self.model.ori_name, self.model.md5, acc_sc]
+        for ch in self.buried_resdic:
+            if ch in b_viols and b_viols[ch] != set():
+                buried_str = ",".join([str(res) for res in sorted(b_viols[ch])])
+                self.violations_data.append(buried_str)
+            else:
+                self.violations_data.append(None)
+        for ch in self.acc_resdic:
+            if ch in a_viols and a_viols[ch] != set():
+                acc_str = ",".join([str(res) for res in sorted(a_viols[ch])])
+                self.violations_data.append(acc_str)
+            else:
+                self.violations_data.append(None)
+        return copy.deepcopy(self)
 
-    def output(self) -> None:
-        """Write down accessibility scores to file."""
-        output_fname = Path(self.path, self.output_name)
-        df = pd.DataFrame(self.data)
-        df.to_csv(output_fname, sep="\t", index=False, header=False)
-        # now we save the violations
-        violations_fname = Path(self.path, self.viol_output_name)
-        viol_df = pd.DataFrame(self.violations)
-        viol_df.to_csv(violations_fname, sep="\t", index=False, header=False)
+
+def extract_data_from_accscore_class(sasascore_objects: list[AccScore],
+                                     output_fname: Path,
+                                     violations_output_fname: Path
+                                     ) -> Optional[dict[int, ParamDict]]:
+    """
+    Extracts data attributes from a list of AccScore objects into a structured dictionary,
+    optionally sorts the data based on a specified key, and writes the sorted data to
+    a file.
+
+    Args:
+        sasascore_objects (list[AccScore]): List of AccScore objects containing data attributes
+                                     to be extracted.
+        output_fname (Path): Path to the output file where the sorted data will be written.
+        violations_output_fname (Path): Path to the output file where the sorted violations data
+
+    Returns:
+        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if
+                                        successful, None if no data was processed.
+
+    Raises:
+        (Include any specific exceptions the function may raise)
+    """
+    data: dict[int, ParamDict] = {}
+    violations_data: dict[int, ParamDict] = {}
+    for i, sasa_obj in enumerate(sasascore_objects):
+        nbur = len(sasa_obj.buried_resdic)
+        data[i] = {
+            "structure": sasa_obj.data[0],
+            "original_name": sasa_obj.data[1],
+            "md5": sasa_obj.data[2],
+            "score": sasa_obj.data[3],
+        }
+        # fill in violations
+        violations_data[i] = {
+            "structure": sasa_obj.data[0],
+        }
+        for b, bur in enumerate(sasa_obj.buried_resdic):
+            bur_key = f"bur_{bur}"
+            violations_data[i].update(
+                {bur_key: sasa_obj.violations_data[b+1]}
+                )
+        for a, acc in enumerate(sasa_obj.acc_resdic):
+            acc_key = f"acc_{acc}"
+            violations_data[i].update(
+                {acc_key: sasa_obj.violations_data[nbur+a+1]}
+                )
+    write_nested_dic_to_file(data, output_fname)
+    write_nested_dic_to_file(violations_data, violations_output_fname)
+
+    return data, violations_data

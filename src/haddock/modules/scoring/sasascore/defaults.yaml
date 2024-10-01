@@ -7,9 +7,9 @@ cutoff:
   min: 0.0
   max: 1.0
   precision: 3
-  title: relative accessibility cutoff 
-  short: relative accessibility cutoff 
-  long: relative accessibility cutoff 
+  title: relative side chain surface accessibility cutoff 
+  short: relative side chain surface accessibility cutoff 
+  long: relative side chain surface accessibility cutoff. Residues with a relative side chain surface accessibility below this value are considered buried.
   group: 'scoring'
   explevel: easy
 resdic_buried_:

@@ -18,21 +18,17 @@ Example:
 >>> resdic_accessible_B: [4, 5, 6]
 """
 from pathlib import Path
+import os
 
 from haddock.core.typing import FilePath
 from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libutil import parse_ncores
-from haddock.libs.libparallel import get_index_list
+from haddock.libs.libparallel import get_index_list, Scheduler
 from haddock.modules.scoring.sasascore.sasascore import (
     AccScore,
-    AccScoreJob,
-    prettify_df,
+    extract_data_from_accscore_class
     )
-from haddock.modules.analysis import (
-    get_analysis_exec_mode,
-    )
-from typing import Optional
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -54,22 +50,6 @@ class HaddockModule(BaseHaddockModule):
         """Confirm module is installed."""
         return
 
-    def _rearrange_output(self, output_name: FilePath, path: FilePath,
-                          ncores: int) -> None:
-        """Combine different tsv outputs in a single file."""
-        output_fname = Path(path, output_name)
-        self.log(f"rearranging output files into {output_fname}")
-        key = output_fname.stem.split(".")[0]
-        # Combine files
-        with open(output_fname, 'w') as out_file:
-            for core in range(ncores):
-                tmp_file = Path(path, f"{key}_" + str(core) + ".tsv")
-                with open(tmp_file) as infile:
-                    out_file.write(infile.read())
-                tmp_file.unlink()
-        self.log(f"Completed reconstruction of {key} files.")
-        self.log(f"{output_fname} created.")
-    
     def _run(self) -> None:
         """Execute module."""
         try:
@@ -78,12 +58,14 @@ class HaddockModule(BaseHaddockModule):
                 )
         except Exception as e:
             self.finish_with_error(e)
-
-        nmodels = len(models_to_score)
-        # index_list for the jobs with linear scaling
-        ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
-        idx_list = get_index_list(nmodels, ncores)
-
+        if self.params["mode"] == "mpi":
+            input_ncores_slurm = int(os.getenv('SLURM_CPUS_ON_NODE', 1))
+            input_ncores_pbs = int(os.getenv('PBS_CPUS_ON_NODE', 1))
+            input_ncores = max(input_ncores_slurm, input_ncores_pbs)
+        else:
+            input_ncores = self.params["ncores"]
+        ncores = parse_ncores(input_ncores, njobs=len(models_to_score))
+        self.log(f"Running {self.name} module with {ncores} cores.")
         # loading buried and accessible residue dictionaries
         buried_resdic = {
             key[-1]: value for key, value
@@ -98,56 +80,36 @@ class HaddockModule(BaseHaddockModule):
         # remove _
         buried_resdic.pop("_")
         acc_resdic.pop("_")
-        # finding the chains
-        buried_violations_chains = [f"acc_{ch}" for ch in acc_resdic.keys()]
-        acc_violations_chains = [f"bur_{ch}" for ch in buried_resdic.keys()]
-        violations_chains = acc_violations_chains + buried_violations_chains
+        
         # initialize jobs
-        sasascore_jobs: list[AccScoreJob] = []
-
-        for core in range(ncores):
-            output_name = Path("sasascore_" + str(core) + ".tsv")
-            viol_output_name = Path("violations_" + str(core) + ".tsv")
-            model_list = models_to_score[idx_list[core]:idx_list[core + 1]]
+        sasascore_jobs: list[AccScore] = []
+        for model_to_be_evaluated in models_to_score:
             accscore_obj = AccScore(
-                model_list=model_list,
-                output_name=output_name,
-                core=core,
+                model=model_to_be_evaluated,
                 path=Path("."),
                 buried_resdic=buried_resdic,
                 acc_resdic=acc_resdic,
                 cutoff=self.params["cutoff"],
-                viol_output_name=viol_output_name,
                 probe_radius=self.params["probe_radius"],
                 )
-            
-            job = AccScoreJob(
-                accscore_obj,
-                )
-            sasascore_jobs.append(job)
+            sasascore_jobs.append(accscore_obj)
         
-        # Run sasascore Jobs
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
-        Engine = get_engine(exec_mode, self.params)
-        engine = Engine(sasascore_jobs)
+        # Run sasascore Jobs using Scheduler
+        engine = Scheduler(
+            ncores=ncores,
+            tasks=sasascore_jobs)
         engine.run()
 
         # rearrange output
         output_name = Path("sasascore.tsv")
-        self._rearrange_output(
-            output_name,
-            path=Path("."),
-            ncores=ncores
-            )
-        score_columns = ["structure", "original_name", "md5", "score"]
-        prettify_df(output_name, columns=score_columns, sortby="score")
-        self._rearrange_output(
-            "violations.tsv",
-            path=Path("."),
-            ncores=ncores
-            )
-        prettify_df("violations.tsv",
-                    columns=["structure"] + violations_chains)
+        viol_output_name = Path("violations.tsv")
+        # extract results
+        sasascore_jobs = engine.results
+        extract_data_from_accscore_class(
+            sasascore_objects=sasascore_jobs,
+            output_fname=output_name,
+            violations_output_fname=viol_output_name
+        )
 
         self.output_models = models_to_score
         self.export_io_models()

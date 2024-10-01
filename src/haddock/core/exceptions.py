@@ -63,7 +63,7 @@ class HaddockModuleError(HaddockError):
 
 
 class ThirdPartyIntallationError(HaddockModuleError):
-    """General error for when third party modules is not properly installed."""
+    """General error when a third party module is not properly installed."""
 
     pass
 

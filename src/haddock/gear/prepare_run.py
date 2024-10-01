@@ -799,18 +799,18 @@ def validate_ncs_params(params: dict) -> None:
     # Validate value of `numncs`
     ncs_suffixes = list(groupped_ncs.keys())
     # Case when number of definition do not match
-    if params["numncs"] != len(ncs_suffixes):
+    if params["nncs"] != len(ncs_suffixes):
         msg = (
-            f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+            f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
             " do not match with the number of defined NCS restraints "
             f"({len(ncs_suffixes)})"
             )
         error_list.append(msg)
     else:
         # Case when numbers do not match
-        if max(ncs_suffixes) != params["numncs"]:
+        if max(ncs_suffixes) != params["nncs"]:
             msg = (
-                f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+                f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
                 " do not match with the number of defined NCS restraints "
                 f"({', '.join([str(s) for s in ncs_suffixes])})"
                 )
@@ -1162,25 +1162,44 @@ def get_expandable_parameters(
 def _get_expandable(
     user_config: ParamMap, defaults: ParamMap, module_name: str, max_mols: int
 ) -> set[str]:
-    type_1 = get_single_index_groups(defaults)
-    type_2 = get_multiple_index_groups(defaults)
-    type_4 = get_mol_parameters(defaults)
-
+    # Set parsing vars
     allowed_params: set[str] = set()
-    allowed_params.update(
-        read_single_idx_groups_user_config(user_config, type_1)
-    )  # noqa: E501
-    allowed_params.update(
-        read_multiple_idx_groups_user_config(user_config, type_2)
-    )  # noqa: E501
+    all_counts: dict[str, int] = {}
+    # Read single indexed groups (terminating by `_X`)
+    news_t1, counts_t1 = read_single_idx_groups_user_config(
+        user_config,
+        get_single_index_groups(defaults),
+        )
+    allowed_params.update(news_t1)
+    all_counts.update(counts_t1)
+    # Read multiple indexed groups (terminating by `_X_Y`)
+    news_t2, counts_t2 = read_multiple_idx_groups_user_config(
+        user_config,
+        get_multiple_index_groups(defaults),
+        )
+    allowed_params.update(news_t2)
+    all_counts.update(counts_t2)
 
     with suppress(KeyError):
-        type_3 = type_simplest_ep[get_module_name(module_name)]
-        allowed_params.update(read_simplest_expandable(type_3, user_config))
-
-    _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
+        news_t3 = read_simplest_expandable(
+            user_config,
+            type_simplest_ep[get_module_name(module_name)],
+            )
+        allowed_params.update(news_t3)
+    # Read molecule paramters (starting by `mol_`)
+    _ = read_mol_parameters(
+        user_config,
+        get_mol_parameters(defaults),
+        max_mols=max_mols,
+        )
     allowed_params.update(_)
 
+    # Add counted parameters to hidden user parameters
+    for param, count in all_counts.items():
+        count_param_name = f"n{param}"
+        if count_param_name in defaults.keys():
+            user_config[count_param_name] = count
+    # Return new set of allowed parameters
     return allowed_params
 
 

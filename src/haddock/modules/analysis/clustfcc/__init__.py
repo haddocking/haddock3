@@ -12,11 +12,7 @@ import os
 from pathlib import Path
 
 from haddock import FCC_path, log
-from haddock.core.defaults import (
-    BINARY_DIR,
-    CONTACT_FCC_EXEC,
-    MODULE_DEFAULT_YAML,
-    )
+from haddock.core.defaults import CONTACT_FCC_EXEC, MODULE_DEFAULT_YAML
 from haddock.core.typing import Union
 from haddock.fcc import calc_fcc_matrix, cluster_fcc
 from haddock.libs.libclust import (

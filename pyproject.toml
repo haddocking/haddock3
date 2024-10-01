@@ -34,7 +34,7 @@ dependencies = [
   'pyyaml>=6.0',
   'scipy>=1.10.0',
   'toml>=0.10.2',
-  'pandas==1.*',
+  'pandas==2.*',
   'plotly==5.11.0',
   'kaleido==0.2.1',
   'freesasa>=2.2.1'

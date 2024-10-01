@@ -36,7 +36,7 @@ dependencies = [
   'toml>=0.10.2',
   'pandas==1.*',
   'plotly==5.11.0',
-  'kaleido==0.2.1',
+  'kaleido==0.2.1.post1',
   'freesasa>=2.2.1'
 ]
 

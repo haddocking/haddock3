@@ -109,8 +109,9 @@ _emsg_unexpected_params_multiple = (
 # common error messages
 _emsg_num_differ = (
     "The parameter block {!r} expects "
-    "{} parameters, but {} are present "
-    "in the user configuration file: {}."
+    "{} parameters ({}), but {} are present "
+    "in the user configuration file: {}. "
+    "Parameter(s) {} are missing."
 )
 
 
@@ -249,7 +250,7 @@ def _read_groups_in_user_config(
     extract_params: Callable[..., set[str]],
     _emsg_no_group: str = "Parameter block is not a valid expandable group",
     _emsg_unexpected_params: str = "Unexpected params for group",
-) -> set[str]:
+) -> tuple[set[str], dict[str, int]]:
     """
     Read groups in user config.
 
@@ -279,15 +280,18 @@ def _read_groups_in_user_config(
 
     Returns
     -------
-    set
+    new : set[str]
         A set with the new parameters in the user configuration file
         that are acceptable according to the expandable rules.
+    param_name_counts : dict[str, int]
+        Count of expendable parameter parameter names
     """
     # minimum=1 is used to capture groups with missing parameters
     user_groups = get_user_groups(user_config, minimum=1, reference=False)
     default_group_names = set(group[0] for group in default_groups)
 
     new: set[str] = set()
+    param_name_counts: dict[str, int] = {}
     for (param_name, group_idx), params in user_groups.items():
         if param_name not in default_group_names:
             emsg = _emsg_no_group.format(param_name, group_idx)
@@ -311,34 +315,39 @@ def _read_groups_in_user_config(
         # when num_found > num_expected the error about in `diff` is
         # triggered instead
         if num_found != num_expected:
+            expected_missings = set(expected_params).difference(params)
             emsg = _emsg_num_differ.format(
                 param_name,
                 num_expected,
+                ", ".join(expected_params),
                 num_found,
                 ", ".join(params),
+                ", ".join([f"`{p}`" for p in expected_missings]),
             )
             raise ConfigurationError(emsg)
 
         related_params = extract_params(user_config, param_name, group_idx)
+        # Increment counts for this parameter
+        if related_params:
+            param_name_counts.setdefault(param_name, 0)
+            param_name_counts[param_name] += 1
         new.update(related_params)
-
-    return new
+    return new, param_name_counts
 
 
 def read_simplest_expandable(
-    expparams: Iterable[str], config: Iterable[str]
+    config: Iterable[str], expparams: Iterable[str], 
 ) -> set[str]:
     """
     Read expandable parameters from config file of the type `param_1`.
 
     Parameters
     ----------
+    config : dict, dict.keys, set, or alike
+        The user configuration file.
     expparams : dict, dict.keys, set, or alike
         The parameter names that should be considered as expandable.
         Usually, this is a module subdictionary of `type_simplest_ep`.
-
-    config : dict, dict.keys, set, or alike
-        The user configuration file.
 
     Returns
     -------

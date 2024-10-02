@@ -88,4 +88,4 @@ package-dir = {"" = "src"}
 include-package-data = true
 
 [tool.setuptools.package-data]
-haddock = ["bin/*", "lib/assets/*.css", "lib/assets/*.js"]
+haddock = ["bin/*"]

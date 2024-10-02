@@ -399,6 +399,23 @@ def extract_groups(pair_list):
     out.close()
 
 
+def create_file_with_cryst(pdb_file):
+    """
+    This function creates a pdb because the CRYST line is missing from the pdf file.     
+    This line is necessary for DSSP.
+
+    Args:
+        pdb_file: str
+
+    Returns:
+
+    """
+    file_in = open(pdb_file, "a")
+    file_in.seek(0) # go to the first position of the file
+    file_in.write(CRYST_LINE)
+    file_in.close()
+
+
 def determine_ss(structure, skipss, pdbf_path):
     """
 

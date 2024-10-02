@@ -11,7 +11,7 @@ from haddock.core.typing import FilePath
 from haddock.libs.libontology import PDBFile
 from haddock.modules import get_engine
 from haddock.modules.scoring import ScoringModule
-from haddock.modules.scoring.prodigy.prodigy import AnyProdigyJob, CheckInstall
+from haddock.modules.scoring.prodigy.prodigyv3 import AnyProdigyJob, CheckInstall
 
 
 RECIPE_PATH = Path(__file__).resolve().parent

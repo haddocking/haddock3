@@ -1,7 +1,5 @@
 """Set of functionalities to run prodigy."""
 
-
-import subprocess
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -40,26 +38,31 @@ class CheckInstall:
     @staticmethod
     def run_helps() -> None:
         """Run prodigy CLI with help."""
-        import prodigy
-        #import prodigy_lig
+        import prodigy_prot.predict_IC
+        #import prodigy_lig.prodigy_lig
         return None
 
 
 class ProdigyWorker(ABC):
     def __init__(self, model: FilePath, params: ParamDict):
+        # Use by both prodigy -prot and -lig
         self.model = model
         self.topKd = params["to_pkd"]
         self.temperature = params["temperature"]
-        self.acc_cutoff = params["accessibility_cutoff"]
         self.dist_cutoff = self.set_distance_cutoff(params["distance_cutoff"])
+        self.chains = params["chains"]
+        # Only used by prodigy-prot
+        self.acc_cutoff = params["accessibility_cutoff"]
+        # Only used by prodigy-lig
+        self.lig_resname = params["ligand_resname"]
+        self.lig_chain = params["ligand_chain"]
+        # Output values
         self.score = None
         self.error = None
 
     def _run(self) -> None:
         """Main computation function."""
-        prodigy_stdout = self.evaluate_complex()
-        deltaG = self.extract_deltaG(prodigy_stdout)
-        self.score = self.pkd_converter(deltaG)
+        self.score = self.pkd_converter(self.evaluate_complex())
 
     def run(self) -> None:
         """Wrapper of the run function."""
@@ -67,29 +70,29 @@ class ProdigyWorker(ABC):
             self._run()
         except ModuleError as error:
             self.error = error
-    
-    def evaluate_complex(self) -> str:
-        """Run prodigy and return stdout.
+
+    def pkd_converter(self, deltaG: float) -> float:
+        """Decide if deltaG must be converted to pKd.
+
+        Parameters
+        ----------
+        deltaG : float
+            Input DeltaG value
 
         Returns
         -------
-        prodigy_stdout : str
-            Standard output of prodigy (in quiet mode).
+        score : float
+            The converted DeltaG to pKd if self.topKd is true,
+            else the input DeltaG.
         """
-        # Build command line
-        cmd_ = self.gen_cmd_line()
-        # Subprocess run
-        prodigy_stdout = self.subprocess_run(cmd_)
-        return prodigy_stdout
-    
-    def pkd_converter(self, deltaG: float) -> float:
         if self.topKd:
-            return self.deltaG_to_pKd(
+            score = self.deltaG_to_pKd(
                 deltaG,
                 kelvins=self.temperature + KELVIN_TO_CELCIUS,
                 )
         else:
-            return deltaG
+            score = deltaG
+        return round(score, 3)
     
     @staticmethod
     def deltaG_to_pKd(deltaG: float, kelvins: float = 298.3) -> float:
@@ -118,51 +121,28 @@ class ProdigyWorker(ABC):
         pKd = round(_pKd, 2)
         return -pKd
 
-    @staticmethod
-    def subprocess_run(cmd_: list[Union[str, FilePath]]) -> Optional[str]:
-        print(" ".join([str(v) for v in cmd_]))
-        # Run it
-        run = subprocess.Popen(
-            cmd_,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            )
-        # Check that run went smooth
-        stderr = run.stderr.read().decode("utf-8")
-        if stderr != "":
-            raise ModuleError(stderr)
-        # Gather standard output
-        stdout = run.stdout.read().decode("utf-8")
-        return stdout
+    @abstractmethod
+    def evaluate_complex(self) -> None:
+        pass
 
     @abstractmethod
     def set_distance_cutoff(_dist_cutoff: Optional[float]) -> float:
         pass
 
-    @abstractmethod
-    def extract_deltaG(stdout: str) -> str:
-        pass
 
-    @abstractmethod
-    def gen_cmd_line(self) -> list[Union[str, FilePath]]:
-        pass
-
-
-class ProdigyProt(ProdigyWorker):
+class ProdigyProtein(ProdigyWorker):
     def __init__(self, model: FilePath, params: ParamDict):
         super().__init__(model, params)
 
-    def gen_cmd_line(self) -> list[Union[str, FilePath]]:
-        # Build command line
-        cmd_ = [
-            "prodigy",
-            self.model,
-            "--distance-cutoff", str(self.dist_cutoff),
-            "--acc-threshold", str(self.acc_cutoff),
-            "--temperature", str(self.temperature),
-            "--quiet",
-            ]
-        return cmd_
+    def evaluate_complex(self) -> float:
+        from prodigy_prot.predict_IC import parse_structure, Prodigy
+        structure, _n_chains, _n_res = parse_structure(self.model)
+        prodigy = Prodigy(structure, self.chains, self.temperature)
+        prodigy.predict(
+            distance_cutoff=self.dist_cutoff,
+            acc_threshold=self.acc_cutoff,
+            )
+        return prodigy.ba_val
 
     @staticmethod
     def set_distance_cutoff(_dist_cutoff: Optional[float]) -> float:
@@ -187,40 +167,46 @@ class ProdigyProt(ProdigyWorker):
             dist_cutoff = 5.5
         return dist_cutoff
 
-    @staticmethod
-    def extract_deltaG(prodigy_predictions: str) -> float:
-        """Extract score from prodigy-prot
 
-        This function is ment to be used when the flag --quiet is used.
-
-        Parameters
-        ----------
-        prodigy_predictions : str
-            Standard output of prodigy (prodigy-protein)
-
-        Returns
-        -------
-        deltaG: float
-            The predicted deltaG
-        """
-        deltaG_str = prodigy_predictions.strip().split()[-1]
-        deltaG = float(deltaG_str)
-        return round(deltaG, 3)
-
-
-class ProdigyLig(ProdigyWorker):
+class ProdigyLigand(ProdigyWorker):
     def __init__(self, model: FilePath, params: ParamDict):
         super().__init__(model, params)
 
-    def gen_cmd_line(self) -> list[Union[str, FilePath]]:
-        # Build command line
-        cmd_ = [
-            "prodigy_lig",
-            "--chains", ",".join(chains), f"{ligchain}:{ligname}",
-            "--distance_cutoff", self.dist_cutoff,
-            "--input_file", self.model,
-            ]
-        return cmd_
+    def evaluate_complex(self) -> float:
+        from prodigy_lig.prodigy_lig import (
+            basename,
+            extract_electrostatics,
+            FastMMCIFParser,
+            PDBParser,
+            ProdigyLig,
+            splitext,
+            )
+        fname, s_ext = splitext(basename(self.model))
+        if s_ext in (".pdb", ".ent", ):
+            parser = PDBParser(QUIET=1)
+        elif s_ext == ".cif":
+            parser = FastMMCIFParser(QUIET=1)
+
+        with open(self.model) as in_file:
+            # try to set electrostatics from input file if not provided by user
+            electrostatics = False
+            try:
+                electrostatics = extract_electrostatics(in_file)
+            except Exception:
+                pass
+            prodigy_lig = ProdigyLig(
+                parser.get_structure(fname, in_file),
+                chains=[
+                    ":".join(self.chains),
+                    f"{self.lig_chain}:{self.lig_resname}",
+                    ],
+                electrostatics=electrostatics,
+                cutoff=self.dist_cutoff,
+                )
+        prodigy_lig.predict()
+        if prodigy_lig.dg_elec:
+            return prodigy_lig.dg_elec
+        return prodigy_lig.dg
 
     @staticmethod
     def set_distance_cutoff(_dist_cutoff: Optional[float]) -> float:
@@ -244,30 +230,6 @@ class ProdigyLig(ProdigyWorker):
         else:
             dist_cutoff = 10.5
         return dist_cutoff
-
-    @staticmethod
-    def extract_deltaG(prodigy_predictions: str) -> float:
-        """Extract delatG from prodigy-lig predictions.
-
-        Parameters
-        ----------
-        prodigy_lig_predictions : str
-            Standard output of prodigy-lig.
-
-        Returns
-        -------
-        deltaG : float
-            The predicted deltaG
-        """
-        # Point line and value
-        prediction_lines = prodigy_predictions.split('\n')
-        second_line = prediction_lines[1].strip()
-        predicted_DG_string = second_line.split()[-1]
-        # Cast to float
-        _deltaG = float(predicted_DG_string)
-        # Reduce number of decimals
-        deltaG = round(_deltaG, 2)
-        return deltaG
 
 
 class ModelScore:
@@ -303,7 +265,7 @@ class AnyProdigyJob:
         return self._run()
 
     @staticmethod
-    def get_worker(mode: str) -> Union[ProdigyProt, ProdigyLig]:
+    def get_worker(mode: str) -> Union[ProdigyProtein, ProdigyLigand]:
         """Find appropriated class that will handle the computation.
 
         Parameters
@@ -317,6 +279,6 @@ class AnyProdigyJob:
             The prodigy class that will handle the computation
         """
         if mode == "protein":
-            return ProdigyProt
+            return ProdigyProtein
         else:
-            return ProdigyLig
+            return ProdigyLigand

@@ -30,7 +30,7 @@ class CheckInstall:
         """
         try:
             self.run_helps()
-        except FileNotFoundError:
+        except ModuleNotFoundError:
             raise ModuleError(
                 "Issue detected with the installation of Prodigy. "
                 "Consider installing it with: "
@@ -40,13 +40,8 @@ class CheckInstall:
     @staticmethod
     def run_helps() -> None:
         """Run prodigy CLI with help."""
-        for ext in ("",):#"-lig"):
-            prodigy_help = subprocess.Popen(
-                [f"prodigy{ext}", "--help"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                )
-            _help_string = prodigy_help.stdout.read().decode('utf-8')
+        import prodigy
+        #import prodigy_lig
         return None
 
 

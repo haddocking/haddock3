@@ -1,8 +1,8 @@
 scoring_mode:
   default: protein
   type: string
-  minchars: 1
-  maxchars: 20
+  minchars: 6
+  maxchars: 7
   choices:
     - protein
     - ligand
@@ -10,6 +10,36 @@ scoring_mode:
   short: Scoring mode of PRODIGY
   long: Choose protein when scoring protein complexes, and ligands when a small
    molecule is involved.
+  group: scoring
+  explevel: easy
+chains:
+  default: ["A", "B"]
+  type: list
+  minitems: 2
+  maxitems: 2
+  title: Chains to be scored.
+  short: Chains to be scored.
+  long: Chains to be scored.
+  group: scoring
+  explevel: easy
+ligand_resname:
+  default: UNK
+  type: string
+  minchars: 1
+  maxchars: 3
+  title: Residue name of the ligand
+  short: Residue name of the ligand
+  long: Residue name of the ligand to score. Only used for prodigy-ligand.
+  group: scoring
+  explevel: easy
+ligand_chain:
+  default: B
+  type: string
+  minchars: 1
+  maxchars: 1
+  title: Chain of the ligand
+  short: Chain of the ligand
+  long: Chain of the ligand to score. Only used for prodigy-ligand.
   group: scoring
   explevel: easy
 distance_cutoff:
@@ -34,6 +64,7 @@ accessibility_cutoff:
   title: Add text
   short: Add text
   long: Add text
+    Not used in prodigy-lig.
   group: scoring
   explevel: expert
 temperature:
@@ -54,4 +85,4 @@ to_pkd:
   short: Add text
   long: Add text
   group: conversion
-  explevel: expert
+  explevel: easy

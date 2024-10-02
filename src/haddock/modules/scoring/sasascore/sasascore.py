@@ -3,7 +3,6 @@ import copy
 from pathlib import Path
 
 from typing import Optional
-import pandas as pd
 
 from haddock.libs.libio import write_nested_dic_to_file
 from haddock import log

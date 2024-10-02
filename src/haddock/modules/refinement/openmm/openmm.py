@@ -1,18 +1,25 @@
-"""Refinement module using OpenMM.
+"""OpenMM refinement module for HADDOCK3.
 
 The potential of OpenMM can be exploited to perform potentially different
  tasks, such as:
-- refine the models obtained from a thorough docking run;
-- refine the models in the middle of a docking run. For example, it can be used
- to refine the models coming from a `rigidbody` module before `flexref` is
- executed;
-- refine some molecules prior to their use in a thorough docking run.
+- Run MD simulation for each model from previous step;
+- Refine the models in the middle of a docking run. For example, it can be used
+ to refine the models coming from a `[rigidbody]` module before `[flexref]` is
+ executed, or to replace the `[mdref]` step.
+- Generate conformers prior to their use in a thorough docking run.
 
-To get a list of all possible parameters, run::
-     haddock3-cfg -m openmm
-     
+To get a list of all possible parameters, run:
+    haddock3-cfg -m openmm
+
+Module workflow:
+- Generate openmm topology and fix atoms
+- Build solvation box
+- Equilibration solvation box restraining the protein
+- Run MD simulation: increase temperature, run MD, reduce temperature.
+- Either generate an ensemble of multiple frames or return the last frame.
+
 This module will refine all models coming from the previous workflow step and
- send them to the next step in the workflow. If you want to use other modules
+send them to the next step in the workflow. If you want to use other modules
 such as `flexref` or `emref` after the OpenMM module, you need to recreate the
 topologies by simply adding a `[topoaa]` step in the workflow.
 See examples in `examples/thirdparty/openmm` folder.
@@ -35,6 +42,7 @@ from openmm import (
     )
 from openmm.app import (
     PME,
+    NoCutoff,
     AllBonds,
     ForceField,
     HAngles,
@@ -64,6 +72,7 @@ from pdbfixer import PDBFixer
 from pdbtools import pdb_delhetatm
 from pdbtools.pdb_mkensemble import run as make_ensemble
 from haddock import log
+from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Optional, Union, ParamDict
 from haddock.libs.libontology import PDBFile
 
@@ -161,6 +170,7 @@ class OPENMM:
         fixer.replaceNonstandardResidues()
         fixer.findMissingAtoms()
         fixer.addMissingAtoms()
+        fixer.addMissingHydrogens(self.params["ph"])
         # calling PDBFixer
         output_filepath = os.path.join(
             self.directory_dict["pdbfixer"],
@@ -241,7 +251,11 @@ class OPENMM:
                 )
 
         except Exception as e:
-            self.log.info(f"BUILDING SOLVATION BOX ERROR: {e}")
+            error_msg = (
+                f"An error occured when building solvation box: {e}"
+                )
+            self.log.error(error_msg)
+            raise ModuleError(f"[openMM] module error: {error_msg}")
         else:
             return box_path
 
@@ -370,7 +384,7 @@ class OPENMM:
             # Print log info
             self.log.info(
                 "Running solvent equilibration phase "
-                "under protein coordinate constraints:"
+                "under protein coordinate position restraints:"
                 )
             self.log.info(
                 f"For {self.params['solv_eq_timesteps']} timesteps at "
@@ -407,9 +421,10 @@ class OPENMM:
         except Exception:
             import traceback
             strerr = traceback.format_exc()
-            self.log.error(
-                "EQUILIBRATING SOLVATION BOX ERROR FOR "
-                f"{pdb_filepath}:\n{strerr}"
+            self.log.debug(
+                "Error durring solvent equilibration for file "
+                f"{pdb_filepath}:\n{strerr}.{os.linesep}"
+                "Continuing from unequilibrated solvent frame."
                 )
 
     def _stabilize_temperature(
@@ -654,10 +669,13 @@ class OPENMM:
         pdb = openmmpdbfile(inputPDBfile)
         forcefield = ForceField(self.params['forcefield'], solvent_model)
         # system setup
+        nonbondedMethod = PME
+        if self.params["implicit_solvent"]:
+            nonbondedMethod = NoCutoff
         # should give an ERROR when system_constraints = 'None'.
         system = forcefield.createSystem(
             pdb.topology,
-            nonbondedMethod=PME,
+            nonbondedMethod=nonbondedMethod,
             nonbondedCutoff=1 * nanometer,
             constraints=self.constraints,
             removeCMMotion=self.params['remove_center_of_mass_motion'],
@@ -886,7 +904,10 @@ class OPENMM:
             # define solvent model and create solvation box
             solvent_model = self.params["explicit_solvent_model"]
             # create solvation box
-            pdbPath = self.create_solvation_box(solvent_model)
+            try:
+                pdbPath = self.create_solvation_box(solvent_model)
+            except ModuleError as _err:
+                return
             # Eauilibrate this box around system
             pdbPath = self.equilibrate_solvation_box(pdbPath, solvent_model)
             # set variables

@@ -1,7 +1,7 @@
 forcefield:
   default: 'amber14-all.xml'
   type: string
-  minchars: 0
+  minchars: 10
   maxchars: 100
   choices:
     - 'amber14-all.xml'
@@ -54,7 +54,8 @@ keep_solvent:
   type: boolean
   title: Whether-or-not solvent be removed from provided structures.
   short: Whether-or-not solvent be removed from provided structures.
-  long: Whether-or-not solvent be removed from provided structures. If 'false', all HETATM atoms will be removed.
+  long: Whether-or-not solvent be removed from provided structures.
+    If 'false', all HETATM atoms will be removed.
   group: 'post processing'
   explevel: easy
 
@@ -90,14 +91,14 @@ add_extra_particles_for_forcefield:
   title: Add extra particles for forcefield.
   short: Add extra particles for forcefield if needed such as e.g. Drude particles.
   long: Add extra particles for forcefield if needed such as e.g. Drude particles.
-  group: ''
+  group: 'force field'
   explevel: easy
 
 timestep_ps:
   default: 0.002
   type: float
   precision: 3
-  min: 0
+  min: 0.001
   max: 0.004
   title: Timestep definition.
   short: Definition of timestep used by the integrator to progress the simulation.
@@ -108,8 +109,8 @@ timestep_ps:
 constraints:
   default: 'HBonds'
   type: string
-  minchars: 0
-  maxchars: 100
+  minchars: 1
+  maxchars: 20
   choices:
     - 'None'
     - 'HBonds'
@@ -156,10 +157,11 @@ sampling_factor:
   explevel: easy
 
 temperature_kelvin:
-  default: 300
-  type: integer
-  min: 1
-  max: 373
+  default: 298.15
+  type: float
+  precision: 2
+  min: 1.00
+  max: 1000.00
   title: Average temperature.
   short: Average temperature used by e.g. the integrator or by for temperature coupling.
   long: Average temperature used by e.g. the integrator or by for temperature coupling.

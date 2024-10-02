@@ -24,8 +24,11 @@ class HaddockModule(ScoringModule):
     name = RECIPE_PATH.name
 
     def __init__(
-        self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
-    ) -> None:
+            self,
+            order: int,
+            path: Path,
+            initial_params: FilePath = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod

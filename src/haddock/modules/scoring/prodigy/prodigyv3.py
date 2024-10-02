@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
+from haddock import log
 from haddock.core.exceptions import ModuleError
 from haddock.core.typing import FilePath, Optional, ParamDict, Union
 from haddock.libs.libontology import PDBFile
@@ -38,13 +39,15 @@ class CheckInstall:
     @staticmethod
     def run_helps() -> None:
         """Run prodigy CLI with help."""
-        import prodigy_prot.predict_IC
-        #import prodigy_lig.prodigy_lig
+        import prodigy_prot.predict_IC  # noqa : F401
+        #import prodigy_lig.prodigy_lig  # noqa : F401
         return None
 
 
 class ProdigyWorker(ABC):
-    def __init__(self, model: FilePath, params: ParamDict):
+    """Superclass of Prodigy Worker."""
+
+    def __init__(self, model: FilePath, params: ParamDict) -> None:
         # Use by both prodigy -prot and -lig
         self.model = model
         self.topKd = params["to_pkd"]
@@ -57,15 +60,15 @@ class ProdigyWorker(ABC):
         self.lig_resname = params["ligand_resname"]
         self.lig_chain = params["ligand_chain"]
         # Output values
-        self.score = None
-        self.error = None
+        self.score: Optional[float] = None
+        self.error: Optional[Exception] = None
 
     def _run(self) -> None:
-        """Main computation function."""
+        """Evaluate complex and compute score."""
         self.score = self.pkd_converter(self.evaluate_complex())
 
     def run(self) -> None:
-        """Wrapper of the run function."""
+        """Execute the _run method."""
         try:
             self._run()
         except ModuleError as error:
@@ -122,19 +125,32 @@ class ProdigyWorker(ABC):
         return -pKd
 
     @abstractmethod
-    def evaluate_complex(self) -> None:
+    def evaluate_complex(self) -> float:
+        """Logic to evaluate a complex using prodigy."""
         pass
 
+    @staticmethod
     @abstractmethod
     def set_distance_cutoff(_dist_cutoff: Optional[float]) -> float:
+        """Logic to set the distance cutoff."""
         pass
 
 
 class ProdigyProtein(ProdigyWorker):
-    def __init__(self, model: FilePath, params: ParamDict):
+    """Class managing the computation of protein-protein with prodigy."""
+
+    def __init__(self, model: FilePath, params: ParamDict) -> None:
+        """Instanciate the class with superclass."""
         super().__init__(model, params)
 
     def evaluate_complex(self) -> float:
+        """Evaluate a complex with prodigy-prot.
+
+        Returns
+        -------
+        deltaG : float
+            The computed DeltaG of the input complex.
+        """
         from prodigy_prot.predict_IC import parse_structure, Prodigy
         structure, _n_chains, _n_res = parse_structure(self.model)
         prodigy = Prodigy(structure, self.chains, self.temperature)
@@ -142,7 +158,8 @@ class ProdigyProtein(ProdigyWorker):
             distance_cutoff=self.dist_cutoff,
             acc_threshold=self.acc_cutoff,
             )
-        return prodigy.ba_val
+        deltaG = prodigy.ba_val
+        return deltaG
 
     @staticmethod
     def set_distance_cutoff(_dist_cutoff: Optional[float]) -> float:
@@ -169,10 +186,20 @@ class ProdigyProtein(ProdigyWorker):
 
 
 class ProdigyLigand(ProdigyWorker):
-    def __init__(self, model: FilePath, params: ParamDict):
+    """Class managing the computation of protein-ligand with prodigy."""
+
+    def __init__(self, model: FilePath, params: ParamDict) -> None:
+        """Instanciate the class with superclass."""
         super().__init__(model, params)
 
     def evaluate_complex(self) -> float:
+        """Evaluate a complex with prodigy-lig.
+
+        Returns
+        -------
+        deltaG : float
+            The computed DeltaG of the input complex.
+        """
         from prodigy_lig.prodigy_lig import (
             basename,
             extract_electrostatics,
@@ -204,9 +231,8 @@ class ProdigyLigand(ProdigyWorker):
                 cutoff=self.dist_cutoff,
                 )
         prodigy_lig.predict()
-        if prodigy_lig.dg_elec:
-            return prodigy_lig.dg_elec
-        return prodigy_lig.dg
+        deltaG = prodigy_lig.dg_elec if prodigy_lig.dg_elec else prodigy_lig.dg
+        return deltaG
 
     @staticmethod
     def set_distance_cutoff(_dist_cutoff: Optional[float]) -> float:
@@ -235,7 +261,8 @@ class ProdigyLigand(ProdigyWorker):
 class ModelScore:
     """Simple class for holding score for a model."""
 
-    def __init__(self, model_index: int):
+    def __init__(self, model_index: int) -> None:
+        """Initiate models scores."""
         self.index = model_index
         self.score = None
         self.error = None
@@ -244,24 +271,30 @@ class ModelScore:
 class AnyProdigyJob:
     """Managing the computation of prodigy scores within haddock3."""
 
-    def __init__(self, model: PDBFile, params: ParamDict, index: int = 1):
+    def __init__(
+            self,
+            model: PDBFile,
+            params: ParamDict,
+            index: int = 1,
+            ) -> None:
+        """Initiate a worker."""
         worker = self.get_worker(params["scoring_mode"])
         self.worker = worker(model.rel_path, params)
         self.score = ModelScore(index)
 
     def _run(self) -> ModelScore:
-        """Main computation function."""
+        """Run the worker and retrieve output values."""
         try:
             self.worker.run()
         except Exception as e:
-            print(e)
+            log.error(e)
         else:
             self.score.score = self.worker.score
             self.score.error = self.worker.error
         return self.score
 
     def run(self) -> ModelScore:
-        """Wrapper to the _run function."""
+        """Execute the _run method."""
         return self._run()
 
     @staticmethod

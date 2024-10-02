@@ -10,6 +10,7 @@ from haddock.libs.libutil import (
     get_number_from_path_stem,
     non_negative_int,
     parse_ncores,
+    rank_according_to_score,
     recursive_convert_paths_to_strings,
     recursive_dict_update,
     sort_numbered_paths,
@@ -209,3 +210,55 @@ def test_parse_ncores_error(maxcpus):
     """Test parse_ncores function."""
     with pytest.raises(TypeError):
         parse_ncores(max_cpus=maxcpus)
+
+
+def test_rank_according_to_score_capri():
+    """Test rank according to score for caprieval data."""
+    data = {
+        1: {
+            "score": 3.0,
+            "caprieval_rank": 99999,
+        },
+        2: {
+            "score": 2.0,
+            "caprieval_rank": 99999,
+        },
+        3: {
+            "score": 1.0,
+            "caprieval_rank": 99999,
+        },
+    }
+
+    ranked_data = rank_according_to_score(
+        data=data, sort_key="score", sort_ascending=True, iscapri=True
+    )
+
+    assert ranked_data[1]["caprieval_rank"] == 1
+    assert ranked_data[2]["caprieval_rank"] == 2
+    assert ranked_data[3]["caprieval_rank"] == 3
+
+
+def test_rank_according_to_score_notcapri():
+    """Test rank according to score."""
+    data = {
+        1: {
+            "score": 3.0,
+            "structure": "1.pdb",
+        },
+        2: {
+            "score": 2.0,
+            "structure": "2.pdb",
+        },
+        3: {
+            "score": 1.0,
+            "structure": "3.pdb",
+        },
+    }
+
+    ranked_data = rank_according_to_score(
+        data=data, sort_key="score", sort_ascending=True, iscapri=False
+    )
+
+    assert ranked_data[1]["structure"] == "3.pdb"
+    assert ranked_data[2]["structure"] == "2.pdb"
+    assert ranked_data[3]["structure"] == "1.pdb"

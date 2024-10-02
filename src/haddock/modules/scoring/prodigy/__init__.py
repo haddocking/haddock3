@@ -11,7 +11,7 @@ from haddock.core.typing import FilePath
 from haddock.libs.libontology import PDBFile
 from haddock.modules import get_engine
 from haddock.modules.scoring import ScoringModule
-from haddock.modules.scoring.prodigy.prodigyv3 import AnyProdigyJob, CheckInstall
+from haddock.modules.scoring.prodigy.prodigy import ProdigyJob, CheckInstall
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -46,17 +46,17 @@ class HaddockModule(ScoringModule):
             self.finish_with_error(e)
 
         # Pool of Prodigy jobs to be executed
-        jobs: list[AnyProdigyJob] = []
+        jobs: list[ProdigyJob] = []
         self.output_models: list[PDBFile] = []
 
         for mi, model in enumerate(models_to_score):
             self.output_models.append(model)
-            prodigy_worker = AnyProdigyJob(
+            prodigy_job = ProdigyJob(
                 model,
                 self.params,
                 index=mi,
                 )
-            jobs.append(prodigy_worker)
+            jobs.append(prodigy_job)
 
         # Run CNS Jobs
         self.log(f"Running {len(jobs)} Prodigy Jobs")

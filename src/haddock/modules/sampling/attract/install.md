@@ -1,7 +1,7 @@
 This is very raw instruction on how to install ATTRACT on Linux (does not work on Microsoft Windows nor on Mac):
 
-1. Obtain gfortran, version 13.3.0 
-2. Obtain g++, version 11.5.0  
+1. Obtain gfortran, version 13.3.0
+2. Obtain g++, version 11.5.0
 3. Make and activate attract environment with Python 2.7, numpy, scipy and pdb2pqr 
 (normally, pyenv/conda/mamba can deal with it)
 4. git clone  --recursive https://github.com/sjdv1982/attract.git
@@ -60,3 +60,9 @@ then activate attract environment again
   usage: $path/attract structures.dat parameterfile receptor.pdb [ligand.pdb] [options]
 - "python -c 'import numpy, scipy' " should give no error
 - "python -c 'import pdb2pqr' " should give no error
+
+10. Download & unpack library of RNA fragment conformations from (here)[https://surfdrive.surf.nl/files/index.php/s/7yWPzLd1ov3AaUE] 
+`export LIBRARY=/path/to/nalib`
+
+11. Lastly, point to where large files (~6GB per default ATTRACT run) containing staring point for the docking can be stored
+`export RANDSEARCH=/path/to/where`

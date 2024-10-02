@@ -1,10 +1,10 @@
 """Set if functions related to [attract]"""
 
-import os
+#import os
 import sys 
 import subprocess
-import shutil
-import shlex
+#import shutil
+#import shlex
 from pathlib import Path
 
 

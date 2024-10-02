@@ -12,7 +12,8 @@ add short description of the protocol, including CG, NAlib, sampling,
 scoring (two ways) and assembly + possible restraints. 
 ."""
 import os
-import sys
+#import sys
+import tempfile
 import subprocess
 import shutil
 import shlex
@@ -52,6 +53,7 @@ class HaddockModule(BaseHaddockModule):
             attract_dir = os.environ['ATTRACTDIR']
             attract_tools = os.environ['ATTRACTTOOLS']
             nalib = os.environ['LIBRARY']
+            randsearch = os.environ['RANDSEARCH']
         except KeyError as e:
             raise EnvironmentError(f"Required environment variable not found: {e}")
 
@@ -68,17 +70,12 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module.
-            
-            # todo 
-            1. check library + 
-            2. process input +
-            3. make folder +
-            4. run docking < currently working on > 
-            5. run lrmsd (eventually optional)
-            6. HIPPO (eventually optional)
-            7. Assembly ?
-            8. Scoring ?
-            9. SeleTopChains ? """
+        Currently:
+        1. Converts protein and RNA in ATTRACT coarse-grain 
+        2. Splits RNA into overlapping fragments
+        3. Creates required by ATTRACT files: motif.list, boundfrag.list, nalib
+        4. Passes initial all-atom protein and RNA to next module
+        """
 
         # Get the models generated in previous step
         models: list[PDBFile] = [
@@ -111,10 +108,8 @@ class HaddockModule(BaseHaddockModule):
         if {label_1, label_2} != {'protein', 'rna'}:
             _msg = "ATTRACT requires protein and RNA molecules as input"
             self.finish_with_error(_msg)
-        
+
         # Add required by ATTRACT files: 
-        # - link fragment library          
-        # - get motif.list, boundfrag.list, and fragXr.pdb 
         log.info("Preparing docking directory")
         
         nalib = self.nalib
@@ -124,38 +119,10 @@ class HaddockModule(BaseHaddockModule):
 
         process_rna_file('rna-aar.pdb')
 
-        log.info("Running ATTRACT...")
-        cmd = [
-        'bash', 
-        '/trinity/login/arha/tools/scripts/attract/docking/dock-lrmsd-in-haddock.sh', # move this to haddock3/src/.../attract/
-        '.', # dir with input files 
-        '10', # number of starting points for sampling
-        '/trinity/login/arha/dev-h3/test-attr/tmp' # where to store tmp files
-        ]
-        # need to add randsearch
+        tmp_dir = tempfile.mkdtemp(dir=os.getcwd())
+        # will be used during the docking
+        shutil.rmtree(tmp_dir)
 
-        docking = subprocess.run(cmd, capture_output=True, text=True)
-
-        with open('log.txt','w') as f:
-            for item in docking.stdout:
-                f.write(f"{item}")
-        # here     
-        with open('err.txt', 'w') as f:
-                    for item in docking.stderr:
-                        f.write(f"{item}")
-
-        # 
-        # score with HIPPO
-        
-        #
-        # assemble 
-        #
-
-        #
-        # score with attract? haddock? hippo (idk if possible)? 
-                
-        # dat2pdb:
-        # /trinity/login/arha/tools/attract/bin/collect $m-e7.dat /dev/null frag${x}r.pdb --ens 2 nalib/$m-clust1.0r.list > models_frag${X}r.pdb
         list_of_created_models = []     
         created_models = ['protein-aa.pdb','rna-aa.pdb']
         for model in created_models:

@@ -38,7 +38,7 @@ DEFAULT_DICT = read_from_yaml_config(DEFAULT_CONFIG)
 def fixture_proper_ncs_params() -> dict[str, Union[str, int]]:
     return {
         "ncs_on": True,
-        "numncs": 2,
+        "nncs": 2,
         "ncs_sta1_1": 1,
         "ncs_sta2_1": 1,
         "ncs_end1_1": 10,
@@ -411,27 +411,41 @@ def test_param_value_error(defaultparams, key, value):
         validate_value(defaultparams, key, value)
 
 
-def test_validate_parameters_are_not_incompatible(mocker):
-    """Test proper logic of test_validate_parameters_are_not_incompatible."""
-    mocker.patch(
-        "haddock.gear.prepare_run.incompatible_defaults_params",
-        {"limiting_parameter": {"incompatible_parameter": "incompatible_value"}},
-    )
-
+def test_validate_parameters_are_not_incompatible():
+    """Test parameter incompatibilities."""
     params = {
-        "limiting_parameter": "",
+        "limiting_parameter": True,
         "incompatible_parameter": "incompatible_value",
+        }
+    # Define an incompatible parameter
+    # when limiting_parameter has value `True`,
+    # `incompatible_parameter` cannot adopt `incompatible_value`
+    incompatible_params = {
+        "limiting_parameter": {
+            True: {
+                "incompatible_parameter": "incompatible_value",
+            }
+        }
     }
-
+    # Test 1 successfully fail
     with pytest.raises(ValueError):
-        validate_parameters_are_not_incompatible(params)
+        validate_parameters_are_not_incompatible(
+            params,
+            incompatible_params,
+            )
 
-    params = {
-        "limiting_parameter": "limiting_value",
-        "ok_parameter": "ok_value",
+    # Test 2 - successfully pass
+    incompatible_params = {
+        "limiting_parameter": {
+            False: {
+                "incompatible_parameter": "incompatible_value",
+            }
+        }
     }
-
-    assert validate_parameters_are_not_incompatible(params) is None
+    no_return = validate_parameters_are_not_incompatible(
+        params, incompatible_params
+        )
+    assert no_return is None
 
 
 ###################################
@@ -469,7 +483,7 @@ def test_validate_ncs_params_different_end(proper_ncs_params):
 def test_validate_ncs_params_wrong_count(proper_ncs_params):
     """Test NCS param error when missmatch in number of ncs defined."""
     # Set wrong number of ncs definition
-    proper_ncs_params["numncs"] = 1
+    proper_ncs_params["nncs"] = 1
     with pytest.raises(ConfigurationError):
         assert validate_ncs_params(proper_ncs_params) is None
 
@@ -486,6 +500,6 @@ def test_validate_ncs_params_wrong_suffix_value(proper_ncs_params):
             proper_ncs_params[k3] = proper_ncs_params[k2]
             # Delete key2
             del proper_ncs_params[k2]
-    # Except error as _3 != (numncs = 2)
+    # Except error as _3 != (nncs = 2)
     with pytest.raises(ConfigurationError):
         assert validate_ncs_params(proper_ncs_params) is None

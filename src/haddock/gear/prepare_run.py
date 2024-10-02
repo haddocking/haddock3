@@ -64,7 +64,10 @@ from haddock.gear.validations import (
     v_rundir,
     validate_defaults_yaml,
     )
-from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.yaml2cfg import (
+    read_from_yaml_config,
+    find_incompatible_parameters,
+    )
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libio import make_writeable_recursive
@@ -179,16 +182,33 @@ def _read_defaults(module_name, default_only=True):
         default.yaml file of the module.
     """
     module_name_ = get_module_name(module_name)
-    pdef = Path(
+    pdef = gen_defaults_module_param_path(module_name_)
+    validate_defaults_yaml(pdef)
+    mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
+    return mod_default_config
+
+
+def gen_defaults_module_param_path(module_name_: str) -> Path:
+    """Build path to default parameters of a module.
+
+    Parameters
+    ----------
+    module_name_ : str
+        Name of the module
+
+    Returns
+    -------
+    Path
+        Path to the module YAML defaults parameter.
+    """
+    params_defaults_path = Path(
         haddock3_source_path,
         "modules",
         modules_category[module_name_],
         module_name_,
         "defaults.yaml",
     ).resolve()
-    validate_defaults_yaml(pdef)
-    mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
-    return mod_default_config
+    return params_defaults_path
 
 
 def setup_run(
@@ -278,7 +298,11 @@ def setup_run(
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
     )
 
-    validate_parameters_are_not_incompatible(general_params)
+    # Validate there is no incompatible parameters in global parameters
+    validate_parameters_are_not_incompatible(
+        general_params,
+        incompatible_defaults_params,
+        )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -531,8 +555,7 @@ def validate_modules_names(params: Iterable[str]) -> None:
 
 @with_config_error
 def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
-    """
-    Validate individual parameters for each module.
+    """Validate individual parameters for each module.
 
     Raises
     ------
@@ -545,6 +568,21 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         defaults = _read_defaults(module_name)
         if not defaults:
             continue
+
+        # Check for parameter incompatibilities
+        module_incompatibilities = find_incompatible_parameters(
+            gen_defaults_module_param_path(module_name)
+            )
+        try:
+            validate_parameters_are_not_incompatible(
+                args,
+                module_incompatibilities,
+                )
+        except ValueError as e:
+            raise ConfigurationError(
+                f"An issue was discovered in module [{module_name}]: "
+                f"{e.args[0]}"
+                )
 
         if module_name in modules_using_resdic:
             confirm_resdic_chainid_length(args)
@@ -799,18 +837,18 @@ def validate_ncs_params(params: dict) -> None:
     # Validate value of `numncs`
     ncs_suffixes = list(groupped_ncs.keys())
     # Case when number of definition do not match
-    if params["numncs"] != len(ncs_suffixes):
+    if params["nncs"] != len(ncs_suffixes):
         msg = (
-            f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+            f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
             " do not match with the number of defined NCS restraints "
             f"({len(ncs_suffixes)})"
             )
         error_list.append(msg)
     else:
         # Case when numbers do not match
-        if max(ncs_suffixes) != params["numncs"]:
+        if max(ncs_suffixes) != params["nncs"]:
             msg = (
-                f'Number of NCS restraints (`numncs = {params["numncs"]}`) '
+                f'Number of NCS restraints (`nncs = {params["nncs"]}`) '
                 " do not match with the number of defined NCS restraints "
                 f"({', '.join([str(s) for s in ncs_suffixes])})"
                 )
@@ -1059,7 +1097,10 @@ def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
     return
 
 
-def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
+def validate_parameters_are_not_incompatible(
+        params: ParamMap,
+        incompatible_params: ParamMap,
+        ) -> None:
     """
     Validate parameters are not incompatible.
 
@@ -1071,18 +1112,25 @@ def validate_parameters_are_not_incompatible(params: ParamMap) -> None:
     Raises
     ------
     ValueError
-        If any parameter in `params` is incompatible with another parameter as defined by `incompatible_params`.
+        If any parameter in `params` is incompatible with another parameter
+        as defined by `incompatible_params`.
     """
-    for limiting_param, incompatibilities in incompatible_defaults_params.items():
+    for limiting_param, incompatibilities in incompatible_params.items():
         # Check if the limiting parameter is present in the parameters
         if limiting_param in params:
+            # Point incompatibilities for the value of the limiting parameter
+            if params[limiting_param] not in incompatibilities.keys():
+                continue
+            active_incompatibilities = incompatibilities[params[limiting_param]]
             # Check each incompatibility for the limiting parameter
-            for incompatible_param, incompatible_value in incompatibilities.items():
+            for incompatible_param, incompatible_value in active_incompatibilities.items():
                 # Check if the incompatible parameter is present and has the incompatible value
                 if params.get(incompatible_param) == incompatible_value:
                     raise ValueError(
-                        f"Parameter `{limiting_param}` is incompatible with `{incompatible_param}={incompatible_value}`."
-                    )
+                        f"Parameter `{limiting_param}` with value "
+                        f"`{params[limiting_param]}` is incompatible with "
+                        f"`{incompatible_param}={incompatible_value}`."
+                        )
 
 
 def validate_parameters_are_not_misspelled(
@@ -1162,25 +1210,44 @@ def get_expandable_parameters(
 def _get_expandable(
     user_config: ParamMap, defaults: ParamMap, module_name: str, max_mols: int
 ) -> set[str]:
-    type_1 = get_single_index_groups(defaults)
-    type_2 = get_multiple_index_groups(defaults)
-    type_4 = get_mol_parameters(defaults)
-
+    # Set parsing vars
     allowed_params: set[str] = set()
-    allowed_params.update(
-        read_single_idx_groups_user_config(user_config, type_1)
-    )  # noqa: E501
-    allowed_params.update(
-        read_multiple_idx_groups_user_config(user_config, type_2)
-    )  # noqa: E501
+    all_counts: dict[str, int] = {}
+    # Read single indexed groups (terminating by `_X`)
+    news_t1, counts_t1 = read_single_idx_groups_user_config(
+        user_config,
+        get_single_index_groups(defaults),
+        )
+    allowed_params.update(news_t1)
+    all_counts.update(counts_t1)
+    # Read multiple indexed groups (terminating by `_X_Y`)
+    news_t2, counts_t2 = read_multiple_idx_groups_user_config(
+        user_config,
+        get_multiple_index_groups(defaults),
+        )
+    allowed_params.update(news_t2)
+    all_counts.update(counts_t2)
 
     with suppress(KeyError):
-        type_3 = type_simplest_ep[get_module_name(module_name)]
-        allowed_params.update(read_simplest_expandable(type_3, user_config))
-
-    _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
+        news_t3 = read_simplest_expandable(
+            user_config,
+            type_simplest_ep[get_module_name(module_name)],
+            )
+        allowed_params.update(news_t3)
+    # Read molecule paramters (starting by `mol_`)
+    _ = read_mol_parameters(
+        user_config,
+        get_mol_parameters(defaults),
+        max_mols=max_mols,
+        )
     allowed_params.update(_)
 
+    # Add counted parameters to hidden user parameters
+    for param, count in all_counts.items():
+        count_param_name = f"n{param}"
+        if count_param_name in defaults.keys():
+            user_config[count_param_name] = count
+    # Return new set of allowed parameters
     return allowed_params
 
 

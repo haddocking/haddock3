@@ -1,4 +1,5 @@
 """Test the libalign library."""
+
 import os
 import tempfile
 from pathlib import Path
@@ -9,10 +10,10 @@ import pytest
 from haddock.libs.libalign import (
     ALIGNError,
     align_seq,
-    check_common_atoms,
     calc_rmsd,
-    check_chains,
     centroid,
+    check_chains,
+    check_common_atoms,
     dump_as_izone,
     get_align,
     get_atoms,
@@ -44,7 +45,7 @@ def test_kabsch():
         [-0.08023797468354221, -7.218693670886075, 2.9678683544303794],
         [9.232762025316458, 18.419306329113926, 8.949868354430379],
         [-1.7482379746835424, -8.395693670886075, 7.604868354430379],
-        ]
+    ]
 
     Q = [
         [6.0952658227848495, -5.630326582278489, 8.033610126582303],
@@ -57,7 +58,7 @@ def test_kabsch():
         [6.895265822784854, -12.33832658227849, 1.2686101265823062],
         [5.7642658227848536, 16.110673417721507, 1.3446101265823032],
         [10.306265822784848, -12.226326582278489, 5.028610126582304],
-        ]
+    ]
 
     observed_U = kabsch(P, Q)
 
@@ -65,7 +66,7 @@ def test_kabsch():
         [0.38845040189428726, 0.38160307568742435, -0.8387403518932808],
         [-0.20700756088693778, 0.9230933741949091, 0.32410876608493205],
         [0.8979165634978604, 0.047725414019726436, 0.43757071411697324],
-        ]
+    ]
 
     np.testing.assert_allclose(np.asarray(expected_U), observed_U)
 
@@ -83,7 +84,7 @@ def test_calc_rmsd():
         [5.88420286284558, 9.382362089324166, -5.708004059876668],
         [4.238076687025332, 3.8305358597829944, -5.857279410346993],
         [5.145346893131023, -2.7233805318567046, 7.910771966100926],
-        ]
+    ]
     W = [
         [-2.2927341772151664, 1.3226734177215107, 12.252610126582304],
         [8.353265822784834, 10.995673417721513, -7.888389873417699],
@@ -95,7 +96,7 @@ def test_calc_rmsd():
         [5.965265822784836, 2.219673417721509, -7.501389873417699],
         [5.648265822784836, -3.0373265822784887, -4.8293898734177],
         [5.240265822784835, -3.3833265822784924, 9.9936101265823],
-        ]
+    ]
 
     rmsd = calc_rmsd(V, W)
 
@@ -108,7 +109,7 @@ def test_centroid():
         [6.0952658227848495, -5.630326582278489, 8.033610126582303],
         [0.5082658227848498, 1.733673417721512, 10.833610126582304],
         [7.42726582278485, 7.67067341772151, -5.757389873417694],
-        ]
+    ]
 
     observed_centroid = centroid(X)
     observed_centroid = list(observed_centroid)
@@ -116,7 +117,7 @@ def test_centroid():
         4.6769324894515165,
         1.2580067510548443,
         4.369943459915638,
-        ]
+    ]
 
     assert observed_centroid == expected_centroid
 
@@ -129,7 +130,7 @@ def test_load_coords():
     (
         observed_coord_dic,
         observed_chain_ranges,
-        ) = load_coords(pdb_f, atoms)
+    ) = load_coords(pdb_f, atoms)
     observed_keys = list(observed_coord_dic.keys())
     expected_keys = [
         ("B", 1, "C"),
@@ -152,7 +153,7 @@ def test_load_coords():
         ("B", 5, "CA"),
         ("B", 5, "C"),
         ("B", 5, "O"),
-        ]
+    ]
 
     assert observed_keys == expected_keys
 
@@ -178,7 +179,7 @@ def test_load_coords():
         [2.761, 10.16, 1.151],
         [1.832, 10.156, 2.373],
         [1.352, 11.174, 2.853],
-        ]
+    ]
 
     assert observed_coords == expected_coords
 
@@ -189,7 +190,7 @@ def test_load_coords():
 
 def test_wrong_filtered_resid_error_load_coords():
     """Test the residue matching error with an uncompatible resdic."""
-    filter_resdic_wrongres = {'B': [7, 8, 9]}  # protein has only residues 1-5
+    filter_resdic_wrongres = {"B": [7, 8, 9]}  # protein has only residues 1-5
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
     with pytest.raises(ALIGNError):
@@ -198,7 +199,7 @@ def test_wrong_filtered_resid_error_load_coords():
 
 def test_wrong_filtered_chain_error_load_coords():
     """Test the chain matching error with an uncompatible resdic."""
-    filter_resdic_wrongchain = {'A': [1, 2, 3]}  # protein has only chain B
+    filter_resdic_wrongchain = {"A": [1, 2, 3]}  # protein has only chain B
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
     with pytest.raises(ALIGNError):
@@ -211,7 +212,7 @@ def test_get_atoms():
         Path(golden_data, "protein.pdb"),
         Path(golden_data, "dna.pdb"),
         Path(golden_data, "ligand.pdb"),
-        ]
+    ]
     observed_atom_dic = {}
     for p in pdb_list:
         observed_atom_dic.update(get_atoms(p))
@@ -253,7 +254,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-            ],
+        ],
         "DC": [
             "C5",
             "N9",
@@ -271,7 +272,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-            ],
+        ],
         "DT": [
             "C5",
             "N9",
@@ -289,7 +290,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-            ],
+        ],
         "DG": [
             "C5",
             "N9",
@@ -307,7 +308,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-            ],
+        ],
         "A": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
         "G": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
         "C": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
@@ -333,8 +334,8 @@ def test_get_atoms():
             "C81",
             "C82",
             "C91",
-            ],
-        }
+        ],
+    }
 
     assert observed_atom_dic == expected_atom_dic
 
@@ -363,8 +364,8 @@ def test_pdb2fastadic():
             30: "G",
             31: "T",
             32: "T",
-            }
         }
+    }
 
     assert observed_dna_fastadic == expected_dna_fastadic
 
@@ -408,10 +409,10 @@ def test_align_seq():
 
         observed_aln = open(expected_aln_f).readlines()
         expected_aln = [
-            f"MFQQE{os.linesep}",
-            f"|||-|{os.linesep}",
-            f"MFQ-E{os.linesep}",
-            ]
+            f"target            0 MFQQE 5{os.linesep}",
+            f"                  0 |||-| 5{os.linesep}",
+            f"query             0 MFQ-E 4{os.linesep}",
+        ]
 
         assert observed_aln == expected_aln
 
@@ -442,10 +443,10 @@ def test_align_seq_inverted():
         print(f"observed_numb_dic: {observed_numb_dic}")
         print(f"observed_chm_dict: {observed_chm_dict}")
         expected_numb_keys = ["A", "B"]
-        expected_chm_dict = {"A" : "A", "B": "B"}
+        expected_chm_dict = {"A": "A", "B": "B"}
 
         assert list(observed_numb_dic.keys()) == expected_numb_keys
-        assert observed_chm_dict == expected_chm_dict    
+        assert observed_chm_dict == expected_chm_dict
 
 
 def test_make_range():
@@ -471,7 +472,7 @@ def test_dump_as_izone():
             f"ZONE B2:B102{os.linesep}",
             f"ZONE B3:B110{os.linesep}",
             f"ZONE B5:B112{os.linesep}",
-            ]
+        ]
 
         assert observed_izone == expected_izone
 
@@ -488,8 +489,8 @@ def test_dump_as_izone():
             f"ZONE B2:X102{os.linesep}",
             f"ZONE B3:X110{os.linesep}",
             f"ZONE B5:X112{os.linesep}",
-            ]
-        
+        ]
+
         assert observed_izone == expected_izone
 
 
@@ -499,14 +500,15 @@ def test_check_common_atoms():
     mod = Path(golden_data, "protprot_complex_2.pdb")
     models = [ref, mod]
 
-    n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)
+    n_atoms, obs_common_keys = check_common_atoms(models, None, False, 90.0)
     assert n_atoms == 950
     assert len(obs_common_keys) == 950
-    assert ('B', 74, 'N') in obs_common_keys
+    assert ("B", 74, "N") in obs_common_keys
 
     models.append(Path(golden_data, "protein.pdb"))
     with pytest.raises(ALIGNError):
-        n_atoms, obs_common_keys  = check_common_atoms(models, None, False, 90.0)
+        n_atoms, obs_common_keys = check_common_atoms(models, None, False, 90.0)
+
 
 def test_rearrange_xyz_files():
     """Test the rearrange_xyz_files function."""
@@ -519,7 +521,7 @@ def test_rearrange_xyz_files():
 
         # Test the function
         rearrange_xyz_files("file.xyz", path=tmpdirname, ncores=ncores)
-        
+
         # Check the files have been renamed
         assert not Path(tmpdirname, "file_0.xyz").exists()
         assert Path(tmpdirname, "file.xyz").exists()
@@ -533,12 +535,14 @@ def test_rearrange_xyz_files():
 
 def test_check_chains():
     """Test correct checking of chains."""
-    obs_ch = [["A", "C"],
-              ["A", "B"],
-              ["S", "E", "B", "A"],
-              ["S", "E", "P", "A"],
-              ["C", "D"]]
-    
+    obs_ch = [
+        ["A", "C"],
+        ["A", "B"],
+        ["S", "E", "B", "A"],
+        ["S", "E", "P", "A"],
+        ["C", "D"],
+    ]
+
     inp_receptor_chains = ["A", "A", "A", "A", "C"]
     inp_ligand_chains = [
         [],
@@ -549,14 +553,19 @@ def test_check_chains():
     ]
 
     # assuming exp chains are A and B
-    exp_ch = [["A", ["C"]], # C becomes the ligand
-              ["A", ["B"]], # C becomes the ligand
-              ["A", ["B", "E"]],  # S is ignored (B,E are present)
-              ["A", ["S", "E", "P"]], # B is not there, S-E-P become the ligands
-              ["C", ["D"]]] # B is not there, D becomes the ligand
+    exp_ch = [
+        ["A", ["C"]],  # C becomes the ligand
+        ["A", ["B"]],  # C becomes the ligand
+        ["A", ["B", "E"]],  # S is ignored (B,E are present)
+        ["A", ["S", "E", "P"]],  # B is not there, S-E-P become the ligands
+        ["C", ["D"]],
+    ]  # B is not there, D becomes the ligand
 
     for n in range(len(obs_ch)):
-        obs_r_chain, obs_l_chain = check_chains(obs_ch[n], inp_receptor_chains[n], inp_ligand_chains[n])
+        obs_r_chain, obs_l_chain = check_chains(
+            obs_ch[n], inp_receptor_chains[n], inp_ligand_chains[n]
+        )
         exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
         assert obs_r_chain == exp_r_chain
         assert obs_l_chain == exp_l_chain
+

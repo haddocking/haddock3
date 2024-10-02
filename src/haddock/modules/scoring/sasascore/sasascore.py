@@ -12,6 +12,7 @@ from haddock.clis.restraints.calc_accessibility import (
     apply_cutoff,
     get_accessibility,
     )
+from haddock.libs.libutil import rank_according_to_score
 
 
 def calc_acc_score(result_dict, buried_resdic, acc_resdic):
@@ -153,7 +154,13 @@ def extract_data_from_accscore_class(sasascore_objects: list[AccScore],
             violations_data[i].update(
                 {acc_key: sasa_obj.violations_data[nbur+a+1]}
                 )
-    write_nested_dic_to_file(data, output_fname)
+
+    ranked_data = rank_according_to_score(
+        data, sort_key="score", sort_ascending=True, iscapri=False
+    )
+    write_nested_dic_to_file(ranked_data, output_fname)
+
+    # violations do not need to be sorted
     write_nested_dic_to_file(violations_data, violations_output_fname)
 
     return data, violations_data

@@ -379,3 +379,48 @@ def recursive_convert_paths_to_strings(params: ParamMapT) -> ParamMapT:
             params[param] = value
 
     return params
+
+
+def rank_according_to_score(
+    data: dict[int, ParamDict], sort_key: str, sort_ascending: bool, iscapri: bool = False
+) -> dict[int, ParamDict]:
+    """
+    Ranks a dictionary of data based on a specified sort key and sort order,
+    and assigns a rank to each entry based on its 'score' attribute.
+
+    Args:
+        data (dict[int, ParamDict]): Dictionary where each key is an index and each
+                                     value is a ParamDict containing data attributes.
+        sort_key (str): Key by which to sort the data within the ParamDict.
+                        Must correspond to a valid attribute in ParamDict.
+        sort_ascending (bool): If True, sorts the data in ascending order based on
+                               the sort_key; if False, sorts in descending order.
+        iscapri (bool): If True, assigns a 'caprieval_rank' attribute to each entry
+
+    Returns:
+        dict[int, ParamDict]: A new dictionary where entries are sorted according
+                              to the sort_key and optionally sorted order. Each entry
+                              also includes a 'caprieval_rank' attribute indicating
+                              its rank based on the 'score'.
+    """
+    score_rankkey_values = [(k, v["score"]) for k, v in data.items()]
+    score_rankkey_values.sort(key=lambda x: x[1])
+
+    for i, k in enumerate(score_rankkey_values):
+        data_idx, _ = k
+        if iscapri:
+            data[data_idx]["caprieval_rank"] = i + 1
+
+    # Sort according to the sort key
+    rankkey_values = [(k, v[sort_key]) for k, v in data.items()]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False,
+    )
+
+    _data = {}
+    for i, (data_idx, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[data_idx]
+    data = _data
+
+    return _data

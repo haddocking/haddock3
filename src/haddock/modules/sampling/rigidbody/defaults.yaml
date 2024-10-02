@@ -58,7 +58,7 @@ hbond_fname:
   long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
   group: 'distance restraints'
   explevel: easy
-amb_scale:
+ambig_scale:
   default: 50
   type: integer
   min: 0
@@ -68,7 +68,7 @@ amb_scale:
   long: Force constant applied to the distance restraints defined in ambig_fname.
   group: 'distance restraints'
   explevel: expert
-unamb_scale:
+unambig_scale:
   default: 50
   type: integer
   min: 0
@@ -900,7 +900,7 @@ inter_rigid:
   group: 'sampling'
   explevel: expert
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99
@@ -956,7 +956,7 @@ symtbl_fname:
   long: Filename of the custom symmetry restraints file. 
   group: 'symmetry'
   explevel: expert
-numc2sym:
+nc2sym:
   default: 0
   type: integer
   min: 0
@@ -1028,7 +1028,7 @@ c2sym_seg2_1:
   long: Segment ID of second C2 segment
   group: 'symmetry'
   explevel: expert
-numc3sym:
+nc3sym:
   default: 0
   type: integer
   min: 0
@@ -1130,7 +1130,7 @@ c3sym_seg3_1:
   long: Segment ID of third C3 segment
   group: 'symmetry'
   explevel: expert
-numc4sym:
+nc4sym:
   default: 0
   type: integer
   min: 0
@@ -1262,7 +1262,7 @@ c4sym_seg4_1:
   long: Segment ID of fourth C4 segment
   group: 'symmetry'
   explevel: expert
-numc5sym:
+nc5sym:
   default: 0
   type: integer
   min: 0
@@ -1424,7 +1424,7 @@ c5sym_seg5_1:
   long: Segment ID of fifth C5 segment
   group: 'symmetry'
   explevel: expert
-numc6sym:
+nc6sym:
   default: 0
   type: integer
   min: 0
@@ -1616,7 +1616,7 @@ c6sym_seg6_1:
   long: Segment ID of sixth C6 segment
   group: 'symmetry'
   explevel: expert
-nums3sym:
+ns3sym:
   default: 0
   type: integer
   min: 0
@@ -1716,97 +1716,6 @@ s3sym_seg3_1:
   title: Segment ID of third S3 segment
   short: Segment ID of third S3 segment
   long: Segment ID of third S3 segment
-  group: 'symmetry'
-  explevel: expert
-ncs_on:
-  default: false
-  type: boolean
-  title: Non-crystallographic symmetry restraints
-  short: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.
-  long: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.
-    This does not apply any symmetry between the two molecules but rather defines restraints such as the RMSD between those is 0.
-  group: 'symmetry'
-  explevel: expert
-kncs:
-  default: 1.0
-  type: float
-  min: 0
-  max: 1000
-  precision: 1
-  title: Force constant for non-crystallographic restraints
-  short: Force constant for non-crystallographic restraints
-  long: Force constant for non-crystallographic restraints
-  group: 'symmetry'
-  explevel: expert
-numncs:
-  default: 0
-  type: integer
-  min: 0
-  max: 100
-  title: Number of non-crystallographic symmetry restraints
-  short: Number of non-crystallographic symmetry restraints (NCS).
-  long: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined.
-    Note that those must contain exactly the same residues/atom combinations.
-  group: 'symmetry'
-  explevel: expert
-ncs_sta1_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Residue number of first residue
-  short: Residue number of first residue in the first NCS segment
-  long: Residue number of first residue in the first NCS segment
-  group: 'symmetry'
-  explevel: expert
-ncs_end1_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Residue number of last residue
-  short: Residue number of last residue in the first NCS segment
-  long: Residue number of last residue in the first NCS segment
-  group: 'symmetry'
-  explevel: expert
-ncs_seg1_1:
-  default: ''
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: Segment ID of first NCS segment
-  short: Segment ID of first NCS segment
-  long: Segment ID of first NCS segment
-  group: 'symmetry'
-  explevel: expert
-ncs_sta2_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Residue number of first residue
-  short: Residue number of first residue in the second NCS segment
-  long: Residue number of first residue in the second NCS segment
-  group: 'symmetry'
-  explevel: expert
-ncs_end2_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Residue number of last residue
-  short: Residue number of last residue in the second NCS segment
-  long: Residue number of last residue in the second NCS segment
-  group: 'symmetry'
-  explevel: expert
-ncs_seg2_1:
-  default: ''
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: Segment ID of second NCS segment
-  short: Segment ID of second NCS segment
-  long: Segment ID of second NCS segment
   group: 'symmetry'
   explevel: expert
 #

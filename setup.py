@@ -1,107 +1,145 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """Setup dot py."""
-import warnings
-from os.path import dirname, join
+import os
+import platform
+import subprocess
+import sys
+import urllib.request
+from pathlib import Path
 
-from setuptools import SetuptoolsDeprecationWarning, find_packages, setup
-# Import warnings object for later filtering out
-from setuptools.command.easy_install import EasyInstallDeprecationWarning
-
-
-# Add warnings filtering to the Setup Deprecation Warnings
-warnings.filterwarnings("ignore", category=SetuptoolsDeprecationWarning)
-warnings.filterwarnings("ignore", category=EasyInstallDeprecationWarning)
+from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext
 
 
-def read(*names, **kwargs) -> str:
-    """Read description files."""
-    path = join(dirname(__file__), *names)
-    with open(path, encoding=kwargs.get('encoding', 'utf8')) as fh:
-        return fh.read()
+CNS_BINARIES = {
+    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
+    "x86_64-darwin": "https://surfdrive.surf.nl/files/index.php/s/3Fzzte0Zx0L8GTY/download",
+    "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
+    "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
+}
+
+cpp_extensions = [
+    Extension(
+        "haddock.bin.contact_fcc",
+        sources=["src/haddock/deps/contact_fcc.cpp"],
+        extra_compile_args=["-O2"],
+    ),
+    Extension(
+        "haddock.bin.fast_rmsdmatrix",
+        sources=["src/haddock/deps/fast-rmsdmatrix.c"],
+        extra_compile_args=["-Wall", "-O3", "-march=native", "-std=c99"],
+        extra_link_args=["-lm"],
+    ),
+]
 
 
-# activate once added, do not remove
-long_description = '{}\n{}'.format(
-    read('README.md'),
-    read('CHANGELOG.md'),
-    )
+class CustomBuild(build_ext):
+    """Custom build handles the C/C++ dependencies"""
+
+    def run(self):
+        """Run the custom build"""
+        print("Building HADDOCK3 C/C++ binary dependencies...")
+        self.build_executable(
+            name="contact_fcc",
+            cmd=["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
+        )
+        self.build_executable(
+            name="fast-rmsdmatrix",
+            cmd=[
+                "gcc",
+                "-Wall",
+                "-O3",
+                "-march=native",
+                "-std=c99",
+                "-o",
+                "fast-rmsdmatrix",
+                "src/haddock/deps/fast-rmsdmatrix.c",
+                "-lm",
+            ],
+        )
+        print("Downloading the CNS binary...")
+        self.download_cns()
+
+        # Run the standard build
+        build_ext.run(self)
+
+    def build_executable(self, name, cmd):
+        """Helper function to execute the build command"""
+        try:
+            subprocess.check_call(cmd)
+            # Ensure the source bin directory exists
+            src_bin_dir = Path("src", "haddock", "bin")
+            src_bin_dir.mkdir(exist_ok=True, parents=True)
+
+            # Move the built executable to the source bin directory
+            src_bin_exec = Path(src_bin_dir, name)
+            if src_bin_exec.exists():
+                src_bin_exec.unlink()
+
+            self.move_file(name, src_bin_exec)
+
+            # If build_lib exists, also copy to there
+            if hasattr(self, "build_lib"):
+                build_bin_dir = Path(self.build_lib, "haddock", "bin")
+                build_bin_dir.mkdir(exist_ok=True, parents=True)
+                self.copy_file(Path(src_bin_dir, name), Path(build_bin_dir, name))
+
+            print(f"Successfully built and moved {name}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error building {name}: {e}")
+            raise
+
+    def download_cns(self):
+        """Helper function to download the CNS binary"""
+
+        arch = self.get_arch()
+
+        if arch not in CNS_BINARIES:
+            print(f"Unknown architecture: {arch}")
+            sys.exit(1)
+
+        cns_binary_url = CNS_BINARIES[arch]
+
+        src_bin_dir = Path("src", "haddock", "bin")
+        src_bin_dir.mkdir(exist_ok=True, parents=True)
+
+        cns_exec = Path(src_bin_dir, "cns")
+        status, msg = self.download_file(cns_binary_url, cns_exec)
+        if not status:
+            print(msg)
+            sys.exit(1)
+
+        # Make it executable
+        os.chmod(cns_exec, 0o755)
+
+        # If build_lib exists, also copy to there
+        if hasattr(self, "build_lib"):
+            install_bin_dir = Path(self.build_lib, "haddock", "bin")
+            install_bin_dir.mkdir(exist_ok=True, parents=True)
+            self.copy_file(cns_exec, Path(install_bin_dir, "cns"))
+
+    @staticmethod
+    def download_file(url, dest) -> tuple[bool, str]:
+        """Download a file from a URL"""
+        try:
+            urllib.request.urlretrieve(url, dest)
+            return True, "Download successful"
+        except Exception as e:  # pylint: disable=broad-except
+            return False, f"Download failed: {e}"
+
+    @staticmethod
+    def get_arch():
+        """Helper function to figure out the architetchure"""
+        system = platform.system().lower()
+        machine = platform.machine().lower()
+
+        return f"{machine}-{system}"
 
 
 setup(
-    name='haddock3',
-    version='3.0.0',
-    description='Haddock 3.',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    license='Apache License 2.0',
-    author='HADDOCK',
-    author_email='A.M.J.J.Bonvin@uu.nl',
-    url='https://github.com/haddocking/haddock3',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
-    # py_modules=[splitext(basename(i))[0] for i in glob("src/*.py")],
-    include_package_data=True,
-    zip_safe=False,
-    classifiers=[
-        # complete classifier list:
-        # http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: Apache Software License',
-        'Natural Language :: English',
-        'Operating System :: POSIX',
-        'Operating System :: POSIX :: Linux',
-        'Operating System :: MacOS',
-        'Programming Language :: Python :: 3.9',
-        ],
-    project_urls={
-        'webpage': 'https://github.com/haddocking/haddock3',
-        'Documentation': 'https://github.com/haddocking/haddock3#readme',
-        'Changelog': '',
-        'Issue Tracker': 'https://github.com/haddocking/haddock3/issues',
-        'Discussion Forum': 'https://github.com/haddocking/haddock3/issues',
-        },
-    keywords=[
-        'Structural Biology',
-        'Biochemistry',
-        'Docking',
-        'Protein docking',
-        'Proteins',
-        ],
-    python_requires='>=3.9, <3.10',
-    install_requires=[
-        # not added on purpose
-        ],
-    extras_require={
-        },
-    setup_requires=[
-        ],
-    entry_points={
-        'console_scripts': [
-            'haddock3 = haddock.clis.cli:maincli',
-            "haddock3-mpitask = haddock.clis.cli_mpi:maincli",
-            'haddock3-bm = haddock.clis.cli_bm:maincli',
-            'haddock3-cfg = haddock.clis.cli_cfg:maincli',
-            'haddock3-clean = haddock.clis.cli_clean:maincli',
-            'haddock3-copy = haddock.clis.cli_cp:maincli',
-            'haddock3-dmn = haddock.clis.cli_dmn:maincli',
-            'haddock3-pp = haddock.clis.cli_pp:maincli',
-            'haddock3-score = haddock.clis.cli_score:maincli',
-            'haddock3-unpack = haddock.clis.cli_unpack:maincli',
-            'haddock3-analyse = haddock.clis.cli_analyse:maincli',
-            'haddock3-traceback = haddock.clis.cli_traceback:maincli',
-            'haddock3-re = haddock.clis.cli_re:maincli',
-	        'haddock3-restraints = haddock.clis.cli_restraints:maincli'
-            ]
-        },
-    # cmdclass={'build_ext': optional_build_ext},
-    # ext_modules=[
-    #    Extension(
-    #        splitext(relpath(path, 'src').replace(os.sep, '.'))[0],
-    #        sources=[path],
-    #        include_dirs=[dirname(path)]
-    #    )
-    #    for root, _, _ in os.walk('src')
-    #    for path in glob(join(root, '*.c'))
-    # ],
-    )
+    cmdclass={
+        "build_ext": CustomBuild,
+    },
+    ext_modules=cpp_extensions,
+)

@@ -11,14 +11,14 @@ receptor_chain:
   explevel: easy
 
 ligand_chains:
-  default: ["B"]
+  default: []
   type: list
   minitems: 0
   maxitems: 100
   title: Ligand ChainIDs
   short: Ligand ChainIDs to be considered for the IL-RMSD calculations.
   long: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be
-    treated as the ligand for the IL-RMSD.
+    treated as the ligand for the IL-RMSD. By default, all chains are considered with the exception of the receptor chain.
   group: analysis
   explevel: easy
 

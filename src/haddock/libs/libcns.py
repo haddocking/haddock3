@@ -273,7 +273,7 @@ def prepare_cns_input(
     ambig_fname: FilePath = "",
     native_segid: bool = False,
     default_params_path: Optional[Path] = None,
-    less_io: Optional[bool] = True,
+    debug: Optional[bool] = False,
     seed: Optional[int] = None,
 ) -> Union[Path, str]:
     """
@@ -372,7 +372,7 @@ def prepare_cns_input(
 
     inp = default_params + input_str + seed_str + output + segid_str + recipe_str
 
-    if less_io:
+    if not debug:
         return inp
     else:
         inp_file = Path(f"{identifier}_{model_number}.inp")

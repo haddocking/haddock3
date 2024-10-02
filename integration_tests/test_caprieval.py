@@ -62,6 +62,8 @@ def expected_clt_data() -> list[dict[str, Union[int, str, float]]]:
             "dockq_std": 0.463,
             "ilrmsd": 9.124,
             "ilrmsd_std": 9.124,
+            "rmsd": 4.311,
+            "rmsd_std": 4.311,
             "air": float("nan"),
             "air_std": float("nan"),
             "bsa": float("nan"),
@@ -92,6 +94,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "lrmsd": 0.000,
             "ilrmsd": 0.000,
             "dockq": 1.000,
+            "rmsd": 0.000,
             "cluster_id": "-",
             "cluster_ranking": "-",
             "model-cluster_ranking": "-",
@@ -107,6 +110,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "lrmsd": 20.937,
             "ilrmsd": 18.248,
             "dockq": 0.074,
+            "rmsd": 8.623,
             "cluster_id": "-",
             "cluster_ranking": "-",
             "model-cluster_ranking": "-",
@@ -165,33 +169,35 @@ def _compare_polymorphic_data(
     oberseved_data: list[dict[str, Union[int, str, float]]],
 ):
     """Helper function to compare a list of dictionaries with polymorphic values."""
-    for k, v in zip(expected_data, oberseved_data):
-        for key in k:
-            v1 = k[key]
-            v2 = v[key]
+    for expected, observed in zip(expected_data, oberseved_data):
+        # Loop over keys
+        for key in expected.keys():
+            # Point corresponding values
+            exp_val = expected[key]
+            obs_val = observed[key]
 
             # Check the type match
-            assert type(v1) == type(v2), f"Type mismatch for {key}"
+            assert type(exp_val) == type(obs_val), f"Type mismatch for {key}"
 
             # Check float
-            if isinstance(v1, float):
-                if math.isnan(v1):
-                    assert isinstance(v2, float) and math.isnan(
-                        v2
+            if isinstance(exp_val, float):
+                if math.isnan(exp_val):
+                    assert isinstance(obs_val, float) and math.isnan(
+                        obs_val
                     ), f"Value mismatch for {key}"
                 else:
                     assert (
-                        isinstance(v2, (int, float))
-                        and pytest.approx(v1, rel=1e-3) == v2
+                        isinstance(obs_val, (int, float))
+                        and pytest.approx(exp_val, rel=1e-3) == obs_val
                     ), f"Value mismatch for {key}"
 
             # Check int
-            elif isinstance(v1, int):
-                assert v1 == v2, f"Value mismatch for {key}"
+            elif isinstance(exp_val, int):
+                assert exp_val == obs_val, f"Value mismatch for {key}"
 
             # Check str
-            elif isinstance(v1, str):
-                assert v1 == v2, f"Value mismatch for {key}"
+            elif isinstance(exp_val, str):
+                assert exp_val == obs_val, f"Value mismatch for {key}"
 
             # Value is not float, int or str
             else:
@@ -203,28 +209,31 @@ def _check_capri_ss_tsv(
 ):
     """Helper function to check the content of the capri_ss.tsv file."""
     with open(capri_file) as f:
-        lines = f.readlines()
+        lines = [
+            _.strip().split("\t")
+            for _ in f.readlines()
+            if not _.startswith("#")
+            ]
 
     # Check the header
     expected_header_cols = list(expected_data[0].keys())
-    observed_header_cols = lines[0].strip().split("\t")
+    observed_header_cols = lines[0]
 
-    # Check if all they have the same lenght
+    # Check if all of them have the same lenght
     assert len(observed_header_cols) == len(expected_header_cols), "Header mismatch"
-
+    # Make sure column names are the same
     for col_name in expected_header_cols:
         assert col_name in observed_header_cols, f"{col_name} not found in the header"
 
     oberseved_data: list[dict[str, Union[int, str, float]]] = []
     data = lines[1:]
     for line in data:
-        values = line.strip().split("\t")
 
         # Check there is one value for each column
-        assert len(values) == len(expected_header_cols), "Values mismatch"
+        assert len(line) == len(expected_header_cols), "Values mismatch"
 
         data_dict = {}
-        for h, v in zip(expected_header_cols, values):
+        for h, v in zip(expected_header_cols, line):
             data_dict[h] = _cast_float_str_int(v)
 
         oberseved_data.append(data_dict)
@@ -240,14 +249,16 @@ def _check_capri_clt_tsv(
 ):
     """Helper function to check the content of the capri_clt.tsv file."""
     with open(capri_file) as f:
-        lines = f.readlines()
-
-    # There are several `#` lines in the file, these are comments and can be ignored
-    lines = [line for line in lines if not line.startswith("#")]
+        # There are several `#` lines in the file, these are comments and can be ignored
+        lines = [
+            _.strip().split("\t")
+            for _ in f.readlines()
+            if not _.startswith("#")
+            ]
 
     # Check header
     expected_header_cols = list(expected_data[0].keys())
-    observed_header_cols = lines[0].strip().split("\t")
+    observed_header_cols = lines[0]
 
     # Check if all the columns are present
     assert len(observed_header_cols) == len(expected_header_cols), "Header mismatch"
@@ -258,13 +269,12 @@ def _check_capri_clt_tsv(
     data = lines[1:]
     oberseved_data: list[dict[str, Union[int, str, float]]] = []
     for line in data:
-        values = line.strip().split("\t")
 
         # Check if there is one value for each column
-        assert len(values) == len(expected_header_cols), "Values mismatch"
+        assert len(line) == len(expected_header_cols), "Values mismatch"
 
         data_dic = {}
-        for h, v in zip(expected_header_cols, values):
+        for h, v in zip(expected_header_cols, line):
             data_dic[h] = _cast_float_str_int(v)
 
         oberseved_data.append(data_dic)
@@ -320,11 +330,11 @@ def test_caprieval_default(
     )
 
 
-def test_caprieval_less_io(
+def test_caprieval_nodebug(
     caprieval_module, model_list, expected_ss_data, expected_clt_data
 ):
     caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
-    caprieval_module.params["less_io"] = True
+    caprieval_module.params["debug"] = False
 
     caprieval_module.run()
 

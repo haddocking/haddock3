@@ -18,7 +18,7 @@ if ($Data.flags.sym eq true) then
     ! Define C2 symmetry restraints for symmetrical multimers
     !
     eval ($ncount = 0)
-    while ($ncount < $data.numc2sym) loop c2symloop
+    while ($ncount < $data.nc2sym) loop c2symloop
 
         eval ($ncount = $ncount + 1)
         evaluate ($i1start = $c2sym_sta1_$ncount)
@@ -32,7 +32,7 @@ if ($Data.flags.sym eq true) then
         evaluate ($diff1 = $i1end - $i1start)
         evaluate ($diff2 = $i2end - $i2start)
         if ($diff1 ne $diff2) then
-            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display CHAIN LENGTH FOR SYMMETRY RESTRAINTS DOES NOT MATCH
             display PLEASE CHECK CAREFULLY YOUR INPUT
             display ... stopping ...
             stop
@@ -65,7 +65,7 @@ if ($Data.flags.sym eq true) then
     ! Define C3 symmetry restraints for symmetrical multimers
     !
     eval ($ncount = 0)
-    while ($ncount < $data.numc3sym) loop c3symloop
+    while ($ncount < $data.nc3sym) loop c3symloop
 
         eval ($ncount = $ncount + 1)
         evaluate ($i1start = $c3sym_sta1_$ncount)
@@ -142,7 +142,7 @@ if ($Data.flags.sym eq true) then
     ! Define S3 symmetry restraints for symmetrical multimers
     !
     eval ($ncount = 0)
-    while ($ncount < $data.nums3sym) loop s3symloop
+    while ($ncount < $data.ns3sym) loop s3symloop
 
         eval ($ncount = $ncount + 1)
         evaluate ($i1start = $s3sym_sta1_$ncount)
@@ -218,7 +218,7 @@ if ($Data.flags.sym eq true) then
     !
     eval ($istep = 10)
     eval ($ncount = 0)
-    while ($ncount < $data.numc4sym) loop c4symloop
+    while ($ncount < $data.nc4sym) loop c4symloop
 
         eval ($ncount = $ncount + 1)
         evaluate ($i1start = $c4sym_sta1_$ncount)
@@ -369,7 +369,7 @@ if ($Data.flags.sym eq true) then
     !
     eval ($istep = 4)
     eval ($ncount = 0)
-    while ($ncount < $data.numc5sym) loop c5symloop
+    while ($ncount < $data.nc5sym) loop c5symloop
 
         eval ($ncount = $ncount + 1)
         evaluate ($i1start = $c5sym_sta1_$ncount)
@@ -482,7 +482,7 @@ if ($Data.flags.sym eq true) then
     !
     eval ($istep = 10)
     eval ($ncount = 0)
-    while ($ncount < $data.numc6sym) loop c6symloop
+    while ($ncount < $data.nc6sym) loop c6symloop
 
         eval ($ncount = $ncount + 1)
         evaluate ($i1start = $c6sym_sta1_$ncount)

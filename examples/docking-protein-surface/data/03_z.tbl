@@ -1,0 +1,33 @@
+assign ( resid 19 and segid A and name CA ) (  segid S and name SHA and attr z le -13.403) 8.0 8.0 0.0
+
+assign ( resid 83 and segid A and name CA ) (  segid S and name SHA and attr z le -13.403) 8.0 8.0 0.0
+
+assign ( resid 145 and segid A and name CA ) (  segid S and name SHA and attr z le -13.403) 8.0 8.0 0.0
+
+assign ( resid 119 and segid A and name CA ) (  segid S and name SHA and attr z le -13.403) 8.0 8.0 0.0
+
+assign ( resid 167 and segid A and name CA ) (  segid S and name SHA and attr z le -13.403) 8.0 8.0 0.0
+
+assign ( resid 98 and segid A and name CA ) (  segid S and name SHA and attr z ge 13.403) 8.0 8.0 0.0
+
+assign ( resid 101 and segid A and name CA ) (  segid S and name SHA and attr z ge 13.403) 8.0 8.0 0.0
+
+assign ( resid 126 and segid A and name CA ) (  segid S and name SHA and attr z ge 13.403) 8.0 8.0 0.0
+
+assign ( resid 129 and segid A and name CA ) (  segid S and name SHA and attr z ge 13.403) 8.0 8.0 0.0
+
+assign ( resid 23 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+assign ( resid 62 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+assign ( resid 87 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+assign ( resid 111 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+assign ( resid 116 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+assign ( resid 153 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+assign ( resid 163 and segid A and name CA ) (  segid S and name SHA and attr z ge 25.089) 8.0 8.0 0.0
+
+

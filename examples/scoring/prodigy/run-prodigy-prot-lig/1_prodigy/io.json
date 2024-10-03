@@ -1,0 +1,89 @@
+{
+    "input": [
+        {
+            "0": {
+                "clt_id": null,
+                "clt_model_rank": null,
+                "clt_rank": null,
+                "created": "2024-10-02 10:05:57",
+                "file_name": "prot-lig_haddock.pdb",
+                "file_type": {
+                    "py/reduce": [
+                        {
+                            "py/type": "haddock.libs.libontology.Format"
+                        },
+                        {
+                            "py/tuple": [
+                                "pdb"
+                            ]
+                        }
+                    ]
+                },
+                "full_name": "prot-lig_haddock.pdb",
+                "len": NaN,
+                "md5": null,
+                "ori_name": "prot-lig",
+                "path": "/Users/vreys/Desktop/HADDOCK3/haddock3-dev/examples/thirdparty/prodigy/run-prodigy-prot-lig/0_topoaa",
+                "py/object": "haddock.libs.libontology.PDBFile",
+                "rel_path": {
+                    "py/reduce": [
+                        {
+                            "py/type": "pathlib.PosixPath"
+                        },
+                        {
+                            "py/tuple": [
+                                "..",
+                                "0_topoaa",
+                                "prot-lig_haddock.pdb"
+                            ]
+                        }
+                    ]
+                },
+                "restr_fname": null,
+                "score": null,
+                "seed": null,
+                "topology": {
+                    "created": "2024-10-02 10:05:57",
+                    "file_name": "prot-lig_haddock.psf",
+                    "file_type": {
+                        "py/reduce": [
+                            {
+                                "py/type": "haddock.libs.libontology.Format"
+                            },
+                            {
+                                "py/tuple": [
+                                    "psf"
+                                ]
+                            }
+                        ]
+                    },
+                    "full_name": "prot-lig_haddock.psf",
+                    "md5": null,
+                    "path": "/Users/vreys/Desktop/HADDOCK3/haddock3-dev/examples/thirdparty/prodigy/run-prodigy-prot-lig/0_topoaa",
+                    "py/object": "haddock.libs.libontology.TopologyFile",
+                    "rel_path": {
+                        "py/reduce": [
+                            {
+                                "py/type": "pathlib.PosixPath"
+                            },
+                            {
+                                "py/tuple": [
+                                    "..",
+                                    "0_topoaa",
+                                    "prot-lig_haddock.psf"
+                                ]
+                            }
+                        ]
+                    },
+                    "restr_fname": null
+                },
+                "unw_energies": null
+            }
+        }
+    ],
+    "output": [
+        {
+            "py/id": 3
+        }
+    ]
+}

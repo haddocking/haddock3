@@ -1,0 +1,10 @@
+
+run_dir = "run-prodigy-prot-prot"
+molecules = [
+    "data/prot-prot.pdb",
+    "data/homotrimer.pdb",
+    ]
+postprocess=false
+clean=false
+[topoaa]
+[prodigy]

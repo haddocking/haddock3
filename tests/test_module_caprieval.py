@@ -18,6 +18,7 @@ from haddock.modules.analysis.caprieval.capri import (
     extract_data_from_capri_class,
     get_previous_cns_step,
     load_contacts,
+    rank_according_to_score,
     rearrange_ss_capri_output,
     )
 
@@ -950,6 +951,7 @@ def test_capri_run(mocker):
 
 
 def test_rank_according_to_score():
+    """test ranking according to score."""
     data = {
         1: {
             "score": 3.0,

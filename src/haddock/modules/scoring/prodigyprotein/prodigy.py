@@ -15,6 +15,8 @@ class ProdigyProtein(ProdigyWorker):
     def __init__(self, model: FilePath, params: ParamDict) -> None:
         """Instantiate the class with superclass."""
         super().__init__(model, params)
+        self.acc_cutoff = self.params["accessibility_cutoff"]
+        self.chains = self.params["chains"]
 
     def evaluate_complex(self) -> float:
         """Evaluate a complex with prodigy-prot.

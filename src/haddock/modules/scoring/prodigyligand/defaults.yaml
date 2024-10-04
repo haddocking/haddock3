@@ -1,22 +1,8 @@
-scoring_mode:
-  default: protein
+receptor_chain:
+  default: "A"
   type: string
-  minchars: 6
-  maxchars: 7
-  choices:
-    - protein
-    - ligand
-  title: Scoring mode of PRODIGY
-  short: Scoring mode of PRODIGY
-  long: Choose protein when scoring protein complexes, and ligands when a small
-   molecule is involved.
-  group: scoring
-  explevel: easy
-chains:
-  default: ["A", "B"]
-  type: list
-  minitems: 2
-  maxitems: 2
+  minchars: 1
+  maxchars: 1
   title: Chains to be scored.
   short: Chains to be scored.
   long: Chains to be scored.
@@ -43,7 +29,7 @@ ligand_chain:
   group: scoring
   explevel: easy
 distance_cutoff:
-  default: .nan
+  default: 10.5
   type: float
   min: 1.00
   max: 100.00
@@ -53,18 +39,6 @@ distance_cutoff:
   long: Add text.
     If not set, will take the default input values for the
     prodigy-prot or prodigy-lig, depending on the selected `scoring_mode`.
-  group: scoring
-  explevel: expert
-accessibility_cutoff:
-  default: 0.05
-  type: float
-  min: 0.00
-  max: 1.00
-  precision: 2
-  title: Add text
-  short: Add text
-  long: Add text
-    Not used in prodigy-lig.
   group: scoring
   explevel: expert
 temperature:

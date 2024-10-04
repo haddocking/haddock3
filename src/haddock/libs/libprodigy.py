@@ -50,15 +50,10 @@ class ProdigyWorker(ABC):
     def __init__(self, model: FilePath, params: ParamDict) -> None:
         # Use by both prodigy -prot and -lig
         self.model = model
+        self.params = params
         self.topKd = params["to_pkd"]
         self.temperature = params["temperature"]
         self.dist_cutoff = self.set_distance_cutoff(params["distance_cutoff"])
-        self.chains = params["chains"]
-        # Only used by prodigy-prot
-        self.acc_cutoff = params["accessibility_cutoff"]
-        # Only used by prodigy-lig
-        self.lig_resname = params["ligand_resname"]
-        self.lig_chain = params["ligand_chain"]
         # Output values
         self.score: Optional[float] = None
         self.error: Optional[Exception] = None

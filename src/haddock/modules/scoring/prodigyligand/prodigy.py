@@ -11,6 +11,9 @@ class ProdigyLigand(ProdigyWorker):
     def __init__(self, model: FilePath, params: ParamDict) -> None:
         """Instantiate the class with superclass."""
         super().__init__(model, params)
+        self.receptor_chain = self.params["receptor_chain"]
+        self.lig_resname = self.params["ligand_resname"]
+        self.lig_chain = self.params["ligand_chain"]
 
     def evaluate_complex(self) -> float:
         """Evaluate a complex with prodigy-lig.
@@ -45,7 +48,7 @@ class ProdigyLigand(ProdigyWorker):
             prodigy_lig = ProdigyLig(
                 parser.get_structure(fname, in_file),
                 chains=[
-                    ":".join(self.chains),
+                    f"{self.receptor_chain}:{self.lig_chain}",
                     f"{self.lig_chain}:{self.lig_resname}",
                     ],
                 electrostatics=electrostatics,

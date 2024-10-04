@@ -267,7 +267,7 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_io_models(self, faulty_tolerance=0):
+    def export_io_models(self, faulty_tolerance: float = 0.0) -> None:
         """
         Export input/output to the ModuleIO interface.
 

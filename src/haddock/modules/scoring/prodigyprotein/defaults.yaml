@@ -1,0 +1,51 @@
+chains:
+  default: ["A", "B"]
+  type: list
+  minitems: 2
+  maxitems: 20
+  title: Chains to be scored.
+  short: Chains to be scored.
+  long: Chains to be scored.
+  group: scoring
+  explevel: easy
+distance_cutoff:
+  default: 5.5
+  type: float
+  min: 1.00
+  max: 100.00
+  precision: 2
+  title: Add text
+  short: Add text
+  long: Add text.
+  group: scoring
+  explevel: expert
+accessibility_cutoff:
+  default: 0.05
+  type: float
+  min: 0.00
+  max: 1.00
+  precision: 2
+  title: Add text
+  short: Add text
+  long: Add text
+  group: scoring
+  explevel: expert
+temperature:
+  default: 25.00
+  type: float
+  min: -273.15
+  max: 95.00
+  precision: 2
+  title: Add text
+  short: Add text
+  long: Add text
+  group: conversion
+  explevel: expert
+to_pkd:
+  default: true
+  type: boolean
+  title: Add text
+  short: Add text
+  long: Add text
+  group: conversion
+  explevel: easy

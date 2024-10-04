@@ -103,9 +103,9 @@ HEATMAP_DEFAULT_PATH = Path('contacts.html')
 def create_html(
         json_content: str,
         plot_id: int = 1,
+        plotly_js_import: Optional[str] = None,
         figure_height: int = 800,
         figure_width: int = 1000,
-        offline: bool = False,
         ) -> str:
     """Create html content given a plotly json.
 
@@ -129,16 +129,14 @@ def create_html(
         html content
     """
     # Check if plotly javascript must be flushed in this file
-    if offline:
-        plotlyjs = f'<script type="text/javascript">{get_plotlyjs()}</script>'
-    else:
-        plotlyjs = f'<script src="{plotly_cdn_url()}"></script>'
+    if not plotly_js_import:
+        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
 
     # Write HTML content
     html_content = f"""
     <div>
     <script type="text/javascript">window.PlotlyConfig = {{ MathJaxConfig: 'local' }};</script>
-    {plotlyjs}
+    {plotly_js_import}
     <div id="plot{plot_id}" class="plotly-graph-div" style="height:{figure_height}px; width:{figure_width}px;">
     </div>
     <script id="data{plot_id}" type="application/json">
@@ -313,11 +311,14 @@ def box_plot_plotly(
     # layout
     update_layout_plotly(fig, "Cluster Rank", AXIS_NAMES[y_ax])
     # save figure
-    px_fname = f"{y_ax}_clt.html"
+    px_fpath = Path(f"{y_ax}_clt.html")
     json_content = fig.to_json()
-    html_content = create_html(json_content, offline=offline)
+    html_content = create_html(
+        json_content,
+        plotly_js_import=offline_js_manager(px_fpath, offline),
+        )
     # write html_content to px_fname
-    Path(px_fname).write_text(html_content)
+    px_fpath.write_text(html_content)
     # create format boxplot if necessary
     if format:
         fig.write_image(f"{y_ax}_clt.{format}", scale=scale)
@@ -543,7 +544,7 @@ def scatter_plot_plotly(
             )
     for trace in traces:
         fig.add_trace(trace)
-    px_fname = f"{x_ax}_{y_ax}.html"
+    px_fpath = Path(f"{x_ax}_{y_ax}.html")
     update_layout_plotly(
         fig,
         TITLE_NAMES[x_ax],
@@ -551,9 +552,12 @@ def scatter_plot_plotly(
         title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}",
         )
     json_content = fig.to_json()
-    html_content = create_html(json_content, offline=offline)
+    html_content = create_html(
+        json_content,
+        plotly_js_import=offline_js_manager(px_fpath, offline),
+        )
     # write html_content to px_fname
-    Path(px_fname).write_text(html_content)
+    Path(px_fpath).write_text(html_content)
 
     # create format boxplot if necessary
     if format:
@@ -997,7 +1001,12 @@ def _css_styles_for_report(offline: bool) -> str:
     return f"{table_css}<style>{custom_css}</style>"
 
 
-def _generate_html_report(step, figures, offline):
+def _generate_html_report(
+        step: str,
+        figures: list[Union[Figure, pd.DataFrame]],
+        report_path: FilePath,
+        offline: bool = False,
+        ) -> str:
     """
     Generate an HTML report for a specific step of analysis, including figures.
 
@@ -1019,7 +1028,7 @@ def _generate_html_report(step, figures, offline):
     """
     html_report = "<!DOCTYPE html><html lang='en'>"
     html_report += _generate_html_head(step, offline)
-    html_report += _generate_html_body(figures, offline)
+    html_report += _generate_html_body(figures, report_path, offline=offline)
     html_report += "</html>"
     return html_report
 
@@ -1129,7 +1138,11 @@ def _generate_clustered_table_html(
             </script>"""  # noqa : E501
 
 
-def _generate_html_body(figures: list[Figure], offline: bool = False) -> str:
+def _generate_html_body(
+        figures: list[Union[Figure, pd.DataFrame]],
+        report_path: FilePath,
+        offline: bool = False,
+        ) -> str:
     """
     Generate an HTML body section containing figures for an analysis report.
 
@@ -1148,8 +1161,8 @@ def _generate_html_body(figures: list[Figure], offline: bool = False) -> str:
         The generated HTML body as a string.
     """
     body = "<body>"
-    table_index = 1
-    fig_index = 1
+    table_index: int = 1
+    fig_index: int = 1
     for figure in figures:
         if isinstance(figure, pd.DataFrame):  # tables
             table_index += 1
@@ -1171,9 +1184,9 @@ def _generate_html_body(figures: list[Figure], offline: bool = False) -> str:
             inner_html = create_html(
                 inner_json,
                 fig_index,
-                figure.layout.height,
-                figure.layout.width,
-                offline=offline,
+                plotly_js_import=offline_js_manager(report_path, offline),
+                figure_height=figure.layout.height,
+                figure_width=figure.layout.width,
                 )
             fig_index += 1  # type: ignore
         body += "<br>"  # add a break between tables and plots
@@ -1182,7 +1195,14 @@ def _generate_html_body(figures: list[Figure], offline: bool = False) -> str:
     return body
 
 
-def report_generator(boxes, scatters, tables, step, offline):
+def report_generator(
+        boxes: list[Figure],
+        scatters: list[Figure],
+        tables: list,
+        step: str,
+        directory: FilePath = ".",
+        offline: bool = False
+        ) -> None:
     """
     Create a figure include plots and tables.
 
@@ -1197,6 +1217,8 @@ def report_generator(boxes, scatters, tables, step, offline):
         list of scatter plots generated by scatter_plot_handler
     table: list
         a list including tables generated by clt_table_handler
+    directory : Path
+        path to the output folder
     offline: bool
         If True, the HTML will be generated for offline use.
     """
@@ -1215,8 +1237,9 @@ def report_generator(boxes, scatters, tables, step, offline):
     if offline:
         Path('../data/ui').mkdir(parents=True, exist_ok=True)
     # Write everything to a html file
-    html_report = _generate_html_report(step, figures, offline)
-    with open("report.html", "w", encoding="utf-8") as report:
+    report_path = Path(directory, "report.html")
+    html_report = _generate_html_report(step, figures, report_path, offline)
+    with open(report_path, "w", encoding="utf-8") as report:
         report.write(html_report)
 
 
@@ -1444,17 +1467,21 @@ def fig_to_html(
 
     Parameters
     ----------
+    fig : Figure
+        A Figure object created by Plotly
+    fpath : Union[str, Path]
+        Where to write the content
     json_content : str
         plotly json content
-    
     plot_id : int
         plot id to be used in the html content
-    
     figure_height : int
         figure height (in pixels)
-    
     figure_width : int
         figure width (in pixels)
+    offline : bool
+        If set to False, use the cdn url to obtain the javascript content
+        for the rendering.
     """
     # Convert to json
     json_content = fig.to_json()
@@ -1462,15 +1489,48 @@ def fig_to_html(
     html_content = create_html(
         json_content,
         plot_id=plot_id,
+        plotly_js_import=offline_js_manager(fpath, offline),
         figure_height=figure_height,
         figure_width=figure_width,
-        offline=offline,
         )
     # Write it
     Path(fpath).write_text(html_content)
 
 
-def make_traceback_plot(tr_subset, plot_filename):
+def offline_js_manager(fpath: FilePath, offline: bool) -> str:
+    """Build string to access plotly javascript content.
+
+    Parameters
+    ----------
+    fpath : FilePath
+        Path to the figure about to be written.
+    offline : bool
+        if True use the offline approach.
+
+    Returns
+    -------
+    plotly_js_import : str
+        HTML solution for the importation of the plotly javascript content.
+    """
+    # Case where offline isrequired
+    if offline:
+        # Obtain directory where the figure should be written
+        fig_dir = Path(fpath).parent
+        # Set plotly js filepath
+        plotly_js_fpath = Path(fig_dir, "plotly_bundle.js")
+        # Check that this file do not already exists
+        if not plotly_js_fpath.exists():
+            # Write the plotly java script content
+            plotly_js_fpath.write_text(get_plotlyjs())
+        # Build HTML string
+        plotly_js_import = f'<script src="{plotly_js_fpath}"></script>'
+    else:
+        # Use CDN url to obtain the script
+        plotly_js_import = f'<script src="{plotly_cdn_url()}"></script>'
+    return plotly_js_import
+        
+
+def make_traceback_plot(tr_subset, plot_filename, offline=False):
     """
     Create a traceback barplot with the 40 best ranked models.
 
@@ -1487,25 +1547,29 @@ def make_traceback_plot(tr_subset, plot_filename):
     # vertical legend on the right with legend name 'Modules'
     fig.update_layout(legend_orientation="v", legend_title="Modules")
     # legend should have bigger font size
-    fig.update_layout(legend=dict(
-        title_font_size=24,
-        font_size=24,
-    ))
+    fig.update_layout(
+        legend=dict(
+            title_font_size=24,
+            font_size=24,
+            ),
+        )
     # y axis title 'Sum of Ranks'
     fig.update_layout(yaxis_title="Sum of Ranks", xaxis_title="Models")
     # bigger axis labels
     fig.update_layout(
         yaxis=dict(title_font_size=30, tickfont_size=16),
-        xaxis=dict(title_font_size=30, tickfont_size=16)
+        xaxis=dict(title_font_size=30, tickfont_size=16),
         )
     # bigger title
     fig.update_layout(
         title_text=f"Top ranked {tr_subset.shape[0]} Models",
         title_font_size=30
         )
-    fig_to_html(fig,
-                plot_filename,
-                figure_height=1200,
-                figure_width=2000
-                )
+    fig_to_html(
+        fig,
+        plot_filename,
+        figure_height=1200,
+        figure_width=2000,
+        offline=offline,
+        )
     return plot_filename

@@ -460,6 +460,7 @@ def analyse_step(
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
 
+    # Go to directory where to write all the analysis figures / report
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if run_capri == True:
@@ -490,7 +491,7 @@ def analyse_step(
             offline=offline,
             )
         tables = clt_table_handler(clt_file, ss_file, is_cleaned)
-        report_generator(boxes, scatters, tables, step, offline)
+        report_generator(boxes, scatters, tables, step, '.', offline)
         # provide a zipped archive of the top ranked structures
         zip_top_ranked(ss_file, cluster_ranking, Path("summary.tgz"))
 

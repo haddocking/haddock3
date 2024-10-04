@@ -40,7 +40,6 @@ from haddock.libs.libalign import (
 )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
-from haddock.libs.libutil import rank_according_to_score
 from haddock.modules import get_module_steps_folders
 
 
@@ -848,7 +847,7 @@ def rearrange_ss_capri_output(
         out_file.unlink()
 
     ranked_data = rank_according_to_score(
-        data, sort_key=sort_key, sort_ascending=sort_ascending, iscapri=True
+        data, sort_key=sort_key, sort_ascending=sort_ascending
     )
 
     data = ranked_data
@@ -858,6 +857,49 @@ def rearrange_ss_capri_output(
         return
     else:
         write_nested_dic_to_file(data, output_name)
+
+
+def rank_according_to_score(
+    data: dict[int, ParamDict], sort_key: str, sort_ascending: bool
+) -> dict[int, ParamDict]:
+    """
+    Ranks a dictionary of data based on a specified sort key and sort order,
+    and assigns a rank to each entry based on its 'score' attribute.
+
+    Args:
+        data (dict[int, ParamDict]): Dictionary where each key is an index and each
+                                     value is a ParamDict containing data attributes.
+        sort_key (str): Key by which to sort the data within the ParamDict.
+                        Must correspond to a valid attribute in ParamDict.
+        sort_ascending (bool): If True, sorts the data in ascending order based on
+                               the sort_key; if False, sorts in descending order.
+
+    Returns:
+        dict[int, ParamDict]: A new dictionary where entries are sorted according
+                              to the sort_key and optionally sorted order. Each entry
+                              also includes a 'caprieval_rank' attribute indicating
+                              its rank based on the 'score'.
+    """
+    score_rankkey_values = [(k, v["score"]) for k, v in data.items()]
+    score_rankkey_values.sort(key=lambda x: x[1])
+
+    for i, k in enumerate(score_rankkey_values):
+        data_idx, _ = k
+        data[data_idx]["caprieval_rank"] = i + 1
+
+    # Sort according to the sort key
+    rankkey_values = [(k, v[sort_key]) for k, v in data.items()]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False,
+    )
+
+    _data = {}
+    for i, (data_idx, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[data_idx]
+    data = _data
+
+    return _data
 
 
 def extract_data_from_capri_class(
@@ -908,7 +950,7 @@ def extract_data_from_capri_class(
             data[i].update(c.model.unw_energies)
 
     ranked_data = rank_according_to_score(
-        data, sort_key=sort_key, sort_ascending=sort_ascending, iscapri=True
+        data, sort_key=sort_key, sort_ascending=sort_ascending
     )
     if not ranked_data:
         # This means no files have been collected

@@ -11,7 +11,6 @@ from haddock.clis.restraints.calc_accessibility import (
     apply_cutoff,
     get_accessibility,
     )
-from haddock.libs.libutil import rank_according_to_score
 
 
 def calc_acc_score(result_dict, buried_resdic, acc_resdic):
@@ -108,7 +107,6 @@ class AccScore:
 
 
 def extract_data_from_accscore_class(sasascore_objects: list[AccScore],
-                                     output_fname: Path,
                                      violations_output_fname: Path
                                      ) -> Optional[dict[int, ParamDict]]:
     """
@@ -119,26 +117,17 @@ def extract_data_from_accscore_class(sasascore_objects: list[AccScore],
     Args:
         sasascore_objects (list[AccScore]): List of AccScore objects containing data attributes
                                      to be extracted.
-        output_fname (Path): Path to the output file where the sorted data will be written.
-        violations_output_fname (Path): Path to the output file where the sorted violations data
+        violations_output_fname (Path): Path to the output file with the sorted violations data
 
     Returns:
-        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if
-                                        successful, None if no data was processed.
-
+        Optional[dict[int, ParamDict]]: The structured violations_data dictionary
     Raises:
         (Include any specific exceptions the function may raise)
     """
-    data: dict[int, ParamDict] = {}
     violations_data: dict[int, ParamDict] = {}
     for i, sasa_obj in enumerate(sasascore_objects):
         nbur = len(sasa_obj.buried_resdic)
-        data[i] = {
-            "structure": sasa_obj.data[0],
-            "original_name": sasa_obj.data[1],
-            "md5": sasa_obj.data[2],
-            "score": sasa_obj.data[3],
-        }
+        
         # fill in violations
         violations_data[i] = {
             "structure": sasa_obj.data[0],
@@ -154,12 +143,7 @@ def extract_data_from_accscore_class(sasascore_objects: list[AccScore],
                 {acc_key: sasa_obj.violations_data[nbur+a+1]}
                 )
 
-    ranked_data = rank_according_to_score(
-        data, sort_key="score", sort_ascending=True, iscapri=False
-    )
-    write_nested_dic_to_file(ranked_data, output_fname)
-
     # violations do not need to be sorted
     write_nested_dic_to_file(violations_data, violations_output_fname)
 
-    return data, violations_data
+    return violations_data

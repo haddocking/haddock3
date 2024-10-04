@@ -22,7 +22,8 @@ import os
 
 from haddock.core.typing import FilePath
 from haddock.modules import get_engine
-from haddock.modules import BaseHaddockModule
+from haddock.modules.scoring import ScoringModule
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import parse_ncores
 from haddock.libs.libparallel import get_index_list, Scheduler
 from haddock.modules.scoring.sasascore.sasascore import (
@@ -34,7 +35,7 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
-class HaddockModule(BaseHaddockModule):
+class HaddockModule(ScoringModule):
     """HADDOCK3 module to perform accessibility scoring."""
 
     name = RECIPE_PATH.name
@@ -81,6 +82,7 @@ class HaddockModule(BaseHaddockModule):
         buried_resdic.pop("_")
         acc_resdic.pop("_")
         
+        self.output_models: list[PDBFile] = []
         # initialize jobs
         sasascore_jobs: list[AccScore] = []
         for model_to_be_evaluated in models_to_score:
@@ -93,6 +95,8 @@ class HaddockModule(BaseHaddockModule):
                 probe_radius=self.params["probe_radius"],
                 )
             sasascore_jobs.append(accscore_obj)
+            # append model to output models
+            self.output_models.append(model_to_be_evaluated)
         
         # Run sasascore Jobs using Scheduler
         engine = Scheduler(
@@ -100,16 +104,18 @@ class HaddockModule(BaseHaddockModule):
             tasks=sasascore_jobs)
         engine.run()
 
-        # rearrange output
-        output_name = Path("sasascore.tsv")
-        viol_output_name = Path("violations.tsv")
-        # extract results
+        # extract results and overwrite scores
         sasascore_jobs = engine.results
+        for i, pdb in enumerate(self.output_models):
+            pdb.score = sasascore_jobs[i].data[3]
+        output_name = Path("sasascore.tsv")
+        self.output(output_name)
+
+        # now violations
+        viol_output_name = Path("violations.tsv")
         extract_data_from_accscore_class(
             sasascore_objects=sasascore_jobs,
-            output_fname=output_name,
             violations_output_fname=viol_output_name
         )
 
-        self.output_models = models_to_score
         self.export_io_models()

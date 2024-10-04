@@ -941,6 +941,31 @@ def test_capri_run(mocker):
     assert capri.dockq == pytest.approx(rand_dockq)
 
 
+def test_rank_according_to_score():
+    data = {
+        1: {
+            "score": 3.0,
+            "caprieval_rank": 99999,
+        },
+        2: {
+            "score": 2.0,
+            "caprieval_rank": 99999,
+        },
+        3: {
+            "score": 1.0,
+            "caprieval_rank": 99999,
+        },
+    }
+
+    ranked_data = rank_according_to_score(
+        data=data, sort_key="score", sort_ascending=True
+    )
+
+    assert ranked_data[1]["caprieval_rank"] == 1
+    assert ranked_data[2]["caprieval_rank"] == 2
+    assert ranked_data[3]["caprieval_rank"] == 3
+
+
 def test_extract_data_from_capri_class(mocker):
 
     mocker.patch(

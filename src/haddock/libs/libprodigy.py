@@ -53,7 +53,7 @@ class ProdigyWorker(ABC):
         self.params = params
         self.topKd = params["to_pkd"]
         self.temperature = params["temperature"]
-        self.dist_cutoff = self.set_distance_cutoff(params["distance_cutoff"])
+        self.dist_cutoff = params["distance_cutoff"]
         # Output values
         self.score: Optional[float] = None
         self.error: Optional[Exception] = None

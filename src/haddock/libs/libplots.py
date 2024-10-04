@@ -1,6 +1,7 @@
 """Plotting functionalities."""
 
 import json
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -24,6 +25,7 @@ from haddock.core.typing import (
     Optional,
     Union,
     )
+from haddock.libs.assets import haddock_ui_path
 
 
 SCATTER_PAIRS = [
@@ -940,9 +942,14 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     return df_merged
 
 
-def _css_styles_for_report():
+def _css_styles_for_report(offline: bool) -> str:
     """
     Generate custom CSS styles for an analysis report.
+
+    Parameters
+    ----------
+    offline : bool
+        If True, the HTML will be generated for offline use.
 
     Returns
     -------
@@ -953,39 +960,44 @@ def _css_styles_for_report():
         font-family: Arial, sans-serif;
         font-size: 32px;
         font-weight: bold;
-        }
-
+    }
+    body {
+      margin-left: 1em;
+    }
     table {
         border-collapse: collapse;
     }
-
     th {
         background-color: #f2f2f2;
         padding: 8px;
         border: 1px solid #ddd;
         text-align: left;
     }
-
     th[scope="row"] {
         position: sticky;
         min-width: 16rem;
         left: 0;
         z-index: 1
     }
-
     td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
     }
-
     tr:nth-child(even) {
         background-color: #f2f2f2
     }
-
+    .js-plotly-plot .plotly .modebar svg {
+	    display: inline;
+    }
     """
-    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1/dist/style.css"  # noqa:E501
-    table_css = f' <link href={css_link} rel="stylesheet" />'
+    css_link = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/index.css"
+    if offline:
+        # copy the css file to the report directory
+        src = haddock_ui_path / 'index.css'
+        shutil.copyfile(str(src), "../data/ui/index.css")
+        css_link = "../../data/ui/index.css"
+    table_css = f' <link href="{css_link}" rel="stylesheet" />'
     return f"{table_css}<style>{custom_css}</style>"
 
 
@@ -1006,6 +1018,8 @@ def _generate_html_report(
         A list of figures to include in the HTML body.
         Each figure can be either a string representing a table or a
         plotly.graph_objects.Figure object.
+    offline : bool
+        If True, the HTML will be generated for offline use.
 
     Returns
     -------
@@ -1013,13 +1027,13 @@ def _generate_html_report(
         The generated HTML report as a string.
     """
     html_report = "<!DOCTYPE html><html lang='en'>"
-    html_report += _generate_html_head(step)
+    html_report += _generate_html_head(step, offline)
     html_report += _generate_html_body(figures, report_path, offline=offline)
     html_report += "</html>"
     return html_report
 
 
-def _generate_html_head(step):
+def _generate_html_head(step, offline):
     """
     Generate the HTML head section for an analysis report.
 
@@ -1027,6 +1041,8 @@ def _generate_html_head(step):
     ----------
     step : str
         The step number.
+    offline : bool
+        If True, the HTML will be generated for offline use.
 
     Returns
     -------
@@ -1036,17 +1052,7 @@ def _generate_html_head(step):
     head = "<head>"
     head += f"<title>Analysis report of step {step}</title>"
     head += f"<p class='title'>Analysis report of step {step}</p>"
-    head += _css_styles_for_report()
-    head += """
-            <script type="importmap">
-            {
-                "imports": {
-                    "react": "https://esm.sh/react@^18.2.0",
-                    "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                    "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1?bundle"
-                }
-            }
-            </script>"""  # noqa : E501
+    head += _css_styles_for_report(offline)
     head += "</head>"
     return head
 
@@ -1054,6 +1060,7 @@ def _generate_html_head(step):
 def _generate_unclustered_table_html(
         table_id: str,
         df: pd.DataFrame,
+        bundle_url: str,
         ) -> str:
     data = df.to_json(orient='records')
     headers = [
@@ -1077,21 +1084,18 @@ def _generate_unclustered_table_html(
             }}
             </script>
             <script type="module">
-            import {{createRoot}} from "react-dom"
-            import {{createElement}} from "react"
-            import {{StructureTable}} from "@i-vresse/haddock3-analysis-components"
+            import {{ renderStructureTable }} from "{bundle_url}";
 
             const props = JSON.parse(document.getElementById("data{table_id}").text)
 
-            createRoot(document.getElementById('{table_id}')).render(
-                createElement(StructureTable, props)
-            )
+            renderStructureTable(document.getElementById('{table_id}'), props.headers, props.structures)
             </script>"""  # noqa : E501
 
 
 def _generate_clustered_table_html(
         table_id: str,
         df: pd.DataFrame,
+        bundle_url: str,
         ) -> str:
     data = df.to_json(orient='records')
     nr_best_columns = df.filter(like="best").shape[1]
@@ -1127,15 +1131,10 @@ def _generate_clustered_table_html(
             }}
             </script>
             <script type="module">
-            import {{createRoot}} from "react-dom"
-            import {{createElement}} from "react"
-            import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
-
+            import {{ renderClusterTable }} from "{bundle_url}";
             const props = JSON.parse(document.getElementById("data{table_id}").text)
 
-            createRoot(document.getElementById('{table_id}')).render(
-                createElement(ClusterTable, props)
-            )
+            renderClusterTable(document.getElementById('{table_id}'), props.headers, props.clusters);
             </script>"""  # noqa : E501
 
 
@@ -1153,6 +1152,8 @@ def _generate_html_body(
         A list of figures to include in the HTML body.
         Each figure can be either a string representing a table or a
         plotly.graph_objects.Figure object.
+    offline : bool
+        If True, the HTML will be generated for offline use.
 
     Returns
     -------
@@ -1168,10 +1169,16 @@ def _generate_html_body(
             table_id = f"table{table_index}"
 
             is_unclustered = 'cluster_rank' not in figure
+            bundle_url = "https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/report.bundle.js"
+            if offline:
+                # copy the bundle to the run_dir folder
+                src = haddock_ui_path / 'report.bundle.js'
+                shutil.copyfile(str(src), "../data/ui/report.bundle.js")
+                bundle_url = "../../data/ui/report.bundle.js"
             if is_unclustered:
-                inner_html = _generate_unclustered_table_html(table_id, figure)
+                inner_html = _generate_unclustered_table_html(table_id, figure, bundle_url)
             else:
-                inner_html = _generate_clustered_table_html(table_id, figure)
+                inner_html = _generate_clustered_table_html(table_id, figure, bundle_url)
         else:  # plots
             inner_json = figure.to_json()
             inner_html = create_html(
@@ -1194,6 +1201,7 @@ def report_generator(
         tables: list,
         step: str,
         directory: FilePath = ".",
+        offline: bool = False
         ) -> None:
     """
     Create a figure include plots and tables.
@@ -1209,6 +1217,10 @@ def report_generator(
         list of scatter plots generated by scatter_plot_handler
     table: list
         a list including tables generated by clt_table_handler
+    directory : Path
+        path to the output folder
+    offline: bool
+        If True, the HTML will be generated for offline use.
     """
     figures = [tables]
     # Combine scatters
@@ -1222,9 +1234,11 @@ def report_generator(
     # Combine boxes"
     figures.append(report_plots_handler(boxes))
 
+    if offline:
+        Path('../data/ui').mkdir(parents=True, exist_ok=True)
     # Write everything to a html file
     report_path = Path(directory, "report.html")
-    html_report = _generate_html_report(step, figures, report_path)
+    html_report = _generate_html_report(step, figures, report_path, offline)
     with open(report_path, "w", encoding="utf-8") as report:
         report.write(html_report)
 

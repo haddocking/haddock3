@@ -1,6 +1,6 @@
 """Test expandable parameter modules."""
-import importlib
 
+import importlib
 import pytest
 
 from haddock.core.exceptions import ConfigurationError
@@ -423,7 +423,7 @@ def test_read_single_idx_groups_user_config(
         expected,
         ):
     """Test read single index groups in user config."""
-    result = read_single_idx_groups_user_config(user_config, default_groups)
+    result, _ = read_single_idx_groups_user_config(user_config, default_groups)
     assert result == expected
 
 
@@ -431,19 +431,60 @@ def test_read_single_idx_groups_user_config(
     "user_config,default_groups,expected",
     [
         (
-            {"param_other_1", "param_else_1",
-             "param_other_2", "param_else_2",
-             "param_1",
-             "param_sam_1_1", "param_frodo_1_1",
-             "param_sam_1_2", "param_frodo_1_2",
-             "param_sam_2_1", "param_frodo_2_1",
-             },
-            {("param1", "1"): {"sam", "frodo"},
-             ("param2", "1"): {"sam", "frodo"}},
-            {"param_frodo_1_1", "param_sam_1_1",
-             "param_frodo_1_2", "param_sam_1_2",
-             "param_sam_2_1", "param_frodo_2_1",
-             },
+            # user_config
+            {
+                "param_other_1", "param_else_1",  # param 1
+                "param_other_2", "param_else_2",  # param 2
+                "param_1",  # not a single index group
+                "param_other_1_1",  # multiple index group
+                },
+            # default_groups
+            {
+                ("param", "1"): {"other", "else"},
+                },
+            # expected
+            {
+                "param": 2,
+                },
+            ),
+        ]
+    )
+def test_read_single_idx_groups_user_config_count(
+        user_config,
+        default_groups,
+        expected,
+        ):
+    """Test read single index groups in user config."""
+    _, counts = read_single_idx_groups_user_config(user_config, default_groups)
+    assert counts == expected
+
+
+@pytest.mark.parametrize(
+    "user_config,default_groups,expected",
+    [
+        (
+            # user_config
+            {
+                # single index ones should NOT be considered
+                "param_other_1", "param_else_1",
+                "param_other_2", "param_else_2",
+                "param_1",
+                # multiple index ones should be considered
+                "param_sam_1_1", "param_frodo_1_1",
+                "param_sam_1_2", "param_frodo_1_2",
+                "param_sam_2_1", "param_frodo_2_1",
+                },
+            # default_groups
+            {
+                ("param1", "1"): {"sam", "frodo"},
+                ("param2", "1"): {"sam", "frodo"},
+                },
+            # expected
+            {
+                "param_frodo_1_1", "param_sam_1_1",
+                "param_frodo_1_2", "param_sam_1_2",
+                "param_sam_2_1", "param_frodo_2_1",
+                },
             ),
         ]
     )
@@ -452,9 +493,51 @@ def test_read_multiple_idx_groups_user_config(
         default_groups,
         expected,
         ):
-    """Test read single index groups in user config."""
-    result = read_multiple_idx_groups_user_config(user_config, default_groups)
+    """Test read multiple index groups in user config."""
+    result, _ = read_multiple_idx_groups_user_config(
+        user_config, default_groups,
+        )
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "user_config,default_groups,expected",
+    [
+        (
+            # user_config
+            {
+                # single index ones should NOT be considered
+                "param_other_1", "param_else_1",
+                "param_other_2", "param_else_2",
+                "param_1",
+                # multiple index ones should be considered
+                "param_sam_1_1", "param_frodo_1_1",  # param1 1
+                "param_sam_1_2", "param_frodo_1_2",  # param1 2
+                "param_sam_2_1", "param_frodo_2_1",  # param2 1
+                },
+            # default_groups
+            {
+                ("param1", "1"): {"sam", "frodo"},
+                ("param2", "1"): {"sam", "frodo"},
+                },
+            # expected counts
+            {
+                "param1": 2,
+                "param2": 1,
+                },
+            ),
+        ]
+    )
+def test_read_multiple_idx_groups_user_config_counts(
+        user_config,
+        default_groups,
+        expected,
+        ):
+    """Test counts multiple index groups in user config."""
+    _, counts = read_multiple_idx_groups_user_config(
+        user_config, default_groups,
+        )
+    assert counts == expected
 
 
 @pytest.mark.parametrize(

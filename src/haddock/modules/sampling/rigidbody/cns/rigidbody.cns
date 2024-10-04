@@ -58,26 +58,26 @@ evaluate ($toppar.par_nonbonded = "OPLSX")
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($data.nums3sym= $nums3sym)
-evaluate ($data.numc4sym = $numc4sym)
-evaluate ($data.numc5sym = $numc5sym)
-evaluate ($data.numc6sym = $numc6sym)
+evaluate ($data.nc2sym = $nc2sym)
+evaluate ($data.nc3sym = $nc3sym)
+evaluate ($data.ns3sym = $ns3sym)
+evaluate ($data.nc4sym = $nc4sym)
+evaluate ($data.nc5sym = $nc5sym)
+evaluate ($data.nc6sym = $nc6sym)
 
-if ( $data.numc2sym eq 6) then
+if ( $data.nc2sym eq 6) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc3sym ne 0) then
+if ( $data.nc3sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc4sym ne 0) then
+if ( $data.nc4sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc5sym ne 0) then
+if ( $data.nc5sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc6sym ne 0) then
+if ( $data.nc6sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
 
@@ -86,8 +86,8 @@ evaluate ($Data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_scale=$amb_scale)
-evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.ambig_scale=$ambig_scale)
+evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
 
@@ -263,14 +263,9 @@ if ($Data.ranair eq true) then
         reset
         nrestraints = 100000     ! allocate space for NOEs
         ceiling 1000
+        class ambi
     end
     @MODULE:randomairs.cns
-
-    !Read back in hbond data
-    fileexist $hbond_fname end
-    if ($result eq true) then
-        noe @@$hbond_fname end
-    end if
 
     noe
         averaging  * sum
@@ -322,7 +317,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
         @MODULE:random_rotations.cns
     end if
 
-    evaluate ($unamb_scale = 1.0)
+    evaluate ($unambig_scale = 1.0)
     evaluate ($ambig_scale = 1.0)
     evaluate ($hbond_scale = 1.0)
     evaluate ($symm_scale = 1.0)
@@ -330,7 +325,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
     evaluate ($surf_scale = 0.0)
 
     noe
-        scale dist $unamb_scale
+        scale dist $unambig_scale
         scale ambi $ambig_scale
         scale hbon $hbond_scale
         scale symm $symm_scale
@@ -373,13 +368,13 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             flag include elec end
         end if
 
-        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_scale))
-        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_scale))
+        evaluate ($unambig_scale = min(($unambig_scale * 2),$Data.unambig_scale))
+        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.ambig_scale))
         evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_scale))
         evaluate ($symm_scale = min(($symm_scale * 2),$Data.ksym))
 
         noe
-            scale dist $unamb_scale
+            scale dist $unambig_scale
             scale ambi $ambig_scale
             scale hbon $hbond_scale
             scale symm $symm_scale
@@ -387,7 +382,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     end loop rigmin
 
-    evaluate ($unamb_scale_store = $unamb_scale)
+    evaluate ($unambig_scale_store = $unambig_scale)
     evaluate ($ambig_scale_store = $ambig_scale)
     evaluate ($hbond_scale_store = $hbond_scale)
     evaluate ($symm_scale_store = $symm_scale)
@@ -399,8 +394,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     if ($SaProtocol.rigidtrans eq true) then
 
-        evaluate ($cont_scale = $Data.kcm)
-        evaluate ($surf_scale = $Data.ksurf)
+        evaluate ($cont_scale = $data.kcm)
+        evaluate ($surf_scale = $data.ksurf)
         noe
             scale contact $cont_scale
             scale surface $surf_scale
@@ -550,14 +545,14 @@ else
     end if
 end if
 
-evaluate ($unamb_scale = $Data.unamb_scale)
-evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($unambig_scale = $Data.unambig_scale)
+evaluate ($ambig_scale = $Data.ambig_scale)
 evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe
-    scale dist $unamb_scale
+    scale dist $unambig_scale
     scale ambi $ambig_scale
-    scale hbon 0.0
+    scale hbon $hbond_scale
     scale cont 0.0
 end
 

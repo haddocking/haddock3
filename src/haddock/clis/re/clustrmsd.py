@@ -22,6 +22,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     get_matrix_path,
     iterate_min_population,
+    order_clusters,
     write_clusters,
     write_clustrmsd_file,
     )
@@ -168,9 +169,9 @@ def reclustrmsd(
     log.info(f"Updated clustering parameters = {clustrmsd_params}")
     
     # processing the clusters
-    unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
-    clusters = [c for c in unq_clusters if c != -1]
+    clusters, cluster_arr = order_clusters(cluster_arr)
     log.info(f"clusters = {clusters}")
+    log.info(f"cluster_arr = {cluster_arr}")
 
     clt_dic, cluster_centers = write_clusters(
         clusters,

@@ -9,8 +9,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.contactmap import HaddockModule as CMapModule
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG as CONTMAP_CONF
 
-tests_path = Path(__file__).resolve().parents[0]
-GOLDEN_DATA = Path(tests_path, 'golden_data')
+from integration_tests import GOLDEN_DATA
 
 
 @pytest.fixture

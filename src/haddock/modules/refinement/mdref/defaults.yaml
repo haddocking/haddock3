@@ -38,7 +38,7 @@ previous_ambig:
     If true, use the the restraint information coming from the previous CNS module. If false, don't use previous information.
   long: Boolean condition on the ambiguous distance restraints file.
     If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
-    If False, don't use previous information.
+    If false, don't use previous information.
   group: 'distance restraints'
   explevel: expert
 unambig_fname:
@@ -58,7 +58,7 @@ hbond_fname:
   long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
   group: 'distance restraints'
   explevel: easy
-amb_scale:
+ambig_scale:
   default: 50
   type: integer
   min: 0
@@ -68,7 +68,7 @@ amb_scale:
   long: Force constant applied to the distance restraints defined in ambig_fname.
   group: 'distance restraints'
   explevel: expert
-unamb_scale:
+unambig_scale:
   default: 50
   type: integer
   min: 0
@@ -194,12 +194,12 @@ dihedrals_scale:
   default: 200
   type: integer
   min: 0
-  max: 1000
+  max: 9999
   title: Force constant for dihedral angle restraints
   short: Force constant applied to the dihedral angle restraints read from dihe_fname.
   long: Force constant applied to the dihedral angle restraints read from dihe_fname.
   group: 'dihedral restraints'
-  explevel: expert
+  explevel: easy
 ssdihed:
   default: none
   type: string
@@ -223,7 +223,7 @@ error_dih:
   default: 10
   type: integer
   min: 0
-  max: 1000
+  max: 180
   title: Force constant for backbone dihedral angle restraints
   short: Force constant for backbone dihedral angle restraints (ssdihed option)
   long: Force constant for backbone dihedral angle restraints (ssdihed option)
@@ -276,7 +276,7 @@ symtbl_fname:
   long: Filename of the custom symmetry restraints file. 
   group: 'symmetry'
   explevel: expert
-numc2sym:
+nc2sym:
   default: 0
   type: integer
   min: 0
@@ -287,7 +287,7 @@ numc2sym:
     For each, a pair of segments on which the symmetry restraint is applied will have to be defined.
     Those must all have the same length.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 c2sym_sta1_1:
   default: .nan
   type: integer
@@ -348,7 +348,7 @@ c2sym_seg2_1:
   long: Segment ID of second C2 segment
   group: 'symmetry'
   explevel: expert
-numc3sym:
+nc3sym:
   default: 0
   type: integer
   min: 0
@@ -359,7 +359,7 @@ numc3sym:
     For each, three segments on which the symmetry restraint is applied will have to be defined. 
     Those must all have the same length.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 c3sym_sta1_1:
   default: .nan
   type: integer
@@ -450,7 +450,7 @@ c3sym_seg3_1:
   long: Segment ID of third C3 segment
   group: 'symmetry'
   explevel: expert
-numc4sym:
+nc4sym:
   default: 0
   type: integer
   min: 0
@@ -461,7 +461,7 @@ numc4sym:
     For each, four segments on which the symmetry restraint is applied will have to be defined. 
     Those must all have the same length.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 c4sym_sta1_1:
   default: .nan
   type: integer
@@ -582,7 +582,7 @@ c4sym_seg4_1:
   long: Segment ID of fourth C4 segment
   group: 'symmetry'
   explevel: expert
-numc5sym:
+nc5sym:
   default: 0
   type: integer
   min: 0
@@ -593,7 +593,7 @@ numc5sym:
     For each, five segments on which the symmetry restraint is applied will have to be defined. 
     Those must all have the same length.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 c5sym_sta1_1:
   default: .nan
   type: integer
@@ -744,7 +744,7 @@ c5sym_seg5_1:
   long: Segment ID of fifth C5 segment
   group: 'symmetry'
   explevel: expert
-numc6sym:
+nc6sym:
   default: 0
   type: integer
   min: 0
@@ -755,7 +755,7 @@ numc6sym:
     For each, six segments on which the symmetry restraint is applied will have to be defined. 
     Those must all have the same length.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 c6sym_sta1_1:
   default: .nan
   type: integer
@@ -936,7 +936,7 @@ c6sym_seg6_1:
   long: Segment ID of sixth C6 segment
   group: 'symmetry'
   explevel: expert
-nums3sym:
+ns3sym:
   default: 0
   type: integer
   min: 0
@@ -947,7 +947,7 @@ nums3sym:
     For each, three segments on which the symmetry restraint is applied will have to be defined. 
     Those must all have the same length.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 s3sym_sta1_1:
   default: .nan
   type: integer
@@ -1058,7 +1058,7 @@ kncs:
   long: Force constant for non-crystallographic restraints
   group: 'symmetry'
   explevel: expert
-numncs:
+nncs:
   default: 0
   type: integer
   min: 0
@@ -1068,7 +1068,7 @@ numncs:
   long: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined.
     Note that those must contain exactly the same residues/atom combinations.
   group: 'symmetry'
-  explevel: expert
+  explevel: hidden
 ncs_sta1_1:
   default: .nan
   type: integer
@@ -1326,7 +1326,7 @@ ligand_param_fname:
   long: Ligand parameter file in CNS format containing all force field parameters 
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -1335,7 +1335,7 @@ ligand_top_fname:
   long: Ligand topology file in CNS format containing the ligand topologies 
     (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: expert
+  explevel: easy
 elecflag:
   default: true
   type: boolean
@@ -1385,17 +1385,17 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 400
+  max: 500
   title: Sampling factor for each starting model
   short: This parameter control how many times a model will be refined.
   long: This parameter control how many times a model will be refined. 
   group: 'sampling'
   explevel: expert
 max_nmodels:
-  default: 10000
+  default: 50000
   type: integer
   min: 1
-  max: 50000
+  max: 100000
   title: Maximum number of models to refine
   short: This parameter controls the maximum number of models to refine.
   long: This parameter controls the maximum number of models to refine.
@@ -2184,624 +2184,46 @@ seg_end_20_1:
 #
 # Fully flexible segments
 #
-nfle1:
+nfle:
   default: 0
   type: integer
   min: 0
   max: 1000
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
+  long: This parameter defines the number of fully flexible segments for all molecules.
+    If >=1 then those must be defined manually with segment ID (segid) in the fle_seg_* variable, 
+    followed by the starting and ending residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
-  explevel: expert
-fle_sta_1_1:
+  explevel: hidden
+fle_sta_1:
   default: .nan
   type: integer
   min: -9999
   max: 9999
   title: Starting residue number
   short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
+  long: Residue number defining the start of this (1st) fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fle_end_1_1:
+fle_end_1:
   default: .nan
   type: integer
   min: -9999
   max: 9999
   title: End residue number
   short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
+  long: Residue number defining the end of this (1st) fully flexible segment.
   group: 'flexibility'
   explevel: expert
-nfle2:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_2_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_2_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle3:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_3_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_3_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle4:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_4_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_4_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle5:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_5_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_5_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle6:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_6_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_6_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle7:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_7_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_7_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle8:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_8_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_8_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle9:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_9_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_9_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle10:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_10_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_10_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle11:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_11_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_11_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle12:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_12_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_12_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle13:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_13_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_13_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle14:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_14_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_14_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle15:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_15_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_15_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle16:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_16_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_16_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle17:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_17_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_17_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle18:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_18_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_18_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle19:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_19_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_19_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-nfle20:
-  default: 0
-  type: integer
-  min: 0
-  max: 1000
-  title: Number of fully flexible segments
-  short: This defines the number of fully flexible segments. 
-  long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
-  group: 'flexibility'
-  explevel: expert
-fle_sta_20_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: Starting residue number
-  short: Residue number defining the start of the fully flexible segment.
-  long: Residue number defining the start of the fully flexible segment.
-  group: 'flexibility'
-  explevel: expert
-fle_end_20_1:
-  default: .nan
-  type: integer
-  min: -9999
-  max: 9999
-  title: End residue number
-  short: Residue number defining the end of the fully flexible segment.
-  long: Residue number defining the end of the fully flexible segment.
+fle_seg_1:
+  default: none
+  type: string 
+  minchars: 1
+  maxchars: 4
+  title: Segment ID (segid)
+  short: Segment ID of the molecule for which this flexible segment is defined.
+  long: Segment ID of the molecule for which this (1st) flexible segment is defined.
   group: 'flexibility'
   explevel: expert
 #

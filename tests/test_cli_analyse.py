@@ -113,4 +113,38 @@ def test_zip_top_ranked(example_capri_ss):
         zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
         assert os.path.isfile("summary.tgz") is True
     os.chdir(cwd)
-    
+
+
+def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):
+    """Test cli_analyse main in offline mode."""
+    # build fake run_dir
+    run_dir = tmp_path / "example_dir"
+    if os.path.isdir(run_dir):
+        shutil.rmtree(run_dir)
+    step_name = "2_caprieval"
+    step_dir = run_dir / step_name
+    os.mkdir(run_dir)
+    os.mkdir(step_dir)
+    shutil.copy(example_capri_ss, step_dir / "capri_ss.tsv")
+    shutil.copy(example_capri_clt, step_dir / "capri_clt.tsv")
+
+    # run haddock3-analyse
+    main(
+        run_dir,
+        [2],
+        5,
+        format=None,
+        scale=None,
+        is_cleaned=False,
+        inter=False,
+        offline=True,
+        )
+
+    # check analysis directory exists
+    ana_dir = run_dir / "analysis/"
+    assert ana_dir.is_dir()
+
+    # check whether there are js and css files
+    assert (run_dir / "data/ui/report.bundle.js").is_file()
+    assert (run_dir / "data/ui/index.css").is_file()
+    assert (ana_dir / "2_caprieval_analysis/plotly_bundle.js").is_file()

@@ -42,7 +42,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "coverage==7.2.5",
+  "coverage==7.6.1",
   "pytest==8.3.3",
   "pytest-cov==4.0.0",
   "hypothesis==6.112.2",

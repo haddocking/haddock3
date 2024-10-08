@@ -6,7 +6,7 @@ import numpy as np
 
 from haddock import log
 from haddock.core.exceptions import ModuleError
-from haddock.core.typing import FilePath, Optional, ParamDict, Union
+from haddock.core.typing import FilePath, Optional, ParamDict
 from haddock.libs.libontology import PDBFile
 
 
@@ -50,7 +50,6 @@ class ProdigyWorker(ABC):
     def __init__(self, model: FilePath, params: ParamDict) -> None:
         # Use by both prodigy -prot and -lig
         self.model = model
-        self.params = params
         self.topKd = params["to_pkd"]
         self.temperature = params["temperature"]
         self.dist_cutoff = params["distance_cutoff"]
@@ -135,7 +134,7 @@ class ModelScore:
         self.error = None
 
 
-class ProdigyBaseJob:
+class ProdigyBaseJob(ABC):
     """Managing the computation of prodigy scores within haddock3."""
 
     def __init__(

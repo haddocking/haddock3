@@ -32,6 +32,8 @@ from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
 
+CRYST_LINE = "CRYST1 \n"
+
 
 def add_dummy(bead_list, dist=0.11, n=2):
     """
@@ -399,24 +401,27 @@ def extract_groups(pair_list):
     out.close()
 
 
-def create_file_with_cryst(pdb_file):
+def create_file_with_cryst(pdb_file, pdb_file_copy):
     """
-    This function creates a pdb because the CRYST line is missing from the pdf file.     
+    This function creates a new pdb because the CRYST line is missing from the pdf file.     
     This line is necessary for DSSP.
 
     Args:
         pdb_file: str
+        pdb_file_copy: str
 
     Returns:
 
     """
-    file_in = open(pdb_file, "a")
-    file_in.seek(0) # go to the first position of the file
-    file_in.write(CRYST_LINE)
+    file_in = open(pdb_file, "r")
+    file_out = open(pdb_file_copy, "w")
+    content = file_in.read()
+    file_out.write(CRYST_LINE + content)
     file_in.close()
+    file_out.close()
 
 
-def determine_ss(structure, skipss, pdbf_path):
+def determine_ss(structure, output_path, skipss, pdbf_path):
     """
 
     Args:
@@ -427,18 +432,27 @@ def determine_ss(structure, skipss, pdbf_path):
     Returns:
 
     """
+
     # calculate SS
     for model in structure:
+        tmp_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_tmp.pdb"
+        create_file_with_cryst(pdbf_path, tmp_file_name)
+
         if skipss:
             continue
         else:
             try:
-                dssp = DSSP(model, pdbf_path)
+                #p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) 
+                #dssp_raw, errors = p.communicate()
+                #print("THIS IS ERR:", errors)
+                #print("THIS IS OUT:", dssp_raw)
+                dssp = DSSP(model, tmp_file_name)
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
                 log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
-
+        
+        subprocess.Popen(["rm", tmp_file_name])
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
         # Get SS information and translate it:
@@ -524,7 +538,7 @@ def martinize(input_pdb, output_path, skipss):
                     atom.bfactor = 1.0
 
     # Assign HADDOCK code according to SS (1-9)
-    determine_ss(structure=aa_model, skipss=skipss, pdbf_path=pdbf_path)
+    determine_ss(structure=aa_model, output_path = output_path, skipss=skipss, pdbf_path=pdbf_path)
 
     # Strandardize naming
     # WARNING, THIS ASSUMES THAT INPUT DNA/RNA IS 3-LETTER CODE

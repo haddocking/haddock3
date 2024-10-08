@@ -2,6 +2,7 @@
 import logging
 import sys
 from pathlib import Path
+from importlib.metadata import version as package_version
 
 log = logging.getLogger(__name__)
 log.handlers.clear()
@@ -39,7 +40,8 @@ class EmptyPath:
 
 
 # version
-version = "3.0.0"
+version = package_version("haddock3")
+
 v_major, v_minor, v_patch = version.split('.')
 
 contact_us = 'https://github.com/haddocking/haddock3/issues'

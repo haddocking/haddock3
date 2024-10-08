@@ -1,4 +1,4 @@
-"""Set of functionalities to run prodigy.
+"""Set of functionalities to run prodigy-protein.
 
 DevNotes:
 The magic happens in haddock.libs.libprodigy

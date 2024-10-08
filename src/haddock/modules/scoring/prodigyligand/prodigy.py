@@ -1,4 +1,8 @@
-"""Set of functionalities to run prodigy."""
+"""Set of functionalities to run prodigy-ligand.
+
+DevNotes:
+The magic happens in haddock.libs.libprodigy
+"""
 
 from haddock.core.typing import FilePath, ParamDict
 from haddock.libs.libontology import PDBFile

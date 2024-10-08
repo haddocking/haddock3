@@ -11,7 +11,7 @@ from haddock.libs.libontology import PDBFile
 
 
 # Define conversion constants
-R_GAZ_CONST = 8.314
+R_GAZ_CONST = 8.31446261815324 	# (J x mol−1 x K−1)
 CALS_TO_JOULES = 4.184
 KELVIN_TO_CELCIUS = 273.15
 
@@ -135,7 +135,7 @@ class ModelScore:
         self.error = None
 
 
-class ProdigyJob:
+class ProdigyBaseJob:
     """Managing the computation of prodigy scores within haddock3."""
 
     def __init__(

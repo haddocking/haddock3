@@ -20,6 +20,7 @@ Example:
 from pathlib import Path
 import os
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.modules import get_engine
 from haddock.modules.scoring import ScoringModule
@@ -32,7 +33,7 @@ from haddock.modules.scoring.sasascore.sasascore import (
     )
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(ScoringModule):

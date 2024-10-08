@@ -1,7 +1,7 @@
 """Set of functionalities to run prodigy-ligand.
 
 DevNotes:
-The magic happens in haddock.libs.libprodigy
+The magic happens in haddock/libs/libprodigy.py
 """
 
 from haddock.core.typing import FilePath, ParamDict
@@ -15,9 +15,10 @@ class ProdigyLigand(ProdigyWorker):
     def __init__(self, model: FilePath, params: ParamDict) -> None:
         """Instantiate the class with superclass."""
         super().__init__(model, params)
-        self.receptor_chain = self.params["receptor_chain"]
-        self.lig_resname = self.params["ligand_resname"]
-        self.lig_chain = self.params["ligand_chain"]
+        # Hold specific parameters
+        self.receptor_chain = params["receptor_chain"]
+        self.lig_resname = params["ligand_resname"]
+        self.lig_chain = params["ligand_chain"]
 
     def evaluate_complex(self) -> float:
         """Evaluate a complex with prodigy-lig.

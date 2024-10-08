@@ -1,7 +1,7 @@
 """Set of functionalities to run prodigy-protein.
 
 DevNotes:
-The magic happens in haddock.libs.libprodigy
+The magic happens in haddock/libs/libprodigy.py
 """
 
 from haddock.core.typing import FilePath, ParamDict
@@ -15,8 +15,9 @@ class ProdigyProtein(ProdigyWorker):
     def __init__(self, model: FilePath, params: ParamDict) -> None:
         """Instantiate the class with superclass."""
         super().__init__(model, params)
-        self.acc_cutoff = self.params["accessibility_cutoff"]
-        self.chains = self.params["chains"]
+        # Hold specific parameters
+        self.acc_cutoff = params["accessibility_cutoff"]
+        self.chains = params["chains"]
 
     def evaluate_complex(self) -> float:
         """Evaluate a complex with prodigy-prot.

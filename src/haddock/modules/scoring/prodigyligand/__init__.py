@@ -9,9 +9,10 @@ from pathlib import Path
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libprodigy import CheckInstall
 from haddock.modules import get_engine
 from haddock.modules.scoring import ScoringModule
-from haddock.modules.scoring.prodigy.prodigy import ProdigyJob, CheckInstall
+from haddock.modules.scoring.prodigyligand.prodigy import ProdigyJob
 
 
 RECIPE_PATH = Path(__file__).resolve().parent

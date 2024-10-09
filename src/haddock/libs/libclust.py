@@ -20,7 +20,7 @@ import numpy as np
 from scipy.spatial.distance import squareform
 
 
-MAX_NB_ENTRY_HTML_MATRIX = 5000
+MAX_NB_ENTRY_HTML_MATRIX = 3100
 
 
 def write_structure_list(input_models: list[PDBFile],

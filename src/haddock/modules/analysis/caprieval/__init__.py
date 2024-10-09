@@ -135,7 +135,9 @@ class HaddockModule(BaseHaddockModule):
             tasks=jobs, ncores=self.params["ncores"], max_cpus=self.params["max_cpus"]
         )
         engine.run()
+
         jobs = engine.results
+        jobs = sorted(jobs, key=lambda capri: capri.identificator)
 
         extract_data_from_capri_class(
             capri_objects=jobs,

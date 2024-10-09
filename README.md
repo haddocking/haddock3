@@ -1,10 +1,6 @@
 # `haddock3`
 
-<!-- <p align="center">
-
-  <img src="docs/figs/HADDOCK3-logo.png" alt="haddock3-logo" style="vertical-align: middle;">
-</p>
-<src > -->
+![haddock3-logo](https://github.com/haddocking/haddock3/blob/main/docs/figs/HADDOCK3-logo.png)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
 [![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)
@@ -18,8 +14,6 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
-![haddock3-logo](docs/figs/HADDOCK3-logo.png)
-
 ## Introduction
 
 HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**ing, is a widely used computational tool for the integrative modeling of biomolecular interactions. Developed by researchers at [Utrecht University](https://uu.nl) in the [BonvinLab](https://bonvinlab.org) for more than 20 years, it integrates various types of experimental data, biochemical, biophysical, bioinformatic prediction and knowledge to guide the docking process.
@@ -29,9 +23,7 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 Clone the repository and run `pip install .`;
 
 ```bash
-git clone https://github.com/haddocking/haddock3
-cd haddock3
-pip install .
+pip install haddock3
 ```
 
 Execute:
@@ -69,7 +61,7 @@ The most basic usage is:
 haddock3 <configuration-file.toml>
 ```
 
-Check the [EXAMPLES](examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
+Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
 
 ## Support
 
@@ -94,7 +86,7 @@ If you used `haddock3` for your research, please cite us:
 
 ## Development
 
-🚧 _Coming soon! We are currently working on the development guide_ 🚧
+Please check [DEVELOPMENT](https://github.com/haddocking/haddock3/blob/main/DEVELOPMENT.md) for instructions on how to develop `haddock3`
 
 ### Code Documentation
 

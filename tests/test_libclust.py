@@ -83,17 +83,15 @@ def test_plot_cluster_matrix_big(big_distance_matrix_data):
             matrix_path,
             list(range(MAX_NB_ENTRY_HTML_MATRIX + 1)),
             [str(i + 1) for i in range(MAX_NB_ENTRY_HTML_MATRIX + 1)],
-            dttype='random',
+            dttype="random",
             diag_fill=0.5,
             color_scale="Blues",
             reverse=False,
-            output_fname='clust_matrix_test_big',
+            output_fname="clust_matrix_test_big",
             )
         # Check output
-        assert os.path.exists(figure_path)
-        assert Path(figure_path).stat().st_size != 0
-        assert Path(figure_path).suffix == '.png'
-        Path(figure_path).unlink(missing_ok=False)
+        assert figure_path is None
+        assert not Path("clust_matrix_test_big.html").exists()
         Path(matrix_path).unlink(missing_ok=False)
 
 

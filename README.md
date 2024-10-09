@@ -1,6 +1,6 @@
 # `haddock3`
 
-![haddock3-logo](https://github.com/haddocking/haddock3/blob/main/docs/figs/HADDOCK3-logo.png)
+![haddock3-logo](https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/docs/figs/HADDOCK3-logo.png)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
 [![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)

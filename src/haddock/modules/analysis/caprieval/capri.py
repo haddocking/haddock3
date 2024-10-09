@@ -174,7 +174,7 @@ class CAPRI:
 
     def __init__(
         self,
-        identificator: str,
+        identificator: int,
         model: PDBPath,
         path: Path,
         reference: PDBPath,
@@ -186,7 +186,7 @@ class CAPRI:
 
         Parameters
         ----------
-        identificator : str
+        identificator : int
             The identificator of the object.
         model : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             The model to be evaluated.
@@ -508,7 +508,7 @@ class CAPRI:
                 self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
-    
+
     def calc_global_rmsd(self) -> None:
         """Calculate the full structure RMSD."""
         # Load reference atomic coordinates
@@ -520,7 +520,7 @@ class CAPRI:
                 self.atoms,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
-                )
+            )
         except ALIGNError as alignerror:
             log.warning(alignerror)
             return
@@ -649,7 +649,7 @@ class CAPRI:
         if self.params["dockq"]:
             log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
-        
+
         if self.params["global_rmsd"]:
             log.debug(f"id {self.identificator}, calculating global RMSD")
             self.calc_global_rmsd()
@@ -756,7 +756,14 @@ class CAPRI:
 def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
     """Merge CAPRI data."""
     # Set of attributes/keys we want to extract
-    target_keys = ("irmsd", "fnat", "ilrmsd", "lrmsd", "dockq", "rmsd", )
+    target_keys = (
+        "irmsd",
+        "fnat",
+        "ilrmsd",
+        "lrmsd",
+        "dockq",
+        "rmsd",
+    )
     # Initiate holder
     capri_dic: dict[str, dict[str, float]] = {}
     # Loop over jobs ids
@@ -773,9 +780,8 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
         model_name = Path(content_data[header_data.index("model")]).name
         # Gather data for this model
         capri_dic[model_name] = {
-            key: float(content_data[header_data.index(key)])
-            for key in target_keys
-            }
+            key: float(content_data[header_data.index(key)]) for key in target_keys
+        }
 
     for j in capri_jobs:
         for m in capri_dic:
@@ -784,7 +790,7 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
             if m == file_name:
                 # add the data
                 for target_key in target_keys:
-                   # Set a new target_key attribute to object with capri_dic[m][target_key] value
+                    # Set a new target_key attribute to object with capri_dic[m][target_key] value
                     j.__setattr__(target_key, capri_dic[m][target_key])
 
     return capri_jobs
@@ -995,9 +1001,7 @@ def calc_stats(data: list) -> tuple[float, float]:
 
 
 # Define dict types
-CltData = dict[
-    tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]
-]
+CltData = dict[tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]]
 
 
 def capri_cluster_analysis(

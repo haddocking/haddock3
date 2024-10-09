@@ -20,8 +20,6 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Clone the repository and run `pip install .`;
-
 ```bash
 pip install haddock3
 ```

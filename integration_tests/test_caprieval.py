@@ -399,48 +399,6 @@ def test_caprieval_default(
     )
 
 
-def test_caprieval_nodebug(
-    caprieval_module, model_list, expected_ss_data, expected_clt_data
-):
-    caprieval_module.previous_io = MockPreviousIO(path=caprieval_module.path)
-    caprieval_module.params["debug"] = False
-
-    caprieval_module.run()
-
-    evaluate_caprieval_execution(
-        caprieval_module, model_list, expected_ss_data, expected_clt_data
-    )
-
-
-def test_ss_clt_relation_debug(caprieval_module):
-    """Check if the values in the ss.tsv match the ones in clt.tsv"""
-
-    caprieval_module.previous_io = MockPreviousIO_with_models_to_be_clustered(
-        path=caprieval_module.path
-    )
-
-    caprieval_module.params["debug"] = True
-    caprieval_module.run()
-
-    metrics_to_be_evaluated = [
-        "score",
-        "irmsd",
-        "fnat",
-        "lrmsd",
-        "dockq",
-        "ilrmsd",
-        "rmsd",
-    ]
-
-    for metric in metrics_to_be_evaluated:
-        _check_means_match(
-            capri_ss_f=Path(caprieval_module.path, "capri_ss.tsv"),
-            capri_clt_f=Path(caprieval_module.path, "capri_clt.tsv"),
-            target_metric=metric,
-            top_n=caprieval_module.params["clt_threshold"],
-        )
-
-
 def test_ss_clt_relation(caprieval_module):
     """Check if the values in the ss.tsv match the ones in clt.tsv"""
 
@@ -448,7 +406,6 @@ def test_ss_clt_relation(caprieval_module):
         path=caprieval_module.path
     )
 
-    caprieval_module.params["debug"] = False
     caprieval_module.run()
 
     metrics_to_be_evaluated = [

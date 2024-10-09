@@ -1,6 +1,7 @@
 """CAPRI module."""
 
 import copy
+import json
 import os
 import shutil
 import tempfile
@@ -26,8 +27,8 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    Type,
-)
+    )
+from haddock.gear.config import load as read_config
 from haddock.libs.libalign import (
     ALIGNError,
     calc_rmsd,
@@ -38,16 +39,13 @@ from haddock.libs.libalign import (
     kabsch,
     load_coords,
     make_range,
-)
+    )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.modules import get_module_steps_folders
 
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
-import json
-
-from haddock.gear.config import load as read_config
 
 
 def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
@@ -751,128 +749,6 @@ class CAPRI:
         # REPLACE!
         new_pdb_path = shutil.move(temp_f.name, pdb_path)
         return new_pdb_path
-
-
-def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
-    """Merge CAPRI data."""
-    # Set of attributes/keys we want to extract
-    target_keys = (
-        "irmsd",
-        "fnat",
-        "ilrmsd",
-        "lrmsd",
-        "dockq",
-        "rmsd",
-    )
-    # Initiate holder
-    capri_dic: dict[str, dict[str, float]] = {}
-    # Loop over jobs ids
-    for ident in range(1, len(capri_jobs) + 1):
-        # Point tsv file
-        out_file = Path(f"capri_ss_{ident}.tsv")
-        if not out_file.exists():
-            continue
-        # Read it
-        header, content = out_file.read_text().split(os.linesep, 1)
-        header_data = header.split("\t")
-        content_data = content.split("\t")
-        # Find model name
-        model_name = Path(content_data[header_data.index("model")]).name
-        # Gather data for this model
-        capri_dic[model_name] = {
-            key: float(content_data[header_data.index(key)]) for key in target_keys
-        }
-
-    for j in capri_jobs:
-        for m in capri_dic:
-            jm = j.model
-            file_name = jm.name if isinstance(jm, Path) else jm.file_name
-            if m == file_name:
-                # add the data
-                for target_key in target_keys:
-                    # Set a new target_key attribute to object with capri_dic[m][target_key] value
-                    j.__setattr__(target_key, capri_dic[m][target_key])
-
-    return capri_jobs
-
-
-def rearrange_ss_capri_output(
-    output_name: str,
-    output_count: int,
-    sort_key: str,
-    sort_ascending: bool,
-    path: FilePath,
-) -> None:
-    """Combine different capri outputs in a single file.
-
-    Parameters
-    ----------
-    output_name : str
-        Name of the output file.
-    output_count : int
-        Number of output files to combine.
-    sort_key : str
-        Key to sort the output files.
-    path : Path
-        Path to the output directory.
-    """
-    # this would be easier and more readable with pandas (:
-    output_fname = Path(path, output_name)
-    log.info(f"Rearranging output files into {output_fname}")
-    keyword = output_name.split(".")[0]
-    split_dict = {
-        "capri_ss": "model-cluster_ranking",
-        "capri_clt": "caprieval_rank",
-    }
-    if keyword not in split_dict.keys():
-        raise Exception(f"Keyword {keyword} does not exist.")
-
-    # Load the information of each intermediate file
-    data: dict[int, ParamDict] = {}
-    for ident in range(1, output_count + 1):
-        out_file = Path(path, f"{keyword}_{ident}.tsv")
-
-        # raise a warning if file does not exist.
-        if not out_file.exists():
-            log.warning(
-                (
-                    f"Output file {out_file} does not exist. "
-                    "Caprieval will not be exhaustive..."
-                )
-            )
-            continue
-
-        data[ident] = {}
-        header, content = out_file.read_text().split(os.linesep, 1)
-
-        header_data = header.split("\t")
-        content_data = content.split("\t")
-
-        # find out the data type of each field
-        value: Union[float, str]
-        for key, value in zip(header_data, content_data):
-            try:
-                value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    value = str(value).strip(os.linesep)
-            data[ident][key] = value
-
-        out_file.unlink()
-
-    ranked_data = rank_according_to_score(
-        data, sort_key=sort_key, sort_ascending=sort_ascending
-    )
-
-    data = ranked_data
-
-    if not data:
-        # This means no files have been collected
-        return
-    else:
-        write_nested_dic_to_file(data, output_name)
 
 
 def rank_according_to_score(

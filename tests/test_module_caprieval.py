@@ -19,8 +19,7 @@ from haddock.modules.analysis.caprieval.capri import (
     get_previous_cns_step,
     load_contacts,
     rank_according_to_score,
-    rearrange_ss_capri_output,
-    )
+)
 
 from . import golden_data
 
@@ -606,31 +605,6 @@ def test_add_chain_from_segid(protprot_caprimodule):
         for line in fh:
             if line.startswith("ATOM"):
                 assert line[21] == "A"
-
-
-def test_rearrange_ss_capri_output():
-    """Test rearranging the capri output."""
-    with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
-        with open("capri_ss_1.tsv", "w", encoding="utf-8") as fh:
-            fh.write(
-                "model	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	"
-                "dockq	cluster_id	cluster_ranking	"
-                "model-cluster_ranking" + os.linesep
-            )
-            fh.write(
-                "../1_emscoring/emscoring_909.pdb	1	-424.751	0.000	"
-                "1.000	0.000	0.000	1.000	-	-	-" + os.linesep
-            )
-        rearrange_ss_capri_output(
-            "capri_ss.txt",
-            output_count=1,
-            sort_key="score",
-            sort_ascending=True,
-            path=Path("."),
-        )
-
-        assert Path("capri_ss.txt").stat().st_size != 0
 
 
 def test_calc_stats():

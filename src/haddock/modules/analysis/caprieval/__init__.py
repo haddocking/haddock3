@@ -28,23 +28,16 @@ The following files are generated:
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import Any, FilePath, Union
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
-from haddock.modules import (
-    BaseHaddockModule,
-    get_engine,
-    get_module_steps_folders,
-)
-from haddock.modules.analysis import get_analysis_exec_mode
+from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
     dump_weights,
     extract_data_from_capri_class,
-    merge_data,
-    rearrange_ss_capri_output,
-)
+    )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -60,9 +53,7 @@ class HaddockModule(BaseHaddockModule):
         self,
         order: int,
         path: Path,
-        *ignore: Any,
         init_params: FilePath = DEFAULT_CONFIG,
-        **everything: Any,
     ) -> None:
         super().__init__(order, path, init_params)
 

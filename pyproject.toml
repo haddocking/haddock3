@@ -48,7 +48,8 @@ dev = [
   "pytest-mock==3.14.0",
   "fastapi==0.115.0",
   "httpx==0.27.0",
-  "mpi4py==4.0.0"
+  "mpi4py==4.0.0",
+  "kaleido==0.2.1",
 ]
 docs = [
   "sphinx>=2",

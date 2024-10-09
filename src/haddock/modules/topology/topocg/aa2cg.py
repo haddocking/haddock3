@@ -24,7 +24,6 @@ from haddock import log
 from Bio.PDB import Entity
 from Bio.PDB import PDBIO
 from Bio.PDB import PDBParser
-from Bio.PDB.DSSP import DSSP
 from Bio.PDB.StructureBuilder import StructureBuilder
 
 from haddock.core.exceptions import ModuleError

@@ -442,16 +442,22 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
             continue
         else:
             try:
-                #p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) 
-                #dssp_raw, errors = p.communicate()
-                #print("THIS IS ERR:", errors)
-                #print("THIS IS OUT:", dssp_raw)
-                dssp = DSSP(model, tmp_file_name)
+                p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
                 log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
         
+        dssp_raw, errors = p.communicate()
+        dssp_raw = dssp_raw.split('#')[1].split('\n')[:-1]
+        dssp = {}
+
+        for line in dssp_raw:
+            if line[11:12] in dssp.keys():
+                dssp[line[11:12]].append(line[16:17])
+            else:
+                dssp[line[11:12]] = []
+
         subprocess.Popen(["rm", tmp_file_name])
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
@@ -459,27 +465,16 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
         # DSSP > MARTINI > HADDOCK
         # this could still be improved
         for chain in model:
-            if chain.id in calculated_chains:
-                # if ss_dic[model]:
-                # get DSSP value for each residue
-                for r in chain:
-                    try:
-                        r.xtra["SS_DSSP"]
-                    except KeyError:
-                        log.warning('No SS definition found for residue: {} {} {:d}'.
-                                        format(chain.id, r.resname, r.id[1]))
-                        r.xtra["SS_DSSP"] = "-"
-                dssp_dic = collections.OrderedDict([(r, r.xtra["SS_DSSP"]) for r in chain])
-                dssp_ss = "".join(dssp_dic.values())
-                _, martini_types = ss_classification(dssp_ss)  # ancestral function, keep it there
+            dssp_ss = "".join(dssp[chain.id])
+            _, martini_types = ss_classification(dssp_ss)  # ancestral function, keep it there
 
-                # transform MARTINI > HADDOCK
-                # and add it to the bfactor col
-                for residue, ss in zip(dssp_dic, martini_types):
-                    code = ss_to_code[ss]
-                    # for atom in residue.get_atoms():
-                    for atom in residue.get_atom():
-                        atom.bfactor = code
+            # transform MARTINI > HADDOCK
+            # and add it to the bfactor col
+            for residue, ss in zip(chain, martini_types):
+                code = ss_to_code[ss]
+                # for atom in residue.get_atoms():
+                for atom in residue:
+                    atom.bfactor = code
     return structure
 
 

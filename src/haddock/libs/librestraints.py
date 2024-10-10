@@ -11,6 +11,7 @@ from freesasa import Classifier, structureFromBioPDB, calc
 # Scaling factors for relative ASA
 # Calculated using extended ALA-X-ALA peptides
 # Taken from NACCESS
+# Taken from NACCESS
 REL_ASA = {
     'total':
         {
@@ -34,7 +35,27 @@ REL_ASA = {
             'VAL': 151.44,
             'TRP': 249.36,
             'TYR': 212.76,
-        },
+            'ASH': 140.39,
+            'DDZ': 107.95,
+            'GLH': 172.25,
+            'CYM': 134.28,
+            'CSP': 134.28,
+            'CYF': 134.28,
+            'CYC': 134.28,
+            'CFE': 134.28,
+            'NEP': 182.88,
+            'ALY': 200.81,
+            'MLZ': 200.81,
+            'MLY': 200.81,
+            'M3L': 200.81,
+            'HYP': 136.13,
+            'SEP': 116.50,
+            'TOP': 139.27,
+            'TYP': 212.76,
+            'PTR': 212.76,
+            'TYS': 212.76,
+            'PNS': 116.50,
+            },
     'bb':
         {
             'ALA': 38.54,
@@ -57,7 +78,27 @@ REL_ASA = {
             'VAL': 37.16,
             'TRP': 38.10,
             'TYR': 35.38,
-        },
+            'ASH': 37.70,
+            'DDZ': 38.54,
+            'GLH': 37.51,
+            'CYM': 37.53,
+            'CYC': 37.53,
+            'CSP': 37.53,
+            'CYF': 37.53,
+            'CFE': 37.53,
+            'NEP': 35.80,
+            'ALY': 37.51,
+            'MLZ': 37.51,
+            'MLY': 37.51,
+            'M3L': 37.51,
+            'HYP': 16.23,
+            'SEP': 38.40,
+            'TOP': 37.57,
+            'TYP': 35.38,
+            'PTR': 35.38,
+            'TYS': 35.38,
+            'PNS': 38.40,
+            },
     'sc':
         {
             'ALA': 69.41,
@@ -80,8 +121,29 @@ REL_ASA = {
             'VAL': 114.28,
             'TRP': 211.26,
             'TYR': 177.38,
-        }
-}
+            'ASH': 102.69,
+            'DDZ': 69.41,
+            'GLH': 134.74,
+            'CYM': 96.75,
+            'CYC': 96.75,
+            'CSP': 96.75,
+            'CYF': 96.75,
+            'CFE': 96.75,
+            'NEP': 147.08,
+            'ALY': 163.30,
+            'MLZ': 163.30,
+            'MLY': 163.30,
+            'M3L': 163.30,
+            'HYP': 119.90,
+            'SEP': 78.11,
+            'TOP': 101.70,
+            'TYP': 177.38,
+            'PTR': 177.38,
+            'TYS': 177.38,
+            'PNS': 78.11,
+            }
+    }
+DEFAULT_PROBE_RADIUS = 1.4
 
 def get_surface_resids(structure, cutoff=15):
     """

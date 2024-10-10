@@ -177,7 +177,6 @@ class CAPRI:
         path: Path,
         reference: PDBPath,
         params: ParamMap,
-        debug: Optional[bool] = False,
     ) -> None:
         """
         Initialize the class.
@@ -223,7 +222,6 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
-        self.debug = debug
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -569,40 +567,6 @@ class CAPRI:
             has_cluster_info = True
         return has_cluster_info
 
-    def make_output(self) -> None:
-        """Output the CAPRI results to a .tsv file."""
-        data = {}
-        # keep always "model" the first key
-        data["model"] = self.model
-        data["md5"] = self.model.md5
-        # create the empty rank here so that it will appear
-        #  as the second column
-        data["caprieval_rank"] = None
-        data["score"] = self.model.score
-        data["irmsd"] = self.irmsd
-        data["fnat"] = self.fnat
-        data["lrmsd"] = self.lrmsd
-        data["ilrmsd"] = self.ilrmsd
-        data["dockq"] = self.dockq
-        data["rmsd"] = self.rmsd
-
-        if self.has_cluster_info():
-            data["cluster_id"] = self.model.clt_id
-            data["cluster_ranking"] = self.model.clt_rank
-            data["model-cluster_ranking"] = self.model.clt_model_rank
-        else:
-            data["cluster_id"] = None
-            data["cluster_ranking"] = None
-            data["model-cluster_ranking"] = None
-
-        # energies
-        if self.model.unw_energies:
-            for key in self.model.unw_energies:
-                data[key] = self.model.unw_energies[key]
-
-        output_fname = Path(self.path, self.output_ss_fname)
-
-        write_dic_to_file(data, output_fname)
 
     def run(self) -> Union[None, "CAPRI"]:
         """Get the CAPRI metrics."""
@@ -652,12 +616,8 @@ class CAPRI:
             log.debug(f"id {self.identificator}, calculating global RMSD")
             self.calc_global_rmsd()
 
-        if self.debug:
-            self.make_output()
-        else:
-            # The scheduler will use the return of the `run` method as the output of the tasks
-            #  Here to avoid writing a file, return a copy of this instance
-            return copy.deepcopy(self)
+        # The scheduler will use the return of the `run` method as the output of the tasks
+        return copy.deepcopy(self)
 
     @staticmethod
     def _load_atoms(

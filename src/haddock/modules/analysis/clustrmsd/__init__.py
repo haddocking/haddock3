@@ -179,7 +179,10 @@ class HaddockModule(BaseHaddockModule):
                 matrix_cluster_dt=matrix_cluster_dt,
                 cluster_limits=cluster_limits,
                 )
-            log.info(f"Plotting matrix in {html_matrixpath}")
+            if html_matrixpath:
+                log.info(f"Plotting matrix in {html_matrixpath}")
+            else:
+                log.warning("Cluster matrix was not generated")
 
         self.export_io_models()
         # sending matrix to next step of the workflow

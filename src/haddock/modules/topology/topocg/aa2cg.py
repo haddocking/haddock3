@@ -32,7 +32,7 @@ from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
 
-CRYST_LINE = "CRYST1 \n"
+CRYST_LINE = "CRYST1 " + os.linesep
 
 
 def add_dummy(bead_list, dist=0.11, n=2):

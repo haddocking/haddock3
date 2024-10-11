@@ -401,7 +401,7 @@ def extract_groups(pair_list):
     out.close()
 
 
-def create_file_with_cryst(pdb_file, pdb_file_copy):
+def create_file_with_cryst(pdb_file: str, pdb_file_copy: str) -> None:
     """
     This function creates a new pdb because the CRYST line is missing from the pdf file.     
     This line is necessary for DSSP.

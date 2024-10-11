@@ -439,12 +439,12 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
         else:
             try:
                 p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                dssp_raw, errors = p.communicate()
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
                 log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
         
-        dssp_raw, errors = p.communicate()
         dssp_raw = dssp_raw.split('#')[1].split('\n')[:-1]
         dssp = {}
 

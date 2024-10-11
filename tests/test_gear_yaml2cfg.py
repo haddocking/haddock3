@@ -1,9 +1,13 @@
 """Test yaml2cfg gear."""
 import filecmp
+import pytest
 from pathlib import Path
 
-from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
+from haddock.gear.yaml2cfg import (
+    flat_yaml_cfg,
+    yaml2cfg_text,
+    )
 
 from . import (
     haddock3_yaml_cfg_examples,

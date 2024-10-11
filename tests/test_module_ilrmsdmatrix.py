@@ -1,11 +1,12 @@
 """Test the rmsdmatrix module."""
+import o
 import os
+import tempfile
 from pathlib import Path
 
 import numpy as np
 import pytest
-import pytest_mock  # noqa : F401
-import tempfile
+
 
 from haddock.modules.analysis.ilrmsdmatrix import DEFAULT_CONFIG as ilrmsd_pars
 from haddock.modules.analysis.ilrmsdmatrix import (
@@ -19,9 +20,17 @@ from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
 from . import golden_data
 from .test_module_caprieval import protprot_input_list, protprot_onechain_list  # noqa : F401
 
+from haddock.modules.analysis.ilrmsdmatrix import \
+    DEFAULT_CONFIG as ILRMSD_DEFAULT_PARAMS
+from haddock.modules.analysis.ilrmsdmatrix import \
+    HaddockModule as IlrmsdmatrixModule
+from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import Contact, ContactJob
 
-@pytest.fixture
-def params():
+
+
+@pytest.fixture(name="params")
+def fixture_params():
+    """???"""
     return {"receptor_chain": "A", "ligand_chains": ["B"]}
 
 
@@ -37,11 +46,35 @@ def contact_obj(protprot_input_list, params):  # noqa : F811
         params=params,
     )
 
-    yield contact_obj
+def ilrmsdmatrix():
+    """Return ilrmsdmatrix module."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
+        yield IlrmsdmatrixModule(
+            order=1,
+            path=Path("."),
+            initial_params=ILRMSD_DEFAULT_PARAMS,
+        )
 
 
-@pytest.fixture
-def contact_job_obj(contact_obj, params):
+
+@pytest.fixture(name="contact_obj")
+def fixture_contact_obj(protprot_input_list, params):
+    """Return example Contact object."""
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        yield Contact(
+            model_list=protprot_input_list,
+            output_name="contact",
+            path=Path("."),
+            core=0,
+            contact_distance_cutoff=5.0,
+            params=params,
+        )
+
+
+@pytest.fixture(name="contact_job_obj")
+def fixture_contact_job_obj(contact_obj, params):
     """Return example ContactJob object."""
     contact_job_obj = ContactJob(
         Path("contact_output"),
@@ -49,6 +82,13 @@ def contact_job_obj(contact_obj, params):
         contact_obj,
     )
     yield contact_job_obj
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        yield ContactJob(
+            Path("contact_output"),
+            params,
+            contact_obj,
+        )
 
 
 def test_contact(contact_obj):
@@ -105,10 +145,11 @@ def test_ilrmsdmatrix_init(ilrmsdmatrix):
         order=42,
         path=Path("0_anything"),
         initial_params=ilrmsd_pars,
+        initial_params=ILRMSD_DEFAULT_PARAMS,
     )
     # Once a module is initialized, it should have the following attributes
     assert ilrmsdmatrix.path == Path("0_anything")
-    assert ilrmsdmatrix._origignal_config_file == ilrmsd_pars
+    assert ilrmsdmatrix._origignal_config_file == ILRMSD_DEFAULT_PARAMS
     assert type(ilrmsdmatrix.params) == dict
     assert len(ilrmsdmatrix.params) != 0
 

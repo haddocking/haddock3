@@ -44,35 +44,19 @@ while ($ncount < $data.ncomponents) loop nloop1
     evaluate ($corr = max($corr,$zdim))
 
     if  ($data.cmtight eq false) then
-        ! use average of all three dimensions + 10A
+        ! use average of all three dimensions
         evaluate ($dim_$ncount = ($xdim + $ydim + $zdim)/6.0)
     else
         ! use only the average of the smallest two dimensions
         evaluate ($dim_$ncount = ($xdim + $ydim + $zdim - $corr)/4.0)
     end if
 
-    if ($toppar.dna_$ncount = true) then
-        ! Check first if not protein-DNA complex
-        do (store6 = 0) (all)
-        do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB))
-        show sum (store6) (all)
-        if ($result eq 0) then
-            ! we are dealing with a nucleic acid - check if DNA or RNA 
-            do (store6 = 0) (all)
-            do (store6 = 1) (resn DA or resn DT or resn DC or resn DG)
-            show sum (store6) (all)
-            if ($result > 0) then
-                ! we are delaing with DNA - set dimension to 0
-                evaluate ($dim_$ncount = 0.0)
-            end if
-        end if
-    end if
-
+    ! check for anything not protein
     do (store6 = 0) (all)
-    do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB))
     show sum (store6) (all)
     if ($result eq 0) then
-        ! we are dealing with a ligand set dimension to 0
+        ! we are dealing with a ligand, nucleic acid or glycan -> set dimension to 0
         evaluate ($dim_$ncount = 0.0)
     end if
     
@@ -134,7 +118,7 @@ noe
     end loop nloop1
 
     averaging  contact center
-    scale      contact $Data.kcont
+    scale      contact $data.kcm
     sqconstant contact 1.0
     sqexponent contact 2
     soexponent contact 1

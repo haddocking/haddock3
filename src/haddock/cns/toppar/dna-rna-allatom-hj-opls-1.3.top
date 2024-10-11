@@ -22,8 +22,8 @@ AUTOGENERATE  ANGLES=TRUE  END
 {* DNA/RNA default masses *}
 
 MASS   P     30.97400! phosphorus
-MASS   O1P   15.99940! O in phosphate
-MASS   O2P   15.99940! O in phosphate
+MASS   OP1   15.99940! O in phosphate
+MASS   OP2   15.99940! O in phosphate
 MASS   O5R   15.99940! ester -P-O-C-
 MASS   C5R   12.011! corresp. to CH2E
 MASS   C4R   12.011! corresp. to CH1E
@@ -140,8 +140,8 @@ RESIdue G ! RNA GUA
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5R   CHARGE=0.00    END
@@ -187,7 +187,7 @@ RESIdue G ! RNA GUA
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P        BOND P    O2P           BOND P    O5'    
+ BOND P    OP1        BOND P    OP2           BOND P    O5'    
 
  BOND O5'  C5'         BOND C5'  C4'           BOND C4'  O4'
  BOND C4'  C3'         BOND O4'  C1'           BOND C1'  N9
@@ -237,8 +237,8 @@ RESIdue DG ! deoxy form of GUA
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5D   CHARGE=0.00     END ! deoxy
@@ -283,7 +283,7 @@ RESIdue DG ! deoxy form of GUA
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P        BOND P    O2P           BOND P    O5'    
+ BOND P    OP1        BOND P    OP2           BOND P    O5'    
 
  BOND O5'  C5'         BOND C5'  C4'           BOND C4'  O4'
  BOND C4'  C3'         BOND O4'  C1'           BOND C1'  N9
@@ -335,8 +335,8 @@ RESIdue A ! RNA ADE
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5R   CHARGE=0.00    END
@@ -380,7 +380,7 @@ RESIdue A ! RNA ADE
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P              BOND P    O2P              BOND P    O5'
+ BOND P    OP1              BOND P    OP2              BOND P    O5'
  BOND O5'  C5'              BOND C5'  C4'              BOND C4'  O4'
  BOND C4'  C3'              BOND O4'  C1'              BOND C1'  N9
  BOND C1'  C2'              BOND N9   C4               BOND N9   C8
@@ -426,8 +426,8 @@ RESIdue DA ! deoxy form at ADE
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5D   CHARGE=0.00     END ! deoxy
@@ -470,7 +470,7 @@ RESIdue DA ! deoxy form at ADE
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P              BOND P    O2P              BOND P    O5'
+ BOND P    OP1              BOND P    OP2              BOND P    O5'
  BOND O5'  C5'              BOND C5'  C4'              BOND C4'  O4'
  BOND C4'  C3'              BOND O4'  C1'              BOND C1'  N9
  BOND C1'  C2'              BOND N9   C4               BOND N9   C8
@@ -518,8 +518,8 @@ RESIdue C  ! RNA CYT
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5R   CHARGE=0.00    END
@@ -561,7 +561,7 @@ RESIdue C  ! RNA CYT
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P             BOND P    O2P             BOND P    O5'
+ BOND P    OP1             BOND P    OP2             BOND P    O5'
  BOND O5'  C5'             BOND C5'  C4'             BOND C4'  O4'
  BOND C4'  C3'             BOND O4'  C1'             BOND C1'  N1
  BOND C1'  C2'             BOND N1   C2              BOND N1   C6
@@ -598,8 +598,8 @@ RESIdue DC ! deoxy form of CYT
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5D   CHARGE=0.00     END ! deoxy
@@ -640,7 +640,7 @@ RESIdue DC ! deoxy form of CYT
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P             BOND P    O2P             BOND P    O5'
+ BOND P    OP1             BOND P    OP2             BOND P    O5'
  BOND O5'  C5'             BOND C5'  C4'             BOND C4'  O4'
  BOND C4'  C3'             BOND O4'  C1'             BOND C1'  N1
  BOND C1'  C2'             BOND N1   C2              BOND N1   C6
@@ -681,8 +681,8 @@ RESIdue DT  ! deoxy form of THY
 
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5D   CHARGE=0.00     END ! deoxy
@@ -726,7 +726,7 @@ RESIdue DT  ! deoxy form of THY
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
 
- BOND P    O1P               BOND P    O2P               BOND P    O5'
+ BOND P    OP1               BOND P    OP2               BOND P    O5'
  BOND O5'  C5'               BOND C5'  C4'               BOND C4'  O4'
  BOND C4'  C3'               BOND O4'  C1'               BOND C1'  N1
  BOND C1'  C2'               BOND N1   C2                BOND N1   C6
@@ -768,8 +768,8 @@ RESIdue DJ  ! baseJ implemented based on DT and acpype output
 
  GROUp
   ATOM P    TYPE=P     CHARGE= 0.78   END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5D   CHARGE= 0.00   END ! deoxy
@@ -838,7 +838,7 @@ RESIdue DJ  ! baseJ implemented based on DT and acpype output
  GROUP
   ATOM O3'  TYPE=O3R     CHARGE=-0.43   END
 
- BOND P    O1P               BOND P    O2P               BOND P    O5'
+ BOND P    OP1               BOND P    OP2               BOND P    O5'
  BOND O5'  C5'               BOND C5'  C4'               BOND C4'  O4'
  BOND C4'  C3'               BOND O4'  C1'               BOND C1'  N1
  BOND C1'  C2'               BOND N1   C2                BOND N1   C6
@@ -898,8 +898,8 @@ RESIdue U ! URI
   
  GROUp
   ATOM P    TYPE=P     CHARGE=0.78    END
-  ATOM O1P  TYPE=O1P   CHARGE=-0.66   END
-  ATOM O2P  TYPE=O2P   CHARGE=-0.66   END
+  ATOM OP1  TYPE=OP1   CHARGE=-0.66   END
+  ATOM OP2  TYPE=OP2   CHARGE=-0.66   END
   ATOM O5'  TYPE=O5R   CHARGE=-0.43   END
  GROUp
   ATOM C5'  TYPE=C5R   CHARGE=0.00    END
@@ -940,7 +940,7 @@ RESIdue U ! URI
  GROUP
   ATOM O3'  TYPE=O3R   CHARGE=-0.43   END
 
- BOND P    O1P                BOND P    O2P              BOND P    O5'
+ BOND P    OP1                BOND P    OP2              BOND P    O5'
  BOND O5'  C5'                BOND C5'  C4'              BOND C4'  O4'
  BOND C4'  C3'                BOND O4'  C1'              BOND C1'  N1
  BOND C1'  C2'                BOND N1   C2               BOND N1   C6
@@ -1013,8 +1013,8 @@ PRESidue 5PHO           ! 5-terminus (with phosphate)
   ADD BOND +O5T  +P
   ADD ANGLe +H5T  +O5T  +P
   ADD ANGLe +O5'  +P  +O5T
-  ADD ANGLe +O5T  +P  +O1P
-  ADD ANGLe +O5T  +P  +O2P 
+  ADD ANGLe +O5T  +P  +OP1
+  ADD ANGLe +O5T  +P  +OP2 
 
 END {5PHO}
 
@@ -1043,8 +1043,8 @@ PRESidue 5TER        ! 5-terminus (without phosphate)
   MODIFY ATOM +O5'  TYPE=OH  CHARGE=-0.70  END      
   MODIFY ATOM +C5'  TYPE=C5R  CHARGE=0.00  END      
   DELETE ATOM +P   END
-  DELETE ATOM +O1P END
-  DELETE ATOM +O2P END
+  DELETE ATOM +OP1 END
+  DELETE ATOM +OP2 END
  !
  ADD BOND +H5T   +O5'
  ADD ANGLe +H5T   +O5'  +C5'
@@ -1062,15 +1062,15 @@ PRESidue NUC         ! patch for nucleic acid backbone
 
   MODIFY ATOM -O3' END   !
   MODIFY ATOM +P   END   !
-  MODIFY ATOM +O1P END   ! this should correctly define the electrostatic 
+  MODIFY ATOM +OP1 END   ! this should correctly define the electrostatic 
 
-  MODIFY ATOM +O2P END   ! group boundary 
+  MODIFY ATOM +OP2 END   ! group boundary 
 
   MODIFY ATOM +O5' END   !
  ADD BOND -O3' +P
  ADD ANGLE -C3' -O3' +P
- ADD ANGLE -O3' +P  +O1P
- ADD ANGLE -O3' +P  +O2P
+ ADD ANGLE -O3' +P  +OP1
+ ADD ANGLE -O3' +P  +OP2
  ADD ANGLE -O3' +P  +O5'
 !ADD DIHEdral -O3' +P  +O5'  +C5'   
 

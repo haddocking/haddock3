@@ -46,8 +46,8 @@ evaluate ($data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_scale=$amb_scale)
-evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.ambig_scale=$ambig_scale)
+evaluate ($data.unambig_scale=$unambig_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
 evaluate ($data.contactairs=$contactairs)
@@ -59,17 +59,17 @@ evaluate ($data.kcont=$kcont)
 ! NCS restraints
 evaluate ($data.kncs = $kncs)
 evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
+evaluate ($data.nncs = $nncs)
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($data.nums3sym = $nums3sym)
-evaluate ($data.numc4sym = $numc4sym)
-evaluate ($data.numc5sym = $numc5sym)
-evaluate ($data.numc6sym = $numc6sym)
+evaluate ($data.nc2sym = $nc2sym)
+evaluate ($data.nc3sym = $nc3sym)
+evaluate ($data.ns3sym = $ns3sym)
+evaluate ($data.nc4sym = $nc4sym)
+evaluate ($data.nc5sym = $nc5sym)
+evaluate ($data.nc6sym = $nc6sym)
 
 !Dihedral angle energy term:
 evaluate ($data.flags.dihed = true)
@@ -186,8 +186,8 @@ noe
     averaging  * sum
     potential  * soft
     scale      * 1.0
-    scale ambi $amb_scale
-    scale dist $unamb_scale
+    scale ambi $ambig_scale
+    scale dist $unambig_scale
     scale hbon $hbond_scale
     sqconstant * 1.0
     sqexponent * 2
@@ -198,7 +198,6 @@ noe
     msoexponent * 1
     masymptote  * -0.1
     mrswitch    * 0.5
-    avexpo hbond 20
 end
 
 {* set the energy flags ======================================================== *}
@@ -371,8 +370,8 @@ else
 end if
 
 noe
-    scale dist $data.unamb_scale
-    scale ambi $data.amb_scale
+    scale dist $data.unambig_scale
+    scale ambi $data.ambig_scale
     scale hbon $data.hbond_scale
     scale symm 0.0
     scale cont 0.0
@@ -410,8 +409,8 @@ if ($data.flags.sym eq true) then
         noe cv $npart ? end
     end if
     noe
-        scale dist $data.unamb_scale
-        scale ambi $data.amb_scale
+        scale dist $data.unambig_scale
+        scale ambi $data.ambig_scale
         scale hbon $data.hbond_scale
     end
     print threshold=0.3 noe

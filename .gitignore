@@ -154,6 +154,5 @@ docs/haddock.modules.rst
 docs/haddock.modules.base_cns_module.rst
 docs/setup.rst
 docs/clients/*rst
-src/fast-rmsdmatrix
-src/fcc
+src/haddock/bin/
 log

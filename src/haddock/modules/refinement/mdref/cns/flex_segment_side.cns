@@ -1,18 +1,3 @@
-! flex_segment_side.cns
-!     Define semi-flexible segments (side-chains only)
-!
-! ***********************************************************************
-! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
-! * All rights reserved.                                                *
-! * This code is part of the HADDOCK software and governed by its       *
-! * license. Please see the LICENSE file that should have been included *
-! * as part of this package.                                            *
-! ***********************************************************************
-!
-
-do (store5 = 0) (all)
-do (store6 = 0) (all)
-do (store7 = 0) (all)
 
 !first flexible segments for docking
 evaluate($nchain1 = 0)
@@ -33,8 +18,6 @@ while ($nchain1 < $data.ncomponents) loop nloop1
                 do (store5 = $nchain1) ( resid $seg_sta_$nchain1_$nf : $seg_end_$nchain1_$nf
                                          and segid $prot_segid_$nchain1
                                          and not(name CA or name BB or name C or name N or name O) )
-                do (store7 = $nchain1) ( resid $seg_sta_$nchain1_$nf : $seg_end_$nchain1_$nf
-                                         and segid $prot_segid_$nchain1)
                 display FLEXIBLE SIDE-CHAINS SEGMENT NR $nf FROM $seg_sta_$nchain1_$nf TO $seg_end_$nchain1_$nf
             end loop Xflex
         end if
@@ -42,51 +25,23 @@ while ($nchain1 < $data.ncomponents) loop nloop1
 end loop nloop1
 
 !then fully flexible segments for all stages
-evaluate($nchain1 = 0)
-while ($nchain1 < $data.ncomponents) loop nloop2
-    evaluate($nchain1 = $nchain1 + 1)
-    if ($nfle$nchain1 = 0) then
-        display NO FULLY FLEXIBLE SEGMENTS for molecule $nchain1
-    else
-        display FULLY FLEXIBLE SEGMENTS for molecule $nchain1
-        evaluate($nf=0)
-        while ($nf < $nfle$nchain1) loop Xfflex
-            evaluate($nf=$nf + 1)
-            do (store5 = $nchain1) ( resid $fle_sta_$nchain1_$nf : $fle_end_$nchain1_$nf
-                                     and segid $prot_segid_$nchain1)
-            do (store7 = $nchain1) ( resid $fle_sta_$nchain1_$nf : $fle_end_$nchain1_$nf
-                                     and segid $prot_segid_$nchain1)
-            display FULLY FLEXIBLE SEGMENT NR $nf FROM $fle_sta_$nchain1_$nf TO $fle_end_$nchain1_$nf
-        end loop Xfflex
-    end if
-end loop nloop2
+
+!then fully flexible segments for all stages
+display NO FLEXIBLE SEGMENTS for all molecule at this stage
+if ($nfle = 0) then
+    display NO FULLY FLEXIBLE SEGMENTS
+else
+    evaluate($nf=0)
+    while ($nf < $nfle) loop Xfflex
+        evaluate($nf=$nf + 1)
+        do (store5 = 1) ( resid $fle_sta_$nf : $fle_end_$nf and segid $fle_seg_$nf )
+            display FULLY FLEXIBLE SEGMENT NR $nf FROM $fle_sta_$nf TO $fle_end_$nf FOR CHAIN $fle_seg_$nf
+    end loop Xfflex
+end if
 
 do (store5 = 21) (resn WAT or resn HOH or resn TIP*)
-
-evaluate ($nfletot = 0)
-! check number of flexible residues per molecule
-evaluate($nchain1 = 0)
-while ($nchain1 < $data.ncomponents) loop nloop3
-    evaluate($nchain1 = $nchain1 + 1)
-    do (store6 = 0) (all)
-    do (store6 = 1) (tag and (attr store7 = $nchain1))
-    show sum (store6) (all)
-    evaluate ($numfle=$result)
-    do (store6 = 0) (all)
-    do (store6 = 1) (tag and segid $prot_segid_$nchain1 and not (attr store7 = $nchain1))
-    show sum (store6) (all)
-    evaluate ($numrig=$result)
-    do (store6 = 0) (all)
-    do (store6 = 1) (tag and segid $prot_segid_$nchain1)
-    show sum (store6) (all)
-    evaluate ($numres=$result)
-    display FLEXIBILITY STATISTIC FOR MOLECULE $nchain1 : Nres=$numres Nrigid=$numrig Nflex=$numfle
-    evaluate ($nfletot = $nfletot + $numfle)
-end loop nloop3
 
 do (store1 = 0) (all)
 do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name OH2)
 show sum (store1) ((resn WAT or resn HOH or resn TIP*))
-evaluate ($nfletot = $nfletot + $result)
 
-evaluate ($nfletot = $nfletot + 10)

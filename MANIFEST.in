@@ -1,36 +1,31 @@
 graft docs
 graft src/haddock
-
 include *.md
 include *.rst
 include LICENSE
-include requirements.txt
-include requirements.yml
-include requirements_full.yml
-
+include pyproject.toml
+include setup.py
 exclude .gitmodules
 exclude .bumpversion.cfg
 exclude .coveragerc
 exclude .readthedocs.yml
 exclude tox.ini
-
 prune devtools
 prune examples
 prune src/fcc
 prune tests
-
 # exclude params*.rst documentation that is generated with
 # `tox -e docs`
 exclude docs/modules/*/params/*.rst
 exclude docs/reference/core/mandatory_parameters.rst
 exclude docs/modules/general_module_params.rst
-
 global-exclude *.py[cod] __pycache__/* *.so *.dylib 
 global-exclude tags
 global-exclude *.swp
-
 # recursive include of varia files
 recursive-include varia *.f
 recursive-include varia *.inc
 recursive-include varia *.lua
 recursive-include varia *.md
+include src/haddock/bin/*
+include src/haddock/libs/assets/*

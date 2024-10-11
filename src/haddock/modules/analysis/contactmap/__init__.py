@@ -16,6 +16,7 @@ connecting with *chords* the two residues that are contacting.
 from copy import deepcopy
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import Any, FilePath, SupportsRunT
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
@@ -31,7 +32,7 @@ from haddock.modules.analysis.contactmap.contmap import (
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):

@@ -356,3 +356,45 @@ def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_s
     log.info('Saving detailed output to clustrmsd.txt')
     with open(output_fname, 'w') as out_fh:
         out_fh.write(output_str)
+
+
+def order_clusters(cluster_arr):
+    """
+    Order the clusters by population.
+    
+    The most populated cluster will be assigned the ID 1, the second most
+     populated the ID 2, and so on.
+
+    Parameters
+    ----------
+    cluster_arr : np.ndarray
+        Array of clusters.
+    
+    Returns
+    -------
+    clusters : list
+        List of clusters.
+    
+    cluster_arr : np.ndarray
+        Array of clusters.
+    """
+    unique_clusters, cluster_counts = np.unique(cluster_arr, return_counts=True)
+    
+    sorted_indices = np.argsort(-cluster_counts)  # must use negative to sort ascending
+    sorted_clusters = unique_clusters[sorted_indices]
+    
+    # delete -1 from sorted_clusters if present
+    sorted_clusters = sorted_clusters[sorted_clusters != -1]
+    clusters = []
+    # for every element of sorted_clusters I want to assign a new ID
+    # to the elements of cluster_arr that match the order of sorted_clusters
+    index_dict = {}
+    for c in sorted_clusters:
+        # index of cluster_arr where the cluster is equal to c
+        idx = np.where(cluster_arr == c)
+        index_dict[c] = idx
+    # now the assignment
+    for i, c in enumerate(sorted_clusters):
+        clusters.append(i + 1)
+        cluster_arr[index_dict[c]] = i + 1
+    return clusters, cluster_arr

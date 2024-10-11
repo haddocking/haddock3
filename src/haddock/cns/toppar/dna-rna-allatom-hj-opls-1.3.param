@@ -37,8 +37,8 @@ BOND  O2R  HO      1350.000    0.9572
 
 !Phos.  - combined RNA/DNA statistics used 
 !                      kq       x_eq       sigma
-BOND  P    O1P     1489.209    1.485      ! 0.015  Phos
-BOND  P    O2P     1489.209    1.485      ! 0.015  P
+BOND  P    OP1     1489.209    1.485      ! 0.015  Phos
+BOND  P    OP2     1489.209    1.485      ! 0.015  P
 BOND  P    O5R     3350.720    1.593      ! 0.010  P
 BOND  P    OH      3350.720    1.593      ! 0.010  P	! For 5pho patch
 BOND  P    O3R     2326.889    1.607      ! 0.012  P
@@ -229,8 +229,8 @@ ANGLe       HO     OH	  P          139.500  107.300 ! For 5pho patch
 ANGLe       HO     O2R    C2R        139.500  107.300 
 ANGLe       OH     P      O3R        144.300  102.600 !
 ANGLe       OH     P      O5R        144.300  102.600 !
-ANGLe       OH     P      O1P        296.700  108.230 !
-ANGLe       OH     P      O2P        296.700  108.230 !
+ANGLe       OH     P      OP1        296.700  108.230 !
+ANGLe       OH     P      OP2        296.700  108.230 !
 ANGLe       OH     C5R    C4R        210.000  112.000 ! 
 ANGLe       OH     C5D    C4D        210.000  112.000 ! 
 ANGLe       OH     C5R    C4D        210.000  112.000 ! 
@@ -245,12 +245,12 @@ ANGLe       C2D    C3R    OH         139.500  111.000 ! for 3ter terminus
 
 !Phos.  - combined RNA/DNA statistics used 
 !                                      kq      x_eq  sigma
-ANGLe       O1P    P      O2P       1337.074  119.600 !1.5 P 
-ANGLe       O5R    P      O1P        357.719  108.100 !2.9 P
-ANGLe       O5R    P      O2P        412.677  108.300 !2.7 P 
+ANGLe       OP1    P      OP2       1337.074  119.600 !1.5 P 
+ANGLe       O5R    P      OP1        357.719  108.100 !2.9 P
+ANGLe       O5R    P      OP2        412.677  108.300 !2.7 P 
 ANGLe       O3R    P      O5R        833.356  104.000 !1.9 P 
-ANGLe       O2P    P      O3R        293.791  108.300 !3.2 P
-ANGLe       O1P    P      O3R        293.791  107.400 !3.2 P 
+ANGLe       OP2    P      O3R        293.791  108.300 !3.2 P
+ANGLe       OP1    P      O3R        293.791  107.400 !3.2 P 
 
 ANGLe       O5R    C5R    C4R       1534.906  110.200 !1.4 P 
 ANGLe       P      O5R    C5R       1175.163  120.900 !1.6 P 
@@ -873,10 +873,10 @@ NONBonded  O3R      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
 NONBonded  O4R      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
 NONBonded  O4D      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
 NONBonded  O5R      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
-NONBonded  O1P      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
-NONBonded  O2P      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
-NONBonded  O1PH     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
-NONBonded  O2PH     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  OP1      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  OP2      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  OP1H     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  OP2H     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
 
 NONBonded  P        $vdw_eps $vdw_radius_P    $vdw_eps $vdw_radius14_P
 
@@ -983,8 +983,8 @@ NONBonded  O3R     0.170   3.000       0.021    3.000	! opls OS
 NONBonded  O4R     0.170   3.000       0.021    3.000	! opls OS
 NONBonded  O4D     0.170   3.000       0.021    3.000	! opls OS
 NONBonded  O5R     0.170   3.000       0.021    3.000	! opls OS
-NONBonded  O1P     0.210   2.960       0.026    2.960	! opls O2
-NONBonded  O2P     0.210   2.960       0.026    2.960	! opls O2
+NONBonded  OP1     0.210   2.960       0.026    2.960	! opls O2
+NONBonded  OP2     0.210   2.960       0.026    2.960	! opls O2
 NONBonded  O2R     0.170   3.070       0.021    3.070	! opls OH
 NONBonded  ON      0.210   2.960       0.026    2.960	! opls O
 NONBonded  O6G     0.210   2.960       0.026    2.960	! opls O
@@ -1049,8 +1049,8 @@ NONBonded  N2A     0.170   3.250       0.021    3.250	! opls N2
 NONBonded  OH      0.170   3.070       0.021    3.070	! opls OH
 NONBonded  O5H     0.170   3.070       0.021    3.070	! opls OH
 NONBonded  O4U     0.210   2.960       0.026    2.960	! opls O
-NONBonded  O1PH    0.170   3.070       0.021    3.070	! opls OH
-NONBonded  O2PH    0.170   3.070       0.021    3.070	! opls OH
+NONBonded  OP1H    0.170   3.070       0.021    3.070	! opls OH
+NONBonded  OP2H    0.170   3.070       0.021    3.070	! opls OH
 NONBonded  SD      0.250   3.550       0.031    3.550	! opls S
 
 !basej
@@ -1103,8 +1103,8 @@ NONBonded  O3R      0.2304   2.7290      0.2304   2.7290
 NONBonded  O4R      0.2304   2.7290      0.2304   2.7290
 NONBonded  O4D      0.2304   2.7290      0.2304   2.7290
 NONBonded  O5R      0.2304   2.7290      0.2304   2.7290
-NONBonded  O1P      0.2304   2.7290      0.2304   2.7290
-NONBonded  O2P      0.2304   2.7290      0.2304   2.7290
+NONBonded  OP1      0.2304   2.7290      0.2304   2.7290
+NONBonded  OP2      0.2304   2.7290      0.2304   2.7290
 NONBonded  P        0.5849   3.3854      0.5849   3.3854
 
 !bases

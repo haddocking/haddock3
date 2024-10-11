@@ -1,6 +1,7 @@
 """CAPRI module."""
 
 import copy
+import json
 import os
 import shutil
 import tempfile
@@ -26,8 +27,8 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    Type,
-)
+    )
+from haddock.gear.config import load as read_config
 from haddock.libs.libalign import (
     ALIGNError,
     calc_rmsd,
@@ -38,16 +39,13 @@ from haddock.libs.libalign import (
     kabsch,
     load_coords,
     make_range,
-)
+    )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.modules import get_module_steps_folders
 
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
-import json
-
-from haddock.gear.config import load as read_config
 
 
 def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
@@ -174,19 +172,18 @@ class CAPRI:
 
     def __init__(
         self,
-        identificator: str,
+        identificator: int,
         model: PDBPath,
         path: Path,
         reference: PDBPath,
         params: ParamMap,
-        less_io: Optional[bool] = False,
     ) -> None:
         """
         Initialize the class.
 
         Parameters
         ----------
-        identificator : str
+        identificator : int
             The identificator of the object.
         model : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             The model to be evaluated.
@@ -213,6 +210,7 @@ class CAPRI:
         self.ilrmsd = float("nan")
         self.fnat = float("nan")
         self.dockq = float("nan")
+        self.rmsd = float("nan")
         self.allatoms = params["allatoms"]
         self.atoms = self._load_atoms(model, reference, full=self.allatoms)
         self.r_chain = params["receptor_chain"]
@@ -224,7 +222,6 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
-        self.less_io = less_io
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -508,6 +505,42 @@ class CAPRI:
         else:
             log.warning("No reference contacts found")
 
+    def calc_global_rmsd(self) -> None:
+        """Calculate the full structure RMSD."""
+        # Load reference atomic coordinates
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
+        # Load model atomic coordinates
+        try:
+            model_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+            )
+        except ALIGNError as alignerror:
+            log.warning(alignerror)
+            return
+        # Obtain list of coordinates
+        Q = []
+        P = []
+        for k in ref_coord_dic.keys() & model_coord_dic.keys():
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = model_coord_dic[k]
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
+        # Cast indo array
+        Q = np.asarray(Q)
+        P = np.asarray(P)
+        # Center to 0
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
+        # Obtain rotation matrix
+        U = kabsch(P, Q)
+        # Rotate model (the actual superimposition)
+        P = np.dot(P, U)
+        # Compute full RMSD
+        self.rmsd = calc_rmsd(P, Q)
+
     def calc_dockq(self) -> None:
         """Calculate the DockQ metric."""
         self.dockq = 0.0
@@ -534,39 +567,6 @@ class CAPRI:
             has_cluster_info = True
         return has_cluster_info
 
-    def make_output(self) -> None:
-        """Output the CAPRI results to a .tsv file."""
-        data = {}
-        # keep always "model" the first key
-        data["model"] = self.model
-        data["md5"] = self.model.md5
-        # create the empty rank here so that it will appear
-        #  as the second column
-        data["caprieval_rank"] = None
-        data["score"] = self.model.score
-        data["irmsd"] = self.irmsd
-        data["fnat"] = self.fnat
-        data["lrmsd"] = self.lrmsd
-        data["ilrmsd"] = self.ilrmsd
-        data["dockq"] = self.dockq
-
-        if self.has_cluster_info():
-            data["cluster_id"] = self.model.clt_id
-            data["cluster_ranking"] = self.model.clt_rank
-            data["model-cluster_ranking"] = self.model.clt_model_rank
-        else:
-            data["cluster_id"] = None
-            data["cluster_ranking"] = None
-            data["model-cluster_ranking"] = None
-
-        # energies
-        if self.model.unw_energies:
-            for key in self.model.unw_energies:
-                data[key] = self.model.unw_energies[key]
-
-        output_fname = Path(self.path, self.output_ss_fname)
-
-        write_dic_to_file(data, output_fname)
 
     def run(self) -> Union[None, "CAPRI"]:
         """Get the CAPRI metrics."""
@@ -612,12 +612,12 @@ class CAPRI:
             log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
 
-        if not self.less_io:
-            self.make_output()
-        else:
-            # The scheduler will use the return of the `run` method as the output of the tasks
-            #  Here to avoid writing a file, return a copy of this instance
-            return copy.deepcopy(self)
+        if self.params["global_rmsd"]:
+            log.debug(f"id {self.identificator}, calculating global RMSD")
+            self.calc_global_rmsd()
+
+        # The scheduler will use the return of the `run` method as the output of the tasks
+        return copy.deepcopy(self)
 
     @staticmethod
     def _load_atoms(
@@ -711,119 +711,6 @@ class CAPRI:
         return new_pdb_path
 
 
-def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
-    """Merge CAPRI data."""
-    capri_dic: dict[str, dict[str, float]] = {}
-    for ident in range(1, len(capri_jobs) + 1):
-        out_file = Path(f"capri_ss_{ident}.tsv")
-        if not out_file.exists():
-            continue
-        header, content = out_file.read_text().split(os.linesep, 1)
-
-        header_data = header.split("\t")
-        content_data = content.split("\t")
-
-        model_name = Path(content_data[header_data.index("model")]).name
-        capri_dic[model_name] = {}
-        target_keys = ["irmsd", "fnat", "ilrmsd", "lrmsd", "dockq"]
-        for key in target_keys:
-            val = float(content_data[header_data.index(key)])
-            capri_dic[model_name][key] = val
-
-    for j in capri_jobs:
-        for m in capri_dic:
-            jm = j.model
-            file_name = jm.name if isinstance(jm, Path) else jm.file_name
-            if m == file_name:
-                # add the data
-                j.irmsd = capri_dic[m]["irmsd"]
-                j.fnat = capri_dic[m]["fnat"]
-                j.lrmsd = capri_dic[m]["lrmsd"]
-                j.ilrmsd = capri_dic[m]["ilrmsd"]
-                j.dockq = capri_dic[m]["dockq"]
-
-    return capri_jobs
-
-
-def rearrange_ss_capri_output(
-    output_name: str,
-    output_count: int,
-    sort_key: str,
-    sort_ascending: bool,
-    path: FilePath,
-) -> None:
-    """Combine different capri outputs in a single file.
-
-    Parameters
-    ----------
-    output_name : str
-        Name of the output file.
-    output_count : int
-        Number of output files to combine.
-    sort_key : str
-        Key to sort the output files.
-    path : Path
-        Path to the output directory.
-    """
-    # this would be easier and more readable with pandas (:
-    output_fname = Path(path, output_name)
-    log.info(f"Rearranging output files into {output_fname}")
-    keyword = output_name.split(".")[0]
-    split_dict = {
-        "capri_ss": "model-cluster_ranking",
-        "capri_clt": "caprieval_rank",
-    }
-    if keyword not in split_dict.keys():
-        raise Exception(f"Keyword {keyword} does not exist.")
-
-    # Load the information of each intermediate file
-    data: dict[int, ParamDict] = {}
-    for ident in range(1, output_count + 1):
-        out_file = Path(path, f"{keyword}_{ident}.tsv")
-
-        # raise a warning if file does not exist.
-        if not out_file.exists():
-            log.warning(
-                (
-                    f"Output file {out_file} does not exist. "
-                    "Caprieval will not be exhaustive..."
-                )
-            )
-            continue
-
-        data[ident] = {}
-        header, content = out_file.read_text().split(os.linesep, 1)
-
-        header_data = header.split("\t")
-        content_data = content.split("\t")
-
-        # find out the data type of each field
-        value: Union[float, str]
-        for key, value in zip(header_data, content_data):
-            try:
-                value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    value = str(value).strip(os.linesep)
-            data[ident][key] = value
-
-        out_file.unlink()
-
-    ranked_data = rank_according_to_score(
-        data, sort_key=sort_key, sort_ascending=sort_ascending
-    )
-
-    data = ranked_data
-
-    if not data:
-        # This means no files have been collected
-        return
-    else:
-        write_nested_dic_to_file(data, output_name)
-
-
 def rank_according_to_score(
     data: dict[int, ParamDict], sort_key: str, sort_ascending: bool
 ) -> dict[int, ParamDict]:
@@ -907,6 +794,7 @@ def extract_data_from_capri_class(
             "lrmsd": c.lrmsd,
             "ilrmsd": c.ilrmsd,
             "dockq": c.dockq,
+            "rmsd": c.rmsd,
             "cluster_id": c.model.clt_id if c.model.clt_id else None,
             "cluster_ranking": c.model.clt_rank if c.model.clt_rank else None,
             "model-cluster_ranking": (
@@ -949,9 +837,7 @@ def calc_stats(data: list) -> tuple[float, float]:
 
 
 # Define dict types
-CltData = dict[
-    tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]
-]  # noqa : E501
+CltData = dict[tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]]
 
 
 def capri_cluster_analysis(
@@ -964,7 +850,7 @@ def capri_cluster_analysis(
     path: FilePath,
 ) -> None:
     """Consider the cluster results for the CAPRI evaluation."""
-    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd"]
+    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq", "ilrmsd", "rmsd"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data

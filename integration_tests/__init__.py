@@ -16,4 +16,4 @@ has_cns = pytest.mark.skipif(
 )
 
 tests_path = Path(__file__).resolve().parents[0]
-golden_data = Path(tests_path, 'golden_data')
+GOLDEN_DATA = Path(tests_path, "golden_data")

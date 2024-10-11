@@ -62,6 +62,20 @@ dockq:
   group: analysis
   explevel: easy
 
+global_rmsd:
+  default: true
+  type: boolean
+  title: Calculate global RMSD
+  short: Calculate full structure RMSD.
+  long: Compute full structure RMSD between reference structure and the model
+        after superimposition. Note that a sequence alignment is performed to
+        obtain the mapping between the reference and the model. If the one of
+        the structure contain a 'small-molecule', we assume that the compared
+        structure atoms are in the same order. With default parameters `allatoms = false`, only
+        backbone RMSD will be computed.
+  group: analysis
+  explevel: easy
+
 irmsd_cutoff:
   default: 10.0
   type: float

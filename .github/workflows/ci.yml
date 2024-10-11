@@ -1,0 +1,61 @@
+---
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
+
+      - name: install haddock3 with extra dependencies
+        run: pip install '.[dev,docs]'
+
+      - name: run unit tests
+        run: >-
+          pytest tests/
+          --cov --cov-report=term-missing --cov-append
+          --hypothesis-show-statistics
+
+      - name: run integration tests
+        run: >-
+          pytest integration_tests/
+          --cov --cov-report=term-missing --cov-append
+          --hypothesis-show-statistics
+
+      - name: generate coverage report
+        run: |
+          coverage report
+          coverage xml
+
+      - uses: codacy/codacy-coverage-reporter-action@v1
+        if: >-
+          ${{ github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository }}
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage.xml
+
+      - name: check if docs are buildable
+        continue-on-error: true
+        run: |
+          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+          sphinx-build docs haddock3-docs

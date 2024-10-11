@@ -1,10 +1,12 @@
 """HADDOCK3 modules."""
 
 import re
+
 from abc import ABC, abstractmethod
 from contextlib import contextmanager, suppress
 from copy import deepcopy
 from functools import partial
+from os import linesep
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
@@ -22,6 +24,7 @@ from haddock.core.typing import (
 )
 from haddock.gear import config
 from haddock.gear.clean_steps import clean_output
+from haddock.gear.known_cns_errors import find_all_cns_errors
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config, find_incompatible_parameters
 from haddock.libs.libhpc import HPCScheduler
@@ -264,7 +267,7 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_io_models(self, faulty_tolerance=0):
+    def export_io_models(self, faulty_tolerance: float = 0.0) -> None:
         """
         Export input/output to the ModuleIO interface.
 
@@ -297,6 +300,12 @@ class BaseHaddockModule(ABC):
                 f"{faulty:.2f}% of output was not generated for this module "
                 f"and tolerance was set to {faulty_tolerance:.2f}%."
             )
+            # Try to detect CNS errors
+            if detected_errors := find_all_cns_errors(self.path):
+                _msg += linesep
+                for error in detected_errors.values():
+                    _msg += f'{str(error["error"])}{linesep}'
+            # Show final error message
             self.finish_with_error(_msg)
 
     def finish_with_error(self, reason: object = "Module has failed.") -> None:

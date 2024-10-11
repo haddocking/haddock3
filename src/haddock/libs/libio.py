@@ -6,6 +6,7 @@ import gzip
 import os
 import stat
 import tarfile
+import re
 from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
@@ -21,7 +22,7 @@ from haddock.core.typing import (
     Iterable,
     Mapping,
     Optional,
-)
+    )
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
 
@@ -102,6 +103,10 @@ def read_from_yaml(yaml_file: FilePath) -> dict[Any, Any]:
         Always returns a dictionary.
         Returns empty dictionary if yaml_file is empty.
     """
+    # Check that this yaml file do not contain duplicated parameters
+    check_yaml_duplicated_parameters(yaml_file)
+
+    # Load yaml file using the yaml lib
     with open(yaml_file, "r") as fin:
         ycfg = yaml.safe_load(fin)
 
@@ -112,6 +117,33 @@ def read_from_yaml(yaml_file: FilePath) -> dict[Any, Any]:
 
     assert isinstance(ycfg, dict), type(ycfg)
     return ycfg
+
+
+def check_yaml_duplicated_parameters(yaml_fpath: str) -> None:
+    """Make sure the provided yaml file do not contain duplicated parameters.
+
+    Parameters
+    ----------
+    yaml_fpath : str
+        Path to a yaml file
+    """
+    # Build regular expression
+    # Note: Understand behavior here -> https://regex101.com/r/AaFHp4/1
+    yaml_param_regex = re.compile("^(([A-Za-z0-9]_?)+):")
+    # Read content as string
+    with open(yaml_fpath, 'r') as filin:
+        yaml_content = filin.readlines()
+    parsed_param_names: dict[str, int] = {}
+    # Loop over lines
+    for i, line in enumerate(yaml_content, start=1):
+        # Check if new parameter
+        if (match := yaml_param_regex.search(line)):
+            # Point parameter name
+            param_name = match.group(1)
+            # Make sure this parameter has not yet been used
+            assert param_name not in parsed_param_names.keys(), f"Parameter '{param_name}' in {yaml_fpath} has duplicates: l.{parsed_param_names[param_name]} and l.{i}"  # noqa : E501
+            # Hold line were this parameter is, in case of duplication, to help
+            parsed_param_names[param_name] = i
 
 
 def open_files_to_lines(*files: FilePath) -> list[list[str]]:
@@ -131,8 +163,9 @@ def open_files_to_lines(*files: FilePath) -> list[list[str]]:
 
 
 def save_lines_to_files(
-    files: Iterable[FilePath], lines: Iterable[Iterable[str]]
-) -> None:
+        files: Iterable[FilePath],
+        lines: Iterable[Iterable[str]]
+        ) -> None:
     """
     Save a list of list of lines to files.
 
@@ -157,8 +190,9 @@ def save_lines_to_files(
 
 
 def add_suffix_to_files(
-    files: Iterable[FilePath], suffix: str
-) -> Generator[Path, None, None]:
+        files: Iterable[FilePath],
+        suffix: str
+        ) -> Generator[Path, None, None]:
     """
     Add a suffix to file paths.
 
@@ -177,11 +211,11 @@ def add_suffix_to_files(
 
 
 def write_dic_to_file(
-    data_dict: Mapping[Any, Any],
-    output_fname: FilePath,
-    info_header: str = "",
-    sep: str = "\t",
-) -> None:
+        data_dict: Mapping[Any, Any],
+        output_fname: FilePath,
+        info_header: str = "",
+        sep: str = "\t",
+        ) -> None:
     """
     Create a table from a dictionary.
 
@@ -220,11 +254,11 @@ def write_dic_to_file(
 
 
 def write_nested_dic_to_file(
-    data_dict: Mapping[Any, Any],
-    output_fname: FilePath,
-    info_header: str = "",
-    sep: str = "\t",
-) -> None:
+        data_dict: Mapping[Any, Any],
+        output_fname: FilePath,
+        info_header: str = "",
+        sep: str = "\t",
+        ) -> None:
     """
     Create a table from a nested dictionary.
 
@@ -280,8 +314,11 @@ def working_directory(path: FilePath) -> Generator[None, None, None]:
 
 
 def compress_files_ext(
-    path: FilePath, ext: str, ncores: int = 1, **kwargs: Any
-) -> bool:
+        path: FilePath,
+        ext: str,
+        ncores: int = 1,
+        **kwargs: Any
+        ) -> bool:
     """
     Compress all files with same extension in folder to `.gz`.
 
@@ -319,11 +356,11 @@ def compress_files_ext(
 
 
 def gzip_files(
-    file_: FilePath,
-    block_size: Optional[int] = None,
-    compresslevel: int = 9,
-    remove_original: bool = False,
-) -> None:
+        file_: FilePath,
+        block_size: Optional[int] = None,
+        compresslevel: int = 9,
+        remove_original: bool = False,
+        ) -> None:
     """
     Gzip a file.
 
@@ -344,8 +381,8 @@ def gzip_files(
 
     gfile = str(file_) + ".gz"
     with open(file_, "rb") as fin, gzip.open(
-        gfile, mode="wb", compresslevel=compresslevel
-    ) as gout:
+            gfile, mode="wb", compresslevel=compresslevel
+            ) as gout:
         content = fin.read(block_size)  # read the first
         while content:
             gout.write(content)
@@ -383,10 +420,10 @@ def archive_files_ext(path: FilePath, ext: str, compresslevel: int = 9) -> bool:
 
     if files:
         with tarfile.open(
-            Path(path, f"{ext}.tgz"),
-            mode="w:gz",
-            compresslevel=compresslevel,
-        ) as tarout:
+                Path(path, f"{ext}.tgz"),
+                mode="w:gz",
+                compresslevel=compresslevel,
+                ) as tarout:
             for file_ in files:
                 tarout.add(file_, arcname=file_.name)
 
@@ -440,10 +477,10 @@ def remove_files_with_ext(folder: FilePath, ext: str) -> None:
 
 
 def folder_exists(
-    path: FilePath,
-    exception: type[Exception] = ValueError,
-    emsg: str = "The folder {!r} does not exist or is not a folder.",
-) -> Path:
+        path: FilePath,
+        exception: type[Exception] = ValueError,
+        emsg: str = "The folder {!r} does not exist or is not a folder.",
+        ) -> Path:
     """
     Assert if a folder exist.
 
@@ -483,10 +520,10 @@ def folder_exists(
 
 
 def file_exists(
-    path: FilePath,
-    exception: type[Exception] = ValueError,
-    emsg: str = "`path` is not a file or does not exist",
-) -> Path:
+        path: FilePath,
+        exception: type[Exception] = ValueError,
+        emsg: str = "`path` is not a file or does not exist",
+        ) -> Path:
     """
     Assert if file exist.
 

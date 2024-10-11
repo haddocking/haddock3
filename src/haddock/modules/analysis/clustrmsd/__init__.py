@@ -30,10 +30,9 @@ matrix.
 """  # noqa: E501
 from pathlib import Path
 
-import numpy as np
-
 from haddock import log
-# from haddock.core.typing import FilePath
+from haddock.core.defaults import MODULE_DEFAULT_YAML
+from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
@@ -49,14 +48,14 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_dendrogram,
     get_matrix_path,
     iterate_min_population,
+    order_clusters,
     read_matrix,
     write_clusters,
     write_clustrmsd_file,
     )
-from typing import Union
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -115,10 +114,8 @@ class HaddockModule(BaseHaddockModule):
                 self.params['min_population'],
                 )
             self.params['min_population'] = min_population
-
-        # print clusters
-        unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
-        clusters = [c for c in unq_clusters if c != -1]
+        
+        clusters, cluster_arr = order_clusters(cluster_arr)
         log.info(f"clusters = {clusters}")
         
         out_filename = Path('cluster.out')
@@ -182,7 +179,10 @@ class HaddockModule(BaseHaddockModule):
                 matrix_cluster_dt=matrix_cluster_dt,
                 cluster_limits=cluster_limits,
                 )
-            log.info(f"Plotting matrix in {html_matrixpath}")
+            if html_matrixpath:
+                log.info(f"Plotting matrix in {html_matrixpath}")
+            else:
+                log.warning("Cluster matrix was not generated")
 
         self.export_io_models()
         # sending matrix to next step of the workflow

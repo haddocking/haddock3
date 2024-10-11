@@ -4,19 +4,16 @@ import os
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
 
-from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
-from haddock.modules.analysis.rmsdmatrix import HaddockModule
+from haddock.modules.analysis.rmsdmatrix import \
+    DEFAULT_CONFIG as DEFAULT_RMSDMATRIX_PARAMS
+from haddock.modules.analysis.rmsdmatrix import HaddockModule as Rmsdmatrix
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     XYZWriter,
     get_pair,
     rmsd_dispatcher,
     )
-
-from . import golden_data
 
 
 @pytest.fixture
@@ -37,6 +34,14 @@ def input_protdna():
     return PDBFile(
         Path(golden_data, "protdna_complex_1.pdb"), path=golden_data, score=42.0
     )
+@pytest.fixture(name="rmsdmatrix")
+def fixture_rmsdmatrix():
+    """rmsdmatrix module fixture"""
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        yield Rmsdmatrix(
+            order=2, path=Path("."), initial_params=DEFAULT_RMSDMATRIX_PARAMS
+        )
 
 
 def test_get_pair():
@@ -84,13 +89,15 @@ def test_rmsd_dispatcher():
         assert dispatcher_output[2] == expected_mod_vec[n]
 
 
-def test_overall_rmsd(input_protdna_models):
+def test_overall_rmsd(rmsdmatrix, protdna_input_list):
     """Test overall rmsdmatrix module."""
     rmsd_module = HaddockModule(
         order=2, path=Path("2_rmsdmatrix"), initial_params=rmsd_pars
     )
     rmsd_module.previous_io.output = input_protdna_models
     rmsd_module._run()
+    rmsdmatrix.previous_io.output = protdna_input_list
+    rmsdmatrix._run()
 
     ls = os.listdir()
 
@@ -105,12 +112,13 @@ def test_overall_rmsd(input_protdna_models):
 
     assert rmsd_matrix == expected_rmsd_matrix
 
-    os.unlink(Path("rmsd.matrix"))
-    os.unlink(Path("rmsd_matrix.json"))
-    os.unlink(Path("io.json"))
+    # os.unlink(Path("rmsd.matrix"))
+    # os.unlink(Path("rmsd_matrix.json"))
+    # os.unlink(Path("io.json"))
 
 
 def test_xyzwriter(input_protdna):
+def test_xyzwriter(protdna_input_list):
     "test XYZWriter"
     with tempfile.TemporaryDirectory() as tmpdir:
         common_keys = [
@@ -122,6 +130,7 @@ def test_xyzwriter(input_protdna):
         exp_output = Path(tmpdir, "test.xyz")
         xyzwriter_obj = XYZWriter(
             model=input_protdna,
+            model_list=protdna_input_list,
             output_name=exp_output,
             n_atoms=4,
             common_keys=common_keys,
@@ -131,7 +140,6 @@ def test_xyzwriter(input_protdna):
         xyzwriter_obj.run()
 
         xyzwriter_obj.write_output()
-
         assert exp_output.exists()
         # check the content
         with open(exp_output) as f:

@@ -1,0 +1,124 @@
+! hbond restraint set
+!
+assign ( resid 52  and segid B)
+       (
+        ( resid 38  and segid A)
+     or
+        ( resid 40  and segid A)
+     or
+        ( resid 45  and segid A)
+     or
+        ( resid 46  and segid A)
+     or
+        ( resid 69  and segid A)
+     or
+        ( resid 71  and segid A)
+     or
+        ( resid 78  and segid A)
+     or
+        ( resid 80  and segid A)
+     or
+        ( resid 94  and segid A)
+     or
+        ( resid 96  and segid A)
+     or
+        ( resid 141  and segid A)
+     or
+        ( resid 37  and segid A)
+     or
+        ( resid 39  and segid A)
+     or
+        ( resid 43  and segid A)
+     or
+        ( resid 68  and segid A)
+     or
+        ( resid 72  and segid A)
+     or
+        ( resid 97  and segid A)
+     or
+        ( resid 109  and segid A)
+     or
+        ( resid 132  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 54  and segid B)
+       (
+        ( resid 38  and segid A)
+     or
+        ( resid 40  and segid A)
+     or
+        ( resid 45  and segid A)
+     or
+        ( resid 46  and segid A)
+     or
+        ( resid 69  and segid A)
+     or
+        ( resid 71  and segid A)
+     or
+        ( resid 78  and segid A)
+     or
+        ( resid 80  and segid A)
+     or
+        ( resid 94  and segid A)
+     or
+        ( resid 96  and segid A)
+     or
+        ( resid 141  and segid A)
+     or
+        ( resid 37  and segid A)
+     or
+        ( resid 39  and segid A)
+     or
+        ( resid 43  and segid A)
+     or
+        ( resid 68  and segid A)
+     or
+        ( resid 72  and segid A)
+     or
+        ( resid 97  and segid A)
+     or
+        ( resid 109  and segid A)
+     or
+        ( resid 132  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 56  and segid B)
+       (
+        ( resid 38  and segid A)
+     or
+        ( resid 40  and segid A)
+     or
+        ( resid 45  and segid A)
+     or
+        ( resid 46  and segid A)
+     or
+        ( resid 69  and segid A)
+     or
+        ( resid 71  and segid A)
+     or
+        ( resid 78  and segid A)
+     or
+        ( resid 80  and segid A)
+     or
+        ( resid 94  and segid A)
+     or
+        ( resid 96  and segid A)
+     or
+        ( resid 141  and segid A)
+     or
+        ( resid 37  and segid A)
+     or
+        ( resid 39  and segid A)
+     or
+        ( resid 43  and segid A)
+     or
+        ( resid 68  and segid A)
+     or
+        ( resid 72  and segid A)
+     or
+        ( resid 97  and segid A)
+     or
+        ( resid 109  and segid A)
+     or
+        ( resid 132  and segid A)
+       )  2.0 2.0 0.0

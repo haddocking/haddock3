@@ -15,8 +15,6 @@ evaluate ($flcut = 5.0)
 
 do (store5 = $nchain1) (byres (segid $prot_segid_$nchain1 
                                and (not (segid $prot_segid_$nchain1 or resn SHA)) around $flcut))
-do (store7 = $nchain1) (byres (segid $prot_segid_$nchain1 
-                               and (not (segid $prot_segid_$nchain1 or resn SHA)) around $flcut))
 
 do (store6 = 0) (segid $prot_segid_$nchain1)
 for $id in id (tag and attr store5 >0 and not ((resn WAT or resn HOH or resn TIP*) or resn DMSO) and segid $prot_segid_$nchain1) loop flexres1
@@ -30,7 +28,6 @@ for $id in id (tag and attr store5 >0 and not ((resn WAT or resn HOH or resn TIP
 end loop flexres1
 
 do (store5 = store6) (segid $prot_segid_$nchain1)
-do (store7 = store6) (segid $prot_segid_$nchain1)
 
 display THE FOLLOWING RESIDUES HAVE BEEN DEFINED AS FLEXIBLE for molecule $nchain1
 for $id in id (tag and attr store5 >0 and not ((resn WAT or resn HOH or resn TIP*) or resn DMSO) and segid $prot_segid_$nchain1) loop flexres2

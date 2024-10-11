@@ -45,8 +45,8 @@ restraints dihedral scale $Data.dihedrals_hot end
 evaluate ($reassign = TRUE)
 
 noe
-    scale dist  $Data.unamb_hot
-    scale ambi  $Data.amb_hot
+    scale dist  $Data.unambig_hot
+    scale ambi  $Data.ambig_hot
     scale hbon  $Data.hbond_hot
 end
 

@@ -20,7 +20,7 @@ import numpy as np
 from scipy.spatial.distance import squareform
 
 
-MAX_NB_ENTRY_HTML_MATRIX = 5000
+MAX_NB_ENTRY_HTML_MATRIX = 3100
 
 
 def write_structure_list(input_models: list[PDBFile],
@@ -70,7 +70,7 @@ def plot_cluster_matrix(
         output_fname: Union[str, Path, FilePath] = 'clust_matrix',
         matrix_cluster_dt: Optional[list[list[list[int]]]] = None,
         cluster_limits: Optional[list[dict[str, float]]] = None,
-        ) -> str:
+        ) -> Optional[str]:
     """Plot a plotly heatmap of a matrix file.
 
     Parameters
@@ -99,6 +99,10 @@ def plot_cluster_matrix(
     output_fname_ext : str
         Path to the generated file containing the figure.
     """
+    # Check that we will be able to generate a functional interactive plot
+    if len(final_order_idx) > MAX_NB_ENTRY_HTML_MATRIX:
+        return None
+
     upper_diag, lower_diag = [], []
     # Read matrix
     with open(matrix_path, 'r') as f:
@@ -149,9 +153,8 @@ def plot_cluster_matrix(
             '<extra></extra>'
             )
 
-    # Generate file extension ~ matrix size
-    ext = 'html' if len(final_order_idx) <= MAX_NB_ENTRY_HTML_MATRIX else 'png'
-    output_fname_ext = f"{output_fname}.{ext}"
+    # Generate file name
+    output_fname_ext = f"{output_fname}.html"
     # Draw heatmap
     heatmap_plotly(
         submat,

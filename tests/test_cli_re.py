@@ -159,7 +159,7 @@ def test_cli_reclustrmsd():
         clustrmsd_tsv = Path(interactive_folder, "clustrmsd.tsv")
         assert clustrmsd_tsv.exists()
         lines = clustrmsd_tsv.read_text().splitlines()
-        assert lines[1] == "1\tensemble_4G6M_6_haddock.pdb\tnan\t1"
+        assert lines[1] == "1\tensemble_4G6M_1_haddock.pdb\tnan\t1"
 
         # clustrmsd.txt
         clustrmsd_txt = Path(interactive_folder, "clustrmsd.txt")
@@ -167,6 +167,13 @@ def test_cli_reclustrmsd():
         lines = clustrmsd_txt.read_text().splitlines()
         assert lines[4] == "> criterion=maxclust"
         assert lines[5] == "> n_clusters=2"
+
+        # cluster.out
+        cluster_out = Path(interactive_folder, "cluster.out")
+        assert cluster_out.exists()
+        lines = cluster_out.read_text().splitlines()
+        assert lines[0] == "Cluster 1 -> 1 2 3 4 5 7 8 9"
+        assert lines[1] == "Cluster 2 -> 6 10"
 
         # Test generation of plot
         clustrmsd_html_matrix = Path(interactive_folder, "rmsd_matrix.html")

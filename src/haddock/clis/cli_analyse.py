@@ -40,7 +40,7 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     ParamMap,
-)
+    )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.clean_steps import _unpack_gz
 from haddock.libs.libcli import _ParamsToDict
@@ -53,10 +53,12 @@ from haddock.libs.libplots import (
     read_capri_table,
     report_generator,
     scatter_plot_handler,
-)
+    SUPPORTED_OUTPUT_FORMATS,
+    )
 from haddock.modules import get_module_steps_folders
-from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
-from haddock import modules_defaults_path
+from haddock.modules.analysis.caprieval import (
+    DEFAULT_CONFIG as caprieval_params,
+    )
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
@@ -64,7 +66,10 @@ ANA_FOLDER = "analysis"  # name of the analysis folder
 INTER_STR = INTERACTIVE_RE_SUFFIX  # suffix of interactive analysis folders
 
 
-def get_cluster_ranking(capri_clt_filename: FilePath, top_cluster: int) -> ClRank:
+def get_cluster_ranking(
+        capri_clt_filename: FilePath,
+        top_cluster: int,
+        ) -> ClRank:
     """
     Get capri cluster ranking.
 
@@ -152,7 +157,7 @@ ap.add_argument(
     required=False,
     type=str,
     default=None,
-    choices=["png", "pdf", "svg", "jpeg", "webp"],
+    choices=list(SUPPORTED_OUTPUT_FORMATS),
 )
 
 ap.add_argument(
@@ -164,7 +169,7 @@ ap.add_argument(
     help="interactive analysis",
     required=False,
     type=bool,
-    default=False
+    default=False,
     )
 
 ap.add_argument(
@@ -172,7 +177,7 @@ ap.add_argument(
     help="is the directory going to be cleaned?",
     required=False,
     type=bool,
-    default=False
+    default=False,
 )
 
 ap.add_argument(
@@ -180,7 +185,7 @@ ap.add_argument(
     help="Should plots js functions be self-contained?",
     required=False,
     type=bool,
-    default=False
+    default=False,
 )
 
 ap.add_argument(
@@ -234,10 +239,17 @@ def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
 
 def maincli() -> None:
     """Execute main client."""
-    cli(ap, main)
+    cli(_ap(), main)
 
 
-def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cleaned: bool, mode: str, ncores: int) -> None:
+def run_capri_analysis(
+        step: str,
+        run_dir: FilePath,
+        capri_dict: ParamMap,
+        is_cleaned: bool,
+        mode: str,
+        ncores: int,
+        ) -> None:
     """
     Run the caprieval analysis.
 
@@ -256,7 +268,6 @@ def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap, is_cl
     io.load(filename)
     # unpack the files if they are compressed
     if is_cleaned:
-        default_general_params = read_from_yaml_config(modules_defaults_path)
         path_to_unpack = io.output[0].path
         haddock3_unpack(path_to_unpack, ncores=ncores)
     # define step_order. We add one to it, as the caprieval module will
@@ -301,8 +312,9 @@ def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
     for param in kwargs:
         if param not in default_capri:
             sys.exit(
-                f"* ERROR * Parameter {param!r} is not a valid `caprieval` parameter"
-            )  # noqa:E501
+                f"* ERROR * Parameter {param!r} is not "
+                "a valid `caprieval` parameter"
+                )
         else:
             if param.endswith("fname"):  # using full path for files
                 rel_path = Path(kwargs[param])
@@ -344,7 +356,11 @@ def update_paths_in_capri_dict(
     return new_capri_dict
 
 
-def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_name: FilePath) -> None:
+def zip_top_ranked(
+        capri_filename: FilePath,
+        cluster_ranking: ClRank,
+        summary_name: FilePath,
+        ) -> None:
     """
     Zip the top ranked structures.
 
@@ -460,6 +476,7 @@ def analyse_step(
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
 
+    # Go to directory where to write all the analysis figures / report
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if run_capri == True:
@@ -490,9 +507,56 @@ def analyse_step(
             offline=offline,
             )
         tables = clt_table_handler(clt_file, ss_file, is_cleaned)
-        report_generator(boxes, scatters, tables, step)
+        report_generator(boxes, scatters, tables, step, ".", offline)
         # provide a zipped archive of the top ranked structures
         zip_top_ranked(ss_file, cluster_ranking, Path("summary.tgz"))
+
+
+def validate_format(_format: Optional[ImgFormat]) -> Optional[ImgFormat]:
+    """Validate the optional argument `format`.
+
+    Parameters
+    ----------
+    _format : Optional[ImgFormat]
+        A optential output format set by the user.
+
+    Returns
+    -------
+    Optional[ImgFormat]
+        A valid output format for the figures to be generated.
+
+    Raises
+    ------
+    ImportError
+        When the kaleido package is not installed.
+    ValueError
+        When the export format is not supported by plotly / kaleido.
+    """
+    # Optional, so if not defined, return _format (None)
+    if not _format:
+        return _format
+    # Make sure it is lower case
+    format = _format.lower()
+    # Check if part of supported output formats
+    if format in SUPPORTED_OUTPUT_FORMATS:
+        # Make sure the `kaleido` package is installed
+        try:
+            import kaleido  # noqa : F401
+        except ImportError:
+            raise ImportError(
+                f"Exporting with format {format} requires the use of `kaleido`"
+                f" package, that seems not to be installed. {os.linesep}"
+                "Please install it with: `pip install kaleido==0.2.*`"
+                )
+        # At this stage, everything should go smooth with the export format
+        else:
+            # Return supported format
+            return format
+    # Raise error if unsupported format
+    raise ValueError(
+        f"Format `{format}` is not supported.{os.linesep}"
+        f"Supported formats: {SUPPORTED_OUTPUT_FORMATS}."
+        )
 
 
 def main(
@@ -548,6 +612,10 @@ def main(
         f"Running haddock3-analyse on {run_dir}, modules {modules}, "
         f"with top_cluster = {top_cluster}"
     )
+    # Validate output format
+    format = validate_format(format)
+
+    # Obtain starting working directory
     ori_cwd = os.getcwd()
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
@@ -612,9 +680,9 @@ def main(
         except Exception as e:
             error = True
             log.warning(
-                f"""Could not execute the analysis for step {step}.
-                The following error occurred {e}"""
-            )
+                f"Could not execute the analysis for step {step}. "
+                f"The following error occurred {e}"
+                )
         if error:
             bad_folder_paths.append(target_path)
         else:

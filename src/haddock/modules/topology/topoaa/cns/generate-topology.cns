@@ -257,9 +257,11 @@ topology
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile
     end if
-    fileexist $ligand_top_fname end
-    if ($result eq true) then
-        @@$ligand_top_fname
+    if ($ligand_top_fname # "") then
+        fileexist $ligand_top_fname end
+        if ($result eq true) then
+            @@$ligand_top_fname
+        end if
     end if
 end
 
@@ -291,9 +293,11 @@ parameter
     if ( &BLANK%shape_parameter_infile = false ) then
         @@&shape_parameter_infile
     end if
-    fileexist $ligand_param_fname end
-    if ($result eq true) then
-        @@$ligand_param_fname
+    if ($ligand_param_fname # "") then
+        fileexist $ligand_param_fname end
+        if ($result eq true) then
+            @@$ligand_param_fname
+        end if
     end if
 end
 
@@ -403,7 +407,7 @@ if ( $select = 0 ) then
 end if
 
 if ( $log_level = "verbose" ) then
-    set message=normal echo=on end
+    set message=verbose echo=on end
 elseif ( $log_level = "normal") then
     set message=normal echo=off end
 else
@@ -441,7 +445,7 @@ for $id1 in id ( resn CYS and name SG ) loop dis1
 
         pick bond (id $id1) (id $id2) geometry
 
-        if ( $result <= &disulphide_dist ) then
+        if ( $result <= $disulphide_dist ) then
             evaluate ($disu=$disu+1)
             evaluate ($seg1.$disu=$segid1)
             evaluate ($seg2.$disu=$segid2)
@@ -495,7 +499,7 @@ if ($cyclicpept eq TRUE ) then
             if ($rdiff gt 2) then
 
                 pick bond (id $id1) (id $id2) geometry
-                if ( $result <= &cyclicpept_dist ) then
+                if ( $result <= $cyclicpept_dist ) then
                     evaluate ($cycp=$cycp+1)
                     evaluate ($seg1.$cycp=$segid1)
                     evaluate ($seg2.$cycp=$segid2)

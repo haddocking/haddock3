@@ -18,7 +18,9 @@ import importlib
 import os
 import sys
 
-from haddock import config_expert_levels
+from pathlib import Path
+
+from haddock import config_expert_levels, core_path
 from haddock.core.typing import (
     ArgumentParser,
     Callable,
@@ -142,27 +144,70 @@ def main(
     new_config = ""
 
     if global_params:
+        # Read general parameters
         general_cfg = read_from_yaml(modules_defaults_path)
         general_params_str = yaml2cfg_text(
             general_cfg,
             module=None,
             explevel="all",
             details=details,
-        )
-        comment = os.linesep.join(
+            )
+        general_comment = os.linesep.join(
             (
+                "#" * 50,
                 "# The parameters below are optional parameters. ",
                 "# They can either be used as global parameters or as part ",
                 "# of the module's parameters",
+                "#" * 50,
+                )
             )
-        )
 
+        # Read mandatory parmeters
+        mandatory_cfg_path = Path(core_path, "mandatory.yaml")
+        general_mandatory_cfg = read_from_yaml(mandatory_cfg_path)
+        general_mandatory_params_str = yaml2cfg_text(
+            general_mandatory_cfg,
+            module=None,
+            explevel="all",
+            details=details,
+            mandatory_param=True,
+            )
+        mandatory_comment = os.linesep.join(
+            (
+                "#" * 50,
+                "# The parameters below are mandatory parameters.",
+                "# They must be specified in your configuration file!",
+                "#" * 50,
+                )
+            )
+
+        # Read optional parameters
+        optional_cfg_path = Path(core_path, "optional.yaml")
+        general_optional_cfg = read_from_yaml(optional_cfg_path)
+        general_optional_params_str = yaml2cfg_text(
+            general_optional_cfg,
+            module=None,
+            explevel="all",
+            details=details,
+            )
+        optional_comment = os.linesep.join(
+            (
+                "#" * 50,
+                "# The parameters below are optional global parameters.",
+                "#" * 50,
+                )
+            )
+        # Concatenate all of them
         new_config = os.linesep.join(
             (
-                comment,
+                mandatory_comment,
+                general_mandatory_params_str,
+                optional_comment,
+                general_optional_params_str,
+                general_comment,
                 general_params_str,
+                )
             )
-        )
 
     if module:
         module_name = ".".join(

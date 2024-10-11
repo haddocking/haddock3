@@ -34,6 +34,9 @@ from haddock import RMSD_path, log
 from haddock.core.typing import Any, FilePath
 from haddock.libs.libalign import check_common_atoms
 from haddock.libs.libio import dump_output_data_to_file
+from haddock.core.defaults import FAST_RMSDMATRIX_EXEC, MODULE_DEFAULT_YAML
+from haddock.core.typing import Any, AtomsDict, FilePath
+from haddock.libs.libalign import check_common_atoms, rearrange_xyz_files
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule, get_engine
@@ -44,13 +47,14 @@ from haddock.modules.analysis import (
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSDJob,
     XYZWriter,
+    XYZWriterJob,
     rmsd_dispatcher,
-)
+    )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
-EXEC_PATH = Path(RMSD_path, "src/fast-rmsdmatrix")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
+EXEC_PATH = FAST_RMSDMATRIX_EXEC
 
 
 class HaddockModule(BaseHaddockModule):
@@ -79,6 +83,24 @@ class HaddockModule(BaseHaddockModule):
             raise Exception(f"Required {str(EXEC_PATH)} file is not executable")
 
         return
+
+    def _rearrange_output(
+        self, output_name: FilePath, path: FilePath, ncores: int
+    ) -> None:
+        """Combine different rmsd outputs in a single file."""
+        output_fname = Path(path, output_name)
+        self.log(f"rearranging output files into {output_fname}")
+        # Combine files
+        with open(output_fname, "w") as out_file:
+            for core in range(ncores):
+                tmp_file = Path(path, "rmsd_" + str(core) + ".matrix")
+                with open(tmp_file) as infile:
+                    out_file.write(infile.read())
+                log.debug(f"File number {core} written")
+                tmp_file.unlink()
+        log.info("Completed reconstruction of rmsd files.")
+        log.info(f"{output_fname} created.")
+
 
     def update_params(self, *args: Any, **kwargs: Any) -> None:
         """Update parameters."""
@@ -112,6 +134,9 @@ class HaddockModule(BaseHaddockModule):
 
         # index_list for the jobs with linear scaling
         ncores = parse_ncores(n=self.params["ncores"], njobs=len(models))
+        index_list = get_index_list(nmodels, ncores)
+
+        traj_filename = Path("traj.xyz")
 
         filter_resdic = {
             key[-1]: value
@@ -201,6 +226,33 @@ class HaddockModule(BaseHaddockModule):
 
         if not self.rmsd_matrix_fname.exists():
             self.finish_with_error("RMSD matrix file was not generated")
+            rmsd_jobs.append(job)
+
+        engine = Engine(rmsd_jobs)
+        engine.run()
+
+        rmsd_file_l: list[str] = []
+        not_found: list[str] = []
+        for job in rmsd_jobs:
+            if not job.output.exists():
+                # NOTE: If there is no output, most likely the RMSD calculation
+                # timed out
+                not_found.append(job.output.name)
+                wrn = f"Rmsd results were not calculated for {job.output.name}"
+                log.warning(wrn)
+            else:
+                rmsd_file_l.append(str(job.output))
+
+        if not_found:
+            # Not all distances were calculated, cannot create the full matrix
+            self.finish_with_error("Several files were not generated:" f" {not_found}")
+
+        # Post-processing : single file
+        final_output_name = "rmsd.matrix"
+        self._rearrange_output(final_output_name, path=Path("."), ncores=ncores)
+        # Delete the trajectory file
+        if traj_filename.exists():
+            os.unlink(traj_filename)
 
         # Sending models to the next step of the workflow
         self.output_models = models  # type: ignore

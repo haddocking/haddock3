@@ -10,7 +10,6 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-
 ! Ambiguous and unambiguous distance restraints, hbonds
 noe
     reset
@@ -23,22 +22,30 @@ fileexist $filenam0 end
 if ($result eq false) then
     evaluate ($filenam0 = $ambig_fname)
 end if
-fileexist $filenam0 end
-if ($result eq true) then
-    noe class ambi @@$filenam0 end
+
+if ($filenam0 # "") then
+    fileexist $filenam0 end
+    if ($result eq true) then
+        noe class ambi @@$filenam0 end
+    end if
 end if
+
 if ($Data.randremoval eq true) then
     noe part $Data.npart end
 end if
 
-fileexist $unambig_fname end
-if ($result eq true) then
-    noe class dist @@$unambig_fname end
+if ($unambig_fname # "") then
+    fileexist $unambig_fname end
+    if ($result eq true) then
+        noe class dist @@$unambig_fname end
+    end if
 end if
 
-fileexist $hbond_fname end
-if ($result eq true) then
-    noe @@$hbond_fname end
+if ($hbond_fname # "") then
+    fileexist $hbond_fname end
+    if ($result eq true) then
+        noe class hbon @@$hbond_fname end
+    end if
 end if
 
 noe
@@ -54,7 +61,6 @@ noe
     msoexponent * 1
     masymptote  * -0.1
     mrswitch    * 1.0
-    avexpo hbond 20
 end
 
 
@@ -63,11 +69,13 @@ restraints dihedral
     reset
     nassign 50000 
 end
-fileexist $dihe_fname end
-if ($result eq true) then
-    restraints dihedral
-        @@$dihe_fname
-    end
+if ($dihe_fname # "") then
+    fileexist $dihe_fname end
+    if ($result eq true) then
+        restraints dihedral
+            @@$dihe_fname
+        end
+    end if
 end if
 
 restraints dihedral ? end

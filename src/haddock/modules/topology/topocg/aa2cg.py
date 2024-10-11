@@ -412,12 +412,9 @@ def create_file_with_cryst(pdb_file, pdb_file_copy):
     Returns:
 
     """
-    file_in = open(pdb_file, "r")
-    file_out = open(pdb_file_copy, "w")
-    content = file_in.read()
-    file_out.write(CRYST_LINE + content)
-    file_in.close()
-    file_out.close()
+    with open(pdb_file, "r") as file_in, open(pdb_file_copy, "w") as file_out:
+        content = file_in.read()
+        file_out.write(CRYST_LINE + content)
 
 
 def determine_ss(structure, output_path, skipss, pdbf_path):

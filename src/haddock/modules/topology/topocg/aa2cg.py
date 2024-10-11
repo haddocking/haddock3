@@ -19,6 +19,7 @@ import os
 import random
 import subprocess
 import warnings
+from pathlib import Path
 from haddock import log
 
 from Bio.PDB import Entity
@@ -428,7 +429,6 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
     Returns:
 
     """
-
     # calculate SS
     for model in structure:
         tmp_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_tmp.pdb"
@@ -440,12 +440,14 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
             try:
                 p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 dssp_raw, errors = p.communicate()
+                dssp_raw = dssp_raw.split('#')[1].split('\n')[:-1]
+                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
+                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
                 log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
         
-        dssp_raw = dssp_raw.split('#')[1].split('\n')[:-1]
         dssp = {}
 
         for line in dssp_raw:
@@ -454,7 +456,6 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
             else:
                 dssp[line[11:12]] = []
 
-        subprocess.Popen(["rm", tmp_file_name])
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
         # Get SS information and translate it:

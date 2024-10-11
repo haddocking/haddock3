@@ -1,24 +1,21 @@
 # `haddock3`
 
-<!-- <p align="center">
-
-  <img src="docs/figs/HADDOCK3-logo.png" alt="haddock3-logo" style="vertical-align: middle;">
-</p>
-<src > -->
+![haddock3-logo](https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/docs/figs/HADDOCK3-logo.png)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
 [![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8844/badge)](https://www.bestpractices.dev/projects/8844)
 
+[![Downloads](https://static.pepy.tech/badge/haddock3)](https://pepy.tech/project/haddock3)
+![PyPI - Version](https://img.shields.io/pypi/v/haddock3)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/haddock3)
+
 [![unit tests](https://github.com/haddocking/haddock3/workflows/tests/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=tests)
 [![build](https://github.com/haddocking/haddock3/workflows/build/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=build)
 [![docs](https://github.com/haddocking/haddock3/workflows/pages/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=pages)
-
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
-
-![haddock3-logo](docs/figs/HADDOCK3-logo.png)
 
 ## Introduction
 
@@ -26,12 +23,8 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Clone the repository and run `pip install .`;
-
 ```bash
-git clone https://github.com/haddocking/haddock3
-cd haddock3
-pip install .
+pip install haddock3
 ```
 
 Execute:
@@ -69,7 +62,7 @@ The most basic usage is:
 haddock3 <configuration-file.toml>
 ```
 
-Check the [EXAMPLES](examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
+Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
 
 ## Support
 
@@ -94,7 +87,7 @@ If you used `haddock3` for your research, please cite us:
 
 ## Development
 
-🚧 _Coming soon! We are currently working on the development guide_ 🚧
+Please check [DEVELOPMENT](https://github.com/haddocking/haddock3/blob/main/DEVELOPMENT.md) for instructions on how to develop `haddock3`
 
 ### Code Documentation
 

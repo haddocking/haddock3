@@ -28,23 +28,16 @@ The following files are generated:
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import Any, FilePath, Union
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
-from haddock.modules import (
-    BaseHaddockModule,
-    get_engine,
-    get_module_steps_folders,
-    )
-from haddock.modules.analysis import get_analysis_exec_mode
+from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
     dump_weights,
     extract_data_from_capri_class,
-    merge_data,
-    rearrange_ss_capri_output,
-)
+    )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -60,9 +53,7 @@ class HaddockModule(BaseHaddockModule):
         self,
         order: int,
         path: Path,
-        *ignore: Any,
         init_params: FilePath = DEFAULT_CONFIG,
-        **everything: Any,
     ) -> None:
         super().__init__(order, path, init_params)
 
@@ -109,11 +100,6 @@ class HaddockModule(BaseHaddockModule):
             )
             reference = best_model_fname
 
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
-        Engine = get_engine(exec_mode, self.params)
-
-        _less_io = self.params["mode"] == "local" and not self.params["debug"]
-
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
         #  we can handle scenarios in which the models are hetergoneous
@@ -128,45 +114,28 @@ class HaddockModule(BaseHaddockModule):
                 )
             jobs.append(
                 CAPRI(
-                    identificator=str(i),
+                    identificator=i,
                     model=model_to_be_evaluated,
                     path=Path("."),
                     reference=reference,
                     params=self.params,
-                    debug=not _less_io,
                 )
             )
 
-        engine = Engine(jobs)
+        engine = Scheduler(
+            tasks=jobs, ncores=self.params["ncores"], max_cpus=self.params["max_cpus"]
+        )
         engine.run()
 
-        if _less_io and isinstance(engine, Scheduler):
-            jobs = engine.results
-            extract_data_from_capri_class(
-                capri_objects=jobs,
-                output_fname=Path(".", "capri_ss.tsv"),
-                sort_key=self.params["sortby"],
-                sort_ascending=self.params["sort_ascending"],
-            )
+        jobs = engine.results
+        jobs = sorted(jobs, key=lambda capri: capri.identificator)
 
-        else:
-            self.log(
-                msg=(
-                    "DEPRECATION NOTICE: This execution mode (debug=True) "
-                    "will no longer be supported in the next version."
-                    ),
-                level="warning",
-            )
-            jobs = merge_data(jobs)
-
-            # Each job created one .tsv, unify them:
-            rearrange_ss_capri_output(
-                output_name="capri_ss.tsv",
-                output_count=len(jobs),
-                sort_key=self.params["sortby"],
-                sort_ascending=self.params["sort_ascending"],
-                path=Path("."),
-            )
+        extract_data_from_capri_class(
+            capri_objects=jobs,
+            output_fname=Path(".", "capri_ss.tsv"),
+            sort_key=self.params["sortby"],
+            sort_ascending=self.params["sort_ascending"],
+        )
 
         capri_cluster_analysis(
             capri_list=jobs,

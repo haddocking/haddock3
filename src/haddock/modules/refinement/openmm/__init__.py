@@ -117,6 +117,12 @@ class HaddockModule(BaseHaddockModule):
                 "OpenMM pdbfixer is not installed in conda."
                 )
         return None
+    
+    @staticmethod
+    def set_max_cpu(nbcpu: int) -> None:
+        from openmm import Platform
+        cpu_platform = Platform.getPlatformByName('CPU')
+        cpu_platform.setPropertyDefaultValue('Threads', str(nbcpu))
 
     def _run(self) -> None:
         """Execute module."""
@@ -127,6 +133,9 @@ class HaddockModule(BaseHaddockModule):
 
         # create directories
         directory_dict = self.create_directories()
+
+        # Limit cpu usage
+        self.set_max_cpu(self.params["ncores"])
 
         # Build list of OPENMM jobs
         openmm_jobs: list[OPENMM] = []

@@ -4,27 +4,34 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "3.0.0"
+version = "2024.10.0b6"
 description = "HADDOCK3"
-authors = [{name = "BonvinLab", email = "bonvinlab.support@uu.nl"}]
-license = {text = "Apache License 2.0"}
+readme = "README.md"
+authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
+license = { text = "Apache License 2.0" }
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: Apache Software License",
-    "Natural Language :: English",
-    "Operating System :: POSIX",
-    "Operating System :: POSIX :: Linux",
-    "Operating System :: MacOS",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "Topic :: Scientific/Engineering :: Chemistry",
-    "Topic :: Scientific/Engineering :: Physics",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: Apache Software License",
+  "Natural Language :: English",
+  "Operating System :: POSIX",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
-keywords = ["Structural Biology", "Biochemistry", "Docking", "Protein docking", "Proteins"]
+keywords = [
+  "Structural Biology",
+  "Biochemistry",
+  "Docking",
+  "Protein docking",
+  "Proteins",
+]
 requires-python = ">=3.9, <3.13"
 dependencies = [
   'pdb-tools>=2.5.0',
@@ -36,10 +43,9 @@ dependencies = [
   'toml>=0.10.2',
   'pandas==2.*',
   'plotly==5.24.1',
-  'kaleido==0.2.1',
-  'freesasa>=2.2.1',
   'prodigy-prot==2.2.3',
-  'prodigy-lig==1.1.2'
+  'prodigy-lig==1.1.2',
+  'freesasa>=2.2.1',
 ]
 
 [project.optional-dependencies]
@@ -48,10 +54,11 @@ dev = [
   "pytest==8.3.3",
   "pytest-cov==4.0.0",
   "hypothesis==6.112.2",
-  "pytest-mock==3.12.0",
+  "pytest-mock==3.14.0",
   "fastapi==0.115.0",
   "httpx==0.27.0",
-  "mpi4py==4.0.0"
+  "mpi4py==4.0.0",
+  "kaleido==0.2.1",
 ]
 docs = [
   "sphinx>=2",
@@ -59,7 +66,7 @@ docs = [
   "sphinx_rtd_theme>=2.0.0",
   "CommonMark>=0.9.1",
   "mock>=5.0.2",
-  "myst-parser>=1.0.0"
+  "myst-parser>=1.0.0",
 ]
 
 [project.urls]
@@ -86,7 +93,7 @@ haddock3-restraints = "haddock.clis.cli_restraints:maincli"
 
 [tool.setuptools]
 packages = ["haddock"]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 include-package-data = true
 
 [tool.setuptools.package-data]

@@ -31,7 +31,7 @@ def handle_ss_file(
     """
     # now we want to calculate mean and std dev of the scores on df_ss
     # first sort the dataframe by score
-    df_ss.sort_values(by=["score"], inplace=True)
+    df_ss.sort_values(by=["score", "caprieval_rank"], inplace=True)
     # groupby cluster_id
     df_ss_grouped = df_ss.groupby("cluster_id")
     # calculate the mean and standard deviation of the first 4 elements

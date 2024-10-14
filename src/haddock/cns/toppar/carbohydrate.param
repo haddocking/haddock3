@@ -57,6 +57,7 @@ BOND CCA  NH1    1000.0    1.45   !as extended atom carbon-N
 BOND CCS  C      1000.0    1.52   !"    "       "     "   -C
 BOND CCE  C      1000.0    1.52
 BOND CCA  C      1000.0    1.52
+BOND CC6  OC     1000.0    1.25   ! standard CO bond (parm10)
 
 
 ANGLe H    OH1  CCS   500.0   109.35
@@ -148,6 +149,10 @@ ANGLe C    CCE  OES   500.0   107.24
 ANGLe C    CCA  OES   500.0   107.24
 ANGLe C    CCE  CCS   500.0   108.72
 ANGLe C    CCA  CCS   500.0   108.72
+! other angles
+ANGLe OC   CC6  OC    500.00  123.3548
+ANGLe CCS  CC6  OC    500.0   109.70 ! guess from CCS-CC6-OAS (to check: experimental structures have 112-113)
+
 
 
 DIHEdral  X    CCS   CCS   X      2.0  3   0.0
@@ -174,6 +179,7 @@ DIHEdral  X    C     CCA   X      2.0  3   0.0
 DIHEdral  X    C     CCS   X      2.0  3   0.0 ! N-acetyl in NAG, 8/30/93
 DIHEdral  CCS  NH1   C     CCS    2.0  2   0.0 ! peptide plane in NAG
                                                !   guess - PDA 8/99
+DIHEdral  CCS  OES   CCE   CCS    2.0  2   0.0 ! guessing for BDP
 
 IMPRoper  CCS X    X    CCS    500.0     0  35.26439 
 IMPRoper  CCE X    X    CCS    500.0     0  35.26439 
@@ -231,6 +237,8 @@ IMPRoper  HAS OES  OAS  CCS    500.00    0  67.6 !A12,A13,A14,A16,B12L,B14L alph
 IMPRoper  C   CCS  NH1  O      500.00    0   0.0 !NAG,SIA planar
 IMPRoper  NH1 C    CCS  H      500.00    0   0.0 !NAG,SIA planar
 IMPRoper  CCS NH1  C    CCS    500.00    0 180.0 !NAG,SIA trans peptide
+! new impropers
+IMPRoper  CC6 CCS  OC   OC     500.00    0   0.0 !BDP, angle taken from charmm
 
 
 {Asn-NAG}

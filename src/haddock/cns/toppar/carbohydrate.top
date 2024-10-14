@@ -26,6 +26,7 @@ REMARKS FCB:       beta -D-fucopyranose
 REMARKS SIA:       alpha-N-acetyl neuraminic acid
 REMARKS SIB:       beta-N-acetyl neuraminic acid - A. Bonvin
 REMARKS XYP:       beta-D-xylopyranose
+REMARKS BDP:       beta-D-glucoronic acid
 REMARKS ----------------------------------------------------------
 REMARKS Links
 REMARKS B1N: N-linked glycan beta link from NAG and NDG to ASN (asparagine)
@@ -1921,6 +1922,71 @@ RESIdue GXL  !alpha-L-galactopyranose
 
 END
 
+RESIdue BDP  !beta-D-glucoronic acid
+GROUP
+
+ATOM C1   TYPE=CCE  CHARge= 0.340   END
+ATOM H1   TYPE=HAS  CHARge= 0.090   END
+ATOM O1   TYPE=OH1  CHARge=-0.650   END
+ATOM HO1  TYPE=H    CHARge= 0.420   END
+ATOM C5   TYPE=CCS  CHARge= 0.110   END
+ATOM H5   TYPE=HAS  CHARge= 0.090   END
+ATOM O5   TYPE=OES  CHARge=-0.400   END
+ATOM C2   TYPE=CCS  CHARge= 0.140   END
+ATOM H2   TYPE=HAS  CHARge= 0.090   END
+ATOM O2   TYPE=OH1  CHARge=-0.650   END
+ATOM HO2  TYPE=H    CHARge= 0.420   END
+ATOM C3   TYPE=CCS  CHARge= 0.140   END
+ATOM H3   TYPE=HAS  CHARge= 0.090   END
+ATOM O3   TYPE=OH1  CHARge=-0.650   END
+ATOM HO3  TYPE=H    CHARge= 0.420   END
+ATOM C4   TYPE=CCS  CHARge= 0.140   END
+ATOM H4   TYPE=HAS  CHARge= 0.090   END
+ATOM O4   TYPE=OH1  CHARge=-0.650   END
+ATOM HO4  TYPE=H    CHARge= 0.420   END
+ATOM C6   TYPE=CC6  CHARge= 0.520   END
+ATOM O61  TYPE=OC   CHARge=-0.760   END
+ATOM O62  TYPE=OC   CHARge=-0.760   END
+
+  BOND C1 O1
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 O61
+  BOND C6 O62
+  BOND C5 O5
+
+  DIHEDRAL O5 C1 C2 C3 
+  DIHEDRAL C1 C2 C3 C4 
+  DIHEDRAL C2 C3 C4 C5 
+  DIHEDRAL C3 C4 C5 O5 
+  DIHEDRAL C4 C5 O5 C1 
+  DIHEDRAL C4 C5 C6 O61
+  DIHEDRAL O5 C1 O1 HO1
+  DIHEDRAL C1 C2 O2 HO2
+  DIHEDRAL C2 C3 O3 HO3
+  DIHEDRAL C3 C4 O4 HO4
+  DIHEDRAL C5 O5 C1 C2 ! the only one not defined in haddock
+
+  IMPROPER C6 C5 O62 O61
+
+END
+
 !-------------------------------------------------------------------
 !-------------------------------------------------------------------
 
@@ -2790,5 +2856,4 @@ END
 !-------------------------------------------------------------------
 
 set message=$old_message echo=$old_echo end
-
 

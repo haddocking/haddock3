@@ -440,7 +440,7 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
             try:
                 p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 dssp_raw, errors = p.communicate()
-                dssp_raw = dssp_raw.split('#')[1].split('\n')[:-1]
+                dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
                 if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
@@ -454,7 +454,7 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
             if line[11:12] in dssp.keys():
                 dssp[line[11:12]].append(line[16:17])
             else:
-                dssp[line[11:12]] = []
+                dssp[line[11:12]] = [line[16:17]]
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 

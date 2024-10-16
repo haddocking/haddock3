@@ -19,8 +19,7 @@ from haddock.modules.analysis.caprieval.capri import (
     get_previous_cns_step,
     load_contacts,
     rank_according_to_score,
-    rearrange_ss_capri_output,
-    )
+)
 
 from . import golden_data
 
@@ -442,60 +441,6 @@ def test_protdna_allatoms(protdna_caprimodule):
     assert np.isclose(protdna_caprimodule.fnat, 0.4878, atol=0.01)
 
 
-def test_make_output(protprot_caprimodule):
-    """Test the writing of capri.tsv file."""
-    protprot_caprimodule.model.clt_id = 1
-    protprot_caprimodule.model.clt_rank = 1
-    protprot_caprimodule.model.clt_model_rank = 10
-    protprot_caprimodule.model.unw_energies = {"something": 0.0}
-
-    protprot_caprimodule.make_output()
-
-    ss_fname = Path(
-        protprot_caprimodule.path, f"capri_ss_{protprot_caprimodule.identificator}.tsv"
-    )
-    # Check that the file contains something
-    assert ss_fname.stat().st_size != 0
-
-    # remove the model column since its name will depend on where we are running
-    #  the test
-    observed_outf_l = read_capri_file(ss_fname)
-    expected_outf_l = [
-        [
-            "md5",
-            "caprieval_rank",
-            "score",
-            "irmsd",
-            "fnat",
-            "lrmsd",
-            "ilrmsd",
-            "dockq",
-            "rmsd",
-            "cluster_id",
-            "cluster_ranking",
-            "model-cluster_ranking",
-            "something",
-        ],
-        [
-            "-",
-            "-",
-            "nan",
-            "nan",
-            "nan",
-            "nan",
-            "nan",
-            "nan",
-            "nan",
-            "1",
-            "1",
-            "10",
-            "0.000",
-        ],
-    ]
-
-    assert observed_outf_l == expected_outf_l
-
-    os.unlink(ss_fname)
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
@@ -606,31 +551,6 @@ def test_add_chain_from_segid(protprot_caprimodule):
         for line in fh:
             if line.startswith("ATOM"):
                 assert line[21] == "A"
-
-
-def test_rearrange_ss_capri_output():
-    """Test rearranging the capri output."""
-    with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
-        with open("capri_ss_1.tsv", "w", encoding="utf-8") as fh:
-            fh.write(
-                "model	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	"
-                "dockq	cluster_id	cluster_ranking	"
-                "model-cluster_ranking" + os.linesep
-            )
-            fh.write(
-                "../1_emscoring/emscoring_909.pdb	1	-424.751	0.000	"
-                "1.000	0.000	0.000	1.000	-	-	-" + os.linesep
-            )
-        rearrange_ss_capri_output(
-            "capri_ss.txt",
-            output_count=1,
-            sort_key="score",
-            sort_ascending=True,
-            path=Path("."),
-        )
-
-        assert Path("capri_ss.txt").stat().st_size != 0
 
 
 def test_calc_stats():
@@ -937,7 +857,6 @@ def test_capri_run(mocker):
             side_effect=lambda: setattr(capri, "rmsd", rand_global_rmsd),
         )
 
-        mocker.patch.object(capri, "make_output")
 
         capri.run()
 

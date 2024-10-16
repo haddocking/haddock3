@@ -98,7 +98,7 @@ value(int): cluster's rank
 """
 
 HEATMAP_DEFAULT_PATH = Path('contacts.html')
-
+SUPPORTED_OUTPUT_FORMATS = ('png', 'jpeg', 'webp', 'svg', 'pdf', 'eps', )
 
 def create_html(
         json_content: str,
@@ -1344,10 +1344,26 @@ def export_plotly_figure(
         figure_width: int = 1000,
         offline: bool = False,
         ) -> None:
+    """Write a plotly figure.
+
+    Parameters
+    ----------
+    fig : Figure
+        The plotly Figure object
+    output_fname : Union[str, Path]
+        Where to write it
+    figure_height : int, optional
+        Height of the figure (in pixels), by default 1000
+    figure_width : int, optional
+        Width of the figure (in pixels), by default 1000
+    offline : bool, optional
+        If True add the plotly js library to the file, by default False
+    """
     # Detect output file extension
-    suffix = Path(output_fname).suffix
+    _suffix = Path(output_fname).suffix
+    suffix = _suffix[1:]
     # Check corresponding function
-    if 'html' in suffix:
+    if suffix == "html":
         fig_to_html(
             fig,
             output_fname,
@@ -1355,7 +1371,7 @@ def export_plotly_figure(
             figure_width=figure_width,
             offline=offline,
             )
-    elif suffix in ('.png', '.jpeg', '.webp', '.svg', '.pdf', '.eps', ):
+    elif suffix in SUPPORTED_OUTPUT_FORMATS:
         fig.write_image(output_fname)
     
   

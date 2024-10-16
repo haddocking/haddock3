@@ -63,11 +63,9 @@ class HaddockModule(ScoringModule):
         if self.params["mode"] == "mpi":
             input_ncores_slurm = int(os.getenv('SLURM_CPUS_ON_NODE', 1))
             input_ncores_pbs = int(os.getenv('PBS_CPUS_ON_NODE', 1))
-            input_ncores = max(input_ncores_slurm, input_ncores_pbs)
+            ncores = max(input_ncores_slurm, input_ncores_pbs)
         else:
-            input_ncores = self.params["ncores"]
-        ncores = parse_ncores(input_ncores, njobs=len(models_to_score))
-        self.log(f"Running {self.name} module with {ncores} cores.")
+            ncores = self.params["ncores"]
         # loading buried and accessible residue dictionaries
         buried_resdic = {
             key[-1]: value for key, value
@@ -102,7 +100,8 @@ class HaddockModule(ScoringModule):
         # Run sasascore Jobs using Scheduler
         engine = Scheduler(
             ncores=ncores,
-            tasks=sasascore_jobs)
+            tasks=sasascore_jobs,
+        )
         engine.run()
 
         # extract results and overwrite scores

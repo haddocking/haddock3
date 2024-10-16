@@ -11,7 +11,7 @@ This file provides information on how to setup a development environment for HAD
 
 ## System requirements
 
-- Python 3.9
+- Python 3.12
 - OpenMPI
 
 ### Installing system dependencies
@@ -32,26 +32,30 @@ sudo apt-get update &&
     sudo apt-get install openmpi-bin libopenmpi3 libopenmpi-dev
 ```
 
-After all the system-dependencies are in place, download and compile python.
+After all the system-dependencies are in place, download and compile python from source.
 
 **Conda is NOT recommended for development**
 
 ```bash
-wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz
-tar -xf Python-3.9.6.tgz
-cd Python-3.9.6
-./configure --enable-optimizations
-sudo make altinstall -j 8
+mkdir $HOME/software
+cd $HOME/software
+wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz
+tar -xf Python-3.12.0.tgz
+cd Python-3.12.0
+./configure --prefix=$HOME/python3 --enable-optimizations --with-ensurepip=install
+make -j 8
+make install
+cd $HOME
 ```
 
-Then `python3.9` should be available on your system at `/usr/local/bin/python3.9`
+Then `python3.12` will be installed locally on your system at `$HOME/python3` and the executable is `$HOME/python3/bin/python3`
 
-On **OSX**, you can use a package-manager such as [brew](https://brew.sh) to install Python 3.9.
+On **OSX**, you can use a package-manager such as [brew](https://brew.sh) to install Python 3.12.
 
 > Please keep in mind installing python with a package manager can mask system dependencies that your development might add. That's why we recommended you install it from source.
 
 ```bash
-brew install python@3.9
+brew install python@3.12
 ```
 
 ## Setting up the development environment
@@ -59,8 +63,7 @@ brew install python@3.9
 ### Clone the repository
 
 ```bash
-git clone https://github.com/haddocking/haddock3.git
-cd haddock3
+git clone https://github.com/haddocking/haddock3.git && cd haddock3
 ```
 
 ### Python environment
@@ -68,30 +71,34 @@ cd haddock3
 We recommend you use Python's native virtual environment to manage the dependencies.
 
 ```bash
-python3.9 -m venv .venv
+$HOME/python3/bin/python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 ### Install haddock3 in development mode
 
-Install both project dependencies and test dependencies using pip.
+We use [`Poetry`](https://python-poetry.org/) as our dependency manager, install it with:
 
 ```bash
-pip install -e '.[dev,docs]'
+(.venv) $ pip install poetry
 ```
 
-> If you are using a Mac, if the installation of mpi4py fails, run first `brew install mpi4py`
+Finally, install haddock3 in development mode with:
+
+```bash
+(.venv) $ poetry install
+```
 
 ## Running tests
 
 In `haddock3` we use the pytest framework, make sure you check it's [documentation](https://docs.pytest.org/en/6.2.x/contents.html) the tests are located in `tests/` (unit) and `integration_tests/` directories.
 
 ```bash
-pytest tests/
+(.venv) $ pytest tests/
 ```
 
 ```bash
-pytest integration_tests/
+(.venv) $ pytest integration_tests/
 ```
 
 ## Installation in an HPC environment

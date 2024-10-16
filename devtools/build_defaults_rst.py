@@ -38,6 +38,7 @@ MODULE_TITLE_DICT = {
     "alascan": "Alanine Scanning module",
     "ilrmsdmatrix": "Interface Ligand RMSD Matrix calculation module",
     "exit": "Exit module",
+    "sasascore": "Surface Accessibility Scoring module",
 }
 
 CATEGORY_TITLE_DICT = {

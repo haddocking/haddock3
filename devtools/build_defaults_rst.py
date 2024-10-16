@@ -13,9 +13,10 @@ from collections.abc import Mapping
 from pathlib import Path
 import shutil
 
-from haddock import haddock3_repository_path, haddock3_source_path
 from haddock.core.typing import ParamMap
 from haddock.libs.libio import read_from_yaml
+
+HADDOCK_REL_SRC_PATH = Path("src", "haddock")
 
 MODULE_TITLE_DICT = {
     "topoaa": "All-atom topology module",
@@ -37,6 +38,7 @@ MODULE_TITLE_DICT = {
     "alascan": "Alanine Scanning module",
     "ilrmsdmatrix": "Interface Ligand RMSD Matrix calculation module",
     "exit": "Exit module",
+    "openmm": "OpenMM module",
 }
 
 CATEGORY_TITLE_DICT = {
@@ -185,12 +187,11 @@ def process_category_file(category: str) -> None:
         Category name.
     """
     category_rst = Path(
-                haddock3_repository_path,
                 'docs',
                 f"haddock.modules.{category}.rst"
                 )
+
     target_path = Path(
-        haddock3_repository_path,
         'docs',
         'modules',
         category
@@ -217,12 +218,10 @@ def process_module_file(category: str, module_name: str) -> None:
         Module name.
     """
     module_rst = Path(
-        haddock3_repository_path,
         'docs',
         f"haddock.modules.{category}.{module_name}.rst"
         )
     target_rst = Path(
-        haddock3_repository_path,
         'docs',
         'modules',
         category,
@@ -230,20 +229,13 @@ def process_module_file(category: str, module_name: str) -> None:
         )
     shutil.move(module_rst, target_rst)
     # does the submodule exist?
-    submodule_gen = Path(haddock3_repository_path, 'docs').glob(f"haddock.modules.{category}.{module_name}.*.rst")
+    submodule_gen = Path('docs').glob(f"haddock.modules.{category}.{module_name}.*.rst")
     submodule_list = list(submodule_gen)
     if len(submodule_list) != 0:
         
-        submodule_name = submodule_list[0]
-    
-        submodule_rst = Path(
-            haddock3_repository_path,
-            'docs',
-            submodule_name
-        )
+        submodule_rst = submodule_list[0]
     
         submodule_target_rst = Path(
-            haddock3_repository_path,
             'docs',
             'modules',
             category,
@@ -278,8 +270,7 @@ def main() -> None:
     # from haddock.modules import modules_category
     # to avoid importing dependencies of the haddock modules packages
     pattern = Path('modules', '*', '*', '*.yaml')
-    configs = haddock3_source_path.glob(str(pattern))
-
+    configs = Path(HADDOCK_REL_SRC_PATH).glob(str(pattern))
     processed_categories = []
     # create RST pages for all modules' configuration files.
     for config in configs:
@@ -293,10 +284,8 @@ def main() -> None:
         # ignore empty modules - currently topocg for example
         if len(params) == 0:
             continue
-
         # if the category has not been processed yet, copy the category file
         if category not in processed_categories:
-
             process_category_file(category)
             
             processed_categories.append(category)
@@ -306,14 +295,12 @@ def main() -> None:
         text = build_rst(params)
 
         params_folder = Path(
-            haddock3_repository_path,
             'docs',
             'modules',
             category,
             'params',
             )
         params_folder.mkdir(exist_ok=True)
-
         with open(Path(params_folder, f'{module_name}.rst'), 'w') as fout:
             fout.write(text)
 
@@ -323,11 +310,10 @@ def main() -> None:
     # Generate general default parameters RST page
     HEADING.reset()
     HEADING.increase()
-    general_defaults = Path(haddock3_source_path, 'modules', 'defaults.yaml')
+    general_defaults = Path(HADDOCK_REL_SRC_PATH, 'modules', 'defaults.yaml')
     general_params = read_from_yaml(general_defaults)
     text = build_rst(general_params)
     params_file = Path(
-        haddock3_repository_path,
         'docs',
         'modules',
         'general_module_params.rst',
@@ -339,10 +325,10 @@ def main() -> None:
     # now libs, gear and core
     for folder in ("libs", "gear", "core"):
         # make directory if it does not exist
-        target_path = Path(haddock3_repository_path, 'docs', 'reference', folder)
+        target_path = Path(HADDOCK_REL_SRC_PATH, 'docs', 'reference', folder)
         target_path.mkdir(exist_ok=True)
         # collect rst files
-        rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.{folder}.*rst")
+        rst_files = Path(HADDOCK_REL_SRC_PATH, 'docs').glob(f"haddock.{folder}.*rst")
         for rst_file in rst_files:
             target_rst = Path(target_path, rst_file.name)
             shutil.move(rst_file, target_rst)
@@ -353,7 +339,7 @@ def main() -> None:
     
     # Generate mandatory parameters RST page
     HEADING.reset()
-    mandatory_defaults = Path(haddock3_source_path, 'core', 'mandatory.yaml')
+    mandatory_defaults = Path(HADDOCK_REL_SRC_PATH, 'core', 'mandatory.yaml')
     mandatory_params = read_from_yaml(mandatory_defaults)
 
     for param in mandatory_params:
@@ -362,7 +348,6 @@ def main() -> None:
 
     text = build_rst(mandatory_params)
     params_file = Path(
-        haddock3_repository_path,
         'docs',
         'reference',
         'core',
@@ -375,13 +360,12 @@ def main() -> None:
         fout.write(text)
 
     # now the command-line interfaces
-    clients_folder = Path(haddock3_repository_path, 'docs', 'clients')
+    clients_folder = Path(HADDOCK_REL_SRC_PATH, 'docs', 'clients')
     clients_folder.mkdir(exist_ok=True)
 
-    cli_rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.clis.*rst")
+    cli_rst_files = Path(HADDOCK_REL_SRC_PATH, 'docs').glob(f"haddock.clis.*rst")
     for cli_rst_file in cli_rst_files:
         target_rst = Path(
-            haddock3_repository_path,
             'docs',
             'clients',
             cli_rst_file.name

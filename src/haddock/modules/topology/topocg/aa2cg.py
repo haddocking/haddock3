@@ -441,13 +441,13 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
                 p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 dssp_raw, errors = p.communicate()
                 dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
-                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
-                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
                 log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
-        
+            finally:
+                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
+
         dssp = {}
 
         for line in dssp_raw:
@@ -467,7 +467,7 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
 
             # transform MARTINI > HADDOCK
             # and add it to the bfactor col
-            for residue, ss in zip(chain, martini_types):
+            for residue, ss in zip(chain, martini_types): # chain and martini_types order must match
                 code = ss_to_code[ss]
                 # for atom in residue.get_atoms():
                 for atom in residue:

@@ -10,15 +10,39 @@
 #========================================================================================================================#
 
 # Generates only one plan based on one selection of residues
-haddock3-restraints z_surface_restraints --pdb data/protein.pdb --residues 19,83,145,119,167 --output data/one_z_surface_selection
+./../../utils/haddock-restraints z \
+  --residues 19,83,145,119,167 \
+  data/protein.pdb \
+  data/01_beads.pdb \
+  20 \
+  6 > data/01_z.tbl
 
 # Generates two plans based on the two residues selections
-haddock3-restraints z_surface_restraints --pdb data/protein.pdb --residues 19,83,145,119,167 98,101,126,129 --output data/protein_z_restraints
+./../../utils/haddock-restraints z \
+  --residues 19,83,145,119,167 \
+  --residues 98,101,126,129 \
+  data/protein.pdb \
+  data/02_beads.pdb \
+  20 \
+  6  > data/02_z.tbl
 
 # Generates two plans based on the two residues selections and reduce both area of the surface and space between beads
-haddock3-restraints z_surface_restraints --pdb data/protein.pdb --residues 19,83,145,119,167 98,101,126,129 --output data/protein_z_restraints_smallspacing --spacing 4 --x-size 20 --y-size 20
+./../../utils/haddock-restraints z \
+  --residues 19,83,145,119,167 \
+  --residues 98,101,126,129 \
+  data/protein.pdb \
+  data/02_beads_smallspacing.pdb \
+  4 \
+  6  > data/02_z_smallspacing.tbl
 
 # Generates three plans based on the three residues selections
-haddock3-restraints z_surface_restraints --pdb data/protein.pdb --residues 19,83,145,119,167 98,101,126,129 23,62,87,111,116,153,163 --output data/three_z_restraints
+./../../utils/haddock-restraints z \
+  --residues 19,83,145,119,167 \
+  --residues 98,101,126,129 \
+  --residues 23,62,87,111,116,153,163 \
+  data/protein.pdb \
+  data/03_beads.pdb \
+  20 \
+  6  > data/03_z.tbl
 
 #========================================================================================================================#

@@ -3,7 +3,7 @@
 from typing import Iterable
 
 
-modules_using_resdic = ("caprieval", "rmsdmatrix", "alascan")
+modules_using_resdic = ("caprieval", "rmsdmatrix", "alascan", "sasascore")
 
 
 def confirm_resdic_chainid_length(params: Iterable[str]) -> None:

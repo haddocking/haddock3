@@ -1,0 +1,149 @@
+! HADDOCK AIR restraints
+! HADDOCK AIR restraints for 1st selection
+!
+assign ( resid 151  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 152  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 348  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 276  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 156  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 292  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 277  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 222  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 371  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 246  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 406  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 179  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 178  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 227  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 294  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 224  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 119  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+assign ( resid 118  and segid A)
+       (
+        ( resid 500  and segid B)
+       )  2.0 2.0 0.0
+
+
+! HADDOCK AIR restraints for 2nd selection
+!
+assign ( resid 500  and segid B)
+       (
+        ( resid 151  and segid A)
+     or
+        ( resid 152  and segid A)
+     or
+        ( resid 348  and segid A)
+     or
+        ( resid 276  and segid A)
+     or
+        ( resid 156  and segid A)
+     or
+        ( resid 292  and segid A)
+     or
+        ( resid 277  and segid A)
+     or
+        ( resid 222  and segid A)
+     or
+        ( resid 371  and segid A)
+     or
+        ( resid 246  and segid A)
+     or
+        ( resid 406  and segid A)
+     or
+        ( resid 179  and segid A)
+     or
+        ( resid 178  and segid A)
+     or
+        ( resid 227  and segid A)
+     or
+        ( resid 294  and segid A)
+     or
+        ( resid 224  and segid A)
+     or
+        ( resid 119  and segid A)
+     or
+        ( resid 118  and segid A)
+       )  2.0 2.0 0.0
+
+
+! HADDOCK AIR restraints for 3rd selection
+!
+
+! HADDOCK AIR restraints for 4th selection
+!
+
+! HADDOCK AIR restraints for 5th selection
+!
+
+! HADDOCK AIR restraints for 6th selection
+!
+
+

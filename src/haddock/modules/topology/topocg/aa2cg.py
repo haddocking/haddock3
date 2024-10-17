@@ -19,18 +19,21 @@ import os
 import random
 import subprocess
 import warnings
+from pathlib import Path
 from haddock import log
+import tempfile
 
 from Bio.PDB import Entity
 from Bio.PDB import PDBIO
 from Bio.PDB import PDBParser
-from Bio.PDB.DSSP import DSSP
 from Bio.PDB.StructureBuilder import StructureBuilder
 
 from haddock.core.exceptions import ModuleError
 from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
+
+CRYST_LINE = "CRYST1 " + os.linesep
 
 
 def add_dummy(bead_list, dist=0.11, n=2):
@@ -399,7 +402,27 @@ def extract_groups(pair_list):
     out.close()
 
 
-def determine_ss(structure, skipss, pdbf_path):
+def create_file_with_cryst(pdb_file: str) -> None:
+    """
+    This function creates a new pdb because the CRYST line is missing from the pdf file.     
+    This line is necessary for DSSP.
+
+    Args:
+        output: str
+        pdb_file: str
+
+    Returns:
+        pdb_file_copy: str
+
+    """
+    with open(pdb_file, "r") as file_in, tempfile.NamedTemporaryFile(mode = "w", delete=False) as file_out:
+        content = file_in.read()
+        file_out.write(CRYST_LINE + content)
+    
+    return(file_out.name)
+
+
+def determine_ss(structure, output_path, skipss, pdbf_path):
     """
 
     Args:
@@ -408,19 +431,34 @@ def determine_ss(structure, skipss, pdbf_path):
         pdbf_path:
 
     Returns:
+        structure:
 
     """
     # calculate SS
     for model in structure:
+        tmp_file_name = create_file_with_cryst(pdbf_path)
+
         if skipss:
             continue
         else:
             try:
-                dssp = DSSP(model, pdbf_path)
+                p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                dssp_raw, errors = p.communicate()
+                dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
                 log.warning('SS could not be assigned, assigning code 1 to all residues')
                 continue
+            finally:
+                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
+
+        dssp = {}
+
+        for line in dssp_raw:
+            if line[11:12] in dssp.keys():
+                dssp[line[11:12]].append(line[16:17])
+            else:
+                dssp[line[11:12]] = [line[16:17]]
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
@@ -428,27 +466,16 @@ def determine_ss(structure, skipss, pdbf_path):
         # DSSP > MARTINI > HADDOCK
         # this could still be improved
         for chain in model:
-            if chain.id in calculated_chains:
-                # if ss_dic[model]:
-                # get DSSP value for each residue
-                for r in chain:
-                    try:
-                        r.xtra["SS_DSSP"]
-                    except KeyError:
-                        log.warning('No SS definition found for residue: {} {} {:d}'.
-                                        format(chain.id, r.resname, r.id[1]))
-                        r.xtra["SS_DSSP"] = "-"
-                dssp_dic = collections.OrderedDict([(r, r.xtra["SS_DSSP"]) for r in chain])
-                dssp_ss = "".join(dssp_dic.values())
-                _, martini_types = ss_classification(dssp_ss)  # ancestral function, keep it there
+            dssp_ss = "".join(dssp[chain.id])
+            _, martini_types = ss_classification(dssp_ss)  # ancestral function, keep it there
 
-                # transform MARTINI > HADDOCK
-                # and add it to the bfactor col
-                for residue, ss in zip(dssp_dic, martini_types):
-                    code = ss_to_code[ss]
-                    # for atom in residue.get_atoms():
-                    for atom in residue.get_atom():
-                        atom.bfactor = code
+            # transform MARTINI > HADDOCK
+            # and add it to the bfactor col
+            for residue, ss in zip(chain, martini_types): # chain and martini_types order must match
+                code = ss_to_code[ss]
+                # for atom in residue.get_atoms():
+                for atom in residue:
+                    atom.bfactor = code
     return structure
 
 
@@ -507,7 +534,7 @@ def martinize(input_pdb, output_path, skipss):
                     atom.bfactor = 1.0
 
     # Assign HADDOCK code according to SS (1-9)
-    determine_ss(structure=aa_model, skipss=skipss, pdbf_path=pdbf_path)
+    determine_ss(structure=aa_model, output_path = output_path, skipss=skipss, pdbf_path=pdbf_path)
 
     # Strandardize naming
     # WARNING, THIS ASSUMES THAT INPUT DNA/RNA IS 3-LETTER CODE

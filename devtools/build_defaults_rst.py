@@ -62,6 +62,7 @@ REFERENCE_TITLE_DICT = {
     "gear.extend_run": "Start from copy",
     "gear.greetings": "Greetings messages",
     "gear.haddockmodel": "HADDOCK models",
+    "gear.known_cns_errors": "Known CNS errors",
     "gear.parameters": "Parameters helper",
     "gear.prepare_run": "Prepare run",
     "gear.preprocessing": "PDB preprocessing",

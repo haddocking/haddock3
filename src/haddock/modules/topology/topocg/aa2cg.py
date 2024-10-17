@@ -21,6 +21,7 @@ import subprocess
 import warnings
 from pathlib import Path
 from haddock import log
+import tempfile
 
 from Bio.PDB import Entity
 from Bio.PDB import PDBIO
@@ -401,7 +402,7 @@ def extract_groups(pair_list):
     out.close()
 
 
-def create_file_with_cryst(output_path: str, pdb_file: str) -> None:
+def create_file_with_cryst(pdb_file: str) -> None:
     """
     This function creates a new pdb because the CRYST line is missing from the pdf file.     
     This line is necessary for DSSP.
@@ -414,13 +415,11 @@ def create_file_with_cryst(output_path: str, pdb_file: str) -> None:
         pdb_file_copy: str
 
     """
-    pdb_file_copy = f"../{output_path}/{pdb_file.split('/')[-1][:-4]}_tmp.pdb"
-    
-    with open(pdb_file, "r") as file_in, open(pdb_file_copy, "w") as file_out:
+    with open(pdb_file, "r") as file_in, tempfile.NamedTemporaryFile(mode = "w", delete=False) as file_out:
         content = file_in.read()
         file_out.write(CRYST_LINE + content)
     
-    return(pdb_file_copy)
+    return(file_out.name)
 
 
 def determine_ss(structure, output_path, skipss, pdbf_path):
@@ -437,7 +436,7 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
     """
     # calculate SS
     for model in structure:
-        tmp_file_name = create_file_with_cryst(output_path, pdbf_path)
+        tmp_file_name = create_file_with_cryst(pdbf_path)
 
         if skipss:
             continue

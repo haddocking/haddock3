@@ -401,21 +401,26 @@ def extract_groups(pair_list):
     out.close()
 
 
-def create_file_with_cryst(pdb_file: str, pdb_file_copy: str) -> None:
+def create_file_with_cryst(output_path: str, pdb_file: str) -> None:
     """
     This function creates a new pdb because the CRYST line is missing from the pdf file.     
     This line is necessary for DSSP.
 
     Args:
+        output: str
         pdb_file: str
-        pdb_file_copy: str
 
     Returns:
+        pdb_file_copy: str
 
     """
+    pdb_file_copy = f"../{output_path}/{pdb_file.split('/')[-1][:-4]}_tmp.pdb"
+    
     with open(pdb_file, "r") as file_in, open(pdb_file_copy, "w") as file_out:
         content = file_in.read()
         file_out.write(CRYST_LINE + content)
+    
+    return(pdb_file_copy)
 
 
 def determine_ss(structure, output_path, skipss, pdbf_path):
@@ -427,12 +432,12 @@ def determine_ss(structure, output_path, skipss, pdbf_path):
         pdbf_path:
 
     Returns:
+        structure:
 
     """
     # calculate SS
     for model in structure:
-        tmp_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_tmp.pdb"
-        create_file_with_cryst(pdbf_path, tmp_file_name)
+        tmp_file_name = create_file_with_cryst(output_path, pdbf_path)
 
         if skipss:
             continue

@@ -870,8 +870,7 @@ def test_capri_run(mocker):
 
 
 def test_rank_according_to_score():
-    """???"""
-
+    """test ranking according to score."""
     data = {
         1: {
             "score": 3.0,

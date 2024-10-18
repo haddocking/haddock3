@@ -161,6 +161,7 @@ pattypes = {
 }
 
 ss_to_code = {"C": 1,  # Free,
+              " ": 1,
               "S": 2,
               "H": 3,
               "1": 4,

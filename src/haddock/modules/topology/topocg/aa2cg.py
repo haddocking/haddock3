@@ -436,12 +436,12 @@ def determine_ss(structure, skipss, pdbf_path):
     """
     # calculate SS
     for model in structure:
-        tmp_file_name = create_file_with_cryst(pdbf_path)
 
         if skipss:
             continue
         else:
             try:
+                tmp_file_name = create_file_with_cryst(pdbf_path)
                 p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                 dssp_raw, errors = p.communicate()
                 dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]

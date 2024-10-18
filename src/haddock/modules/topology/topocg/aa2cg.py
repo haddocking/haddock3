@@ -422,7 +422,7 @@ def create_file_with_cryst(pdb_file: str) -> None:
     return(file_out.name)
 
 
-def determine_ss(structure, output_path, skipss, pdbf_path):
+def determine_ss(structure, skipss, pdbf_path):
     """
 
     Args:
@@ -534,7 +534,7 @@ def martinize(input_pdb, output_path, skipss):
                     atom.bfactor = 1.0
 
     # Assign HADDOCK code according to SS (1-9)
-    determine_ss(structure=aa_model, output_path = output_path, skipss=skipss, pdbf_path=pdbf_path)
+    determine_ss(structure=aa_model, skipss=skipss, pdbf_path=pdbf_path)
 
     # Strandardize naming
     # WARNING, THIS ASSUMES THAT INPUT DNA/RNA IS 3-LETTER CODE

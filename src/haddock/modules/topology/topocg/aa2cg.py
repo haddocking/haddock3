@@ -455,10 +455,8 @@ def determine_ss(structure, skipss, pdbf_path):
         dssp = {}
 
         for line in dssp_raw:
-            if line[11:12] in dssp.keys():
-                dssp[line[11:12]].append(line[16:17])
-            else:
-                dssp[line[11:12]] = [line[16:17]]
+            var_a, var_b = line[11], line[16]
+            dssp.setdefault(var_a, []).append(var_b)
 
         calculated_chains = list(set([e[0] for e in dssp.keys()]))
 

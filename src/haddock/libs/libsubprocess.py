@@ -11,7 +11,7 @@ from haddock.core.exceptions import (
     CNSRunningError,
     JobRunningError,
     KnownCNSError,
-    )
+)
 from haddock.core.typing import Any, FilePath, Optional, ParamDict
 from haddock.gear.known_cns_errors import KNOWN_ERRORS as KNOWN_CNS_ERRORS
 from haddock.libs.libio import gzip_files
@@ -238,8 +238,9 @@ class CNSJob:
 
             if compress_seed:
                 with suppress(FileNotFoundError):
+                    seed_f = Path(self.output_file).with_suffix(".seed")
                     gzip_files(
-                        Path(Path(self.output_file).stem).with_suffix(".seed"),
+                        seed_f,
                         remove_original=True,
                     )
 

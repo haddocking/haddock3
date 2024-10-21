@@ -39,7 +39,7 @@ MODULE_TITLE_DICT = {
     "alascan": "Alanine Scanning module",
     "ilrmsdmatrix": "Interface Ligand RMSD Matrix calculation module",
     "exit": "Exit module",
-    "openmm": "OpenMM module",
+    "openmm": "OpenMM Molecular Dynamics module",
     "sasascore": "Surface Accessibility Scoring module",
 }
 

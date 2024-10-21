@@ -15,8 +15,9 @@ from integration_tests import GOLDEN_DATA
 @pytest.fixture
 def rmsdmatrix_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         ilrmsdmatrix = rmsdmatrixModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_RMSD_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_RMSD_CONFIG
         )
         yield ilrmsdmatrix
 

@@ -3,10 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from haddock.modules.topology.topoaa import \
-    DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
+from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
-
+import os
 from . import CNS_EXEC
 from integration_tests import GOLDEN_DATA
 
@@ -14,8 +13,9 @@ from integration_tests import GOLDEN_DATA
 @pytest.fixture
 def topoaa_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         topoaa = TopoaaModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_TOPOAA_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_TOPOAA_CONFIG
         )
         yield topoaa
 

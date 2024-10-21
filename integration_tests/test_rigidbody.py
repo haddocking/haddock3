@@ -5,17 +5,20 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.modules.sampling.rigidbody import \
-    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG
+from haddock.modules.sampling.rigidbody import (
+    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG,
+)
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 from tests import golden_data
+import os
 
 
 @pytest.fixture
 def rigidbody_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         rigidbody = RigidbodyModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_RIGIDBODY_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_RIGIDBODY_CONFIG
         )
         yield rigidbody
 

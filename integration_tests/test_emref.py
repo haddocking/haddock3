@@ -9,13 +9,15 @@ from haddock.modules.refinement.emref import DEFAULT_CONFIG as DEFAULT_EMREF_CON
 from haddock.modules.refinement.emref import HaddockModule as FlexrefModule
 
 from integration_tests import GOLDEN_DATA
+import os
 
 
 @pytest.fixture
 def emref_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         emref = FlexrefModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_EMREF_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_EMREF_CONFIG
         )
         yield emref
 

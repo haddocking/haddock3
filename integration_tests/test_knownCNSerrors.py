@@ -13,8 +13,8 @@ from haddock.gear.known_cns_errors import KNOWN_ERRORS
 from haddock.libs.libontology import PDBFile
 from haddock.modules.sampling.rigidbody import (
     DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG,
-    HaddockModule as RigidbodyModule
-    )
+    HaddockModule as RigidbodyModule,
+)
 
 
 @pytest.fixture
@@ -55,12 +55,18 @@ def rigidbody_module_with_cns_errors(gen_fake_cns_errors):
         order=1,
         path=Path(gen_fake_cns_errors),
         initial_params=DEFAULT_RIGIDBODY_CONFIG,
-        )
+    )
     # Generate 9 filepath that were not created
     rigidbody.output_models = [
-        PDBFile(Path(gen_fake_cns_errors, f"not_generated_output_{i}.pdb"))
+        PDBFile(
+            Path(
+                gen_fake_cns_errors,
+                f"not_generated_output_{i}.pdb",
+            ),
+            path=gen_fake_cns_errors,
+        )
         for i in range(1, 10)
-        ]
+    ]
     yield rigidbody
 
 
@@ -72,12 +78,11 @@ def rigidbody_module_without_cns_errors():
             order=1,
             path=Path(tmp),
             initial_params=DEFAULT_RIGIDBODY_CONFIG,
-            )
+        )
         # Generate 9 filepath that were not created
         rigidbody.output_models = [
-            PDBFile(Path(tmp, f"not_generated_output_{i}.pdb"))
-            for i in range(1, 10)
-            ]
+            PDBFile(Path(tmp, f"not_generated_output_{i}.pdb")) for i in range(1, 10)
+        ]
         yield rigidbody
 
 
@@ -93,7 +98,7 @@ def test_detection_when_faulty(rigidbody_module_with_cns_errors):
     """Test failure of run and detection of CNS errors."""
     rigidbody_module_with_cns_errors.previous_io = MockPreviousIO(
         rigidbody_module_with_cns_errors.path
-        )
+    )
     # Check that the run will fail
     with pytest.raises(RuntimeError) as error_info:
         rigidbody_module_with_cns_errors.export_io_models()
@@ -111,7 +116,7 @@ def test_undetected_when_faulty(rigidbody_module_without_cns_errors):
     """Test failure of run and undetection of CNS errors."""
     rigidbody_module_without_cns_errors.previous_io = MockPreviousIO(
         rigidbody_module_without_cns_errors.path
-        )
+    )
     # Check that the run will fail
     with pytest.raises(RuntimeError) as error_info:
         rigidbody_module_without_cns_errors.export_io_models()

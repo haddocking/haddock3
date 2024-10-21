@@ -2,7 +2,7 @@ import shutil
 import tempfile
 import gzip
 from pathlib import Path
-
+import os
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
@@ -18,8 +18,9 @@ from integration_tests import GOLDEN_DATA
 @pytest.fixture
 def rigidbody_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         rigidbody = RigidbodyModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_RIGIDBODY_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_RIGIDBODY_CONFIG
         )
         yield rigidbody
 
@@ -31,7 +32,7 @@ class MockPreviousIO:
     def retrieve_models(self, crossdock: bool = False):
         shutil.copy(
             Path(testgolden_data, "e2aP_1F3G_haddock.pdb"),
-            Path(".", "e2aP_1F3G_haddock.pdb"),
+            Path(self.path, "e2aP_1F3G_haddock.pdb"),
         )
         shutil.copy(
             Path(testgolden_data, "e2aP_1F3G_haddock.psf"),
@@ -100,8 +101,9 @@ def test_restraints_rigidbody(rigidbody_module):
     assert Path(rigidbody_module.path, "rigidbody_1.out.gz").stat().st_size > 0
     assert Path(rigidbody_module.path, "rigidbody_1.inp").stat().st_size > 0
 
-    file_content = gzip.open(Path(rigidbody_module.path, "rigidbody_1.out.gz"), 'rt').read()
-    assert 'NOEPRI: RMS diff. class AMBI' in file_content
-    assert 'NOEPRI: RMS diff. class DIST' in file_content
-    assert 'NOEPRI: RMS diff. class HBON' in file_content
-
+    file_content = gzip.open(
+        Path(rigidbody_module.path, "rigidbody_1.out.gz"), "rt"
+    ).read()
+    assert "NOEPRI: RMS diff. class AMBI" in file_content
+    assert "NOEPRI: RMS diff. class DIST" in file_content
+    assert "NOEPRI: RMS diff. class HBON" in file_content

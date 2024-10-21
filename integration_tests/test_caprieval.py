@@ -129,22 +129,22 @@ class MockPreviousIO:
     def retrieve_models(self, individualize: bool = True):
         shutil.copy(
             Path(UNITTESTS_GOLDEN_DATA, "protprot_complex_1.pdb"),
-            Path(".", "protprot_complex_1.pdb"),
+            Path(self.path, "protprot_complex_1.pdb"),
         )
         shutil.copy(
             Path(UNITTESTS_GOLDEN_DATA, "protprot_complex_2.pdb"),
-            Path(".", "protprot_complex_2.pdb"),
+            Path(self.path, "protprot_complex_2.pdb"),
         )
         model_list = [
             PDBFile(
                 file_name="protprot_complex_1.pdb",
-                path=".",
+                path=self.path,
                 unw_energies={"energy_term": 0.0},
                 score=0.0,
             ),
             PDBFile(
                 file_name="protprot_complex_2.pdb",
-                path=".",
+                path=self.path,
                 unw_energies={"energy_term": 0.0},
                 score=100.0,
             ),

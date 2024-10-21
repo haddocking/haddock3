@@ -11,14 +11,17 @@ from haddock.modules.refinement.flexref import (
 )
 from haddock.modules.refinement.flexref import HaddockModule as FlexrefModule
 
-from integration_tests import GOLDEN_DATA
+from . import GOLDEN_DATA
+
+import os
 
 
 @pytest.fixture
 def flexref_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         flexref = FlexrefModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_FLEXREF_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_FLEXREF_CONFIG
         )
         yield flexref
 
@@ -99,8 +102,8 @@ def test_flexref_fle(flexref_module, calc_fnat):
 
     assert Path(flexref_module.path, "flexref_1.pdb").exists()
     assert Path(flexref_module.path, "flexref_1.out.gz").exists()
-    file_content = gzip.open(Path(flexref_module.path, "flexref_1.out.gz"), 'rt').read()
-    assert '$SAPROTOCOL.TADFACTOR set to    4.00000' in file_content
+    file_content = gzip.open(Path(flexref_module.path, "flexref_1.out.gz"), "rt").read()
+    assert "$SAPROTOCOL.TADFACTOR set to    4.00000" in file_content
 
     fnat = calc_fnat(
         model=Path(flexref_module.path, "flexref_1.pdb"),

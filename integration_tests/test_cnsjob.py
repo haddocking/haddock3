@@ -12,7 +12,6 @@ from haddock.libs.libsubprocess import CNSJob
 from integration_tests import GOLDEN_DATA, CNS_EXEC
 
 
-
 @pytest.fixture
 def cns_output_pdb_filename() -> Generator[str, None, None]:
     with tempfile.NamedTemporaryFile(suffix=".pdb", delete=False) as output_f:
@@ -33,10 +32,10 @@ def fixture_cns_error_filename() -> Generator[str, None, None]:
 
 @pytest.fixture
 def cnsjob(
-        cns_input_filename,
-        cns_output_filename,
-        cns_error_filename,
-        ) -> Generator[CNSJob, None, None]:
+    cns_input_filename,
+    cns_output_filename,
+    cns_error_filename,
+) -> Generator[CNSJob, None, None]:
     yield CNSJob(
         input_file=Path(cns_input_filename),
         output_file=Path(cns_output_filename),
@@ -49,7 +48,7 @@ def cnsjob(
 def cnsjob_no_files(
     cns_inp_str,
     cns_error_filename,
-    ) -> Generator[CNSJob, None, None]:
+) -> Generator[CNSJob, None, None]:
     yield CNSJob(
         input_file=cns_inp_str,
         error_file=Path(cns_error_filename),
@@ -59,7 +58,7 @@ def cnsjob_no_files(
 
 @pytest.fixture
 def cns_seed_filename(cns_output_filename) -> Generator[str, None, None]:
-    seed_filename = Path(Path(cns_output_filename).stem).with_suffix(".seed")
+    seed_filename = Path(cns_output_filename).with_suffix(".seed")
     yield str(seed_filename)
     seed_filename.unlink(missing_ok=True)
 
@@ -132,17 +131,17 @@ def test_cnsjob_run_compress_out(cnsjob, cns_output_filename, cns_output_pdb_fil
 
 
 def test_cnsjob_run_uncompressed_err(
-        mocker,
-        cnsjob,
-        cns_error_filename,
-        ):
+    mocker,
+    cnsjob,
+    cns_error_filename,
+):
     """Test uncompressed error file."""
     # Mock generation of an error in STDOUT
     random_error = random.choice(list(KNOWN_ERRORS.keys()))
     mocker.patch(
         "haddock.libs.libsubprocess.subprocess.Popen.communicate",
         return_value=(bytes(random_error, encoding="utf-8"), b""),
-        )
+    )
     cnsjob.run(
         compress_inp=False,
         compress_out=False,
@@ -155,17 +154,17 @@ def test_cnsjob_run_uncompressed_err(
 
 
 def test_cnsjob_run_compress_err(
-        mocker,
-        cnsjob,
-        cns_error_filename,
-        ):
+    mocker,
+    cnsjob,
+    cns_error_filename,
+):
     """Test compressed error file."""
     # Mock generation of an error in STDOUT
     random_error = random.choice(list(KNOWN_ERRORS.keys()))
     mocker.patch(
         "haddock.libs.libsubprocess.subprocess.Popen.communicate",
         return_value=(bytes(random_error, encoding="utf-8"), b""),
-        )
+    )
     cnsjob.run(
         compress_inp=False,
         compress_out=False,
@@ -187,7 +186,6 @@ def test_cnsjob_compress_seed(cnsjob, cns_output_pdb_filename, cns_seed_filename
 
     assert Path(f"{cns_seed_filename}.gz").exists()
     assert Path(f"{cns_seed_filename}.gz").stat().st_size > 0
-    Path(f"{cns_seed_filename}.gz").unlink()
 
     assert Path(cns_output_pdb_filename).exists()
     assert Path(cns_output_pdb_filename).stat().st_size > 0

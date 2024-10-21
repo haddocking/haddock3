@@ -8,19 +8,20 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile, TopologyFile
-from haddock.modules.scoring.emscoring import \
-    DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG
+from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as DEFAULT_EMSCORING_CONFIG
 from haddock.modules.scoring.emscoring import HaddockModule as EmscoringModule
 
 from integration_tests import GOLDEN_DATA
+import os
 
 
 @pytest.fixture
 def emscoring_module():
     """Return a default emscoring module."""
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         emscoring_module = EmscoringModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_EMSCORING_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_EMSCORING_CONFIG
         )
         # lower number of steps for faster testing
         emscoring_module.params["nemsteps"] = 5
@@ -75,4 +76,3 @@ def test_emscoring_default(emscoring_module, calc_fnat):
         native=Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
     )
     assert fnat == pytest.approx(0.95, abs=0.1)
-

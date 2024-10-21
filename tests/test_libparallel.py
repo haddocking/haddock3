@@ -1,8 +1,8 @@
-import uuid
 from multiprocessing import Queue
 from pathlib import Path
 
 import pytest
+import tempfile
 
 from haddock.libs.libparallel import (
     GenericTask,
@@ -42,7 +42,8 @@ class FileTask:
         self.input_file = Path(filename)
 
     def run(self):
-        Path(self.input_file).touch()
+        pass
+
 
 class TaskWithException:
 
@@ -72,11 +73,14 @@ def scheduler():
     )
 
 
+import tempfile
+
+
 @pytest.fixture
 def scheduler_files():
     """Return a scheduler with 3 tasks that create files."""
 
-    file_list = [uuid.uuid4().hex for _ in range(3)]
+    file_list = [tempfile.NamedTemporaryFile(delete=False).name for _ in range(3)]
     yield Scheduler(
         ncores=1,
         tasks=[

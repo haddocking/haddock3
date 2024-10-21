@@ -1,4 +1,5 @@
 """Test the haddock3-re CLI."""
+
 from haddock.clis.cli_re import maincli as cli_re
 import pytest
 import tempfile
@@ -21,7 +22,7 @@ def weights_dict():
         "w_desolv": 1.0,
         "w_bsa": -0.01,
         "w_air": 0.01,
-        }
+    }
 
 
 def test_cli_re_empty():
@@ -32,7 +33,8 @@ def test_cli_re_empty():
 
 def test_cli_rescore(weights_dict):
     """Test haddock3-re rescore subcommand."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         with tempfile.TemporaryDirectory(dir=tmpdir) as nested_tmpdir:
             # weights json file
             weights_json = Path(nested_tmpdir, "weights_params.json")
@@ -47,9 +49,8 @@ def test_cli_rescore(weights_dict):
 
             # check if the files are created
             interactive_folder = [
-                el for el in os.listdir(tmpdir)
-                if el.endswith("interactive")
-                ]
+                el for el in os.listdir(tmpdir) if el.endswith("interactive")
+            ]
             assert len(interactive_folder) == 1
             interactive_folder = Path(tmpdir, interactive_folder[0])
 
@@ -73,7 +74,7 @@ def test_cli_rescore(weights_dict):
 
 def test_cli_reclustfcc():
     """Test haddock3-re clustfcc subcommand."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         nested_tmpdir = Path(tmpdir, "03_clustfcc")
         os.mkdir(nested_tmpdir)
         # json file
@@ -85,17 +86,21 @@ def test_cli_reclustfcc():
         # fcc matrix
         fcc_matrix = Path(golden_data, "example_fcc.matrix")
         shutil.copy(fcc_matrix, Path(nested_tmpdir, "fcc.matrix"))
-        subprocess.run([
-            "haddock3-re", "clustfcc", nested_tmpdir,
-            "-f", "0.65",
-            "-p"  # shortcut to --plot_matrix
-            ])
+        subprocess.run(
+            [
+                "haddock3-re",
+                "clustfcc",
+                nested_tmpdir,
+                "-f",
+                "0.65",
+                "-p",  # shortcut to --plot_matrix
+            ]
+        )
 
         # check if the interactive folders is created
         interactive_folder = [
-            el for el in os.listdir(tmpdir)
-            if el.endswith("interactive")
-            ]
+            el for el in os.listdir(tmpdir) if el.endswith("interactive")
+        ]
         assert len(interactive_folder) == 1
         # check that the clustfcc.tsv file is correctly created
         interactive_folder = Path(tmpdir, interactive_folder[0])
@@ -115,7 +120,7 @@ def test_cli_reclustfcc():
         clustfcc_html_matrix = Path(interactive_folder, "fcc_matrix.html")
         assert clustfcc_html_matrix.exists()
         assert clustfcc_html_matrix.stat().st_size != 0
-    
+
 
 def test_cli_reclustrmsd():
     """Test haddock3-re clustrmsd subcommand."""
@@ -128,7 +133,7 @@ def test_cli_reclustrmsd():
         shutil.copy(
             rmsdmatrix_json,
             Path(nested_tmpdir_previousstep, "rmsd_matrix.json"),
-            )
+        )
 
         # Fake clustrmsd module files
         nested_tmpdir = Path(tmpdir, "2_clustrmsd")
@@ -142,16 +147,20 @@ def test_cli_reclustrmsd():
         # dendrogram
         dendrogram = Path(golden_data, "example_dendrogram.txt")
         shutil.copy(dendrogram, Path(nested_tmpdir, "dendrogram.txt"))
-        subprocess.run([
-            "haddock3-re", "clustrmsd", nested_tmpdir,
-            "-n", "2",
-            '-p'  # shortcut to --plot_matrix
-            ])
+        subprocess.run(
+            [
+                "haddock3-re",
+                "clustrmsd",
+                nested_tmpdir,
+                "-n",
+                "2",
+                "-p",  # shortcut to --plot_matrix
+            ]
+        )
         # check if the interactive folders is created
         interactive_folder = [
-            el for el in os.listdir(tmpdir)
-            if el.endswith("interactive")
-            ]
+            el for el in os.listdir(tmpdir) if el.endswith("interactive")
+        ]
         assert len(interactive_folder) == 1
 
         # check that the clustrmsd.tsv file is correctly created

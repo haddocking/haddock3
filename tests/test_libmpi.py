@@ -6,14 +6,14 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-
+import os
 from haddock.libs.libmpi import MPIScheduler
 
 
 @pytest.fixture
 def mpischeduler():
     with tempfile.TemporaryDirectory() as tempdir:
-
+        os.chdir(tempdir)
         scheduler = MPIScheduler(tasks=[1, 2, 3], ncores=4)
         scheduler.cwd = Path(tempdir)
 
@@ -22,12 +22,14 @@ def mpischeduler():
 
 def test_mpischeduler_init():
 
-    cores = random.randint(1, 99)
-    mpi = MPIScheduler(tasks=[1, 2, 3], ncores=cores)
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        cores = random.randint(1, 99)
+        mpi = MPIScheduler(tasks=[1, 2, 3], ncores=cores)
 
-    assert mpi.tasks == [1, 2, 3]
-    assert mpi.cwd == Path.cwd()
-    assert mpi.ncores == cores
+        assert mpi.tasks == [1, 2, 3]
+        assert mpi.cwd == Path(tempdir)
+        assert mpi.ncores == cores
 
 
 def test_mpischduler_run(mocker, mpischeduler):

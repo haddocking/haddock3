@@ -9,11 +9,11 @@ import pytest
 from haddock.clis.restraints.active_passive_to_ambig import (
     actpass_to_ambig,
     parse_actpass_file,
-    )
+)
 from haddock.clis.restraints.calc_accessibility import (
     REL_ASA,
     calc_accessibility,
-    )
+)
 from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.clis.restraints.restrain_bodies import restrain_bodies
 from haddock.clis.restraints.validate_tbl import validate_tbl
@@ -24,7 +24,7 @@ from haddock.clis.restraints.z_surface_restraints import (
     load_selections,
     shape_bead,
     step_coords,
-    )
+)
 from haddock.libs.libpdb import (
     slc_chainid,
     slc_name,
@@ -35,8 +35,8 @@ from haddock.libs.libpdb import (
     slc_x,
     slc_y,
     slc_z,
-    )
-
+)
+import os
 from . import golden_data
 
 
@@ -102,7 +102,8 @@ def test_validate_tbl(example_tbl_file, capsys):
 def test_validate_tbl_error(example_tbl_file, capsys):
     """Test validate_tbl function in case of malformed tbl."""
     lines = open(example_tbl_file, "r").readlines()
-    with tempfile.NamedTemporaryFile(dir=".") as tmp:
+    with tempfile.NamedTemporaryFile() as tmp:
+        os.chdir(tmp)
         # let's say I forget some lines
         for ln in lines[3:]:
             tmp.write(ln.encode())
@@ -127,6 +128,7 @@ def test_restrain_bodies(protdna_input_list, capsys):  # noqa : F811
     assert (
         out_lines[0]
         == "assign (segid A and resi 10 and name CA) (segid B and resi 7 and name P) 26.542 0.0 0.0"
+        # == "assign (segid A and resi 59 and name CA) (segid B and resi 10 and name P) 30.698 0.0 0.0"
     )  # noqa : E501
 
 

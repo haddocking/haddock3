@@ -9,13 +9,15 @@ from haddock.modules.refinement.mdref import DEFAULT_CONFIG as DEFAULT_MDREF_CON
 from haddock.modules.refinement.mdref import HaddockModule as FlexrefModule
 
 from integration_tests import GOLDEN_DATA
+import os
 
 
 @pytest.fixture
 def mdref_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         mdref = FlexrefModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_MDREF_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_MDREF_CONFIG
         )
         yield mdref
 

@@ -50,6 +50,7 @@ def task() -> Generator[Task, None, None]:
 def test_run_cli_mpi_main_cnsjob(cnsjob):
     """Test the cli_mpi_main function with a CNSJob."""
     with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
         scheduler = MPIScheduler(tasks=[cnsjob], ncores=1)
         scheduler.cwd = Path(tempdir)
         scheduler._pickle_tasks()
@@ -66,6 +67,7 @@ def test_run_cli_mpi_main_cnsjob(cnsjob):
 def test_run_cli_mpi_main_task(task):
     """Test the cli_mpi_main function with a Task."""
     with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
         scheduler = MPIScheduler(tasks=[task], ncores=1)
         scheduler.cwd = Path(tempdir)
         scheduler._pickle_tasks()

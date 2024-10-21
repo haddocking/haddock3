@@ -8,10 +8,10 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.ilrmsdmatrix import \
-    DEFAULT_CONFIG as DEFAULT_ILRMSD_CONFIG
-from haddock.modules.analysis.ilrmsdmatrix import \
-    HaddockModule as IlrmsdmatrixModule
+from haddock.modules.analysis.ilrmsdmatrix import (
+    DEFAULT_CONFIG as DEFAULT_ILRMSD_CONFIG,
+)
+from haddock.modules.analysis.ilrmsdmatrix import HaddockModule as IlrmsdmatrixModule
 
 from integration_tests import GOLDEN_DATA
 
@@ -20,8 +20,9 @@ from integration_tests import GOLDEN_DATA
 def ilrmsdmatrix_module():
     """Provide a parametrized IL-RMSD matrix module."""
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         yield IlrmsdmatrixModule(
-            order=0, path=tmpdir, initial_params=DEFAULT_ILRMSD_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_ILRMSD_CONFIG
         )
 
 

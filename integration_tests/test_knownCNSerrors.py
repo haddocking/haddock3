@@ -16,6 +16,8 @@ from haddock.modules.sampling.rigidbody import (
     HaddockModule as RigidbodyModule,
 )
 
+import os
+
 
 @pytest.fixture
 def gen_random_text():
@@ -51,9 +53,10 @@ def gen_fake_cns_errors(gen_random_text):
 @pytest.fixture
 def rigidbody_module_with_cns_errors(gen_fake_cns_errors):
     """Generate a failed rigidbody module with CNS errors."""
+    os.chdir(gen_fake_cns_errors)
     rigidbody = RigidbodyModule(
         order=1,
-        path=Path(gen_fake_cns_errors),
+        path=Path("."),
         initial_params=DEFAULT_RIGIDBODY_CONFIG,
     )
     # Generate 9 filepath that were not created
@@ -74,14 +77,16 @@ def rigidbody_module_with_cns_errors(gen_fake_cns_errors):
 def rigidbody_module_without_cns_errors():
     """Generate a failed rigidbody module without CNS errors."""
     with tempfile.TemporaryDirectory("moduleoutputs") as tmp:
+        os.chdir(tmp)
         rigidbody = RigidbodyModule(
             order=1,
-            path=Path(tmp),
+            path=Path("."),
             initial_params=DEFAULT_RIGIDBODY_CONFIG,
         )
         # Generate 9 filepath that were not created
         rigidbody.output_models = [
-            PDBFile(Path(tmp, f"not_generated_output_{i}.pdb")) for i in range(1, 10)
+            PDBFile(Path(tmp, f"not_generated_output_{i}.pdb"), path=tmp)
+            for i in range(1, 10)
         ]
         yield rigidbody
 
@@ -99,6 +104,7 @@ def test_detection_when_faulty(rigidbody_module_with_cns_errors):
     rigidbody_module_with_cns_errors.previous_io = MockPreviousIO(
         rigidbody_module_with_cns_errors.path
     )
+    Path(rigidbody_module_with_cns_errors.path, "io.json").touch()
     # Check that the run will fail
     with pytest.raises(RuntimeError) as error_info:
         rigidbody_module_with_cns_errors.export_io_models()
@@ -117,6 +123,7 @@ def test_undetected_when_faulty(rigidbody_module_without_cns_errors):
     rigidbody_module_without_cns_errors.previous_io = MockPreviousIO(
         rigidbody_module_without_cns_errors.path
     )
+    Path(rigidbody_module_without_cns_errors.path, "io.json").touch()
     # Check that the run will fail
     with pytest.raises(RuntimeError) as error_info:
         rigidbody_module_without_cns_errors.export_io_models()

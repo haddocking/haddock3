@@ -8,19 +8,20 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile, TopologyFile
-from haddock.modules.scoring.mdscoring import \
-    DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
+from haddock.modules.scoring.mdscoring import DEFAULT_CONFIG as DEFAULT_MDSCORING_CONFIG
 from haddock.modules.scoring.mdscoring import HaddockModule as mdscoringModule
 
 from integration_tests import GOLDEN_DATA
+import os
 
 
 @pytest.fixture
 def mdscoring_module():
     """Return a default mdscoring module."""
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         mdscoring_module = mdscoringModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_MDSCORING_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_MDSCORING_CONFIG
         )
         yield mdscoring_module
 

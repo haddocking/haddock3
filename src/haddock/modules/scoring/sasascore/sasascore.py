@@ -87,6 +87,9 @@ class AccScore:
             acc_sc, b_viols, a_viols = calc_acc_score(result_dic,
                                                       self.buried_resdic,
                                                       self.acc_resdic)
+            print(f"Accessibility score for {self.model}: {acc_sc}")
+            print(f"Buried violations: {b_viols}")
+            print(f"Accessible violations: {a_viols}")
         except AssertionError as e:
             log.warning(f"Error in get_accessibility for {self.model}: {e}.")
             acc_sc, b_viols, a_viols = None, None, None

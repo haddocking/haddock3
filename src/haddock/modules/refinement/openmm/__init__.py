@@ -1,22 +1,25 @@
-"""OpenMM refinement module for HADDOCK3.
+"""OpenMM Molecular Dynamics refinement module for HADDOCK3.
 
 The potential of OpenMM can be exploited to perform potentially different
- tasks, such as:
-- Run MD simulation for each model from previous step;
-- Refine the models in the middle of a docking run. For example, it can be used
- to refine the models coming from a `[rigidbody]` module before `[flexref]` is
- executed, or to replace the `[mdref]` step.
-- Generate conformers prior to their use in a thorough docking run.
+tasks, such as:
+
+* Run MD simulation for each model from previous step;
+* Refine the models in the middle of a docking run. For example, it can be used
+  to refine the models coming from a `[rigidbody]` module before `[flexref]` is
+  executed, or to replace the `[mdref]` step.
+* Generate conformers prior to their use in a thorough docking run.
 
 To get a list of all possible parameters, run:
-    haddock3-cfg -m openmm
+
+>>> haddock3-cfg -m openmm
 
 Module workflow:
-- Generate openmm topology and fix atoms
-- Build solvation box
-- Equilibration solvation box restraining the protein
-- Run MD simulation: increase temperature, run MD, reduce temperature.
-- Either generate an ensemble of multiple frames or return the last frame.
+
+* Generate openmm topology and fix atoms
+* Build solvation box
+* Equilibration solvation box restraining the protein
+* Run MD simulation: increase temperature, run MD, reduce temperature.
+* Either generate an ensemble of multiple frames or return the last frame.
 
 This module will refine all models coming from the previous workflow step and
 send them to the next step in the workflow. If you want to use other modules

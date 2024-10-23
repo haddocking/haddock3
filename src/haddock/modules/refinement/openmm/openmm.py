@@ -28,11 +28,15 @@ See examples in `examples/thirdparty/openmm` folder.
 # Standard libarires importation
 import os
 
+from contextlib import suppress
 from pathlib import Path
 
 # Import OpenMM and pdbfixer third-party libraries
 # >conda activate haddock3
 # >conda install -c conda-forge libstdcxx-ng openmm pdbfixer
+
+# allow general testing when OpenMM is not installed
+#with suppress(ImportError):
 from openmm import (
     CustomCentroidBondForce,
     CustomExternalForce,
@@ -69,8 +73,7 @@ from openmm.unit import (
 from pdbfixer import PDBFixer
 
 # Haddock libraries
-from pdbtools import pdb_delhetatm
-from pdbtools.pdb_mkensemble import run as make_ensemble
+from pdbtools import pdb_delhetatm, pdb_mkensemble
 from haddock import log
 from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Optional, Union, ParamDict
@@ -886,7 +889,7 @@ class OPENMM:
             f"Generating ensemble from {len(all_files)} samples: "
             f"{ensemble_filepath}"
             )
-        ensemble = make_ensemble(all_files)
+        ensemble = pdb_mkensemble.run(all_files)
         with open(ensemble_filepath, "w") as wfile:
             for line in ensemble:
                 wfile.write(line)

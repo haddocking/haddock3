@@ -123,3 +123,9 @@ def fixture_protprot_onechain_list() -> Generator[list[PDBFile], Any, Any]:
         pdb_obj_2 = PDBFile(file_name=dst_prot_2, path=Path(dst_prot_2).parent)
 
         yield [pdb_obj_1, pdb_obj_2]
+
+
+@pytest.fixture
+def in_tmp_dir(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    return tmp_path

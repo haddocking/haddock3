@@ -1,4 +1,5 @@
 """Test haddock3-analyse client."""
+
 import os
 import shutil
 from pathlib import Path
@@ -11,10 +12,9 @@ from haddock.clis.cli_analyse import (
     main,
     update_capri_dict,
     zip_top_ranked,
-    )
+)
 from haddock.gear.yaml2cfg import read_from_yaml_config
-from haddock.modules.analysis.caprieval import \
-    DEFAULT_CONFIG as caprieval_params
+from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
 
 from . import golden_data
 
@@ -51,11 +51,7 @@ def test_update_capri_dict(default_capri):
 def test_get_cluster_ranking(example_capri_clt):
     """Test get_cluster_ranking."""
     obs_cl_ranking = get_cluster_ranking(example_capri_clt, 5)
-    exp_cl_ranking = {16: 1,
-                      1: 2,
-                      13: 3,
-                      4: 4,
-                      5: 5}
+    exp_cl_ranking = {16: 1, 1: 2, 13: 3, 4: 4, 5: 5}
     assert exp_cl_ranking == obs_cl_ranking
 
 
@@ -81,7 +77,7 @@ def test_main(example_capri_ss, example_capri_clt):
         scale=None,
         is_cleaned=False,
         inter=False,
-        )
+    )
 
     # check analysis directory exists
     ana_dir = Path(run_dir, "analysis/")
@@ -95,24 +91,24 @@ def test_main(example_capri_ss, example_capri_clt):
     shutil.rmtree(run_dir)
 
 
-def test_zip_top_ranked(example_capri_ss):
+def test_zip_top_ranked(example_capri_ss, in_tmp_dir):
     """Test cli_analyse zip_top_ranked function."""
-    cwd = os.getcwd()
-    with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
-        # build fake run_dir
-        rigid_dir = "1_rigidbody"
-        rigid_dir_analysis = "1_rigidbody_analysis"
-        os.mkdir(rigid_dir)
-        os.mkdir(rigid_dir_analysis)
-        # fill rigidbody directory with one file
-        shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), Path(rigid_dir, "rigidbody_383.pdb"))
-        os.chdir(rigid_dir_analysis)
-        
-        exp_cl_ranking = {1: 2}
-        zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
-        assert os.path.isfile("summary.tgz") is True
-    os.chdir(cwd)
+    # build fake run_dir
+    rigid_dir = "1_rigidbody"
+    print(Path.cwd())
+    rigid_dir_analysis = "1_rigidbody_analysis"
+    os.mkdir(rigid_dir)
+    os.mkdir(rigid_dir_analysis)
+    # fill rigidbody directory with one file
+    shutil.copy(
+        Path(golden_data, "protprot_complex_1.pdb"),
+        Path(rigid_dir, "rigidbody_383.pdb"),
+    )
+
+    exp_cl_ranking = {1: 2}
+    zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
+    # assert os.path.isfile("summary.tgz") is True
+    assert Path(in_tmp_dir, "summary.tgz").exists()
 
 
 def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):
@@ -138,7 +134,7 @@ def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):
         is_cleaned=False,
         inter=False,
         offline=True,
-        )
+    )
 
     # check analysis directory exists
     ana_dir = run_dir / "analysis/"

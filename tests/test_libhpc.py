@@ -86,13 +86,13 @@ def hpcworker(mocker):
     )
     with tempfile.TemporaryDirectory() as tempdir:
         os.chdir(tempdir)
-        return HPCWorker(
+        yield HPCWorker(
             tasks=[
                 CNSJob(
                     Path("rigidbody.inp"),
                     Path("rigidbody.out"),
                     envvars={
-                        "MODDIR": ".",
+                        "MODDIR": tempdir,
                         "TOPPAR": "topology_params",
                         "MODULE": "rigidbody",
                     },

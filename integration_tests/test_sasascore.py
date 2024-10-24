@@ -4,12 +4,10 @@ from pathlib import Path
 import pytest
 import shutil
 import pandas as pd
-import numpy as np
 import os
 from haddock.modules.scoring.sasascore import DEFAULT_CONFIG as DEFAULT_SASASCORE_CONFIG
 from haddock.modules.scoring.sasascore import HaddockModule as SasascoreModule
 from haddock.libs.libontology import PDBFile
-from . import CNS_EXEC, DATA_DIR, has_cns
 from tests import golden_data
 
 

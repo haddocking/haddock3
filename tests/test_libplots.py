@@ -9,14 +9,14 @@ import pytest
 import tempfile
 
 from haddock.libs.libplots import (
-    box_plot_handler,   
+    box_plot_handler,
     create_other_cluster,
     find_best_struct,
     make_alascan_plot,
     offline_js_manager,
     scatter_plot_handler,
     read_capri_table,
-    )
+)
 from . import data_folder, golden_data
 
 
@@ -37,14 +37,16 @@ def fixture_example_capri_clt():
     """Provide example capri_clt.tsv filepath."""
     return Path(golden_data, "capri_ss_example.tsv")
 
+
 @pytest.fixture(name="cluster_ranking")
 def fixture_cluster_ranking(example_capri_clt):
     """Provide top 10 ranking from capri_clt.tsv."""
     from haddock.clis.cli_analyse import get_cluster_ranking
+
     _cluster_ranking = get_cluster_ranking(
         example_capri_clt,
         10,
-        )
+    )
     return _cluster_ranking
 
 
@@ -226,6 +228,7 @@ def example_capri_ss_dashcluster():
     """Provide example capri_ss.tsv filename."""
     return Path(data_folder, "capri_ss_-cluster.tsv")
 
+
 # TODO find a way to not duplicate this fixture from test_module_alascan.py
 # maybe move to conftest.py file?
 @pytest.fixture
@@ -255,14 +258,17 @@ def example_df_scan_clt():
 
 def test_make_alascan_plot(example_df_scan_clt):
     """Test make_alascan_plot."""
-    make_alascan_plot(example_df_scan_clt, clt_id="-")
-    # assert existence of plot
-    assert Path("scan_clt_-.html").exists()
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        make_alascan_plot(example_df_scan_clt, clt_id="-")
+        # assert existence of plot
+        assert Path("scan_clt_-.html").exists()
 
 
 def test_plotly_cdn_url():
     """Test to obtain plotly cdn url function."""
     from plotly.io._utils import plotly_cdn_url
+
     plotly_cdn_full_url = plotly_cdn_url()
     assert type(plotly_cdn_full_url) == str
 
@@ -270,6 +276,7 @@ def test_plotly_cdn_url():
 def test_plotly_offline():
     """Test to obtain plotly self contained javascript."""
     from plotly.offline.offline import get_plotlyjs
+
     plotly_self_contained = get_plotlyjs()
     assert type(plotly_self_contained) == str
 
@@ -284,6 +291,7 @@ def test_offline_js_manager():
         assert Path(tmpdir, "plotly_bundle.js").exists()
     # Offline == False
     from plotly.io._utils import plotly_cdn_url
+
     plotly_cdn_full_url = plotly_cdn_url()
     offline_plotly_js = offline_js_manager(tmpdir, offline=False)
     assert plotly_cdn_full_url in offline_plotly_js
@@ -299,7 +307,7 @@ def test_box_plot_handler(example_capri_ss, cluster_ranking):
             cluster_ranking,
             None,  # When not set (default), goes for html file generation
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) == 0
     os.chdir(initdir)
@@ -315,7 +323,7 @@ def test_box_plot_handler_format(example_capri_ss, cluster_ranking):
             cluster_ranking,
             "png",
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) > 0
     os.chdir(initdir)
@@ -331,7 +339,7 @@ def test_scatter_plot_handler(example_capri_ss, cluster_ranking):
             cluster_ranking,
             None,  # When not set (default), goes for html file generation
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) == 0
     os.chdir(initdir)
@@ -347,7 +355,7 @@ def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking):
             cluster_ranking,
             "png",
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) > 0
     os.chdir(initdir)

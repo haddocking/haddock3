@@ -4,7 +4,7 @@ import tempfile
 import random
 from pathlib import Path
 from typing import Union
-
+import os
 import pytest
 
 from haddock.libs.libontology import PDBFile
@@ -20,29 +20,39 @@ from . import GOLDEN_DATA
 @pytest.fixture
 def caprieval_module():
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         yield CaprievalModule(
             order=0,
-            path=Path(tmpdir),
+            path=Path("."),
             init_params=DEFAULT_CAPRIEVAL_CONFIG,
         )
 
 
 @pytest.fixture
 def model_list():
-    return [
-        PDBFile(
-            file_name="protprot_complex_1.pdb",
-            path=".",
-            unw_energies={"energy_term": 0.0},
-            score=0.0,
-        ),
-        PDBFile(
-            file_name="protprot_complex_2.pdb",
-            path=".",
-            unw_energies={"energy_term": 0.0},
-            score=100.0,
-        ),
-    ]
+    with tempfile.TemporaryDirectory() as tempdir:
+        shutil.copy(
+            Path(GOLDEN_DATA, "protprot_complex_1.pdb"),
+            Path(tempdir, "protprot_complex_1.pdb"),
+        )
+        shutil.copy(
+            Path(GOLDEN_DATA, "protprot_complex_2.pdb"),
+            Path(tempdir, "protprot_complex_2.pdb"),
+        )
+        yield [
+            PDBFile(
+                file_name="protprot_complex_1.pdb",
+                path=Path(tempdir),
+                unw_energies={"energy_term": 0.0},
+                score=0.0,
+            ),
+            PDBFile(
+                file_name="protprot_complex_2.pdb",
+                path=Path(tempdir),
+                unw_energies={"energy_term": 0.0},
+                score=100.0,
+            ),
+        ]
 
 
 @pytest.fixture
@@ -166,7 +176,9 @@ class MockPreviousIO_with_models_to_be_clustered:
             src = Path(GOLDEN_DATA, "models_for_clustering", m)
             dst = Path(self.path, m)
             shutil.copy(src, dst)
-            p = PDBFile(file_name=m, path=".", score=random.uniform(-100, 100))
+            p = PDBFile(
+                file_name=m, path=Path(self.path), score=random.uniform(-100, 100)
+            )
             model_list.append(p)
         return model_list
 

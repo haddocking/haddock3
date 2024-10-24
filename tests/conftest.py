@@ -81,6 +81,21 @@ def fixture_protdna_input_list():
         yield [pdb_obj_1, pdb_obj_2]
 
 
+@pytest.fixture(name="protdna_input")
+def fixture_protdna_input():
+    """Prot-DNA input."""
+    with (tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_1,):
+        dst_prot_1 = tmp_1.name
+
+        src_prot_1 = Path(golden_data, "protdna_complex_1.pdb")
+
+        shutil.copy(src_prot_1, dst_prot_1)
+
+        pdb_obj_1 = PDBFile(file_name=dst_prot_1, path=Path(dst_prot_1).parent)
+
+        yield pdb_obj_1
+
+
 @pytest.fixture(name="protlig_input_list")
 def fixture_protlig_input_list():
     """Protein-Ligand input."""

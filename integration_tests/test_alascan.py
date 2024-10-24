@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import shutil
 import pandas as pd
-
+import os
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.libs.libontology import PDBFile
@@ -15,8 +15,9 @@ from tests import golden_data
 def alascan_module():
     """Return a default alascan module."""
     with tempfile.TemporaryDirectory() as tmpdir:
+        os.chdir(tmpdir)
         alascan = AlascanModule(
-            order=0, path=Path(tmpdir), initial_params=DEFAULT_ALASCAN_CONFIG
+            order=0, path=Path("."), initial_params=DEFAULT_ALASCAN_CONFIG
         )
         alascan.params["int_cutoff"] = 3.5
         yield alascan

@@ -65,7 +65,8 @@ def fixture_output_list():
 def fixture_fcc_module():
     """Clustfcc module."""
     with tempfile.TemporaryDirectory() as tempdir:
-        yield ClustFCCModule(order=1, path=Path(tempdir), initial_params=clustfcc_pars)
+        os.chdir(tempdir)
+        yield ClustFCCModule(order=1, path=Path("."), initial_params=clustfcc_pars)
 
 
 def test_clustfcc(fcc_module, output_list):

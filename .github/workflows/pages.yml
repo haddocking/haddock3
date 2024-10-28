@@ -14,15 +14,19 @@ jobs:
   pages:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'
 
-#       install openmm to render openmm docs properly
       - name: install openmm
-            conda install -c conda-forge openmm pdbfixer
+        run: conda install -c conda-forge openmm pdbfixer
 
-       - name: Generate docs
-       run: |
+      - name: Generate docs
+        run: |
          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
          sphinx-build -b html docs haddock3-docs
 

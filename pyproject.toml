@@ -59,7 +59,7 @@ dev = [
   "kaleido==0.2.1",
 ]
 docs = [
-  "sphinx>=8",
+  "sphinx>=7",
   "sphinx-argparse>=0.5.2",
   "sphinx_rtd_theme>=3.0.1",
   "CommonMark>=0.9.1",

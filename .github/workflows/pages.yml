@@ -18,9 +18,14 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.9"
+
+      - name: install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'

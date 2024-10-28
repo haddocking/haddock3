@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_mpi &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -122,7 +116,9 @@
 <span class="c1"># Note! ########################################################################################</span>
 
 
-<div class="viewcode-block" id="get_mpi"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.get_mpi">[docs]</a><span class="k">def</span> <span class="nf">get_mpi</span><span class="p">():</span>
+<div class="viewcode-block" id="get_mpi">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.get_mpi">[docs]</a>
+<span class="k">def</span> <span class="nf">get_mpi</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Lazy load MPI and COMM.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">MPI</span><span class="p">,</span> <span class="n">COMM</span>
     <span class="k">if</span> <span class="n">MPI</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -140,9 +136,13 @@
     <span class="k">return</span> <span class="n">MPI</span><span class="p">,</span> <span class="n">COMM</span></div>
 
 
-<div class="viewcode-block" id="split_tasks"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.split_tasks">[docs]</a><span class="k">def</span> <span class="nf">split_tasks</span><span class="p">(</span><span class="n">task_l</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="split_tasks">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.split_tasks">[docs]</a>
+<span class="k">def</span> <span class="nf">split_tasks</span><span class="p">(</span><span class="n">task_l</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split tasks into equal lenght chunks.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">task_l</span><span class="p">[</span><span class="n">_i</span><span class="p">::</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span></div>
+
 
 
 <span class="c1"># ========================================================================#</span>
@@ -163,26 +163,37 @@
     <span class="k">return</span> <span class="n">ap</span>
 
 
-<div class="viewcode-block" id="load_args"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.load_args">[docs]</a><span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
+<div class="viewcode-block" id="load_args">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.load_args">[docs]</a>
+<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="cli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.cli">[docs]</a><span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="cli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.cli">[docs]</a>
+<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
     <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="maincli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.maincli">[docs]</a><span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="maincli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.maincli">[docs]</a>
+<span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
     <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
+
 
 
 <span class="c1"># ========================================================================#</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">pickled_tasks</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_mpi.html#haddock.clis.cli_mpi.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">pickled_tasks</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute the tasks.&quot;&quot;&quot;</span>
     <span class="n">MPI</span><span class="p">,</span> <span class="n">COMM</span> <span class="o">=</span> <span class="n">get_mpi</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">COMM</span><span class="o">.</span><span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -201,6 +212,7 @@
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s2">&quot;input_file&quot;</span><span class="p">):</span>
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">input_file</span><span class="p">)</span></div>
 
+
     <span class="c1"># COMM.Barrier()</span>
     <span class="c1"># results = MPI.COMM_WORLD.gather(results, root=0)</span>
 
@@ -217,7 +229,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

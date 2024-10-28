@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Editing and extending runs &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,9 +34,6 @@
           <a href="../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,7 +65,6 @@
 <li class="toctree-l2"><a class="reference internal" href="index.html#tutorials-for-developers">Tutorials for developers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
@@ -104,12 +98,12 @@
            <div itemprop="articleBody">
              
   <section id="editing-and-extending-runs">
-<h1>Editing and extending runs<a class="headerlink" href="#editing-and-extending-runs" title="Permalink to this heading"></a></h1>
+<h1>Editing and extending runs<a class="headerlink" href="#editing-and-extending-runs" title="Link to this heading"></a></h1>
 <p>The modularity of HADDOCK3 allows restarting halted runs from a certain step,
 extending previous runs with additional steps, and using successful steps as
 starting points for new runs. Let’s see some examples.</p>
 <section id="restarting-a-run">
-<h2>Restarting a run<a class="headerlink" href="#restarting-a-run" title="Permalink to this heading"></a></h2>
+<h2>Restarting a run<a class="headerlink" href="#restarting-a-run" title="Link to this heading"></a></h2>
 <p>Use the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> flag to restart a HADDOCK3 run. For example, imagine you
 start a run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">my</span><span class="o">-</span><span class="n">run</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span>
@@ -128,7 +122,7 @@ the step you which to restart from. <strong>Remember</strong>, haddock steps are
 <code class="docutils literal notranslate"><span class="pre">...</span></code>, will be deleted.</p>
 </section>
 <section id="restarting-a-run-with-modified-parameters">
-<h2>Restarting a run with modified parameters<a class="headerlink" href="#restarting-a-run-with-modified-parameters" title="Permalink to this heading"></a></h2>
+<h2>Restarting a run with modified parameters<a class="headerlink" href="#restarting-a-run-with-modified-parameters" title="Link to this heading"></a></h2>
 <p>You can profit from the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> option described above to (re)run modules
 with modified parameters. For example, if you noticed a parameter was set to
 <code class="docutils literal notranslate"><span class="pre">true</span></code> when you wanted it to <code class="docutils literal notranslate"><span class="pre">false</span></code>, or if you wish to increase the sampling
@@ -143,7 +137,7 @@ module onward.</p>
 <code class="docutils literal notranslate"><span class="pre">...</span></code>, will be deleted.</p>
 </section>
 <section id="restarting-a-run-with-additional-steps">
-<h2>Restarting a run with additional steps<a class="headerlink" href="#restarting-a-run-with-additional-steps" title="Permalink to this heading"></a></h2>
+<h2>Restarting a run with additional steps<a class="headerlink" href="#restarting-a-run-with-additional-steps" title="Link to this heading"></a></h2>
 <p>You can profit from the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> option to add steps to a run. For example,
 a run has <strong>five</strong> steps and is completed successfully. You now realize you want
 to perform an additional refinement (<code class="docutils literal notranslate"><span class="pre">mdref</span></code>) followed by CAPRI evaluation
@@ -158,7 +152,7 @@ workflow: the five initial steps and three new steps. Remember <code class="docu
 0-indexed.</p>
 </section>
 <section id="extend-a-run">
-<h2>Extend a run<a class="headerlink" href="#extend-a-run" title="Permalink to this heading"></a></h2>
+<h2>Extend a run<a class="headerlink" href="#extend-a-run" title="Link to this heading"></a></h2>
 <p>You can extend a successful run with additional steps. For that, prepare a
 configurtation file containing only the new steps you wish to execute on top of
 the previously successful run. In these cases, you <strong>don’t</strong> need to define the
@@ -170,7 +164,7 @@ they will be ignored. You <strong>can</strong> define the other general paramete
 </div>
 </section>
 <section id="starting-new-runs-from-successful-steps">
-<h2>Starting new runs from successful steps<a class="headerlink" href="#starting-new-runs-from-successful-steps" title="Permalink to this heading"></a></h2>
+<h2>Starting new runs from successful steps<a class="headerlink" href="#starting-new-runs-from-successful-steps" title="Link to this heading"></a></h2>
 <p>You can also start an independent run from a successful step of a previous run.
 Consider the following successful run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run1</span><span class="o">/</span>
@@ -224,7 +218,7 @@ general parameters like <code class="docutils literal notranslate"><span class="
 </div>
 </section>
 <section id="additional-considerations">
-<h2>Additional considerations<a class="headerlink" href="#additional-considerations" title="Permalink to this heading"></a></h2>
+<h2>Additional considerations<a class="headerlink" href="#additional-considerations" title="Link to this heading"></a></h2>
 <p>You can now combine the functionalities explained above in many different
 variations.</p>
 <p>Below is some quick Q&amp;A regarding these options:</p>
@@ -264,7 +258,7 @@ forum</a>.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.sampling.rigidbody &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -134,7 +128,9 @@
 <span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">):</span>
+<div class="viewcode-block" id="HaddockModule">
+<a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule">[docs]</a>
+<span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for rigid body sampling.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
@@ -145,12 +141,17 @@
         <span class="n">cns_script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">,</span> <span class="s2">&quot;rigidbody.cns&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">cns_script</span><span class="o">=</span><span class="n">cns_script</span><span class="p">)</span>
 
-<div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="HaddockModule.confirm_installation">
+<a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.confirm_installation">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm module is installed.&quot;&quot;&quot;</span>
         <span class="k">return</span></div>
 
-<div class="viewcode-block" id="HaddockModule.make_cns_jobs"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.make_cns_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">make_cns_jobs</span><span class="p">(</span>
+
+<div class="viewcode-block" id="HaddockModule.make_cns_jobs">
+<a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.make_cns_jobs">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_cns_jobs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">inp_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span>
             <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
@@ -174,7 +175,10 @@
             <span class="n">jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jobs</span></div>
 
-<div class="viewcode-block" id="HaddockModule.prepare_cns_input_sequential"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_sequential">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_cns_input_sequential</span><span class="p">(</span>
+
+<div class="viewcode-block" id="HaddockModule.prepare_cns_input_sequential">
+<a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_sequential">[docs]</a>
+    <span class="k">def</span> <span class="nf">prepare_cns_input_sequential</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">models_to_dock</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
         <span class="n">sampling_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -209,7 +213,10 @@
                 <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">_l</span></div>
 
-<div class="viewcode-block" id="HaddockModule.prepare_cns_input_parallel"><a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_parallel">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_cns_input_parallel</span><span class="p">(</span>
+
+<div class="viewcode-block" id="HaddockModule.prepare_cns_input_parallel">
+<a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_parallel">[docs]</a>
+    <span class="k">def</span> <span class="nf">prepare_cns_input_parallel</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">models_to_dock</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
         <span class="n">sampling_factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -254,6 +261,7 @@
             <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">task_result</span><span class="p">,</span> <span class="n">element</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">element</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
 
         <span class="k">return</span> <span class="n">l</span></div>
+
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
@@ -333,6 +341,7 @@
                 <span class="n">model</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">haddock_score</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span></div>
+
 </pre></div>
 
            </div>
@@ -343,7 +352,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

@@ -1,28 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Benchmark Daemon &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="HADDOCK3 MPI Run" href="haddock.clis.cli_mpi.html" />
-    <link rel="prev" title="Copy steps to new run" href="haddock.clis.cli_cp.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +32,6 @@
           <a href="../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -47,45 +40,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="haddock.clis.html">Command-line interfaces</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#subpackages">Subpackages</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="haddock.clis.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli.html">Run HADDOCK3</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_analyse.html">Analysis client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_bm.html">Benchmark Client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_cfg.html">Retrieve config</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_clean.html">Clean HADDOCK3 runs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_cp.html">Copy steps to new run</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Benchmark Daemon</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.Job"><code class="docutils literal notranslate"><span class="pre">Job</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.calc_size"><code class="docutils literal notranslate"><span class="pre">calc_size()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.cli"><code class="docutils literal notranslate"><span class="pre">cli()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.filter_by_status"><code class="docutils literal notranslate"><span class="pre">filter_by_status()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.get_current_jobs"><code class="docutils literal notranslate"><span class="pre">get_current_jobs()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.load_args"><code class="docutils literal notranslate"><span class="pre">load_args()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.maincli"><code class="docutils literal notranslate"><span class="pre">maincli()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_dmn.workload_manager_launch"><code class="docutils literal notranslate"><span class="pre">workload_manager_launch</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_mpi.html">HADDOCK3 MPI Run</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_pp.html">PDB preprocessing client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_re.html">Interactive run client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_restraints.html">Generate restraints</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_score.html">Calculate score</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_traceback.html">PDB Traceback client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_unpack.html">Unpack HADDOCK3 run</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#module-haddock.clis">Module contents</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
@@ -107,7 +67,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="haddock.clis.html">Command-line interfaces</a></li>
       <li class="breadcrumb-item active">Benchmark Daemon</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/clients/haddock.clis.cli_dmn.rst.txt" rel="nofollow"> View page source</a>
@@ -119,7 +78,7 @@
            <div itemprop="articleBody">
              
   <section id="module-haddock.clis.cli_dmn">
-<span id="benchmark-daemon"></span><h1>Benchmark Daemon<a class="headerlink" href="#module-haddock.clis.cli_dmn" title="Permalink to this heading"></a></h1>
+<span id="benchmark-daemon"></span><h1>Benchmark Daemon<a class="headerlink" href="#module-haddock.clis.cli_dmn" title="Link to this heading"></a></h1>
 <p>HADDOCK3 benchmark submission daemon.</p>
 <p>For more information read our benchmark tutorial at <cite>docs/benchmark.tut</cite>
 in HADDOCK3 repository site: <a class="reference external" href="https://github.com/haddocking/haddock3">https://github.com/haddocking/haddock3</a>:</p>
@@ -137,8 +96,8 @@ in HADDOCK3 repository site: <a class="reference external" href="https://github.
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.Job">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">Job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">launch_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">Job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">launch_command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Job task.</p>
 <p>Controls the status of each job.</p>
 <dl class="field-list simple">
@@ -151,7 +110,7 @@ in HADDOCK3 repository site: <a class="reference external" href="https://github.
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.Job.get_status">
-<span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job.get_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job.get_status" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job.get_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job.get_status" title="Link to this definition"></a></dt>
 <dd><p>Get job status.</p>
 <p>The job status depends on the present of files: <cite>AVAILABLE</cite>,
 <cite>RUNNING</cite>, <cite>DONE</cite>, and <cite>FAIL</cite> created by <cite>haddock-bm</cite> jobs.</p>
@@ -160,7 +119,7 @@ in HADDOCK3 repository site: <a class="reference external" href="https://github.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.Job.restart">
-<span class="sig-name descname"><span class="pre">restart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job.restart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job.restart" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">restart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job.restart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job.restart" title="Link to this definition"></a></dt>
 <dd><p>Restart the status of the job to <cite>AVAILABLE</cite>.</p>
 <p>Does this by removing all status files and creating the file
 <cite>AVAILABLE</cite>.</p>
@@ -168,7 +127,7 @@ in HADDOCK3 repository site: <a class="reference external" href="https://github.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.Job.submit">
-<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job.submit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#Job.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.Job.submit" title="Link to this definition"></a></dt>
 <dd><p>Submit job.</p>
 <p>Run command <cite>$launch_command $job_filename</cite>.</p>
 </dd></dl>
@@ -177,7 +136,7 @@ in HADDOCK3 repository site: <a class="reference external" href="https://github.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.calc_size">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">calc_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#calc_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.calc_size" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">calc_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#calc_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.calc_size" title="Link to this definition"></a></dt>
 <dd><p>Calculate the size of the job.</p>
 <p>Expects the job file to be in a folder structure as defined by
 <cite>haddock3-bm</cite>.</p>
@@ -187,13 +146,13 @@ in the <cite>target.pdb</cite> file.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.cli">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.12)"><span class="pre">ArgumentParser</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">main</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#cli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.cli" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.13)"><span class="pre">ArgumentParser</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">main</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#cli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.cli" title="Link to this definition"></a></dt>
 <dd><p>Command-line interface entry point.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.filter_by_status">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">filter_by_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#haddock.clis.cli_dmn.Job" title="haddock.clis.cli_dmn.Job"><span class="pre">haddock.clis.cli_dmn.Job</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'AVAILABLE'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#haddock.clis.cli_dmn.Job" title="haddock.clis.cli_dmn.Job"><span class="pre">haddock.clis.cli_dmn.Job</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#filter_by_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.filter_by_status" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">filter_by_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#haddock.clis.cli_dmn.Job" title="haddock.clis.cli_dmn.Job"><span class="pre">Job</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'AVAILABLE'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#haddock.clis.cli_dmn.Job" title="haddock.clis.cli_dmn.Job"><span class="pre">Job</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#filter_by_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.filter_by_status" title="Link to this definition"></a></dt>
 <dd><p>Filter jobs by their status.</p>
 <p>Only jobs with <cite>status</cite> are accepted.</p>
 <dl class="field-list simple">
@@ -208,7 +167,7 @@ in the <cite>target.pdb</cite> file.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.get_current_jobs">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">get_current_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BM5'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#get_current_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.get_current_jobs" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">get_current_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BM5'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#get_current_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.get_current_jobs" title="Link to this definition"></a></dt>
 <dd><p>Get current number of jobs for which job-name has the <cite>grep</cite> word.</p>
 <p>List of jobs is retrieve using the command <cite>qstat</cite>.</p>
 <dl class="field-list simple">
@@ -223,13 +182,13 @@ in the <cite>target.pdb</cite> file.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.load_args">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">load_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.12)"><span class="pre">ArgumentParser</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.12)"><span class="pre">Namespace</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#load_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.load_args" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">load_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.13)"><span class="pre">ArgumentParser</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><span class="pre">Namespace</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#load_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.load_args" title="Link to this definition"></a></dt>
 <dd><p>Load argument parser args.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.main">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">benchmark_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'slurm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">benchmark_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'slurm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.main" title="Link to this definition"></a></dt>
 <dd><p>Execute the benchmark daemon.</p>
 <p>The parameters defined here are the same as defined in the client
 arguments.</p>
@@ -259,13 +218,13 @@ the sorted jobs first. Defaults to False, the longer first.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.maincli">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">maincli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#maincli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.maincli" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">maincli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli_dmn.html#maincli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli_dmn.maincli" title="Link to this definition"></a></dt>
 <dd><p>Execute main client.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.clis.cli_dmn.workload_manager_launch">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">workload_manager_launch</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'slurm':</span> <span class="pre">'sbatch',</span> <span class="pre">'torque':</span> <span class="pre">'qsub'}</span></em><a class="headerlink" href="#haddock.clis.cli_dmn.workload_manager_launch" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli_dmn.</span></span><span class="sig-name descname"><span class="pre">workload_manager_launch</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'slurm':</span> <span class="pre">'sbatch',</span> <span class="pre">'torque':</span> <span class="pre">'qsub'}</span></em><a class="headerlink" href="#haddock.clis.cli_dmn.workload_manager_launch" title="Link to this definition"></a></dt>
 <dd><p>options for the different job queue systems supported</p>
 </dd></dl>
 
@@ -274,16 +233,13 @@ the sorted jobs first. Defaults to False, the longer first.</p></li>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="haddock.clis.cli_cp.html" class="btn btn-neutral float-left" title="Copy steps to new run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="haddock.clis.cli_mpi.html" class="btn btn-neutral float-right" title="HADDOCK3 MPI Run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

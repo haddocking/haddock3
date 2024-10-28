@@ -1,28 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libfcc module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="libfunc: functional-programming helping tools" href="haddock.libs.libfunc.html" />
-    <link rel="prev" title="libcns: creating CNS files" href="haddock.libs.libcns.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +32,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -47,51 +40,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="haddock.libs.html">Libs Reference</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="haddock.libs.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libalign.html">libalign: sequence and structural alignments</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcli.html">libcli: functions helping clients</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libclust.html">libclust: functions related to clustering</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcns.html">libcns: creating CNS files</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">haddock.libs.libfcc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfunc.html">libfunc: functional-programming helping tools</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libhpc.html">libhpc: HPC execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libinteractive.html">libinteractive: functions related to interactive tasks</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libio.html">libio: I/O helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.liblog.html">liblog: Logging helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmath.html">libmath: Math helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmpi.html">libmpi: MPI execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libontology.html">libontology: module communication</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libparallel.html">libparallel: multiprocessing helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libpdb.html">libpdb: PDB helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libplots.html">libplots: plotting functionalities</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.librestraints.html">librestraints: functions related to restraints</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libstructure.html">libstructure: functions related to structures</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libsubprocess.html">libsubprocess: subprocess execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libtimer.html">libtimer: timing functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libutil.html">libutil: utility functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libworkflow.html">libworkflow: workflow functions</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.libs.html#module-haddock.libs">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../gear/haddock.gear.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Library Reference</a></li>
 </ul>
 
         </div>
@@ -108,8 +67,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
-          <li class="breadcrumb-item"><a href="haddock.libs.html">Libs Reference</a></li>
       <li class="breadcrumb-item active">haddock.libs.libfcc module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/reference/libs/haddock.libs.libfcc.rst.txt" rel="nofollow"> View page source</a>
@@ -121,38 +78,38 @@
            <div itemprop="articleBody">
              
   <section id="module-haddock.libs.libfcc">
-<span id="haddock-libs-libfcc-module"></span><h1>haddock.libs.libfcc module<a class="headerlink" href="#module-haddock.libs.libfcc" title="Permalink to this heading"></a></h1>
+<span id="haddock-libs-libfcc-module"></span><h1>haddock.libs.libfcc module<a class="headerlink" href="#module-haddock.libs.libfcc" title="Link to this heading"></a></h1>
 <p>FCC related functions</p>
 <p>NOTE: This functions were ported directly from <cite>https://github.com/haddocking/fcc</cite>!</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Cluster">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Cluster" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Cluster" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Defines a Cluster. A Cluster is created with a name and a center (Element class)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Cluster.add_member">
-<span class="sig-name descname"><span class="pre">add_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Cluster.add_member"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Cluster.add_member" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Cluster.add_member"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Cluster.add_member" title="Link to this definition"></a></dt>
 <dd><p>Adds one single element to the cluster.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Cluster.center">
-<span class="sig-name descname"><span class="pre">center</span></span><a class="headerlink" href="#haddock.libs.libfcc.Cluster.center" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">center</span></span><a class="headerlink" href="#haddock.libs.libfcc.Cluster.center" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Cluster.members">
-<span class="sig-name descname"><span class="pre">members</span></span><a class="headerlink" href="#haddock.libs.libfcc.Cluster.members" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">members</span></span><a class="headerlink" href="#haddock.libs.libfcc.Cluster.members" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Cluster.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#haddock.libs.libfcc.Cluster.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#haddock.libs.libfcc.Cluster.name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Cluster.populate">
-<span class="sig-name descname"><span class="pre">populate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Cluster.populate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Cluster.populate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">populate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Cluster.populate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Cluster.populate" title="Link to this definition"></a></dt>
 <dd><p>Populates the Cluster member list through the
 neighbor list of its center.</p>
 </dd></dl>
@@ -161,55 +118,55 @@ neighbor list of its center.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Element">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Element" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Element"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Element" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Defines a ‘clusterable’ Element</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Element.add_neighbor">
-<span class="sig-name descname"><span class="pre">add_neighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Element.add_neighbor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Element.add_neighbor" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_neighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Element.add_neighbor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Element.add_neighbor" title="Link to this definition"></a></dt>
 <dd><p>Adds another element to the neighbor list</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Element.assign_cluster">
-<span class="sig-name descname"><span class="pre">assign_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clust_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Element.assign_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Element.assign_cluster" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">assign_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clust_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#Element.assign_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.Element.assign_cluster" title="Link to this definition"></a></dt>
 <dd><p>Assigns the Element to Cluster. 0 if unclustered</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Element.cluster">
-<span class="sig-name descname"><span class="pre">cluster</span></span><a class="headerlink" href="#haddock.libs.libfcc.Element.cluster" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cluster</span></span><a class="headerlink" href="#haddock.libs.libfcc.Element.cluster" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Element.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#haddock.libs.libfcc.Element.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#haddock.libs.libfcc.Element.name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.Element.neighbors">
-<span class="sig-name descname"><span class="pre">neighbors</span></span><a class="headerlink" href="#haddock.libs.libfcc.Element.neighbors" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">neighbors</span></span><a class="headerlink" href="#haddock.libs.libfcc.Element.neighbors" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.calculate_fcc">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">calculate_fcc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#calculate_fcc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.calculate_fcc" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">calculate_fcc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#calculate_fcc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.calculate_fcc" title="Link to this definition"></a></dt>
 <dd><p>Calculates the fraction of common elements between two lists
 taking into account chain IDs</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.calculate_fcc_nc">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">calculate_fcc_nc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#calculate_fcc_nc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.calculate_fcc_nc" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">calculate_fcc_nc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#calculate_fcc_nc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.calculate_fcc_nc" title="Link to this definition"></a></dt>
 <dd><p>Calculates the fraction of common elements between two lists
 not taking into account chain IDs. Much Slower.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.calculate_pairwise_matrix">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">calculate_pairwise_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contacts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#calculate_pairwise_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.calculate_pairwise_matrix" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">calculate_pairwise_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contacts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#calculate_pairwise_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.calculate_pairwise_matrix" title="Link to this definition"></a></dt>
 <dd><p>Calculates a matrix of pairwise fraction of common contacts (FCC).
 Outputs numeric indexes.</p>
 <p>contacts: list_of_unique_pairs_of_residues [set/list]</p>
@@ -219,26 +176,26 @@ FCC(cplx_1/cplx_2) FCC(cplx_2/cplx_1)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.cluster_elements">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">cluster_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e_pool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#cluster_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.cluster_elements" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">cluster_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e_pool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#cluster_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.cluster_elements" title="Link to this definition"></a></dt>
 <dd><p>Groups Elements within a given threshold
 together in the same cluster.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.output_clusters">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">output_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#output_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.output_clusters" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">output_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#output_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.output_clusters" title="Link to this definition"></a></dt>
 <dd><p>Outputs the cluster name, center, and members.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.parse_contact_file">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">parse_contact_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#parse_contact_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.parse_contact_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">parse_contact_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#parse_contact_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.parse_contact_file" title="Link to this definition"></a></dt>
 <dd><p>Parses a list of contact files.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.read_matrix">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">read_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strictness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#read_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.read_matrix" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">read_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strictness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#read_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.read_matrix" title="Link to this definition"></a></dt>
 <dd><blockquote>
 <div><p>Reads in a four column matrix (1 2 0.123 0.456</p>
 </div></blockquote>
@@ -257,16 +214,13 @@ with anything remotely similar.</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="haddock.libs.libcns.html" class="btn btn-neutral float-left" title="libcns: creating CNS files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="haddock.libs.libfunc.html" class="btn btn-neutral float-right" title="libfunc: functional-programming helping tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

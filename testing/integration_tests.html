@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Running integration tests manually &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,9 +34,6 @@
           <a href="../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -53,7 +48,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Testing</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Running integration tests manually</a><ul>
@@ -102,7 +96,7 @@
            <div itemprop="articleBody">
              
   <section id="running-integration-tests-manually">
-<h1>Running integration tests manually<a class="headerlink" href="#running-integration-tests-manually" title="Permalink to this heading"></a></h1>
+<h1>Running integration tests manually<a class="headerlink" href="#running-integration-tests-manually" title="Link to this heading"></a></h1>
 <p><em>This documentation is for developers.</em></p>
 <p>The integration tests ensure HADDOCK3 workflows work correctly by performing
 short docking or analysis on testing systems. With these tests, we evaluate if
@@ -120,7 +114,7 @@ power to run these tests, ask us and we will run them for you.</p>
 <p>The easiest way is to have two installations of haddock3:
 one fixed at the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch and another with your developments.</p>
 <section id="install-haddock3-main-branch-separately">
-<h2>1. Install HADDOCK3 main branch separately<a class="headerlink" href="#install-haddock3-main-branch-separately" title="Permalink to this heading"></a></h2>
+<h2>1. Install HADDOCK3 main branch separately<a class="headerlink" href="#install-haddock3-main-branch-separately" title="Link to this heading"></a></h2>
 <p>First, you should install HADDOCK3 main branch in a separate folder and
 python environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/haddocking/haddock3<span class="w"> </span>haddock3main
@@ -139,7 +133,7 @@ test examples from the <code class="docutils literal notranslate"><span class="p
 future occasions. You can keep using it to test all your developments.</p>
 </section>
 <section id="running-the-tests-in-the-main">
-<h2>3. Running the tests in the <code class="docutils literal notranslate"><span class="pre">main</span></code><a class="headerlink" href="#running-the-tests-in-the-main" title="Permalink to this heading"></a></h2>
+<h2>3. Running the tests in the <code class="docutils literal notranslate"><span class="pre">main</span></code><a class="headerlink" href="#running-the-tests-in-the-main" title="Link to this heading"></a></h2>
 <p>Before running the integration tests, ensure the reference repository <code class="docutils literal notranslate"><span class="pre">main</span></code>
 branch is up-to-date.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>haddock3main
@@ -164,7 +158,7 @@ python<span class="w"> </span>run_tests.py<span class="w"> </span>-b
 files) and stop if any of the tests break. For help, see <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run_tests.py</span> <span class="pre">-h</span></code>.</p>
 </section>
 <section id="running-the-tests-on-your-branch">
-<h2>4. Running the tests on your branch<a class="headerlink" href="#running-the-tests-on-your-branch" title="Permalink to this heading"></a></h2>
+<h2>4. Running the tests on your branch<a class="headerlink" href="#running-the-tests-on-your-branch" title="Link to this heading"></a></h2>
 <p>Navigate to your development repository and activate the haddock3 environment -
 you are likely on a different terminal window.</p>
 <p>Run the tests the same way as before by navigating to the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder and
@@ -175,7 +169,7 @@ python<span class="w"> </span>run_tests.py<span class="w"> </span>-b
 </div>
 </section>
 <section id="comparing-both-runs">
-<h2>5. Comparing both runs<a class="headerlink" href="#comparing-both-runs" title="Permalink to this heading"></a></h2>
+<h2>5. Comparing both runs<a class="headerlink" href="#comparing-both-runs" title="Link to this heading"></a></h2>
 <p>Once tests in the <code class="docutils literal notranslate"><span class="pre">main</span></code> and your development branch complete, that is, all
 <code class="docutils literal notranslate"><span class="pre">*-test.cfg</span></code> files were executed, you can compare their CAPRI scores.</p>
 <p>Inside the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder of your development branch, run:</p>
@@ -190,22 +184,22 @@ code that explicitly affects the CAPRI scores. If that is the case, explain it
 in the pull request description.</p>
 </section>
 <section id="additional-considerations">
-<h2>Additional considerations<a class="headerlink" href="#additional-considerations" title="Permalink to this heading"></a></h2>
+<h2>Additional considerations<a class="headerlink" href="#additional-considerations" title="Link to this heading"></a></h2>
 <section id="tests-breaking-with-run-tests-py">
-<h3>Tests breaking with <code class="docutils literal notranslate"><span class="pre">run_tests.py</span></code><a class="headerlink" href="#tests-breaking-with-run-tests-py" title="Permalink to this heading"></a></h3>
+<h3>Tests breaking with <code class="docutils literal notranslate"><span class="pre">run_tests.py</span></code><a class="headerlink" href="#tests-breaking-with-run-tests-py" title="Link to this heading"></a></h3>
 <p>Tests break during the <code class="docutils literal notranslate"><span class="pre">run_test.py</span></code> step if the new code breaks the core
 HADDOCK3 workflow. You should work towards correcting those errors first. Once
 the workflows execute completely, you can then compare the CAPRI tables.</p>
 </section>
 <section id="running-on-a-cluster">
-<h3>Running on a cluster<a class="headerlink" href="#running-on-a-cluster" title="Permalink to this heading"></a></h3>
+<h3>Running on a cluster<a class="headerlink" href="#running-on-a-cluster" title="Link to this heading"></a></h3>
 <p>Following the instructions here, the test cases will run locally on your
 computer. But if you have access to a job scheduling system in a cluster, you
 can prepare a <code class="docutils literal notranslate"><span class="pre">job</span></code> script and launch the job as you would to for any other
 related process.</p>
 </section>
 <section id="running-individual-test-cases">
-<h3>Running individual test cases<a class="headerlink" href="#running-individual-test-cases" title="Permalink to this heading"></a></h3>
+<h3>Running individual test cases<a class="headerlink" href="#running-individual-test-cases" title="Link to this heading"></a></h3>
 <p>If you want to compare a particular test case only, for example, two different
 runs for the <code class="docutils literal notranslate"><span class="pre">docking-protein-protein/docking-protein-protein-test.cfg</span></code>, run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>compare_runs.py<span class="w"> </span>-r1<span class="w"> </span>&lt;PATH-TO-RUN1&gt;<span class="w"> </span>-r2<span class="w"> </span>&lt;PATH-TO-RUN2&gt;
@@ -228,7 +222,7 @@ runs for the <code class="docutils literal notranslate"><span class="pre">dockin
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

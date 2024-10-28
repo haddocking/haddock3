@@ -1,0 +1,23 @@
+OpenMM Molecular Dynamics module
+=========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.refinement.openmm.openmm
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.refinement.openmm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/openmm.rst
+

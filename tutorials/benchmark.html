@@ -1,27 +1,25 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HADDOCK3 benchmark tutorial &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command-line interfaces" href="../clients/haddock.clis.html" />
+    <link rel="next" title="Modules" href="../modules/index.html" />
     <link rel="prev" title="Running HADDOCK3 with MPI" href="mpi.html" /> 
 </head>
 
@@ -36,9 +34,6 @@
           <a href="../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -68,7 +63,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
@@ -102,7 +96,7 @@
            <div itemprop="articleBody">
              
   <section id="haddock3-benchmark-tutorial">
-<h1>HADDOCK3 benchmark tutorial<a class="headerlink" href="#haddock3-benchmark-tutorial" title="Permalink to this heading"></a></h1>
+<h1>HADDOCK3 benchmark tutorial<a class="headerlink" href="#haddock3-benchmark-tutorial" title="Link to this heading"></a></h1>
 <p>Developing HADDOCK3 requires handling thousands of parameters, either at
 the CNS level or the Python level. Therefore, unit-testing is sometimes
 not enough. To assess the correct functioning of HADDOCK3 we have
@@ -115,7 +109,7 @@ expected.</p>
 <p>HADDOCK3 has two command-line clients that set up the benchmark workflow
 automatically. Let’s go through them step-by-step.</p>
 <section id="obtaining-the-initial-models">
-<h2>Obtaining the initial models<a class="headerlink" href="#obtaining-the-initial-models" title="Permalink to this heading"></a></h2>
+<h2>Obtaining the initial models<a class="headerlink" href="#obtaining-the-initial-models" title="Link to this heading"></a></h2>
 <p>The Bonvin lab has manually curated a list of systems ideal for this
 benchmark. The repository is available here. Clone it to your machine
 with:</p>
@@ -125,7 +119,7 @@ with:</p>
 systems for HADDOCK.</p>
 </section>
 <section id="setting-up-the-runs">
-<h2>Setting up the runs<a class="headerlink" href="#setting-up-the-runs" title="Permalink to this heading"></a></h2>
+<h2>Setting up the runs<a class="headerlink" href="#setting-up-the-runs" title="Link to this heading"></a></h2>
 <p>Having HADDOCK3 installed, you can set up the runs with the following
 command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># first, make a new folder where you want the runs to be stored</span>
@@ -137,7 +131,7 @@ command:</p>
 menu and select which ones better adapt to your system.</p>
 </section>
 <section id="running-with-the-daemon">
-<h2>Running with the daemon<a class="headerlink" href="#running-with-the-daemon" title="Permalink to this heading"></a></h2>
+<h2>Running with the daemon<a class="headerlink" href="#running-with-the-daemon" title="Link to this heading"></a></h2>
 <p>Running more than 200 HADDOCK jobs is time-consuming. Inspecting the
 queue system manually over several days is a pain. Therefore, we created
 a daemon that will handle the queue and submit the jobs for you. Use the
@@ -156,7 +150,7 @@ the <code class="docutils literal notranslate"><span class="pre">find</span></co
 <p><code class="docutils literal notranslate"><span class="pre">find</span> <span class="pre">&lt;folder-where-the-BM-jobs-were-created&gt;</span> <span class="pre">-name</span> <span class="pre">DONE</span> <span class="pre">|</span> <span class="pre">wc</span> <span class="pre">-l</span></code></p>
 </section>
 <section id="stopping-the-daemon">
-<h2>Stopping the daemon<a class="headerlink" href="#stopping-the-daemon" title="Permalink to this heading"></a></h2>
+<h2>Stopping the daemon<a class="headerlink" href="#stopping-the-daemon" title="Link to this heading"></a></h2>
 <p>If you want to stop the daemon, press <code class="docutils literal notranslate"><span class="pre">Ctrl+c</span></code> in the window where you
 launch it. And manually cancel the remaining jobs. You can try the
 following command:</p>
@@ -165,7 +159,7 @@ following command:</p>
 tag in their job name (unless you defined otherwise in the <code class="docutils literal notranslate"><span class="pre">[OPTIONS]</span></code>)</p>
 </section>
 <section id="further-notes">
-<h2>Further notes<a class="headerlink" href="#further-notes" title="Permalink to this heading"></a></h2>
+<h2>Further notes<a class="headerlink" href="#further-notes" title="Link to this heading"></a></h2>
 <p>As with any command-line tool, the haddock3-daemon will run as long as
 the terminal window is open. However, we don’t recommend using the <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>
 terminal detacher suffix command unless you know what you do.
@@ -176,7 +170,7 @@ node.</p>
 do that by using the daemon job created by the <code class="docutils literal notranslate"><span class="pre">haddock3-bm</span></code> command.</p>
 </section>
 <section id="what-happens-if-you-halt-the-daemon">
-<h2>What happens if you halt the daemon?<a class="headerlink" href="#what-happens-if-you-halt-the-daemon" title="Permalink to this heading"></a></h2>
+<h2>What happens if you halt the daemon?<a class="headerlink" href="#what-happens-if-you-halt-the-daemon" title="Link to this heading"></a></h2>
 <p>If you halt the daemon, you can restart the operations from where they
 left. Two scenarios are possible:</p>
 <ol class="arabic simple">
@@ -200,14 +194,14 @@ welcomed</a>.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="mpi.html" class="btn btn-neutral float-left" title="Running HADDOCK3 with MPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../clients/haddock.clis.html" class="btn btn-neutral float-right" title="Command-line interfaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../modules/index.html" class="btn btn-neutral float-right" title="Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

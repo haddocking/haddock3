@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.refinement.openmm &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../haddock.html">haddock</a></li>
+          <li class="breadcrumb-item"><a href="../../modules.html">haddock.modules</a></li>
+      <li class="breadcrumb-item active">haddock.modules.refinement.openmm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules.refinement.openmm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;OpenMM Molecular Dynamics refinement module for HADDOCK3.</span>
+
+<span class="sd">The potential of OpenMM can be exploited to perform potentially different</span>
+<span class="sd">tasks, such as:</span>
+
+<span class="sd">* Run MD simulation for each model from previous step;</span>
+<span class="sd">* Refine the models in the middle of a docking run. For example, it can be used</span>
+<span class="sd">  to refine the models coming from a `[rigidbody]` module before `[flexref]` is</span>
+<span class="sd">  executed, or to replace the `[mdref]` step.</span>
+<span class="sd">* Generate conformers prior to their use in a thorough docking run.</span>
+
+<span class="sd">To get a list of all possible parameters, run:</span>
+
+<span class="sd">&gt;&gt;&gt; haddock3-cfg -m openmm</span>
+
+<span class="sd">Module workflow:</span>
+
+<span class="sd">* Generate openmm topology and fix atoms</span>
+<span class="sd">* Build solvation box</span>
+<span class="sd">* Equilibration solvation box restraining the protein</span>
+<span class="sd">* Run MD simulation: increase temperature, run MD, reduce temperature.</span>
+<span class="sd">* Either generate an ensemble of multiple frames or return the last frame.</span>
+
+<span class="sd">This module will refine all models coming from the previous workflow step and</span>
+<span class="sd">send them to the next step in the workflow. If you want to use other modules</span>
+<span class="sd">such as `flexref` or `emref` after the OpenMM module, you need to recreate the</span>
+<span class="sd">topologies by simply adding a `[topoaa]` step in the workflow.</span>
+<span class="sd">See examples in `examples/thirdparty/openmm` folder.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">subprocrun</span>
+
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ThirdPartyIntallationError</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
+
+<span class="c1"># allow general testing when OpenMM is not installed</span>
+<span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">haddock.modules.refinement.openmm.openmm</span> <span class="kn">import</span> <span class="n">OPENMM</span>
+
+
+<span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HaddockModule">
+<a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule">[docs]</a>
+<span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 OpenMM module.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HaddockModule.create_directories">
+<a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.create_directories">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the necessary directories and provides the paths.&quot;&quot;&quot;</span>
+        <span class="n">directory_list</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;pdbfixer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;solvation_boxes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intermediates&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;md_raw_output&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;openmm_output&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;simulation_stats&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">directory_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">directory_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating directory </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+            <span class="n">directory_dict</span><span class="p">[</span><span class="nb">dir</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dir</span>
+        
+        <span class="k">return</span> <span class="n">directory_dict</span></div>
+
+    
+<div class="viewcode-block" id="HaddockModule.remove_directories">
+<a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.remove_directories">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove unnecessary directories full of heavy files.&quot;&quot;&quot;</span>
+        <span class="n">directory_list</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;pdbfixer&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;md_raw_output&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;solvation_boxes&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="n">directory_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing temporary directory </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="HaddockModule.confirm_installation">
+<a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.confirm_installation">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm installation of openmm and pdfixer.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ThirdPartyIntallationError</span>
+<span class="sd">            When OpenMM is not installed</span>
+<span class="sd">        ThirdPartyIntallationError</span>
+<span class="sd">            When OpenMM pdbfixer is not installed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">run_subprocess</span><span class="p">(</span><span class="n">command_to_run</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Run subprocess.&quot;&quot;&quot;</span>
+            <span class="n">subprocess_output</span> <span class="o">=</span> <span class="n">subprocrun</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">command_to_run</span><span class="p">],</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">subprocess_output</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">checkOpenMM</span> <span class="o">=</span> <span class="n">run_subprocess</span><span class="p">(</span><span class="s2">&quot;conda list openmm --json&quot;</span><span class="p">)</span>
+        <span class="n">checkPdbfixer</span> <span class="o">=</span> <span class="n">run_subprocess</span><span class="p">(</span><span class="s2">&quot;conda list pdbfixer --json&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">checkOpenMM</span> <span class="o">==</span> <span class="s2">&quot;[]&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ThirdPartyIntallationError</span><span class="p">(</span>
+                <span class="s2">&quot;OpenMM is not installed in conda.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">checkPdbfixer</span> <span class="o">==</span> <span class="s2">&quot;[]&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ThirdPartyIntallationError</span><span class="p">(</span>
+                <span class="s2">&quot;OpenMM pdbfixer is not installed in conda.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="HaddockModule.set_max_cpu">
+<a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.set_max_cpu">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">set_max_cpu</span><span class="p">(</span><span class="n">nbcpu</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">Platform</span>
+        <span class="n">cpu_platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">getPlatformByName</span><span class="p">(</span><span class="s1">&#39;CPU&#39;</span><span class="p">)</span>
+        <span class="n">cpu_platform</span><span class="o">.</span><span class="n">setPropertyDefaultValue</span><span class="p">(</span><span class="s1">&#39;Threads&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbcpu</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+        <span class="c1"># Retrieve previous models</span>
+        <span class="n">previous_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span>
+            <span class="n">individualize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># create directories</span>
+        <span class="n">directory_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_directories</span><span class="p">()</span>
+
+        <span class="c1"># Limit cpu usage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_max_cpu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Build list of OPENMM jobs</span>
+        <span class="n">openmm_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OPENMM</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model_to_be_simulated</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">previous_models</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># Create a openmm job</span>
+            <span class="n">openmm_job_i</span> <span class="o">=</span> <span class="n">OPENMM</span><span class="p">(</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="n">model_to_be_simulated</span><span class="p">,</span>
+                <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
+                <span class="n">directory_dict</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="c1"># Hold it</span>
+            <span class="n">openmm_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">openmm_job_i</span><span class="p">)</span>
+
+        <span class="c1"># running jobs</span>
+        <span class="n">scheduling_engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduling_engine</span><span class="p">(</span><span class="n">openmm_jobs</span><span class="p">)</span>
+        <span class="n">scheduler</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># Retrieve generated models</span>
+        <span class="n">output_pdbs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_dict</span><span class="p">[</span><span class="s2">&quot;openmm_output&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.pdb&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Check if at least one output file has been generated</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_pdbs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span>
+                <span class="s2">&quot;No output models generated. &quot;</span>
+                <span class="s2">&quot;Check Openmm Execution and logfile.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># deleting unnecessary directories</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Removing unnecessary directories...&quot;</span><span class="p">)</span>
+        <span class="c1"># self.remove_directories()</span>
+
+        <span class="c1"># Add small message to the user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Completed OpenMM module run.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s2">&quot;If you want to continue the haddock3 workflow after &quot;</span>
+            <span class="s2">&quot;the OpenMM module, the next module should be `[topoaa]`, &quot;</span>
+            <span class="s2">&quot;to rebuild the CNS molecular topologies.&quot;</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># Setting the output variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">PDBFile</span><span class="p">(</span><span class="n">openmmout</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">openmmout</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">output_pdbs</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="c1"># Generating standardized haddock3 outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

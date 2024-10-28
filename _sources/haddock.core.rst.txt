@@ -1,0 +1,22 @@
+haddock.core package
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.core.cns_paths
+   haddock.core.defaults
+   haddock.core.exceptions
+   haddock.core.supported_molecules
+   haddock.core.typing
+
+Module contents
+---------------
+
+.. automodule:: haddock.core
+   :members:
+   :undoc-members:
+   :show-inheritance:

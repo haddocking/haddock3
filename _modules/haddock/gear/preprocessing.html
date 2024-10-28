@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.preprocessing &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -229,10 +223,13 @@
 <span class="n">_CHAINS</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="n">_ascii_letters</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ModelsDifferError"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.ModelsDifferError">[docs]</a><span class="k">class</span> <span class="nc">ModelsDifferError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelsDifferError">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.ModelsDifferError">[docs]</a>
+<span class="k">class</span> <span class="nc">ModelsDifferError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MODELS of the PDB differ in atom labels.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_report</span><span class="p">(</span><span class="n">log_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -409,7 +406,9 @@
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">residues</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="process_pdbs"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.process_pdbs">[docs]</a><span class="k">def</span> <span class="nf">process_pdbs</span><span class="p">(</span>
+<div class="viewcode-block" id="process_pdbs">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.process_pdbs">[docs]</a>
+<span class="k">def</span> <span class="nf">process_pdbs</span><span class="p">(</span>
     <span class="o">*</span><span class="n">inputdata</span><span class="p">:</span> <span class="n">LineIterSource</span><span class="p">,</span>
     <span class="n">dry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">user_supported_residues</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -523,6 +522,7 @@
     <span class="k">return</span> <span class="n">final_result</span></div>
 
 
+
 <span class="c1"># Functions operating line-by-line</span>
 
 <span class="c1"># make pdb-tools reportable</span>
@@ -544,7 +544,9 @@
 <span class="p">)</span>  <span class="c1"># noqa: E501</span>
 
 
-<div class="viewcode-block" id="replace_HETATM_to_ATOM"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_HETATM_to_ATOM">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replacing HETATM to ATOM for residue </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="replace_HETATM_to_ATOM">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_HETATM_to_ATOM">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replacing HETATM to ATOM for residue </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">replace_HETATM_to_ATOM</span><span class="p">(</span>
     <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">res</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -573,7 +575,10 @@
             <span class="k">yield</span> <span class="n">line</span></div>
 
 
-<div class="viewcode-block" id="replace_residue"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_residue">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replace residue ATOM/HETATM </span><span class="si">{!r}</span><span class="s2"> to ATOM </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="replace_residue">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_residue">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replace residue ATOM/HETATM </span><span class="si">{!r}</span><span class="s2"> to ATOM </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">replace_residue</span><span class="p">(</span>
     <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resin</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resout</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -606,6 +611,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_</span> <span class="o">=</span> <span class="n">replace_HETATM_to_ATOM</span><span class="p">(</span><span class="n">fhandler</span><span class="p">,</span> <span class="n">res</span><span class="o">=</span><span class="n">resin</span><span class="p">)</span>
     <span class="k">yield from</span> <span class="n">pdb_rplresname</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">name_from</span><span class="o">=</span><span class="n">resin</span><span class="p">,</span> <span class="n">name_to</span><span class="o">=</span><span class="n">resout</span><span class="p">)</span></div>
+
 
 
 <span class="n">replace_MSE_to_MET</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">replace_residue</span><span class="p">,</span> <span class="n">resin</span><span class="o">=</span><span class="s2">&quot;MSE&quot;</span><span class="p">,</span> <span class="n">resout</span><span class="o">=</span><span class="s2">&quot;MET&quot;</span><span class="p">)</span>
@@ -654,7 +660,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="remove_unsupported_molecules"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.remove_unsupported_molecules">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Remove unsupported molecules&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="remove_unsupported_molecules">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.remove_unsupported_molecules">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Remove unsupported molecules&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">remove_unsupported_molecules</span><span class="p">(</span>
     <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">haddock3_defined</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -723,6 +731,7 @@
     <span class="k">return</span></div>
 
 
+
 <span class="n">remove_unsupported_hetatm</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
     <span class="n">remove_unsupported_molecules</span><span class="p">,</span>
     <span class="n">haddock3_defined</span><span class="o">=</span><span class="n">supported_HETATM</span><span class="p">,</span>
@@ -756,7 +765,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="add_charges_to_ions"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.add_charges_to_ions">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Add charges to ions.&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="add_charges_to_ions">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.add_charges_to_ions">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Add charges to ions.&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">add_charges_to_ions</span><span class="p">(</span><span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add charges to ions according to HADDOCK3 specifications.</span>
@@ -831,6 +842,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">line</span>  <span class="c1"># lines that are not atoms</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_process_ion_case_resname</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -915,7 +927,9 @@
     <span class="k">return</span> <span class="n">new_line</span>
 
 
-<div class="viewcode-block" id="convert_record"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.convert_record">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Convert record: </span><span class="si">{!r}</span><span class="s2"> to </span><span class="si">{!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_record">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.convert_record">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Convert record: </span><span class="si">{!r}</span><span class="s2"> to </span><span class="si">{!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">convert_record</span><span class="p">(</span>
     <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">other_record</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">residues</span><span class="p">:</span> <span class="n">Container</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -945,6 +959,7 @@
                 <span class="k">yield</span> <span class="n">other_record</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
                 <span class="k">continue</span>
         <span class="k">yield</span> <span class="n">line</span></div>
+
 
 
 <span class="n">convert_ATOM_to_HETATM</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
@@ -979,7 +994,9 @@
 <span class="c1"># Functions operating in the whole PDB</span>
 
 
-<div class="viewcode-block" id="solve_no_chainID_no_segID"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.solve_no_chainID_no_segID">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Solving chain/seg ID issues.&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="solve_no_chainID_no_segID">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.solve_no_chainID_no_segID">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Solving chain/seg ID issues.&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">solve_no_chainID_no_segID</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Solve inconsistencies with chainID and segID.</span>
@@ -1023,12 +1040,15 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_lines</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># TODO: needs to become an option.</span>
 <span class="c1"># change chain ID and shift the residue of the other chains.</span>
 <span class="c1"># also needs to be sync with the restraints.</span>
 <span class="c1"># maybe not an automatic.. maybe used as a CLI</span>
 <span class="c1"># maybe is a place to have a CHECK instead of a autoprocess</span>
-<div class="viewcode-block" id="homogenize_chains"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.homogenize_chains">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Homogenizes chains&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="homogenize_chains">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.homogenize_chains">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Homogenizes chains&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">homogenize_chains</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Homogenize chainIDs within the same PDB.</span>
@@ -1056,10 +1076,13 @@
         <span class="k">return</span> <span class="n">lines</span></div>
 
 
+
 <span class="c1"># Functions operating in all PDBs at once</span>
 
 
-<div class="viewcode-block" id="correct_equal_chain_segids"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.correct_equal_chain_segids">[docs]</a><span class="k">def</span> <span class="nf">correct_equal_chain_segids</span><span class="p">(</span><span class="n">structures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<div class="viewcode-block" id="correct_equal_chain_segids">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.correct_equal_chain_segids">[docs]</a>
+<span class="k">def</span> <span class="nf">correct_equal_chain_segids</span><span class="p">(</span><span class="n">structures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Correct for repeated chainID in the input PDB files.</span>
 
@@ -1113,8 +1136,11 @@
     <span class="k">return</span> <span class="n">new_structures</span></div>
 
 
+
 <span class="c1"># this id bad</span>
-<div class="viewcode-block" id="models_should_have_the_same_labels"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.models_should_have_the_same_labels">[docs]</a><span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Check models are the same&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="models_should_have_the_same_labels">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.models_should_have_the_same_labels">[docs]</a>
+<span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Check models are the same&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">models_should_have_the_same_labels</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Confirm models have the same labels.</span>
@@ -1174,6 +1200,7 @@
             <span class="k">raise</span> <span class="n">ModelsDifferError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">lines</span></div>
+
 </pre></div>
 
            </div>
@@ -1184,7 +1211,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

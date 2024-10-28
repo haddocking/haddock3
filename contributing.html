@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributing to HADDOCK3 &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,9 +34,6 @@
           <a href="index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -53,7 +48,6 @@
 <li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing to HADDOCK3</a><ul>
@@ -98,7 +92,7 @@
            <div itemprop="articleBody">
              
   <section id="contributing-to-haddock3">
-<h1>Contributing to HADDOCK3<a class="headerlink" href="#contributing-to-haddock3" title="Permalink to this heading"></a></h1>
+<h1>Contributing to HADDOCK3<a class="headerlink" href="#contributing-to-haddock3" title="Link to this heading"></a></h1>
 <p>Welcome, we made many efforts to facilitate your contribution to this
 fantastic project. There are several ways to contribute:</p>
 <ul class="simple">
@@ -112,7 +106,7 @@ fantastic project. There are several ways to contribute:</p>
 instructions in the <a class="reference internal" href="#docs/INSTALL.md"><span class="xref myst">INSTALL</span></a> file. Afterwards, follow the
 instructions in this file.</p>
 <section id="contributing-new-code">
-<h2>1. Contributing new code<a class="headerlink" href="#contributing-new-code" title="Permalink to this heading"></a></h2>
+<h2>1. Contributing new code<a class="headerlink" href="#contributing-new-code" title="Link to this heading"></a></h2>
 <p>HADDOCK3 has two main testing workflows. Here, within the repository, we
 test the HADDOCK3’s Python shell, code style, and package building.  Our
 Continuous Integration (CI) pipeline is based on
@@ -195,7 +189,7 @@ can help you from the beginning.</p></li>
 </li>
 </ol>
 <section id="contributing-with-code-additional-details">
-<h3>1.1 Contributing with code (additional details)<a class="headerlink" href="#contributing-with-code-additional-details" title="Permalink to this heading"></a></h3>
+<h3>1.1 Contributing with code (additional details)<a class="headerlink" href="#contributing-with-code-additional-details" title="Link to this heading"></a></h3>
 <p><strong>You should also know that…</strong> HADDOCK3 folders, files, and code
 follow a well defined structure with very specific patterns. Inside each
 source folder you will (likely) find a <code class="docutils literal notranslate"><span class="pre">README</span></code> file describing the
@@ -222,7 +216,7 @@ there. You will see that all folders and files follow a pattern.</p></li>
 </ul>
 </section>
 <section id="contributing-with-tests-additional-details">
-<h3>1.2 Contributing with tests (additional details)<a class="headerlink" href="#contributing-with-tests-additional-details" title="Permalink to this heading"></a></h3>
+<h3>1.2 Contributing with tests (additional details)<a class="headerlink" href="#contributing-with-tests-additional-details" title="Link to this heading"></a></h3>
 <p>Inside the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> folder you will find several <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> files.
 Normally, each file has the tests for each <code class="docutils literal notranslate"><span class="pre">*.py</span></code> file in the source. If
 you create new <code class="docutils literal notranslate"><span class="pre">*.py</span></code> files you should create a new test file of the
@@ -233,7 +227,7 @@ the <code class="docutils literal notranslate"><span class="pre">tox</span> <spa
 tests for a singly file use <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span> <span class="pre">--</span> <span class="pre">tests/test_myfile.py</span></code>.</p>
 </section>
 <section id="dependencies">
-<h3>1.3 Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading"></a></h3>
+<h3>1.3 Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h3>
 <p>HADDOCK3 is highly interconnected with other projects. Many of them use
 HADDOCK3 core functionalities. Therefore, we aim to keep HADDOCK3 with
 the lowest dependency footprint possible. Avoid adding dependencies when
@@ -268,7 +262,7 @@ dependency</em>. Talk with us before.</p></li>
 </ol>
 </section>
 <section id="code-style">
-<h3>1.4 Code style<a class="headerlink" href="#code-style" title="Permalink to this heading"></a></h3>
+<h3>1.4 Code style<a class="headerlink" href="#code-style" title="Link to this heading"></a></h3>
 <p>HADDOCK3 follows nice code style rules. These are <em>almost</em> hard rules,
 but there is some room for exceptions - common sense prevails. When
 developing code, run <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">lint</span></code> to inspect if your code follows our
@@ -369,7 +363,7 @@ Line have a soft max of 80 chars.</p>
 </div>
 </section>
 <section id="code-structure">
-<h3>1.5 Code structure<a class="headerlink" href="#code-structure" title="Permalink to this heading"></a></h3>
+<h3>1.5 Code structure<a class="headerlink" href="#code-structure" title="Link to this heading"></a></h3>
 <p>Write code in the form of small functions, because small functions are
 easier to test. Combine small functions to compose larger functions. If
 you need to use a global variable in a function, pass it as a default
@@ -382,13 +376,13 @@ stuff. Use the <code class="docutils literal notranslate"><span class="pre">TODO
 future. If needed, raise an issue.</p>
 </section>
 <section id="creating-a-new-module">
-<h3>1.6 Creating a new module<a class="headerlink" href="#creating-a-new-module" title="Permalink to this heading"></a></h3>
+<h3>1.6 Creating a new module<a class="headerlink" href="#creating-a-new-module" title="Link to this heading"></a></h3>
 <p>To develop a new HADDOCK3 module follow our guidelines and templates
 under <code class="docutils literal notranslate"><span class="pre">src/haddock/modules/_template_cat/_template_mod/</span></code>.</p>
 </section>
 </section>
 <section id="contributing-with-documentation">
-<h2>2. Contributing with documentation<a class="headerlink" href="#contributing-with-documentation" title="Permalink to this heading"></a></h2>
+<h2>2. Contributing with documentation<a class="headerlink" href="#contributing-with-documentation" title="Link to this heading"></a></h2>
 <p>You may contribute to HADDOCK3 documentation by improving parts where
 documentation is lacking or writing the documentation for the new code
 you propose. HADDOCK3 documentation is hosted online at
@@ -436,7 +430,7 @@ file.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

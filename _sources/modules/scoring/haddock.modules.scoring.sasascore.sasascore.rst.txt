@@ -1,0 +1,7 @@
+haddock.modules.scoring.sasascore.sasascore module
+==================================================
+
+.. automodule:: haddock.modules.scoring.sasascore.sasascore
+   :members:
+   :undoc-members:
+   :show-inheritance:

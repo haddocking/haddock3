@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Workflow Examples &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,9 +34,6 @@
           <a href="index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -67,7 +62,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a></li>
@@ -100,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="workflow-examples">
-<h1>Workflow Examples<a class="headerlink" href="#workflow-examples" title="Permalink to this heading"></a></h1>
+<h1>Workflow Examples<a class="headerlink" href="#workflow-examples" title="Link to this heading"></a></h1>
 <p>The HADDOCK3 <code class="docutils literal notranslate"><span class="pre">examples/</span></code> directory contains various subdirectories and config files
 corresponding to different types of complexes, scenarios and data.</p>
 <ol class="arabic simple">
@@ -124,7 +118,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 </ul>
 <p>The following examples are currently provided:</p>
 <section id="docking-antibogy-antigen">
-<h2>docking-antibogy-antigen<a class="headerlink" href="#docking-antibogy-antigen" title="Permalink to this heading"></a></h2>
+<h2>docking-antibogy-antigen<a class="headerlink" href="#docking-antibogy-antigen" title="Link to this heading"></a></h2>
 <p>An antibody-antigen docking example making use only of the knowledge of the hypervariables (HV) loops on the antibody to guide the docking. This is the same complex used in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/">HADDOCK2.4 webserver tutorial</a>; refer to it for more details. Three different ways of using the knowledge of the HV loop residues are illustrated:</p>
 <ul class="simple">
 <li><p><strong>CDR-accessible</strong>: using ambiguous distance restraints (AIRs) between the HV loop residues and the solvent-accessible residues of the antigen. Those are defined in the <code class="docutils literal notranslate"><span class="pre">ambig.tbl</span></code> file provided in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory</p></li>
@@ -141,7 +135,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-dna">
-<h2>docking-protein-dna<a class="headerlink" href="#docking-protein-dna" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-dna<a class="headerlink" href="#docking-protein-dna" title="Link to this heading"></a></h2>
 <p>A protein-DNA docking example making use of rather specific protein-DNA distance restraints defined in the <code class="docutils literal notranslate"><span class="pre">ambig.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory.</p>
 <p>Three different protocols/workflows are illustrated:</p>
 <ol class="arabic simple">
@@ -153,7 +147,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p><strong>Note</strong> the modified electrostatic treatment for DNA (<code class="docutils literal notranslate"><span class="pre">cdie</span></code> and <code class="docutils literal notranslate"><span class="pre">epsilon=78</span></code>) and the automatic definition of DNA restraints to maintain the double helix (<code class="docutils literal notranslate"><span class="pre">dnarest_on=true</span></code>).</p>
 </section>
 <section id="docking-protein-glycan">
-<h2>docking-protein-glycan<a class="headerlink" href="#docking-protein-glycan" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-glycan<a class="headerlink" href="#docking-protein-glycan" title="Link to this heading"></a></h2>
 <p>A protein-glycan docking example making use of the knowledge of the binding site on the protein to guide the docking. The conformation of the glycan has been obtained from the <a class="reference external" href="http://glycam.org/">GLYCAM webserver</a>, while the structure of the protein is taken from the PDB in its unbound form. In the proposed workflows, a clustering step is always performed after initial docking stage, so as to increase the diversity of the ensemble of models to be refined. Three different workflows are illustrated:</p>
 <ol class="arabic simple">
 <li><p>1000 rigidbody docking models, RMSD clustering to select 50 clusters, flexible refinement of the top 5 models of each cluster, final RMSD clustering for cluster-based scoring (<a class="reference download internal" download="" href="_downloads/0890a1df3a4078e5678b94fae7b211ad/docking-protein-glycan-full.cfg"><span class="xref download myst">docking-protein-glycan-full.cfg</span></a>). The RMSD clustering assumes a good knowledge of the interface, as the user has to define the residues involved in the binding site by means of the resdic_ parameter.</p></li>
@@ -163,13 +157,13 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p><strong>Note</strong> the modified weight of the van der Waals energy term for the scoring of the rigidbody docking models (<code class="docutils literal notranslate"><span class="pre">w_vdw</span> <span class="pre">=</span> <span class="pre">1.0</span></code>), as in the <a class="reference internal" href="#docking-protein-ligand">protein-ligand example</a>.</p>
 </section>
 <section id="docking-protein-homotrimer">
-<h2>docking-protein-homotrimer<a class="headerlink" href="#docking-protein-homotrimer" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-homotrimer<a class="headerlink" href="#docking-protein-homotrimer" title="Link to this heading"></a></h2>
 <p>A protein homotrimer with C3 symmetry docking example making use of bioinformatics interface predictions from our <a class="reference external" href="https://wenmr.science.uu.nl/whiscy/">Whiscy webserver</a> defined in the <a class="reference download internal" download="" href="_downloads/020be12e9f40c9baaf6acda0849017e1/1qu9_whiscy_air.tbl"><span class="xref download myst">1qu9_whiscy_air.tbl</span></a> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory. Note that this is a bound docking example since the protein monomers used for docking are taken from the crystal structure of the homotrimer. The workflow does however perform a flexible refinement of the models, which might lead to deviations from the bound conformation.</p>
 <p>The <a class="reference download internal" download="" href="_downloads/236bd1c3782afe259e974e197a048ba0/docking-protein-homotrimer-full.cfg"><span class="xref download myst">docking-protein-homotrimer-full.cfg</span></a> workflow consists of the generation of 2000 rigidbody docking models, selection of top200 and flexible refinement + EM of those. C3 and non-crystallographic (NCS) symmetry restraints are defined to guide the docking.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-ligand">
-<h2>docking-protein-ligand<a class="headerlink" href="#docking-protein-ligand" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-ligand<a class="headerlink" href="#docking-protein-ligand" title="Link to this heading"></a></h2>
 <p>A protein-ligand docking example making use of the knowledge of the binding site on the protein to guide the docking.</p>
 <p>As explained in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-binding-sites/">protein-ligand HADDOCK2.4 tutorial</a>, in the rigidbody docking phase all residues of the binding site are defined as active to draw the ligand into it (the corresponding AIRs are defined in the <a class="reference download internal" download="" href="_downloads/a300d174b05e98a251f758c90ccfabf1/ambig-active-rigidbody.tbl"><span class="xref download myst">ambig-active-rigidbody.tbl</span></a> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). For the flexible refinement only the ligand is defined as active and the binding site as passive to allow the ligand to explore the binding site (the corresponding AIRs are defined in the <a class="reference download internal" download="" href="_downloads/d7deefbb1c7f7dde0270f72746bc8d98/ambig-passive.tbl"><span class="xref download myst">ambig-passive.tbl</span></a> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory).</p>
 <p>The <a class="reference download internal" download="" href="_downloads/5efbc2050ea6f9470237e58ed40b7774/docking-protein-ligand-full.cfg"><span class="xref download myst">docking-protein-ligand-full.cfg</span></a> workflow consists of the generation of 1000 rigidbody docking models, selection of top200 and flexible refinement of those.</p>
@@ -177,7 +171,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-ligand-shape">
-<h2>docking-protein-ligand-shape<a class="headerlink" href="#docking-protein-ligand-shape" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-ligand-shape<a class="headerlink" href="#docking-protein-ligand-shape" title="Link to this heading"></a></h2>
 <p>A protein-ligand docking example making use of the knowledge of a template ligand (a ligand similar to the ligand we want to dock and bind to the same receptor). The template ligand information is used in the form of shape consisting of dummy beads and positioned within the binding site to which distance restraints are defined. More details about the method and the performance of the protocol when benchmarked on a fully unbound dataset
 can be seen in our freely available <a class="reference external" href="https://pubs.acs.org/doi/full/10.1021/acs.jcim.1c00796">paper on JCIM</a>.</p>
 <p>As explained in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/shape-small-molecule/">shape small molecule HADDOCK2.4 tutorial</a>, during the docking and refinement the protein and the shape are kept in their original positions (see the <code class="docutils literal notranslate"><span class="pre">mol_fix_origin_X</span></code> parameters in the config file) and ambiguous distance restraints between the ligand and the shape beads are defined. (The corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">shape-restraints-from-shape-1.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). This is effectively a three body docking. For the ligand an ensemble of 10 different conformations is provided as starting point for the docking (<code class="docutils literal notranslate"><span class="pre">ligand-ensemble.pdb</span></code> in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). Please refer to our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/shape-small-molecule/">shape small molecule tutorial</a> for information on how to generate such an ensemble.</p>
@@ -186,7 +180,7 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-peptide">
-<h2>docking-protein-peptide<a class="headerlink" href="#docking-protein-peptide" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-peptide<a class="headerlink" href="#docking-protein-peptide" title="Link to this heading"></a></h2>
 <p>The protein-peptide docking example makes use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the <code class="docutils literal notranslate"><span class="pre">ambig.tbl</span></code> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). This example follows the protocol described in our protein-peptide docking article (<a class="reference external" href="https://dx.plos.org/10.1371/journal.pone.0058769">Trellet et. al. PLoS ONE 8, e58769 (2013)</a>). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were built using PyMol (instructions on how to do that can be found <a class="reference external" href="https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system">here</a>).</p>
 <p>Three different workflows are illustrated:</p>
 <ol class="arabic simple">
@@ -198,7 +192,7 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="docking-protein-protein">
-<h2>docking-protein-protein<a class="headerlink" href="#docking-protein-protein" title="Permalink to this heading"></a></h2>
+<h2>docking-protein-protein<a class="headerlink" href="#docking-protein-protein" title="Link to this heading"></a></h2>
 <p>The protein-protein docking example makes use of the NMR chemical shift perturbation data providing information on the residues of binding site to guide the docking. The NMR-identified residues are defined as active with their surface neighbors as passive (the corresponding AIRs are defined in the <a class="reference download internal" download="" href="_downloads/f9b8a2fea90919b117c56e8fff7750e6/e2a-hpr_air.tbl"><span class="xref download myst">e2a-hpr_air.tbl</span></a> file in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory). This system is the same as described in our <a class="reference external" href="https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-protein-protein-basic/">HADDOCK2.4 basic protein-protein docking tutorial</a>. For the second molecule (HPR), an ensemble of 10 conformations (taken from the NMR solution structure of this protein) is used as starting point for the docking. Refer to above tutorial for more details about the system and restraints.</p>
 <p>Three different workflows are illustrated:</p>
 <ol class="arabic simple">
@@ -210,13 +204,13 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="refine-complex">
-<h2>refine-complex<a class="headerlink" href="#refine-complex" title="Permalink to this heading"></a></h2>
+<h2>refine-complex<a class="headerlink" href="#refine-complex" title="Link to this heading"></a></h2>
 <p>This example illustrates the refinement of a complex. In this case (workflow <a class="reference download internal" download="" href="_downloads/430b378fe46e4bab5b2a7ab218b93b78/refine-complex-test.cfg"><span class="xref download myst">refine-complex-test.cfg</span></a>) the molecules are kept in their original positions and the complex is subjected to a short flexible refinement in explicit solvent with the <code class="docutils literal notranslate"><span class="pre">mdref</span></code> module. The same complex as for the <code class="docutils literal notranslate"><span class="pre">docking-protein-protein</span></code> example is used. The molecules are defined separately in the config file (and could consist each of an ensemble, provided the two ensembles have exactly the same number of models).</p>
 <p>In this example all parameters are left to their default settings, except for manually defining the histidines’ protonation states and setting the <code class="docutils literal notranslate"><span class="pre">sampling_factor</span></code> to 10, which means that from each starting complex 10 models will be generated with different random seeds for initiating the molecular dynamics phase.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at the end to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="scoring">
-<h2>scoring<a class="headerlink" href="#scoring" title="Permalink to this heading"></a></h2>
+<h2>scoring<a class="headerlink" href="#scoring" title="Link to this heading"></a></h2>
 <p>This example illustrates the use of HADDOCK3 for scoring purposes. In contrast to HADDOCK2.4, HADDOCK3 can score a heterogenous set of complexes within one run/workflow. In this example, four different types of complexes are scored within the same workflow:</p>
 <ul class="simple">
 <li><p>an ensemble of 5 models taken from CAPRI Target161</p></li>
@@ -233,14 +227,14 @@ can be seen in our freely available <a class="reference external" href="https://
 <p>The model listings with their associated HADDOCK scores can be found in a <code class="docutils literal notranslate"><span class="pre">.tsv</span></code> file in the stage 01 directory of the respective runs.</p>
 </section>
 <section id="docking-multiple-ambig">
-<h2>docking-multiple-ambig<a class="headerlink" href="#docking-multiple-ambig" title="Permalink to this heading"></a></h2>
+<h2>docking-multiple-ambig<a class="headerlink" href="#docking-multiple-ambig" title="Link to this heading"></a></h2>
 <p>This example shows how to use HADDOCK3 when several restraint files are available. The example (<a class="reference download internal" download="" href="_downloads/bff81a5ff217e7c593fae796b3001e07/docking-multiple-tbls-test.cfg"><span class="xref download myst">docking-multiple-tbls-test.cfg</span></a>) is built upon the results obtained running <a class="reference external" href="https://github.com/haddocking/arctic3d">arctic3d</a> on two proteins forming the complex <code class="docutils literal notranslate"><span class="pre">2GAF</span></code>. The presence of multiple interfaces in both structures allows to define several <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> ambiguous restraint files to be used in the calculations. At first, these files must be compressed in a <code class="docutils literal notranslate"><span class="pre">.tbl.tgz</span></code> archive. During the workflow, the HADDOCK3 machinery unzips the archive and evenly assigns each <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> file to a number of models to be generated. Even if only one sixth of the restraint files contain reasonable information on the interface, HADDOCK3 is still able to retrieve good docking models in the best-scoring positions.</p>
 <p><strong>Note</strong> how the information about restraint files is propagated during the workflow (<code class="docutils literal notranslate"><span class="pre">previous_ambig</span> <span class="pre">=</span> <span class="pre">true</span></code> for <code class="docutils literal notranslate"><span class="pre">flexref</span></code> and <code class="docutils literal notranslate"><span class="pre">emref</span></code> modules), so that each model is always refined with its corresponding <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> file.</p>
 <p>Importantly, in the <a class="reference download internal" download="" href="_downloads/c0325ac11ffcd6d4180c6f1758ad6e2d/docking-multiple-tbls-clt-full.cfg"><span class="xref download myst">docking-multiple-tbls-clt-full.cfg</span></a> example the clustering is performed right after the <code class="docutils literal notranslate"><span class="pre">rigidbody</span></code> module, so as to lump together solutions resulting from the application of different sets of restraints.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 <section id="general-analysis-tasks">
-<h2>general analysis tasks<a class="headerlink" href="#general-analysis-tasks" title="Permalink to this heading"></a></h2>
+<h2>general analysis tasks<a class="headerlink" href="#general-analysis-tasks" title="Link to this heading"></a></h2>
 <p>In the <code class="docutils literal notranslate"><span class="pre">analysis</span></code> directory, a few examples of how to perform general analysis tasks are provided. These workflows aim at showing how HADDOCK3 can be used outside the scope of docking and refinement to analyse structures and models coming from different sources (e.g. Alphafold2). These example workflows include:</p>
 <ul class="simple">
 <li><p><a class="reference download internal" download="" href="_downloads/85161af7796a53456d90fd4d3cb85054/alascan-test.cfg"><span class="xref download myst">alascan-test.cfg</span></a>: an example of how to perform alanine scanning on a protein-protein complex.</p></li>
@@ -264,7 +258,7 @@ can be seen in our freely available <a class="reference external" href="https://
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

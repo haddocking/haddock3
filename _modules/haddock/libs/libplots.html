@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libplots &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -87,6 +81,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Plotting functionalities.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -110,6 +105,7 @@
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.assets</span> <span class="kn">import</span> <span class="n">haddock_ui_path</span>
 
 
 <span class="n">SCATTER_PAIRS</span> <span class="o">=</span> <span class="p">[</span>
@@ -182,14 +178,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">HEATMAP_DEFAULT_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;contacts.html&#39;</span><span class="p">)</span>
+<span class="n">SUPPORTED_OUTPUT_FORMATS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;webp&#39;</span><span class="p">,</span> <span class="s1">&#39;svg&#39;</span><span class="p">,</span> <span class="s1">&#39;pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;eps&#39;</span><span class="p">,</span> <span class="p">)</span>
 
-
-<div class="viewcode-block" id="create_html"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.create_html">[docs]</a><span class="k">def</span> <span class="nf">create_html</span><span class="p">(</span>
+<div class="viewcode-block" id="create_html">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.create_html">[docs]</a>
+<span class="k">def</span> <span class="nf">create_html</span><span class="p">(</span>
         <span class="n">json_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">plot_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">plotly_js_import</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">figure_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">800</span><span class="p">,</span>
         <span class="n">figure_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
-        <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create html content given a plotly json.</span>
 
@@ -213,16 +211,14 @@
 <span class="sd">        html content</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Check if plotly javascript must be flushed in this file</span>
-    <span class="k">if</span> <span class="n">offline</span><span class="p">:</span>
-        <span class="n">plotlyjs</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;script type=&quot;text/javascript&quot;&gt;</span><span class="si">{</span><span class="n">get_plotlyjs</span><span class="p">()</span><span class="si">}</span><span class="s1">&lt;/script&gt;&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">plotlyjs</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;script src=&quot;</span><span class="si">{</span><span class="n">plotly_cdn_url</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot;&gt;&lt;/script&gt;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">plotly_js_import</span><span class="p">:</span>
+        <span class="n">plotly_js_import</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;script src=&quot;</span><span class="si">{</span><span class="n">plotly_cdn_url</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot;&gt;&lt;/script&gt;&#39;</span>
 
     <span class="c1"># Write HTML content</span>
     <span class="n">html_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    &lt;div&gt;</span>
 <span class="s2">    &lt;script type=&quot;text/javascript&quot;&gt;window.PlotlyConfig = </span><span class="se">{{</span><span class="s2"> MathJaxConfig: &#39;local&#39; </span><span class="se">}}</span><span class="s2">;&lt;/script&gt;</span>
-<span class="s2">    </span><span class="si">{</span><span class="n">plotlyjs</span><span class="si">}</span>
+<span class="s2">    </span><span class="si">{</span><span class="n">plotly_js_import</span><span class="si">}</span>
 <span class="s2">    &lt;div id=&quot;plot</span><span class="si">{</span><span class="n">plot_id</span><span class="si">}</span><span class="s2">&quot; class=&quot;plotly-graph-div&quot; style=&quot;height:</span><span class="si">{</span><span class="n">figure_height</span><span class="si">}</span><span class="s2">px; width:</span><span class="si">{</span><span class="n">figure_width</span><span class="si">}</span><span class="s2">px;&quot;&gt;</span>
 <span class="s2">    &lt;/div&gt;</span>
 <span class="s2">    &lt;script id=&quot;data</span><span class="si">{</span><span class="n">plot_id</span><span class="si">}</span><span class="s2">&quot; type=&quot;application/json&quot;&gt;</span>
@@ -245,7 +241,10 @@
     <span class="k">return</span> <span class="n">html_content</span></div>
 
 
-<div class="viewcode-block" id="read_capri_table"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.read_capri_table">[docs]</a><span class="k">def</span> <span class="nf">read_capri_table</span><span class="p">(</span>
+
+<div class="viewcode-block" id="read_capri_table">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.read_capri_table">[docs]</a>
+<span class="k">def</span> <span class="nf">read_capri_table</span><span class="p">(</span>
         <span class="n">capri_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
         <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -267,7 +266,10 @@
     <span class="k">return</span> <span class="n">capri_df</span></div>
 
 
-<div class="viewcode-block" id="in_capri"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.in_capri">[docs]</a><span class="k">def</span> <span class="nf">in_capri</span><span class="p">(</span><span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df_columns</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="in_capri">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.in_capri">[docs]</a>
+<span class="k">def</span> <span class="nf">in_capri</span><span class="p">(</span><span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df_columns</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the selected column is in the set of available columns.</span>
 
@@ -290,7 +292,10 @@
     <span class="k">return</span> <span class="n">resp</span></div>
 
 
-<div class="viewcode-block" id="update_layout_plotly"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.update_layout_plotly">[docs]</a><span class="k">def</span> <span class="nf">update_layout_plotly</span><span class="p">(</span>
+
+<div class="viewcode-block" id="update_layout_plotly">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.update_layout_plotly">[docs]</a>
+<span class="k">def</span> <span class="nf">update_layout_plotly</span><span class="p">(</span>
         <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span>
         <span class="n">x_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">y_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -329,7 +334,10 @@
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="box_plot_plotly"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.box_plot_plotly">[docs]</a><span class="k">def</span> <span class="nf">box_plot_plotly</span><span class="p">(</span>
+
+<div class="viewcode-block" id="box_plot_plotly">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.box_plot_plotly">[docs]</a>
+<span class="k">def</span> <span class="nf">box_plot_plotly</span><span class="p">(</span>
         <span class="n">gb_full</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">y_ax</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">cl_rank</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
@@ -397,18 +405,24 @@
     <span class="c1"># layout</span>
     <span class="n">update_layout_plotly</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;Cluster Rank&quot;</span><span class="p">,</span> <span class="n">AXIS_NAMES</span><span class="p">[</span><span class="n">y_ax</span><span class="p">])</span>
     <span class="c1"># save figure</span>
-    <span class="n">px_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_ax</span><span class="si">}</span><span class="s2">_clt.html&quot;</span>
+    <span class="n">px_fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_ax</span><span class="si">}</span><span class="s2">_clt.html&quot;</span><span class="p">)</span>
     <span class="n">json_content</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
-    <span class="n">html_content</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span><span class="n">json_content</span><span class="p">,</span> <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">)</span>
+    <span class="n">html_content</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span>
+        <span class="n">json_content</span><span class="p">,</span>
+        <span class="n">plotly_js_import</span><span class="o">=</span><span class="n">offline_js_manager</span><span class="p">(</span><span class="n">px_fpath</span><span class="p">,</span> <span class="n">offline</span><span class="p">),</span>
+        <span class="p">)</span>
     <span class="c1"># write html_content to px_fname</span>
-    <span class="n">Path</span><span class="p">(</span><span class="n">px_fname</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
+    <span class="n">px_fpath</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
     <span class="c1"># create format boxplot if necessary</span>
     <span class="k">if</span> <span class="nb">format</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y_ax</span><span class="si">}</span><span class="s2">_clt.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="box_plot_data"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.box_plot_data">[docs]</a><span class="k">def</span> <span class="nf">box_plot_data</span><span class="p">(</span><span class="n">capri_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cl_rank</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="box_plot_data">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.box_plot_data">[docs]</a>
+<span class="k">def</span> <span class="nf">box_plot_data</span><span class="p">(</span><span class="n">capri_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cl_rank</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve box plot data.</span>
 
@@ -444,7 +458,10 @@
     <span class="k">return</span> <span class="n">gb_full</span></div>
 
 
-<div class="viewcode-block" id="box_plot_handler"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.box_plot_handler">[docs]</a><span class="k">def</span> <span class="nf">box_plot_handler</span><span class="p">(</span>
+
+<div class="viewcode-block" id="box_plot_handler">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.box_plot_handler">[docs]</a>
+<span class="k">def</span> <span class="nf">box_plot_handler</span><span class="p">(</span>
         <span class="n">capri_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
         <span class="n">cl_rank</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">,</span>
         <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImgFormat</span><span class="p">],</span>
@@ -483,7 +500,10 @@
     <span class="k">return</span> <span class="n">fig_list</span></div>
 
 
-<div class="viewcode-block" id="scatter_plot_plotly"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.scatter_plot_plotly">[docs]</a><span class="k">def</span> <span class="nf">scatter_plot_plotly</span><span class="p">(</span>
+
+<div class="viewcode-block" id="scatter_plot_plotly">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.scatter_plot_plotly">[docs]</a>
+<span class="k">def</span> <span class="nf">scatter_plot_plotly</span><span class="p">(</span>
         <span class="n">gb_cluster</span><span class="p">:</span> <span class="n">DataFrameGroupBy</span><span class="p">,</span>
         <span class="n">gb_other</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">cl_rank</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">,</span>
@@ -627,7 +647,7 @@
             <span class="p">)</span>
     <span class="k">for</span> <span class="n">trace</span> <span class="ow">in</span> <span class="n">traces</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
-    <span class="n">px_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x_ax</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">y_ax</span><span class="si">}</span><span class="s2">.html&quot;</span>
+    <span class="n">px_fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x_ax</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">y_ax</span><span class="si">}</span><span class="s2">.html&quot;</span><span class="p">)</span>
     <span class="n">update_layout_plotly</span><span class="p">(</span>
         <span class="n">fig</span><span class="p">,</span>
         <span class="n">TITLE_NAMES</span><span class="p">[</span><span class="n">x_ax</span><span class="p">],</span>
@@ -635,9 +655,12 @@
         <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TITLE_NAMES</span><span class="p">[</span><span class="n">x_ax</span><span class="p">]</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">TITLE_NAMES</span><span class="p">[</span><span class="n">y_ax</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="n">json_content</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
-    <span class="n">html_content</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span><span class="n">json_content</span><span class="p">,</span> <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">)</span>
+    <span class="n">html_content</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span>
+        <span class="n">json_content</span><span class="p">,</span>
+        <span class="n">plotly_js_import</span><span class="o">=</span><span class="n">offline_js_manager</span><span class="p">(</span><span class="n">px_fpath</span><span class="p">,</span> <span class="n">offline</span><span class="p">),</span>
+        <span class="p">)</span>
     <span class="c1"># write html_content to px_fname</span>
-    <span class="n">Path</span><span class="p">(</span><span class="n">px_fname</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">px_fpath</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span>
 
     <span class="c1"># create format boxplot if necessary</span>
     <span class="k">if</span> <span class="nb">format</span><span class="p">:</span>
@@ -645,7 +668,10 @@
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="scatter_plot_data"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.scatter_plot_data">[docs]</a><span class="k">def</span> <span class="nf">scatter_plot_data</span><span class="p">(</span>
+
+<div class="viewcode-block" id="scatter_plot_data">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.scatter_plot_data">[docs]</a>
+<span class="k">def</span> <span class="nf">scatter_plot_data</span><span class="p">(</span>
         <span class="n">capri_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">cl_rank</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DataFrameGroupBy</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
@@ -673,7 +699,10 @@
     <span class="k">return</span> <span class="n">gb_cluster</span><span class="p">,</span> <span class="n">gb_other</span></div>
 
 
-<div class="viewcode-block" id="scatter_plot_handler"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.scatter_plot_handler">[docs]</a><span class="k">def</span> <span class="nf">scatter_plot_handler</span><span class="p">(</span>
+
+<div class="viewcode-block" id="scatter_plot_handler">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.scatter_plot_handler">[docs]</a>
+<span class="k">def</span> <span class="nf">scatter_plot_handler</span><span class="p">(</span>
         <span class="n">capri_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
         <span class="n">cl_rank</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">,</span>
         <span class="nb">format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImgFormat</span><span class="p">],</span>
@@ -728,6 +757,7 @@
     <span class="k">return</span> <span class="n">fig_list</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">_report_grid_size</span><span class="p">(</span><span class="n">plot_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Figure</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the size of the grid in the report.</span>
@@ -767,7 +797,9 @@
     <span class="k">return</span> <span class="n">number_of_rows</span><span class="p">,</span> <span class="n">number_of_cols</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span>
 
 
-<div class="viewcode-block" id="report_plots_handler"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.report_plots_handler">[docs]</a><span class="k">def</span> <span class="nf">report_plots_handler</span><span class="p">(</span><span class="n">plots</span><span class="p">,</span> <span class="n">shared_xaxes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">shared_yaxes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="report_plots_handler">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.report_plots_handler">[docs]</a>
+<span class="k">def</span> <span class="nf">report_plots_handler</span><span class="p">(</span><span class="n">plots</span><span class="p">,</span> <span class="n">shared_xaxes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">shared_yaxes</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a figure that holds subplots.</span>
 
@@ -831,7 +863,10 @@
     <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="find_best_struct"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.find_best_struct">[docs]</a><span class="k">def</span> <span class="nf">find_best_struct</span><span class="p">(</span>
+
+<div class="viewcode-block" id="find_best_struct">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.find_best_struct">[docs]</a>
+<span class="k">def</span> <span class="nf">find_best_struct</span><span class="p">(</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">max_best_structs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -870,7 +905,10 @@
     <span class="k">return</span> <span class="n">best_df</span></div>
 
 
-<div class="viewcode-block" id="clean_capri_table"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.clean_capri_table">[docs]</a><span class="k">def</span> <span class="nf">clean_capri_table</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="clean_capri_table">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.clean_capri_table">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_capri_table</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a tidy capri table for the report.</span>
 
@@ -904,7 +942,10 @@
     <span class="k">return</span> <span class="n">df</span></div>
 
 
-<div class="viewcode-block" id="create_other_cluster"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.create_other_cluster">[docs]</a><span class="k">def</span> <span class="nf">create_other_cluster</span><span class="p">(</span>
+
+<div class="viewcode-block" id="create_other_cluster">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.create_other_cluster">[docs]</a>
+<span class="k">def</span> <span class="nf">create_other_cluster</span><span class="p">(</span>
         <span class="n">clusters_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">structs_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">max_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -957,7 +998,10 @@
     <span class="k">return</span> <span class="n">clusters_df</span><span class="p">,</span> <span class="n">structs_df</span></div>
 
 
-<div class="viewcode-block" id="clt_table_handler"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.clt_table_handler">[docs]</a><span class="k">def</span> <span class="nf">clt_table_handler</span><span class="p">(</span><span class="n">clt_file</span><span class="p">,</span> <span class="n">ss_file</span><span class="p">,</span> <span class="n">is_cleaned</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="clt_table_handler">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.clt_table_handler">[docs]</a>
+<span class="k">def</span> <span class="nf">clt_table_handler</span><span class="p">(</span><span class="n">clt_file</span><span class="p">,</span> <span class="n">ss_file</span><span class="p">,</span> <span class="n">is_cleaned</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a dataframe including data for tables.</span>
 
@@ -1022,9 +1066,15 @@
     <span class="k">return</span> <span class="n">df_merged</span></div>
 
 
-<span class="k">def</span> <span class="nf">_css_styles_for_report</span><span class="p">():</span>
+
+<span class="k">def</span> <span class="nf">_css_styles_for_report</span><span class="p">(</span><span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate custom CSS styles for an analysis report.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    offline : bool</span>
+<span class="sd">        If True, the HTML will be generated for offline use.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1035,43 +1085,53 @@
 <span class="s2">        font-family: Arial, sans-serif;</span>
 <span class="s2">        font-size: 32px;</span>
 <span class="s2">        font-weight: bold;</span>
-<span class="s2">        }</span>
-
+<span class="s2">    }</span>
+<span class="s2">    body {</span>
+<span class="s2">      margin-left: 1em;</span>
+<span class="s2">    }</span>
 <span class="s2">    table {</span>
 <span class="s2">        border-collapse: collapse;</span>
 <span class="s2">    }</span>
-
 <span class="s2">    th {</span>
 <span class="s2">        background-color: #f2f2f2;</span>
 <span class="s2">        padding: 8px;</span>
 <span class="s2">        border: 1px solid #ddd;</span>
 <span class="s2">        text-align: left;</span>
 <span class="s2">    }</span>
-
 <span class="s2">    th[scope=&quot;row&quot;] {</span>
 <span class="s2">        position: sticky;</span>
 <span class="s2">        min-width: 16rem;</span>
 <span class="s2">        left: 0;</span>
 <span class="s2">        z-index: 1</span>
 <span class="s2">    }</span>
-
 <span class="s2">    td {</span>
 <span class="s2">        border: 1px solid #ddd;</span>
 <span class="s2">        padding: 8px;</span>
 <span class="s2">        text-align: left;</span>
 <span class="s2">    }</span>
-
 <span class="s2">    tr:nth-child(even) {</span>
 <span class="s2">        background-color: #f2f2f2</span>
 <span class="s2">    }</span>
-
+<span class="s2">    .js-plotly-plot .plotly .modebar svg {</span>
+<span class="s2">	    display: inline;</span>
+<span class="s2">    }</span>
 <span class="s2">    &quot;&quot;&quot;</span>
-    <span class="n">css_link</span> <span class="o">=</span> <span class="s2">&quot;https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1/dist/style.css&quot;</span>  <span class="c1"># noqa:E501</span>
-    <span class="n">table_css</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39; &lt;link href=</span><span class="si">{</span><span class="n">css_link</span><span class="si">}</span><span class="s1"> rel=&quot;stylesheet&quot; /&gt;&#39;</span>
+    <span class="n">css_link</span> <span class="o">=</span> <span class="s2">&quot;https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/index.css&quot;</span>
+    <span class="k">if</span> <span class="n">offline</span><span class="p">:</span>
+        <span class="c1"># copy the css file to the report directory</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">haddock_ui_path</span> <span class="o">/</span> <span class="s1">&#39;index.css&#39;</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="s2">&quot;../data/ui/index.css&quot;</span><span class="p">)</span>
+        <span class="n">css_link</span> <span class="o">=</span> <span class="s2">&quot;../../data/ui/index.css&quot;</span>
+    <span class="n">table_css</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39; &lt;link href=&quot;</span><span class="si">{</span><span class="n">css_link</span><span class="si">}</span><span class="s1">&quot; rel=&quot;stylesheet&quot; /&gt;&#39;</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_css</span><span class="si">}</span><span class="s2">&lt;style&gt;</span><span class="si">{</span><span class="n">custom_css</span><span class="si">}</span><span class="s2">&lt;/style&gt;&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">_generate_html_report</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">figures</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_generate_html_report</span><span class="p">(</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">figures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
+        <span class="n">report_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate an HTML report for a specific step of analysis, including figures.</span>
 
@@ -1083,6 +1143,8 @@
 <span class="sd">        A list of figures to include in the HTML body.</span>
 <span class="sd">        Each figure can be either a string representing a table or a</span>
 <span class="sd">        plotly.graph_objects.Figure object.</span>
+<span class="sd">    offline : bool</span>
+<span class="sd">        If True, the HTML will be generated for offline use.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1090,13 +1152,13 @@
 <span class="sd">        The generated HTML report as a string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">html_report</span> <span class="o">=</span> <span class="s2">&quot;&lt;!DOCTYPE html&gt;&lt;html lang=&#39;en&#39;&gt;&quot;</span>
-    <span class="n">html_report</span> <span class="o">+=</span> <span class="n">_generate_html_head</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-    <span class="n">html_report</span> <span class="o">+=</span> <span class="n">_generate_html_body</span><span class="p">(</span><span class="n">figures</span><span class="p">)</span>
+    <span class="n">html_report</span> <span class="o">+=</span> <span class="n">_generate_html_head</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">offline</span><span class="p">)</span>
+    <span class="n">html_report</span> <span class="o">+=</span> <span class="n">_generate_html_body</span><span class="p">(</span><span class="n">figures</span><span class="p">,</span> <span class="n">report_path</span><span class="p">,</span> <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">)</span>
     <span class="n">html_report</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/html&gt;&quot;</span>
     <span class="k">return</span> <span class="n">html_report</span>
 
 
-<span class="k">def</span> <span class="nf">_generate_html_head</span><span class="p">(</span><span class="n">step</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_generate_html_head</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">offline</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the HTML head section for an analysis report.</span>
 
@@ -1104,6 +1166,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    step : str</span>
 <span class="sd">        The step number.</span>
+<span class="sd">    offline : bool</span>
+<span class="sd">        If True, the HTML will be generated for offline use.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1113,17 +1177,7 @@
     <span class="n">head</span> <span class="o">=</span> <span class="s2">&quot;&lt;head&gt;&quot;</span>
     <span class="n">head</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;title&gt;Analysis report of step </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&lt;/title&gt;&quot;</span>
     <span class="n">head</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;p class=&#39;title&#39;&gt;Analysis report of step </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
-    <span class="n">head</span> <span class="o">+=</span> <span class="n">_css_styles_for_report</span><span class="p">()</span>
-    <span class="n">head</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            &lt;script type=&quot;importmap&quot;&gt;</span>
-<span class="s2">            {</span>
-<span class="s2">                &quot;imports&quot;: {</span>
-<span class="s2">                    &quot;react&quot;: &quot;https://esm.sh/react@^18.2.0&quot;,</span>
-<span class="s2">                    &quot;react-dom&quot;: &quot;https://esm.sh/react-dom@^18.2.0&quot;,</span>
-<span class="s2">                    &quot;@i-vresse/haddock3-analysis-components&quot;: &quot;https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1?bundle&quot;</span>
-<span class="s2">                }</span>
-<span class="s2">            }</span>
-<span class="s2">            &lt;/script&gt;&quot;&quot;&quot;</span>  <span class="c1"># noqa : E501</span>
+    <span class="n">head</span> <span class="o">+=</span> <span class="n">_css_styles_for_report</span><span class="p">(</span><span class="n">offline</span><span class="p">)</span>
     <span class="n">head</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/head&gt;&quot;</span>
     <span class="k">return</span> <span class="n">head</span>
 
@@ -1131,6 +1185,7 @@
 <span class="k">def</span> <span class="nf">_generate_unclustered_table_html</span><span class="p">(</span>
         <span class="n">table_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">bundle_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span>
@@ -1154,21 +1209,18 @@
 <span class="s2">            </span><span class="se">}}</span>
 <span class="s2">            &lt;/script&gt;</span>
 <span class="s2">            &lt;script type=&quot;module&quot;&gt;</span>
-<span class="s2">            import </span><span class="se">{{</span><span class="s2">createRoot</span><span class="se">}}</span><span class="s2"> from &quot;react-dom&quot;</span>
-<span class="s2">            import </span><span class="se">{{</span><span class="s2">createElement</span><span class="se">}}</span><span class="s2"> from &quot;react&quot;</span>
-<span class="s2">            import </span><span class="se">{{</span><span class="s2">StructureTable</span><span class="se">}}</span><span class="s2"> from &quot;@i-vresse/haddock3-analysis-components&quot;</span>
+<span class="s2">            import </span><span class="se">{{</span><span class="s2"> renderStructureTable </span><span class="se">}}</span><span class="s2"> from &quot;</span><span class="si">{</span><span class="n">bundle_url</span><span class="si">}</span><span class="s2">&quot;;</span>
 
 <span class="s2">            const props = JSON.parse(document.getElementById(&quot;data</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&quot;).text)</span>
 
-<span class="s2">            createRoot(document.getElementById(&#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;)).render(</span>
-<span class="s2">                createElement(StructureTable, props)</span>
-<span class="s2">            )</span>
+<span class="s2">            renderStructureTable(document.getElementById(&#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;), props.headers, props.structures)</span>
 <span class="s2">            &lt;/script&gt;&quot;&quot;&quot;</span>  <span class="c1"># noqa : E501</span>
 
 
 <span class="k">def</span> <span class="nf">_generate_clustered_table_html</span><span class="p">(</span>
         <span class="n">table_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">bundle_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
     <span class="n">nr_best_columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1204,19 +1256,18 @@
 <span class="s2">            </span><span class="se">}}</span>
 <span class="s2">            &lt;/script&gt;</span>
 <span class="s2">            &lt;script type=&quot;module&quot;&gt;</span>
-<span class="s2">            import </span><span class="se">{{</span><span class="s2">createRoot</span><span class="se">}}</span><span class="s2"> from &quot;react-dom&quot;</span>
-<span class="s2">            import </span><span class="se">{{</span><span class="s2">createElement</span><span class="se">}}</span><span class="s2"> from &quot;react&quot;</span>
-<span class="s2">            import </span><span class="se">{{</span><span class="s2">ClusterTable</span><span class="se">}}</span><span class="s2"> from &quot;@i-vresse/haddock3-analysis-components&quot;</span>
-
+<span class="s2">            import </span><span class="se">{{</span><span class="s2"> renderClusterTable </span><span class="se">}}</span><span class="s2"> from &quot;</span><span class="si">{</span><span class="n">bundle_url</span><span class="si">}</span><span class="s2">&quot;;</span>
 <span class="s2">            const props = JSON.parse(document.getElementById(&quot;data</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&quot;).text)</span>
 
-<span class="s2">            createRoot(document.getElementById(&#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;)).render(</span>
-<span class="s2">                createElement(ClusterTable, props)</span>
-<span class="s2">            )</span>
+<span class="s2">            renderClusterTable(document.getElementById(&#39;</span><span class="si">{</span><span class="n">table_id</span><span class="si">}</span><span class="s2">&#39;), props.headers, props.clusters);</span>
 <span class="s2">            &lt;/script&gt;&quot;&quot;&quot;</span>  <span class="c1"># noqa : E501</span>
 
 
-<span class="k">def</span> <span class="nf">_generate_html_body</span><span class="p">(</span><span class="n">figures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Figure</span><span class="p">],</span> <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_generate_html_body</span><span class="p">(</span>
+        <span class="n">figures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Figure</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
+        <span class="n">report_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate an HTML body section containing figures for an analysis report.</span>
 
@@ -1226,6 +1277,8 @@
 <span class="sd">        A list of figures to include in the HTML body.</span>
 <span class="sd">        Each figure can be either a string representing a table or a</span>
 <span class="sd">        plotly.graph_objects.Figure object.</span>
+<span class="sd">    offline : bool</span>
+<span class="sd">        If True, the HTML will be generated for offline use.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -1233,26 +1286,32 @@
 <span class="sd">        The generated HTML body as a string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">body</span> <span class="o">=</span> <span class="s2">&quot;&lt;body&gt;&quot;</span>
-    <span class="n">table_index</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">fig_index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">table_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">fig_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">figure</span> <span class="ow">in</span> <span class="n">figures</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figure</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>  <span class="c1"># tables</span>
             <span class="n">table_index</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">table_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;table</span><span class="si">{</span><span class="n">table_index</span><span class="si">}</span><span class="s2">&quot;</span>
 
             <span class="n">is_unclustered</span> <span class="o">=</span> <span class="s1">&#39;cluster_rank&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">figure</span>
+            <span class="n">bundle_url</span> <span class="o">=</span> <span class="s2">&quot;https://cdn.jsdelivr.net/npm/@i-vresse/haddock3-ui@~0.3.0/dist/report.bundle.js&quot;</span>
+            <span class="k">if</span> <span class="n">offline</span><span class="p">:</span>
+                <span class="c1"># copy the bundle to the run_dir folder</span>
+                <span class="n">src</span> <span class="o">=</span> <span class="n">haddock_ui_path</span> <span class="o">/</span> <span class="s1">&#39;report.bundle.js&#39;</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="s2">&quot;../data/ui/report.bundle.js&quot;</span><span class="p">)</span>
+                <span class="n">bundle_url</span> <span class="o">=</span> <span class="s2">&quot;../../data/ui/report.bundle.js&quot;</span>
             <span class="k">if</span> <span class="n">is_unclustered</span><span class="p">:</span>
-                <span class="n">inner_html</span> <span class="o">=</span> <span class="n">_generate_unclustered_table_html</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">figure</span><span class="p">)</span>
+                <span class="n">inner_html</span> <span class="o">=</span> <span class="n">_generate_unclustered_table_html</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">figure</span><span class="p">,</span> <span class="n">bundle_url</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">inner_html</span> <span class="o">=</span> <span class="n">_generate_clustered_table_html</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">figure</span><span class="p">)</span>
+                <span class="n">inner_html</span> <span class="o">=</span> <span class="n">_generate_clustered_table_html</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">figure</span><span class="p">,</span> <span class="n">bundle_url</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># plots</span>
             <span class="n">inner_json</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
             <span class="n">inner_html</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span>
                 <span class="n">inner_json</span><span class="p">,</span>
                 <span class="n">fig_index</span><span class="p">,</span>
-                <span class="n">figure</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
-                <span class="n">figure</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
-                <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
+                <span class="n">plotly_js_import</span><span class="o">=</span><span class="n">offline_js_manager</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="n">offline</span><span class="p">),</span>
+                <span class="n">figure_height</span><span class="o">=</span><span class="n">figure</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+                <span class="n">figure_width</span><span class="o">=</span><span class="n">figure</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">fig_index</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># type: ignore</span>
         <span class="n">body</span> <span class="o">+=</span> <span class="s2">&quot;&lt;br&gt;&quot;</span>  <span class="c1"># add a break between tables and plots</span>
@@ -1261,7 +1320,16 @@
     <span class="k">return</span> <span class="n">body</span>
 
 
-<div class="viewcode-block" id="report_generator"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.report_generator">[docs]</a><span class="k">def</span> <span class="nf">report_generator</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scatters</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="report_generator">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.report_generator">[docs]</a>
+<span class="k">def</span> <span class="nf">report_generator</span><span class="p">(</span>
+        <span class="n">boxes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Figure</span><span class="p">],</span>
+        <span class="n">scatters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Figure</span><span class="p">],</span>
+        <span class="n">tables</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">directory</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a figure include plots and tables.</span>
 
@@ -1276,6 +1344,10 @@
 <span class="sd">        list of scatter plots generated by scatter_plot_handler</span>
 <span class="sd">    table: list</span>
 <span class="sd">        a list including tables generated by clt_table_handler</span>
+<span class="sd">    directory : Path</span>
+<span class="sd">        path to the output folder</span>
+<span class="sd">    offline: bool</span>
+<span class="sd">        If True, the HTML will be generated for offline use.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">figures</span> <span class="o">=</span> <span class="p">[</span><span class="n">tables</span><span class="p">]</span>
     <span class="c1"># Combine scatters</span>
@@ -1289,13 +1361,19 @@
     <span class="c1"># Combine boxes&quot;</span>
     <span class="n">figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">report_plots_handler</span><span class="p">(</span><span class="n">boxes</span><span class="p">))</span>
 
+    <span class="k">if</span> <span class="n">offline</span><span class="p">:</span>
+        <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../data/ui&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="c1"># Write everything to a html file</span>
-    <span class="n">html_report</span> <span class="o">=</span> <span class="n">_generate_html_report</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">figures</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;report.html&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">report</span><span class="p">:</span>
+    <span class="n">report_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="s2">&quot;report.html&quot;</span><span class="p">)</span>
+    <span class="n">html_report</span> <span class="o">=</span> <span class="n">_generate_html_report</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">figures</span><span class="p">,</span> <span class="n">report_path</span><span class="p">,</span> <span class="n">offline</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">report</span><span class="p">:</span>
         <span class="n">report</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html_report</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="heatmap_plotly"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.heatmap_plotly">[docs]</a><span class="k">def</span> <span class="nf">heatmap_plotly</span><span class="p">(</span>
+
+<div class="viewcode-block" id="heatmap_plotly">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.heatmap_plotly">[docs]</a>
+<span class="k">def</span> <span class="nf">heatmap_plotly</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span>
         <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">xlabels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1389,17 +1467,36 @@
     <span class="k">return</span> <span class="n">output_fname</span></div>
 
 
-<div class="viewcode-block" id="export_plotly_figure"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.export_plotly_figure">[docs]</a><span class="k">def</span> <span class="nf">export_plotly_figure</span><span class="p">(</span>
+
+<div class="viewcode-block" id="export_plotly_figure">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.export_plotly_figure">[docs]</a>
+<span class="k">def</span> <span class="nf">export_plotly_figure</span><span class="p">(</span>
         <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span>
         <span class="n">output_fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">figure_height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">figure_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a plotly figure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fig : Figure</span>
+<span class="sd">        The plotly Figure object</span>
+<span class="sd">    output_fname : Union[str, Path]</span>
+<span class="sd">        Where to write it</span>
+<span class="sd">    figure_height : int, optional</span>
+<span class="sd">        Height of the figure (in pixels), by default 1000</span>
+<span class="sd">    figure_width : int, optional</span>
+<span class="sd">        Width of the figure (in pixels), by default 1000</span>
+<span class="sd">    offline : bool, optional</span>
+<span class="sd">        If True add the plotly js library to the file, by default False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Detect output file extension</span>
-    <span class="n">suffix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+    <span class="n">_suffix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="n">_suffix</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="c1"># Check corresponding function</span>
-    <span class="k">if</span> <span class="s1">&#39;html&#39;</span> <span class="ow">in</span> <span class="n">suffix</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
         <span class="n">fig_to_html</span><span class="p">(</span>
             <span class="n">fig</span><span class="p">,</span>
             <span class="n">output_fname</span><span class="p">,</span>
@@ -1407,11 +1504,14 @@
             <span class="n">figure_width</span><span class="o">=</span><span class="n">figure_width</span><span class="p">,</span>
             <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
             <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;.jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;.webp&#39;</span><span class="p">,</span> <span class="s1">&#39;.svg&#39;</span><span class="p">,</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;.eps&#39;</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">elif</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="n">SUPPORTED_OUTPUT_FORMATS</span><span class="p">:</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">write_image</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span></div>
+
     
   
-<div class="viewcode-block" id="make_alascan_plot"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.make_alascan_plot">[docs]</a><span class="k">def</span> <span class="nf">make_alascan_plot</span><span class="p">(</span>
+<div class="viewcode-block" id="make_alascan_plot">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.make_alascan_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">make_alascan_plot</span><span class="p">(</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">clt_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">scan_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ALA&quot;</span><span class="p">,</span>
@@ -1507,7 +1607,10 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="fig_to_html"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.fig_to_html">[docs]</a><span class="k">def</span> <span class="nf">fig_to_html</span><span class="p">(</span>
+
+<div class="viewcode-block" id="fig_to_html">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.fig_to_html">[docs]</a>
+<span class="k">def</span> <span class="nf">fig_to_html</span><span class="p">(</span>
         <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span>
         <span class="n">fpath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">plot_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -1519,17 +1622,21 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
+<span class="sd">    fig : Figure</span>
+<span class="sd">        A Figure object created by Plotly</span>
+<span class="sd">    fpath : Union[str, Path]</span>
+<span class="sd">        Where to write the content</span>
 <span class="sd">    json_content : str</span>
 <span class="sd">        plotly json content</span>
-<span class="sd">    </span>
 <span class="sd">    plot_id : int</span>
 <span class="sd">        plot id to be used in the html content</span>
-<span class="sd">    </span>
 <span class="sd">    figure_height : int</span>
 <span class="sd">        figure height (in pixels)</span>
-<span class="sd">    </span>
 <span class="sd">    figure_width : int</span>
 <span class="sd">        figure width (in pixels)</span>
+<span class="sd">    offline : bool</span>
+<span class="sd">        If set to False, use the cdn url to obtain the javascript content</span>
+<span class="sd">        for the rendering.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Convert to json</span>
     <span class="n">json_content</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
@@ -1537,15 +1644,54 @@
     <span class="n">html_content</span> <span class="o">=</span> <span class="n">create_html</span><span class="p">(</span>
         <span class="n">json_content</span><span class="p">,</span>
         <span class="n">plot_id</span><span class="o">=</span><span class="n">plot_id</span><span class="p">,</span>
+        <span class="n">plotly_js_import</span><span class="o">=</span><span class="n">offline_js_manager</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">offline</span><span class="p">),</span>
         <span class="n">figure_height</span><span class="o">=</span><span class="n">figure_height</span><span class="p">,</span>
         <span class="n">figure_width</span><span class="o">=</span><span class="n">figure_width</span><span class="p">,</span>
-        <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="c1"># Write it</span>
     <span class="n">Path</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">html_content</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="make_traceback_plot"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.make_traceback_plot">[docs]</a><span class="k">def</span> <span class="nf">make_traceback_plot</span><span class="p">(</span><span class="n">tr_subset</span><span class="p">,</span> <span class="n">plot_filename</span><span class="p">):</span>
+
+<div class="viewcode-block" id="offline_js_manager">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.offline_js_manager">[docs]</a>
+<span class="k">def</span> <span class="nf">offline_js_manager</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build string to access plotly javascript content.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fpath : FilePath</span>
+<span class="sd">        Path to the figure about to be written.</span>
+<span class="sd">    offline : bool</span>
+<span class="sd">        if True use the offline approach.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    plotly_js_import : str</span>
+<span class="sd">        HTML solution for the importation of the plotly javascript content.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Case where offline isrequired</span>
+    <span class="k">if</span> <span class="n">offline</span><span class="p">:</span>
+        <span class="c1"># Obtain directory where the figure should be written</span>
+        <span class="n">fig_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+        <span class="c1"># Set plotly js filepath</span>
+        <span class="n">plotly_js_fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fig_dir</span><span class="p">,</span> <span class="s2">&quot;plotly_bundle.js&quot;</span><span class="p">)</span>
+        <span class="c1"># Check that this file do not already exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plotly_js_fpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># Write the plotly java script content</span>
+            <span class="n">plotly_js_fpath</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">get_plotlyjs</span><span class="p">())</span>
+        <span class="c1"># Build HTML string</span>
+        <span class="n">plotly_js_import</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;script src=&quot;</span><span class="si">{</span><span class="n">plotly_js_fpath</span><span class="si">}</span><span class="s1">&quot;&gt;&lt;/script&gt;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use CDN url to obtain the script</span>
+        <span class="n">plotly_js_import</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;script src=&quot;</span><span class="si">{</span><span class="n">plotly_cdn_url</span><span class="p">()</span><span class="si">}</span><span class="s1">&quot;&gt;&lt;/script&gt;&#39;</span>
+    <span class="k">return</span> <span class="n">plotly_js_import</span></div>
+
+        
+
+<div class="viewcode-block" id="make_traceback_plot">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.make_traceback_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">make_traceback_plot</span><span class="p">(</span><span class="n">tr_subset</span><span class="p">,</span> <span class="n">plot_filename</span><span class="p">,</span> <span class="n">offline</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a traceback barplot with the 40 best ranked models.</span>
 
@@ -1562,28 +1708,33 @@
     <span class="c1"># vertical legend on the right with legend name &#39;Modules&#39;</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">legend_orientation</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">legend_title</span><span class="o">=</span><span class="s2">&quot;Modules&quot;</span><span class="p">)</span>
     <span class="c1"># legend should have bigger font size</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-        <span class="n">title_font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
-        <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
-    <span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+        <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">title_font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+            <span class="n">font_size</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
     <span class="c1"># y axis title &#39;Sum of Ranks&#39;</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">yaxis_title</span><span class="o">=</span><span class="s2">&quot;Sum of Ranks&quot;</span><span class="p">,</span> <span class="n">xaxis_title</span><span class="o">=</span><span class="s2">&quot;Models&quot;</span><span class="p">)</span>
     <span class="c1"># bigger axis labels</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
         <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title_font_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">16</span><span class="p">),</span>
-        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title_font_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">title_font_size</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">16</span><span class="p">),</span>
         <span class="p">)</span>
     <span class="c1"># bigger title</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
         <span class="n">title_text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Top ranked </span><span class="si">{</span><span class="n">tr_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> Models&quot;</span><span class="p">,</span>
         <span class="n">title_font_size</span><span class="o">=</span><span class="mi">30</span>
         <span class="p">)</span>
-    <span class="n">fig_to_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span>
-                <span class="n">plot_filename</span><span class="p">,</span>
-                <span class="n">figure_height</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span>
-                <span class="n">figure_width</span><span class="o">=</span><span class="mi">2000</span>
-                <span class="p">)</span>
+    <span class="n">fig_to_html</span><span class="p">(</span>
+        <span class="n">fig</span><span class="p">,</span>
+        <span class="n">plot_filename</span><span class="p">,</span>
+        <span class="n">figure_height</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span>
+        <span class="n">figure_width</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+        <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">plot_filename</span></div>
+
 </pre></div>
 
            </div>
@@ -1594,7 +1745,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

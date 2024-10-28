@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>All-atom topology module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -53,7 +48,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Topology Modules</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
@@ -106,9 +100,9 @@
            <div itemprop="articleBody">
              
   <section id="all-atom-topology-module">
-<h1>All-atom topology module<a class="headerlink" href="#all-atom-topology-module" title="Permalink to this heading"></a></h1>
+<h1>All-atom topology module<a class="headerlink" href="#all-atom-topology-module" title="Link to this heading"></a></h1>
 <section id="module-haddock.modules.topology.topoaa">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.topology.topoaa" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.topology.topoaa" title="Link to this heading"></a></h2>
 <p>Create and manage CNS all-atom topology.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">[topoaa]</span></code> module is dedicated to the generation of CNS compatible
 parameters (.param) and topologies (.psf) for each of the input structures.</p>
@@ -129,18 +123,18 @@ by the user, as there is currently no built-in solution to generate
 them on the fly.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.topology.topoaa.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/topology/topoaa/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.topology.topoaa.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/haddock/modules/topology/topoaa/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.base_cns_module.BaseCNSModule" title="haddock.modules.base_cns_module.BaseCNSModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCNSModule</span></code></a></p>
 <p>HADDOCK3 module to create CNS all-atom topologies.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
 <dd><p>Confirm if module is installed.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.HaddockModule.get_ensemble_origin">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ensemble_origin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule.get_ensemble_origin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.get_ensemble_origin" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_ensemble_origin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule.get_ensemble_origin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.get_ensemble_origin" title="Link to this definition"></a></dt>
 <dd><p>Try to find origin for each model in ensemble.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -154,30 +148,30 @@ them on the fly.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.HaddockModule.get_md5">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_md5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule.get_md5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.get_md5" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_md5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#HaddockModule.get_md5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.get_md5" title="Link to this definition"></a></dt>
 <dd><p>Get MD5 hash of a multi-model PDB file.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.HaddockModule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'topoaa'</span></em><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'topoaa'</span></em><a class="headerlink" href="#haddock.modules.topology.topoaa.HaddockModule.name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.modules.topology.topoaa.generate_topology">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.topology.topoaa.</span></span><span class="sig-name descname"><span class="pre">generate_topology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipe_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_params_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_to_disk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#generate_topology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.generate_topology" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.modules.topology.topoaa.</span></span><span class="sig-name descname"><span class="pre">generate_topology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipe_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.13)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mol_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.13)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_params_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_to_disk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/topology/topoaa.html#generate_topology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.topology.topoaa.generate_topology" title="Link to this definition"></a></dt>
 <dd><p>Generate a HADDOCK topology file from input_pdb.</p>
 </dd></dl>
 
 </section>
 <section id="default-parameters">
-<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
 <section id="easy">
-<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
+<h3>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h3>
 <section id="delenph">
-<h4>delenph<a class="headerlink" href="#delenph" title="Permalink to this heading"></a></h4>
+<h4>delenph<a class="headerlink" href="#delenph" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -189,7 +183,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="ligand-param-fname">
-<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading"></a></h4>
+<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -201,7 +195,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="ligand-top-fname">
-<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading"></a></h4>
+<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -213,7 +207,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="mol1">
-<h4>mol1<a class="headerlink" href="#mol1" title="Permalink to this heading"></a></h4>
+<h4>mol1<a class="headerlink" href="#mol1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>title</em>: Input molecule configuration</div>
 <div class="line"><em>short description</em>: Specific molecule configuration</div>
@@ -222,7 +216,7 @@ them on the fly.</p>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 <section id="mol1-cyclicpept">
-<h5>mol1.cyclicpept<a class="headerlink" href="#mol1-cyclicpept" title="Permalink to this heading"></a></h5>
+<h5>mol1.cyclicpept<a class="headerlink" href="#mol1-cyclicpept" title="Link to this heading"></a></h5>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -234,7 +228,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="mol1-hisd-1">
-<h5>mol1.hisd_1<a class="headerlink" href="#mol1-hisd-1" title="Permalink to this heading"></a></h5>
+<h5>mol1.hisd_1<a class="headerlink" href="#mol1-hisd-1" title="Link to this heading"></a></h5>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -248,7 +242,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="mol1-hise-1">
-<h5>mol1.hise_1<a class="headerlink" href="#mol1-hise-1" title="Permalink to this heading"></a></h5>
+<h5>mol1.hise_1<a class="headerlink" href="#mol1-hise-1" title="Link to this heading"></a></h5>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -262,7 +256,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="mol1-nhisd">
-<h5>mol1.nhisd<a class="headerlink" href="#mol1-nhisd" title="Permalink to this heading"></a></h5>
+<h5>mol1.nhisd<a class="headerlink" href="#mol1-nhisd" title="Link to this heading"></a></h5>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -276,7 +270,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="mol1-nhise">
-<h5>mol1.nhise<a class="headerlink" href="#mol1-nhise" title="Permalink to this heading"></a></h5>
+<h5>mol1.nhise<a class="headerlink" href="#mol1-nhise" title="Link to this heading"></a></h5>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -292,9 +286,9 @@ them on the fly.</p>
 </section>
 </section>
 <section id="expert">
-<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this heading"></a></h3>
+<h3>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h3>
 <section id="autohis">
-<h4>autohis<a class="headerlink" href="#autohis" title="Permalink to this heading"></a></h4>
+<h4>autohis<a class="headerlink" href="#autohis" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -306,7 +300,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="limit">
-<h4>limit<a class="headerlink" href="#limit" title="Permalink to this heading"></a></h4>
+<h4>limit<a class="headerlink" href="#limit" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -318,7 +312,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="set-bfactor">
-<h4>set_bfactor<a class="headerlink" href="#set-bfactor" title="Permalink to this heading"></a></h4>
+<h4>set_bfactor<a class="headerlink" href="#set-bfactor" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -330,7 +324,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="tolerance">
-<h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading"></a></h4>
+<h4>tolerance<a class="headerlink" href="#tolerance" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -345,9 +339,9 @@ them on the fly.</p>
 </section>
 </section>
 <section id="guru">
-<h3>Guru<a class="headerlink" href="#guru" title="Permalink to this heading"></a></h3>
+<h3>Guru<a class="headerlink" href="#guru" title="Link to this heading"></a></h3>
 <section id="cyclicpept-dist">
-<h4>cyclicpept_dist<a class="headerlink" href="#cyclicpept-dist" title="Permalink to this heading"></a></h4>
+<h4>cyclicpept_dist<a class="headerlink" href="#cyclicpept-dist" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 2.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -361,7 +355,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="disulphide-dist">
-<h4>disulphide_dist<a class="headerlink" href="#disulphide-dist" title="Permalink to this heading"></a></h4>
+<h4>disulphide_dist<a class="headerlink" href="#disulphide-dist" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 2.2</div>
 <div class="line"><em>type</em>: float</div>
@@ -375,7 +369,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="iniseed">
-<h4>iniseed<a class="headerlink" href="#iniseed" title="Permalink to this heading"></a></h4>
+<h4>iniseed<a class="headerlink" href="#iniseed" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 917</div>
 <div class="line"><em>type</em>: integer</div>
@@ -389,7 +383,7 @@ them on the fly.</p>
 </div>
 </section>
 <section id="log-level">
-<h4>log_level<a class="headerlink" href="#log-level" title="Permalink to this heading"></a></h4>
+<h4>log_level<a class="headerlink" href="#log-level" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘quiet’</div>
 <div class="line"><em>type</em>: string</div>
@@ -417,7 +411,7 @@ them on the fly.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

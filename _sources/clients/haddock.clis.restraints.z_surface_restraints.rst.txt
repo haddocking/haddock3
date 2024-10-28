@@ -1,0 +1,7 @@
+haddock.clis.restraints.z\_surface\_restraints module
+=====================================================
+
+.. automodule:: haddock.clis.restraints.z_surface_restraints
+   :members:
+   :undoc-members:
+   :show-inheritance:

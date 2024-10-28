@@ -1,28 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>libmath: Math helping functions &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="libmpi: MPI execution functions" href="haddock.libs.libmpi.html" />
-    <link rel="prev" title="liblog: Logging helping functions" href="haddock.libs.liblog.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +32,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -47,51 +40,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="haddock.libs.html">Libs Reference</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="haddock.libs.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libalign.html">libalign: sequence and structural alignments</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcli.html">libcli: functions helping clients</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libclust.html">libclust: functions related to clustering</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcns.html">libcns: creating CNS files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfcc.html">haddock.libs.libfcc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfunc.html">libfunc: functional-programming helping tools</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libhpc.html">libhpc: HPC execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libinteractive.html">libinteractive: functions related to interactive tasks</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libio.html">libio: I/O helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.liblog.html">liblog: Logging helping functions</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">libmath: Math helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmpi.html">libmpi: MPI execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libontology.html">libontology: module communication</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libparallel.html">libparallel: multiprocessing helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libpdb.html">libpdb: PDB helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libplots.html">libplots: plotting functionalities</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.librestraints.html">librestraints: functions related to restraints</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libstructure.html">libstructure: functions related to structures</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libsubprocess.html">libsubprocess: subprocess execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libtimer.html">libtimer: timing functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libutil.html">libutil: utility functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libworkflow.html">libworkflow: workflow functions</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.libs.html#module-haddock.libs">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../gear/haddock.gear.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Library Reference</a></li>
 </ul>
 
         </div>
@@ -108,8 +67,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
-          <li class="breadcrumb-item"><a href="haddock.libs.html">Libs Reference</a></li>
       <li class="breadcrumb-item active">libmath: Math helping functions</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/reference/libs/haddock.libs.libmath.rst.txt" rel="nofollow"> View page source</a>
@@ -121,18 +78,18 @@
            <div itemprop="articleBody">
              
   <section id="libmath-math-helping-functions">
-<h1>libmath: Math helping functions<a class="headerlink" href="#libmath-math-helping-functions" title="Permalink to this heading"></a></h1>
-<span class="target" id="module-haddock.libs.libmath"></span><p>Mathematical functions.</p>
+<h1>libmath: Math helping functions<a class="headerlink" href="#libmath-math-helping-functions" title="Link to this heading"></a></h1>
+<p id="module-haddock.libs.libmath">Mathematical functions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.libs.libmath.RandomNumberGenerator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libmath.</span></span><span class="sig-name descname"><span class="pre">RandomNumberGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">494</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libmath.html#RandomNumberGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libmath.RandomNumberGenerator" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libmath.</span></span><span class="sig-name descname"><span class="pre">RandomNumberGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">494</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libmath.html#RandomNumberGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libmath.RandomNumberGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Generate random numbers.</p>
 <p>Python uses the Mersenne Twister as the core generator.
 It produces 53-bit precision floats and has a period of 2**19937-1</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.libs.libmath.RandomNumberGenerator.randint">
-<span class="sig-name descname"><span class="pre">randint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lower_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libmath.html#RandomNumberGenerator.randint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libmath.RandomNumberGenerator.randint" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">randint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lower_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libmath.html#RandomNumberGenerator.randint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libmath.RandomNumberGenerator.randint" title="Link to this definition"></a></dt>
 <dd><p>Generate a random integer.</p>
 </dd></dl>
 
@@ -143,16 +100,13 @@ It produces 53-bit precision floats and has a period of 2**19937-1</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="haddock.libs.liblog.html" class="btn btn-neutral float-left" title="liblog: Logging helping functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="haddock.libs.libmpi.html" class="btn btn-neutral float-right" title="libmpi: MPI execution functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

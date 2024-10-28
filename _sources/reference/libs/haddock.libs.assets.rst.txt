@@ -1,0 +1,10 @@
+haddock.libs.assets package
+===========================
+
+Module contents
+---------------
+
+.. automodule:: haddock.libs.assets
+   :members:
+   :undoc-members:
+   :show-inheritance:

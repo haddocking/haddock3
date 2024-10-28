@@ -1,0 +1,31 @@
+haddock.gear package
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.gear.clean_steps
+   haddock.gear.config
+   haddock.gear.expandable_parameters
+   haddock.gear.extend_run
+   haddock.gear.greetings
+   haddock.gear.haddockmodel
+   haddock.gear.known_cns_errors
+   haddock.gear.parameters
+   haddock.gear.prepare_run
+   haddock.gear.preprocessing
+   haddock.gear.restart_run
+   haddock.gear.validations
+   haddock.gear.yaml2cfg
+   haddock.gear.zerofill
+
+Module contents
+---------------
+
+.. automodule:: haddock.gear
+   :members:
+   :undoc-members:
+   :show-inheritance:

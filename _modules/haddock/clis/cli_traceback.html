@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_traceback &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -101,9 +95,9 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span>
 <span class="kn">from</span> <span class="nn">haddock.libs</span> <span class="kn">import</span> <span class="n">libcli</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libplots</span> <span class="kn">import</span> <span class="n">make_traceback_plot</span>
@@ -113,7 +107,9 @@
 <span class="n">TRACK_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;traceback&quot;</span>  <span class="c1"># name of the traceback folder</span>
 
 
-<div class="viewcode-block" id="get_steps_without_pdbs"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.get_steps_without_pdbs">[docs]</a><span class="k">def</span> <span class="nf">get_steps_without_pdbs</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">all_steps</span><span class="p">):</span>
+<div class="viewcode-block" id="get_steps_without_pdbs">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.get_steps_without_pdbs">[docs]</a>
+<span class="k">def</span> <span class="nf">get_steps_without_pdbs</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">all_steps</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the modules that do not produce PDB files.</span>
 
@@ -143,7 +139,10 @@
     <span class="k">return</span> <span class="n">steps_without_pdbs</span></div>
 
 
-<div class="viewcode-block" id="get_ori_names"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.get_ori_names">[docs]</a><span class="k">def</span> <span class="nf">get_ori_names</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pdbfile</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">max_topo_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="get_ori_names">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.get_ori_names">[docs]</a>
+<span class="k">def</span> <span class="nf">get_ori_names</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pdbfile</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">max_topo_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the original name(s) of the PDB file.</span>
 
@@ -178,9 +177,12 @@
     <span class="k">return</span> <span class="n">ori_names</span><span class="p">,</span> <span class="n">max_topo_len</span></div>
 
 
-<div class="viewcode-block" id="traceback_dataframe"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.traceback_dataframe">[docs]</a><span class="k">def</span> <span class="nf">traceback_dataframe</span><span class="p">(</span>
+
+<div class="viewcode-block" id="traceback_dataframe">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.traceback_dataframe">[docs]</a>
+<span class="k">def</span> <span class="nf">traceback_dataframe</span><span class="p">(</span>
     <span class="n">data_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">rank_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">max_topo_len</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create traceback dataframe by combining together ranks and data.</span>
 
@@ -227,7 +229,10 @@
     <span class="k">return</span> <span class="n">df_ord</span></div>
 
 
-<div class="viewcode-block" id="order_traceback_df"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.order_traceback_df">[docs]</a><span class="k">def</span> <span class="nf">order_traceback_df</span><span class="p">(</span><span class="n">df_output</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">):</span>
+
+<div class="viewcode-block" id="order_traceback_df">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.order_traceback_df">[docs]</a>
+<span class="k">def</span> <span class="nf">order_traceback_df</span><span class="p">(</span><span class="n">df_output</span><span class="p">,</span> <span class="n">sel_step</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Order the traceback dataframe. Each step is ordered by rank.</span>
 
@@ -262,7 +267,10 @@
     <span class="k">return</span> <span class="n">df_output</span></div>
 
 
-<div class="viewcode-block" id="subset_traceback"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.subset_traceback">[docs]</a><span class="k">def</span> <span class="nf">subset_traceback</span><span class="p">(</span><span class="n">traceback_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cons_filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="subset_traceback">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.subset_traceback">[docs]</a>
+<span class="k">def</span> <span class="nf">subset_traceback</span><span class="p">(</span><span class="n">traceback_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cons_filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a subset the traceback dataframe with the top 40 models.</span>
 
@@ -302,6 +310,7 @@
     <span class="k">return</span> <span class="n">rank_data_subset</span></div>
 
 
+
 <span class="c1"># Command line interface parser</span>
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
     <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;haddock3-traceback&quot;</span><span class="p">,</span>
@@ -312,23 +321,34 @@
 <span class="n">libcli</span><span class="o">.</span><span class="n">add_rundir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="load_args"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.load_args">[docs]</a><span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
+<div class="viewcode-block" id="load_args">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.load_args">[docs]</a>
+<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="cli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.cli">[docs]</a><span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">):</span>
+
+<div class="viewcode-block" id="cli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.cli">[docs]</a>
+<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
     <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="n">cmd</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="maincli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.maincli">[docs]</a><span class="k">def</span> <span class="nf">maincli</span><span class="p">():</span>
+
+<div class="viewcode-block" id="maincli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.maincli">[docs]</a>
+<span class="k">def</span> <span class="nf">maincli</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
     <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_traceback.html#haddock.clis.cli_traceback.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">run_dir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Traceback CLI.</span>
 
@@ -448,8 +468,9 @@
 
     <span class="c1"># plotting the traceback dataframe</span>
     <span class="n">plot_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">TRACK_FOLDER</span><span class="p">,</span> <span class="s2">&quot;traceback.html&quot;</span><span class="p">)</span>
-    <span class="n">make_traceback_plot</span><span class="p">(</span><span class="n">rank_data_subset</span><span class="p">,</span> <span class="n">plot_filename</span><span class="p">)</span>
+    <span class="n">make_traceback_plot</span><span class="p">(</span><span class="n">rank_data_subset</span><span class="p">,</span> <span class="n">plot_filename</span><span class="p">,</span> <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">)</span>
     <span class="k">return</span></div>
+
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
@@ -464,7 +485,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

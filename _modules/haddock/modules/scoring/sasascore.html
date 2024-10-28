@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.scoring.sasascore &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../haddock.html">haddock</a></li>
+          <li class="breadcrumb-item"><a href="../../modules.html">haddock.modules</a></li>
+          <li class="breadcrumb-item"><a href="../scoring.html">haddock.modules.scoring</a></li>
+      <li class="breadcrumb-item active">haddock.modules.scoring.sasascore</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules.scoring.sasascore</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Surface accessibility scoring module.</span>
+
+<span class="sd">This module performs a solvent accessibility analysis based on </span>
+<span class="sd">some user-defined residues that should be buried or accessible.</span>
+
+<span class="sd">If a supposedly buried (resp. accessible) residue is accessible (resp. buried),</span>
+<span class="sd">the score should increase by one. The lower the final score the more consistent</span>
+<span class="sd">the model with the user data.</span>
+
+<span class="sd">To run this module, the user must provide a dictionary with the buried and/or accessible</span>
+<span class="sd">residues. The keys of the dictionary should be the chain identifiers and the values</span>
+<span class="sd">should be lists of residue numbers.</span>
+
+<span class="sd">Example:</span>
+
+<span class="sd">&gt;&gt;&gt; resdic_buried_A: [1, 2, 3]</span>
+<span class="sd">&gt;&gt;&gt; resdic_accessible_B: [4, 5, 6]</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.scoring</span> <span class="kn">import</span> <span class="n">ScoringModule</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">parse_ncores</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">get_index_list</span><span class="p">,</span> <span class="n">Scheduler</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.scoring.sasascore.sasascore</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AccScore</span><span class="p">,</span>
+    <span class="n">extract_data_from_accscore_class</span>
+    <span class="p">)</span>
+
+<span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HaddockModule">
+<a class="viewcode-back" href="../../../../modules/scoring/haddock.modules.scoring.sasascore.html#haddock.modules.scoring.sasascore.HaddockModule">[docs]</a>
+<span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">ScoringModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module to perform accessibility scoring.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                 <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+                 <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HaddockModule.confirm_installation">
+<a class="viewcode-back" href="../../../../modules/scoring/haddock.modules.scoring.sasascore.html#haddock.modules.scoring.sasascore.HaddockModule.confirm_installation">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm module is installed.&quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">models_to_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span>
+                <span class="n">individualize</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;mpi&quot;</span><span class="p">:</span>
+            <span class="n">input_ncores_slurm</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;SLURM_CPUS_ON_NODE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">input_ncores_pbs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;PBS_CPUS_ON_NODE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">ncores</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">input_ncores_slurm</span><span class="p">,</span> <span class="n">input_ncores_pbs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ncores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">]</span>
+        <span class="c1"># loading buried and accessible residue dictionaries</span>
+        <span class="n">buried_resdic</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+            <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;resdic_buried&quot;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="n">acc_resdic</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+            <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;resdic_accessible&quot;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="c1"># remove _</span>
+        <span class="n">buried_resdic</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">acc_resdic</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># initialize jobs</span>
+        <span class="n">sasascore_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AccScore</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model_to_be_evaluated</span> <span class="ow">in</span> <span class="n">models_to_score</span><span class="p">:</span>
+            <span class="n">accscore_obj</span> <span class="o">=</span> <span class="n">AccScore</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model_to_be_evaluated</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
+                <span class="n">buried_resdic</span><span class="o">=</span><span class="n">buried_resdic</span><span class="p">,</span>
+                <span class="n">acc_resdic</span><span class="o">=</span><span class="n">acc_resdic</span><span class="p">,</span>
+                <span class="n">cutoff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cutoff&quot;</span><span class="p">],</span>
+                <span class="n">probe_radius</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;probe_radius&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="n">sasascore_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accscore_obj</span><span class="p">)</span>
+            <span class="c1"># append model to output models</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_to_be_evaluated</span><span class="p">)</span>
+        
+        <span class="c1"># Run sasascore Jobs using Scheduler</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">Scheduler</span><span class="p">(</span>
+            <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span><span class="p">,</span>
+            <span class="n">tasks</span><span class="o">=</span><span class="n">sasascore_jobs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># extract results and overwrite scores</span>
+        <span class="n">sasascore_jobs</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">results</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">):</span>
+            <span class="n">pdb</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">sasascore_jobs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">output_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;sasascore.tsv&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+
+        <span class="c1"># now violations</span>
+        <span class="n">viol_output_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;violations.tsv&quot;</span><span class="p">)</span>
+        <span class="n">extract_data_from_accscore_class</span><span class="p">(</span>
+            <span class="n">sasascore_objects</span><span class="o">=</span><span class="n">sasascore_jobs</span><span class="p">,</span>
+            <span class="n">violations_output_fname</span><span class="o">=</span><span class="n">viol_output_name</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

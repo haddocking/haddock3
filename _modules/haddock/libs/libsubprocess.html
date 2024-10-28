@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libsubprocess &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -103,7 +97,9 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">gzip_files</span>
 
 
-<div class="viewcode-block" id="BaseJob"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.BaseJob">[docs]</a><span class="k">class</span> <span class="nc">BaseJob</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseJob">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.BaseJob">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for a subprocess job.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -115,7 +111,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span>
 
-<div class="viewcode-block" id="BaseJob.run"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.BaseJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseJob.run">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.BaseJob.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">make_cmd</span><span class="p">()</span>
 
@@ -134,12 +132,19 @@
 
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="BaseJob.make_cmd"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.BaseJob.make_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BaseJob.make_cmd">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.BaseJob.make_cmd">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute subprocess job.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Job"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.Job">[docs]</a><span class="k">class</span> <span class="nc">Job</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Job">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.Job">[docs]</a>
+<span class="k">class</span> <span class="nc">Job</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a standard job.</span>
 
@@ -148,7 +153,9 @@
 <span class="sd">        $ cmd ARGS INPUT</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Job.make_cmd"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.Job.make_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Job.make_cmd">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.Job.make_cmd">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute subprocess job.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span>
@@ -157,10 +164,14 @@
                 <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">),</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">return</span></div></div>
+        <span class="k">return</span></div>
+</div>
 
 
-<div class="viewcode-block" id="JobInputFirst"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.JobInputFirst">[docs]</a><span class="k">class</span> <span class="nc">JobInputFirst</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
+
+<div class="viewcode-block" id="JobInputFirst">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.JobInputFirst">[docs]</a>
+<span class="k">class</span> <span class="nc">JobInputFirst</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a subprocess job with inverted args and input.</span>
 
@@ -169,7 +180,9 @@
 <span class="sd">        $ cmd INPUT ARGS</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="JobInputFirst.make_cmd"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.JobInputFirst.make_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="JobInputFirst.make_cmd">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.JobInputFirst.make_cmd">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span>
@@ -178,10 +191,14 @@
                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)),</span>  <span class="c1"># empty string if no args</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">return</span></div></div>
+        <span class="k">return</span></div>
+</div>
 
 
-<div class="viewcode-block" id="CNSJob"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob">[docs]</a><span class="k">class</span> <span class="nc">CNSJob</span><span class="p">:</span>
+
+<div class="viewcode-block" id="CNSJob">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob">[docs]</a>
+<span class="k">class</span> <span class="nc">CNSJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A CNS job script.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -263,7 +280,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cns_exec</span> <span class="o">=</span> <span class="n">cns_exec_path</span>
 
-<div class="viewcode-block" id="CNSJob.run"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+<div class="viewcode-block" id="CNSJob.run">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">compress_inp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">compress_out</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -343,7 +362,10 @@
         <span class="c1"># Return STDOUT</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="CNSJob.contains_cns_stdout_error"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob.contains_cns_stdout_error">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="CNSJob.contains_cns_stdout_error">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob.contains_cns_stdout_error">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">contains_cns_stdout_error</span><span class="p">(</span><span class="n">out</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="c1"># Decode end of STDOUT</span>
         <span class="c1"># Search in last 24000 characters (300 lines * 80 characters)</span>
@@ -358,7 +380,9 @@
             <span class="c1"># Check if a known error is found</span>
             <span class="k">elif</span> <span class="nb">any</span><span class="p">([</span><span class="n">error</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">KNOWN_CNS_ERRORS</span><span class="o">.</span><span class="n">keys</span><span class="p">()]):</span>
                 <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span></div></div>
+        <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
 </pre></div>
 
            </div>
@@ -369,7 +393,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

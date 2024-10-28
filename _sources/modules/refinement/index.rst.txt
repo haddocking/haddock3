@@ -10,6 +10,7 @@ Subpackages
    haddock.modules.refinement.emref
    haddock.modules.refinement.flexref
    haddock.modules.refinement.mdref
+   haddock.modules.refinement.openmm
 
 Module contents
 ---------------

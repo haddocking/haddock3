@@ -9,6 +9,7 @@ Subpackages
 
    haddock.modules.scoring.emscoring
    haddock.modules.scoring.mdscoring
+   haddock.modules.scoring.sasascore
 
 Module contents
 ---------------

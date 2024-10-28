@@ -936,19 +936,6 @@ kcm
 | *group*: ab initio mode
 | *explevel*: expert
 
-kncs
-~~~~
-
-| *default*: 1.0
-| *type*: float
-| *title*: Force constant for non-crystallographic restraints
-| *min*: 0
-| *max*: 1000
-| *short description*: Force constant for non-crystallographic restraints
-| *long description*: Force constant for non-crystallographic restraints
-| *group*: symmetry
-| *explevel*: expert
-
 ksurf
 ~~~~~
 
@@ -1070,91 +1057,6 @@ nc6sym
 | *max*: 10
 | *short description*: Defines the number of C6 symmetry restraints.
 | *long description*: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_end1_1
-~~~~~~~~~~
-
-| *default*: nan
-| *type*: integer
-| *title*: Residue number of last residue
-| *min*: -9999
-| *max*: 9999
-| *short description*: Residue number of last residue in the first NCS segment
-| *long description*: Residue number of last residue in the first NCS segment
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_end2_1
-~~~~~~~~~~
-
-| *default*: nan
-| *type*: integer
-| *title*: Residue number of last residue
-| *min*: -9999
-| *max*: 9999
-| *short description*: Residue number of last residue in the second NCS segment
-| *long description*: Residue number of last residue in the second NCS segment
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_on
-~~~~~~
-
-| *default*: False
-| *type*: boolean
-| *title*: Non-crystallographic symmetry restraints
-| *short description*: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.
-| *long description*: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation. This does not apply any symmetry between the two molecules but rather defines restraints such as the RMSD between those is 0.
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_seg1_1
-~~~~~~~~~~
-
-| *default*: ''
-| *type*: string
-| *title*: Segment ID of first NCS segment
-| *short description*: Segment ID of first NCS segment
-| *long description*: Segment ID of first NCS segment
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_seg2_1
-~~~~~~~~~~
-
-| *default*: ''
-| *type*: string
-| *title*: Segment ID of second NCS segment
-| *short description*: Segment ID of second NCS segment
-| *long description*: Segment ID of second NCS segment
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_sta1_1
-~~~~~~~~~~
-
-| *default*: nan
-| *type*: integer
-| *title*: Residue number of first residue
-| *min*: -9999
-| *max*: 9999
-| *short description*: Residue number of first residue in the first NCS segment
-| *long description*: Residue number of first residue in the first NCS segment
-| *group*: symmetry
-| *explevel*: expert
-
-ncs_sta2_1
-~~~~~~~~~~
-
-| *default*: nan
-| *type*: integer
-| *title*: Residue number of first residue
-| *min*: -9999
-| *max*: 9999
-| *short description*: Residue number of first residue in the second NCS segment
-| *long description*: Residue number of first residue in the second NCS segment
 | *group*: symmetry
 | *explevel*: expert
 

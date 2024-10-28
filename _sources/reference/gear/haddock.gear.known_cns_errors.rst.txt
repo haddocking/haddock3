@@ -1,4 +1,4 @@
-haddock.gear.known\_cns\_errors module
+Known CNS errors
 ======================================
 
 .. automodule:: haddock.gear.known_cns_errors

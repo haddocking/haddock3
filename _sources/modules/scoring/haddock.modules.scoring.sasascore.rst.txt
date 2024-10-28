@@ -1,0 +1,23 @@
+Surface Accessibility Scoring module
+=========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.scoring.sasascore.sasascore
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.scoring.sasascore
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/sasascore.rst
+

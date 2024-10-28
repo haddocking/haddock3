@@ -1,28 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>libtimer: timing functions &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="libutil: utility functions" href="haddock.libs.libutil.html" />
-    <link rel="prev" title="libsubprocess: subprocess execution functions" href="haddock.libs.libsubprocess.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +32,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -47,51 +40,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="haddock.libs.html">Libs Reference</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="haddock.libs.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libalign.html">libalign: sequence and structural alignments</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcli.html">libcli: functions helping clients</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libclust.html">libclust: functions related to clustering</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcns.html">libcns: creating CNS files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfcc.html">haddock.libs.libfcc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfunc.html">libfunc: functional-programming helping tools</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libhpc.html">libhpc: HPC execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libinteractive.html">libinteractive: functions related to interactive tasks</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libio.html">libio: I/O helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.liblog.html">liblog: Logging helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmath.html">libmath: Math helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmpi.html">libmpi: MPI execution functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libontology.html">libontology: module communication</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libparallel.html">libparallel: multiprocessing helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libpdb.html">libpdb: PDB helping functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libplots.html">libplots: plotting functionalities</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.librestraints.html">librestraints: functions related to restraints</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libstructure.html">libstructure: functions related to structures</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libsubprocess.html">libsubprocess: subprocess execution functions</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">libtimer: timing functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libutil.html">libutil: utility functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libworkflow.html">libworkflow: workflow functions</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.libs.html#module-haddock.libs">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../gear/haddock.gear.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Library Reference</a></li>
 </ul>
 
         </div>
@@ -108,8 +67,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
-          <li class="breadcrumb-item"><a href="haddock.libs.html">Libs Reference</a></li>
       <li class="breadcrumb-item active">libtimer: timing functions</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/reference/libs/haddock.libs.libtimer.rst.txt" rel="nofollow"> View page source</a>
@@ -121,11 +78,11 @@
            <div itemprop="articleBody">
              
   <section id="module-haddock.libs.libtimer">
-<span id="libtimer-timing-functions"></span><h1>libtimer: timing functions<a class="headerlink" href="#module-haddock.libs.libtimer" title="Permalink to this heading"></a></h1>
+<span id="libtimer-timing-functions"></span><h1>libtimer: timing functions<a class="headerlink" href="#module-haddock.libs.libtimer" title="Link to this heading"></a></h1>
 <p>Tools related to timing functions.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libtimer.convert_seconds_to_min_sec">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libtimer.</span></span><span class="sig-name descname"><span class="pre">convert_seconds_to_min_sec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libtimer.html#convert_seconds_to_min_sec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libtimer.convert_seconds_to_min_sec" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libtimer.</span></span><span class="sig-name descname"><span class="pre">convert_seconds_to_min_sec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libtimer.html#convert_seconds_to_min_sec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libtimer.convert_seconds_to_min_sec" title="Link to this definition"></a></dt>
 <dd><p>Convert seconds to min&amp;sec.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">convert_seconds_to_min_sec</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
@@ -152,7 +109,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libtimer.log_time">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libtimer.</span></span><span class="sig-name descname"><span class="pre">log_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre_msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.12)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libtimer.html#log_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libtimer.log_time" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libtimer.</span></span><span class="sig-name descname"><span class="pre">log_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pre_msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libtimer.html#log_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libtimer.log_time" title="Link to this definition"></a></dt>
 <dd><p>Log the time taken to execute the code under the context.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">log_time</span><span class="p">(</span><span class="s2">&quot;function took&quot;</span><span class="p">):</span>
@@ -177,16 +134,13 @@
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="haddock.libs.libsubprocess.html" class="btn btn-neutral float-left" title="libsubprocess: subprocess execution functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="haddock.libs.libutil.html" class="btn btn-neutral float-right" title="libutil: utility functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

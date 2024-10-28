@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_analyse &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -126,7 +120,7 @@
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">ParamDict</span><span class="p">,</span>
     <span class="n">ParamMap</span><span class="p">,</span>
-<span class="p">)</span>
+    <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.clean_steps</span> <span class="kn">import</span> <span class="n">_unpack_gz</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libcli</span> <span class="kn">import</span> <span class="n">_ParamsToDict</span>
@@ -139,10 +133,12 @@
     <span class="n">read_capri_table</span><span class="p">,</span>
     <span class="n">report_generator</span><span class="p">,</span>
     <span class="n">scatter_plot_handler</span><span class="p">,</span>
-<span class="p">)</span>
+    <span class="n">SUPPORTED_OUTPUT_FORMATS</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval</span> <span class="kn">import</span> <span class="n">DEFAULT_CONFIG</span> <span class="k">as</span> <span class="n">caprieval_params</span>
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">modules_defaults_path</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_CONFIG</span> <span class="k">as</span> <span class="n">caprieval_params</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval</span> <span class="kn">import</span> <span class="n">HaddockModule</span>
 
 
@@ -150,7 +146,12 @@
 <span class="n">INTER_STR</span> <span class="o">=</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>  <span class="c1"># suffix of interactive analysis folders</span>
 
 
-<div class="viewcode-block" id="get_cluster_ranking"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.get_cluster_ranking">[docs]</a><span class="k">def</span> <span class="nf">get_cluster_ranking</span><span class="p">(</span><span class="n">capri_clt_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">top_cluster</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClRank</span><span class="p">:</span>
+<div class="viewcode-block" id="get_cluster_ranking">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.get_cluster_ranking">[docs]</a>
+<span class="k">def</span> <span class="nf">get_cluster_ranking</span><span class="p">(</span>
+        <span class="n">capri_clt_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">top_cluster</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClRank</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get capri cluster ranking.</span>
 
@@ -173,7 +174,10 @@
     <span class="k">return</span> <span class="n">cl_ranking</span></div>
 
 
-<div class="viewcode-block" id="update_paths"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.update_paths">[docs]</a><span class="k">def</span> <span class="nf">update_paths</span><span class="p">(</span>
+
+<div class="viewcode-block" id="update_paths">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.update_paths">[docs]</a>
+<span class="k">def</span> <span class="nf">update_paths</span><span class="p">(</span>
     <span class="n">capri_ss_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">toch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;../&quot;</span><span class="p">,</span> <span class="n">toadd</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;../../&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -198,6 +202,7 @@
         <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="n">new_lines</span><span class="p">:</span>
             <span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ln</span><span class="p">)</span>
     <span class="k">return</span></div>
+
 
 
 <span class="c1"># Command line interface parser</span>
@@ -238,7 +243,7 @@
     <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
     <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;webp&quot;</span><span class="p">],</span>
+    <span class="n">choices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">SUPPORTED_OUTPUT_FORMATS</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -250,7 +255,7 @@
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;interactive analysis&quot;</span><span class="p">,</span>
     <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
 
 <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -258,7 +263,7 @@
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;is the directory going to be cleaned?&quot;</span><span class="p">,</span>
     <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -266,7 +271,7 @@
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Should plots js functions be self-contained?&quot;</span><span class="p">,</span>
     <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -306,24 +311,42 @@
     <span class="k">return</span> <span class="n">ap</span>
 
 
-<div class="viewcode-block" id="load_args"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.load_args">[docs]</a><span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
+<div class="viewcode-block" id="load_args">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.load_args">[docs]</a>
+<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="cli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.cli">[docs]</a><span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="cli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.cli">[docs]</a>
+<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;other_params&quot;</span><span class="p">)</span>
     <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="n">cmd</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="maincli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.maincli">[docs]</a><span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="maincli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.maincli">[docs]</a>
+<span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
-    <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
+    <span class="n">cli</span><span class="p">(</span><span class="n">_ap</span><span class="p">(),</span> <span class="n">main</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="run_capri_analysis"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.run_capri_analysis">[docs]</a><span class="k">def</span> <span class="nf">run_capri_analysis</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">capri_dict</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span> <span class="n">is_cleaned</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="run_capri_analysis">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.run_capri_analysis">[docs]</a>
+<span class="k">def</span> <span class="nf">run_capri_analysis</span><span class="p">(</span>
+        <span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">run_dir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">capri_dict</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
+        <span class="n">is_cleaned</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run the caprieval analysis.</span>
 
@@ -342,7 +365,6 @@
     <span class="n">io</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="c1"># unpack the files if they are compressed</span>
     <span class="k">if</span> <span class="n">is_cleaned</span><span class="p">:</span>
-        <span class="n">default_general_params</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">modules_defaults_path</span><span class="p">)</span>
         <span class="n">path_to_unpack</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">path</span>
         <span class="n">haddock3_unpack</span><span class="p">(</span><span class="n">path_to_unpack</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span><span class="p">)</span>
     <span class="c1"># define step_order. We add one to it, as the caprieval module will</span>
@@ -367,7 +389,10 @@
         <span class="n">haddock3_clean</span><span class="p">(</span><span class="n">path_to_unpack</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="update_capri_dict"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.update_capri_dict">[docs]</a><span class="k">def</span> <span class="nf">update_capri_dict</span><span class="p">(</span><span class="n">default_capri</span><span class="p">:</span> <span class="n">ParamDict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="update_capri_dict">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.update_capri_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">update_capri_dict</span><span class="p">(</span><span class="n">default_capri</span><span class="p">:</span> <span class="n">ParamDict</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Update capri dictionary.</span>
 
@@ -387,8 +412,9 @@
     <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_capri</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;* ERROR * Parameter </span><span class="si">{</span><span class="n">param</span><span class="si">!r}</span><span class="s2"> is not a valid `caprieval` parameter&quot;</span>
-            <span class="p">)</span>  <span class="c1"># noqa:E501</span>
+                <span class="sa">f</span><span class="s2">&quot;* ERROR * Parameter </span><span class="si">{</span><span class="n">param</span><span class="si">!r}</span><span class="s2"> is not &quot;</span>
+                <span class="s2">&quot;a valid `caprieval` parameter&quot;</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;fname&quot;</span><span class="p">):</span>  <span class="c1"># using full path for files</span>
                 <span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>
@@ -400,7 +426,10 @@
     <span class="k">return</span> <span class="n">capri_dict</span></div>
 
 
-<div class="viewcode-block" id="update_paths_in_capri_dict"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.update_paths_in_capri_dict">[docs]</a><span class="k">def</span> <span class="nf">update_paths_in_capri_dict</span><span class="p">(</span>
+
+<div class="viewcode-block" id="update_paths_in_capri_dict">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.update_paths_in_capri_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">update_paths_in_capri_dict</span><span class="p">(</span>
     <span class="n">capri_dict</span><span class="p">:</span> <span class="n">ParamDict</span><span class="p">,</span> <span class="n">target_path</span><span class="p">:</span> <span class="n">FilePath</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -430,7 +459,14 @@
     <span class="k">return</span> <span class="n">new_capri_dict</span></div>
 
 
-<div class="viewcode-block" id="zip_top_ranked"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.zip_top_ranked">[docs]</a><span class="k">def</span> <span class="nf">zip_top_ranked</span><span class="p">(</span><span class="n">capri_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">cluster_ranking</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">,</span> <span class="n">summary_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="zip_top_ranked">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.zip_top_ranked">[docs]</a>
+<span class="k">def</span> <span class="nf">zip_top_ranked</span><span class="p">(</span>
+        <span class="n">capri_filename</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">cluster_ranking</span><span class="p">:</span> <span class="n">ClRank</span><span class="p">,</span>
+        <span class="n">summary_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Zip the top ranked structures.</span>
 
@@ -489,7 +525,10 @@
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Summary archive </span><span class="si">{</span><span class="n">summary_name</span><span class="si">}</span><span class="s2"> not created!&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="analyse_step"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.analyse_step">[docs]</a><span class="k">def</span> <span class="nf">analyse_step</span><span class="p">(</span>
+
+<div class="viewcode-block" id="analyse_step">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.analyse_step">[docs]</a>
+<span class="k">def</span> <span class="nf">analyse_step</span><span class="p">(</span>
     <span class="n">step</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">run_dir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">capri_dict</span><span class="p">:</span> <span class="n">ParamDict</span><span class="p">,</span>
@@ -546,6 +585,7 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ss_fname</span><span class="p">,</span> <span class="n">target_path</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">clt_fname</span><span class="p">,</span> <span class="n">target_path</span><span class="p">)</span>
 
+    <span class="c1"># Go to directory where to write all the analysis figures / report</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">target_path</span><span class="p">)</span>
     <span class="c1"># if the step is not caprieval, caprieval must be run</span>
     <span class="k">if</span> <span class="n">run_capri</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -576,12 +616,65 @@
             <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">tables</span> <span class="o">=</span> <span class="n">clt_table_handler</span><span class="p">(</span><span class="n">clt_file</span><span class="p">,</span> <span class="n">ss_file</span><span class="p">,</span> <span class="n">is_cleaned</span><span class="p">)</span>
-        <span class="n">report_generator</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scatters</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+        <span class="n">report_generator</span><span class="p">(</span><span class="n">boxes</span><span class="p">,</span> <span class="n">scatters</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">offline</span><span class="p">)</span>
         <span class="c1"># provide a zipped archive of the top ranked structures</span>
         <span class="n">zip_top_ranked</span><span class="p">(</span><span class="n">ss_file</span><span class="p">,</span> <span class="n">cluster_ranking</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.tgz&quot;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+
+<div class="viewcode-block" id="validate_format">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.validate_format">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_format</span><span class="p">(</span><span class="n">_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImgFormat</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImgFormat</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate the optional argument `format`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    _format : Optional[ImgFormat]</span>
+<span class="sd">        A optential output format set by the user.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Optional[ImgFormat]</span>
+<span class="sd">        A valid output format for the figures to be generated.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ImportError</span>
+<span class="sd">        When the kaleido package is not installed.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        When the export format is not supported by plotly / kaleido.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Optional, so if not defined, return _format (None)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_format</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_format</span>
+    <span class="c1"># Make sure it is lower case</span>
+    <span class="nb">format</span> <span class="o">=</span> <span class="n">_format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="c1"># Check if part of supported output formats</span>
+    <span class="k">if</span> <span class="nb">format</span> <span class="ow">in</span> <span class="n">SUPPORTED_OUTPUT_FORMATS</span><span class="p">:</span>
+        <span class="c1"># Make sure the `kaleido` package is installed</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">kaleido</span>  <span class="c1"># noqa : F401</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Exporting with format </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2"> requires the use of `kaleido`&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; package, that seems not to be installed. </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Please install it with: `pip install kaleido==0.2.*`&quot;</span>
+                <span class="p">)</span>
+        <span class="c1"># At this stage, everything should go smooth with the export format</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Return supported format</span>
+            <span class="k">return</span> <span class="nb">format</span>
+    <span class="c1"># Raise error if unsupported format</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Format `</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">` is not supported.</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Supported formats: </span><span class="si">{</span><span class="n">SUPPORTED_OUTPUT_FORMATS</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_analyse.html#haddock.clis.cli_analyse.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
     <span class="n">run_dir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">modules</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">top_cluster</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -634,6 +727,10 @@
         <span class="sa">f</span><span class="s2">&quot;Running haddock3-analyse on </span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">, modules </span><span class="si">{</span><span class="n">modules</span><span class="si">}</span><span class="s2">, &quot;</span>
         <span class="sa">f</span><span class="s2">&quot;with top_cluster = </span><span class="si">{</span><span class="n">top_cluster</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
+    <span class="c1"># Validate output format</span>
+    <span class="nb">format</span> <span class="o">=</span> <span class="n">validate_format</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+
+    <span class="c1"># Obtain starting working directory</span>
     <span class="n">ori_cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
     <span class="c1"># modifying the parameters</span>
     <span class="n">default_capri</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">caprieval_params</span><span class="p">)</span>
@@ -698,9 +795,9 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Could not execute the analysis for step </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">.</span>
-<span class="s2">                The following error occurred </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
-            <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not execute the analysis for step </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The following error occurred </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
         <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
             <span class="n">bad_folder_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -743,6 +840,7 @@
     <span class="k">return</span></div>
 
 
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">maincli</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
 </pre></div>
@@ -755,7 +853,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

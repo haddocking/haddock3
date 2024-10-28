@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.base_cns_module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -100,7 +94,9 @@
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
 
 
-<div class="viewcode-block" id="BaseCNSModule"><a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule">[docs]</a><span class="k">class</span> <span class="nc">BaseCNSModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseCNSModule">
+<a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseCNSModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Operation module for CNS.</span>
 
@@ -124,7 +120,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span> <span class="o">=</span> <span class="n">global_toppar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cns_protocol_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseCNSModule.run"><a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="BaseCNSModule.run">
+<a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the module.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Running [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] module&#39;</span><span class="p">)</span>
 
@@ -149,7 +147,10 @@
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Module [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] finished.&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseCNSModule.default_envvars"><a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.default_envvars">[docs]</a>    <span class="k">def</span> <span class="nf">default_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="BaseCNSModule.default_envvars">
+<a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.default_envvars">[docs]</a>
+    <span class="k">def</span> <span class="nf">default_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return default env vars updated to `envvars` (if given).&quot;&quot;&quot;</span>
         <span class="n">default_envvars</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;MODULE&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cns_folder_path</span><span class="p">),</span>
@@ -159,7 +160,10 @@
 
         <span class="k">return</span> <span class="n">default_envvars</span></div>
 
-<div class="viewcode-block" id="BaseCNSModule.save_envvars"><a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.save_envvars">[docs]</a>    <span class="k">def</span> <span class="nf">save_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;envvars&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BaseCNSModule.save_envvars">
+<a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.save_envvars">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;envvars&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save envvars needed for CNS to a file in the module&#39;s folder.&quot;&quot;&quot;</span>
         <span class="c1"># there are so few variables, best to handle them by hand</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span>
@@ -175,7 +179,10 @@
         <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">fstr</span><span class="p">)</span>
         <span class="k">return</span></div>
 
-<div class="viewcode-block" id="BaseCNSModule.make_self_contained"><a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.make_self_contained">[docs]</a>    <span class="k">def</span> <span class="nf">make_self_contained</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BaseCNSModule.make_self_contained">
+<a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.make_self_contained">[docs]</a>
+    <span class="k">def</span> <span class="nf">make_self_contained</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create folders to make run self-contained.&quot;&quot;&quot;</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cns_folder_path</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span>
@@ -200,7 +207,10 @@
             <span class="n">shutil</span><span class="o">.</span><span class="n">copystat</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">,</span> <span class="n">new_cns</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cns_exec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">_cns_exec</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseCNSModule.get_ambig_fnames"><a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames">[docs]</a>    <span class="k">def</span> <span class="nf">get_ambig_fnames</span><span class="p">(</span>
+
+<div class="viewcode-block" id="BaseCNSModule.get_ambig_fnames">
+<a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_ambig_fnames</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">prev_ambig_fnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">]]</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FilePath</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the correct ambiguous restraint names.</span>
@@ -238,7 +248,9 @@
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;&#39;previous_ambig&#39; option selected but no available restraint information in models&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Using previously defined restraints&quot;</span><span class="p">)</span>
                 <span class="n">ambig_fnames</span> <span class="o">=</span> <span class="n">prev_ambig_fnames</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">ambig_fnames</span></div></div>
+        <span class="k">return</span> <span class="n">ambig_fnames</span></div>
+</div>
+
 </pre></div>
 
            </div>
@@ -249,7 +261,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libpdb &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -125,7 +119,9 @@
 <span class="n">slc_charge</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">78</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="format_atom_name"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.format_atom_name">[docs]</a><span class="k">def</span> <span class="nf">format_atom_name</span><span class="p">(</span><span class="n">atom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="format_atom_name">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.format_atom_name">[docs]</a>
+<span class="k">def</span> <span class="nf">format_atom_name</span><span class="p">(</span><span class="n">atom</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format PDB atom name.</span>
 
@@ -171,7 +167,10 @@
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span></div>
 
 
-<div class="viewcode-block" id="get_supported_residues"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_supported_residues">[docs]</a><span class="k">def</span> <span class="nf">get_supported_residues</span><span class="p">(</span><span class="n">haddock_topology</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="get_supported_residues">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_supported_residues">[docs]</a>
+<span class="k">def</span> <span class="nf">get_supported_residues</span><span class="p">(</span><span class="n">haddock_topology</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the topology file and identify which data is supported.&quot;&quot;&quot;</span>
     <span class="n">supported</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">haddock_topology</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_handler</span><span class="p">:</span>
@@ -180,6 +179,7 @@
                 <span class="n">res</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">supported</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">supported</span></div>
+
 
 
 <span class="n">_to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;REMAR&quot;</span><span class="p">,</span> <span class="s2">&quot;CTERB&quot;</span><span class="p">,</span> <span class="s2">&quot;CTERA&quot;</span><span class="p">,</span> <span class="s2">&quot;NTERA&quot;</span><span class="p">,</span> <span class="s2">&quot;NTERB&quot;</span><span class="p">,</span> <span class="s2">&quot;CONECT&quot;</span><span class="p">]</span>
@@ -196,7 +196,9 @@
 <span class="n">_to_keep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">supported_residues</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="split_ensemble"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.split_ensemble">[docs]</a><span class="k">def</span> <span class="nf">split_ensemble</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+<div class="viewcode-block" id="split_ensemble">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.split_ensemble">[docs]</a>
+<span class="k">def</span> <span class="nf">split_ensemble</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
                    <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Split a multimodel PDB file into different structures.</span>
@@ -216,7 +218,10 @@
     <span class="k">return</span> <span class="n">sort_numbered_paths</span><span class="p">(</span><span class="o">*</span><span class="n">get_new_models</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="split_by_chain"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.split_by_chain">[docs]</a><span class="k">def</span> <span class="nf">split_by_chain</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="split_by_chain">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.split_by_chain">[docs]</a>
+<span class="k">def</span> <span class="nf">split_by_chain</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split a PDB file into multiple structures for each chain.&quot;&quot;&quot;</span>
     <span class="n">abs_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_handler</span><span class="p">:</span>
@@ -226,7 +231,10 @@
     <span class="k">return</span> <span class="n">get_new_models</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="tidy"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.tidy">[docs]</a><span class="k">def</span> <span class="nf">tidy</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">new_pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="tidy">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.tidy">[docs]</a>
+<span class="k">def</span> <span class="nf">tidy</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">new_pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tidy PDB structure.&quot;&quot;&quot;</span>
     <span class="n">abs_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_handler</span><span class="p">:</span>
@@ -236,7 +244,10 @@
                     <span class="n">output_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="swap_segid_chain"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.swap_segid_chain">[docs]</a><span class="k">def</span> <span class="nf">swap_segid_chain</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+
+<div class="viewcode-block" id="swap_segid_chain">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.swap_segid_chain">[docs]</a>
+<span class="k">def</span> <span class="nf">swap_segid_chain</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
                      <span class="n">new_pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add to the Chain ID column the found Segid.&quot;&quot;&quot;</span>
     <span class="n">abs_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
@@ -247,7 +258,10 @@
                     <span class="n">output_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="sanitize"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.sanitize">[docs]</a><span class="k">def</span> <span class="nf">sanitize</span><span class="p">(</span>
+
+<div class="viewcode-block" id="sanitize">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.sanitize">[docs]</a>
+<span class="k">def</span> <span class="nf">sanitize</span><span class="p">(</span>
         <span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePathT</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">custom_topology</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">FilePathT</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
@@ -283,7 +297,10 @@
     <span class="k">return</span> <span class="n">new_pdb_file</span></div>
 
 
-<div class="viewcode-block" id="identify_chainseg"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.identify_chainseg">[docs]</a><span class="k">def</span> <span class="nf">identify_chainseg</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+
+<div class="viewcode-block" id="identify_chainseg">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.identify_chainseg">[docs]</a>
+<span class="k">def</span> <span class="nf">identify_chainseg</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
                       <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return segID OR chainID.&quot;&quot;&quot;</span>
     <span class="n">segids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -319,7 +336,10 @@
     <span class="k">return</span> <span class="n">segids</span><span class="p">,</span> <span class="n">chains</span></div>
 
 
-<div class="viewcode-block" id="get_new_models"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_new_models">[docs]</a><span class="k">def</span> <span class="nf">get_new_models</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="get_new_models">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_new_models">[docs]</a>
+<span class="k">def</span> <span class="nf">get_new_models</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get new PDB models if they exist.</span>
 
@@ -332,7 +352,10 @@
     <span class="k">return</span> <span class="n">new_models</span></div>
 
 
-<div class="viewcode-block" id="get_pdb_file_suffix_variations"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_pdb_file_suffix_variations">[docs]</a><span class="k">def</span> <span class="nf">get_pdb_file_suffix_variations</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+
+<div class="viewcode-block" id="get_pdb_file_suffix_variations">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_pdb_file_suffix_variations">[docs]</a>
+<span class="k">def</span> <span class="nf">get_pdb_file_suffix_variations</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
                                    <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List suffix variations of a PDB file in the current path.</span>
@@ -359,7 +382,10 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">basename</span><span class="o">.</span><span class="n">stem</span><span class="si">}{</span><span class="n">sep</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">basename</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="read_RECORD_section"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.read_RECORD_section">[docs]</a><span class="k">def</span> <span class="nf">read_RECORD_section</span><span class="p">(</span>
+
+<div class="viewcode-block" id="read_RECORD_section">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.read_RECORD_section">[docs]</a>
+<span class="k">def</span> <span class="nf">read_RECORD_section</span><span class="p">(</span>
         <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">section_slice</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -380,6 +406,7 @@
     <span class="k">return</span> <span class="n">chainids</span></div>
 
 
+
 <span class="n">read_chainids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_chainid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
 <span class="n">read_segids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_segid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </pre></div>
@@ -392,7 +419,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

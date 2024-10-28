@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.config &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -192,14 +186,19 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="ConfigFormatError"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.ConfigFormatError">[docs]</a><span class="k">class</span> <span class="nc">ConfigFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfigFormatError">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.ConfigFormatError">[docs]</a>
+<span class="k">class</span> <span class="nc">ConfigFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception if there is a format error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
+
 <span class="c1"># main public API</span>
-<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
+<div class="viewcode-block" id="load">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.load">[docs]</a>
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load an HADDOCK3 configuration file to a dictionary.</span>
 
@@ -228,7 +227,10 @@
         <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>  <span class="c1"># noqa: E501</span></div>
 
 
-<div class="viewcode-block" id="loads"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.loads">[docs]</a><span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">cfg_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="loads">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.loads">[docs]</a>
+<span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">cfg_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read a string representing a config file to a dictionary.</span>
 
@@ -322,7 +324,10 @@
     <span class="k">return</span> <span class="n">all_configs</span></div>
 
 
-<div class="viewcode-block" id="convert_variables_to_paths"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.convert_variables_to_paths">[docs]</a><span class="k">def</span> <span class="nf">convert_variables_to_paths</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">ParamMapT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamMapT</span><span class="p">:</span>
+
+<div class="viewcode-block" id="convert_variables_to_paths">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.convert_variables_to_paths">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_variables_to_paths</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">ParamMapT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamMapT</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert config variables to paths.</span>
 
@@ -351,7 +356,10 @@
     <span class="k">return</span> <span class="n">cfg</span></div>
 
 
-<div class="viewcode-block" id="convert_to_path"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.convert_to_path">[docs]</a><span class="k">def</span> <span class="nf">convert_to_path</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">EmptyPath</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="convert_to_path">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.convert_to_path">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_to_path</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">EmptyPath</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a variable to Path if variable evaluates to true.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -359,7 +367,10 @@
         <span class="k">return</span> <span class="n">EmptyPath</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="match_path_criteria"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.match_path_criteria">[docs]</a><span class="k">def</span> <span class="nf">match_path_criteria</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="match_path_criteria">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.match_path_criteria">[docs]</a>
+<span class="k">def</span> <span class="nf">match_path_criteria</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Confirm a parameter should be converted to path.</span>
 
@@ -369,7 +380,10 @@
     <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">_keys_that_accept_files</span></div>
 
 
-<div class="viewcode-block" id="get_module_name"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.get_module_name">[docs]</a><span class="k">def</span> <span class="nf">get_module_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="get_module_name">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.get_module_name">[docs]</a>
+<span class="k">def</span> <span class="nf">get_module_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the module name according to the config parser.</span>
 
@@ -378,7 +392,10 @@
     <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="save"><a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.save">[docs]</a><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">pure_toml</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="save">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.config.html#haddock.gear.config.save">[docs]</a>
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">pure_toml</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write a dictionary to a HADDOCK3 config file.</span>
 
@@ -423,6 +440,7 @@
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
         <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cfg_str</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
 </pre></div>
 
            </div>
@@ -433,7 +451,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

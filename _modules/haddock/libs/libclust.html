@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libclust &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -106,10 +100,12 @@
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">squareform</span>
 
 
-<span class="n">MAX_NB_ENTRY_HTML_MATRIX</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">MAX_NB_ENTRY_HTML_MATRIX</span> <span class="o">=</span> <span class="mi">3100</span>
 
 
-<div class="viewcode-block" id="write_structure_list"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.write_structure_list">[docs]</a><span class="k">def</span> <span class="nf">write_structure_list</span><span class="p">(</span><span class="n">input_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
+<div class="viewcode-block" id="write_structure_list">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.write_structure_list">[docs]</a>
+<span class="k">def</span> <span class="nf">write_structure_list</span><span class="p">(</span><span class="n">input_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
                          <span class="n">clustered_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
                          <span class="n">out_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -145,7 +141,10 @@
         <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_str</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="plot_cluster_matrix"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.plot_cluster_matrix">[docs]</a><span class="k">def</span> <span class="nf">plot_cluster_matrix</span><span class="p">(</span>
+
+<div class="viewcode-block" id="plot_cluster_matrix">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.plot_cluster_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_cluster_matrix</span><span class="p">(</span>
         <span class="n">matrix_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">final_order_idx</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -156,7 +155,7 @@
         <span class="n">output_fname</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;clust_matrix&#39;</span><span class="p">,</span>
         <span class="n">matrix_cluster_dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cluster_limits</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot a plotly heatmap of a matrix file.</span>
 
 <span class="sd">    Parameters</span>
@@ -185,6 +184,10 @@
 <span class="sd">    output_fname_ext : str</span>
 <span class="sd">        Path to the generated file containing the figure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check that we will be able to generate a functional interactive plot</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_order_idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_NB_ENTRY_HTML_MATRIX</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
     <span class="n">upper_diag</span><span class="p">,</span> <span class="n">lower_diag</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
     <span class="c1"># Read matrix</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">matrix_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -235,9 +238,8 @@
             <span class="s1">&#39;&lt;extra&gt;&lt;/extra&gt;&#39;</span>
             <span class="p">)</span>
 
-    <span class="c1"># Generate file extension ~ matrix size</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;html&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_order_idx</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">MAX_NB_ENTRY_HTML_MATRIX</span> <span class="k">else</span> <span class="s1">&#39;png&#39;</span>
-    <span class="n">output_fname_ext</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># Generate file name</span>
+    <span class="n">output_fname_ext</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">.html&quot;</span>
     <span class="c1"># Draw heatmap</span>
     <span class="n">heatmap_plotly</span><span class="p">(</span>
         <span class="n">submat</span><span class="p">,</span>
@@ -255,7 +257,10 @@
     <span class="k">return</span> <span class="n">output_fname_ext</span></div>
 
 
-<div class="viewcode-block" id="get_cluster_matrix_plot_clt_dt"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.get_cluster_matrix_plot_clt_dt">[docs]</a><span class="k">def</span> <span class="nf">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_cluster_matrix_plot_clt_dt">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.get_cluster_matrix_plot_clt_dt">[docs]</a>
+<span class="k">def</span> <span class="nf">get_cluster_matrix_plot_clt_dt</span><span class="p">(</span>
         <span class="n">cluster_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate cluster matrix data for plotly.</span>
@@ -307,7 +312,10 @@
     <span class="k">return</span> <span class="n">matrix_cluster_dt</span><span class="p">,</span> <span class="n">cluster_limits</span></div>
 
 
-<div class="viewcode-block" id="rank_clusters"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.rank_clusters">[docs]</a><span class="k">def</span> <span class="nf">rank_clusters</span><span class="p">(</span><span class="n">clt_dic</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rank_clusters">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.rank_clusters">[docs]</a>
+<span class="k">def</span> <span class="nf">rank_clusters</span><span class="p">(</span><span class="n">clt_dic</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rank the clusters by their average score.</span>
 
@@ -340,7 +348,10 @@
     <span class="k">return</span> <span class="n">score_dic</span><span class="p">,</span> <span class="n">sorted_score_dic</span></div>
 
 
-<div class="viewcode-block" id="add_cluster_info"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.add_cluster_info">[docs]</a><span class="k">def</span> <span class="nf">add_cluster_info</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">):</span>
+
+<div class="viewcode-block" id="add_cluster_info">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.add_cluster_info">[docs]</a>
+<span class="k">def</span> <span class="nf">add_cluster_info</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add cluster information to the models.</span>
 
@@ -374,7 +385,10 @@
     <span class="k">return</span> <span class="n">output_models</span></div>
 
 
-<div class="viewcode-block" id="clustrmsd_tolerance_params"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.clustrmsd_tolerance_params">[docs]</a><span class="k">def</span> <span class="nf">clustrmsd_tolerance_params</span><span class="p">(</span>
+
+<div class="viewcode-block" id="clustrmsd_tolerance_params">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libclust.html#haddock.libs.libclust.clustrmsd_tolerance_params">[docs]</a>
+<span class="k">def</span> <span class="nf">clustrmsd_tolerance_params</span><span class="p">(</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">ParamDictT</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide parameters of interest for clust rmsd.</span>
@@ -397,6 +411,7 @@
         <span class="n">tolerance_param_name</span> <span class="o">=</span> <span class="s2">&quot;clust_cutoff&quot;</span>
         <span class="n">tolerance</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">tolerance_param_name</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">tolerance_param_name</span><span class="p">,</span> <span class="n">tolerance</span></div>
+
 </pre></div>
 
            </div>
@@ -407,7 +422,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

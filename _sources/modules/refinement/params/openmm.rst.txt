@@ -1,0 +1,316 @@
+
+
+Easy
+````
+
+add_extra_particles_for_forcefield
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Add extra particles for forcefield.
+| *short description*: Add extra particles for forcefield if needed such as e.g. Drude particles.
+| *long description*: Add extra particles for forcefield if needed such as e.g. Drude particles.
+| *group*: force field
+| *explevel*: easy
+
+constraints
+~~~~~~~~~~~
+
+| *default*: 'HBonds'
+| *type*: string
+| *title*: Integration constraints.
+| *choices*: ['None', 'HBonds', 'AllBonds', 'HAngles']
+| *short description*: Integration constraints used to allow for larger integration time step.
+| *long description*: Integration constraints used to allow for larger integration time step. For extra info see http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints
+| *group*: restraints
+| *explevel*: easy
+
+explicit_solvent_model
+~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 'amber14/tip3p.xml'
+| *type*: string
+| *title*: Explicit solvent models.
+| *choices*: ['amber14/tip3p.xml', 'amber14/spce.xml', 'charmm36/spce.xml', 'amber14/tip4pew.xml', 'charmm36/tip4pew.xml', 'charmm36/tip5p.xml']
+| *short description*: Solvent models supported by the OpenMM modeller to build the water solvation box.
+| *long description*: Solvent models supported by the OpenMM modeller to build the water solvation box.
+| *group*: force field
+| *explevel*: easy
+
+forcefield
+~~~~~~~~~~
+
+| *default*: 'amber14-all.xml'
+| *type*: string
+| *title*: Forcefield used by OpenMM.
+| *choices*: ['amber14-all.xml', 'amber14/protein.ff14SB.xml', 'amber14/protein.ff15ipq.xml', 'amber14/DNA.OL15.xml', 'amber14/DNA.bsc1.xml', 'amber14/RNA.OL3.xml', 'amber14/lipid17.xml', 'amber14/GLYCAM_06j-1.xml', 'charmm36.xml']
+| *short description*: Forcefields that can be used by OpenMM.
+| *long description*: Forcefields that can be used by OpenMM.
+| *group*: force field
+| *explevel*: easy
+
+generate_ensemble
+~~~~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Generate ensemble of configurations.
+| *short description*: Generate ensemble of configurations.
+| *long description*: If 'true', generates 1 single ensemble .pdb file holding various configurations; composed of the equilibrated one, all intermediates and the final one. If 'false', only return the last configuration obtained after 'simulation_timesteps' steps.
+| *group*: post processing
+| *explevel*: easy
+
+implicit_solvent
+~~~~~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Indicate use of implicit solvent.
+| *short description*: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.
+| *long description*: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.
+| *group*: force field
+| *explevel*: easy
+
+implicit_solvent_model
+~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 'implicit/hct.xml'
+| *type*: string
+| *title*: Implicit solvent models.
+| *choices*: ['implicit/hct.xml', 'implicit/obc1.xml', 'implicit/obc2.xml', 'implicit/gbn.xml', 'implicit/gbn2.xml']
+| *short description*: Implicit solvent models supported by OpenMM.
+| *long description*: Implicit solvent models supported by OpenMM.
+| *group*: force field
+| *explevel*: easy
+
+iniseed
+~~~~~~~
+
+| *default*: 917
+| *type*: integer
+| *title*: Simulation seed.
+| *min*: 0
+| *max*: 1000000
+| *short description*: Set a pseudo-random seed for the simulation.
+| *long description*: Set a pseudo-random seed for the simulation. This defines how the initial velocities are created, but has no effect on the randomicity of the solvation box.
+| *group*: sampling
+| *explevel*: easy
+
+ion_concentration
+~~~~~~~~~~~~~~~~~
+
+| *default*: 0.15
+| *type*: float
+| *title*: Ion concentration.
+| *min*: 0
+| *max*: 5
+| *short description*: Ion concentration in Molar.
+| *long description*: Ion concentration in Molar.
+| *group*: sampling
+| *explevel*: easy
+
+keep_solvent
+~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Whether-or-not solvent be removed from provided structures.
+| *short description*: Whether-or-not solvent be removed from provided structures.
+| *long description*: Whether-or-not solvent be removed from provided structures. If 'false', all HETATM atoms will be removed.
+| *group*: post processing
+| *explevel*: easy
+
+remove_center_of_mass_motion
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Remove center of mass motion.
+| *short description*: Remove center of mass motion when overall molecular drift is detected.
+| *long description*: Remove center of mass motion when overall molecular drift is detected.
+| *group*: sampling
+| *explevel*: easy
+
+rigid_water
+~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Use rigid water.
+| *short description*: Use of rigid water in the simulation.
+| *long description*: Use of rigid water in the simulation. Flexible water molecules usually require a slower taken timestep by the used integrator.
+| *group*: restraints
+| *explevel*: easy
+
+sampling_factor
+~~~~~~~~~~~~~~~
+
+| *default*: 1
+| *type*: integer
+| *title*: Number of simulation replicas.
+| *min*: 1
+| *max*: 20
+| *short description*: Number of simulation replicas.
+| *long description*: Number of simulation replicas.
+| *group*: sampling
+| *explevel*: easy
+
+solv_equilibration
+~~~~~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Process the solvent equilibration phase.
+| *short description*: Process the solvent equilibration phase.
+| *long description*: Process the solvent equilibration phase. If 'true', the solvent will be equilibrated while constraining proteins positions to intial ones.
+| *group*: sampling
+| *explevel*: easy
+
+temperature_kelvin
+~~~~~~~~~~~~~~~~~~
+
+| *default*: 298.15
+| *type*: float
+| *title*: Average temperature.
+| *min*: 1.0
+| *max*: 1000.0
+| *short description*: Average temperature used by e.g. the integrator or by for temperature coupling.
+| *long description*: Average temperature used by e.g. the integrator or by for temperature coupling.
+| *group*: sampling
+| *explevel*: easy
+
+
+Expert
+``````
+
+equilibration_timesteps
+~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 3000
+| *type*: integer
+| *title*: Equilibration timesteps.
+| *min*: 0
+| *max*: 100000
+| *short description*: Equilibration timesteps performed without saving the simulation state.
+| *long description*: Equilibration timesteps performed without saving the simulation state.
+| *group*: sampling
+| *explevel*: expert
+
+padding
+~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Padding value in nanometers.
+| *min*: 0.3
+| *max*: 10
+| *short description*: Padding value in nanometers.
+| *long description*: Padding value in nanometers. This is used to create the solvation box by adding water molecules around the molecule up to this padding distance. When performing a long refinement of a complex, increase this parameter as the molecules will likely move away from each other.
+| *group*: sampling
+| *explevel*: expert
+
+ph
+~~
+
+| *default*: 7.4
+| *type*: float
+| *title*: pH of the buffer.
+| *min*: -3.0
+| *max*: 12
+| *short description*: pH of the buffer.
+| *long description*: pH of the buffer. This has an infulence on the protonation states of the resiudes.
+| *group*: simulation
+| *explevel*: expert
+
+save_intermediate
+~~~~~~~~~~~~~~~~~
+
+| *default*: 1
+| *type*: integer
+| *title*: Number of intermediate configurations to save.
+| *min*: 0
+| *max*: 100
+| *short description*: Number of intermediate configurations to save during the simulation.
+| *long description*: Number of intermediate configurations to save during the simulation. The code divides the length of the simulation (simulation_timesteps) by this parameter to get how often configurations should be saved.
+| *group*: sampling
+| *explevel*: expert
+
+simulation_timesteps
+~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 2000
+| *type*: integer
+| *title*: Simulation timesteps.
+| *min*: 0
+| *max*: 1000000
+| *short description*: Simulation timesteps performed during the simulation.
+| *long description*: Simulation timesteps performed during the simulation.
+| *group*: sampling
+| *explevel*: expert
+
+solv_eq_max_temperature_kelvin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 310.0
+| *type*: float
+| *title*: Upper boundary of temperature to reach during solvent eauilibration phase.
+| *min*: 1
+| *max*: 400
+| *short description*: Upper boundary of temperature to reach during solvent eauilibration phase.
+| *long description*: Upper boundary of temperature to reach during solvent eauilibration phase.
+| *group*: sampling
+| *explevel*: expert
+
+solv_eq_spring_constant
+~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 20.0
+| *type*: float
+| *title*: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
+| *min*: 0
+| *max*: 10000
+| *short description*: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.
+| *long description*: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
+| *group*: sampling
+| *explevel*: expert
+
+solv_eq_stepsize_fs
+~~~~~~~~~~~~~~~~~~~
+
+| *default*: 2.0
+| *type*: float
+| *title*: Step size for the solvent equilibration phase.
+| *min*: 0.5
+| *max*: 4
+| *short description*: Step size (in femptoseconds) for the solvent equilibration phase.
+| *long description*: Step size (in femptoseconds) for the solvent equilibration phase.
+| *group*: sampling
+| *explevel*: expert
+
+solv_eq_timesteps
+~~~~~~~~~~~~~~~~~
+
+| *default*: 500
+| *type*: integer
+| *title*: Number of timesteps to be performed during solvent equilibration phase.
+| *min*: 10
+| *max*: 10000
+| *short description*: Number of timesteps to be performed during solvent equilibration phase.
+| *long description*: Number of timesteps to be performed during solvent equilibration phase.
+| *group*: sampling
+| *explevel*: expert
+
+timestep_ps
+~~~~~~~~~~~
+
+| *default*: 0.002
+| *type*: float
+| *title*: Timestep definition.
+| *min*: 0.001
+| *max*: 0.004
+| *short description*: Definition of timestep used by the integrator to progress the simulation.
+| *long description*: Definition of timestep used by the integrator to progress the simulation.
+| *group*: sampling
+| *explevel*: expert
+

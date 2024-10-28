@@ -1,28 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Defaults definitions &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Exceptions" href="haddock.core.exceptions.html" />
-    <link rel="prev" title="CNS paths definitions" href="haddock.core.cns_paths.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +32,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -47,34 +40,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="haddock.core.html">Core Reference</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="haddock.core.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="haddock.core.cns_paths.html">CNS paths definitions</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">Defaults definitions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.core.exceptions.html">Exceptions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.core.supported_molecules.html">Supported molecules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.core.typing.html">typing</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.core.html#module-haddock.core">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../libs/haddock.libs.html">Libs Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../gear/haddock.gear.html">Gear Reference</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Library Reference</a></li>
 </ul>
 
         </div>
@@ -91,8 +67,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
-          <li class="breadcrumb-item"><a href="haddock.core.html">Core Reference</a></li>
       <li class="breadcrumb-item active">Defaults definitions</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/reference/core/haddock.core.defaults.rst.txt" rel="nofollow"> View page source</a>
@@ -104,48 +78,48 @@
            <div itemprop="articleBody">
              
   <section id="module-haddock.core.defaults">
-<span id="defaults-definitions"></span><h1>Defaults definitions<a class="headerlink" href="#module-haddock.core.defaults" title="Permalink to this heading"></a></h1>
+<span id="defaults-definitions"></span><h1>Defaults definitions<a class="headerlink" href="#module-haddock.core.defaults" title="Link to this heading"></a></h1>
 <p>All default parameters used by the framework.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.CNS_MODULES">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">CNS_MODULES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['rigidbody',</span> <span class="pre">'flexref',</span> <span class="pre">'emscoring',</span> <span class="pre">'mdscoring',</span> <span class="pre">'mdref',</span> <span class="pre">'emref']</span></em><a class="headerlink" href="#haddock.core.defaults.CNS_MODULES" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">CNS_MODULES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['rigidbody',</span> <span class="pre">'flexref',</span> <span class="pre">'emscoring',</span> <span class="pre">'mdscoring',</span> <span class="pre">'mdref',</span> <span class="pre">'emref']</span></em><a class="headerlink" href="#haddock.core.defaults.CNS_MODULES" title="Link to this definition"></a></dt>
 <dd><p>List of CNS modules available in HADDOCK3.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.INTERACTIVE_RE_SUFFIX">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">INTERACTIVE_RE_SUFFIX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'interactive'</span></em><a class="headerlink" href="#haddock.core.defaults.INTERACTIVE_RE_SUFFIX" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">INTERACTIVE_RE_SUFFIX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'interactive'</span></em><a class="headerlink" href="#haddock.core.defaults.INTERACTIVE_RE_SUFFIX" title="Link to this definition"></a></dt>
 <dd><p>Suffix added to interactive haddock3-re runs.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.MAX_NUM_MODULES">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MAX_NUM_MODULES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000</span></em><a class="headerlink" href="#haddock.core.defaults.MAX_NUM_MODULES" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MAX_NUM_MODULES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000</span></em><a class="headerlink" href="#haddock.core.defaults.MAX_NUM_MODULES" title="Link to this definition"></a></dt>
 <dd><p>Temptative number of max allowed number of modules to execute</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.MODULE_DEFAULT_YAML">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MODULE_DEFAULT_YAML</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'defaults.yaml'</span></em><a class="headerlink" href="#haddock.core.defaults.MODULE_DEFAULT_YAML" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MODULE_DEFAULT_YAML</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'defaults.yaml'</span></em><a class="headerlink" href="#haddock.core.defaults.MODULE_DEFAULT_YAML" title="Link to this definition"></a></dt>
 <dd><p>Default name of the yaml default parameters file.</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.MODULE_IO_FILE">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MODULE_IO_FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'io.json'</span></em><a class="headerlink" href="#haddock.core.defaults.MODULE_IO_FILE" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MODULE_IO_FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'io.json'</span></em><a class="headerlink" href="#haddock.core.defaults.MODULE_IO_FILE" title="Link to this definition"></a></dt>
 <dd><p>Default name for exchange module information file</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.MODULE_PATH_NAME">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MODULE_PATH_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'step_'</span></em><a class="headerlink" href="#haddock.core.defaults.MODULE_PATH_NAME" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">MODULE_PATH_NAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'step_'</span></em><a class="headerlink" href="#haddock.core.defaults.MODULE_PATH_NAME" title="Link to this definition"></a></dt>
 <dd><p>Module input and generated data will be stored in folder starting by
 this prefix</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="haddock.core.defaults.RUNDIR">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">RUNDIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'run_dir'</span></em><a class="headerlink" href="#haddock.core.defaults.RUNDIR" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.core.defaults.</span></span><span class="sig-name descname"><span class="pre">RUNDIR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'run_dir'</span></em><a class="headerlink" href="#haddock.core.defaults.RUNDIR" title="Link to this definition"></a></dt>
 <dd><p>Default run directory name.</p>
 </dd></dl>
 
@@ -154,16 +128,13 @@ this prefix</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="haddock.core.cns_paths.html" class="btn btn-neutral float-left" title="CNS paths definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="haddock.core.exceptions.html" class="btn btn-neutral float-right" title="Exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

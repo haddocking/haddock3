@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.contactmap.contmap &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -244,7 +238,9 @@
 <span class="c1">##################</span>
 <span class="c1"># Define classes #</span>
 <span class="c1">##################</span>
-<div class="viewcode-block" id="ContactsMapJob"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMapJob">[docs]</a><span class="k">class</span> <span class="nc">ContactsMapJob</span><span class="p">(</span><span class="n">SupportsRun</span><span class="p">):</span>
+<div class="viewcode-block" id="ContactsMapJob">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMapJob">[docs]</a>
+<span class="k">class</span> <span class="nc">ContactsMapJob</span><span class="p">(</span><span class="n">SupportsRun</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Job dedicated to the running of contact maps objects.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -260,13 +256,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span> <span class="o">=</span> <span class="n">contact_obj</span>
 
-<div class="viewcode-block" id="ContactsMapJob.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMapJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ContactsMapJob.run">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMapJob.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this ContactMap Object Job.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-        <span class="k">return</span></div></div>
+        <span class="k">return</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ContactsMap"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMap">[docs]</a><span class="k">class</span> <span class="nc">ContactsMap</span><span class="p">():</span>
+
+<div class="viewcode-block" id="ContactsMap">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMap">[docs]</a>
+<span class="k">class</span> <span class="nc">ContactsMap</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ContactMap analysis for single structure.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -280,7 +282,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="ContactsMap.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMap.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ContactsMap.run">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMap.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Process analysis of contacts of a PDB structure.&quot;&quot;&quot;</span>
         <span class="c1"># Load pdb</span>
         <span class="n">pdb_dt</span> <span class="o">=</span> <span class="n">extract_pdb_dt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
@@ -323,8 +327,11 @@
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res_res_contacts</span><span class="p">,</span> <span class="n">all_heavy_interchain_contacts</span></div>
+
     
-<div class="viewcode-block" id="ContactsMap.generate_output"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMap.generate_output">[docs]</a>    <span class="k">def</span> <span class="nf">generate_output</span><span class="p">(</span>
+<div class="viewcode-block" id="ContactsMap.generate_output">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ContactsMap.generate_output">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_output</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">res_res_contacts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
             <span class="n">all_heavy_interchain_contacts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
@@ -397,10 +404,14 @@
             <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s1">_heavyatoms_interchain_contacts.tsv&#39;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Generated contacts file: </span><span class="si">{</span><span class="n">fpath2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;atom-atom-interchain-contacts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fpath2</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;atom-atom-interchain-contacts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fpath2</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ClusteredContactMap"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ClusteredContactMap">[docs]</a><span class="k">class</span> <span class="nc">ClusteredContactMap</span><span class="p">():</span>
+
+<div class="viewcode-block" id="ClusteredContactMap">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ClusteredContactMap">[docs]</a>
+<span class="k">class</span> <span class="nc">ClusteredContactMap</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ContactMap analysis for set of clustered structures.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -415,7 +426,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="ClusteredContactMap.aggregate_contacts"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ClusteredContactMap.aggregate_contacts">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ClusteredContactMap.aggregate_contacts">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ClusteredContactMap.aggregate_contacts">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">aggregate_contacts</span><span class="p">(</span>
             <span class="n">contacts_holder</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
             <span class="n">contact_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -457,7 +470,10 @@
             <span class="k">for</span> <span class="n">dtk</span> <span class="ow">in</span> <span class="n">contacts_holder</span><span class="p">[</span><span class="n">combined_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">contacts_holder</span><span class="p">[</span><span class="n">combined_key</span><span class="p">][</span><span class="n">dtk</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cont</span><span class="p">[</span><span class="n">dtk</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="ClusteredContactMap.run"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ClusteredContactMap.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusteredContactMap.run">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ClusteredContactMap.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Process analysis of contacts of a set of PDB structures.&quot;&quot;&quot;</span>
         <span class="c1"># initiate holding variables</span>
         <span class="n">clusters_contacts</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Residue-residue contacts</span>
@@ -621,10 +637,14 @@
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Generated cluster contacts chordchart file: </span><span class="si">{</span><span class="n">chordp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;res-res-chordchart&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chordp</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">terminated</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminated</span> <span class="o">=</span> <span class="kc">True</span></div>
+</div>
 
 
-<div class="viewcode-block" id="make_contactmap_report"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_contactmap_report">[docs]</a><span class="k">def</span> <span class="nf">make_contactmap_report</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_contactmap_report">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_contactmap_report">[docs]</a>
+<span class="k">def</span> <span class="nf">make_contactmap_report</span><span class="p">(</span>
         <span class="n">contactmap_jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ContactsMapJob</span><span class="p">],</span>
         <span class="n">outputpath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
@@ -705,7 +725,10 @@
     <span class="k">return</span> <span class="n">outputpath</span></div>
 
 
-<div class="viewcode-block" id="get_clusters_sets"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_clusters_sets">[docs]</a><span class="k">def</span> <span class="nf">get_clusters_sets</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="get_clusters_sets">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_clusters_sets">[docs]</a>
+<span class="k">def</span> <span class="nf">get_clusters_sets</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split models by clusters ids.</span>
 
 <span class="sd">    Parameters</span>
@@ -726,7 +749,10 @@
     <span class="k">return</span> <span class="n">clusters_sets</span></div>
 
 
-<div class="viewcode-block" id="topX_models"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.topX_models">[docs]</a><span class="k">def</span> <span class="nf">topX_models</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">topX</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="topX_models">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.topX_models">[docs]</a>
+<span class="k">def</span> <span class="nf">topX_models</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">topX</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort and return subset of top X best models.</span>
 
 <span class="sd">    Parameters</span>
@@ -750,10 +776,13 @@
     <span class="k">return</span> <span class="n">subset_bests</span></div>
 
 
+
 <span class="c1">####################</span>
 <span class="c1"># Define functions #</span>
 <span class="c1">####################</span>
-<div class="viewcode-block" id="extract_pdb_dt"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_pdb_dt">[docs]</a><span class="k">def</span> <span class="nf">extract_pdb_dt</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="extract_pdb_dt">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_pdb_dt">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_pdb_dt</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read and extract ATOM/HETATM records from a pdb file.</span>
 
 <span class="sd">    Parameters</span>
@@ -820,7 +849,10 @@
     <span class="k">return</span> <span class="n">pdb_chains</span></div>
 
 
-<div class="viewcode-block" id="extract_pdb_coords"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_pdb_coords">[docs]</a><span class="k">def</span> <span class="nf">extract_pdb_coords</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="extract_pdb_coords">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_pdb_coords">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_pdb_coords</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract coordinated from a PDB line.</span>
 
 <span class="sd">    Parameters</span>
@@ -840,7 +872,10 @@
     <span class="k">return</span> <span class="n">coords</span></div>
 
 
-<div class="viewcode-block" id="get_ordered_coords"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_ordered_coords">[docs]</a><span class="k">def</span> <span class="nf">get_ordered_coords</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_ordered_coords">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_ordered_coords">[docs]</a>
+<span class="k">def</span> <span class="nf">get_ordered_coords</span><span class="p">(</span>
         <span class="n">pdb_chains</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate list of all atom coordinates.</span>
@@ -893,7 +928,10 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">all_coords</span><span class="p">,</span> <span class="n">resid_keys</span><span class="p">,</span> <span class="n">resid_dt</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="compute_distance_matrix"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.compute_distance_matrix">[docs]</a><span class="k">def</span> <span class="nf">compute_distance_matrix</span><span class="p">(</span><span class="n">all_atm_coords</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
+
+<div class="viewcode-block" id="compute_distance_matrix">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.compute_distance_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_distance_matrix</span><span class="p">(</span><span class="n">all_atm_coords</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute all vs all distance matrix.</span>
 
 <span class="sd">    Paramaters</span>
@@ -910,7 +948,10 @@
     <span class="k">return</span> <span class="n">dist_matrix</span></div>
 
 
-<div class="viewcode-block" id="extract_submatrix"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_submatrix">[docs]</a><span class="k">def</span> <span class="nf">extract_submatrix</span><span class="p">(</span>
+
+<div class="viewcode-block" id="extract_submatrix">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_submatrix">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_submatrix</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span>
         <span class="n">indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">indices2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -941,7 +982,10 @@
     <span class="k">return</span> <span class="n">submat</span></div>
 
 
-<div class="viewcode-block" id="gen_contact_dt"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.gen_contact_dt">[docs]</a><span class="k">def</span> <span class="nf">gen_contact_dt</span><span class="p">(</span>
+
+<div class="viewcode-block" id="gen_contact_dt">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.gen_contact_dt">[docs]</a>
+<span class="k">def</span> <span class="nf">gen_contact_dt</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span>
         <span class="n">resdt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">res1_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -994,7 +1038,10 @@
     <span class="k">return</span> <span class="n">cont_dt</span></div>
 
 
-<div class="viewcode-block" id="extract_heavyatom_contacts"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_heavyatom_contacts">[docs]</a><span class="k">def</span> <span class="nf">extract_heavyatom_contacts</span><span class="p">(</span>
+
+<div class="viewcode-block" id="extract_heavyatom_contacts">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.extract_heavyatom_contacts">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_heavyatom_contacts</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span>
         <span class="n">resdt</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">res1_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1046,7 +1093,10 @@
     <span class="k">return</span> <span class="n">all_contacts</span></div>
 
 
-<div class="viewcode-block" id="get_cont_type"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_cont_type">[docs]</a><span class="k">def</span> <span class="nf">get_cont_type</span><span class="p">(</span><span class="n">resn1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resn2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="get_cont_type">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_cont_type">[docs]</a>
+<span class="k">def</span> <span class="nf">get_cont_type</span><span class="p">(</span><span class="n">resn1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resn2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate polarity key between two residues.</span>
 
 <span class="sd">    Parameters</span>
@@ -1071,12 +1121,18 @@
     <span class="k">return</span> <span class="n">pol_key</span></div>
 
 
-<div class="viewcode-block" id="min_dist"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.min_dist">[docs]</a><span class="k">def</span> <span class="nf">min_dist</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="min_dist">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.min_dist">[docs]</a>
+<span class="k">def</span> <span class="nf">min_dist</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find minimum value in a matrix.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_res_contacts"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.write_res_contacts">[docs]</a><span class="k">def</span> <span class="nf">write_res_contacts</span><span class="p">(</span>
+
+<div class="viewcode-block" id="write_res_contacts">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.write_res_contacts">[docs]</a>
+<span class="k">def</span> <span class="nf">write_res_contacts</span><span class="p">(</span>
         <span class="n">res_res_contacts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
         <span class="n">header</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
@@ -1172,7 +1228,10 @@
     <span class="k">return</span> <span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="tsv_to_heatmap"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.tsv_to_heatmap">[docs]</a><span class="k">def</span> <span class="nf">tsv_to_heatmap</span><span class="p">(</span>
+
+<div class="viewcode-block" id="tsv_to_heatmap">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.tsv_to_heatmap">[docs]</a>
+<span class="k">def</span> <span class="nf">tsv_to_heatmap</span><span class="p">(</span>
         <span class="n">tsv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
         <span class="n">data_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ca-ca-dist&#39;</span><span class="p">,</span>
@@ -1296,7 +1355,10 @@
     <span class="k">return</span> <span class="n">output_filepath</span></div>
 
 
-<div class="viewcode-block" id="datakey_to_colorscale"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.datakey_to_colorscale">[docs]</a><span class="k">def</span> <span class="nf">datakey_to_colorscale</span><span class="p">(</span><span class="n">data_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color_scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Greys&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="datakey_to_colorscale">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.datakey_to_colorscale">[docs]</a>
+<span class="k">def</span> <span class="nf">datakey_to_colorscale</span><span class="p">(</span><span class="n">data_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color_scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Greys&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert color scale into reverse if data implies to do it.</span>
 
 <span class="sd">    data_key : str</span>
@@ -1312,10 +1374,13 @@
     <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">color_scale</span><span class="si">}</span><span class="s1">_r&#39;</span> <span class="k">if</span> <span class="s1">&#39;probability&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_key</span> <span class="k">else</span> <span class="n">color_scale</span></div>
 
 
+
 <span class="c1">######################################</span>
 <span class="c1"># Start of the chord chart functions #</span>
 <span class="c1">######################################</span>
-<div class="viewcode-block" id="moduloAB"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.moduloAB">[docs]</a><span class="k">def</span> <span class="nf">moduloAB</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="moduloAB">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.moduloAB">[docs]</a>
+<span class="k">def</span> <span class="nf">moduloAB</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lb</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">ub</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Map a real number onto the unit circle.</span>
 
 <span class="sd">     The unit circle is identified with the interval [lb, ub), ub-lb=2*PI.</span>
@@ -1341,7 +1406,10 @@
     <span class="k">return</span> <span class="n">moduloab</span></div>
 
 
-<div class="viewcode-block" id="within_2PI"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.within_2PI">[docs]</a><span class="k">def</span> <span class="nf">within_2PI</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="within_2PI">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.within_2PI">[docs]</a>
+<span class="k">def</span> <span class="nf">within_2PI</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if float value is within unit circle value range.</span>
 
 <span class="sd">    Parameters</span>
@@ -1352,7 +1420,10 @@
     <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">PI</span></div>
 
 
-<div class="viewcode-block" id="check_square_matrix"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.check_square_matrix">[docs]</a><span class="k">def</span> <span class="nf">check_square_matrix</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="check_square_matrix">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.check_square_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">check_square_matrix</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the matrix is a square one.</span>
 
 <span class="sd">    Parameters</span>
@@ -1374,7 +1445,10 @@
     <span class="k">return</span> <span class="n">nb_rows</span></div>
 
 
-<div class="viewcode-block" id="get_ideogram_ends"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_ideogram_ends">[docs]</a><span class="k">def</span> <span class="nf">get_ideogram_ends</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_ideogram_ends">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_ideogram_ends">[docs]</a>
+<span class="k">def</span> <span class="nf">get_ideogram_ends</span><span class="p">(</span>
         <span class="n">ideogram_len</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span>
         <span class="n">gap</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
@@ -1402,7 +1476,10 @@
     <span class="k">return</span> <span class="n">ideo_ends</span></div>
 
 
-<div class="viewcode-block" id="make_ideogram_arc"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ideogram_arc">[docs]</a><span class="k">def</span> <span class="nf">make_ideogram_arc</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_ideogram_arc">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ideogram_arc">[docs]</a>
+<span class="k">def</span> <span class="nf">make_ideogram_arc</span><span class="p">(</span>
         <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">_phi</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">nb_points</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
@@ -1441,7 +1518,10 @@
     <span class="k">return</span> <span class="n">arc_positions</span></div>
 
 
-<div class="viewcode-block" id="make_ribbon_ends"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ribbon_ends">[docs]</a><span class="k">def</span> <span class="nf">make_ribbon_ends</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_ribbon_ends">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ribbon_ends">[docs]</a>
+<span class="k">def</span> <span class="nf">make_ribbon_ends</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span>
         <span class="n">row_sum</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">ideo_ends</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
@@ -1493,7 +1573,10 @@
     <span class="k">return</span> <span class="n">ribbon_boundary</span></div>
 
 
-<div class="viewcode-block" id="control_pts"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.control_pts">[docs]</a><span class="k">def</span> <span class="nf">control_pts</span><span class="p">(</span>
+
+<div class="viewcode-block" id="control_pts">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.control_pts">[docs]</a>
+<span class="k">def</span> <span class="nf">control_pts</span><span class="p">(</span>
         <span class="n">angle</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
@@ -1527,7 +1610,10 @@
     <span class="k">return</span> <span class="n">control_points</span></div>
 
 
-<div class="viewcode-block" id="ctrl_rib_chords"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ctrl_rib_chords">[docs]</a><span class="k">def</span> <span class="nf">ctrl_rib_chords</span><span class="p">(</span>
+
+<div class="viewcode-block" id="ctrl_rib_chords">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.ctrl_rib_chords">[docs]</a>
+<span class="k">def</span> <span class="nf">ctrl_rib_chords</span><span class="p">(</span>
         <span class="n">side1</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">side2</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1562,7 +1648,10 @@
     <span class="k">return</span> <span class="n">poligons</span></div>
 
 
-<div class="viewcode-block" id="make_q_bezier"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_q_bezier">[docs]</a><span class="k">def</span> <span class="nf">make_q_bezier</span><span class="p">(</span><span class="n">control_points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="make_q_bezier">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_q_bezier">[docs]</a>
+<span class="k">def</span> <span class="nf">make_q_bezier</span><span class="p">(</span><span class="n">control_points</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Define the Plotly SVG path for a quadratic Bezier curve.</span>
 
 <span class="sd">        defined by the list of its control points.</span>
@@ -1586,7 +1675,10 @@
     <span class="k">return</span> <span class="n">svgpath</span></div>
 
 
-<div class="viewcode-block" id="make_ribbon_arc"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ribbon_arc">[docs]</a><span class="k">def</span> <span class="nf">make_ribbon_arc</span><span class="p">(</span><span class="n">theta0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">theta1</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="make_ribbon_arc">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ribbon_arc">[docs]</a>
+<span class="k">def</span> <span class="nf">make_ribbon_arc</span><span class="p">(</span><span class="n">theta0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">theta1</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a SVGpath to draw a ribbon arc.</span>
 
 <span class="sd">    Parameters</span>
@@ -1631,7 +1723,10 @@
                          <span class="s1">&#39;must be in [0, 2*pi]&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="make_layout"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_layout">[docs]</a><span class="k">def</span> <span class="nf">make_layout</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_layout">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_layout">[docs]</a>
+<span class="k">def</span> <span class="nf">make_layout</span><span class="p">(</span>
         <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">plot_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">layout_shapes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
@@ -1676,7 +1771,10 @@
     <span class="k">return</span> <span class="n">layout</span></div>
 
 
-<div class="viewcode-block" id="make_ideo_shape"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ideo_shape">[docs]</a><span class="k">def</span> <span class="nf">make_ideo_shape</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_ideo_shape">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ideo_shape">[docs]</a>
+<span class="k">def</span> <span class="nf">make_ideo_shape</span><span class="p">(</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">line_color</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">fill_color</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1706,7 +1804,10 @@
         <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="make_ribbon"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ribbon">[docs]</a><span class="k">def</span> <span class="nf">make_ribbon</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_ribbon">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_ribbon">[docs]</a>
+<span class="k">def</span> <span class="nf">make_ribbon</span><span class="p">(</span>
         <span class="n">side1</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">side2</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">line_color</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -1752,7 +1853,10 @@
         <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="invPerm"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.invPerm">[docs]</a><span class="k">def</span> <span class="nf">invPerm</span><span class="p">(</span><span class="n">perm</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="invPerm">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.invPerm">[docs]</a>
+<span class="k">def</span> <span class="nf">invPerm</span><span class="p">(</span><span class="n">perm</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the inverse of a permutation.</span>
 
 <span class="sd">    Parameters</span>
@@ -1772,7 +1876,10 @@
     <span class="k">return</span> <span class="n">inv</span></div>
 
 
-<div class="viewcode-block" id="get_chains_ideograms_ends"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_chains_ideograms_ends">[docs]</a><span class="k">def</span> <span class="nf">get_chains_ideograms_ends</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_chains_ideograms_ends">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_chains_ideograms_ends">[docs]</a>
+<span class="k">def</span> <span class="nf">get_chains_ideograms_ends</span><span class="p">(</span>
         <span class="n">chains</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">gap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">PI</span> <span class="o">*</span> <span class="mf">0.005</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="n">NDFloat</span><span class="p">]:</span>
@@ -1801,7 +1908,10 @@
     <span class="k">return</span> <span class="n">chain_ideo_ends</span><span class="p">,</span> <span class="n">chain_ideogram_length</span></div>
 
 
-<div class="viewcode-block" id="get_all_ideograms_ends"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_all_ideograms_ends">[docs]</a><span class="k">def</span> <span class="nf">get_all_ideograms_ends</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_all_ideograms_ends">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.get_all_ideograms_ends">[docs]</a>
+<span class="k">def</span> <span class="nf">get_all_ideograms_ends</span><span class="p">(</span>
         <span class="n">chains</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">gap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">PI</span> <span class="o">*</span> <span class="mf">0.005</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]:</span>
@@ -1841,7 +1951,10 @@
     <span class="k">return</span> <span class="n">ideo_ends</span><span class="p">,</span> <span class="n">chain_ideo_ends</span></div>
 
 
-<div class="viewcode-block" id="split_labels_by_chains"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.split_labels_by_chains">[docs]</a><span class="k">def</span> <span class="nf">split_labels_by_chains</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="split_labels_by_chains">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.split_labels_by_chains">[docs]</a>
+<span class="k">def</span> <span class="nf">split_labels_by_chains</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Map each label to its chain.</span>
 
 <span class="sd">    Parameters</span>
@@ -1863,7 +1976,10 @@
     <span class="k">return</span> <span class="n">chains</span></div>
 
 
-<div class="viewcode-block" id="contacts_to_connect_matrix"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.contacts_to_connect_matrix">[docs]</a><span class="k">def</span> <span class="nf">contacts_to_connect_matrix</span><span class="p">(</span>
+
+<div class="viewcode-block" id="contacts_to_connect_matrix">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.contacts_to_connect_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">contacts_to_connect_matrix</span><span class="p">(</span>
         <span class="n">matrix</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span>
         <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
@@ -1900,7 +2016,10 @@
     <span class="k">return</span> <span class="n">connect_matrix</span></div>
 
 
-<div class="viewcode-block" id="to_nice_label"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_nice_label">[docs]</a><span class="k">def</span> <span class="nf">to_nice_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="to_nice_label">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_nice_label">[docs]</a>
+<span class="k">def</span> <span class="nf">to_nice_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a label into a user friendly label.</span>
 
 <span class="sd">    Parameters</span>
@@ -1918,7 +2037,10 @@
     <span class="k">return</span> <span class="n">nicelabel</span></div>
 
 
-<div class="viewcode-block" id="to_color_weight"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_color_weight">[docs]</a><span class="k">def</span> <span class="nf">to_color_weight</span><span class="p">(</span>
+
+<div class="viewcode-block" id="to_color_weight">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_color_weight">[docs]</a>
+<span class="k">def</span> <span class="nf">to_color_weight</span><span class="p">(</span>
         <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">max_dist</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">min_dist</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span>
@@ -1955,7 +2077,10 @@
     <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="to_rgba_color_string"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_rgba_color_string">[docs]</a><span class="k">def</span> <span class="nf">to_rgba_color_string</span><span class="p">(</span>
+
+<div class="viewcode-block" id="to_rgba_color_string">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_rgba_color_string">[docs]</a>
+<span class="k">def</span> <span class="nf">to_rgba_color_string</span><span class="p">(</span>
         <span class="n">connect_color</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -1978,7 +2103,10 @@
     <span class="k">return</span> <span class="n">rgba_color</span></div>
 
 
-<div class="viewcode-block" id="to_full_matrix"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_full_matrix">[docs]</a><span class="k">def</span> <span class="nf">to_full_matrix</span><span class="p">(</span>
+
+<div class="viewcode-block" id="to_full_matrix">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.to_full_matrix">[docs]</a>
+<span class="k">def</span> <span class="nf">to_full_matrix</span><span class="p">(</span>
         <span class="n">half_matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
         <span class="n">diag_val</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">:</span>
@@ -2003,7 +2131,10 @@
     <span class="k">return</span> <span class="n">matrix</span></div>
 
 
-<div class="viewcode-block" id="make_chordchart"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_chordchart">[docs]</a><span class="k">def</span> <span class="nf">make_chordchart</span><span class="p">(</span>
+
+<div class="viewcode-block" id="make_chordchart">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.make_chordchart">[docs]</a>
+<span class="k">def</span> <span class="nf">make_chordchart</span><span class="p">(</span>
         <span class="n">_contact_matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
         <span class="n">_dist_matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
         <span class="n">_interttype_matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -2252,7 +2383,10 @@
     <span class="k">return</span> <span class="n">output_fpath</span></div>
 
 
-<div class="viewcode-block" id="add_chordchart_legends"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.add_chordchart_legends">[docs]</a><span class="k">def</span> <span class="nf">add_chordchart_legends</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="add_chordchart_legends">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.add_chordchart_legends">[docs]</a>
+<span class="k">def</span> <span class="nf">add_chordchart_legends</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add custom legend to chordchart.</span>
 
 <span class="sd">    Parameters</span>
@@ -2354,7 +2488,10 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="tsv_to_chordchart"><a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.tsv_to_chordchart">[docs]</a><span class="k">def</span> <span class="nf">tsv_to_chordchart</span><span class="p">(</span>
+
+<div class="viewcode-block" id="tsv_to_chordchart">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.contactmap.contmap.html#haddock.modules.analysis.contactmap.contmap.tsv_to_chordchart">[docs]</a>
+<span class="k">def</span> <span class="nf">tsv_to_chordchart</span><span class="p">(</span>
         <span class="n">tsv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
         <span class="n">data_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ca-ca-dist&#39;</span><span class="p">,</span>
@@ -2479,6 +2616,7 @@
         <span class="p">)</span>
     
     <span class="k">return</span> <span class="n">chord_chart_fpath</span></div>
+
 </pre></div>
 
            </div>
@@ -2489,7 +2627,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

@@ -1,28 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration file I/O &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Expandable parameters" href="haddock.gear.expandable_parameters.html" />
-    <link rel="prev" title="Clean output from step folders" href="haddock.gear.clean_steps.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +32,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -47,43 +40,17 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../libs/haddock.libs.html">Libs Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="haddock.gear.html">Gear Reference</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="haddock.gear.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.clean_steps.html">Clean output from step folders</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">Configuration file I/O</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.expandable_parameters.html">Expandable parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.extend_run.html">Start from copy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.greetings.html">Greetings messages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.haddockmodel.html">HADDOCK models</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.known_cns_errors.html">haddock.gear.known_cns_errors module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.parameters.html">Parameters helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.prepare_run.html">Prepare run</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.preprocessing.html">PDB preprocessing</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.restart_run.html">Restart run</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.validations.html">Validations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.yaml2cfg.html">YAML configs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.gear.zerofill.html">Zero fill prefix</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="haddock.gear.html#module-haddock.gear">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Library Reference</a></li>
 </ul>
 
         </div>
@@ -100,8 +67,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
-          <li class="breadcrumb-item"><a href="haddock.gear.html">Gear Reference</a></li>
       <li class="breadcrumb-item active">Configuration file I/O</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/reference/gear/haddock.gear.config.rst.txt" rel="nofollow"> View page source</a>
@@ -113,7 +78,7 @@
            <div itemprop="articleBody">
              
   <section id="module-haddock.gear.config">
-<span id="configuration-file-i-o"></span><h1>Configuration file I/O<a class="headerlink" href="#module-haddock.gear.config" title="Permalink to this heading"></a></h1>
+<span id="configuration-file-i-o"></span><h1>Configuration file I/O<a class="headerlink" href="#module-haddock.gear.config" title="Link to this heading"></a></h1>
 <p>Module to read and write HADDOCK3 configuration files.</p>
 <p>HADDOCK3 user configuration files follow TOML syntax plus additional
 features required for HADDOCK3. Therefore, we have implemented our own
@@ -162,20 +127,20 @@ all TOML rules apply regarding defining <code class="docutils literal notranslat
 <p>Read more about TOML for Python here: <a class="reference external" href="https://pypi.org/project/toml/">https://pypi.org/project/toml/</a></p>
 <dl class="py exception">
 <dt class="sig sig-object py" id="haddock.gear.config.ConfigFormatError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">ConfigFormatError</span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#ConfigFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.ConfigFormatError" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">ConfigFormatError</span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#ConfigFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.ConfigFormatError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Exception if there is a format error.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.convert_to_path">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">convert_to_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../haddock.html#haddock.EmptyPath" title="haddock.EmptyPath"><span class="pre">EmptyPath</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#convert_to_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.convert_to_path" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">convert_to_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../haddock.html#haddock.EmptyPath" title="haddock.EmptyPath"><span class="pre">EmptyPath</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#convert_to_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.convert_to_path" title="Link to this definition"></a></dt>
 <dd><p>Convert a variable to Path if variable evaluates to true.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.convert_variables_to_paths">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">convert_variables_to_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.ParamMapT" title="haddock.core.typing.ParamMapT"><span class="pre">ParamMapT</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.ParamMapT" title="haddock.core.typing.ParamMapT"><span class="pre">ParamMapT</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#convert_variables_to_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.convert_variables_to_paths" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">convert_variables_to_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.ParamMapT" title="haddock.core.typing.ParamMapT"><span class="pre">ParamMapT</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/haddock.core.typing.html#haddock.core.typing.ParamMapT" title="haddock.core.typing.ParamMapT"><span class="pre">ParamMapT</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#convert_variables_to_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.convert_variables_to_paths" title="Link to this definition"></a></dt>
 <dd><p>Convert config variables to paths.</p>
 <p>Applies only to those variables HADDOCK3 needs as paths.</p>
 <dl class="field-list simple">
@@ -190,19 +155,19 @@ all TOML rules apply regarding defining <code class="docutils literal notranslat
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.get_module_name">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">get_module_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#get_module_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.get_module_name" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">get_module_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#get_module_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.get_module_name" title="Link to this definition"></a></dt>
 <dd><p>Get the module name according to the config parser.</p>
 <p>Get the name without the integer suffix.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.load">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.load" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.load" title="Link to this definition"></a></dt>
 <dd><p>Load an HADDOCK3 configuration file to a dictionary.</p>
 <p>Accepts HADDOCK3 <code class="docutils literal notranslate"><span class="pre">cfg</span></code> files or pure <code class="docutils literal notranslate"><span class="pre">toml</span></code> files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>fpath</strong> (str or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – Path to user configuration file.</p>
+<dd class="field-odd"><p><strong>fpath</strong> (str or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – Path to user configuration file.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
@@ -222,7 +187,7 @@ suffix, for example: <code class="docutils literal notranslate"><span class="pre
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.loads">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#loads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.loads" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">loads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#loads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.loads" title="Link to this definition"></a></dt>
 <dd><p>Read a string representing a config file to a dictionary.</p>
 <p>Config strings are converted to toml-compatible format and finally
 read by the toml library.</p>
@@ -253,7 +218,7 @@ steps in the workflow.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.match_path_criteria">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">match_path_criteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#match_path_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.match_path_criteria" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">match_path_criteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#match_path_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.match_path_criteria" title="Link to this definition"></a></dt>
 <dd><p>Confirm a parameter should be converted to path.</p>
 <p>This function contains the rules defining which parameter need to be
 converted to Path before be sent to HADDOCK3.</p>
@@ -261,7 +226,7 @@ converted to Path before be sent to HADDOCK3.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.config.save">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.12)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pure_toml</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.save" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config.</span></span><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.MutableMapping" title="(in Python v3.13)"><span class="pre">MutableMapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pure_toml</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/config.html#save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config.save" title="Link to this definition"></a></dt>
 <dd><p>Write a dictionary to a HADDOCK3 config file.</p>
 <p>Write the HADDOCK3 parameter dictionary to a <cite>.cfg</cite> file. There is
 also the option to write in pure TOML format. Both are compatible with
@@ -282,16 +247,13 @@ HADDOCK3.</p>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="haddock.gear.clean_steps.html" class="btn btn-neutral float-left" title="Clean output from step folders" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="haddock.gear.expandable_parameters.html" class="btn btn-neutral float-right" title="Expandable parameters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

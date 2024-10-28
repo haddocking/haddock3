@@ -1,0 +1,57 @@
+
+
+Easy
+````
+
+cutoff
+~~~~~~
+
+| *default*: 0.4
+| *type*: float
+| *title*: relative side chain surface accessibility cutoff
+| *min*: 0.0
+| *max*: 1.0
+| *short description*: relative side chain surface accessibility cutoff
+| *long description*: relative side chain surface accessibility cutoff. Residues with a relative side chain surface accessibility below this value are considered buried.
+| *group*: scoring
+| *explevel*: easy
+
+resdic_accessible_
+~~~~~~~~~~~~~~~~~~
+
+| *default*: []
+| *type*: list
+| *title*: List of residues supposed to be accessible
+| *short description*: List of residues supposed to be accessible
+| *long description*: resdic_* is an expandable parameter. You can provide resdic_accessible_A, resdic_accessible_B, resdic_accessible_C, etc, where the last capital letter is the chain identifier.
+| *group*: analysis
+| *explevel*: easy
+
+resdic_buried_
+~~~~~~~~~~~~~~
+
+| *default*: []
+| *type*: list
+| *title*: List of residues supposed to be buried
+| *short description*: List of residues supposed to be buried
+| *long description*: resdic_buried_* is an expandable parameter. You can provide resdic_buried_A, resdic_buried_B, resdic_buried_C, etc, where the last capital letter is the chain identifier.
+| *group*: analysis
+| *explevel*: easy
+
+
+Expert
+``````
+
+probe_radius
+~~~~~~~~~~~~
+
+| *default*: 1.4
+| *type*: float
+| *title*: Probe radius
+| *min*: 0.0
+| *max*: 10.0
+| *short description*: Probe radius
+| *long description*: Sets the probe radius (in Angstrom) used to compute solvent accessible surface area.
+| *group*: analysis
+| *explevel*: expert
+

@@ -1,0 +1,564 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenMM Molecular Dynamics module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="haddock.modules.refinement.openmm.openmm module" href="haddock.modules.refinement.openmm.openmm.html" />
+    <link rel="prev" title="Water refinement module" href="haddock.modules.refinement.mdref.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Model Refinement Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.refinement.emref.html">Energy Minimization refinement module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.refinement.flexref.html">Flexible refinement module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.refinement.mdref.html">Water refinement module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">OpenMM Molecular Dynamics module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#module-haddock.modules.refinement">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Modules</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Model Refinement Modules</a></li>
+      <li class="breadcrumb-item active">OpenMM Molecular Dynamics module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/refinement/haddock.modules.refinement.openmm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="openmm-molecular-dynamics-module">
+<h1>OpenMM Molecular Dynamics module<a class="headerlink" href="#openmm-molecular-dynamics-module" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="haddock.modules.refinement.openmm.openmm.html">haddock.modules.refinement.openmm.openmm module</a></li>
+</ul>
+</div>
+</section>
+<section id="module-haddock.modules.refinement.openmm">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.refinement.openmm" title="Link to this heading"></a></h2>
+<p>OpenMM Molecular Dynamics refinement module for HADDOCK3.</p>
+<p>The potential of OpenMM can be exploited to perform potentially different
+tasks, such as:</p>
+<ul class="simple">
+<li><p>Run MD simulation for each model from previous step;</p></li>
+<li><p>Refine the models in the middle of a docking run. For example, it can be used
+to refine the models coming from a <cite>[rigidbody]</cite> module before <cite>[flexref]</cite> is
+executed, or to replace the <cite>[mdref]</cite> step.</p></li>
+<li><p>Generate conformers prior to their use in a thorough docking run.</p></li>
+</ul>
+<p>To get a list of all possible parameters, run:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">haddock3</span><span class="o">-</span><span class="n">cfg</span> <span class="o">-</span><span class="n">m</span> <span class="n">openmm</span>
+</pre></div>
+</div>
+<p>Module workflow:</p>
+<ul class="simple">
+<li><p>Generate openmm topology and fix atoms</p></li>
+<li><p>Build solvation box</p></li>
+<li><p>Equilibration solvation box restraining the protein</p></li>
+<li><p>Run MD simulation: increase temperature, run MD, reduce temperature.</p></li>
+<li><p>Either generate an ensemble of multiple frames or return the last frame.</p></li>
+</ul>
+<p>This module will refine all models coming from the previous workflow step and
+send them to the next step in the workflow. If you want to use other modules
+such as <cite>flexref</cite> or <cite>emref</cite> after the OpenMM module, you need to recreate the
+topologies by simply adding a <cite>[topoaa]</cite> step in the workflow.
+See examples in <cite>examples/thirdparty/openmm</cite> folder.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.refinement.openmm.HaddockModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.refinement.openmm.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/haddock/modules/refinement/openmm/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/refinement/openmm.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.openmm.HaddockModule" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a></p>
+<p>HADDOCK3 OpenMM module.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.refinement.openmm.HaddockModule.confirm_installation">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/refinement/openmm.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.openmm.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
+<dd><p>Confirm installation of openmm and pdfixer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.ThirdPartyIntallationError" title="haddock.core.exceptions.ThirdPartyIntallationError"><strong>ThirdPartyIntallationError</strong></a> – When OpenMM is not installed</p></li>
+<li><p><a class="reference internal" href="../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.ThirdPartyIntallationError" title="haddock.core.exceptions.ThirdPartyIntallationError"><strong>ThirdPartyIntallationError</strong></a> – When OpenMM pdbfixer is not installed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.refinement.openmm.HaddockModule.create_directories">
+<span class="sig-name descname"><span class="pre">create_directories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/refinement/openmm.html#HaddockModule.create_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.openmm.HaddockModule.create_directories" title="Link to this definition"></a></dt>
+<dd><p>Create the necessary directories and provides the paths.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.modules.refinement.openmm.HaddockModule.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'openmm'</span></em><a class="headerlink" href="#haddock.modules.refinement.openmm.HaddockModule.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.refinement.openmm.HaddockModule.remove_directories">
+<span class="sig-name descname"><span class="pre">remove_directories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/refinement/openmm.html#HaddockModule.remove_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.openmm.HaddockModule.remove_directories" title="Link to this definition"></a></dt>
+<dd><p>Remove unnecessary directories full of heavy files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.refinement.openmm.HaddockModule.set_max_cpu">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_max_cpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nbcpu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/refinement/openmm.html#HaddockModule.set_max_cpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.refinement.openmm.HaddockModule.set_max_cpu" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="default-parameters">
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
+<section id="easy">
+<h3>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h3>
+<section id="add-extra-particles-for-forcefield">
+<h4>add_extra_particles_for_forcefield<a class="headerlink" href="#add-extra-particles-for-forcefield" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Add extra particles for forcefield.</div>
+<div class="line"><em>short description</em>: Add extra particles for forcefield if needed such as e.g. Drude particles.</div>
+<div class="line"><em>long description</em>: Add extra particles for forcefield if needed such as e.g. Drude particles.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="constraints">
+<h4>constraints<a class="headerlink" href="#constraints" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘HBonds’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Integration constraints.</div>
+<div class="line"><em>choices</em>: [‘None’, ‘HBonds’, ‘AllBonds’, ‘HAngles’]</div>
+<div class="line"><em>short description</em>: Integration constraints used to allow for larger integration time step.</div>
+<div class="line"><em>long description</em>: Integration constraints used to allow for larger integration time step. For extra info see <a class="reference external" href="http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints">http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints</a></div>
+<div class="line"><em>group</em>: restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="explicit-solvent-model">
+<h4>explicit_solvent_model<a class="headerlink" href="#explicit-solvent-model" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘amber14/tip3p.xml’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Explicit solvent models.</div>
+<div class="line"><em>choices</em>: [‘amber14/tip3p.xml’, ‘amber14/spce.xml’, ‘charmm36/spce.xml’, ‘amber14/tip4pew.xml’, ‘charmm36/tip4pew.xml’, ‘charmm36/tip5p.xml’]</div>
+<div class="line"><em>short description</em>: Solvent models supported by the OpenMM modeller to build the water solvation box.</div>
+<div class="line"><em>long description</em>: Solvent models supported by the OpenMM modeller to build the water solvation box.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="forcefield">
+<h4>forcefield<a class="headerlink" href="#forcefield" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘amber14-all.xml’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Forcefield used by OpenMM.</div>
+<div class="line"><em>choices</em>: [‘amber14-all.xml’, ‘amber14/protein.ff14SB.xml’, ‘amber14/protein.ff15ipq.xml’, ‘amber14/DNA.OL15.xml’, ‘amber14/DNA.bsc1.xml’, ‘amber14/RNA.OL3.xml’, ‘amber14/lipid17.xml’, ‘amber14/GLYCAM_06j-1.xml’, ‘charmm36.xml’]</div>
+<div class="line"><em>short description</em>: Forcefields that can be used by OpenMM.</div>
+<div class="line"><em>long description</em>: Forcefields that can be used by OpenMM.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="generate-ensemble">
+<h4>generate_ensemble<a class="headerlink" href="#generate-ensemble" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Generate ensemble of configurations.</div>
+<div class="line"><em>short description</em>: Generate ensemble of configurations.</div>
+<div class="line"><em>long description</em>: If ‘true’, generates 1 single ensemble .pdb file holding various configurations; composed of the equilibrated one, all intermediates and the final one. If ‘false’, only return the last configuration obtained after ‘simulation_timesteps’ steps.</div>
+<div class="line"><em>group</em>: post processing</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="implicit-solvent">
+<h4>implicit_solvent<a class="headerlink" href="#implicit-solvent" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Indicate use of implicit solvent.</div>
+<div class="line"><em>short description</em>: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.</div>
+<div class="line"><em>long description</em>: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="implicit-solvent-model">
+<h4>implicit_solvent_model<a class="headerlink" href="#implicit-solvent-model" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘implicit/hct.xml’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Implicit solvent models.</div>
+<div class="line"><em>choices</em>: [‘implicit/hct.xml’, ‘implicit/obc1.xml’, ‘implicit/obc2.xml’, ‘implicit/gbn.xml’, ‘implicit/gbn2.xml’]</div>
+<div class="line"><em>short description</em>: Implicit solvent models supported by OpenMM.</div>
+<div class="line"><em>long description</em>: Implicit solvent models supported by OpenMM.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="iniseed">
+<h4>iniseed<a class="headerlink" href="#iniseed" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 917</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Simulation seed.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000000</div>
+<div class="line"><em>short description</em>: Set a pseudo-random seed for the simulation.</div>
+<div class="line"><em>long description</em>: Set a pseudo-random seed for the simulation. This defines how the initial velocities are created, but has no effect on the randomicity of the solvation box.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ion-concentration">
+<h4>ion_concentration<a class="headerlink" href="#ion-concentration" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.15</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Ion concentration.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 5</div>
+<div class="line"><em>short description</em>: Ion concentration in Molar.</div>
+<div class="line"><em>long description</em>: Ion concentration in Molar.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="keep-solvent">
+<h4>keep_solvent<a class="headerlink" href="#keep-solvent" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Whether-or-not solvent be removed from provided structures.</div>
+<div class="line"><em>short description</em>: Whether-or-not solvent be removed from provided structures.</div>
+<div class="line"><em>long description</em>: Whether-or-not solvent be removed from provided structures. If ‘false’, all HETATM atoms will be removed.</div>
+<div class="line"><em>group</em>: post processing</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="remove-center-of-mass-motion">
+<h4>remove_center_of_mass_motion<a class="headerlink" href="#remove-center-of-mass-motion" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Remove center of mass motion.</div>
+<div class="line"><em>short description</em>: Remove center of mass motion when overall molecular drift is detected.</div>
+<div class="line"><em>long description</em>: Remove center of mass motion when overall molecular drift is detected.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="rigid-water">
+<h4>rigid_water<a class="headerlink" href="#rigid-water" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Use rigid water.</div>
+<div class="line"><em>short description</em>: Use of rigid water in the simulation.</div>
+<div class="line"><em>long description</em>: Use of rigid water in the simulation. Flexible water molecules usually require a slower taken timestep by the used integrator.</div>
+<div class="line"><em>group</em>: restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="sampling-factor">
+<h4>sampling_factor<a class="headerlink" href="#sampling-factor" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of simulation replicas.</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 20</div>
+<div class="line"><em>short description</em>: Number of simulation replicas.</div>
+<div class="line"><em>long description</em>: Number of simulation replicas.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="solv-equilibration">
+<h4>solv_equilibration<a class="headerlink" href="#solv-equilibration" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Process the solvent equilibration phase.</div>
+<div class="line"><em>short description</em>: Process the solvent equilibration phase.</div>
+<div class="line"><em>long description</em>: Process the solvent equilibration phase. If ‘true’, the solvent will be equilibrated while constraining proteins positions to intial ones.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="temperature-kelvin">
+<h4>temperature_kelvin<a class="headerlink" href="#temperature-kelvin" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 298.15</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Average temperature.</div>
+<div class="line"><em>min</em>: 1.0</div>
+<div class="line"><em>max</em>: 1000.0</div>
+<div class="line"><em>short description</em>: Average temperature used by e.g. the integrator or by for temperature coupling.</div>
+<div class="line"><em>long description</em>: Average temperature used by e.g. the integrator or by for temperature coupling.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+<section id="expert">
+<h3>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h3>
+<section id="equilibration-timesteps">
+<h4>equilibration_timesteps<a class="headerlink" href="#equilibration-timesteps" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 3000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Equilibration timesteps.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 100000</div>
+<div class="line"><em>short description</em>: Equilibration timesteps performed without saving the simulation state.</div>
+<div class="line"><em>long description</em>: Equilibration timesteps performed without saving the simulation state.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="padding">
+<h4>padding<a class="headerlink" href="#padding" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Padding value in nanometers.</div>
+<div class="line"><em>min</em>: 0.3</div>
+<div class="line"><em>max</em>: 10</div>
+<div class="line"><em>short description</em>: Padding value in nanometers.</div>
+<div class="line"><em>long description</em>: Padding value in nanometers. This is used to create the solvation box by adding water molecules around the molecule up to this padding distance. When performing a long refinement of a complex, increase this parameter as the molecules will likely move away from each other.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ph">
+<h4>ph<a class="headerlink" href="#ph" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 7.4</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: pH of the buffer.</div>
+<div class="line"><em>min</em>: -3.0</div>
+<div class="line"><em>max</em>: 12</div>
+<div class="line"><em>short description</em>: pH of the buffer.</div>
+<div class="line"><em>long description</em>: pH of the buffer. This has an infulence on the protonation states of the resiudes.</div>
+<div class="line"><em>group</em>: simulation</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="save-intermediate">
+<h4>save_intermediate<a class="headerlink" href="#save-intermediate" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of intermediate configurations to save.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 100</div>
+<div class="line"><em>short description</em>: Number of intermediate configurations to save during the simulation.</div>
+<div class="line"><em>long description</em>: Number of intermediate configurations to save during the simulation. The code divides the length of the simulation (simulation_timesteps) by this parameter to get how often configurations should be saved.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="simulation-timesteps">
+<h4>simulation_timesteps<a class="headerlink" href="#simulation-timesteps" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 2000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Simulation timesteps.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 1000000</div>
+<div class="line"><em>short description</em>: Simulation timesteps performed during the simulation.</div>
+<div class="line"><em>long description</em>: Simulation timesteps performed during the simulation.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="solv-eq-max-temperature-kelvin">
+<h4>solv_eq_max_temperature_kelvin<a class="headerlink" href="#solv-eq-max-temperature-kelvin" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 310.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Upper boundary of temperature to reach during solvent eauilibration phase.</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 400</div>
+<div class="line"><em>short description</em>: Upper boundary of temperature to reach during solvent eauilibration phase.</div>
+<div class="line"><em>long description</em>: Upper boundary of temperature to reach during solvent eauilibration phase.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="solv-eq-spring-constant">
+<h4>solv_eq_spring_constant<a class="headerlink" href="#solv-eq-spring-constant" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 20.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10000</div>
+<div class="line"><em>short description</em>: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.</div>
+<div class="line"><em>long description</em>: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="solv-eq-stepsize-fs">
+<h4>solv_eq_stepsize_fs<a class="headerlink" href="#solv-eq-stepsize-fs" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 2.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Step size for the solvent equilibration phase.</div>
+<div class="line"><em>min</em>: 0.5</div>
+<div class="line"><em>max</em>: 4</div>
+<div class="line"><em>short description</em>: Step size (in femptoseconds) for the solvent equilibration phase.</div>
+<div class="line"><em>long description</em>: Step size (in femptoseconds) for the solvent equilibration phase.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="solv-eq-timesteps">
+<h4>solv_eq_timesteps<a class="headerlink" href="#solv-eq-timesteps" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 500</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
+<div class="line"><em>min</em>: 10</div>
+<div class="line"><em>max</em>: 10000</div>
+<div class="line"><em>short description</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
+<div class="line"><em>long description</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="timestep-ps">
+<h4>timestep_ps<a class="headerlink" href="#timestep-ps" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.002</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Timestep definition.</div>
+<div class="line"><em>min</em>: 0.001</div>
+<div class="line"><em>max</em>: 0.004</div>
+<div class="line"><em>short description</em>: Definition of timestep used by the integrator to progress the simulation.</div>
+<div class="line"><em>long description</em>: Definition of timestep used by the integrator to progress the simulation.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.modules.refinement.mdref.html" class="btn btn-neutral float-left" title="Water refinement module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.modules.refinement.openmm.openmm.html" class="btn btn-neutral float-right" title="haddock.modules.refinement.openmm.openmm module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

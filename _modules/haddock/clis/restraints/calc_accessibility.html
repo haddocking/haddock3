@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.restraints.calc_accessibility &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -97,20 +91,24 @@
 <span class="sd">        [-c &lt;cutoff&gt;]               Relative side-chain accessibility cutoff</span>
 <span class="sd">        [--log_level &lt;log_level&gt;]   DEBUG, INFO, WARNING, ERROR, or CRITICAL</span>
 <span class="sd">        [--export_to_actpass]       Flag to export accessible resiudes</span>
+<span class="sd">        [--probe_radius &lt;probe_radius&gt;]   Probe radius for the accessibility calculation</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">freesasa</span> <span class="kn">import</span> <span class="n">Structure</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">freesasa</span> <span class="kn">import</span> <span class="n">Structure</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.librestraints</span> <span class="kn">import</span> <span class="n">DEFAULT_PROBE_RADIUS</span><span class="p">,</span> <span class="n">REL_ASA</span>
 
 
 <span class="c1"># As this script is a subcommand of the `haddock3-restraints` cli,</span>
 <span class="c1"># it requires its own options and arguments that are managed here.</span>
-<div class="viewcode-block" id="add_calc_accessibility_arguments"><a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.add_calc_accessibility_arguments">[docs]</a><span class="k">def</span> <span class="nf">add_calc_accessibility_arguments</span><span class="p">(</span><span class="n">calc_accessibility_subcommand</span><span class="p">):</span>
+<div class="viewcode-block" id="add_calc_accessibility_arguments">
+<a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.add_calc_accessibility_arguments">[docs]</a>
+<span class="k">def</span> <span class="nf">add_calc_accessibility_arguments</span><span class="p">(</span><span class="n">calc_accessibility_subcommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add arguments to the calc_accessibility subcommand.&quot;&quot;&quot;</span>
     <span class="n">calc_accessibility_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;input_pdb_file&quot;</span><span class="p">,</span>
@@ -142,8 +140,17 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export the exposed residues as passive to an actpass file&quot;</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+    
+    <span class="n">calc_accessibility_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--probe_radius&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_PROBE_RADIUS</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Probe radius for the accessibility calculation&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">calc_accessibility_subcommand</span></div>
+
 
 
 <span class="c1">##########################################################</span>
@@ -168,142 +175,12 @@
     <span class="s2">&quot;YB&quot;</span><span class="p">,</span> <span class="s2">&quot;OS&quot;</span><span class="p">,</span> <span class="s2">&quot;IR&quot;</span><span class="p">,</span> <span class="s2">&quot;PT&quot;</span><span class="p">,</span> <span class="s2">&quot;AU&quot;</span><span class="p">,</span> <span class="s2">&quot;HG&quot;</span><span class="p">,</span> <span class="s2">&quot;PB&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-<span class="c1"># Taken from NACCESS</span>
-<span class="n">REL_ASA</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;total&#39;</span><span class="p">:</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;ALA&#39;</span><span class="p">:</span> <span class="mf">107.95</span><span class="p">,</span>
-            <span class="s1">&#39;CYS&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
-            <span class="s1">&#39;ASP&#39;</span><span class="p">:</span> <span class="mf">140.39</span><span class="p">,</span>
-            <span class="s1">&#39;GLU&#39;</span><span class="p">:</span> <span class="mf">172.25</span><span class="p">,</span>
-            <span class="s1">&#39;PHE&#39;</span><span class="p">:</span> <span class="mf">199.48</span><span class="p">,</span>
-            <span class="s1">&#39;GLY&#39;</span><span class="p">:</span> <span class="mf">80.10</span><span class="p">,</span>
-            <span class="s1">&#39;HIS&#39;</span><span class="p">:</span> <span class="mf">182.88</span><span class="p">,</span>
-            <span class="s1">&#39;ILE&#39;</span><span class="p">:</span> <span class="mf">175.12</span><span class="p">,</span>
-            <span class="s1">&#39;LYS&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
-            <span class="s1">&#39;LEU&#39;</span><span class="p">:</span> <span class="mf">178.63</span><span class="p">,</span>
-            <span class="s1">&#39;MET&#39;</span><span class="p">:</span> <span class="mf">194.15</span><span class="p">,</span>
-            <span class="s1">&#39;ASN&#39;</span><span class="p">:</span> <span class="mf">143.94</span><span class="p">,</span>
-            <span class="s1">&#39;PRO&#39;</span><span class="p">:</span> <span class="mf">136.13</span><span class="p">,</span>
-            <span class="s1">&#39;GLN&#39;</span><span class="p">:</span> <span class="mf">178.50</span><span class="p">,</span>
-            <span class="s1">&#39;ARG&#39;</span><span class="p">:</span> <span class="mf">238.76</span><span class="p">,</span>
-            <span class="s1">&#39;SER&#39;</span><span class="p">:</span> <span class="mf">116.50</span><span class="p">,</span>
-            <span class="s1">&#39;THR&#39;</span><span class="p">:</span> <span class="mf">139.27</span><span class="p">,</span>
-            <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="mf">151.44</span><span class="p">,</span>
-            <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="mf">249.36</span><span class="p">,</span>
-            <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
-            <span class="s1">&#39;ASH&#39;</span><span class="p">:</span> <span class="mf">140.39</span><span class="p">,</span>
-            <span class="s1">&#39;DDZ&#39;</span><span class="p">:</span> <span class="mf">107.95</span><span class="p">,</span>
-            <span class="s1">&#39;GLH&#39;</span><span class="p">:</span> <span class="mf">172.25</span><span class="p">,</span>
-            <span class="s1">&#39;CYM&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
-            <span class="s1">&#39;CSP&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
-            <span class="s1">&#39;CYF&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
-            <span class="s1">&#39;CYC&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
-            <span class="s1">&#39;CFE&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
-            <span class="s1">&#39;NEP&#39;</span><span class="p">:</span> <span class="mf">182.88</span><span class="p">,</span>
-            <span class="s1">&#39;ALY&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
-            <span class="s1">&#39;MLZ&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
-            <span class="s1">&#39;MLY&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
-            <span class="s1">&#39;M3L&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
-            <span class="s1">&#39;HYP&#39;</span><span class="p">:</span> <span class="mf">136.13</span><span class="p">,</span>
-            <span class="s1">&#39;SEP&#39;</span><span class="p">:</span> <span class="mf">116.50</span><span class="p">,</span>
-            <span class="s1">&#39;TOP&#39;</span><span class="p">:</span> <span class="mf">139.27</span><span class="p">,</span>
-            <span class="s1">&#39;TYP&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
-            <span class="s1">&#39;PTR&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
-            <span class="s1">&#39;TYS&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
-            <span class="s1">&#39;PNS&#39;</span><span class="p">:</span> <span class="mf">116.50</span><span class="p">,</span>
-            <span class="p">},</span>
-    <span class="s1">&#39;bb&#39;</span><span class="p">:</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;ALA&#39;</span><span class="p">:</span> <span class="mf">38.54</span><span class="p">,</span>
-            <span class="s1">&#39;CYS&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
-            <span class="s1">&#39;ASP&#39;</span><span class="p">:</span> <span class="mf">37.70</span><span class="p">,</span>
-            <span class="s1">&#39;GLU&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;PHE&#39;</span><span class="p">:</span> <span class="mf">35.37</span><span class="p">,</span>
-            <span class="s1">&#39;GLY&#39;</span><span class="p">:</span> <span class="mf">47.77</span><span class="p">,</span>
-            <span class="s1">&#39;HIS&#39;</span><span class="p">:</span> <span class="mf">35.80</span><span class="p">,</span>
-            <span class="s1">&#39;ILE&#39;</span><span class="p">:</span> <span class="mf">37.16</span><span class="p">,</span>
-            <span class="s1">&#39;LYS&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;LEU&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;MET&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;ASN&#39;</span><span class="p">:</span> <span class="mf">37.70</span><span class="p">,</span>
-            <span class="s1">&#39;PRO&#39;</span><span class="p">:</span> <span class="mf">16.23</span><span class="p">,</span>
-            <span class="s1">&#39;GLN&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;ARG&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;SER&#39;</span><span class="p">:</span> <span class="mf">38.40</span><span class="p">,</span>
-            <span class="s1">&#39;THR&#39;</span><span class="p">:</span> <span class="mf">37.57</span><span class="p">,</span>
-            <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="mf">37.16</span><span class="p">,</span>
-            <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="mf">38.10</span><span class="p">,</span>
-            <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
-            <span class="s1">&#39;ASH&#39;</span><span class="p">:</span> <span class="mf">37.70</span><span class="p">,</span>
-            <span class="s1">&#39;DDZ&#39;</span><span class="p">:</span> <span class="mf">38.54</span><span class="p">,</span>
-            <span class="s1">&#39;GLH&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;CYM&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
-            <span class="s1">&#39;CYC&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
-            <span class="s1">&#39;CSP&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
-            <span class="s1">&#39;CYF&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
-            <span class="s1">&#39;CFE&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
-            <span class="s1">&#39;NEP&#39;</span><span class="p">:</span> <span class="mf">35.80</span><span class="p">,</span>
-            <span class="s1">&#39;ALY&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;MLZ&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;MLY&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;M3L&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
-            <span class="s1">&#39;HYP&#39;</span><span class="p">:</span> <span class="mf">16.23</span><span class="p">,</span>
-            <span class="s1">&#39;SEP&#39;</span><span class="p">:</span> <span class="mf">38.40</span><span class="p">,</span>
-            <span class="s1">&#39;TOP&#39;</span><span class="p">:</span> <span class="mf">37.57</span><span class="p">,</span>
-            <span class="s1">&#39;TYP&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
-            <span class="s1">&#39;PTR&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
-            <span class="s1">&#39;TYS&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
-            <span class="s1">&#39;PNS&#39;</span><span class="p">:</span> <span class="mf">38.40</span><span class="p">,</span>
-            <span class="p">},</span>
-    <span class="s1">&#39;sc&#39;</span><span class="p">:</span>
-        <span class="p">{</span>
-            <span class="s1">&#39;ALA&#39;</span><span class="p">:</span> <span class="mf">69.41</span><span class="p">,</span>
-            <span class="s1">&#39;CYS&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
-            <span class="s1">&#39;ASP&#39;</span><span class="p">:</span> <span class="mf">102.69</span><span class="p">,</span>
-            <span class="s1">&#39;GLU&#39;</span><span class="p">:</span> <span class="mf">134.74</span><span class="p">,</span>
-            <span class="s1">&#39;PHE&#39;</span><span class="p">:</span> <span class="mf">164.11</span><span class="p">,</span>
-            <span class="s1">&#39;GLY&#39;</span><span class="p">:</span> <span class="mf">32.33</span><span class="p">,</span>
-            <span class="s1">&#39;HIS&#39;</span><span class="p">:</span> <span class="mf">147.08</span><span class="p">,</span>
-            <span class="s1">&#39;ILE&#39;</span><span class="p">:</span> <span class="mf">137.96</span><span class="p">,</span>
-            <span class="s1">&#39;LYS&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
-            <span class="s1">&#39;LEU&#39;</span><span class="p">:</span> <span class="mf">141.12</span><span class="p">,</span>
-            <span class="s1">&#39;MET&#39;</span><span class="p">:</span> <span class="mf">156.64</span><span class="p">,</span>
-            <span class="s1">&#39;ASN&#39;</span><span class="p">:</span> <span class="mf">106.24</span><span class="p">,</span>
-            <span class="s1">&#39;PRO&#39;</span><span class="p">:</span> <span class="mf">119.90</span><span class="p">,</span>
-            <span class="s1">&#39;GLN&#39;</span><span class="p">:</span> <span class="mf">140.99</span><span class="p">,</span>
-            <span class="s1">&#39;ARG&#39;</span><span class="p">:</span> <span class="mf">201.25</span><span class="p">,</span>
-            <span class="s1">&#39;SER&#39;</span><span class="p">:</span> <span class="mf">78.11</span><span class="p">,</span>
-            <span class="s1">&#39;THR&#39;</span><span class="p">:</span> <span class="mf">101.70</span><span class="p">,</span>
-            <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="mf">114.28</span><span class="p">,</span>
-            <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="mf">211.26</span><span class="p">,</span>
-            <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
-            <span class="s1">&#39;ASH&#39;</span><span class="p">:</span> <span class="mf">102.69</span><span class="p">,</span>
-            <span class="s1">&#39;DDZ&#39;</span><span class="p">:</span> <span class="mf">69.41</span><span class="p">,</span>
-            <span class="s1">&#39;GLH&#39;</span><span class="p">:</span> <span class="mf">134.74</span><span class="p">,</span>
-            <span class="s1">&#39;CYM&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
-            <span class="s1">&#39;CYC&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
-            <span class="s1">&#39;CSP&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
-            <span class="s1">&#39;CYF&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
-            <span class="s1">&#39;CFE&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
-            <span class="s1">&#39;NEP&#39;</span><span class="p">:</span> <span class="mf">147.08</span><span class="p">,</span>
-            <span class="s1">&#39;ALY&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
-            <span class="s1">&#39;MLZ&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
-            <span class="s1">&#39;MLY&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
-            <span class="s1">&#39;M3L&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
-            <span class="s1">&#39;HYP&#39;</span><span class="p">:</span> <span class="mf">119.90</span><span class="p">,</span>
-            <span class="s1">&#39;SEP&#39;</span><span class="p">:</span> <span class="mf">78.11</span><span class="p">,</span>
-            <span class="s1">&#39;TOP&#39;</span><span class="p">:</span> <span class="mf">101.70</span><span class="p">,</span>
-            <span class="s1">&#39;TYP&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
-            <span class="s1">&#39;PTR&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
-            <span class="s1">&#39;TYS&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
-            <span class="s1">&#39;PNS&#39;</span><span class="p">:</span> <span class="mf">78.11</span><span class="p">,</span>
-            <span class="p">}</span>
-    <span class="p">}</span>
 
-
-<div class="viewcode-block" id="get_accessibility"><a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.get_accessibility">[docs]</a><span class="k">def</span> <span class="nf">get_accessibility</span><span class="p">(</span>
-        <span class="n">pdb_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<div class="viewcode-block" id="get_accessibility">
+<a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.get_accessibility">[docs]</a>
+<span class="k">def</span> <span class="nf">get_accessibility</span><span class="p">(</span>
+        <span class="n">pdb_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">probe_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_PROBE_RADIUS</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute per-residue accessibility values.</span>
 <span class="sd">    </span>
@@ -323,7 +200,7 @@
     <span class="n">naccess_unsupported_aa</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HEC&#39;</span><span class="p">,</span> <span class="s1">&#39;TIP&#39;</span><span class="p">,</span> <span class="s1">&#39;ACE&#39;</span><span class="p">,</span> <span class="s1">&#39;THP&#39;</span><span class="p">,</span> <span class="s1">&#39;HEB&#39;</span><span class="p">,</span> <span class="s1">&#39;CTN&#39;</span><span class="p">]</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculate accessibility...&quot;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">freesasa</span> <span class="kn">import</span> <span class="n">Classifier</span><span class="p">,</span> <span class="n">calc</span>
+        <span class="kn">from</span> <span class="nn">freesasa</span> <span class="kn">import</span> <span class="n">Classifier</span><span class="p">,</span> <span class="n">calc</span><span class="p">,</span> <span class="n">Parameters</span>
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;calc_accessibility requires the &#39;freesasa&#39; Python API&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
@@ -351,7 +228,21 @@
 
     <span class="n">struct</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">classifier</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
     <span class="n">struct</span><span class="o">.</span><span class="n">setRadiiWithClassifier</span><span class="p">(</span><span class="n">classifier</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">struct</span><span class="p">)</span>
+    <span class="c1"># if the probe_radius is different from the default value</span>
+    <span class="c1"># we need to redefine the parameters</span>
+    <span class="k">if</span> <span class="n">probe_radius</span> <span class="o">!=</span> <span class="n">DEFAULT_PROBE_RADIUS</span><span class="p">:</span>
+        <span class="n">new_parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;algorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;LeeRichards&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;probe-radius&#39;</span><span class="p">:</span> <span class="n">probe_radius</span><span class="p">,</span>
+                <span class="s1">&#39;n-points&#39;</span><span class="p">:</span> <span class="n">Parameters</span><span class="o">.</span><span class="n">defaultParameters</span><span class="p">[</span><span class="s1">&#39;n-points&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n-slices&#39;</span><span class="p">:</span> <span class="n">Parameters</span><span class="o">.</span><span class="n">defaultParameters</span><span class="p">[</span><span class="s1">&#39;n-slices&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;n-threads&#39;</span><span class="p">:</span> <span class="n">Parameters</span><span class="o">.</span><span class="n">defaultParameters</span><span class="p">[</span><span class="s1">&#39;n-threads&#39;</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">new_parameters</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">struct</span><span class="p">)</span>
 
     <span class="c1"># iterate over all atoms to get SASA and residue name</span>
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">nAtoms</span><span class="p">()):</span>
@@ -422,7 +313,10 @@
     <span class="k">return</span> <span class="n">resid_access</span></div>
 
 
-<div class="viewcode-block" id="apply_cutoff"><a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.apply_cutoff">[docs]</a><span class="k">def</span> <span class="nf">apply_cutoff</span><span class="p">(</span>
+
+<div class="viewcode-block" id="apply_cutoff">
+<a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.apply_cutoff">[docs]</a>
+<span class="k">def</span> <span class="nf">apply_cutoff</span><span class="p">(</span>
         <span class="n">access_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
         <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
@@ -445,7 +339,10 @@
     <span class="k">return</span> <span class="n">result_dict</span></div>
 
 
-<div class="viewcode-block" id="export_passive"><a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.export_passive">[docs]</a><span class="k">def</span> <span class="nf">export_passive</span><span class="p">(</span>
+
+<div class="viewcode-block" id="export_passive">
+<a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.export_passive">[docs]</a>
+<span class="k">def</span> <span class="nf">export_passive</span><span class="p">(</span>
         <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -463,11 +360,15 @@
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">result_dict</span><span class="p">[</span><span class="n">chain</span><span class="p">]))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_accessibility"><a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.calc_accessibility">[docs]</a><span class="k">def</span> <span class="nf">calc_accessibility</span><span class="p">(</span>
+
+<div class="viewcode-block" id="calc_accessibility">
+<a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.calc_accessibility.html#haddock.clis.restraints.calc_accessibility.calc_accessibility">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_accessibility</span><span class="p">(</span>
         <span class="n">input_pdb_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
         <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
         <span class="n">export_to_actpass</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">probe_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_PROBE_RADIUS</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the accessibility of the side chains and apply a cutoff.</span>
 <span class="sd">    </span>
@@ -481,6 +382,8 @@
 <span class="sd">        Logging level.</span>
 <span class="sd">    export_to_actpass : bool</span>
 <span class="sd">        Export the exposed residues as passive to an actpass file.</span>
+<span class="sd">    probe_radius : float</span>
+<span class="sd">        Probe radius for the accessibility calculation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
         <span class="n">level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
@@ -488,7 +391,7 @@
         <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/%m/%Y %H:%M:%S&#39;</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="c1"># Compute per-residues accessibilities</span>
-    <span class="n">access_dic</span> <span class="o">=</span> <span class="n">get_accessibility</span><span class="p">(</span><span class="n">input_pdb_file</span><span class="p">)</span>
+    <span class="n">access_dic</span> <span class="o">=</span> <span class="n">get_accessibility</span><span class="p">(</span><span class="n">input_pdb_file</span><span class="p">,</span> <span class="n">probe_radius</span><span class="p">)</span>
     <span class="c1"># Filter residues based on accessibility cutoff</span>
     <span class="n">result_dict</span> <span class="o">=</span> <span class="n">apply_cutoff</span><span class="p">(</span><span class="n">access_dic</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">)</span>
 
@@ -498,6 +401,7 @@
             <span class="n">result_dict</span><span class="p">,</span>
             <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">input_pdb_file</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s1">_&#39;</span><span class="p">,</span>
             <span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -508,7 +412,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

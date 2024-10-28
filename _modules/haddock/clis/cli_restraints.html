@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_restraints &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -103,14 +97,35 @@
 
 <span class="sd">    haddock3-restraints &lt;TASK_NAME&gt; -h</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">haddock.clis.restraints.restrain_bodies</span> <span class="kn">import</span> <span class="n">add_restrain_bodies_arguments</span><span class="p">,</span> <span class="n">restrain_bodies</span>
-<span class="kn">from</span> <span class="nn">haddock.clis.restraints.passive_from_active</span> <span class="kn">import</span> <span class="n">add_pass_from_act_arguments</span><span class="p">,</span> <span class="n">passive_from_active</span>
-<span class="kn">from</span> <span class="nn">haddock.clis.restraints.validate_tbl</span> <span class="kn">import</span> <span class="n">add_validate_tbl_arguments</span><span class="p">,</span> <span class="n">validate_tbl</span>
-<span class="kn">from</span> <span class="nn">haddock.clis.restraints.active_passive_to_ambig</span> <span class="kn">import</span> <span class="n">add_actpass_to_ambig_arguments</span><span class="p">,</span> <span class="n">actpass_to_ambig</span>
-<span class="kn">from</span> <span class="nn">haddock.clis.restraints.calc_accessibility</span> <span class="kn">import</span> <span class="n">add_calc_accessibility_arguments</span><span class="p">,</span> <span class="n">calc_accessibility</span>
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.active_passive_to_ambig</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">actpass_to_ambig</span><span class="p">,</span>
+    <span class="n">add_actpass_to_ambig_arguments</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.calc_accessibility</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_calc_accessibility_arguments</span><span class="p">,</span>
+    <span class="n">calc_accessibility</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.passive_from_active</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_pass_from_act_arguments</span><span class="p">,</span>
+    <span class="n">passive_from_active</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.restrain_bodies</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_restrain_bodies_arguments</span><span class="p">,</span>
+    <span class="n">restrain_bodies</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.validate_tbl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_validate_tbl_arguments</span><span class="p">,</span>
+    <span class="n">validate_tbl</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">haddock.clis.restraints.z_surface_restraints</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_z_surf_restraints_arguments</span><span class="p">,</span>
+    <span class="n">gen_z_surface_restraints</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="c1"># Command line interface parser</span>
@@ -118,52 +133,73 @@
     <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;haddock3-restraints&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="vm">__doc__</span><span class="p">,</span>
     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span>
-    <span class="p">)</span>
+<span class="p">)</span>
 
-<span class="n">subparsers</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;subcommands&#39;</span><span class="p">,</span>
-                               <span class="n">description</span><span class="o">=</span><span class="s1">&#39;valid subcommands&#39;</span><span class="p">,</span>
-                               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;additional help&#39;</span><span class="p">)</span>
+<span class="n">subparsers</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;subcommands&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;valid subcommands&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;additional help&quot;</span>
+<span class="p">)</span>
 
 <span class="c1"># restrain_bodies subcommand</span>
-<span class="n">restrain_bodies_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;restrain_bodies&#39;</span><span class="p">)</span>
+<span class="n">restrain_bodies_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;restrain_bodies&quot;</span><span class="p">)</span>
 <span class="n">restrain_bodies_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">restrain_bodies</span><span class="p">)</span>
 <span class="n">restrain_bodies_subcommand</span> <span class="o">=</span> <span class="n">add_restrain_bodies_arguments</span><span class="p">(</span><span class="n">restrain_bodies_subcommand</span><span class="p">)</span>
 
 <span class="c1"># passive_from_active subcommand</span>
-<span class="n">pass_from_act_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;passive_from_active&#39;</span><span class="p">)</span>
+<span class="n">pass_from_act_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;passive_from_active&quot;</span><span class="p">)</span>
 <span class="n">pass_from_act_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">passive_from_active</span><span class="p">)</span>
 <span class="n">pass_from_act_subcommand</span> <span class="o">=</span> <span class="n">add_pass_from_act_arguments</span><span class="p">(</span><span class="n">pass_from_act_subcommand</span><span class="p">)</span>
 
 <span class="c1"># validate_tbl subcommand</span>
-<span class="n">validate_tbl_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;validate_tbl&#39;</span><span class="p">)</span>
+<span class="n">validate_tbl_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;validate_tbl&quot;</span><span class="p">)</span>
 <span class="n">validate_tbl_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">validate_tbl</span><span class="p">)</span>
 <span class="n">validate_tbl_subcommand</span> <span class="o">=</span> <span class="n">add_validate_tbl_arguments</span><span class="p">(</span><span class="n">validate_tbl_subcommand</span><span class="p">)</span>
 
 <span class="c1"># active_passive_to_ambig subcommand</span>
-<span class="n">actpass_to_ambig_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;active_passive_to_ambig&#39;</span><span class="p">)</span>
+<span class="n">actpass_to_ambig_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;active_passive_to_ambig&quot;</span><span class="p">)</span>
 <span class="n">actpass_to_ambig_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">actpass_to_ambig</span><span class="p">)</span>
-<span class="n">actpass_to_ambig_subcommand</span> <span class="o">=</span> <span class="n">add_actpass_to_ambig_arguments</span><span class="p">(</span><span class="n">actpass_to_ambig_subcommand</span><span class="p">)</span>
+<span class="n">actpass_to_ambig_subcommand</span> <span class="o">=</span> <span class="n">add_actpass_to_ambig_arguments</span><span class="p">(</span>
+    <span class="n">actpass_to_ambig_subcommand</span>
+<span class="p">)</span>
 
 <span class="c1"># calc_accessibility subcommand</span>
-<span class="n">calc_accessibility_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;calc_accessibility&#39;</span><span class="p">)</span>
+<span class="n">calc_accessibility_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;calc_accessibility&quot;</span><span class="p">)</span>
 <span class="n">calc_accessibility_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">calc_accessibility</span><span class="p">)</span>
-<span class="n">calc_accessibility_subcommand</span> <span class="o">=</span> <span class="n">add_calc_accessibility_arguments</span><span class="p">(</span><span class="n">calc_accessibility_subcommand</span><span class="p">)</span>
+<span class="n">calc_accessibility_subcommand</span> <span class="o">=</span> <span class="n">add_calc_accessibility_arguments</span><span class="p">(</span>
+    <span class="n">calc_accessibility_subcommand</span>
+<span class="p">)</span>
+
+<span class="c1"># z_surface_restraints subcommand</span>
+<span class="n">z_surface_restraints_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;z_surface_restraints&quot;</span><span class="p">)</span>
+<span class="n">z_surface_restraints_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">gen_z_surface_restraints</span><span class="p">)</span>
+<span class="n">z_surface_restraints_subcommand</span> <span class="o">=</span> <span class="n">add_z_surf_restraints_arguments</span><span class="p">(</span>
+    <span class="n">z_surface_restraints_subcommand</span>
+<span class="p">)</span>
+
 
 <span class="k">def</span> <span class="nf">_ap</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">ap</span>
 
 
-<div class="viewcode-block" id="load_args"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_restraints.html#haddock.clis.cli_restraints.load_args">[docs]</a><span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
+<div class="viewcode-block" id="load_args">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_restraints.html#haddock.clis.cli_restraints.load_args">[docs]</a>
+<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="maincli"><a class="viewcode-back" href="../../../clients/haddock.clis.cli_restraints.html#haddock.clis.cli_restraints.maincli">[docs]</a><span class="k">def</span> <span class="nf">maincli</span><span class="p">():</span>
+
+<div class="viewcode-block" id="maincli">
+<a class="viewcode-back" href="../../../clients/haddock.clis.cli_restraints.html#haddock.clis.cli_restraints.maincli">[docs]</a>
+<span class="k">def</span> <span class="nf">maincli</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;[DEPRECATION NOTICE] This command will soon be replaced with `haddock-restraints`&quot;</span>
+    <span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;func&quot;</span><span class="p">)</span>
     <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">cmd</span><span class="p">)</span></div>
+
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
@@ -178,7 +214,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

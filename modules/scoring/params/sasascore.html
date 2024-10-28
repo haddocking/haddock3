@@ -1,0 +1,169 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easy &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Easy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modules/scoring/params/sasascore.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="easy">
+<h1>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h1>
+<section id="cutoff">
+<h2>cutoff<a class="headerlink" href="#cutoff" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.4</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: relative side chain surface accessibility cutoff</div>
+<div class="line"><em>min</em>: 0.0</div>
+<div class="line"><em>max</em>: 1.0</div>
+<div class="line"><em>short description</em>: relative side chain surface accessibility cutoff</div>
+<div class="line"><em>long description</em>: relative side chain surface accessibility cutoff. Residues with a relative side chain surface accessibility below this value are considered buried.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="resdic-accessible">
+<h2><a class="reference internal" href="#resdic-accessible">resdic_accessible</a><a class="headerlink" href="#resdic-accessible" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: []</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: List of residues supposed to be accessible</div>
+<div class="line"><em>short description</em>: List of residues supposed to be accessible</div>
+<div class="line"><em>long description</em>: resdic_* is an expandable parameter. You can provide resdic_accessible_A, resdic_accessible_B, resdic_accessible_C, etc, where the last capital letter is the chain identifier.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="resdic-buried">
+<h2><a class="reference internal" href="#resdic-buried">resdic_buried</a><a class="headerlink" href="#resdic-buried" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: []</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: List of residues supposed to be buried</div>
+<div class="line"><em>short description</em>: List of residues supposed to be buried</div>
+<div class="line"><em>long description</em>: resdic_buried_* is an expandable parameter. You can provide resdic_buried_A, resdic_buried_B, resdic_buried_C, etc, where the last capital letter is the chain identifier.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+<section id="expert">
+<h1>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h1>
+<section id="probe-radius">
+<h2>probe_radius<a class="headerlink" href="#probe-radius" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.4</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Probe radius</div>
+<div class="line"><em>min</em>: 0.0</div>
+<div class="line"><em>max</em>: 10.0</div>
+<div class="line"><em>short description</em>: Probe radius</div>
+<div class="line"><em>long description</em>: Sets the probe radius (in Angstrom) used to compute solvent accessible surface area.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, BonvinLab.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

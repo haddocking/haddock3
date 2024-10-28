@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rigid body docking sampling module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -53,7 +48,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Sampling Modules</a><ul class="current">
@@ -108,11 +102,11 @@
            <div itemprop="articleBody">
              
   <section id="rigid-body-docking-sampling-module">
-<h1>Rigid body docking sampling module<a class="headerlink" href="#rigid-body-docking-sampling-module" title="Permalink to this heading"></a></h1>
+<h1>Rigid body docking sampling module<a class="headerlink" href="#rigid-body-docking-sampling-module" title="Link to this heading"></a></h1>
 <section id="module-haddock.modules.sampling.rigidbody">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.sampling.rigidbody" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.sampling.rigidbody" title="Link to this heading"></a></h2>
 <section id="id1">
-<h3>Rigid-body docking sampling module<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>Rigid-body docking sampling module<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>This module does a <strong>randomization of orientations and rigid-body
 minimization.</strong> It corresponds to the classical <code class="docutils literal notranslate"><span class="pre">it0</span></code> step in the HADDOCK2.x
 series.</p>
@@ -138,44 +132,44 @@ sure to sample enough the possible interaction space.</p>
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.sampling.rigidbody.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.sampling.rigidbody.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/sampling/rigidbody/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.sampling.rigidbody.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/haddock/modules/sampling/rigidbody/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.base_cns_module.BaseCNSModule" title="haddock.modules.base_cns_module.BaseCNSModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCNSModule</span></code></a></p>
 <p>HADDOCK3 module for rigid body sampling.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.sampling.rigidbody.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
 <dd><p>Confirm module is installed.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.sampling.rigidbody.HaddockModule.make_cns_jobs">
-<span class="sig-name descname"><span class="pre">make_cns_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.12)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">haddock.libs.libontology.PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.12)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob" title="haddock.libs.libsubprocess.CNSJob"><span class="pre">haddock.libs.libsubprocess.CNSJob</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.make_cns_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.make_cns_jobs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">make_cns_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.13)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob" title="haddock.libs.libsubprocess.CNSJob"><span class="pre">CNSJob</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.make_cns_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.make_cns_jobs" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.modules.sampling.rigidbody.HaddockModule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rigidbody'</span></em><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rigidbody'</span></em><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_parallel">
-<span class="sig-name descname"><span class="pre">prepare_cns_input_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models_to_dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">haddock.libs.libontology.PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambig_fnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">haddock.libs.libontology.PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.12)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.prepare_cns_input_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_parallel" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare_cns_input_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models_to_dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambig_fnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.prepare_cns_input_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_parallel" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_sequential">
-<span class="sig-name descname"><span class="pre">prepare_cns_input_sequential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models_to_dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">haddock.libs.libontology.PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambig_fnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">haddock.libs.libontology.PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.12)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.prepare_cns_input_sequential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_sequential" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare_cns_input_sequential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models_to_dock</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambig_fnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/modules/sampling/rigidbody.html#HaddockModule.prepare_cns_input_sequential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.sampling.rigidbody.HaddockModule.prepare_cns_input_sequential" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="default-parameters">
-<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
 <section id="easy">
-<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
+<h3>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h3>
 <section id="ambig-fname">
-<h4>ambig_fname<a class="headerlink" href="#ambig-fname" title="Permalink to this heading"></a></h4>
+<h4>ambig_fname<a class="headerlink" href="#ambig-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -187,7 +181,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="elecflag">
-<h4>elecflag<a class="headerlink" href="#elecflag" title="Permalink to this heading"></a></h4>
+<h4>elecflag<a class="headerlink" href="#elecflag" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -199,7 +193,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="hbond-fname">
-<h4>hbond_fname<a class="headerlink" href="#hbond-fname" title="Permalink to this heading"></a></h4>
+<h4>hbond_fname<a class="headerlink" href="#hbond-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -211,7 +205,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="mol-shape-1">
-<h4>mol_shape_1<a class="headerlink" href="#mol-shape-1" title="Permalink to this heading"></a></h4>
+<h4>mol_shape_1<a class="headerlink" href="#mol-shape-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -223,7 +217,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="randorien">
-<h4>randorien<a class="headerlink" href="#randorien" title="Permalink to this heading"></a></h4>
+<h4>randorien<a class="headerlink" href="#randorien" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -235,7 +229,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="sampling">
-<h4>sampling<a class="headerlink" href="#sampling" title="Permalink to this heading"></a></h4>
+<h4>sampling<a class="headerlink" href="#sampling" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1000</div>
 <div class="line"><em>type</em>: integer</div>
@@ -249,7 +243,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="unambig-fname">
-<h4>unambig_fname<a class="headerlink" href="#unambig-fname" title="Permalink to this heading"></a></h4>
+<h4>unambig_fname<a class="headerlink" href="#unambig-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -262,9 +256,9 @@ sure to sample enough the possible interaction space.</p>
 </section>
 </section>
 <section id="expert">
-<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this heading"></a></h3>
+<h3>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h3>
 <section id="ambig-scale">
-<h4>ambig_scale<a class="headerlink" href="#ambig-scale" title="Permalink to this heading"></a></h4>
+<h4>ambig_scale<a class="headerlink" href="#ambig-scale" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
@@ -278,7 +272,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c2sym-end1-1">
-<h4>c2sym_end1_1<a class="headerlink" href="#c2sym-end1-1" title="Permalink to this heading"></a></h4>
+<h4>c2sym_end1_1<a class="headerlink" href="#c2sym-end1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -292,7 +286,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c2sym-end2-1">
-<h4>c2sym_end2_1<a class="headerlink" href="#c2sym-end2-1" title="Permalink to this heading"></a></h4>
+<h4>c2sym_end2_1<a class="headerlink" href="#c2sym-end2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -306,7 +300,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c2sym-seg1-1">
-<h4>c2sym_seg1_1<a class="headerlink" href="#c2sym-seg1-1" title="Permalink to this heading"></a></h4>
+<h4>c2sym_seg1_1<a class="headerlink" href="#c2sym-seg1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -318,7 +312,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c2sym-seg2-1">
-<h4>c2sym_seg2_1<a class="headerlink" href="#c2sym-seg2-1" title="Permalink to this heading"></a></h4>
+<h4>c2sym_seg2_1<a class="headerlink" href="#c2sym-seg2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -330,7 +324,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c2sym-sta1-1">
-<h4>c2sym_sta1_1<a class="headerlink" href="#c2sym-sta1-1" title="Permalink to this heading"></a></h4>
+<h4>c2sym_sta1_1<a class="headerlink" href="#c2sym-sta1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -344,7 +338,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c2sym-sta2-1">
-<h4>c2sym_sta2_1<a class="headerlink" href="#c2sym-sta2-1" title="Permalink to this heading"></a></h4>
+<h4>c2sym_sta2_1<a class="headerlink" href="#c2sym-sta2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -358,7 +352,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-end1-1">
-<h4>c3sym_end1_1<a class="headerlink" href="#c3sym-end1-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_end1_1<a class="headerlink" href="#c3sym-end1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -372,7 +366,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-end2-1">
-<h4>c3sym_end2_1<a class="headerlink" href="#c3sym-end2-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_end2_1<a class="headerlink" href="#c3sym-end2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -386,7 +380,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-end3-1">
-<h4>c3sym_end3_1<a class="headerlink" href="#c3sym-end3-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_end3_1<a class="headerlink" href="#c3sym-end3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -400,7 +394,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-seg1-1">
-<h4>c3sym_seg1_1<a class="headerlink" href="#c3sym-seg1-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_seg1_1<a class="headerlink" href="#c3sym-seg1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -412,7 +406,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-seg2-1">
-<h4>c3sym_seg2_1<a class="headerlink" href="#c3sym-seg2-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_seg2_1<a class="headerlink" href="#c3sym-seg2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -424,7 +418,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-seg3-1">
-<h4>c3sym_seg3_1<a class="headerlink" href="#c3sym-seg3-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_seg3_1<a class="headerlink" href="#c3sym-seg3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -436,7 +430,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-sta1-1">
-<h4>c3sym_sta1_1<a class="headerlink" href="#c3sym-sta1-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_sta1_1<a class="headerlink" href="#c3sym-sta1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -450,7 +444,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-sta2-1">
-<h4>c3sym_sta2_1<a class="headerlink" href="#c3sym-sta2-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_sta2_1<a class="headerlink" href="#c3sym-sta2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -464,7 +458,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c3sym-sta3-1">
-<h4>c3sym_sta3_1<a class="headerlink" href="#c3sym-sta3-1" title="Permalink to this heading"></a></h4>
+<h4>c3sym_sta3_1<a class="headerlink" href="#c3sym-sta3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -478,7 +472,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-end1-1">
-<h4>c4sym_end1_1<a class="headerlink" href="#c4sym-end1-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_end1_1<a class="headerlink" href="#c4sym-end1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -492,7 +486,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-end2-1">
-<h4>c4sym_end2_1<a class="headerlink" href="#c4sym-end2-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_end2_1<a class="headerlink" href="#c4sym-end2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -506,7 +500,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-end3-1">
-<h4>c4sym_end3_1<a class="headerlink" href="#c4sym-end3-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_end3_1<a class="headerlink" href="#c4sym-end3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -520,7 +514,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-end4-1">
-<h4>c4sym_end4_1<a class="headerlink" href="#c4sym-end4-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_end4_1<a class="headerlink" href="#c4sym-end4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -534,7 +528,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-seg1-1">
-<h4>c4sym_seg1_1<a class="headerlink" href="#c4sym-seg1-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_seg1_1<a class="headerlink" href="#c4sym-seg1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -546,7 +540,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-seg2-1">
-<h4>c4sym_seg2_1<a class="headerlink" href="#c4sym-seg2-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_seg2_1<a class="headerlink" href="#c4sym-seg2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -558,7 +552,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-seg3-1">
-<h4>c4sym_seg3_1<a class="headerlink" href="#c4sym-seg3-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_seg3_1<a class="headerlink" href="#c4sym-seg3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -570,7 +564,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-seg4-1">
-<h4>c4sym_seg4_1<a class="headerlink" href="#c4sym-seg4-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_seg4_1<a class="headerlink" href="#c4sym-seg4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -582,7 +576,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-sta1-1">
-<h4>c4sym_sta1_1<a class="headerlink" href="#c4sym-sta1-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_sta1_1<a class="headerlink" href="#c4sym-sta1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -596,7 +590,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-sta2-1">
-<h4>c4sym_sta2_1<a class="headerlink" href="#c4sym-sta2-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_sta2_1<a class="headerlink" href="#c4sym-sta2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -610,7 +604,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-sta3-1">
-<h4>c4sym_sta3_1<a class="headerlink" href="#c4sym-sta3-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_sta3_1<a class="headerlink" href="#c4sym-sta3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -624,7 +618,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c4sym-sta4-1">
-<h4>c4sym_sta4_1<a class="headerlink" href="#c4sym-sta4-1" title="Permalink to this heading"></a></h4>
+<h4>c4sym_sta4_1<a class="headerlink" href="#c4sym-sta4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -638,7 +632,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-end1-1">
-<h4>c5sym_end1_1<a class="headerlink" href="#c5sym-end1-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_end1_1<a class="headerlink" href="#c5sym-end1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -652,7 +646,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-end2-1">
-<h4>c5sym_end2_1<a class="headerlink" href="#c5sym-end2-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_end2_1<a class="headerlink" href="#c5sym-end2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -666,7 +660,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-end3-1">
-<h4>c5sym_end3_1<a class="headerlink" href="#c5sym-end3-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_end3_1<a class="headerlink" href="#c5sym-end3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -680,7 +674,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-end4-1">
-<h4>c5sym_end4_1<a class="headerlink" href="#c5sym-end4-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_end4_1<a class="headerlink" href="#c5sym-end4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -694,7 +688,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-end5-1">
-<h4>c5sym_end5_1<a class="headerlink" href="#c5sym-end5-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_end5_1<a class="headerlink" href="#c5sym-end5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -708,7 +702,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-seg1-1">
-<h4>c5sym_seg1_1<a class="headerlink" href="#c5sym-seg1-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_seg1_1<a class="headerlink" href="#c5sym-seg1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -720,7 +714,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-seg2-1">
-<h4>c5sym_seg2_1<a class="headerlink" href="#c5sym-seg2-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_seg2_1<a class="headerlink" href="#c5sym-seg2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -732,7 +726,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-seg3-1">
-<h4>c5sym_seg3_1<a class="headerlink" href="#c5sym-seg3-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_seg3_1<a class="headerlink" href="#c5sym-seg3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -744,7 +738,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-seg4-1">
-<h4>c5sym_seg4_1<a class="headerlink" href="#c5sym-seg4-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_seg4_1<a class="headerlink" href="#c5sym-seg4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -756,7 +750,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-seg5-1">
-<h4>c5sym_seg5_1<a class="headerlink" href="#c5sym-seg5-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_seg5_1<a class="headerlink" href="#c5sym-seg5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -768,7 +762,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-sta1-1">
-<h4>c5sym_sta1_1<a class="headerlink" href="#c5sym-sta1-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_sta1_1<a class="headerlink" href="#c5sym-sta1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -782,7 +776,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-sta2-1">
-<h4>c5sym_sta2_1<a class="headerlink" href="#c5sym-sta2-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_sta2_1<a class="headerlink" href="#c5sym-sta2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -796,7 +790,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-sta3-1">
-<h4>c5sym_sta3_1<a class="headerlink" href="#c5sym-sta3-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_sta3_1<a class="headerlink" href="#c5sym-sta3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -810,7 +804,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-sta4-1">
-<h4>c5sym_sta4_1<a class="headerlink" href="#c5sym-sta4-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_sta4_1<a class="headerlink" href="#c5sym-sta4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -824,7 +818,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c5sym-sta5-1">
-<h4>c5sym_sta5_1<a class="headerlink" href="#c5sym-sta5-1" title="Permalink to this heading"></a></h4>
+<h4>c5sym_sta5_1<a class="headerlink" href="#c5sym-sta5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -838,7 +832,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-end1-1">
-<h4>c6sym_end1_1<a class="headerlink" href="#c6sym-end1-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_end1_1<a class="headerlink" href="#c6sym-end1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -852,7 +846,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-end2-1">
-<h4>c6sym_end2_1<a class="headerlink" href="#c6sym-end2-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_end2_1<a class="headerlink" href="#c6sym-end2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -866,7 +860,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-end3-1">
-<h4>c6sym_end3_1<a class="headerlink" href="#c6sym-end3-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_end3_1<a class="headerlink" href="#c6sym-end3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -880,7 +874,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-end4-1">
-<h4>c6sym_end4_1<a class="headerlink" href="#c6sym-end4-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_end4_1<a class="headerlink" href="#c6sym-end4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -894,7 +888,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-end5-1">
-<h4>c6sym_end5_1<a class="headerlink" href="#c6sym-end5-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_end5_1<a class="headerlink" href="#c6sym-end5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -908,7 +902,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-end6-1">
-<h4>c6sym_end6_1<a class="headerlink" href="#c6sym-end6-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_end6_1<a class="headerlink" href="#c6sym-end6-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -922,7 +916,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-seg1-1">
-<h4>c6sym_seg1_1<a class="headerlink" href="#c6sym-seg1-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_seg1_1<a class="headerlink" href="#c6sym-seg1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -934,7 +928,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-seg2-1">
-<h4>c6sym_seg2_1<a class="headerlink" href="#c6sym-seg2-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_seg2_1<a class="headerlink" href="#c6sym-seg2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -946,7 +940,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-seg3-1">
-<h4>c6sym_seg3_1<a class="headerlink" href="#c6sym-seg3-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_seg3_1<a class="headerlink" href="#c6sym-seg3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -958,7 +952,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-seg4-1">
-<h4>c6sym_seg4_1<a class="headerlink" href="#c6sym-seg4-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_seg4_1<a class="headerlink" href="#c6sym-seg4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -970,7 +964,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-seg5-1">
-<h4>c6sym_seg5_1<a class="headerlink" href="#c6sym-seg5-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_seg5_1<a class="headerlink" href="#c6sym-seg5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -982,7 +976,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-seg6-1">
-<h4>c6sym_seg6_1<a class="headerlink" href="#c6sym-seg6-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_seg6_1<a class="headerlink" href="#c6sym-seg6-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -994,7 +988,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-sta1-1">
-<h4>c6sym_sta1_1<a class="headerlink" href="#c6sym-sta1-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_sta1_1<a class="headerlink" href="#c6sym-sta1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1008,7 +1002,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-sta2-1">
-<h4>c6sym_sta2_1<a class="headerlink" href="#c6sym-sta2-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_sta2_1<a class="headerlink" href="#c6sym-sta2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1022,7 +1016,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-sta3-1">
-<h4>c6sym_sta3_1<a class="headerlink" href="#c6sym-sta3-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_sta3_1<a class="headerlink" href="#c6sym-sta3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1036,7 +1030,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-sta4-1">
-<h4>c6sym_sta4_1<a class="headerlink" href="#c6sym-sta4-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_sta4_1<a class="headerlink" href="#c6sym-sta4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1050,7 +1044,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-sta5-1">
-<h4>c6sym_sta5_1<a class="headerlink" href="#c6sym-sta5-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_sta5_1<a class="headerlink" href="#c6sym-sta5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1064,7 +1058,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="c6sym-sta6-1">
-<h4>c6sym_sta6_1<a class="headerlink" href="#c6sym-sta6-1" title="Permalink to this heading"></a></h4>
+<h4>c6sym_sta6_1<a class="headerlink" href="#c6sym-sta6-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1078,7 +1072,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="cmrest">
-<h4>cmrest<a class="headerlink" href="#cmrest" title="Permalink to this heading"></a></h4>
+<h4>cmrest<a class="headerlink" href="#cmrest" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1090,7 +1084,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="cmtight">
-<h4>cmtight<a class="headerlink" href="#cmtight" title="Permalink to this heading"></a></h4>
+<h4>cmtight<a class="headerlink" href="#cmtight" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1102,7 +1096,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="crossdock">
-<h4>crossdock<a class="headerlink" href="#crossdock" title="Permalink to this heading"></a></h4>
+<h4>crossdock<a class="headerlink" href="#crossdock" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1114,7 +1108,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="dielec">
-<h4>dielec<a class="headerlink" href="#dielec" title="Permalink to this heading"></a></h4>
+<h4>dielec<a class="headerlink" href="#dielec" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘rdie’</div>
 <div class="line"><em>type</em>: string</div>
@@ -1127,7 +1121,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="epsilon">
-<h4>epsilon<a class="headerlink" href="#epsilon" title="Permalink to this heading"></a></h4>
+<h4>epsilon<a class="headerlink" href="#epsilon" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 10.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1141,7 +1135,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="hbond-scale">
-<h4>hbond_scale<a class="headerlink" href="#hbond-scale" title="Permalink to this heading"></a></h4>
+<h4>hbond_scale<a class="headerlink" href="#hbond-scale" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1155,7 +1149,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="inter-rigid">
-<h4>inter_rigid<a class="headerlink" href="#inter-rigid" title="Permalink to this heading"></a></h4>
+<h4>inter_rigid<a class="headerlink" href="#inter-rigid" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1169,7 +1163,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="kcm">
-<h4>kcm<a class="headerlink" href="#kcm" title="Permalink to this heading"></a></h4>
+<h4>kcm<a class="headerlink" href="#kcm" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1182,22 +1176,8 @@ sure to sample enough the possible interaction space.</p>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="kncs">
-<h4>kncs<a class="headerlink" href="#kncs" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 1.0</div>
-<div class="line"><em>type</em>: float</div>
-<div class="line"><em>title</em>: Force constant for non-crystallographic restraints</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 1000</div>
-<div class="line"><em>short description</em>: Force constant for non-crystallographic restraints</div>
-<div class="line"><em>long description</em>: Force constant for non-crystallographic restraints</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
 <section id="ksurf">
-<h4>ksurf<a class="headerlink" href="#ksurf" title="Permalink to this heading"></a></h4>
+<h4>ksurf<a class="headerlink" href="#ksurf" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1211,7 +1191,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="ksym">
-<h4>ksym<a class="headerlink" href="#ksym" title="Permalink to this heading"></a></h4>
+<h4>ksym<a class="headerlink" href="#ksym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 10.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -1225,7 +1205,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="ligand-param-fname">
-<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this heading"></a></h4>
+<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -1237,7 +1217,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="ligand-top-fname">
-<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this heading"></a></h4>
+<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -1249,7 +1229,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="mol-fix-origin-1">
-<h4>mol_fix_origin_1<a class="headerlink" href="#mol-fix-origin-1" title="Permalink to this heading"></a></h4>
+<h4>mol_fix_origin_1<a class="headerlink" href="#mol-fix-origin-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1261,7 +1241,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nc2sym">
-<h4>nc2sym<a class="headerlink" href="#nc2sym" title="Permalink to this heading"></a></h4>
+<h4>nc2sym<a class="headerlink" href="#nc2sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1275,7 +1255,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nc3sym">
-<h4>nc3sym<a class="headerlink" href="#nc3sym" title="Permalink to this heading"></a></h4>
+<h4>nc3sym<a class="headerlink" href="#nc3sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1289,7 +1269,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nc4sym">
-<h4>nc4sym<a class="headerlink" href="#nc4sym" title="Permalink to this heading"></a></h4>
+<h4>nc4sym<a class="headerlink" href="#nc4sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1303,7 +1283,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nc5sym">
-<h4>nc5sym<a class="headerlink" href="#nc5sym" title="Permalink to this heading"></a></h4>
+<h4>nc5sym<a class="headerlink" href="#nc5sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1317,7 +1297,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nc6sym">
-<h4>nc6sym<a class="headerlink" href="#nc6sym" title="Permalink to this heading"></a></h4>
+<h4>nc6sym<a class="headerlink" href="#nc6sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1330,100 +1310,8 @@ sure to sample enough the possible interaction space.</p>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="ncs-end1-1">
-<h4>ncs_end1_1<a class="headerlink" href="#ncs-end1-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Residue number of last residue</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number of last residue in the first NCS segment</div>
-<div class="line"><em>long description</em>: Residue number of last residue in the first NCS segment</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ncs-end2-1">
-<h4>ncs_end2_1<a class="headerlink" href="#ncs-end2-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Residue number of last residue</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number of last residue in the second NCS segment</div>
-<div class="line"><em>long description</em>: Residue number of last residue in the second NCS segment</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ncs-on">
-<h4>ncs_on<a class="headerlink" href="#ncs-on" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: False</div>
-<div class="line"><em>type</em>: boolean</div>
-<div class="line"><em>title</em>: Non-crystallographic symmetry restraints</div>
-<div class="line"><em>short description</em>: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.</div>
-<div class="line"><em>long description</em>: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation. This does not apply any symmetry between the two molecules but rather defines restraints such as the RMSD between those is 0.</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ncs-seg1-1">
-<h4>ncs_seg1_1<a class="headerlink" href="#ncs-seg1-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: ‘’</div>
-<div class="line"><em>type</em>: string</div>
-<div class="line"><em>title</em>: Segment ID of first NCS segment</div>
-<div class="line"><em>short description</em>: Segment ID of first NCS segment</div>
-<div class="line"><em>long description</em>: Segment ID of first NCS segment</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ncs-seg2-1">
-<h4>ncs_seg2_1<a class="headerlink" href="#ncs-seg2-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: ‘’</div>
-<div class="line"><em>type</em>: string</div>
-<div class="line"><em>title</em>: Segment ID of second NCS segment</div>
-<div class="line"><em>short description</em>: Segment ID of second NCS segment</div>
-<div class="line"><em>long description</em>: Segment ID of second NCS segment</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ncs-sta1-1">
-<h4>ncs_sta1_1<a class="headerlink" href="#ncs-sta1-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Residue number of first residue</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number of first residue in the first NCS segment</div>
-<div class="line"><em>long description</em>: Residue number of first residue in the first NCS segment</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="ncs-sta2-1">
-<h4>ncs_sta2_1<a class="headerlink" href="#ncs-sta2-1" title="Permalink to this heading"></a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Residue number of first residue</div>
-<div class="line"><em>min</em>: -9999</div>
-<div class="line"><em>max</em>: 9999</div>
-<div class="line"><em>short description</em>: Residue number of first residue in the second NCS segment</div>
-<div class="line"><em>long description</em>: Residue number of first residue in the second NCS segment</div>
-<div class="line"><em>group</em>: symmetry</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
 <section id="npart">
-<h4>npart<a class="headerlink" href="#npart" title="Permalink to this heading"></a></h4>
+<h4>npart<a class="headerlink" href="#npart" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 2</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1437,7 +1325,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-1">
-<h4>nrair_1<a class="headerlink" href="#nrair-1" title="Permalink to this heading"></a></h4>
+<h4>nrair_1<a class="headerlink" href="#nrair-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1451,7 +1339,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-10">
-<h4>nrair_10<a class="headerlink" href="#nrair-10" title="Permalink to this heading"></a></h4>
+<h4>nrair_10<a class="headerlink" href="#nrair-10" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1465,7 +1353,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-11">
-<h4>nrair_11<a class="headerlink" href="#nrair-11" title="Permalink to this heading"></a></h4>
+<h4>nrair_11<a class="headerlink" href="#nrair-11" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1479,7 +1367,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-12">
-<h4>nrair_12<a class="headerlink" href="#nrair-12" title="Permalink to this heading"></a></h4>
+<h4>nrair_12<a class="headerlink" href="#nrair-12" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1493,7 +1381,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-13">
-<h4>nrair_13<a class="headerlink" href="#nrair-13" title="Permalink to this heading"></a></h4>
+<h4>nrair_13<a class="headerlink" href="#nrair-13" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1507,7 +1395,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-14">
-<h4>nrair_14<a class="headerlink" href="#nrair-14" title="Permalink to this heading"></a></h4>
+<h4>nrair_14<a class="headerlink" href="#nrair-14" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1521,7 +1409,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-15">
-<h4>nrair_15<a class="headerlink" href="#nrair-15" title="Permalink to this heading"></a></h4>
+<h4>nrair_15<a class="headerlink" href="#nrair-15" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1535,7 +1423,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-16">
-<h4>nrair_16<a class="headerlink" href="#nrair-16" title="Permalink to this heading"></a></h4>
+<h4>nrair_16<a class="headerlink" href="#nrair-16" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1549,7 +1437,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-17">
-<h4>nrair_17<a class="headerlink" href="#nrair-17" title="Permalink to this heading"></a></h4>
+<h4>nrair_17<a class="headerlink" href="#nrair-17" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1563,7 +1451,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-18">
-<h4>nrair_18<a class="headerlink" href="#nrair-18" title="Permalink to this heading"></a></h4>
+<h4>nrair_18<a class="headerlink" href="#nrair-18" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1577,7 +1465,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-19">
-<h4>nrair_19<a class="headerlink" href="#nrair-19" title="Permalink to this heading"></a></h4>
+<h4>nrair_19<a class="headerlink" href="#nrair-19" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1591,7 +1479,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-2">
-<h4>nrair_2<a class="headerlink" href="#nrair-2" title="Permalink to this heading"></a></h4>
+<h4>nrair_2<a class="headerlink" href="#nrair-2" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1605,7 +1493,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-20">
-<h4>nrair_20<a class="headerlink" href="#nrair-20" title="Permalink to this heading"></a></h4>
+<h4>nrair_20<a class="headerlink" href="#nrair-20" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1619,7 +1507,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-3">
-<h4>nrair_3<a class="headerlink" href="#nrair-3" title="Permalink to this heading"></a></h4>
+<h4>nrair_3<a class="headerlink" href="#nrair-3" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1633,7 +1521,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-4">
-<h4>nrair_4<a class="headerlink" href="#nrair-4" title="Permalink to this heading"></a></h4>
+<h4>nrair_4<a class="headerlink" href="#nrair-4" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1647,7 +1535,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-5">
-<h4>nrair_5<a class="headerlink" href="#nrair-5" title="Permalink to this heading"></a></h4>
+<h4>nrair_5<a class="headerlink" href="#nrair-5" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1661,7 +1549,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-6">
-<h4>nrair_6<a class="headerlink" href="#nrair-6" title="Permalink to this heading"></a></h4>
+<h4>nrair_6<a class="headerlink" href="#nrair-6" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1675,7 +1563,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-7">
-<h4>nrair_7<a class="headerlink" href="#nrair-7" title="Permalink to this heading"></a></h4>
+<h4>nrair_7<a class="headerlink" href="#nrair-7" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1689,7 +1577,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-8">
-<h4>nrair_8<a class="headerlink" href="#nrair-8" title="Permalink to this heading"></a></h4>
+<h4>nrair_8<a class="headerlink" href="#nrair-8" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1703,7 +1591,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="nrair-9">
-<h4>nrair_9<a class="headerlink" href="#nrair-9" title="Permalink to this heading"></a></h4>
+<h4>nrair_9<a class="headerlink" href="#nrair-9" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1717,7 +1605,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="ns3sym">
-<h4>ns3sym<a class="headerlink" href="#ns3sym" title="Permalink to this heading"></a></h4>
+<h4>ns3sym<a class="headerlink" href="#ns3sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1731,7 +1619,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="ntrials">
-<h4>ntrials<a class="headerlink" href="#ntrials" title="Permalink to this heading"></a></h4>
+<h4>ntrials<a class="headerlink" href="#ntrials" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 5</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1745,7 +1633,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="previous-ambig">
-<h4>previous_ambig<a class="headerlink" href="#previous-ambig" title="Permalink to this heading"></a></h4>
+<h4>previous_ambig<a class="headerlink" href="#previous-ambig" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -1757,7 +1645,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-10-1">
-<h4>rair_end_10_1<a class="headerlink" href="#rair-end-10-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_10_1<a class="headerlink" href="#rair-end-10-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1771,7 +1659,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-11-1">
-<h4>rair_end_11_1<a class="headerlink" href="#rair-end-11-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_11_1<a class="headerlink" href="#rair-end-11-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1785,7 +1673,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-12-1">
-<h4>rair_end_12_1<a class="headerlink" href="#rair-end-12-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_12_1<a class="headerlink" href="#rair-end-12-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1799,7 +1687,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-13-1">
-<h4>rair_end_13_1<a class="headerlink" href="#rair-end-13-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_13_1<a class="headerlink" href="#rair-end-13-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1813,7 +1701,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-14-1">
-<h4>rair_end_14_1<a class="headerlink" href="#rair-end-14-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_14_1<a class="headerlink" href="#rair-end-14-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1827,7 +1715,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-15-1">
-<h4>rair_end_15_1<a class="headerlink" href="#rair-end-15-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_15_1<a class="headerlink" href="#rair-end-15-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1841,7 +1729,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-16-1">
-<h4>rair_end_16_1<a class="headerlink" href="#rair-end-16-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_16_1<a class="headerlink" href="#rair-end-16-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1855,7 +1743,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-17-1">
-<h4>rair_end_17_1<a class="headerlink" href="#rair-end-17-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_17_1<a class="headerlink" href="#rair-end-17-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1869,7 +1757,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-18-1">
-<h4>rair_end_18_1<a class="headerlink" href="#rair-end-18-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_18_1<a class="headerlink" href="#rair-end-18-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1883,7 +1771,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-19-1">
-<h4>rair_end_19_1<a class="headerlink" href="#rair-end-19-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_19_1<a class="headerlink" href="#rair-end-19-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1897,7 +1785,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-1-1">
-<h4>rair_end_1_1<a class="headerlink" href="#rair-end-1-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_1_1<a class="headerlink" href="#rair-end-1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1911,7 +1799,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-20-1">
-<h4>rair_end_20_1<a class="headerlink" href="#rair-end-20-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_20_1<a class="headerlink" href="#rair-end-20-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1925,7 +1813,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-2-1">
-<h4>rair_end_2_1<a class="headerlink" href="#rair-end-2-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_2_1<a class="headerlink" href="#rair-end-2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1939,7 +1827,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-3-1">
-<h4>rair_end_3_1<a class="headerlink" href="#rair-end-3-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_3_1<a class="headerlink" href="#rair-end-3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1953,7 +1841,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-4-1">
-<h4>rair_end_4_1<a class="headerlink" href="#rair-end-4-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_4_1<a class="headerlink" href="#rair-end-4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1967,7 +1855,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-5-1">
-<h4>rair_end_5_1<a class="headerlink" href="#rair-end-5-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_5_1<a class="headerlink" href="#rair-end-5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1981,7 +1869,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-6-1">
-<h4>rair_end_6_1<a class="headerlink" href="#rair-end-6-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_6_1<a class="headerlink" href="#rair-end-6-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -1995,7 +1883,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-7-1">
-<h4>rair_end_7_1<a class="headerlink" href="#rair-end-7-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_7_1<a class="headerlink" href="#rair-end-7-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2009,7 +1897,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-8-1">
-<h4>rair_end_8_1<a class="headerlink" href="#rair-end-8-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_8_1<a class="headerlink" href="#rair-end-8-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2023,7 +1911,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-end-9-1">
-<h4>rair_end_9_1<a class="headerlink" href="#rair-end-9-1" title="Permalink to this heading"></a></h4>
+<h4>rair_end_9_1<a class="headerlink" href="#rair-end-9-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2037,7 +1925,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-10-1">
-<h4>rair_sta_10_1<a class="headerlink" href="#rair-sta-10-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_10_1<a class="headerlink" href="#rair-sta-10-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2051,7 +1939,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-11-1">
-<h4>rair_sta_11_1<a class="headerlink" href="#rair-sta-11-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_11_1<a class="headerlink" href="#rair-sta-11-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2065,7 +1953,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-12-1">
-<h4>rair_sta_12_1<a class="headerlink" href="#rair-sta-12-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_12_1<a class="headerlink" href="#rair-sta-12-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2079,7 +1967,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-13-1">
-<h4>rair_sta_13_1<a class="headerlink" href="#rair-sta-13-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_13_1<a class="headerlink" href="#rair-sta-13-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2093,7 +1981,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-14-1">
-<h4>rair_sta_14_1<a class="headerlink" href="#rair-sta-14-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_14_1<a class="headerlink" href="#rair-sta-14-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2107,7 +1995,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-15-1">
-<h4>rair_sta_15_1<a class="headerlink" href="#rair-sta-15-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_15_1<a class="headerlink" href="#rair-sta-15-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2121,7 +2009,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-16-1">
-<h4>rair_sta_16_1<a class="headerlink" href="#rair-sta-16-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_16_1<a class="headerlink" href="#rair-sta-16-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2135,7 +2023,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-17-1">
-<h4>rair_sta_17_1<a class="headerlink" href="#rair-sta-17-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_17_1<a class="headerlink" href="#rair-sta-17-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2149,7 +2037,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-18-1">
-<h4>rair_sta_18_1<a class="headerlink" href="#rair-sta-18-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_18_1<a class="headerlink" href="#rair-sta-18-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2163,7 +2051,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-19-1">
-<h4>rair_sta_19_1<a class="headerlink" href="#rair-sta-19-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_19_1<a class="headerlink" href="#rair-sta-19-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2177,7 +2065,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-1-1">
-<h4>rair_sta_1_1<a class="headerlink" href="#rair-sta-1-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_1_1<a class="headerlink" href="#rair-sta-1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2191,7 +2079,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-20-1">
-<h4>rair_sta_20_1<a class="headerlink" href="#rair-sta-20-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_20_1<a class="headerlink" href="#rair-sta-20-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2205,7 +2093,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-2-1">
-<h4>rair_sta_2_1<a class="headerlink" href="#rair-sta-2-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_2_1<a class="headerlink" href="#rair-sta-2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2219,7 +2107,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-3-1">
-<h4>rair_sta_3_1<a class="headerlink" href="#rair-sta-3-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_3_1<a class="headerlink" href="#rair-sta-3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2233,7 +2121,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-4-1">
-<h4>rair_sta_4_1<a class="headerlink" href="#rair-sta-4-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_4_1<a class="headerlink" href="#rair-sta-4-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2247,7 +2135,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-5-1">
-<h4>rair_sta_5_1<a class="headerlink" href="#rair-sta-5-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_5_1<a class="headerlink" href="#rair-sta-5-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2261,7 +2149,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-6-1">
-<h4>rair_sta_6_1<a class="headerlink" href="#rair-sta-6-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_6_1<a class="headerlink" href="#rair-sta-6-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2275,7 +2163,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-7-1">
-<h4>rair_sta_7_1<a class="headerlink" href="#rair-sta-7-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_7_1<a class="headerlink" href="#rair-sta-7-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2289,7 +2177,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-8-1">
-<h4>rair_sta_8_1<a class="headerlink" href="#rair-sta-8-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_8_1<a class="headerlink" href="#rair-sta-8-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2303,7 +2191,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rair-sta-9-1">
-<h4>rair_sta_9_1<a class="headerlink" href="#rair-sta-9-1" title="Permalink to this heading"></a></h4>
+<h4>rair_sta_9_1<a class="headerlink" href="#rair-sta-9-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2317,7 +2205,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="ranair">
-<h4>ranair<a class="headerlink" href="#ranair" title="Permalink to this heading"></a></h4>
+<h4>ranair<a class="headerlink" href="#ranair" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2329,7 +2217,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="randremoval">
-<h4>randremoval<a class="headerlink" href="#randremoval" title="Permalink to this heading"></a></h4>
+<h4>randremoval<a class="headerlink" href="#randremoval" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2341,7 +2229,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rotate180">
-<h4>rotate180<a class="headerlink" href="#rotate180" title="Permalink to this heading"></a></h4>
+<h4>rotate180<a class="headerlink" href="#rotate180" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2353,7 +2241,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-end1-1">
-<h4>s3sym_end1_1<a class="headerlink" href="#s3sym-end1-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_end1_1<a class="headerlink" href="#s3sym-end1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2367,7 +2255,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-end2-1">
-<h4>s3sym_end2_1<a class="headerlink" href="#s3sym-end2-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_end2_1<a class="headerlink" href="#s3sym-end2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2381,7 +2269,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-end3-1">
-<h4>s3sym_end3_1<a class="headerlink" href="#s3sym-end3-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_end3_1<a class="headerlink" href="#s3sym-end3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2395,7 +2283,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-seg1-1">
-<h4>s3sym_seg1_1<a class="headerlink" href="#s3sym-seg1-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_seg1_1<a class="headerlink" href="#s3sym-seg1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2407,7 +2295,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-seg2-1">
-<h4>s3sym_seg2_1<a class="headerlink" href="#s3sym-seg2-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_seg2_1<a class="headerlink" href="#s3sym-seg2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2419,7 +2307,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-seg3-1">
-<h4>s3sym_seg3_1<a class="headerlink" href="#s3sym-seg3-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_seg3_1<a class="headerlink" href="#s3sym-seg3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2431,7 +2319,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-sta1-1">
-<h4>s3sym_sta1_1<a class="headerlink" href="#s3sym-sta1-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_sta1_1<a class="headerlink" href="#s3sym-sta1-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2445,7 +2333,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-sta2-1">
-<h4>s3sym_sta2_1<a class="headerlink" href="#s3sym-sta2-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_sta2_1<a class="headerlink" href="#s3sym-sta2-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2459,7 +2347,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="s3sym-sta3-1">
-<h4>s3sym_sta3_1<a class="headerlink" href="#s3sym-sta3-1" title="Permalink to this heading"></a></h4>
+<h4>s3sym_sta3_1<a class="headerlink" href="#s3sym-sta3-1" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2473,7 +2361,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="surfrest">
-<h4>surfrest<a class="headerlink" href="#surfrest" title="Permalink to this heading"></a></h4>
+<h4>surfrest<a class="headerlink" href="#surfrest" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2485,7 +2373,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="sym-on">
-<h4>sym_on<a class="headerlink" href="#sym-on" title="Permalink to this heading"></a></h4>
+<h4>sym_on<a class="headerlink" href="#sym-on" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2497,7 +2385,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="symtbl-fname">
-<h4>symtbl_fname<a class="headerlink" href="#symtbl-fname" title="Permalink to this heading"></a></h4>
+<h4>symtbl_fname<a class="headerlink" href="#symtbl-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘’</div>
 <div class="line"><em>type</em>: file</div>
@@ -2509,7 +2397,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="tolerance">
-<h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading"></a></h4>
+<h4>tolerance<a class="headerlink" href="#tolerance" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 5</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2523,7 +2411,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="unambig-scale">
-<h4>unambig_scale<a class="headerlink" href="#unambig-scale" title="Permalink to this heading"></a></h4>
+<h4>unambig_scale<a class="headerlink" href="#unambig-scale" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 50</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2537,7 +2425,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-air">
-<h4>w_air<a class="headerlink" href="#w-air" title="Permalink to this heading"></a></h4>
+<h4>w_air<a class="headerlink" href="#w-air" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.01</div>
 <div class="line"><em>type</em>: float</div>
@@ -2551,7 +2439,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-bsa">
-<h4>w_bsa<a class="headerlink" href="#w-bsa" title="Permalink to this heading"></a></h4>
+<h4>w_bsa<a class="headerlink" href="#w-bsa" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: -0.01</div>
 <div class="line"><em>type</em>: float</div>
@@ -2565,7 +2453,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-cdih">
-<h4>w_cdih<a class="headerlink" href="#w-cdih" title="Permalink to this heading"></a></h4>
+<h4>w_cdih<a class="headerlink" href="#w-cdih" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -2579,7 +2467,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-desolv">
-<h4>w_desolv<a class="headerlink" href="#w-desolv" title="Permalink to this heading"></a></h4>
+<h4>w_desolv<a class="headerlink" href="#w-desolv" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -2593,7 +2481,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-dist">
-<h4>w_dist<a class="headerlink" href="#w-dist" title="Permalink to this heading"></a></h4>
+<h4>w_dist<a class="headerlink" href="#w-dist" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.01</div>
 <div class="line"><em>type</em>: float</div>
@@ -2607,7 +2495,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-elec">
-<h4>w_elec<a class="headerlink" href="#w-elec" title="Permalink to this heading"></a></h4>
+<h4>w_elec<a class="headerlink" href="#w-elec" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1.0</div>
 <div class="line"><em>type</em>: float</div>
@@ -2621,7 +2509,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-sym">
-<h4>w_sym<a class="headerlink" href="#w-sym" title="Permalink to this heading"></a></h4>
+<h4>w_sym<a class="headerlink" href="#w-sym" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.1</div>
 <div class="line"><em>type</em>: float</div>
@@ -2635,7 +2523,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="w-vdw">
-<h4>w_vdw<a class="headerlink" href="#w-vdw" title="Permalink to this heading"></a></h4>
+<h4>w_vdw<a class="headerlink" href="#w-vdw" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 0.01</div>
 <div class="line"><em>type</em>: float</div>
@@ -2650,9 +2538,9 @@ sure to sample enough the possible interaction space.</p>
 </section>
 </section>
 <section id="guru">
-<h3>Guru<a class="headerlink" href="#guru" title="Permalink to this heading"></a></h3>
+<h3>Guru<a class="headerlink" href="#guru" title="Link to this heading"></a></h3>
 <section id="iniseed">
-<h4>iniseed<a class="headerlink" href="#iniseed" title="Permalink to this heading"></a></h4>
+<h4>iniseed<a class="headerlink" href="#iniseed" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 917</div>
 <div class="line"><em>type</em>: integer</div>
@@ -2666,7 +2554,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="keepwater">
-<h4>keepwater<a class="headerlink" href="#keepwater" title="Permalink to this heading"></a></h4>
+<h4>keepwater<a class="headerlink" href="#keepwater" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2678,7 +2566,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="log-level">
-<h4>log_level<a class="headerlink" href="#log-level" title="Permalink to this heading"></a></h4>
+<h4>log_level<a class="headerlink" href="#log-level" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘quiet’</div>
 <div class="line"><em>type</em>: string</div>
@@ -2691,7 +2579,7 @@ sure to sample enough the possible interaction space.</p>
 </div>
 </section>
 <section id="rigidtrans">
-<h4>rigidtrans<a class="headerlink" href="#rigidtrans" title="Permalink to this heading"></a></h4>
+<h4>rigidtrans<a class="headerlink" href="#rigidtrans" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: True</div>
 <div class="line"><em>type</em>: boolean</div>
@@ -2718,7 +2606,7 @@ sure to sample enough the possible interaction space.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

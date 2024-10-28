@@ -13,6 +13,7 @@ Submodules
    haddock.clis.restraints.restrain_bodies
    haddock.clis.restraints.validate_tbl
    haddock.clis.restraints.webservice
+   haddock.clis.restraints.z_surface_restraints
 
 Module contents
 ---------------

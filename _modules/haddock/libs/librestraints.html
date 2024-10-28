@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.librestraints &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -97,6 +91,7 @@
 <span class="c1"># Scaling factors for relative ASA</span>
 <span class="c1"># Calculated using extended ALA-X-ALA peptides</span>
 <span class="c1"># Taken from NACCESS</span>
+<span class="c1"># Taken from NACCESS</span>
 <span class="n">REL_ASA</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;total&#39;</span><span class="p">:</span>
         <span class="p">{</span>
@@ -120,7 +115,27 @@
             <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="mf">151.44</span><span class="p">,</span>
             <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="mf">249.36</span><span class="p">,</span>
             <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
-        <span class="p">},</span>
+            <span class="s1">&#39;ASH&#39;</span><span class="p">:</span> <span class="mf">140.39</span><span class="p">,</span>
+            <span class="s1">&#39;DDZ&#39;</span><span class="p">:</span> <span class="mf">107.95</span><span class="p">,</span>
+            <span class="s1">&#39;GLH&#39;</span><span class="p">:</span> <span class="mf">172.25</span><span class="p">,</span>
+            <span class="s1">&#39;CYM&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
+            <span class="s1">&#39;CSP&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
+            <span class="s1">&#39;CYF&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
+            <span class="s1">&#39;CYC&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
+            <span class="s1">&#39;CFE&#39;</span><span class="p">:</span> <span class="mf">134.28</span><span class="p">,</span>
+            <span class="s1">&#39;NEP&#39;</span><span class="p">:</span> <span class="mf">182.88</span><span class="p">,</span>
+            <span class="s1">&#39;ALY&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
+            <span class="s1">&#39;MLZ&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
+            <span class="s1">&#39;MLY&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
+            <span class="s1">&#39;M3L&#39;</span><span class="p">:</span> <span class="mf">200.81</span><span class="p">,</span>
+            <span class="s1">&#39;HYP&#39;</span><span class="p">:</span> <span class="mf">136.13</span><span class="p">,</span>
+            <span class="s1">&#39;SEP&#39;</span><span class="p">:</span> <span class="mf">116.50</span><span class="p">,</span>
+            <span class="s1">&#39;TOP&#39;</span><span class="p">:</span> <span class="mf">139.27</span><span class="p">,</span>
+            <span class="s1">&#39;TYP&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
+            <span class="s1">&#39;PTR&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
+            <span class="s1">&#39;TYS&#39;</span><span class="p">:</span> <span class="mf">212.76</span><span class="p">,</span>
+            <span class="s1">&#39;PNS&#39;</span><span class="p">:</span> <span class="mf">116.50</span><span class="p">,</span>
+            <span class="p">},</span>
     <span class="s1">&#39;bb&#39;</span><span class="p">:</span>
         <span class="p">{</span>
             <span class="s1">&#39;ALA&#39;</span><span class="p">:</span> <span class="mf">38.54</span><span class="p">,</span>
@@ -143,7 +158,27 @@
             <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="mf">37.16</span><span class="p">,</span>
             <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="mf">38.10</span><span class="p">,</span>
             <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
-        <span class="p">},</span>
+            <span class="s1">&#39;ASH&#39;</span><span class="p">:</span> <span class="mf">37.70</span><span class="p">,</span>
+            <span class="s1">&#39;DDZ&#39;</span><span class="p">:</span> <span class="mf">38.54</span><span class="p">,</span>
+            <span class="s1">&#39;GLH&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
+            <span class="s1">&#39;CYM&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
+            <span class="s1">&#39;CYC&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
+            <span class="s1">&#39;CSP&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
+            <span class="s1">&#39;CYF&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
+            <span class="s1">&#39;CFE&#39;</span><span class="p">:</span> <span class="mf">37.53</span><span class="p">,</span>
+            <span class="s1">&#39;NEP&#39;</span><span class="p">:</span> <span class="mf">35.80</span><span class="p">,</span>
+            <span class="s1">&#39;ALY&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
+            <span class="s1">&#39;MLZ&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
+            <span class="s1">&#39;MLY&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
+            <span class="s1">&#39;M3L&#39;</span><span class="p">:</span> <span class="mf">37.51</span><span class="p">,</span>
+            <span class="s1">&#39;HYP&#39;</span><span class="p">:</span> <span class="mf">16.23</span><span class="p">,</span>
+            <span class="s1">&#39;SEP&#39;</span><span class="p">:</span> <span class="mf">38.40</span><span class="p">,</span>
+            <span class="s1">&#39;TOP&#39;</span><span class="p">:</span> <span class="mf">37.57</span><span class="p">,</span>
+            <span class="s1">&#39;TYP&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
+            <span class="s1">&#39;PTR&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
+            <span class="s1">&#39;TYS&#39;</span><span class="p">:</span> <span class="mf">35.38</span><span class="p">,</span>
+            <span class="s1">&#39;PNS&#39;</span><span class="p">:</span> <span class="mf">38.40</span><span class="p">,</span>
+            <span class="p">},</span>
     <span class="s1">&#39;sc&#39;</span><span class="p">:</span>
         <span class="p">{</span>
             <span class="s1">&#39;ALA&#39;</span><span class="p">:</span> <span class="mf">69.41</span><span class="p">,</span>
@@ -166,10 +201,33 @@
             <span class="s1">&#39;VAL&#39;</span><span class="p">:</span> <span class="mf">114.28</span><span class="p">,</span>
             <span class="s1">&#39;TRP&#39;</span><span class="p">:</span> <span class="mf">211.26</span><span class="p">,</span>
             <span class="s1">&#39;TYR&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
-        <span class="p">}</span>
-<span class="p">}</span>
+            <span class="s1">&#39;ASH&#39;</span><span class="p">:</span> <span class="mf">102.69</span><span class="p">,</span>
+            <span class="s1">&#39;DDZ&#39;</span><span class="p">:</span> <span class="mf">69.41</span><span class="p">,</span>
+            <span class="s1">&#39;GLH&#39;</span><span class="p">:</span> <span class="mf">134.74</span><span class="p">,</span>
+            <span class="s1">&#39;CYM&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
+            <span class="s1">&#39;CYC&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
+            <span class="s1">&#39;CSP&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
+            <span class="s1">&#39;CYF&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
+            <span class="s1">&#39;CFE&#39;</span><span class="p">:</span> <span class="mf">96.75</span><span class="p">,</span>
+            <span class="s1">&#39;NEP&#39;</span><span class="p">:</span> <span class="mf">147.08</span><span class="p">,</span>
+            <span class="s1">&#39;ALY&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
+            <span class="s1">&#39;MLZ&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
+            <span class="s1">&#39;MLY&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
+            <span class="s1">&#39;M3L&#39;</span><span class="p">:</span> <span class="mf">163.30</span><span class="p">,</span>
+            <span class="s1">&#39;HYP&#39;</span><span class="p">:</span> <span class="mf">119.90</span><span class="p">,</span>
+            <span class="s1">&#39;SEP&#39;</span><span class="p">:</span> <span class="mf">78.11</span><span class="p">,</span>
+            <span class="s1">&#39;TOP&#39;</span><span class="p">:</span> <span class="mf">101.70</span><span class="p">,</span>
+            <span class="s1">&#39;TYP&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
+            <span class="s1">&#39;PTR&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
+            <span class="s1">&#39;TYS&#39;</span><span class="p">:</span> <span class="mf">177.38</span><span class="p">,</span>
+            <span class="s1">&#39;PNS&#39;</span><span class="p">:</span> <span class="mf">78.11</span><span class="p">,</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+<span class="n">DEFAULT_PROBE_RADIUS</span> <span class="o">=</span> <span class="mf">1.4</span>
 
-<div class="viewcode-block" id="get_surface_resids"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.get_surface_resids">[docs]</a><span class="k">def</span> <span class="nf">get_surface_resids</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+<div class="viewcode-block" id="get_surface_resids">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.get_surface_resids">[docs]</a>
+<span class="k">def</span> <span class="nf">get_surface_resids</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calls freesasa using its Python API and returns</span>
 <span class="sd">    per-residue accessibilities.</span>
@@ -218,7 +276,10 @@
     <span class="k">return</span> <span class="n">surface_resids</span></div>
 
 
-<div class="viewcode-block" id="parse_actpass_file"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.parse_actpass_file">[docs]</a><span class="k">def</span> <span class="nf">parse_actpass_file</span><span class="p">(</span><span class="n">actpass_file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="parse_actpass_file">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.parse_actpass_file">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_actpass_file</span><span class="p">(</span><span class="n">actpass_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse actpass file</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -245,7 +306,10 @@
     <span class="k">return</span> <span class="n">active</span><span class="p">,</span> <span class="n">passive</span></div>
 
 
-<div class="viewcode-block" id="active_passive_to_ambig"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.active_passive_to_ambig">[docs]</a><span class="k">def</span> <span class="nf">active_passive_to_ambig</span><span class="p">(</span><span class="n">active1</span><span class="p">,</span> <span class="n">passive1</span><span class="p">,</span> <span class="n">active2</span><span class="p">,</span> <span class="n">passive2</span><span class="p">,</span> <span class="n">segid1</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">segid2</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="active_passive_to_ambig">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.active_passive_to_ambig">[docs]</a>
+<span class="k">def</span> <span class="nf">active_passive_to_ambig</span><span class="p">(</span><span class="n">active1</span><span class="p">,</span> <span class="n">passive1</span><span class="p">,</span> <span class="n">active2</span><span class="p">,</span> <span class="n">passive2</span><span class="p">,</span> <span class="n">segid1</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">segid2</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert active and passive residues to Ambiguous Interaction Restraints</span>
 
 <span class="sd">    Parameters</span>
@@ -301,13 +365,19 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;) 2.0 2.0 0.0</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># Functions/Methods</span>
 
-<div class="viewcode-block" id="calc_euclidean"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.calc_euclidean">[docs]</a><span class="k">def</span> <span class="nf">calc_euclidean</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_euclidean">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.calc_euclidean">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_euclidean</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
 	<span class="k">return</span> <span class="p">((</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span></div>
 
 
-<div class="viewcode-block" id="read_structure"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.read_structure">[docs]</a><span class="k">def</span> <span class="nf">read_structure</span><span class="p">(</span><span class="n">pdbf</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="read_structure">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.read_structure">[docs]</a>
+<span class="k">def</span> <span class="nf">read_structure</span><span class="p">(</span><span class="n">pdbf</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Reads a PDB file and returns a list of parsed atoms</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -340,7 +410,10 @@
 	<span class="k">return</span> <span class="n">res_list</span></div>
 
 
-<div class="viewcode-block" id="get_bodies"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.get_bodies">[docs]</a><span class="k">def</span> <span class="nf">get_bodies</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">prot_threshold</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">dna_threshold</span><span class="o">=</span><span class="mf">7.5</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_bodies">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.get_bodies">[docs]</a>
+<span class="k">def</span> <span class="nf">get_bodies</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">prot_threshold</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">dna_threshold</span><span class="o">=</span><span class="mf">7.5</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Determines gaps in an atom list following simple distance based criteria.</span>
 <span class="sd">	Returns continuous fragments.</span>
@@ -381,7 +454,10 @@
 	<span class="k">return</span> <span class="n">bodies</span></div>
 
 
-<div class="viewcode-block" id="build_restraints"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.build_restraints">[docs]</a><span class="k">def</span> <span class="nf">build_restraints</span><span class="p">(</span><span class="n">bodies</span><span class="p">):</span>
+
+<div class="viewcode-block" id="build_restraints">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.build_restraints">[docs]</a>
+<span class="k">def</span> <span class="nf">build_restraints</span><span class="p">(</span><span class="n">bodies</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Generates distance restraints to maintain the relative</span>
 <span class="sd">	orientation of the different bodies during the simulations.</span>
@@ -436,7 +512,10 @@
 	<span class="k">return</span> <span class="n">restraints</span></div>
 
 
-<div class="viewcode-block" id="generate_tbl"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.generate_tbl">[docs]</a><span class="k">def</span> <span class="nf">generate_tbl</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">restraints</span><span class="p">):</span>
+
+<div class="viewcode-block" id="generate_tbl">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.generate_tbl">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_tbl</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">restraints</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Makes a list of TBL-formatted restraints.</span>
 
@@ -460,7 +539,10 @@
 		<span class="nb">print</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_parenthesis"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.check_parenthesis">[docs]</a><span class="k">def</span> <span class="nf">check_parenthesis</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="check_parenthesis">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.check_parenthesis">[docs]</a>
+<span class="k">def</span> <span class="nf">check_parenthesis</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
     <span class="n">open_parenthesis</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[(]&#39;</span><span class="p">)</span>
     <span class="n">close_parenthesis</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[)]&#39;</span><span class="p">)</span>
     <span class="n">quotation_marks</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[</span><span class="se">\&quot;</span><span class="s1">]&#39;</span><span class="p">)</span>
@@ -481,7 +563,10 @@
                         <span class="s2">&quot;(</span><span class="si">{:d}</span><span class="s2"> quotation marks)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">quote</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="validate_tbldata"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.validate_tbldata">[docs]</a><span class="k">def</span> <span class="nf">validate_tbldata</span><span class="p">(</span><span class="n">restraints</span><span class="p">,</span> <span class="n">pcs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="validate_tbldata">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.validate_tbldata">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_tbldata</span><span class="p">(</span><span class="n">restraints</span><span class="p">,</span> <span class="n">pcs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># List of selection keywords</span>
     <span class="n">selectors</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;resn&#39;</span><span class="p">,</span> <span class="s1">&#39;atom&#39;</span><span class="p">,</span> <span class="s1">&#39;resi&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&#39;</span><span class="p">,</span> <span class="s1">&#39;segi&#39;</span><span class="p">,</span> <span class="s1">&#39;chem&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;byres&#39;</span><span class="p">,</span> <span class="s1">&#39;not&#39;</span><span class="p">)</span>
@@ -714,7 +799,10 @@
         <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
-<div class="viewcode-block" id="passive_from_active_raw"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.passive_from_active_raw">[docs]</a><span class="k">def</span> <span class="nf">passive_from_active_raw</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">surface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.5</span><span class="p">):</span>
+
+<div class="viewcode-block" id="passive_from_active_raw">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.passive_from_active_raw">[docs]</a>
+<span class="k">def</span> <span class="nf">passive_from_active_raw</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">surface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the passive residues.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -772,6 +860,7 @@
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">passive_list</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">surface</span><span class="p">)</span>
     <span class="n">passive_list</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">active</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">passive_list</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -782,7 +871,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

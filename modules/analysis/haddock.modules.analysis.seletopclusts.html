@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Selection of top clusters module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
           <a href="../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -53,7 +48,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
@@ -114,9 +108,9 @@
            <div itemprop="articleBody">
              
   <section id="selection-of-top-clusters-module">
-<h1>Selection of top clusters module<a class="headerlink" href="#selection-of-top-clusters-module" title="Permalink to this heading"></a></h1>
+<h1>Selection of top clusters module<a class="headerlink" href="#selection-of-top-clusters-module" title="Link to this heading"></a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="haddock.modules.analysis.seletopclusts.seletopclusts.html">haddock.modules.analysis.seletopclusts.seletopclusts module</a></li>
@@ -124,7 +118,7 @@
 </div>
 </section>
 <section id="module-haddock.modules.analysis.seletopclusts">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.analysis.seletopclusts" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.analysis.seletopclusts" title="Link to this heading"></a></h2>
 <p>Select models from the top clusters.</p>
 <p>This module selects a number of models from a number of clusters. The
 selection is based on the score of the models within the clusters.</p>
@@ -134,29 +128,29 @@ keep a few models from all the clusters to have more diversity at the
 refinement stage(s).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.analysis.seletopclusts.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.seletopclusts.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ignore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/analysis/seletopclusts/defaults.yaml')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">everything</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/seletopclusts.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.seletopclusts.HaddockModule" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.seletopclusts.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ignore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/haddock/modules/analysis/seletopclusts/defaults.yaml')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">everything</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/seletopclusts.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.seletopclusts.HaddockModule" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a></p>
 <p>Haddock Module for ‘seletopclusts’.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.seletopclusts.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/seletopclusts.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.seletopclusts.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/seletopclusts.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.seletopclusts.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
 <dd><p>Confirm if module is installed.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="haddock.modules.analysis.seletopclusts.HaddockModule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seletopclusts'</span></em><a class="headerlink" href="#haddock.modules.analysis.seletopclusts.HaddockModule.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seletopclusts'</span></em><a class="headerlink" href="#haddock.modules.analysis.seletopclusts.HaddockModule.name" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="default-parameters">
-<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
 <section id="easy">
-<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading"></a></h3>
+<h3>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h3>
 <section id="sortby">
-<h4>sortby<a class="headerlink" href="#sortby" title="Permalink to this heading"></a></h4>
+<h4>sortby<a class="headerlink" href="#sortby" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘score’</div>
 <div class="line"><em>type</em>: string</div>
@@ -168,7 +162,7 @@ refinement stage(s).</p>
 </div>
 </section>
 <section id="top-cluster">
-<h4>top_cluster<a class="headerlink" href="#top-cluster" title="Permalink to this heading"></a></h4>
+<h4>top_cluster<a class="headerlink" href="#top-cluster" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 1000</div>
 <div class="line"><em>type</em>: integer</div>
@@ -182,7 +176,7 @@ refinement stage(s).</p>
 </div>
 </section>
 <section id="top-models">
-<h4>top_models<a class="headerlink" href="#top-models" title="Permalink to this heading"></a></h4>
+<h4>top_models<a class="headerlink" href="#top-models" title="Link to this heading"></a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 10</div>
 <div class="line"><em>type</em>: integer</div>
@@ -211,7 +205,7 @@ refinement stage(s).</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libalign &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             haddock3
           </a>
-              <div class="version">
-                3.0.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -50,7 +45,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
@@ -102,6 +96,7 @@
 <span class="sd">* :py:func:`make_range`</span>
 <span class="sd">* :py:func:`dump_as_izone`</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
@@ -118,15 +113,15 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">pdb_path_exists</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libpdb</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">split_by_chain</span><span class="p">,</span>
+    <span class="n">slc_chainid</span><span class="p">,</span>
+    <span class="n">slc_element</span><span class="p">,</span>
     <span class="n">slc_name</span><span class="p">,</span>
     <span class="n">slc_resname</span><span class="p">,</span>
-    <span class="n">slc_chainid</span><span class="p">,</span>
     <span class="n">slc_resseq</span><span class="p">,</span>
     <span class="n">slc_x</span><span class="p">,</span>
     <span class="n">slc_y</span><span class="p">,</span>
     <span class="n">slc_z</span><span class="p">,</span>
-    <span class="n">slc_element</span><span class="p">,</span>
+    <span class="n">split_by_chain</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -153,7 +148,7 @@
     <span class="s2">&quot;TRP&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TYR&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VAL&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
+<span class="p">]</span>
 
 <span class="n">DNA_RES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DA&quot;</span><span class="p">,</span> <span class="s2">&quot;DC&quot;</span><span class="p">,</span> <span class="s2">&quot;DT&quot;</span><span class="p">,</span> <span class="s2">&quot;DG&quot;</span><span class="p">]</span>
 <span class="c1"># Backbone</span>
@@ -192,7 +187,7 @@
         <span class="s2">&quot;CZ2&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CZ3&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CH2&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
+    <span class="p">],</span>
     <span class="s2">&quot;TYR&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;C&quot;</span><span class="p">,</span>
         <span class="s2">&quot;N&quot;</span><span class="p">,</span>
@@ -206,9 +201,9 @@
         <span class="s2">&quot;CE2&quot;</span><span class="p">,</span>
         <span class="s2">&quot;CZ&quot;</span><span class="p">,</span>
         <span class="s2">&quot;OH&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
+    <span class="p">],</span>
     <span class="s2">&quot;VAL&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;CA&quot;</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;CB&quot;</span><span class="p">,</span> <span class="s2">&quot;CG1&quot;</span><span class="p">,</span> <span class="s2">&quot;CG2&quot;</span><span class="p">],</span>
-    <span class="p">}</span>
+<span class="p">}</span>
 
 <span class="c1"># Bases</span>
 <span class="n">DNA_ATOMS</span> <span class="o">=</span> <span class="p">[</span>
@@ -228,38 +223,38 @@
     <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
     <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
     <span class="s2">&quot;O6&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
+<span class="p">]</span>
 
 <span class="n">DNA_FULL_DICT</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;DA&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s1">&#39;P&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O1P&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O2P&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;DA&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O1P&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O2P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C5&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N9&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N3&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C5&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C8&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;N9&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C8&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C2&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C3&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O6&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
+        <span class="s2">&quot;N2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O6&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
     <span class="s2">&quot;DG&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O1P&quot;</span><span class="p">,</span>
@@ -269,26 +264,26 @@
         <span class="s2">&quot;C4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N9&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N3&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C5&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C8&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;N9&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C8&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C2&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C3&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;O2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O4&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
+        <span class="s2">&quot;O2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O4&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
     <span class="s2">&quot;DC&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O1P&quot;</span><span class="p">,</span>
@@ -298,26 +293,26 @@
         <span class="s2">&quot;C4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N3&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C5&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;N1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C2&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C3&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N9&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C8&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O6&#39;</span><span class="p">,</span>
-        <span class="p">],</span>
+        <span class="s2">&quot;N9&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C8&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O6&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
     <span class="s2">&quot;DT&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O1P&quot;</span><span class="p">,</span>
@@ -327,27 +322,27 @@
         <span class="s2">&quot;C4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O4&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C1&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N1&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N3&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C5&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C7&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;N1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C7&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C2&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C3&#39;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;N9&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N2&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;C8&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N7&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;N6&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;O6&#39;</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">}</span>
+        <span class="s2">&quot;N9&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;C8&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O6&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">}</span>
 
 <span class="n">RNA_RES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;U&quot;</span><span class="p">]</span>
 <span class="n">RNA_ATOMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C4&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;C3&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;O3&#39;&quot;</span><span class="p">]</span>
@@ -376,7 +371,7 @@
         <span class="s2">&quot;C2&quot;</span><span class="p">,</span>
         <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
+    <span class="p">],</span>
     <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;OP1&quot;</span><span class="p">,</span>
@@ -401,7 +396,7 @@
         <span class="s2">&quot;N2&quot;</span><span class="p">,</span>
         <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
+    <span class="p">],</span>
     <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;OP1&quot;</span><span class="p">,</span>
@@ -425,7 +420,7 @@
         <span class="s2">&quot;N3&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C4&quot;</span><span class="p">,</span>
         <span class="s2">&quot;N4&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
+    <span class="p">],</span>
     <span class="s2">&quot;U&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;P&quot;</span><span class="p">,</span>
         <span class="s2">&quot;OP1&quot;</span><span class="p">,</span>
@@ -447,11 +442,13 @@
         <span class="s2">&quot;O4&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C5&quot;</span><span class="p">,</span>
         <span class="s2">&quot;C6&quot;</span><span class="p">,</span>
-        <span class="p">],</span>
-    <span class="p">}</span>
+    <span class="p">],</span>
+<span class="p">}</span>
 
 
-<div class="viewcode-block" id="ALIGNError"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.ALIGNError">[docs]</a><span class="k">class</span> <span class="nc">ALIGNError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ALIGNError">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.ALIGNError">[docs]</a>
+<span class="k">class</span> <span class="nc">ALIGNError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when something goes wrong with the ALIGNMENT library.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -459,7 +456,10 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_rmsd"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.calc_rmsd">[docs]</a><span class="k">def</span> <span class="nf">calc_rmsd</span><span class="p">(</span><span class="n">V</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="calc_rmsd">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.calc_rmsd">[docs]</a>
+<span class="k">def</span> <span class="nf">calc_rmsd</span><span class="p">(</span><span class="n">V</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the RMSD from two vectors.</span>
 
@@ -478,7 +478,10 @@
     <span class="k">return</span> <span class="n">rmsd</span></div>
 
 
-<div class="viewcode-block" id="kabsch"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.kabsch">[docs]</a><span class="k">def</span> <span class="nf">kabsch</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
+
+<div class="viewcode-block" id="kabsch">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.kabsch">[docs]</a>
+<span class="k">def</span> <span class="nf">kabsch</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the rotation matrix using Kabsch algorithm.</span>
 
@@ -506,7 +509,10 @@
     <span class="k">return</span> <span class="n">U</span></div>
 
 
-<div class="viewcode-block" id="centroid"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.centroid">[docs]</a><span class="k">def</span> <span class="nf">centroid</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
+
+<div class="viewcode-block" id="centroid">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.centroid">[docs]</a>
+<span class="k">def</span> <span class="nf">centroid</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the centroid.</span>
 
@@ -523,14 +529,17 @@
     <span class="k">return</span> <span class="n">C</span></div>
 
 
-<div class="viewcode-block" id="load_coords"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.load_coords">[docs]</a><span class="k">def</span> <span class="nf">load_coords</span><span class="p">(</span>
-        <span class="n">pdb_f</span><span class="p">,</span>
-        <span class="n">atoms</span><span class="p">,</span>
-        <span class="n">filter_resdic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">numbering_dic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">add_resname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="p">):</span>
+
+<div class="viewcode-block" id="load_coords">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.load_coords">[docs]</a>
+<span class="k">def</span> <span class="nf">load_coords</span><span class="p">(</span>
+    <span class="n">pdb_f</span><span class="p">,</span>
+    <span class="n">atoms</span><span class="p">,</span>
+    <span class="n">filter_resdic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">numbering_dic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">add_resname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load coordinates from PDB.</span>
 
 <span class="sd">    Parameters</span>
@@ -651,13 +660,16 @@
             <span class="sa">f</span><span class="s2">&quot;Chain matching error on </span><span class="si">{</span><span class="n">pdb_f</span><span class="si">}</span><span class="s2">! &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Filtering scheme used: </span><span class="si">{</span><span class="n">filter_resdic</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Please check the input file and queried filterings.&quot;</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="c1"># Raise the error</span>
         <span class="k">raise</span> <span class="n">ALIGNError</span><span class="p">(</span><span class="n">_err_msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">coord_dic</span><span class="p">,</span> <span class="n">chain_ranges</span></div>
 
 
-<div class="viewcode-block" id="get_atoms"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="get_atoms">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_atoms">[docs]</a>
+<span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify what is the molecule type of each PDB.</span>
 
 <span class="sd">    Parameters</span>
@@ -696,12 +708,14 @@
                 <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">atom_name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_name</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">element</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_element</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="nb">all</span><span class="p">([</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                    <span class="p">[</span>
                         <span class="n">resname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PROT_RES</span><span class="p">,</span>
                         <span class="n">resname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DNA_RES</span><span class="p">,</span>
                         <span class="n">resname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RNA_RES</span><span class="p">,</span>
                         <span class="n">resname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RES_TO_BE_IGNORED</span><span class="p">,</span>
-                        <span class="p">]):</span>
+                    <span class="p">]</span>
+                <span class="p">):</span>
                     <span class="c1"># its neither DNA/RNA nor protein, use the heavy atoms</span>
                     <span class="c1"># WARNING: Atoms that belong to unknown residues must</span>
                     <span class="c1">#  be bound to a residue name;</span>
@@ -716,6 +730,7 @@
                         <span class="k">if</span> <span class="n">atom_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_dic</span><span class="p">[</span><span class="n">resname</span><span class="p">]:</span>
                             <span class="n">atom_dic</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">atom_dic</span></div>
+
 
 
 <span class="n">ResCode</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span>
@@ -744,7 +759,7 @@
     <span class="s2">&quot;C&quot;</span><span class="p">,</span>
     <span class="s2">&quot;T&quot;</span><span class="p">,</span>
     <span class="s2">&quot;X&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
+<span class="p">]</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The single letter code of a residue.</span>
 
@@ -752,7 +767,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="pdb2fastadic"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.pdb2fastadic">[docs]</a><span class="k">def</span> <span class="nf">pdb2fastadic</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<div class="viewcode-block" id="pdb2fastadic">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.pdb2fastadic">[docs]</a>
+<span class="k">def</span> <span class="nf">pdb2fastadic</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the sequence as a fasta.</span>
 
@@ -793,7 +810,7 @@
             <span class="p">(</span>
                 <span class="s2">&quot;DT&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;T&quot;</span><span class="p">,</span>
-                <span class="p">),</span>  <span class="c1"># 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501</span>
+            <span class="p">),</span>  <span class="c1"># 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501</span>
             <span class="p">(</span><span class="s2">&quot;ALY&quot;</span><span class="p">,</span> <span class="s2">&quot;K&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;ASH&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;CFE&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">),</span>
@@ -817,8 +834,8 @@
             <span class="p">(</span><span class="s2">&quot;TOP&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;TYP&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">&quot;TYS&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
 
     <span class="n">seq_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -843,9 +860,12 @@
     <span class="k">return</span> <span class="n">seq_dic</span></div>
 
 
-<div class="viewcode-block" id="get_align"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_align">[docs]</a><span class="k">def</span> <span class="nf">get_align</span><span class="p">(</span>
-        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">FilePath</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">partial</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+
+<div class="viewcode-block" id="get_align">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_align">[docs]</a>
+<span class="k">def</span> <span class="nf">get_align</span><span class="p">(</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">FilePath</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">partial</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the alignment function.</span>
 
@@ -872,16 +892,19 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Alignment method </span><span class="si">{</span><span class="n">method</span><span class="si">!r}</span><span class="s2"> not recognized. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Available options are </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">available_alns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">align_func</span></div>
 
 
-<div class="viewcode-block" id="align_strct"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_strct">[docs]</a><span class="k">def</span> <span class="nf">align_strct</span><span class="p">(</span>
-        <span class="n">reference</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
-        <span class="n">output_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-        <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="align_strct">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_strct">[docs]</a>
+<span class="k">def</span> <span class="nf">align_strct</span><span class="p">(</span>
+    <span class="n">reference</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+    <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Structuraly align and get numbering relationship.</span>
 
@@ -903,9 +926,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">lovoalign_exec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-            <span class="s2">&quot;Structural alignment needs LovoAlign &quot;</span>
-            <span class="s2">&quot;get it at github.com/m3g/lovoalign&quot;</span>
-            <span class="p">)</span>
+            <span class="s2">&quot;Structural alignment needs LovoAlign &quot;</span> <span class="s2">&quot;get it at github.com/m3g/lovoalign&quot;</span>
+        <span class="p">)</span>
         <span class="k">raise</span> <span class="n">ALIGNError</span><span class="p">(</span><span class="s2">&quot;Path to LovoAlign executable required.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">lovoalign_exec</span><span class="p">:</span>
@@ -916,13 +938,9 @@
 
     <span class="n">numbering_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">protein_a_dic</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">e</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">e</span>
-        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">split_by_chain</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
-        <span class="p">}</span>
-    <span class="n">protein_b_dic</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">e</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">e</span>
-        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">split_by_chain</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
-        <span class="p">}</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">split_by_chain</span><span class="p">(</span><span class="n">reference</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">protein_b_dic</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">split_by_chain</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)}</span>
 
     <span class="c1"># check if chain ids match</span>
     <span class="k">if</span> <span class="n">protein_a_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">protein_b_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -938,7 +956,7 @@
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lovoalign_exec</span><span class="si">}</span><span class="s2"> -p1 </span><span class="si">{</span><span class="n">protein_a_dic</span><span class="p">[</span><span class="n">chain</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;-p2 </span><span class="si">{</span><span class="n">protein_b_dic</span><span class="p">[</span><span class="n">chain</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;-c1 </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2"> -c2 </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># logging.debug(f&quot;Command is: {cmd}&quot;)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -959,10 +977,7 @@
                 <span class="n">alignment_end_index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">2</span>
             <span class="k">elif</span> <span class="s2">&quot;ERROR&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
                 <span class="n">failed_pdb</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;LovoAlign could not read </span><span class="si">{</span><span class="n">failed_pdb</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="s2">&quot;is it a ligand?&quot;</span>
-                    <span class="p">)</span>
+                <span class="n">_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;LovoAlign could not read </span><span class="si">{</span><span class="n">failed_pdb</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="s2">&quot;is it a ligand?&quot;</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
                 <span class="n">alignment_pass</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -972,9 +987,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">alignment_pass</span><span class="p">:</span>
             <span class="c1"># This alignment failed, move on to the next</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Skipping alignment of chain </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="s2">&quot;used sequential matching&quot;</span>
-                <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Skipping alignment of chain </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="s2">&quot;used sequential matching&quot;</span>
+            <span class="p">)</span>
             <span class="k">continue</span>
 
         <span class="n">aln_l</span> <span class="o">=</span> <span class="n">lovoalign_out</span><span class="p">[</span><span class="n">alignment_start_index</span><span class="p">:</span><span class="n">alignment_end_index</span><span class="p">]</span>
@@ -986,7 +1000,7 @@
             <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">aln_l</span><span class="p">))</span>
 
         <span class="c1"># remove the line between the alignment segments</span>
-        <span class="n">alignment</span> <span class="o">=</span> <span class="p">[</span><span class="n">aln_l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">aln_l</span><span class="p">),</span> <span class="mi">3</span><span class="p">)]</span>
+        <span class="n">alignment</span> <span class="o">=</span> <span class="p">[</span><span class="n">aln_l</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">aln_l</span><span class="p">),</span> <span class="mi">3</span><span class="p">)]</span>
         <span class="c1"># 100% (5 identical nucleotides / min(length(A),length(B))).</span>
         <span class="n">len_seq_a</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pa_seqdic</span><span class="p">[</span><span class="n">chain</span><span class="p">])</span>
         <span class="n">len_seq_b</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pb_seqdic</span><span class="p">[</span><span class="n">chain</span><span class="p">])</span>
@@ -994,17 +1008,15 @@
             <span class="p">(</span><span class="n">len_seq_a</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">alignment</span><span class="p">]))</span>
             <span class="o">/</span> <span class="nb">min</span><span class="p">(</span><span class="n">len_seq_a</span><span class="p">,</span> <span class="n">len_seq_b</span><span class="p">)</span>
             <span class="o">*</span> <span class="mi">100</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">identity</span> <span class="o">&lt;=</span> <span class="mf">40.0</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;&quot;Structural&quot; identity of chain </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">identity</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%&#39;</span>
                 <span class="s2">&quot;, please check the results carefully&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;&quot;Structural&quot; identity of chain </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">identity</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%&#39;</span>
-                <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&quot;Structural&quot; identity of chain </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">identity</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">)</span>
 
         <span class="c1"># logging.debug(&quot;Reading alignment and matching numbering&quot;)</span>
         <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">alignment</span><span class="p">:</span>
@@ -1033,7 +1045,10 @@
     <span class="k">return</span> <span class="n">numbering_dic</span></div>
 
 
-<div class="viewcode-block" id="write_alignment"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.write_alignment">[docs]</a><span class="k">def</span> <span class="nf">write_alignment</span><span class="p">(</span><span class="n">top_aln</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">):</span>
+
+<div class="viewcode-block" id="write_alignment">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.write_alignment">[docs]</a>
+<span class="k">def</span> <span class="nf">write_alignment</span><span class="p">(</span><span class="n">top_aln</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the alignment to a file.</span>
 
@@ -1052,7 +1067,10 @@
     <span class="k">return</span> <span class="n">aln_fname</span></div>
 
 
-<div class="viewcode-block" id="sequence_alignment"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.sequence_alignment">[docs]</a><span class="k">def</span> <span class="nf">sequence_alignment</span><span class="p">(</span><span class="n">seq_ref</span><span class="p">,</span> <span class="n">seq_model</span><span class="p">):</span>
+
+<div class="viewcode-block" id="sequence_alignment">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.sequence_alignment">[docs]</a>
+<span class="k">def</span> <span class="nf">sequence_alignment</span><span class="p">(</span><span class="n">seq_ref</span><span class="p">,</span> <span class="n">seq_model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform a sequence alignment.</span>
 
@@ -1096,7 +1114,10 @@
     <span class="k">return</span> <span class="n">identity</span><span class="p">,</span> <span class="n">top_aln</span><span class="p">,</span> <span class="n">aln_ref_seg</span><span class="p">,</span> <span class="n">aln_mod_seg</span></div>
 
 
-<div class="viewcode-block" id="SeqAlign"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.SeqAlign">[docs]</a><span class="k">class</span> <span class="nc">SeqAlign</span><span class="p">:</span>
+
+<div class="viewcode-block" id="SeqAlign">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.SeqAlign">[docs]</a>
+<span class="k">class</span> <span class="nc">SeqAlign</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SeqAlign class.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1113,7 +1134,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">aln_ref_segs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of aligned reference segments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">top_alns</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of alignment objects</span>
 
-<div class="viewcode-block" id="SeqAlign.postprocess_alignment"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.SeqAlign.postprocess_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">postprocess_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span><span class="p">,</span> <span class="n">align_id</span><span class="p">):</span>
+<div class="viewcode-block" id="SeqAlign.postprocess_alignment">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.SeqAlign.postprocess_alignment">[docs]</a>
+    <span class="k">def</span> <span class="nf">postprocess_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span><span class="p">,</span> <span class="n">align_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Postprocess the alignment.</span>
 
@@ -1129,23 +1152,23 @@
 <span class="sd">            alignment id (index of the alignment)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">align_dic</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_alns</span><span class="p">[</span><span class="n">align_id</span><span class="p">]</span><span class="o">.</span><span class="n">aligned</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_alns</span><span class="p">[</span><span class="n">align_id</span><span class="p">]</span><span class="o">.</span><span class="n">aligned</span><span class="p">):</span>
             <span class="c1"># No alignment!</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;No alignment for chain </span><span class="si">{</span><span class="n">ref_ch</span><span class="si">}</span><span class="s2"> is it protein/dna-rna? &quot;</span>
                 <span class="s2">&quot;Matching sequentially&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="s2">&quot;X&quot;</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-                    <span class="s2">&quot;X&quot;</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]):</span>
+                <span class="s2">&quot;X&quot;</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span>
+            <span class="p">):</span>
                 <span class="c1"># this sequence contains only ligands, do it manually</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seqs_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]):</span>
                     <span class="c1"># we cannot handle this</span>
                     <span class="c1"># FIXME: This should raise a proper exception instead</span>
                     <span class="k">raise</span> <span class="sa">f</span><span class="s2">&quot;Cannot align chain </span><span class="si">{</span><span class="n">mod_ch</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># noqa: B016</span>
                 <span class="k">for</span> <span class="n">ref_res</span><span class="p">,</span> <span class="n">model_res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">],</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">seqdic_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span>
-                        <span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqdic_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span>
+                <span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">align_dic</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">model_res</span><span class="p">:</span> <span class="n">ref_res</span><span class="p">})</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">identity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identities</span><span class="p">[</span><span class="n">align_id</span><span class="p">]</span>
@@ -1154,30 +1177,33 @@
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Sequence identity of chain </span><span class="si">{</span><span class="n">ref_ch</span><span class="si">}</span><span class="s2"> is &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%, please check the results carefully&quot;</span>
-                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Sequence identity between chain </span><span class="si">{</span><span class="n">ref_ch</span><span class="si">}</span><span class="s2"> &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot; of reference and </span><span class="si">{</span><span class="n">mod_ch</span><span class="si">}</span><span class="s2"> of model is &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span>
-                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">for</span> <span class="n">ref_segment</span><span class="p">,</span> <span class="n">model_segment</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">aln_ref_segs</span><span class="p">[</span><span class="n">align_id</span><span class="p">],</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">aln_model_segs</span><span class="p">[</span><span class="n">align_id</span><span class="p">]</span>
-                    <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">aln_ref_segs</span><span class="p">[</span><span class="n">align_id</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">aln_model_segs</span><span class="p">[</span><span class="n">align_id</span><span class="p">]</span>
+            <span class="p">):</span>
                 <span class="n">start_ref_segment</span><span class="p">,</span> <span class="n">end_ref_segment</span> <span class="o">=</span> <span class="n">ref_segment</span>
                 <span class="n">start_model_segment</span><span class="p">,</span> <span class="n">end_model_segment</span> <span class="o">=</span> <span class="n">model_segment</span>
                 <span class="n">reslist_ref</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span>
                     <span class="n">start_ref_segment</span><span class="p">:</span><span class="n">end_ref_segment</span>
-                    <span class="p">]</span>
+                <span class="p">]</span>
                 <span class="n">reslist_model</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seqdic_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span>
                     <span class="n">start_model_segment</span><span class="p">:</span><span class="n">end_model_segment</span>
-                    <span class="p">]</span>
+                <span class="p">]</span>
                 <span class="k">for</span> <span class="n">_ref_res</span><span class="p">,</span> <span class="n">_model_res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">reslist_ref</span><span class="p">,</span> <span class="n">reslist_model</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">align_dic</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">_model_res</span><span class="p">:</span> <span class="n">_ref_res</span><span class="p">})</span></div></div>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">align_dic</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">_model_res</span><span class="p">:</span> <span class="n">_ref_res</span><span class="p">})</span></div>
+</div>
 
 
-<div class="viewcode-block" id="align_seq"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_seq">[docs]</a><span class="k">def</span> <span class="nf">align_seq</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+
+<div class="viewcode-block" id="align_seq">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_seq">[docs]</a>
+<span class="k">def</span> <span class="nf">align_seq</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sequence align and get the numbering relationship.</span>
 
@@ -1210,10 +1236,7 @@
     <span class="c1"># check if chain ids match</span>
     <span class="k">if</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="c1"># they do not match, we need to do chain matching</span>
-        <span class="n">n_partners</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="p">)</span>
+        <span class="n">n_partners</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">len</span><span class="p">(</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
         <span class="c1"># unique combinations of chains</span>
         <span class="n">combs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1228,9 +1251,8 @@
         <span class="k">for</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span> <span class="ow">in</span> <span class="n">combs</span><span class="p">:</span>
             <span class="c1"># align</span>
             <span class="n">identity</span><span class="p">,</span> <span class="n">top_aln</span><span class="p">,</span> <span class="n">aln_ref_seg</span><span class="p">,</span> <span class="n">aln_mod_seg</span> <span class="o">=</span> <span class="n">sequence_alignment</span><span class="p">(</span>
-                <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">],</span>
-                <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span>
-                <span class="p">)</span>
+                <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_ref</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">],</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">mod_ch</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="c1"># append values to lists</span>
             <span class="n">identities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span>
             <span class="n">aln_model_segs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aln_mod_seg</span><span class="p">)</span>
@@ -1258,10 +1280,9 @@
             <span class="n">SeqAln</span><span class="o">.</span><span class="n">postprocess_alignment</span><span class="p">(</span><span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span><span class="p">,</span> <span class="n">matches</span><span class="p">)</span>
             <span class="c1"># update identities to avoid double matches</span>
             <span class="n">identities</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">identities</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">combs</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_ch</span> <span class="ow">and</span> <span class="n">combs</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mod_ch</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">identities</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">if</span> <span class="n">combs</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_ch</span> <span class="ow">and</span> <span class="n">combs</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mod_ch</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">combs</span><span class="p">))</span>
-                <span class="p">]</span>
+            <span class="p">]</span>
             <span class="n">matches</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model2ref chain matching is </span><span class="si">{</span><span class="n">SeqAln</span><span class="o">.</span><span class="n">model2ref_chain_dict</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1277,9 +1298,8 @@
             <span class="n">seq_model</span> <span class="o">=</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqs_model</span><span class="p">[</span><span class="n">ref_ch</span><span class="p">]</span>
             <span class="c1"># sequence alignment</span>
             <span class="n">identity</span><span class="p">,</span> <span class="n">top_aln</span><span class="p">,</span> <span class="n">aln_ref_seg</span><span class="p">,</span> <span class="n">aln_mod_seg</span> <span class="o">=</span> <span class="n">sequence_alignment</span><span class="p">(</span>
-                <span class="n">seq_ref</span><span class="p">,</span>
-                <span class="n">seq_model</span>
-                <span class="p">)</span>
+                <span class="n">seq_ref</span><span class="p">,</span> <span class="n">seq_model</span>
+            <span class="p">)</span>
             <span class="c1"># update quantities</span>
             <span class="n">SeqAln</span><span class="o">.</span><span class="n">identities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span>
             <span class="n">SeqAln</span><span class="o">.</span><span class="n">aln_model_segs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aln_mod_seg</span><span class="p">)</span>
@@ -1298,9 +1318,12 @@
     <span class="k">return</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">align_dic</span><span class="p">,</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">model2ref_chain_dict</span></div>
 
 
-<div class="viewcode-block" id="make_range"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.make_range">[docs]</a><span class="k">def</span> <span class="nf">make_range</span><span class="p">(</span>
-        <span class="n">chain_range_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="make_range">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.make_range">[docs]</a>
+<span class="k">def</span> <span class="nf">make_range</span><span class="p">(</span>
+    <span class="n">chain_range_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expand a chain dictionary into ranges.</span>
 
@@ -1322,7 +1345,10 @@
     <span class="k">return</span> <span class="n">chain_ranges</span></div>
 
 
-<div class="viewcode-block" id="dump_as_izone"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.dump_as_izone">[docs]</a><span class="k">def</span> <span class="nf">dump_as_izone</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">numbering_dic</span><span class="p">,</span> <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="dump_as_izone">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.dump_as_izone">[docs]</a>
+<span class="k">def</span> <span class="nf">dump_as_izone</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">numbering_dic</span><span class="p">,</span> <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dump the numbering dictionary as .izone.</span>
 
@@ -1347,22 +1373,24 @@
                     <span class="s2">&quot;ZONE &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain</span><span class="si">}{</span><span class="n">bound_res</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">unb_chain</span><span class="si">}{</span><span class="n">unbound_res</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">izone_str</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="rearrange_xyz_files"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.rearrange_xyz_files">[docs]</a><span class="k">def</span> <span class="nf">rearrange_xyz_files</span><span class="p">(</span><span class="n">output_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-                             <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="rearrange_xyz_files">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.rearrange_xyz_files">[docs]</a>
+<span class="k">def</span> <span class="nf">rearrange_xyz_files</span><span class="p">(</span><span class="n">output_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine different xyz outputs in a single file.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    output_name : FilePath</span>
 <span class="sd">        output name</span>
-<span class="sd">    </span>
+
 <span class="sd">    path : FilePath</span>
 <span class="sd">        path to the output files</span>
-<span class="sd">    </span>
+
 <span class="sd">    ncores : int</span>
 <span class="sd">        number of cores</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1371,7 +1399,7 @@
     <span class="n">output_fname_str</span> <span class="o">=</span> <span class="n">output_fname</span><span class="o">.</span><span class="n">stem</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rearranging xyz files into </span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="c1"># Combine files</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_file</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
             <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">output_fname_str</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.xyz&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
@@ -1382,7 +1410,10 @@
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2"> created.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_common_atoms"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_common_atoms">[docs]</a><span class="k">def</span> <span class="nf">check_common_atoms</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">,</span> <span class="n">atom_similarity</span><span class="p">):</span>
+
+<div class="viewcode-block" id="check_common_atoms">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_common_atoms">[docs]</a>
+<span class="k">def</span> <span class="nf">check_common_atoms</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">,</span> <span class="n">atom_similarity</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the models share the same atoms.</span>
 
@@ -1390,10 +1421,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    models : list</span>
 <span class="sd">        list of models</span>
-<span class="sd">    </span>
+
 <span class="sd">    filter_resdic : dict</span>
 <span class="sd">        dictionary of residues to be loaded (one list per chain)</span>
-<span class="sd">    </span>
+
 <span class="sd">    allatoms : bool</span>
 <span class="sd">        use all the heavy atoms</span>
 
@@ -1404,19 +1435,17 @@
 <span class="sd">    -------</span>
 <span class="sd">    n_atoms : int</span>
 <span class="sd">        number of common atoms</span>
-<span class="sd">    </span>
+
 <span class="sd">    common_keys : list</span>
 <span class="sd">        list of common atom keys</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># checking the common keys</span>
-    <span class="n">common_keys</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>    
+    <span class="n">common_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">coord_keys_lengths</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
         <span class="n">atoms</span><span class="p">:</span> <span class="n">AtomsDict</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">)</span>
-        
-        <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
-        <span class="n">mod</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span>
-        <span class="p">)</span>
+
+        <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="p">)</span>
         <span class="n">coord_keys_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">if</span> <span class="n">common_keys</span> <span class="o">!=</span> <span class="p">[]:</span>
             <span class="n">common_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span>
@@ -1424,7 +1453,7 @@
             <span class="n">common_keys</span> <span class="o">=</span> <span class="n">ref_coord_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
     <span class="c1"># checking the common atoms</span>
-    <span class="n">n_atoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span> <span class="c1">#common atoms</span>
+    <span class="n">n_atoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span>  <span class="c1"># common atoms</span>
     <span class="n">max_n_atoms</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">coord_keys_lengths</span><span class="p">)</span>
     <span class="n">perc</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_atoms</span> <span class="o">/</span> <span class="n">max_n_atoms</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
     <span class="k">if</span> <span class="n">perc</span> <span class="o">==</span> <span class="mf">100.0</span><span class="p">:</span>
@@ -1435,7 +1464,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;Not all the atoms are common to all the models.&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; Common atoms (</span><span class="si">{</span><span class="n">n_atoms</span><span class="si">}</span><span class="s2">) != max_n_atoms </span><span class="si">{</span><span class="n">max_n_atoms</span><span class="si">}</span><span class="s2">. Similarity (</span><span class="si">{</span><span class="n">perc</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%) higher than allowed (</span><span class="si">{</span><span class="n">atom_similarity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%).&quot;</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># common keys are less than 90% of the previous keys</span>
         <span class="c1"># something is likely wrong</span>
@@ -1443,17 +1472,20 @@
             <span class="s2">&quot;Input atoms are not the same for all the models.&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; Common atoms (</span><span class="si">{</span><span class="n">n_atoms</span><span class="si">}</span><span class="s2">) != max_n_atoms </span><span class="si">{</span><span class="n">max_n_atoms</span><span class="si">}</span><span class="s2">. Similarity (</span><span class="si">{</span><span class="n">perc</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%) lower than allowed (</span><span class="si">{</span><span class="n">atom_similarity</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%).&quot;</span>
             <span class="s2">&quot; Please check the input ensemble.&quot;</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">raise</span> <span class="n">ALIGNError</span><span class="p">(</span><span class="n">_err_msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">n_atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># TODO: Add type signature</span>
-<div class="viewcode-block" id="check_chains"><a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_chains">[docs]</a><span class="k">def</span> <span class="nf">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="n">inp_r_chain</span><span class="p">,</span> <span class="n">inp_l_chains</span><span class="p">):</span>
+<div class="viewcode-block" id="check_chains">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_chains">[docs]</a>
+<span class="k">def</span> <span class="nf">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="n">inp_r_chain</span><span class="p">,</span> <span class="n">inp_l_chains</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check observed chains against the expected ones.</span>
 
 <span class="sd">    Logic: if at least one of inp_l_chains is among the observed chains and is</span>
-<span class="sd">    not selected as the receptor chain, then ligand_chains is equal to this </span>
+<span class="sd">    not selected as the receptor chain, then ligand_chains is equal to this</span>
 <span class="sd">    interesection. Otherwise, ligand_chains becomes equal to all the other</span>
 <span class="sd">    chains (once receptor chain is removed).</span>
 
@@ -1464,7 +1496,7 @@
 
 <span class="sd">    inp_r_chain : str</span>
 <span class="sd">        Receptor chain.</span>
-<span class="sd">    </span>
+
 <span class="sd">    inp_l_chains : list</span>
 <span class="sd">        List of ligand chains.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1478,6 +1510,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">l_chains</span><span class="p">:</span>
         <span class="n">l_chains</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obs_chains</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">r_chain</span><span class="p">,</span> <span class="n">l_chains</span></div>
+
 </pre></div>
 
            </div>
@@ -1488,7 +1521,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 24, 2024.
+      <span class="lastupdated">Last updated on Oct 28, 2024.
       </span></p>
   </div>
 

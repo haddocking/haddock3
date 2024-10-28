@@ -1,0 +1,47 @@
+haddock.libs package
+====================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.libs.assets
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.libs.libalign
+   haddock.libs.libcli
+   haddock.libs.libclust
+   haddock.libs.libcns
+   haddock.libs.libfcc
+   haddock.libs.libfunc
+   haddock.libs.libhpc
+   haddock.libs.libinteractive
+   haddock.libs.libio
+   haddock.libs.liblog
+   haddock.libs.libmath
+   haddock.libs.libmpi
+   haddock.libs.libontology
+   haddock.libs.libparallel
+   haddock.libs.libpdb
+   haddock.libs.libplots
+   haddock.libs.librestraints
+   haddock.libs.libstructure
+   haddock.libs.libsubprocess
+   haddock.libs.libtimer
+   haddock.libs.libutil
+   haddock.libs.libworkflow
+
+Module contents
+---------------
+
+.. automodule:: haddock.libs
+   :members:
+   :undoc-members:
+   :show-inheritance:

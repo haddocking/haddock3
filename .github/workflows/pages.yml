@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - main
+      - correct_auto_documentation
 
 jobs:
   pages:
@@ -30,10 +31,10 @@ jobs:
          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
          sphinx-build -b html docs haddock3-docs
 
-      - name: deploy
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: gh-pages
-          FOLDER: haddock3-docs
-          GITHUB_TOKEN: ${{ secrets.PAGES }}
+#      - name: deploy
+#        uses: s0/git-publish-subdir-action@develop
+#        env:
+#          REPO: self
+#          BRANCH: gh-pages
+#          FOLDER: haddock3-docs
+#          GITHUB_TOKEN: ${{ secrets.PAGES }}

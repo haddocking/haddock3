@@ -14,35 +14,23 @@ jobs:
   pages:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "temporarily disabled"
-#       - uses: actions/checkout@v2
-#         with:
-#           submodules: recursive
-#
-#       - name: Set up Python
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: "3.9"
-#
-#       - name: Install dependencies
-#         run: |
-#           python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
-#           pip install virtualenv==20.23.0 tox==4.5.1.1
-#
-#       # needs to install hd3 so the command-line pages are
-#       # rendered properly
-#       - name: Install HADDOCK3
-#         run: pip install -v .
-#
-#       - name: Generate docs
-#         run: |
-#           tox -e docs
-#           touch haddock3-docs/.nojekyll
-#
-#       - name: deploy
-#         uses: s0/git-publish-subdir-action@develop
-#         env:
-#           REPO: self
-#           BRANCH: gh-pages
-#           FOLDER: haddock3-docs
-#           GITHUB_TOKEN: ${{ secrets.PAGES }}
+#      - run: echo "temporarily disabled"
+      - name: install haddock3 with extra dependencies
+        run: pip install '.[dev,docs]'
+
+#       install openmm to render openmm docs properly
+      - name: install openmm
+            conda install -c conda-forge openmm pdbfixer
+            
+       - name: Generate docs
+       run: |
+         sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+         sphinx-build -b html docs haddock3-docs
+
+      - name: deploy
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: gh-pages
+          FOLDER: haddock3-docs
+          GITHUB_TOKEN: ${{ secrets.PAGES }}

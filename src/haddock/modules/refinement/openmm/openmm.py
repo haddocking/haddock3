@@ -1,28 +1,5 @@
-"""OpenMM refinement module for HADDOCK3.
-
-The potential of OpenMM can be exploited to perform potentially different
- tasks, such as:
-- Run MD simulation for each model from previous step;
-- Refine the models in the middle of a docking run. For example, it can be used
- to refine the models coming from a `[rigidbody]` module before `[flexref]` is
- executed, or to replace the `[mdref]` step.
-- Generate conformers prior to their use in a thorough docking run.
-
-To get a list of all possible parameters, run:
-    haddock3-cfg -m openmm
-
-Module workflow:
-- Generate openmm topology and fix atoms
-- Build solvation box
-- Equilibration solvation box restraining the protein
-- Run MD simulation: increase temperature, run MD, reduce temperature.
-- Either generate an ensemble of multiple frames or return the last frame.
-
-This module will refine all models coming from the previous workflow step and
-send them to the next step in the workflow. If you want to use other modules
-such as `flexref` or `emref` after the OpenMM module, you need to recreate the
-topologies by simply adding a `[topoaa]` step in the workflow.
-See examples in `examples/thirdparty/openmm` folder.
+"""
+OpenMM Molecular Dynamics refinement module for HADDOCK3.
 """
 
 # Standard libarires importation
@@ -270,11 +247,11 @@ class OPENMM:
         """Machinery for the equilibration of water in presence of the protein.
 
         Here, the idea is to:
-        0. Check if something has to be done
-        1. Initiate the system
-        2. Construct restrain forces on protein atom positions
-        3. Run simulation under restrain
-        4. Save new coordinates file
+            0. Check if something has to be done
+            1. Initiate the system
+            2. Construct restrain forces on protein atom positions
+            3. Run simulation under restrain
+            4. Save new coordinates file
 
         Parameters
         ----------
@@ -576,6 +553,7 @@ class OPENMM:
 
         NOTE: this function is similar to the lines of code found in
               the :py:class:`openmm.app.statedatareporter.StateDataReporter()`
+        
         NOTE2: Would be better if in the StateustomCentroidBondForce class...
 
         Parameters
@@ -606,7 +584,9 @@ class OPENMM:
         """Remove water from the output of an explicit solvent run.
 
         Uses the pdb-tools.pdb_delhetatm() module to do this
+
         NOTE: May produce an issue with TER atoms (Water + ions)
+        
         NOTE2: May lead to issue with modified AA e.g: phsophoserine, etc...
 
         Parameters

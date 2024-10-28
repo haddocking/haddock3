@@ -14,14 +14,13 @@ jobs:
   pages:
     runs-on: ubuntu-latest
     steps:
-#      - run: echo "temporarily disabled"
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'
 
 #       install openmm to render openmm docs properly
       - name: install openmm
             conda install -c conda-forge openmm pdbfixer
-            
+
        - name: Generate docs
        run: |
          sphinx-apidoc -f -e -o docs/ src/haddock -d 1

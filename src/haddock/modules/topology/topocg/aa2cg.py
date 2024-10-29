@@ -131,10 +131,11 @@ def map_cg(chain):
 
             bead_coord = center_of_mass(atoms)
 
-            atom_segment = " ".join([a for a in atom_segment.split()]).replace("*", "")
+            atom_segment = " ".join(list(atom_segment.split())).replace("*", "")
 
             # restrain for backmapping
-            restrain = "assign (segid {}CG and resid {:d} and name {}) (segid {} and resid {:d} and (name {})) 0 0 0".\
+            restrain = "assign (segid {}CG and resid {:d} and name {})"\
+                " (segid {} and resid {:d} and (name {})) 0 0 0".\
                 format(segid, resi, bead_name, segid, resi, " or name ".join(atom_segment.split()))
 
             m_dic[aares][bead_name] = bead_coord, code, restrain
@@ -201,7 +202,8 @@ def center_of_mass(entity, geometric=False):
     # If there is a single atom with undefined mass complain loudly.
     if "ukn" in set(masses) and not geometric:
         raise ValueError("Some Atoms don't have an element assigned.\n"
-                         "Try adding them manually or calculate the geometrical center of mass instead.")
+                         "Try adding them manually or calculate the geometrical "
+                         "center of mass instead.")
 
     if geometric:
         return [sum(coord_list) / len(masses) for coord_list in positions]
@@ -404,7 +406,7 @@ def extract_groups(pair_list):
 
 def create_file_with_cryst(pdb_file: str) -> None:
     """
-    This function creates a new pdb because the CRYST line is missing from the pdf file.     
+    This function creates a new pdb because the CRYST line is missing from the pdf file.
     This line is necessary for DSSP.
 
     Args:
@@ -415,10 +417,11 @@ def create_file_with_cryst(pdb_file: str) -> None:
         pdb_file_copy: str
 
     """
-    with open(pdb_file, "r") as file_in, tempfile.NamedTemporaryFile(mode = "w", delete=False) as file_out:
+    with open(pdb_file, "r") as file_in,\
+    tempfile.NamedTemporaryFile(mode = "w", delete=False) as file_out:
         content = file_in.read()
         file_out.write(CRYST_LINE + content)
-    
+
     return(file_out.name)
 
 
@@ -442,8 +445,11 @@ def determine_ss(structure, skipss, pdbf_path):
         else:
             try:
                 tmp_file_name = create_file_with_cryst(pdbf_path)
-                p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                dssp_raw, errors = p.communicate()
+                p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"],
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE,
+                                     text=True)
+                dssp_raw, _ = p.communicate()
                 dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
             except:  # TODO: think about making this exception more specific
                 # no secondary structure detected for this model
@@ -457,8 +463,6 @@ def determine_ss(structure, skipss, pdbf_path):
         for line in dssp_raw:
             var_a, var_b = line[11], line[16]
             dssp.setdefault(var_a, []).append(var_b)
-
-        calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
         # Get SS information and translate it:
         # DSSP > MARTINI > HADDOCK
@@ -486,9 +490,11 @@ def rename_nucbases(structure):
     Returns:
 
     """
-    chainresdic = dict([(c.get_id(), [r.get_resname() for r in c.get_residues()]) for m in structure for c in m])
+    chainresdic = dict([(c.get_id(),
+                       [r.get_resname() for r in c.get_residues()]) for m in structure for c in m])
 
-    nucleotide_list = ["CYT", "C", "DC", "THY", "T", "DT", "ADE", "A", "DA", "G", "GUA", "DG", "U", "URI"]
+    nucleotide_list = ["CYT", "C", "DC", "THY", "T", "DT", "ADE",
+                       "A", "DA", "G", "GUA", "DG", "U", "URI"]
 
     if [True for c in chainresdic for e in chainresdic[c] if e in nucleotide_list]:
 

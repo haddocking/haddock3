@@ -1,4 +1,4 @@
-haddock.libs package
+Libs Reference
 ====================
 
 Subpackages

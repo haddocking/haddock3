@@ -18,7 +18,9 @@
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Retrieve config" href="haddock.clis.cli_cfg.html" />
+    <link rel="prev" title="Run HADDOCK3" href="haddock.clis.cli.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,12 +42,47 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="haddock.clis.html">Command-line interfaces</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="haddock.clis.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli.html">Run HADDOCK3</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Analysis client</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.analyse_step"><code class="docutils literal notranslate"><span class="pre">analyse_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.cli"><code class="docutils literal notranslate"><span class="pre">cli()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.get_cluster_ranking"><code class="docutils literal notranslate"><span class="pre">get_cluster_ranking()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.load_args"><code class="docutils literal notranslate"><span class="pre">load_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.maincli"><code class="docutils literal notranslate"><span class="pre">maincli()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.run_capri_analysis"><code class="docutils literal notranslate"><span class="pre">run_capri_analysis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.update_capri_dict"><code class="docutils literal notranslate"><span class="pre">update_capri_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.update_paths"><code class="docutils literal notranslate"><span class="pre">update_paths()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.update_paths_in_capri_dict"><code class="docutils literal notranslate"><span class="pre">update_paths_in_capri_dict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.validate_format"><code class="docutils literal notranslate"><span class="pre">validate_format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli_analyse.zip_top_ranked"><code class="docutils literal notranslate"><span class="pre">zip_top_ranked()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_cfg.html">Retrieve config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_clean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_cp.html">Copy steps to new run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_dmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_mpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_pp.html">PDB preprocessing client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_re.html">Interactive run client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_restraints.html">Generate restraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_score.html">Calculate score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_traceback.html">PDB Traceback client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_unpack.html">Unpack HADDOCK3 run</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#module-haddock.clis">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
@@ -67,6 +104,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="haddock.clis.html">Command-line interfaces</a></li>
       <li class="breadcrumb-item active">Analysis client</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/clients/haddock.clis.cli_analyse.rst.txt" rel="nofollow"> View page source</a>
@@ -282,7 +320,10 @@ Otherwise, launch a capri analysis.</p>
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.clis.cli.html" class="btn btn-neutral float-left" title="Run HADDOCK3" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.clis.cli_cfg.html" class="btn btn-neutral float-right" title="Retrieve config" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

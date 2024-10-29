@@ -1,4 +1,4 @@
-haddock.core package
+Core Reference
 ====================
 
 Submodules

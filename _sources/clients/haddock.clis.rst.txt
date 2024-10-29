@@ -1,4 +1,4 @@
-haddock.clis package
+Command-line interfaces
 ====================
 
 Subpackages

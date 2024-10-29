@@ -1,4 +1,4 @@
-haddock.gear package
+Gear Reference
 ====================
 
 Submodules

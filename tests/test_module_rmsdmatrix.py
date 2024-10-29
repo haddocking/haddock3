@@ -1,44 +1,36 @@
 """Test the rmsdmatrix module."""
-import os
-from pathlib import Path
-import tempfile
 
-import numpy as np
+import os
+import tempfile
+from pathlib import Path
+
 import pytest
 
-from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
-from haddock.modules.analysis.rmsdmatrix import HaddockModule
+from haddock.modules.analysis.rmsdmatrix import \
+    DEFAULT_CONFIG as DEFAULT_RMSDMATRIX_PARAMS
+from haddock.modules.analysis.rmsdmatrix import HaddockModule as Rmsdmatrix
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
+    XYZWriter,
     get_pair,
     rmsd_dispatcher,
-    XYZWriter,
     )
 
-from . import golden_data
 
-
-@pytest.fixture
-def input_protdna_models():
-    """Prot-DNA models using for emscoring output."""
-    return [
-        PDBFile(
-            Path(golden_data, "protdna_complex_1.pdb"),
-            path=golden_data,
-            score=42.0
-            ),
-        PDBFile(
-            Path(golden_data, "protdna_complex_2.pdb"),
-            path=golden_data,
-            score=28.0
-            )]
+@pytest.fixture(name="rmsdmatrix")
+def fixture_rmsdmatrix():
+    """rmsdmatrix module fixture"""
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        yield Rmsdmatrix(
+            order=2, path=Path("."), initial_params=DEFAULT_RMSDMATRIX_PARAMS
+        )
 
 
 def test_get_pair():
     """Test the get_pair() function."""
     nmodels_vec = [10, 2, 200]
     idx_vec = [10, 0, 396]
-    
+
     expexted_ivec = [1, 0, 1]
     expected_jvec = [3, 1, 199]
     for n in range(len(nmodels_vec)):
@@ -62,18 +54,16 @@ def test_rmsd_dispatcher():
     nmodels_vec = [1, 10, 5]
     tot_npairs_vec = [1, 45, 10]
     ncores_vec = [1, 2, 10]
-    
+
     expected_pairs_vec = [[1], [23, 22], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     expected_ref_vec = [[0], [0, 2], [0, 0, 0, 0, 1, 1, 1, 2, 2, 3]]
     expected_mod_vec = [[1], [1, 9], [1, 2, 3, 4, 2, 3, 4, 3, 4, 4]]
 
     for n in range(len(nmodels_vec)):
         dispatcher_output = rmsd_dispatcher(
-            nmodels_vec[n],
-            tot_npairs_vec[n],
-            ncores_vec[n]
-            )
-        
+            nmodels_vec[n], tot_npairs_vec[n], ncores_vec[n]
+        )
+
         assert dispatcher_output[0] == expected_pairs_vec[n]
 
         assert dispatcher_output[1] == expected_ref_vec[n]
@@ -81,15 +71,10 @@ def test_rmsd_dispatcher():
         assert dispatcher_output[2] == expected_mod_vec[n]
 
 
-def test_overall_rmsd(input_protdna_models):
+def test_overall_rmsd(rmsdmatrix, protdna_input_list):
     """Test overall rmsdmatrix module."""
-    rmsd_module = HaddockModule(
-        order=2,
-        path=Path("2_rmsdmatrix"),
-        initial_params=rmsd_pars
-        )
-    rmsd_module.previous_io.output = input_protdna_models
-    rmsd_module._run()
+    rmsdmatrix.previous_io.output = protdna_input_list
+    rmsdmatrix._run()
 
     ls = os.listdir()
 
@@ -99,37 +84,37 @@ def test_overall_rmsd(input_protdna_models):
 
     # check correct rmsd matrix
     rmsd_matrix = open("rmsd.matrix").read()
-    
+
     expected_rmsd_matrix = "1 2 2.257" + os.linesep
 
     assert rmsd_matrix == expected_rmsd_matrix
 
-    os.unlink(Path("rmsd.matrix"))
-    os.unlink(Path("rmsd_matrix.json"))
-    os.unlink(Path("io.json"))
+    # os.unlink(Path("rmsd.matrix"))
+    # os.unlink(Path("rmsd_matrix.json"))
+    # os.unlink(Path("io.json"))
 
 
-def test_xyzwriter(input_protdna_models):
+def test_xyzwriter(protdna_input_list):
     "test XYZWriter"
     with tempfile.TemporaryDirectory() as tmpdir:
         common_keys = [
-            ('A', 10, 'N'),
-            ('A', 10, 'CA'),
-            ('A', 32, 'N'),
-            ('B', 38, 'C6'),
+            ("A", 10, "N"),
+            ("A", 10, "CA"),
+            ("A", 32, "N"),
+            ("B", 38, "C6"),
         ]
         exp_output = Path(tmpdir, "test.xyz")
         xyzwriter_obj = XYZWriter(
-            model_list=input_protdna_models,
+            model_list=protdna_input_list,
             output_name=exp_output,
             core=1,
             n_atoms=4,
             common_keys=common_keys,
             filter_resdic=None,
             allatoms=False,
-            )
+        )
         xyzwriter_obj.run()
-        
+
         assert exp_output.exists()
         # check the content
         with open(exp_output) as f:

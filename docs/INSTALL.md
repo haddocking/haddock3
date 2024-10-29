@@ -86,3 +86,21 @@ export GDOCK_PATH=some-folder
 instructions as only the model generation is used here. Please check the
 [repository page](https://github.com/rvhonorato/gdock) for more
 information.
+
+## `openmm`
+
+1. Install the latest version of openmm and pdbfixer
+```bash
+# Activate the haddock3 env
+conda activate haddock3
+# libstdxx must be installed, maybe already present in your system
+conda install -c conda-forge libstdcxx-ng
+# Install OpenMM and related tools/binaries
+conda install -c conda-forge openmm pdbfixer
+```
+
+Openmm should automatically detect the fastest platform among those available
+on your machine.
+
+Please refer to the [official page](http://docs.openmm.org/latest/userguide/)
+of the project for a full description of the installation procedure.

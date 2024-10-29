@@ -15,9 +15,9 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from typing import Any
 
 from haddock import log
+from haddock.core.typing import Any, FilePath
 from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libplots import make_traceback_plot
@@ -94,7 +94,7 @@ def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int) -> tuple[list, in
 
 def traceback_dataframe(
     data_dict: dict, rank_dict: dict, sel_step: list, max_topo_len: int
-) -> None:
+) -> pd.DataFrame:
     """
     Create traceback dataframe by combining together ranks and data.
 
@@ -242,7 +242,7 @@ def maincli():
     cli(ap, main)
 
 
-def main(run_dir):
+def main(run_dir: FilePath, offline: bool = False) -> None:
     """
     Traceback CLI.
 
@@ -362,7 +362,7 @@ def main(run_dir):
 
     # plotting the traceback dataframe
     plot_filename = Path(run_dir, TRACK_FOLDER, "traceback.html")
-    make_traceback_plot(rank_data_subset, plot_filename)
+    make_traceback_plot(rank_data_subset, plot_filename, offline=offline)
     return
 
 

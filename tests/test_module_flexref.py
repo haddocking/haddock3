@@ -1,51 +1,47 @@
 """Test the flexref module."""
+
+import os
+import tempfile
 from pathlib import Path
 
 import pytest
 
-from haddock.libs.libontology import PDBFile
-from haddock.modules.refinement.flexref import DEFAULT_CONFIG as flexref_pars
-from haddock.modules.refinement.flexref import HaddockModule
+from haddock.modules.refinement.flexref import \
+    DEFAULT_CONFIG as DEFAULT_FLEXREF_PARAMS
+from haddock.modules.refinement.flexref import HaddockModule as Flexref
 
 from . import golden_data
 
 
-@pytest.fixture
-def input_models():
-    """Prot-DNA models using for flexref input."""
-    return [
-        PDBFile(
-            Path(golden_data, "protdna_complex_1.pdb"),
-            path=golden_data,
-            score=42.0,
-            restr_fname=Path(golden_data, "example_ambig_1.tbl")
-            ),
-        PDBFile(
-            Path(golden_data, "protdna_complex_2.pdb"),
-            path=golden_data,
-            score=28.0,
-            restr_fname=Path(golden_data, "example_ambig_2.tbl")
-            )]
-
-
-def test_prev_fnames(input_models):
-    """Tests the correct retrieval of ambiguous restraints information."""
-    flexref_module = HaddockModule(
-        order=1,
-        path=Path("1_rigidbody"),
-        initial_params=flexref_pars,
+@pytest.fixture(name="flexref")
+def fixture_fixture_flexref():
+    """???"""
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        yield Flexref(
+            order=1,
+            path=Path("."),
+            initial_params=DEFAULT_FLEXREF_PARAMS,
         )
-    prev_ambig_fnames = [model.restr_fname for model in input_models]
-    obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)
+
+
+def test_prev_fnames(flexref, protdna_input_list):
+    """Tests the correct retrieval of ambiguous restraints information."""
+
+    protdna_input_list[0].restr_fname = Path(golden_data, "example_ambig_1.tbl")
+    protdna_input_list[1].restr_fname = Path(golden_data, "example_ambig_2.tbl")
+
+    prev_ambig_fnames = [model.restr_fname for model in protdna_input_list]
+    obs_ambig_fnames = flexref.get_ambig_fnames(prev_ambig_fnames)
     assert obs_ambig_fnames is None
     # now setting previous to true
-    flexref_module.params["previous_ambig"] = True
-    obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)
+    flexref.params["previous_ambig"] = True
+    obs_ambig_fnames = flexref.get_ambig_fnames(prev_ambig_fnames)
     assert obs_ambig_fnames == prev_ambig_fnames
     # removing restraints information from a model while previous is true
     #  should cause an exception
-    input_models[0].restr_fname = None
-    prev_ambig_fnames = [model.restr_fname for model in input_models]
+    protdna_input_list[0].restr_fname = None
+    prev_ambig_fnames = [model.restr_fname for model in protdna_input_list]
     # FIXME: this should be a more specific exception
     with pytest.raises(Exception):  # noqa: B017
-        obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)
+        obs_ambig_fnames = flexref.get_ambig_fnames(prev_ambig_fnames)

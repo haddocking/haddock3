@@ -12,11 +12,7 @@ import os
 from pathlib import Path
 
 from haddock import FCC_path, log
-from haddock.core.defaults import (
-    BINARY_DIR,
-    CONTACT_FCC_EXEC,
-    MODULE_DEFAULT_YAML,
-    )
+from haddock.core.defaults import CONTACT_FCC_EXEC, MODULE_DEFAULT_YAML
 from haddock.core.typing import Union
 from haddock.fcc import calc_fcc_matrix, cluster_fcc
 from haddock.libs.libclust import (
@@ -203,7 +199,10 @@ class HaddockModule(BaseHaddockModule):
                 matrix_cluster_dt=matrix_cluster_dt,
                 cluster_limits=cluster_limits,
             )
-            log.info(f"Plotting matrix in {html_matrixpath}")
+            if html_matrixpath:
+                log.info(f"Plotting matrix in {html_matrixpath}")
+            else:
+                log.warning("Cluster matrix was not generated")
 
         # Export models for next module
         self.export_io_models()

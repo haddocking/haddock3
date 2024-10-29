@@ -1,49 +1,48 @@
 """Test the rigidbody module."""
 
 import os
+import random
 import tempfile
 from pathlib import Path
 
 import pytest
-import random
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules.sampling.rigidbody import (
-    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_PARAMS,
-)
+from haddock.modules.sampling.rigidbody import \
+    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_PARAMS
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 
 
-@pytest.fixture
-def rigidbody_module(mocker):
-    with tempfile.NamedTemporaryFile() as fake_cns, tempfile.TemporaryDirectory() as tempdir:
-        fake_cns.file.write(b"")
-        fake_cns.file.flush()
-        fake_cns.file.seek(0)
-        os.chmod(fake_cns.name, 0o755)
-        mocker.patch("haddock.libs.libsubprocess.global_cns_exec", fake_cns.name)
+@pytest.fixture(name="rigidbody_module")
+def fixture_rigidbody_module():
+    """???"""
+    with (tempfile.TemporaryDirectory() as tempdir,):
+        os.chdir(tempdir)
 
         yield RigidbodyModule(
             order=1,
-            path=Path(tempdir),
+            path=Path("."),
             initial_params=DEFAULT_RIGIDBODY_PARAMS,
         )
 
 
 def test_prev_fnames():
     """Tests the correct retrieval of ambiguous restraints information."""
-    rigidbody = RigidbodyModule(
-        order=1,
-        path=Path("1_rigidbody"),
-        initial_params=DEFAULT_RIGIDBODY_PARAMS,
-    )
-    prev_ambig_fnames = [None for md in range(rigidbody.params["sampling"])]
-    diff_ambig_fnames = rigidbody.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
-    assert diff_ambig_fnames is None
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        rigidbody = RigidbodyModule(
+            order=1,
+            path=Path("1_rigidbody"),
+            initial_params=DEFAULT_RIGIDBODY_PARAMS,
+        )
+        prev_ambig_fnames = [None for md in range(rigidbody.params["sampling"])]
+        diff_ambig_fnames = rigidbody.get_ambig_fnames(prev_ambig_fnames)  # type: ignore
+        assert diff_ambig_fnames is None
 
 
 def test_rigidbody_make_cns_jobs(rigidbody_module):
+    "???"
 
     rigidbody_module.output_models = []
     rigidbody_module.envvars = {}
@@ -84,6 +83,7 @@ def test_rigidbody_make_cns_jobs(rigidbody_module):
 
 
 def test_prepare_cns_input_sequential(mocker, rigidbody_module):
+    """???"""
 
     mocker.patch(
         "haddock.modules.sampling.rigidbody.prepare_cns_input",
@@ -114,6 +114,7 @@ def test_prepare_cns_input_sequential(mocker, rigidbody_module):
 
 
 def test_prepare_cns_input_parallel(mocker, rigidbody_module):
+    """???"""
     mock_engine_cls = mocker.Mock()
     mocker.patch(
         "haddock.modules.sampling.rigidbody.get_engine", return_value=mock_engine_cls

@@ -19,7 +19,6 @@ from haddock.modules.analysis.caprieval.capri import (
     get_previous_cns_step,
     load_contacts,
     rank_according_to_score,
-    rearrange_ss_capri_output,
 )
 
 from . import golden_data
@@ -38,60 +37,16 @@ def remove_aln_files(class_name):
 
 
 def read_capri_file(fname):
+    """???"""
     file_content = [
         e.split()[1:] for e in open(fname).readlines() if not e.startswith("#")
     ]
     return file_content
 
 
-@pytest.fixture
-def protprot_input_list():
-    """Prot-prot input."""
-    return [
-        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
-    ]
-
-
-@pytest.fixture
-def protprot_1bkd_input_list():
-    """
-    Prot-prot input for target 1bkd.
-
-    Heterogeneous ensemble and big protein.
-    """
-    return [
-        PDBFile(Path(golden_data, "protprot_1bkd_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protprot_1bkd_2.pdb"), path=golden_data),
-    ]
-
-
-@pytest.fixture
-def protdna_input_list():
-    """Prot-DNA input."""
-    return [
-        PDBFile(Path(golden_data, "protdna_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protdna_complex_2.pdb"), path=golden_data),
-    ]
-
-
-@pytest.fixture
-def protlig_input_list():
-    """Protein-Ligand input."""
-    return [
-        PDBFile(Path(golden_data, "protlig_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protlig_complex_2.pdb"), path=golden_data),
-    ]
-
-
-@pytest.fixture
-def protprot_onechain_list():
-    """Protein-Protein complex with a single chain ID."""
-    return [PDBFile(Path(golden_data, "protprot_onechain.pdb"), path=golden_data)]
-
-
-@pytest.fixture
-def params():
+@pytest.fixture(name="params")
+def fixture_params():
+    """???"""
     return {
         "receptor_chain": "A",
         "ligand_chains": ["B"],
@@ -100,8 +55,9 @@ def params():
     }
 
 
-@pytest.fixture
-def params_all():
+@pytest.fixture(name="params_all")
+def fixture_params_all():
+    """???"""
     return {
         "receptor_chain": "A",
         "ligand_chains": ["B"],
@@ -110,16 +66,17 @@ def params_all():
     }
 
 
-@pytest.fixture
-def protdna_caprimodule(protdna_input_list, params):
+@pytest.fixture(name="protdna_caprimodule")
+def fixture_protdna_caprimodule(protdna_input_list, params):
     """Protein-DNA CAPRI module."""
-    reference = protdna_input_list[0].rel_path
-    model = protdna_input_list[1].rel_path
+    reference = protdna_input_list[0]
+    model = protdna_input_list[1]
+    _path = protdna_input_list[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
-        path=golden_data,
+        path=_path,
         params=params,
     )
 
@@ -128,16 +85,17 @@ def protdna_caprimodule(protdna_input_list, params):
     remove_aln_files(capri)
 
 
-@pytest.fixture
-def protlig_caprimodule(protlig_input_list, params):
+@pytest.fixture(name="protlig_caprimodule")
+def fixture_protlig_caprimodule(protlig_input_list, params):
     """Protein-Ligand CAPRI module."""
-    reference = protlig_input_list[0].rel_path
-    model = protlig_input_list[1].rel_path
+    reference = protlig_input_list[0]
+    model = protlig_input_list[1]
+    _path = protlig_input_list[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
-        path=golden_data,
+        path=_path,
         params=params,
     )
 
@@ -146,16 +104,17 @@ def protlig_caprimodule(protlig_input_list, params):
     remove_aln_files(capri)
 
 
-@pytest.fixture
-def protprot_caprimodule(protprot_input_list, params):
+@pytest.fixture(name="protprot_caprimodule")
+def fixture_protprot_caprimodule(protprot_input_list, params):
     """Protein-Protein CAPRI module."""
-    reference = protprot_input_list[0].rel_path
+    reference = protprot_input_list[0]
     model = protprot_input_list[1]
+    _path = protprot_input_list[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
-        path=golden_data,
+        path=_path,
         params=params,
     )
 
@@ -164,16 +123,17 @@ def protprot_caprimodule(protprot_input_list, params):
     remove_aln_files(capri)
 
 
-@pytest.fixture
-def protprot_allatm_caprimodule(protprot_input_list, params_all):
+@pytest.fixture(name="protprot_allatm_caprimodule")
+def fixture_protprot_allatm_caprimodule(protprot_input_list, params_all):
     """Protein-Protein CAPRI module."""
-    reference = protprot_input_list[0].rel_path
+    reference = protprot_input_list[0]
     model = protprot_input_list[1]
+    _path = protprot_input_list[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
-        path=golden_data,
+        path=_path,
         params=params_all,
     )
 
@@ -182,16 +142,58 @@ def protprot_allatm_caprimodule(protprot_input_list, params_all):
     remove_aln_files(capri)
 
 
-@pytest.fixture
-def protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
+@pytest.fixture(name="protprot_1bkd_caprimodule")
+def fixture_protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
     """Protein-Protein CAPRI module for target 1BKD."""
-    reference = protprot_1bkd_input_list[0].rel_path
+    reference = protprot_1bkd_input_list[0]
     model = protprot_1bkd_input_list[1]
+    _path = protprot_1bkd_input_list[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
-        path=golden_data,
+        path=_path,
+        params=params,
+    )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture(name="protprot_onechain_ref_caprimodule")
+def fixture_protprot_onechain_ref_caprimodule(protprot_onechain_list, params):
+    """Protein-Protein CAPRI module with a single chain structure as ref."""
+
+    # reference, model = protprot_onechain_list
+    model, reference = protprot_onechain_list
+    _path = reference.path
+
+    capri = CAPRI(
+        identificator=str(42),
+        reference=reference,
+        model=model,
+        path=_path,
+        params=params,
+    )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture(name="protprot_onechain_mod_caprimodule")
+def fixture_protprot_onechain_mod_caprimodule(protprot_onechain_list, params):
+    """Protein-Protein CAPRI module with a single chain structure as model."""
+
+    reference, model = protprot_onechain_list
+    _path = reference.path
+
+    capri = CAPRI(
+        identificator=str(42),
+        reference=reference,
+        model=model,
+        path=_path,
         params=params,
     )
 
@@ -439,50 +441,6 @@ def test_protdna_allatoms(protdna_caprimodule):
     assert np.isclose(protdna_caprimodule.fnat, 0.4878, atol=0.01)
 
 
-def test_make_output(protprot_caprimodule):
-    """Test the writing of capri.tsv file."""
-    protprot_caprimodule.model.clt_id = 1
-    protprot_caprimodule.model.clt_rank = 1
-    protprot_caprimodule.model.clt_model_rank = 10
-    protprot_caprimodule.model.unw_energies = {"something": 0.0}
-
-    protprot_caprimodule.make_output()
-
-    ss_fname = Path(
-        protprot_caprimodule.path,
-        f"capri_ss_{protprot_caprimodule.identificator}.tsv"
-    )
-    # Check that the file contains something
-    assert ss_fname.stat().st_size != 0
-
-    # remove the model column since its name will depend on where we are running
-    #  the test
-    observed_outf_l = read_capri_file(ss_fname)
-    expected_outf_l = [
-        [
-            "md5",
-            "caprieval_rank",
-            "score",
-            "irmsd",
-            "fnat",
-            "lrmsd",
-            "ilrmsd",
-            "dockq",
-            "rmsd",
-            "cluster_id",
-            "cluster_ranking",
-            "model-cluster_ranking",
-            "something",
-        ],
-        [
-            "-", "-", "nan", "nan", "nan", "nan", "nan", "nan",
-            "nan", "1", "1", "10", "0.000",
-        ],
-    ]
-
-    assert observed_outf_l == expected_outf_l
-
-    os.unlink(ss_fname)
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
@@ -595,30 +553,6 @@ def test_add_chain_from_segid(protprot_caprimodule):
                 assert line[21] == "A"
 
 
-def test_rearrange_ss_capri_output():
-    """Test rearranging the capri output."""
-    with open(f"{golden_data}/capri_ss_1.tsv", "w") as fh:
-        fh.write(
-            "model	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	"
-            "dockq	cluster_id	cluster_ranking	"
-            "model-cluster_ranking" + os.linesep
-        )
-        fh.write(
-            "../1_emscoring/emscoring_909.pdb	1	-424.751	0.000	"
-            "1.000	0.000	0.000	1.000	-	-	-" + os.linesep
-        )
-    rearrange_ss_capri_output(
-        "capri_ss.txt",
-        output_count=1,
-        sort_key="score",
-        sort_ascending=True,
-        path=golden_data,
-    )
-
-    assert Path("capri_ss.txt").stat().st_size != 0
-    Path("capri_ss.txt").unlink()
-
-
 def test_calc_stats():
     """Test the calculation of statistics."""
     observed_mean, observed_std = calc_stats([2, 2, 4, 5])
@@ -636,194 +570,154 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     protprot_caprimodule.fnat = 1.0
     protprot_caprimodule.lrmsd = 1.2
     protprot_caprimodule.ilrmsd = 4.3
-    protprot_caprimodule.rmsd = 0.01,
-    capri_cluster_analysis(
-        capri_list=[protprot_caprimodule, protprot_caprimodule],
-        model_list=[model1, model2],
-        output_fname="capri_clt.txt",
-        clt_threshold=5,
-        sort_key="score",
-        sort_ascending=True,
-        path=Path("."),
-    )
+    protprot_caprimodule.rmsd = (0.01,)
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        capri_cluster_analysis(
+            capri_list=[protprot_caprimodule, protprot_caprimodule],
+            model_list=[model1, model2],
+            output_fname="capri_clt.txt",
+            clt_threshold=5,
+            sort_key="score",
+            sort_ascending=True,
+            path=Path("."),
+        )
 
-    assert Path("capri_clt.txt").stat().st_size != 0
+        assert Path("capri_clt.txt").stat().st_size != 0
 
-    observed_outf_l = read_capri_file("capri_clt.txt")
-    expected_outf_l = [
-        [
-            "cluster_id",
-            "n",
-            "under_eval",
-            "score",
-            "score_std",
-            "irmsd",
-            "irmsd_std",
-            "fnat",
-            "fnat_std",
-            "lrmsd",
-            "lrmsd_std",
-            "dockq",
-            "dockq_std",
-            "ilrmsd",
-            "ilrmsd_std",
-            "rmsd",
-            "rmsd_std",
-            "caprieval_rank",
-        ],
-        [
-            "1",
-            "1",
-            "yes",
-            "42.000",
-            "0.000",
-            "0.100",
-            "0.000",
-            "1.000",
-            "0.000",
-            "1.200",
-            "0.000",
-            "nan",
-            "nan",
-            "4.300",
-            "0.000",
-            "0.010",
-            "0.000",
-            "1",
-        ],
-        [
-            "2",
-            "1",
-            "yes",
-            "50.000",
-            "0.000",
-            "0.100",
-            "0.000",
-            "1.000",
-            "0.000",
-            "1.200",
-            "0.000",
-            "nan",
-            "nan",
-            "4.300",
-            "0.000",
-            "0.010",
-            "0.000",
-            "2",
-        ],
-    ]
-    assert observed_outf_l == expected_outf_l
+        observed_outf_l = read_capri_file("capri_clt.txt")
+        expected_outf_l = [
+            [
+                "cluster_id",
+                "n",
+                "under_eval",
+                "score",
+                "score_std",
+                "irmsd",
+                "irmsd_std",
+                "fnat",
+                "fnat_std",
+                "lrmsd",
+                "lrmsd_std",
+                "dockq",
+                "dockq_std",
+                "ilrmsd",
+                "ilrmsd_std",
+                "rmsd",
+                "rmsd_std",
+                "caprieval_rank",
+            ],
+            [
+                "1",
+                "1",
+                "yes",
+                "42.000",
+                "0.000",
+                "0.100",
+                "0.000",
+                "1.000",
+                "0.000",
+                "1.200",
+                "0.000",
+                "nan",
+                "nan",
+                "4.300",
+                "0.000",
+                "0.010",
+                "0.000",
+                "1",
+            ],
+            [
+                "2",
+                "1",
+                "yes",
+                "50.000",
+                "0.000",
+                "0.100",
+                "0.000",
+                "1.000",
+                "0.000",
+                "1.200",
+                "0.000",
+                "nan",
+                "nan",
+                "4.300",
+                "0.000",
+                "0.010",
+                "0.000",
+                "2",
+            ],
+        ]
+        assert observed_outf_l == expected_outf_l
 
-    # test sorting
-    capri_cluster_analysis(
-        capri_list=[protprot_caprimodule, protprot_caprimodule],
-        model_list=[model1, model2],
-        output_fname="capri_clt.txt",
-        clt_threshold=5,
-        sort_key="cluster_rank",
-        sort_ascending=False,
-        path=Path("."),
-    )
+        # test sorting
+        capri_cluster_analysis(
+            capri_list=[protprot_caprimodule, protprot_caprimodule],
+            model_list=[model1, model2],
+            output_fname="capri_clt.txt",
+            clt_threshold=5,
+            sort_key="cluster_rank",
+            sort_ascending=False,
+            path=Path("."),
+        )
 
-    observed_outf_l = read_capri_file("capri_clt.txt")
-    expected_outf_l = [
-        [
-            "cluster_id",
-            "n",
-            "under_eval",
-            "score",
-            "score_std",
-            "irmsd",
-            "irmsd_std",
-            "fnat",
-            "fnat_std",
-            "lrmsd",
-            "lrmsd_std",
-            "dockq",
-            "dockq_std",
-            "rmsd",
-            "rmsd_std",
-            "caprieval_rank",
-        ],
-        [
-            "2",
-            "1",
-            "yes",
-            "50.000",
-            "0.000",
-            "0.100",
-            "0.000",
-            "1.000",
-            "0.000",
-            "1.200",
-            "0.000",
-            "nan",
-            "nan",
-            "0.010",
-            "0.000",
-            "2",
-        ],
-        [
-            "1",
-            "1",
-            "yes",
-            "42.000",
-            "0.000",
-            "0.100",
-            "0.000",
-            "1.000",
-            "0.000",
-            "1.200",
-            "0.000",
-            "nan",
-            "nan",
-            "0.010",
-            "0.000",
-            "1",
-        ],
-    ]
-
-    Path("capri_clt.txt").unlink()
-
-
-@pytest.fixture
-def protprot_onechain_ref_caprimodule(
-    protprot_input_list, protprot_onechain_list, params
-):
-    """Protein-Protein CAPRI module with a single chain structure as ref."""
-    reference = protprot_onechain_list[0].rel_path
-    model = protprot_input_list[1].rel_path
-    capri = CAPRI(
-        identificator=str(42),
-        reference=reference,
-        model=model,
-        path=golden_data,
-        params=params,
-    )
-
-    yield capri
-
-    remove_aln_files(capri)
-
-
-@pytest.fixture
-def protprot_onechain_mod_caprimodule(
-    protprot_input_list, protprot_onechain_list, params
-):
-    """Protein-Protein CAPRI module with a single chain structure as model."""
-    reference = protprot_input_list[0].rel_path
-    model = protprot_onechain_list[0].rel_path
-    capri = CAPRI(
-        identificator=str(42),
-        reference=reference,
-        model=model,
-        path=golden_data,
-        params=params,
-    )
-
-    yield capri
-
-    remove_aln_files(capri)
+        observed_outf_l = read_capri_file("capri_clt.txt")
+        expected_outf_l = [
+            [
+                "cluster_id",
+                "n",
+                "under_eval",
+                "score",
+                "score_std",
+                "irmsd",
+                "irmsd_std",
+                "fnat",
+                "fnat_std",
+                "lrmsd",
+                "lrmsd_std",
+                "dockq",
+                "dockq_std",
+                "rmsd",
+                "rmsd_std",
+                "caprieval_rank",
+            ],
+            [
+                "2",
+                "1",
+                "yes",
+                "50.000",
+                "0.000",
+                "0.100",
+                "0.000",
+                "1.000",
+                "0.000",
+                "1.200",
+                "0.000",
+                "nan",
+                "nan",
+                "0.010",
+                "0.000",
+                "2",
+            ],
+            [
+                "1",
+                "1",
+                "yes",
+                "42.000",
+                "0.000",
+                "0.100",
+                "0.000",
+                "1.000",
+                "0.000",
+                "1.200",
+                "0.000",
+                "nan",
+                "nan",
+                "0.010",
+                "0.000",
+                "1",
+            ],
+        ]
 
 
 def test_single_chain_reference(protprot_onechain_ref_caprimodule, params):
@@ -893,8 +787,9 @@ def test_protdna_swapped_chains(protdna_caprimodule):
     protdna_caprimodule.calc_ilrmsd()
     assert np.isclose(protdna_caprimodule.ilrmsd, 4.91, atol=0.01)
 
-    
+
 def test_capri_run(mocker):
+    """???"""
 
     mock_get_align_func = mocker.Mock(
         return_value={"numbering": {1: 1, 2: 2}, "chain_dict": {1: 2}}
@@ -905,73 +800,77 @@ def test_capri_run(mocker):
     )
 
     mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
-    capri = CAPRI(
-        identificator="test",
-        model=Path("some-file"),
-        path=Path("."),
-        reference=Path("some-file"),
-        params={
-            "fnat": True,
-            "irmsd": True,
-            "lrmsd": True,
-            "ilrmsd": True,
-            "dockq": True,
-            "global_rmsd": True,
-            "allatoms": True,
-            "receptor_chain": "A",
-            "ligand_chains": ["B"],
-            "alignment_method": None,
-            "lovoalign_exec": None,
-            "fnat_cutoff": 10,
-            "irmsd_cutoff": 10,
-        },
-    )
-    rand_fnat = random.random()
-    mocker.patch.object(
-        capri, "calc_fnat", side_effect=lambda cutoff: setattr(capri, "fnat", rand_fnat)
-    )
-    rand_irmsd = random.random()
-    mocker.patch.object(
-        capri,
-        "calc_irmsd",
-        side_effect=lambda cutoff: setattr(capri, "irmsd", rand_irmsd),
-    )
-    rand_lrmsd = random.random()
-    mocker.patch.object(
-        capri, "calc_lrmsd", side_effect=lambda: setattr(capri, "lrmsd", rand_lrmsd)
-    )
-    rand_ilrmsd = random.random()
-    mocker.patch.object(
-        capri,
-        "calc_ilrmsd",
-        side_effect=lambda cutoff: setattr(capri, "ilrmsd", rand_ilrmsd),
-    )
-    rand_dockq = random.random()
-    mocker.patch.object(
-        capri, "calc_dockq", side_effect=lambda: setattr(capri, "dockq", rand_dockq)
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
+        capri = CAPRI(
+            identificator="test",
+            model=Path("some-file"),
+            path=Path("."),
+            reference=Path("some-file"),
+            params={
+                "fnat": True,
+                "irmsd": True,
+                "lrmsd": True,
+                "ilrmsd": True,
+                "dockq": True,
+                "global_rmsd": True,
+                "allatoms": True,
+                "receptor_chain": "A",
+                "ligand_chains": ["B"],
+                "alignment_method": None,
+                "lovoalign_exec": None,
+                "fnat_cutoff": 10,
+                "irmsd_cutoff": 10,
+            },
+        )
+        rand_fnat = random.random()
+        mocker.patch.object(
+            capri,
+            "calc_fnat",
+            side_effect=lambda cutoff: setattr(capri, "fnat", rand_fnat),
+        )
+        rand_irmsd = random.random()
+        mocker.patch.object(
+            capri,
+            "calc_irmsd",
+            side_effect=lambda cutoff: setattr(capri, "irmsd", rand_irmsd),
+        )
+        rand_lrmsd = random.random()
+        mocker.patch.object(
+            capri, "calc_lrmsd", side_effect=lambda: setattr(capri, "lrmsd", rand_lrmsd)
+        )
+        rand_ilrmsd = random.random()
+        mocker.patch.object(
+            capri,
+            "calc_ilrmsd",
+            side_effect=lambda cutoff: setattr(capri, "ilrmsd", rand_ilrmsd),
+        )
+        rand_dockq = random.random()
+        mocker.patch.object(
+            capri, "calc_dockq", side_effect=lambda: setattr(capri, "dockq", rand_dockq)
+        )
 
-    rand_global_rmsd = random.random()
-    mocker.patch.object(
-        capri,
-        "calc_global_rmsd",
-        side_effect=lambda: setattr(capri, "rmsd", rand_global_rmsd)
-    )
+        rand_global_rmsd = random.random()
+        mocker.patch.object(
+            capri,
+            "calc_global_rmsd",
+            side_effect=lambda: setattr(capri, "rmsd", rand_global_rmsd),
+        )
 
-    mocker.patch.object(capri, "make_output")
 
-    capri.run()
+        capri.run()
 
-    # The only logic to be tested is if the methods are called
-    assert capri.fnat == pytest.approx(rand_fnat)
-    assert capri.irmsd == pytest.approx(rand_irmsd)
-    assert capri.lrmsd == pytest.approx(rand_lrmsd)
-    assert capri.ilrmsd == pytest.approx(rand_ilrmsd)
-    assert capri.dockq == pytest.approx(rand_dockq)
-    assert capri.rmsd == pytest.approx(rand_global_rmsd)
+        # The only logic to be tested is if the methods are called
+        assert capri.fnat == pytest.approx(rand_fnat)
+        assert capri.irmsd == pytest.approx(rand_irmsd)
+        assert capri.lrmsd == pytest.approx(rand_lrmsd)
+        assert capri.ilrmsd == pytest.approx(rand_ilrmsd)
+        assert capri.dockq == pytest.approx(rand_dockq)
+        assert capri.rmsd == pytest.approx(rand_global_rmsd)
 
 
 def test_rank_according_to_score():
+    """test ranking according to score."""
     data = {
         1: {
             "score": 3.0,
@@ -997,6 +896,7 @@ def test_rank_according_to_score():
 
 
 def test_extract_data_from_capri_class(mocker):
+    """???"""
 
     mocker.patch(
         "haddock.modules.analysis.caprieval.capri.write_nested_dic_to_file",
@@ -1004,65 +904,73 @@ def test_extract_data_from_capri_class(mocker):
     )
     mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
 
-    c = CAPRI(
-        path=Path("."),
-        identificator="42",
-        model=Path("anything"),
-        reference=Path("anything"),
-        params={
-            "allatoms": True,
-            "receptor_chain": "X",
-            "ligand_chains": ["X"],
-        },
-    )
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chdir(tempdir)
 
-    # Create random entries
-    random_energy = random.random()
-    random_model = PDBFile(
-        file_name=str(uuid.uuid4()), score=42, unw_energies={"energy": random_energy}
-    )
+        c = CAPRI(
+            path=Path("."),
+            identificator="42",
+            model=Path("anything"),
+            reference=Path("anything"),
+            params={
+                "allatoms": True,
+                "receptor_chain": "X",
+                "ligand_chains": ["X"],
+            },
+        )
 
-    random_clt_id = random.randint(0, 100)
-    random_clt_rank = random.randint(0, 100)
-    random_clt_model_rank = random.randint(0, 100)
-    random_md5 = str(uuid.uuid4())
-    random_score = random.random()
-    random_irmsd = random.random()
-    random_fnat = random.random()
-    random_lrmsd = random.random()
-    random_ilrmsd = random.random()
-    random_dockq = random.random()
-    random_rmsd = random.random()
+        # Create random entries
+        random_energy = random.random()
+        random_model = PDBFile(
+            file_name=str(uuid.uuid4()),
+            score=42,
+            unw_energies={"energy": random_energy},
+        )
 
-    c.model = random_model
-    c.model.clt_id = random_clt_id
-    c.model.clt_rank = random_clt_rank
-    c.model.clt_model_rank = random_clt_model_rank
-    c.md5 = random_md5
-    c.score = random_score
-    c.irmsd = random_irmsd
-    c.fnat = random_fnat
-    c.lrmsd = random_lrmsd
-    c.ilrmsd = random_ilrmsd
-    c.dockq = random_dockq
-    c.rmsd = random_rmsd
+        random_clt_id = random.randint(0, 100)
+        random_clt_rank = random.randint(0, 100)
+        random_clt_model_rank = random.randint(0, 100)
+        random_md5 = str(uuid.uuid4())
+        random_score = random.random()
+        random_irmsd = random.random()
+        random_fnat = random.random()
+        random_lrmsd = random.random()
+        random_ilrmsd = random.random()
+        random_dockq = random.random()
+        random_rmsd = random.random()
 
-    observed_data = extract_data_from_capri_class(
-        capri_objects=[c], sort_key="score", sort_ascending=True, output_fname=Path("")
-    )
+        c.model = random_model
+        c.model.clt_id = random_clt_id
+        c.model.clt_rank = random_clt_rank
+        c.model.clt_model_rank = random_clt_model_rank
+        c.md5 = random_md5
+        c.score = random_score
+        c.irmsd = random_irmsd
+        c.fnat = random_fnat
+        c.lrmsd = random_lrmsd
+        c.ilrmsd = random_ilrmsd
+        c.dockq = random_dockq
+        c.rmsd = random_rmsd
 
-    assert observed_data is not None
+        observed_data = extract_data_from_capri_class(
+            capri_objects=[c],
+            sort_key="score",
+            sort_ascending=True,
+            output_fname=Path(""),
+        )
 
-    assert observed_data[1]["model"] == random_model
-    assert observed_data[1]["md5"] == random_md5
-    assert observed_data[1]["score"] == random_score
-    assert observed_data[1]["irmsd"] == random_irmsd
-    assert observed_data[1]["fnat"] == random_fnat
-    assert observed_data[1]["lrmsd"] == random_lrmsd
-    assert observed_data[1]["ilrmsd"] == random_ilrmsd
-    assert observed_data[1]["dockq"] == random_dockq
-    assert observed_data[1]["rmsd"] == random_rmsd
-    assert observed_data[1]["energy"] == random_energy
-    assert observed_data[1]["cluster_id"] == random_clt_id
-    assert observed_data[1]["cluster_ranking"] == random_clt_rank
-    assert observed_data[1]["model-cluster_ranking"] == random_clt_model_rank
+        assert observed_data is not None
+
+        assert observed_data[1]["model"] == random_model
+        assert observed_data[1]["md5"] == random_md5
+        assert observed_data[1]["score"] == random_score
+        assert observed_data[1]["irmsd"] == random_irmsd
+        assert observed_data[1]["fnat"] == random_fnat
+        assert observed_data[1]["lrmsd"] == random_lrmsd
+        assert observed_data[1]["ilrmsd"] == random_ilrmsd
+        assert observed_data[1]["dockq"] == random_dockq
+        assert observed_data[1]["rmsd"] == random_rmsd
+        assert observed_data[1]["energy"] == random_energy
+        assert observed_data[1]["cluster_id"] == random_clt_id
+        assert observed_data[1]["cluster_ranking"] == random_clt_rank
+        assert observed_data[1]["model-cluster_ranking"] == random_clt_model_rank

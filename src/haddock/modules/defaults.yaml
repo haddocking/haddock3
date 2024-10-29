@@ -150,4 +150,5 @@ debug:
   group: "execution"
   explevel: easy
   incompatible:
-    mode: batch
+    false:
+      mode: batch

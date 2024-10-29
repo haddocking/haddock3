@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
       fail-fast: false
 
     steps:
@@ -26,21 +26,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
-      - name: install python dependencies
-        run: pip install -r requirements.txt
-
-      - name: install test dependencies
-        run: >-
-          pip install coverage pytest pytest-cov hypothesis pytest-mock mypy
-          fastapi==0.110.1 httpx==0.27.0 mpi4py==3.1.6
-
-      - name: install haddock3
-        run: python setup.py -v develop
-
-      ## Disabled for now until we figure out a good configuration ##
-      # - name: check types
-      #   run: mypy src/
-      ###############################################################
+      - name: install haddock3 with extra dependencies
+        run: pip install '.[dev,docs]'
 
       - name: run unit tests
         run: >-
@@ -68,6 +55,7 @@ jobs:
           coverage-reports: ./coverage.xml
 
       - name: check if docs are buildable
-        # this step can fail
         continue-on-error: true
-        run: tox -e docs
+        run: |
+          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+          sphinx-build docs haddock3-docs

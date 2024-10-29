@@ -277,7 +277,7 @@ def run_capri_analysis(
     caprieval_module = HaddockModule(
         order=step_order,
         path=Path(run_dir),
-        initial_params=caprieval_params,
+        init_params=caprieval_params,
     )
     caprieval_module.update_params(**capri_dict)
     # updating mode and ncores

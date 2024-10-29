@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - correct_auto_documentation
 
 jobs:
   pages:
@@ -25,8 +26,8 @@ jobs:
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'
 
-      - name: install openmm
-        run: conda install -c conda-forge openmm pdbfixer
+#      - name: install openmm
+#        run: conda install -c conda-forge openmm pdbfixer
 
       - name: Generate docs
         run: |

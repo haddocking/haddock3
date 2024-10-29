@@ -331,7 +331,7 @@ def main() -> None:
         target_path.mkdir(exist_ok=True)
         # collect rst files
         rst_files = Path('docs').glob(
-            f"haddock.{folder}.*.rst"
+            f"haddock.{folder}*.rst"
             )
         for rst_file in rst_files:
             target_rst = Path(target_path, rst_file.name)
@@ -369,7 +369,7 @@ def main() -> None:
     clients_folder.mkdir(exist_ok=True)
 
     cli_rst_files = Path('docs').glob(
-        f"haddock.clis.*.rst"
+        f"haddock.clis*.rst"
     )
     for cli_rst_file in cli_rst_files:
         target_rst = Path(

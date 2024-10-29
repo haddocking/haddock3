@@ -47,7 +47,3 @@ def test_emscoring_workflow(caplog, monkeypatch):
         assert os.path.isdir("analysis/1_emscoring_analysis") is True
         # there should be a report.html inside it
         assert os.path.isfile("analysis/1_emscoring_analysis/report.html") is True
-        
-        
-    
-

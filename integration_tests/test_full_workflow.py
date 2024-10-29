@@ -7,7 +7,7 @@ from haddock.core.typing import Any
 from integration_tests import GOLDEN_DATA
 
 
-def test_emscoring_workflow(caplog):
+def test_emscoring_workflow(caplog, monkeypatch):
     """Test WorkflowManager."""
     with tempfile.TemporaryDirectory() as tmpdir:
         # copy the pdb file to the temporary directory
@@ -15,7 +15,7 @@ def test_emscoring_workflow(caplog):
             Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
             Path(tmpdir, "protglyc_complex_1.pdb"),
         )
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
 
         caplog.set_level("INFO")
         ParamDict = {

@@ -59,12 +59,12 @@ dev = [
   "kaleido==0.2.1",
 ]
 docs = [
-  "sphinx>=7",
-  "sphinx-argparse>=0.4.0",
+  "sphinx>=8",
+  "sphinx-argparse>=0.5.2",
   "sphinx_rtd_theme>=3.0.1",
   "CommonMark>=0.9.1",
   "mock>=5.1.0",
-  "myst-parser>=3.0.1",
+  "myst-parser>=4.0.0",
 ]
 
 [project.urls]

@@ -64,7 +64,7 @@ docs = [
   "sphinx_rtd_theme>=3.0.1",
   "CommonMark>=0.9.1",
   "mock>=5.1.0",
-  "myst-parser>=4.0.0",
+  "myst-parser>=3.0.1",
 ]
 
 [project.urls]

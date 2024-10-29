@@ -60,7 +60,7 @@ dev = [
 ]
 docs = [
   "sphinx>=7",
-  "sphinx-argparse>=0.5.2",
+  "sphinx-argparse>=0.4.0",
   "sphinx_rtd_theme>=3.0.1",
   "CommonMark>=0.9.1",
   "mock>=5.1.0",

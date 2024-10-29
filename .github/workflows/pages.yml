@@ -23,9 +23,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
-      - name: install openmm
-        run: conda install -c conda-forge openmm pdbfixer
-
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'
 

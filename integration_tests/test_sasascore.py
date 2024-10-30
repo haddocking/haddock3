@@ -37,7 +37,6 @@ class MockPreviousIO():
             PDBFile(file_name="protprot_complex_1.pdb", path="."),
             PDBFile(file_name="protprot_complex_2.pdb", path="."),
         ]
-        print(f"model_list: {model_list}")
         return model_list
 
     def output(self):

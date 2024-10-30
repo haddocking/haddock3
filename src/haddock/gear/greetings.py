@@ -31,7 +31,7 @@ international_good_byes = [
 feedback_urls = {
     "GitHub issues": "https://github.com/haddocking/haddock3/issues",
     "BioExcel feedback": "https://www.bonvinlab.org/feedback",
-    "BioExcel survey": "https://bioexcel.eu/bioexcel-survey-2024/",
+    # "BioExcel survey": "https://bioexcel.eu/bioexcel-survey-2024/",
 }
 
 

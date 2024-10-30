@@ -68,6 +68,7 @@ def test_accscore(scoring_models, buried_resdic, acc_resdic, monkeypatch):
             acc_resdic=acc_resdic,
             cutoff=0.1,
             probe_radius=1.4,
+            identificator=0,
             )
         accscore.run()
         exp_score = 1

@@ -31,7 +31,7 @@ jobs:
 
       - name: run unit tests
         run: >-
-          pytest tests/
+          pytest --random-order tests/
           --cov --cov-report=term-missing --cov-append
           --hypothesis-show-statistics
 

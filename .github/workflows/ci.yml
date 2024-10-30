@@ -37,7 +37,7 @@ jobs:
 
       - name: run integration tests
         run: >-
-          pytest integration_tests/
+          pytest --random-order integration_tests/
           --cov --cov-report=term-missing --cov-append
           --hypothesis-show-statistics
 

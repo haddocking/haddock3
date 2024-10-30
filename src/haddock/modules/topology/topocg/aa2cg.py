@@ -618,7 +618,7 @@ def martinize(input_pdb, output_path, skipss):
             n_l = line
         out.write(n_l)
     out.close()
-    subprocess.call(f"mv temp.pdb {cg_pdb_name}", shell=True)
+    subprocess.call(["mv", "temp.pdb", cg_pdb_name])
 
     # Write Restraints
     tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl"

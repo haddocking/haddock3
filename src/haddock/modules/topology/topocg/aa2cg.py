@@ -207,14 +207,14 @@ def center_of_mass(entity, geometric=False):
 
     if geometric:
         return [sum(coord_list) / len(masses) for coord_list in positions]
-    else:
-        w_pos = [[], [], []]
-        for atom_index, atom_mass in enumerate(masses):
-            w_pos[0].append(positions[0][atom_index] * atom_mass)
-            w_pos[1].append(positions[1][atom_index] * atom_mass)
-            w_pos[2].append(positions[2][atom_index] * atom_mass)
 
-        return [sum(coord_list) / sum(masses) for coord_list in w_pos]
+    w_pos = [[], [], []]
+    for atom_index, atom_mass in enumerate(masses):
+        w_pos[0].append(positions[0][atom_index] * atom_mass)
+        w_pos[1].append(positions[1][atom_index] * atom_mass)
+        w_pos[2].append(positions[2][atom_index] * atom_mass)
+
+    return [sum(coord_list) / sum(masses) for coord_list in w_pos]
 
 
 def determine_hbonds(structure):
@@ -422,7 +422,7 @@ def create_file_with_cryst(pdb_file: str) -> None:
         content = file_in.read()
         file_out.write(CRYST_LINE + content)
 
-    return(file_out.name)
+    return file_out.name
 
 
 def determine_ss(structure, skipss, pdbf_path):
@@ -442,21 +442,20 @@ def determine_ss(structure, skipss, pdbf_path):
 
         if skipss:
             continue
-        else:
-            try:
-                tmp_file_name = create_file_with_cryst(pdbf_path)
-                p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"],
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE,
-                                     text=True)
-                dssp_raw, _ = p.communicate()
-                dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
-            except:  # TODO: think about making this exception more specific
-                # no secondary structure detected for this model
-                log.warning('SS could not be assigned, assigning code 1 to all residues')
-                continue
-            finally:
-                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
+        try:
+            tmp_file_name = create_file_with_cryst(pdbf_path)
+            p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE,
+                                 text=True)
+            dssp_raw, _ = p.communicate()
+            dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
+        except:  # TODO: think about making this exception more specific
+            # no secondary structure detected for this model
+            log.warning('SS could not be assigned, assigning code 1 to all residues')
+            continue
+        finally:
+            if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
 
         dssp = {}
 
@@ -571,7 +570,8 @@ def martinize(input_pdb, output_path, skipss):
                 if residue.id[0] != " ":  # filter HETATMS
                     continue
 
-                structure_builder.init_residue(residue.resname, residue.id[0], residue.id[1], residue.id[2])
+                structure_builder.init_residue(residue.resname, residue.id[0],
+                                               residue.id[1], residue.id[2])
 
                 for i, bead in enumerate(mapping_dic[residue]):
 
@@ -627,5 +627,5 @@ def martinize(input_pdb, output_path, skipss):
     tbl_file.write(f"\n{tbl_str}")
     tbl_file.close()
 
-    return(cg_pdb_name)
+    return cg_pdb_name
 

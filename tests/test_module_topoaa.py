@@ -46,10 +46,10 @@ def fixture_protein():
 
 
 @pytest.fixture(name="topoaa")
-def fixture_topoaa():
+def fixture_topoaa(monkeypatch):
     """topoaa module fixture"""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield Topoaa(order=1, path=Path("."), initial_params=topoaa_params)
 
 

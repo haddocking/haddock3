@@ -57,10 +57,10 @@ def acc_resdic_more_chains():
     }
 
 
-def test_accscore(scoring_models, buried_resdic, acc_resdic):
+def test_accscore(scoring_models, buried_resdic, acc_resdic, monkeypatch):
     """Test accscore expected output."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         accscore = AccScore(
             model=scoring_models[0],
             path=Path("."),

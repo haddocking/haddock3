@@ -15,7 +15,7 @@ from tests import golden_data
 @pytest.fixture
 def sasascore_module():
     """Return a default sasascore module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+    with tempfile.TemporaryDirectory() as tmpdir:
         sasascore = SasascoreModule(
             order=0, path=tmpdir, initial_params=DEFAULT_SASASCORE_CONFIG
         )
@@ -37,7 +37,7 @@ class MockPreviousIO():
             PDBFile(file_name="protprot_complex_1.pdb", path="."),
             PDBFile(file_name="protprot_complex_2.pdb", path="."),
         ]
-
+        print(f"model_list: {model_list}")
         return model_list
 
     def output(self):
@@ -64,7 +64,6 @@ def test_sasascore_default(sasascore_module, mocker):
     # check violations.tsv
     exp_shape = (2, 3)
     df = pd.read_csv(expected_violations_csv, sep="\t", comment="#")
-    print(df)
     assert df.shape == exp_shape, f"{expected_violations_csv} has wrong shape ({df.shape} instead of {exp_shape})"
     assert df.loc[df["structure"] == "protprot_complex_1.pdb"].iloc[0,:]["bur_A"] == "-"
     assert df.loc[df["structure"] == "protprot_complex_2.pdb"].iloc[0,:]["bur_A"] == "39"

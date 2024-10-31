@@ -5,6 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Optional
+from distutils.spawn import find_executable
 
 from haddock import log
 
@@ -20,13 +21,20 @@ class MPIScheduler:
     def run(self) -> None:
         """Send it to the haddock3-mpitask runner."""
         pkl_tasks = self._pickle_tasks()
-        cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
-        log.debug(f"MPI cmd is {cmd}")
-
         log.info(
             f"Executing tasks with the haddock3-mpitask runner using "
             f"{self.ncores} processors..."
             )
+        if find_executable("mpirun") is not None:
+            cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
+        elif find_executable("srun") is not None:
+            cmd = f"srun haddock3-mpitask {pkl_tasks}"
+        else:
+            log.error("mpirun or srun are not available on the system")
+            sys.exit()
+
+        log.debug(f"MPI cmd is {cmd}")
+
         p = subprocess.run(
             shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )

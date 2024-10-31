@@ -65,6 +65,7 @@ class AccScore:
             acc_resdic,
             cutoff,
             probe_radius,
+            identificator,
             ):
         """Initialise AccScore class."""
         self.model = model
@@ -76,6 +77,7 @@ class AccScore:
         self.violations = []
         self.probe_radius = probe_radius
         self.violations_data = [self.model.file_name]
+        self.identificator = identificator
 
     def run(self) -> None:
         """Run accessibility calculations."""

@@ -62,10 +62,10 @@ def fixture_params():
 
 
 @pytest.fixture(name="scan_obj")
-def fixture_scan_obj(protprot_model_list, params):
+def fixture_scan_obj(protprot_model_list, params, monkeypatch):
     """Return example alascan module."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         yield Scan(
             model_list=protprot_model_list,
             output_name="alascan",
@@ -76,10 +76,10 @@ def fixture_scan_obj(protprot_model_list, params):
 
 
 @pytest.fixture(name="scanjob_obj")
-def fixture_scanjob_obj(scan_obj, params):
+def fixture_scanjob_obj(scan_obj, params, monkeypatch):
     """Return example alascan module."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         yield ScanJob(
             scan_obj=scan_obj,
             output=Path("."),
@@ -88,10 +88,10 @@ def fixture_scanjob_obj(scan_obj, params):
 
 
 @pytest.fixture(name="alascan")
-def fixture_alascan():
+def fixture_alascan(monkeypatch):
     """Return alascan module."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         yield AlascanModule(
             order=1,
             path=Path("."),
@@ -197,11 +197,11 @@ def test_scan_obj(scan_obj, protprot_model_list):
     assert scan_obj.scan_res == "ALA"
 
 
-def test_mutate(protprot_model_list):
+def test_mutate(protprot_model_list, monkeypatch):
     """Test the mutate function."""
     with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
-        os.chdir(path=tmpdir)
+        monkeypatch.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
 
         assert mut_pdb_fname == Path("protprot_complex_1-A_T19A.pdb")
@@ -214,11 +214,11 @@ def test_mutate(protprot_model_list):
             mutate(mut_fname, "A", 19, "HOH")
 
 
-def test_add_delta_to_bfactor(protprot_model_list, example_df_scan):
+def test_add_delta_to_bfactor(protprot_model_list, example_df_scan, monkeypatch):
     """Test the add_delta_to_bfactor function."""
     with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
-        os.chdir(path=tmpdir)
+        monkeypatch.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
         add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
         # ALA 19 should have beta = 100.0
@@ -337,11 +337,11 @@ def test_calc_score_wrong(mocker):
         calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
 
 
-def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
+def test_generate_alascan_output(mocker, protprot_model_list, scan_file, monkeypatch):
     """Test the generate_alascan_output method."""
     with tempfile.TemporaryDirectory() as tmpdir:
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         models_to_export = generate_alascan_output(protprot_model_list, path=tmpdir)
         assert len(models_to_export) == 1
         assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
@@ -376,10 +376,10 @@ def mock_alascan_cluster_analysis():
     }
 
 
-def test_alascan_cluster_analysis(protprot_input_list, scan_file):
+def test_alascan_cluster_analysis(protprot_input_list, scan_file, monkeypatch):
     """Test alascan_cluster_analysis."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
         shutil.copy(scan_file, Path("scan_protprot_complex_2.csv"))
         alascan_cluster_analysis(protprot_input_list)

@@ -59,47 +59,46 @@ def test_get_cluster_ranking(example_capri_clt):
     assert exp_cl_ranking == obs_cl_ranking
 
 
-def test_main(example_capri_ss, example_capri_clt):
+def test_main(example_capri_ss, example_capri_clt, monkeypatch):
     """Test cli_analyse main."""
-    # build fake run_dir
-    run_dir = "example_dir"
-    if os.path.isdir(run_dir):
-        shutil.rmtree(run_dir)
-    step_name = "2_caprieval"
-    step_dir = Path(run_dir, step_name)
-    os.mkdir(run_dir)
-    os.mkdir(step_dir)
-    shutil.copy(example_capri_ss, Path(step_dir, "capri_ss.tsv"))
-    shutil.copy(example_capri_clt, Path(step_dir, "capri_clt.tsv"))
-
-    # run haddock3-analyse
-    main(
-        run_dir,
-        [2],
-        5,
-        format=None,
-        scale=None,
-        is_cleaned=False,
-        inter=False,
-        )
-
-    # check analysis directory exists
-    ana_dir = Path(run_dir, "analysis/")
-    assert os.path.isdir(ana_dir) is True
-
-    # check whether there are some html files
-    ana_subdir = Path(ana_dir, f"{step_name}_analysis")
-    html_files = [el for el in os.listdir(ana_subdir) if el.endswith(".html")]
-    assert len(html_files) > 0
-
-    shutil.rmtree(run_dir)
-
-
-def test_zip_top_ranked(example_capri_ss):
-    """Test cli_analyse zip_top_ranked function."""
-    cwd = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
+        # build fake run_dir
+        run_dir = "example_dir"
+        if os.path.isdir(run_dir):
+            shutil.rmtree(run_dir)
+        step_name = "2_caprieval"
+        step_dir = Path(run_dir, step_name)
+        os.mkdir(run_dir)
+        os.mkdir(step_dir)
+        shutil.copy(example_capri_ss, Path(step_dir, "capri_ss.tsv"))
+        shutil.copy(example_capri_clt, Path(step_dir, "capri_clt.tsv"))
+
+        # run haddock3-analyse
+        main(
+            run_dir,
+            [2],
+            5,
+            format=None,
+            scale=None,
+            is_cleaned=False,
+            inter=False,
+            )
+
+        # check analysis directory exists
+        ana_dir = Path(run_dir, "analysis/")
+        assert os.path.isdir(ana_dir) is True
+
+        # check whether there are some html files
+        ana_subdir = Path(ana_dir, f"{step_name}_analysis")
+        html_files = [el for el in os.listdir(ana_subdir) if el.endswith(".html")]
+        assert len(html_files) > 0
+
+
+def test_zip_top_ranked(example_capri_ss, monkeypatch):
+    """Test cli_analyse zip_top_ranked function."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
         # build fake run_dir
         rigid_dir = "1_rigidbody"
         rigid_dir_analysis = "1_rigidbody_analysis"
@@ -107,12 +106,11 @@ def test_zip_top_ranked(example_capri_ss):
         os.mkdir(rigid_dir_analysis)
         # fill rigidbody directory with one file
         shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), Path(rigid_dir, "rigidbody_383.pdb"))
-        os.chdir(rigid_dir_analysis)
+        monkeypatch.chdir(rigid_dir_analysis)
         
         exp_cl_ranking = {1: 2}
         zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
         assert os.path.isfile("summary.tgz") is True
-    os.chdir(cwd)
 
 
 def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):

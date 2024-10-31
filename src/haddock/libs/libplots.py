@@ -877,7 +877,15 @@ def create_other_cluster(
     return clusters_df, structs_df
 
 
-def clt_table_handler(clt_file, ss_file, is_cleaned=False):
+def clt_table_handler(
+        clt_file: FilePath,
+        ss_file: FilePath,
+        is_cleaned: bool = False,
+        topX_clusters: int = 10,
+        clustered_topX: int = 4,
+        unclustered_topX: int = 10,
+        top_ranked_mapping: Optional[dict[Path, str]] = None,
+        ) -> pd.DataFrame:
     """
     Create a dataframe including data for tables.
 
@@ -906,23 +914,34 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     clusters_df = clusters_df.round(2)
     structs_df = structs_df.round(2)
 
-    # if the run will be cleaned, the structures are going to be gzipped
-    if is_cleaned:
-        # substitute the values in the df by adding .gz at the end
-        structs_df['model'] = structs_df['model'].replace(
-            to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True,
-            )
+    if not top_ranked_mapping:
+        # if the run will be cleaned, the structures are going to be gzipped
+        if is_cleaned and not top_ranked_mapping:
+            # substitute the values in the df by adding .gz at the end
+            structs_df['model'] = structs_df['model'].replace(
+                to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True,
+                )
 
     # ss_file is in NN_caprieval/ while report is in
     # analysis/NN_caprieval_analysis/
     # need to correct model paths by prepending ../
-    structs_df['model'] = structs_df['model'].apply(lambda x: f"../{x}")
+    def correct_relative_paths(
+            path: str,
+            top_ranked_mapping: Optional[dict[Path, str]],
+            ) -> str:
+        try:
+            new_path = top_ranked_mapping[Path(path)]
+        except KeyError:
+            new_path = f"../{path}"
+        return new_path
+    structs_df['model'] = structs_df['model'].apply(
+        lambda x: correct_relative_paths(x, top_ranked_mapping)
+        )
 
     is_unclustered = clusters_df["cluster_rank"].unique().tolist() == ["-"]
     # If unclustered, we only want to show the top 10 structures in a table.
     if is_unclustered:
-        max_unstructured_structures = 10
-        structs_df = structs_df[:max_unstructured_structures]
+        structs_df = structs_df[:unclustered_topX]
         cols2keep = ['caprieval_rank', 'model'] + list(AXIS_NAMES.keys())
         structs_df = structs_df[cols2keep]
         # model has ../../01_rigidbody/rigidbody_62.pdb.gz
@@ -933,11 +952,11 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     clusters_df, structs_df = create_other_cluster(
         clusters_df,
         structs_df,
-        max_clusters=11,
+        max_clusters=topX_clusters + 1,
         )
 
     clusters_df = clean_capri_table(clusters_df)
-    structs_df = find_best_struct(structs_df, max_best_structs=4)
+    structs_df = find_best_struct(structs_df, max_best_structs=clustered_topX)
     df_merged = pd.merge(clusters_df, structs_df, on="cluster_id")
     return df_merged
 

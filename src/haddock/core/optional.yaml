@@ -21,4 +21,12 @@ postprocess:
     used to plot the results of a HADDOCK3 workflow. If this option, this command
     is automatically executed at the end of the workflow (on the caprieval folders).
   explevel: easy
-
+gen_archive:
+  default: false
+  type: boolean
+  title: Generates an archive of the run and of the analysis.
+  short: If true, executes haddock3-analyse in self_contained mode and generates
+    archives of the run_directory and of the analysis in two separated tgz files.
+  long: If true, executes haddock3-analyse in self_contained mode and generates
+    archives of the run_directory and of the analysis in two separated tgz files.
+  explevel: easy

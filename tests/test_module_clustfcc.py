@@ -12,10 +12,10 @@ from haddock.modules.analysis.clustfcc import HaddockModule as ClustFCCModule
 
 
 @pytest.fixture(name="fcc_module")
-def fixture_fcc_module():
+def fixture_fcc_module(monkeypatch):
     """Clustfcc module."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield ClustFCCModule(order=1, path=Path("."), initial_params=clustfcc_pars)
 
 

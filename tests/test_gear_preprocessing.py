@@ -404,7 +404,6 @@ def test_process_pdbs():
     assert len(result) == 1
 
     expected = corrected_pdb.read_text().rstrip(os.linesep).split(os.linesep)
-    Path('testpreprocessing.pdb').write_text(os.linesep.join(result[0]))
 
     for i, (rline, eline) in enumerate(zip_longest(result[0], expected)):
         assert rline == eline, i

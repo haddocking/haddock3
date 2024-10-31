@@ -98,10 +98,10 @@ def fixture_ranked_models() -> list[PDBFile]:
 
 
 @pytest.fixture(name="seletopclust")
-def fixture_seletopclust():
+def fixture_seletopclust(monkeypatch):
     """Test module __init__()."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         yield SeleTopClustModule(
             order=1,
             path=Path("."),
@@ -356,10 +356,10 @@ def test_sort_models_ranked(ranked_models):
     assert sorted_models[1].file_name == ranked_models[0].file_name
 
 
-def test_write_selected_models(ranked_models):
+def test_write_selected_models(ranked_models, monkeypatch):
     """Test writing of models names mapping file."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         outputfile = "test-seletopclusts.txt"
         models = write_selected_models(
             output_path=outputfile,

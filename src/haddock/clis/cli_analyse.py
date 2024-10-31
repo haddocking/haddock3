@@ -268,7 +268,7 @@ def run_capri_analysis(
     io.load(filename)
     # unpack the files if they are compressed
     if is_cleaned:
-        path_to_unpack = io.output[0].path
+        path_to_unpack = io.output[0].rel_path.parent
         haddock3_unpack(path_to_unpack, ncores=ncores)
     # define step_order. We add one to it, as the caprieval module will
     # interpret itself as being after the selected step
@@ -277,7 +277,7 @@ def run_capri_analysis(
     caprieval_module = HaddockModule(
         order=step_order,
         path=Path(run_dir),
-        initial_params=caprieval_params,
+        init_params=caprieval_params,
     )
     caprieval_module.update_params(**capri_dict)
     # updating mode and ncores

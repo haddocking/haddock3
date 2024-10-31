@@ -44,6 +44,7 @@ dependencies = [
   'pandas==2.*',
   'plotly==5.24.1',
   'freesasa>=2.2.1',
+  'setuptools',
 ]
 
 [project.optional-dependencies]

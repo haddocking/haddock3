@@ -508,11 +508,21 @@ def rename_nucbases(structure):
             for chain in model:
                 for r in chain.get_residues():
                     if r.resname in ref_dic.keys():
-                        # rename!
+                        # rename
                         r.resname = ref_dic[r.resname]
 
 
 def martinize(input_pdb, output_path, skipss):
+    """
+    
+    Args:
+        input_pdb: str
+        output_path: str
+        skipss: boolean
+    
+    Returns:
+        cg_pdb_name: str
+    """
 
     if not input_pdb:
         emsg = "No input file detected"

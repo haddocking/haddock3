@@ -12,11 +12,11 @@ from haddock.modules.scoring.emscoring import HaddockModule as EMScoring
 
 
 @pytest.fixture(name="emscoring")
-def fixture_emscoring():
+def fixture_emscoring(monkeypatch):
     """???"""
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield EMScoring(
             order=1, path=Path("."), initial_params=DEFAULT_EMSCORING_PARAMS
         )

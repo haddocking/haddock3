@@ -17,10 +17,10 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
 
 
 @pytest.fixture(name="rmsdmatrix")
-def fixture_rmsdmatrix():
+def fixture_rmsdmatrix(monkeypatch):
     """rmsdmatrix module fixture"""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield Rmsdmatrix(
             order=2, path=Path("."), initial_params=DEFAULT_RMSDMATRIX_PARAMS
         )

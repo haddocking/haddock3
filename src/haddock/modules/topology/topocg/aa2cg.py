@@ -607,12 +607,12 @@ def martinize(input_pdb, output_path, skipss):
     # Write CG structure
     cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
     io.set_structure(cg_model)
-    io.save(cg_pdb_name, write_end=1)
+    io.save("temp.pdb", write_end=1)
 
     # make sure atom names are in the correct place
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
-    out = open("temp.pdb", "w")
-    for line in open(cg_pdb_name):
+    out = open(cg_pdb_name, "w")
+    for line in open("temp.pdb", "r"):
         if "ATOM" in line[:4]:
             atom_name = line[12:16].split()[0]
             # mind the spacing
@@ -628,7 +628,7 @@ def martinize(input_pdb, output_path, skipss):
             n_l = line
         out.write(n_l)
     out.close()
-    subprocess.call(["mv", "temp.pdb", cg_pdb_name])
+    if Path("temp.pdb").exists(): Path("temp.pdb").unlink()
 
     # Write Restraints
     tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl"

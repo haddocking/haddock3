@@ -230,9 +230,9 @@ def test_category_hierarchy():
     assert categories_1 == categories_2
 
 
-def test_get_module_steps_folders():
+def test_get_module_steps_folders(monkeypatch):
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         rd = Path("run_dir_test")
         rd.mkdir()
         Path(rd, "0_topoaa").mkdir()
@@ -262,14 +262,14 @@ def test_get_module_steps_folders():
         ("topoaa", False),
     ],
 )
-def test_is_step_folder(in_, expected):
+def test_is_step_folder(in_, expected, monkeypatch):
     """
     Test the `is_step_folder` funtion.
 
     Tests a combination of Paths and strings.
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         Path(in_).mkdir(parents=True)
         result = is_step_folder(in_)
         assert result == expected

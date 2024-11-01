@@ -8,7 +8,7 @@ from typing import Any, Optional
 from shutil import which
 
 from haddock import log
-
+from haddock.core.exceptions import HaddockTermination
 
 class MPIScheduler:
     """Schedules tasks to be executed via MPI."""
@@ -31,7 +31,8 @@ class MPIScheduler:
             cmd = f"srun haddock3-mpitask {pkl_tasks}"
         else:
             log.error("mpirun or srun are not available on the system")
-            sys.exit()
+            log.error("Terminating run!")
+            raise HaddockTermination
 
         log.debug(f"MPI cmd is {cmd}")
 
@@ -44,7 +45,8 @@ class MPIScheduler:
 
         if err:
             log.error(err)
-            sys.exit()
+            log.error("Terminating run!")
+            raise HaddockTermination
 
     def _pickle_tasks(self) -> Path:
         """Pickle the tasks."""

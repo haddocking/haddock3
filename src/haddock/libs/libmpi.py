@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Optional
-from distutils.spawn import find_executable
+from shutil import which
 
 from haddock import log
 
@@ -25,9 +25,9 @@ class MPIScheduler:
             f"Executing tasks with the haddock3-mpitask runner using "
             f"{self.ncores} processors..."
             )
-        if find_executable("mpirun") is not None:
+        if which("mpirun") is not None:
             cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
-        elif find_executable("srun") is not None:
+        elif which("srun") is not None:
             cmd = f"srun haddock3-mpitask {pkl_tasks}"
         else:
             log.error("mpirun or srun are not available on the system")

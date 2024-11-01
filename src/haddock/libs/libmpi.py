@@ -10,6 +10,7 @@ from shutil import which
 from haddock import log
 from haddock.core.exceptions import HaddockTermination
 
+
 class MPIScheduler:
     """Schedules tasks to be executed via MPI."""
 

@@ -26,7 +26,7 @@ define
 
   {- define all beta anomer carbo residues for the links below -}
   beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP 
-          or resname NAG or resname NGA);
+          or resname NAG or resname NGA or resname BDP);
 
   {- Maximum distance between linkable atoms -}
   carbo_dist= 2.0;

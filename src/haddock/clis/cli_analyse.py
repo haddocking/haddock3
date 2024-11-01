@@ -464,7 +464,7 @@ def zip_top_ranked(
         archive_was_created = archive_files_ext(".", "pdb")
         # Delete the pdb files
         for file_ in top_ranked_mapping.values():
-            file_.unlink()
+            Path(file_).unlink()
         output_fname = Path(f"{summary_name}.tgz")
         if archive_was_created:
             # move archive to summary

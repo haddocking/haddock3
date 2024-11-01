@@ -1983,8 +1983,14 @@ ATOM O62  TYPE=OC   CHARge=-0.760   END
   DIHEDRAL C3 C4 O4 HO4
   DIHEDRAL C5 O5 C1 C2 ! the only one not defined in haddock
 
-  IMPROPER C6 C5 O62 O61
-
+  IMPRoper C6 C5 O62 O61
+  
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
 END
 
 !-------------------------------------------------------------------

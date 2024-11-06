@@ -25,10 +25,12 @@ The following files are generated:
 - **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).
 """
 
+
+from os import linesep
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Union
+from haddock.core.typing import FilePath, Optional, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
@@ -38,6 +40,8 @@ from haddock.modules.analysis.caprieval.capri import (
     dump_weights,
     extract_data_from_capri_class,
     )
+from pdbtools.pdb_wc import run as pdb_wc
+from pdbtools.pdb_selmodel import run as pdb_selmodel
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -69,6 +73,92 @@ class HaddockModule(BaseHaddockModule):
                 return True
         return False
 
+    def validate_reference(self, reference: Path) -> Path:
+        """Validate the reference file by returning only one model.
+
+        Parameters
+        ----------
+        reference : Path
+            Path to the input reference structure, possibly containing
+            an ensemble.
+
+        Returns
+        -------
+        reference or first_model_path : Path
+            Path to the reference structure to be used downstream.
+        """
+        # Extremly complicated stuff to manage the gathering of the sys.stdout,
+        # as the pdb_tools.pdb_wc is basically writing on it.
+        import sys
+        from io import TextIOWrapper, BytesIO
+        # Memorize previous sys.stdout
+        original_stdout = sys.stdout
+        # setup the new stdout environment
+        sys.stdout = TextIOWrapper(BytesIO(), sys.stdout.encoding)
+
+        # Count number of models
+        with open(reference, "r") as fh:
+            pdb_wc(fh, "m")
+        # Get output
+        sys.stdout.seek(0)  # Jump to the start
+        wc_return = sys.stdout.read()  # Read output
+        # Restore original stdout
+        sys.stdout.close()
+        sys.stdout = original_stdout
+        # Parse output
+        for line in wc_return.split("\n"):
+            if "No. models" in line:
+                sline = line.strip().split()
+                nb_models = int(sline[-1])
+                break
+        # Return reference as only one structure present
+        if nb_models == 1:
+            return reference
+
+        self.log(
+            f"Multiple structures ({nb_models}) found in reference file. "
+            "Using the first structure as reference. "
+            "Consider providing different ensemble elements as "
+            "reference_fname in sequential [caprieval] modules."
+            )
+        # Write new reference
+        first_model_path = Path("first_model_reference.pdb")
+        with open(reference, "r") as rin, open(first_model_path, "w") as rout:
+            # Gather only first model (as string)
+            for line in pdb_selmodel(rin, [1]):
+                rout.write(line)
+        return first_model_path
+
+    def get_reference(self, models: list[PDBFile]) -> Path:
+        """Manage to obtain the reference structure to be used downstream.
+
+        Parameters
+        ----------
+        models : list[PDBFile]
+            List of input model to be evaluated, among which the best
+            can serve as reference structure if none provided.
+
+        Returns
+        -------
+        reference : Path
+            Path to the reference structure to be used downstream.
+        """
+        if self.params["reference_fname"] is not None:
+            _reference = Path(self.params["reference_fname"])
+            reference = self.validate_reference(_reference)
+        else:
+            self.log(
+                "No reference structure provided. "
+                "Using the structure with the lowest score from previous step"
+            )
+            # Sort by score to find the "best"
+            models.sort()
+            best_model = models[0]
+            assert isinstance(best_model, PDBFile), "Best model is not a PDBFile"
+            best_model_fname = best_model.rel_path
+            reference = best_model_fname
+        return reference
+
     def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
@@ -79,26 +169,15 @@ class HaddockModule(BaseHaddockModule):
         models = self.previous_io.retrieve_models(individualize=True)
         if self.is_nested(models):
             raise ValueError(
-                "CAPRI module cannot be executed after modules that produce a nested list of models"
+                "CAPRI module cannot be executed after "
+                "modules that produce a nested list of models."
             )
 
         # dump previously used weights
         dump_weights(self.order)
 
-        # Sort by score to find the "best"
-        models.sort()
-        best_model = models[0]
-        assert isinstance(best_model, PDBFile), "Best model is not a PDBFile"
-        best_model_fname = best_model.rel_path
-
-        if self.params["reference_fname"]:
-            reference = Path(self.params["reference_fname"])
-        else:
-            self.log(
-                "No reference was given. "
-                "Using the structure with the lowest score from previous step"
-            )
-            reference = best_model_fname
+        # Get reference file
+        reference = self.get_reference(models)
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -106,11 +185,12 @@ class HaddockModule(BaseHaddockModule):
         #  for example during CAPRI scoring
         jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):
-            if isinstance(
-                model_to_be_evaluated, list
-            ):  # `models_to_be_evaluated` cannot be a list, `CAPRI` class is expecting a single model
+            # `models_to_be_evaluated` cannot be a list,
+            # `CAPRI` class is expecting a single model
+            if isinstance(model_to_be_evaluated, list):
                 raise ValueError(
-                    "CAPRI module cannot handle a list of `model_to_be_evaluated`"
+                    "CAPRI module cannot handle a list "
+                    "of `model_to_be_evaluated`"
                 )
             jobs.append(
                 CAPRI(
@@ -123,8 +203,10 @@ class HaddockModule(BaseHaddockModule):
             )
 
         engine = Scheduler(
-            tasks=jobs, ncores=self.params["ncores"], max_cpus=self.params["max_cpus"]
-        )
+            tasks=jobs,
+            ncores=self.params["ncores"],
+            max_cpus=self.params["max_cpus"],
+            )
         engine.run()
 
         jobs = engine.results

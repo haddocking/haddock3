@@ -143,7 +143,7 @@ class HaddockModule(BaseHaddockModule):
         reference : Path
             Path to the reference structure to be used downstream.
         """
-        if self.params["reference_fname"] is not None:
+        if self.params["reference_fname"]:
             _reference = Path(self.params["reference_fname"])
             reference = self.validate_reference(_reference)
         else:

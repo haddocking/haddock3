@@ -14,10 +14,10 @@ from . import golden_data
 
 
 @pytest.fixture(name="flexref")
-def fixture_fixture_flexref():
+def fixture_fixture_flexref(monkeypatch):
     """???"""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield Flexref(
             order=1,
             path=Path("."),

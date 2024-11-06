@@ -560,7 +560,7 @@ def test_calc_stats():
     assert np.isclose(observed_std, 1.3, atol=0.01)
 
 
-def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
+def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list, monkeypatch):
     """Test the cluster analysis."""
     model1, model2 = protprot_input_list[0], protprot_input_list[1]
     model1.clt_rank, model2.clt_rank = 1, 2
@@ -572,7 +572,7 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     protprot_caprimodule.ilrmsd = 4.3
     protprot_caprimodule.rmsd = (0.01,)
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         capri_cluster_analysis(
             capri_list=[protprot_caprimodule, protprot_caprimodule],
             model_list=[model1, model2],
@@ -788,7 +788,7 @@ def test_protdna_swapped_chains(protdna_caprimodule):
     assert np.isclose(protdna_caprimodule.ilrmsd, 4.91, atol=0.01)
 
 
-def test_capri_run(mocker):
+def test_capri_run(mocker, monkeypatch):
     """???"""
 
     mock_get_align_func = mocker.Mock(
@@ -801,7 +801,7 @@ def test_capri_run(mocker):
 
     mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         capri = CAPRI(
             identificator="test",
             model=Path("some-file"),
@@ -870,8 +870,7 @@ def test_capri_run(mocker):
 
 
 def test_rank_according_to_score():
-    """???"""
-
+    """test ranking according to score."""
     data = {
         1: {
             "score": 3.0,
@@ -896,7 +895,7 @@ def test_rank_according_to_score():
     assert ranked_data[3]["caprieval_rank"] == 3
 
 
-def test_extract_data_from_capri_class(mocker):
+def test_extract_data_from_capri_class(mocker, monkeypatch):
     """???"""
 
     mocker.patch(
@@ -906,7 +905,7 @@ def test_extract_data_from_capri_class(mocker):
     mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
 
         c = CAPRI(
             path=Path("."),
@@ -928,9 +927,9 @@ def test_extract_data_from_capri_class(mocker):
             unw_energies={"energy": random_energy},
         )
 
-        random_clt_id = random.randint(0, 100)
-        random_clt_rank = random.randint(0, 100)
-        random_clt_model_rank = random.randint(0, 100)
+        random_clt_id = random.randint(1, 100)
+        random_clt_rank = random.randint(1, 100)
+        random_clt_model_rank = random.randint(1, 100)
         random_md5 = str(uuid.uuid4())
         random_score = random.random()
         random_irmsd = random.random()

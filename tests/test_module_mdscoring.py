@@ -12,11 +12,11 @@ from haddock.modules.scoring.mdscoring import HaddockModule as MDScoring
 
 
 @pytest.fixture(name="mdscoring")
-def fixture_mdscoring():
+def fixture_mdscoring(monkeypatch):
     """mdscoring module fixture"""
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield MDScoring(
             order=1, path=Path("."), initial_params=MDSCORING_DEFAULT_PARAMS
         )

@@ -253,11 +253,13 @@ def example_df_scan_clt():
     yield example_df_scan_clt
 
 
-def test_make_alascan_plot(example_df_scan_clt):
+def test_make_alascan_plot(example_df_scan_clt, monkeypatch):
     """Test make_alascan_plot."""
-    make_alascan_plot(example_df_scan_clt, clt_id="-")
-    # assert existence of plot
-    assert Path("scan_clt_-.html").exists()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        make_alascan_plot(example_df_scan_clt, clt_id="-")
+        # assert existence of plot
+        assert Path("scan_clt_-.html").exists()
 
 
 def test_plotly_cdn_url():
@@ -289,11 +291,11 @@ def test_offline_js_manager():
     assert plotly_cdn_full_url in offline_plotly_js
 
 
-def test_box_plot_handler(example_capri_ss, cluster_ranking):
+def test_box_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
     """Test box plot generation without format definition."""
     initdir = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         box_plot_handler(
             example_capri_ss.resolve(),
             cluster_ranking,
@@ -302,14 +304,12 @@ def test_box_plot_handler(example_capri_ss, cluster_ranking):
             )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) == 0
-    os.chdir(initdir)
 
 
-def test_box_plot_handler_format(example_capri_ss, cluster_ranking):
+def test_box_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch):
     """Test box plot generation with png format definition."""
-    initdir = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         box_plot_handler(
             example_capri_ss.resolve(),
             cluster_ranking,
@@ -318,14 +318,12 @@ def test_box_plot_handler_format(example_capri_ss, cluster_ranking):
             )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) > 0
-    os.chdir(initdir)
 
 
-def test_scatter_plot_handler(example_capri_ss, cluster_ranking):
+def test_scatter_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
     """Test scatter plot generation without format definition."""
-    initdir = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         scatter_plot_handler(
             example_capri_ss.resolve(),
             cluster_ranking,
@@ -334,14 +332,12 @@ def test_scatter_plot_handler(example_capri_ss, cluster_ranking):
             )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) == 0
-    os.chdir(initdir)
 
 
-def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking):
+def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch):
     """Test scatter plot generation with png format definition."""
-    initdir = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         scatter_plot_handler(
             example_capri_ss.resolve(),
             cluster_ranking,
@@ -350,4 +346,3 @@ def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking):
             )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) > 0
-    os.chdir(initdir)

@@ -2089,6 +2089,69 @@ RESIdue MMA  ! methyl alpha-D-mannopyranoside  ! axial O-methyl group added to C
 
 END
 
+RESIdue XYS  !alpha-D-xylopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM H51  TYPE=HAS  CHARge= 0.100   END
+  ATOM H52  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H51
+  BOND C5 H52
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H51 H52 O5 C4  {C5}
+
+END
+
 !-------------------------------------------------------------------
 !-------------------------------------------------------------------
 

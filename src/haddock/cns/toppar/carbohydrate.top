@@ -6,6 +6,8 @@ REMARKS Topologies updated to Feng, PLoS One, 2017
 REMARKS PMC 5726640
 REMARKS Alexandre Bonvin July-2020
 REMARKS Patches added for GAL-SIA 2-3 and 2.6 linkages
+REMARKS Marco Giulini November-2024
+REMARKS Topologies added for BDP-MMA-
 REMARKS ----------------------------------------------------------
 REMARKS Currently supported carbohydrates and their anomers:
 REMARK (codes in parenthesis are commonly used alternatives - currently not recognized by CNS):
@@ -27,6 +29,7 @@ REMARKS SIA:       alpha-N-acetyl neuraminic acid
 REMARKS SIB:       beta-N-acetyl neuraminic acid - A. Bonvin
 REMARKS XYP:       beta-D-xylopyranose
 REMARKS BDP:       beta-D-glucoronic acid
+REMARKS MMA:       methyl alpha-D-mannopyranoside
 REMARKS ----------------------------------------------------------
 REMARKS Links
 REMARKS B1N: N-linked glycan beta link from NAG and NDG to ASN (asparagine)
@@ -1991,6 +1994,99 @@ ATOM O62  TYPE=OC   CHARge=-0.760   END
   IMPRoper H4 C3 O4 C5  {C4}
   IMPRoper H5 C4 O5 C6  {C5}
   IMPRoper H61 H62 O6 C5  !stereo C6
+END
+
+RESIdue MMA  ! methyl alpha-D-mannopyranoside  ! axial O-methyl group added to C1 on mannose
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.290   END ! lowered partial charge according to charmm36
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OAS  CHARge=-0.360   END ! lowered partial charge according to charmm36 and changed atom type as in MAG
+! ATOM HO1  TYPE=H    CHARge= 0.400   END ! deleted HO1
+  ATOM C7   TYPE=CCS  CHARge=-0.090   END ! C7 defined as CCS for consistency with MAG.
+  ATOM H71  TYPE=HAS  CHARge= 0.090   END ! methyl hydrogens with charmm charges
+  ATOM H72  TYPE=HAS  CHARge= 0.090   END
+  ATOM H73  TYPE=HAS  CHARge= 0.090   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+  BOND O1 C7
+  BOND C7 H71
+  BOND C7 H72
+  BOND C7 H73
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+  DIHEDRAL O5 C1 O1 C7  ! the first not in HADDOCK: C7 dihedral
+! DIHEDRAL C1 O1 C7 H71 ! the second not in HADDOCK. commented out in agreement with MAG
+
+!  IMPRoper C1 H1 O5 C2    ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2    ! alpha-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 O2 C1 C3 {axial C2}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 O2 C1 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+
 END
 
 !-------------------------------------------------------------------

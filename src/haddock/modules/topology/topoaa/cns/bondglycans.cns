@@ -23,7 +23,7 @@ define
 (
   {- define all alpha anomer carbo residues for the links below -}
   alpha=   ( resname GLC or resname GLA or resname MAN or resname NDG or resname A2G or resname FUC or resname FCA or resname NDG
-          or resname MMA or resname XYS);
+          or resname MMA or resname XYS or resname RAM);
 
   {- define all beta anomer carbo residues for the links below -}
   beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP 

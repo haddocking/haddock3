@@ -26,7 +26,6 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     ParamMap,
-    Self,
     Union,
     )
 from haddock.gear.config import load as read_config
@@ -620,7 +619,7 @@ class CAPRI:
         # The scheduler will use the return of the `run` method as the output of the tasks
         return copy.deepcopy(self)
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other):
         if self.params["dockq"] and \
                 (self.dockq != float("nan") or other.dockq != float("nan")):
             return self.dockq == other.dockq
@@ -641,7 +640,7 @@ class CAPRI:
             return self.rmsd == other.rmsd
         return True
 
-    def __lt__(self, other: Self) -> bool:
+    def __lt__(self, other):
         if self.params["dockq"] and \
                 (self.dockq != float("nan") or other.dockq != float("nan")):
             return self.dockq > other.dockq

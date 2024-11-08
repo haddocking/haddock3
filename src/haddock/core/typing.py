@@ -35,7 +35,6 @@ from typing import (
     MutableMapping,
     Optional,
     Protocol,
-    Self,
     Sequence,
     Sized,
     SupportsInt,

@@ -106,6 +106,7 @@ class HaddockModule(BaseHaddockModule):
         sys.stdout.close()
         sys.stdout = original_stdout
         # Parse output
+        # using here `\n` (and not os.linesep) as it is the output for pdb_wc
         for line in wc_return.split("\n"):
             if "No. models" in line:
                 sline = line.strip().split()

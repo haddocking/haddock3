@@ -105,12 +105,12 @@ def fixture_correct_rmsd_array():
     return np.array([1.0, 2.0, 2.5, 2.0, 3.0, 0.5])
 
 
-def test_read_rmsd_matrix(correct_rmsd_vec):
+def test_read_rmsd_matrix(correct_rmsd_vec, monkeypatch):
     """Check correct reading of rmsd matrix."""
     rmsd_vec = correct_rmsd_vec
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
 
         output_name = Path(Path.cwd(), "fake_rmsd.matrix")
         json_name = Path(Path.cwd(), "fake_rmsd.json")
@@ -129,12 +129,12 @@ def test_read_rmsd_matrix(correct_rmsd_vec):
             assert rmsd_vec[n][2] == matrix[n]
 
 
-def test_read_matrix_input(correct_rmsd_vec):
+def test_read_matrix_input(correct_rmsd_vec, monkeypatch):
     """Test wrong input to read_matrix."""
     rmsd_vec = correct_rmsd_vec
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         output_name = Path(Path.cwd(), "fake_rmsd.matrix")
 
         write_rmsd_matrix(output_name, rmsd_vec)
@@ -147,12 +147,12 @@ def test_read_matrix_input(correct_rmsd_vec):
             read_matrix(Path(output_name))
 
 
-def test_read_matrix_binomial(short_rmsd_vec):
+def test_read_matrix_binomial(short_rmsd_vec, monkeypatch):
     """Test rmsd matrix with length != binomial coefficient."""
     rmsd_vec = short_rmsd_vec
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         output_name = Path(Path.cwd(), "fake_rmsd.matrix")
         json_name = Path(Path.cwd(), "fake_rmsd.json")
 
@@ -166,12 +166,12 @@ def test_read_matrix_binomial(short_rmsd_vec):
             read_matrix(matrix_json.input[0])
 
 
-def test_read_matrix_npairs(correct_rmsd_vec):
+def test_read_matrix_npairs(correct_rmsd_vec, monkeypatch):
     """Test rmsd file with npairs != binomial coefficient."""
     rmsd_vec = correct_rmsd_vec
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         output_name = Path(Path.cwd(), "fake_rmsd.matrix")
         json_name = Path(Path.cwd(), "fake_rmsd.json")
 
@@ -185,12 +185,12 @@ def test_read_matrix_npairs(correct_rmsd_vec):
             read_matrix(matrix_json.input[0])
 
 
-def test_read_matrix_malformed(malformed_rmsd_vec):
+def test_read_matrix_malformed(malformed_rmsd_vec, monkeypatch):
     """Test read malformed rmsd file."""
     rmsd_vec = malformed_rmsd_vec
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         output_name = Path(Path.cwd(), "fake_rmsd.matrix")
         json_name = Path(Path.cwd(), "fake_rmsd.json")
 
@@ -204,12 +204,12 @@ def test_read_matrix_malformed(malformed_rmsd_vec):
             read_matrix(matrix_json.input[0])
 
 
-def test_correct_clusters(correct_rmsd_array):
+def test_correct_clusters(correct_rmsd_array, monkeypatch):
     """Test correct average-linkage hierarchical clustering."""
     rmsd_matrix = correct_rmsd_array
 
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         observed_dendrogram = get_dendrogram(rmsd_matrix, linkage_type="average")
 
         expected_dendrogram = np.array(
@@ -230,10 +230,10 @@ def test_correct_clusters(correct_rmsd_array):
 # TODO: add tests for the other categories of clustering
 
 
-def test_correct_output(protdna_input_list, output_list):
+def test_correct_output(protdna_input_list, output_list, monkeypatch):
     """Test correct clustrmsd output."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         rmsd_module = HaddockRMSD(order=2, path=Path(""), initial_params=rmsd_pars)
         rmsd_module.previous_io.output = protdna_input_list
         rmsd_module._run()

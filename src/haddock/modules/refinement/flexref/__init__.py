@@ -6,10 +6,11 @@ dynamics in torsion angle space.
 
 
 This semi-flexible SA consists of several stages:
-- High temperature rigid body molecular dynamics
-- Rigid body SA
-- Semi-flexible SA with flexible side-chains at the interface
-- Semi-flexible SA with fully flexible interface (both backbone and side-chains)
+
+* High temperature rigid body molecular dynamics
+* Rigid body SA
+* Semi-flexible SA with flexible side-chains at the interface
+* Semi-flexible SA with fully flexible interface (both backbone and side-chains)
 
 By default, only the interface regions is treated as flexible. It is automatically
 defined based on the intermolecular contacts made. It is also possible to manually

@@ -90,24 +90,15 @@ def fixture_ref_dist_matrix():
 
 
 @pytest.fixture(name="contactmap")
-def fixture_contactmap():
+def fixture_contactmap(monkeypatch):
     """Return contmap module."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield ContactMapModule(
             order=1,
             path=Path("."),
             initial_params=DEFAULT_CONFIG,
         )
-
-
-# @pytest.fixture
-# def protprot_input_list() -> list:
-#     """Prot-prot input."""
-#     return [
-#         PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-#         PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
-#     ]
 
 
 @pytest.fixture(name="cluster_input_iter")
@@ -134,14 +125,14 @@ def fixture_params() -> dict:
 
 
 @pytest.fixture(name="protprot_contactmap")
-def fixture_protprot_contactmap(protprot_input_list, params):
+def fixture_protprot_contactmap(protprot_input_list, params, monkeypatch):
     """???"""
     params["single_model_analysis"] = True
     with (
         tempfile.TemporaryDirectory() as tempdir,
         tempfile.NamedTemporaryFile() as temp_f,
     ):
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         return ContactsMap(
             model=Path(protprot_input_list[0].rel_path),
             output=Path(temp_f.name),
@@ -150,13 +141,13 @@ def fixture_protprot_contactmap(protprot_input_list, params):
 
 
 @pytest.fixture(name="clustercontactmap")
-def fixture_clustercontactmap(protprot_input_list, params):
+def fixture_clustercontactmap(protprot_input_list, params, monkeypatch):
     """???"""
     with (
         tempfile.TemporaryDirectory() as tempdir,
         tempfile.NamedTemporaryFile() as temp_f,
     ):
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         return ClusteredContactMap(
             models=[Path(m.rel_path) for m in protprot_input_list],
             output=Path(temp_f.name),
@@ -404,14 +395,14 @@ def test_clustercontactmap_run(clustercontactmap, contactmap_output_ext):
         Path(fpath).unlink(missing_ok=False)
 
 
-def test_write_res_contacts(res_res_contacts):
+def test_write_res_contacts(res_res_contacts, monkeypatch):
     """Test list of dict to tsv generation."""
 
     with (
         tempfile.TemporaryDirectory() as tempdir,
         tempfile.NamedTemporaryFile(suffix=".tsv") as temp_f,
     ):
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         res_contact_output_f = write_res_contacts(
             res_res_contacts=res_res_contacts,
             header=["res1", "res2", "ca-ca-dist"],
@@ -581,10 +572,11 @@ def test_make_chordchart(
     dist_matrix,
     intertype_matrix,
     protein_labels,
+    monkeypatch,
 ):
     """Test main function."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         outputpath = "chord.html"
         graphpath = make_chordchart(
             contact_matrix,

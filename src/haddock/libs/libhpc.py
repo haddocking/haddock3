@@ -1,4 +1,5 @@
 """Module in charge of running tasks in HPC."""
+
 import os
 import re
 import shlex
@@ -22,19 +23,21 @@ JOB_STATUS_DIC = {
     "COMPLETED": "finished",
     "FAILED": "failed",
     "TIMEOUT": "timed-out",
-    }
+}
 
 TERMINATED_STATUS = (
     "finished",
     "failed",
     "timed-out",
-    )
+)
 
 # if you change these defaults, change also the values in the
 # modules/defaults.cfg file
 _tmpcfg = read_from_yaml_config(modules_defaults_path)
 HPCScheduler_CONCAT_DEFAULT: int = _tmpcfg["concat"]  # original value 1
-HPCWorker_QUEUE_LIMIT_DEFAULT: int = _tmpcfg["queue_limit"]  # original value 100 # noqa: E501
+HPCWorker_QUEUE_LIMIT_DEFAULT: int = _tmpcfg[
+    "queue_limit"
+]  # original value 100 # noqa: E501
 HPCWorker_QUEUE_DEFAULT: str = _tmpcfg["queue"]  # original value ""
 del _tmpcfg
 
@@ -43,13 +46,13 @@ class HPCWorker:
     """Defines the HPC Job."""
 
     def __init__(
-            self,
-            tasks: list[CNSJob],
-            num: int,
-            job_id: Optional[int] = None,
-            workfload_manager: str = 'slurm',
-            queue: Optional[str] = None,
-            ) -> None:
+        self,
+        tasks: list[CNSJob],
+        num: int,
+        job_id: Optional[int] = None,
+        workfload_manager: str = "slurm",
+        queue: Optional[str] = None,
+    ) -> None:
         """
         Define the HPC job.
 
@@ -66,38 +69,36 @@ class HPCWorker:
         self.job_id = job_id
         self.job_status = "unknown"
 
-        self.moddir = Path(tasks[0].envvars['MODDIR'])
-        self.toppar = tasks[0].envvars['TOPPAR']
-        self.cns_folder = tasks[0].envvars['MODULE']
-        module_name = \
-            Path(tasks[0].envvars['MODDIR']).resolve().stem.split('_')[-1]
-        self.job_fname = Path(self.moddir, f'{module_name}_{num}.job')
+        self.moddir = Path(tasks[0].envvars["MODDIR"])
+        self.toppar = tasks[0].envvars["TOPPAR"]
+        self.cns_folder = tasks[0].envvars["MODULE"]
+        module_name = Path(tasks[0].envvars["MODDIR"]).resolve().stem.split("_")[-1]
+        self.job_fname = Path(self.moddir, f"{module_name}_{num}.job")
         self.workload_manager = workfload_manager
         self.queue = queue
 
-    def prepare_job_file(self, queue_type: str = 'slurm') -> None:
+    def prepare_job_file(self, queue_type: str = "slurm") -> None:
         """Prepare the job file for all the jobs in the task list."""
         job_file_contents = create_job_header_funcs[queue_type](
-            job_name='haddock3',
+            job_name="haddock3",
             queue=self.queue,
             ncores=1,
             work_dir=self.moddir,
-            stdout_path=self.job_fname.with_suffix('.out'),
-            stderr_path=self.job_fname.with_suffix('.err'),
-            )
+            stdout_path=self.job_fname.with_suffix(".out"),
+            stderr_path=self.job_fname.with_suffix(".err"),
+        )
 
         job_file_contents += create_CNS_export_envvars(
             MODDIR=self.moddir,
             MODULE=self.cns_folder,
             TOPPAR=self.toppar,
-            )
+        )
 
         job_file_contents += f"cd {self.moddir}{os.linesep}"
         for job in self.tasks:
             cmd = (
-                f"{job.cns_exec} < {job.input_file} > {job.output_file}"
-                f"{os.linesep}"
-                )
+                f"{job.cns_exec} < {job.input_file} > {job.output_file}" f"{os.linesep}"
+            )
             job_file_contents += cmd
 
         self.job_fname.write_text(job_file_contents)
@@ -124,9 +125,7 @@ class HPCWorker:
 
         return self.job_status
 
-    def cancel(
-            self,
-            bypass_statuses: Container[str] = ("finished", "failed")) -> None:
+    def cancel(self, bypass_statuses: Container[str] = ("finished", "failed")) -> None:
         """Cancel the execution."""
         if self.update_status() not in bypass_statuses:
             log.info(f"Canceling {self.job_fname.name} - {self.job_id}")
@@ -138,12 +137,12 @@ class HPCScheduler:
     """Schedules tasks to run in HPC."""
 
     def __init__(
-            self,
-            task_list: list[CNSJob],
-            target_queue: str = HPCWorker_QUEUE_DEFAULT,
-            queue_limit: int = HPCWorker_QUEUE_LIMIT_DEFAULT,
-            concat: int = HPCScheduler_CONCAT_DEFAULT,
-            ) -> None:
+        self,
+        task_list: list[CNSJob],
+        target_queue: str = HPCWorker_QUEUE_DEFAULT,
+        queue_limit: int = HPCWorker_QUEUE_LIMIT_DEFAULT,
+        concat: int = HPCScheduler_CONCAT_DEFAULT,
+    ) -> None:
         self.num_tasks = len(task_list)
         self.queue_limit = queue_limit
         self.concat = concat
@@ -151,16 +150,11 @@ class HPCScheduler:
         # split tasks according to concat level
         if concat > 1:
             log.info(
-                f"Concatenating, each .job will produce {concat} "
-                "(or less) models"
-                )
-        job_list = [
-            task_list[i:i + concat] for i in range(0, len(task_list), concat)
-            ]
+                f"Concatenating, each .job will produce {concat} " "(or less) models"
+            )
+        job_list = [task_list[i : i + concat] for i in range(0, len(task_list), concat)]
 
-        self.worker_list = [
-            HPCWorker(t, j) for j, t in enumerate(job_list, start=1)
-            ]
+        self.worker_list = [HPCWorker(t, j) for j, t in enumerate(job_list, start=1)]
 
         # set the queue
         #  (this is outside the comprehension for clarity)
@@ -173,11 +167,10 @@ class HPCScheduler:
     def run(self) -> None:
         """Run tasks in the Queue."""
         # split by maximum number of submission so we do it in batches
-        adaptive_l: list[float] = []
         batch = [
-            self.worker_list[i:i + self.queue_limit]
+            self.worker_list[i : i + self.queue_limit]
             for i in range(0, len(self.worker_list), self.queue_limit)
-            ]
+        ]
         total_batches = len(batch)
         try:
             for batch_num, worker_list in enumerate(batch, start=1):
@@ -188,6 +181,7 @@ class HPCScheduler:
 
                 # check if those finished
                 completed: bool = False
+                elapsed: float = 0.0
                 while not completed:
                     # Initiate count of terminated jobs
                     terminated_count: int = 0
@@ -197,9 +191,8 @@ class HPCScheduler:
                         # Log status if not finished
                         if worker.job_status != "finished":
                             log.info(
-                                f">> {worker.job_fname.name}"
-                                f" {worker.job_status}"
-                                )
+                                f">> {worker.job_fname.name}" f" {worker.job_status}"
+                            )
                         # Increment number of terminated works
                         if worker.job_status in TERMINATED_STATUS:
                             terminated_count += 1
@@ -210,28 +203,22 @@ class HPCScheduler:
                         completed = True
                         end = time.time()
                         elapsed = end - start
-                        adaptive_l.append(elapsed)
                     else:
-                        if not adaptive_l:
-                            # This is the first run, use pre-defined waits
-                            if len(worker_list) < 10:
-                                sleep_timer = 10
-                            elif len(worker_list) < 50:
-                                sleep_timer = 30
-                            else:
-                                sleep_timer = 60
+                        # use pre-defined waits
+                        if len(worker_list) < 10:
+                            sleep_timer = 10
+                        elif len(worker_list) < 50:
+                            sleep_timer = 30
                         else:
-                            # We already know how long it took, use the average
-                            sleep_timer = round(
-                                sum(adaptive_l) / len(adaptive_l)
-                                )
+                            sleep_timer = 60
                         log.info(f">> Waiting... ({sleep_timer:.2f}s)")
                         time.sleep(sleep_timer)
 
                 per = (float(batch_num) / float(total_batches)) * 100
                 log.info(
                     f">> Batch {batch_num}/{total_batches} took "
-                    f"{elapsed:.2f}s to finish, {per:.2f}% complete")
+                    f"{elapsed:.2f}s to finish, {per:.2f}% complete"
+                )
 
         except KeyboardInterrupt as err:
             self.terminate()
@@ -247,13 +234,13 @@ class HPCScheduler:
 
 
 def create_slurm_header(
-        job_name: FilePath = 'haddock3_slurm_job',
-        work_dir: FilePath = '.',
-        stdout_path: FilePath = 'haddock3_job.out',
-        stderr_path: FilePath = 'haddock3_job.err',
-        queue: Optional[str] = None,
-        ncores: int = 48,
-        ) -> str:
+    job_name: FilePath = "haddock3_slurm_job",
+    work_dir: FilePath = ".",
+    stdout_path: FilePath = "haddock3_job.out",
+    stderr_path: FilePath = "haddock3_job.err",
+    queue: Optional[str] = None,
+    ncores: int = 48,
+) -> str:
     """
     Create HADDOCK3 Slurm Batch job file.
 
@@ -291,13 +278,13 @@ def create_slurm_header(
 
 
 def create_torque_header(
-        job_name: FilePath = 'haddock3_slurm_job',
-        work_dir: FilePath = '.',
-        stdout_path: FilePath = 'haddock3_job.out',
-        stderr_path: FilePath = 'haddock3_job.err',
-        queue: Optional[str] = None,
-        ncores: int = 48,
-        ) -> str:
+    job_name: FilePath = "haddock3_slurm_job",
+    work_dir: FilePath = ".",
+    stdout_path: FilePath = "haddock3_job.out",
+    stderr_path: FilePath = "haddock3_job.err",
+    queue: Optional[str] = None,
+    ncores: int = 48,
+) -> str:
     """
     Create HADDOCK3 Alcazar job file.
 
@@ -348,7 +335,7 @@ def to_torque_time(time: int) -> str:
     # Convert to hh:mm:ss string
     hh_mm_ss_l = [hours, remain_mins, 0]
     # Make sure hours contain at least 2 characters
-    hh_mm_ss = '{0:02d}:{1:02d}:{2:02d}'.format(*hh_mm_ss_l)
+    hh_mm_ss = "{0:02d}:{1:02d}:{2:02d}".format(*hh_mm_ss_l)
     return hh_mm_ss
 
 
@@ -369,7 +356,7 @@ def extract_slurm_status(slurm_out: str) -> str:
         # https://regex101.com/r/M2vbAc/1
         status = re.findall(STATE_REGEX, slurm_out)[0]
     except IndexError:
-        status = 'FAILED'
+        status = "FAILED"
     return status
 
 
@@ -392,15 +379,14 @@ def create_CNS_export_envvars(**envvars: Any) -> str:
 
     """
     exports = os.linesep.join(
-        f'export {key.upper()}={value}'
-        for key, value in envvars.items()
-        )
+        f"export {key.upper()}={value}" for key, value in envvars.items()
+    )
 
     return exports + os.linesep + os.linesep
 
 
 # the different job submission queues
 create_job_header_funcs = {
-    'torque': create_torque_header,
-    'slurm': create_slurm_header,
-    }
+    "torque": create_torque_header,
+    "slurm": create_slurm_header,
+}

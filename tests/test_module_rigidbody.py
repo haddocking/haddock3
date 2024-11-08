@@ -15,10 +15,10 @@ from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 
 
 @pytest.fixture(name="rigidbody_module")
-def fixture_rigidbody_module():
+def fixture_rigidbody_module(monkeypatch):
     """???"""
     with (tempfile.TemporaryDirectory() as tempdir,):
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
 
         yield RigidbodyModule(
             order=1,
@@ -27,10 +27,10 @@ def fixture_rigidbody_module():
         )
 
 
-def test_prev_fnames():
+def test_prev_fnames(monkeypatch):
     """Tests the correct retrieval of ambiguous restraints information."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         rigidbody = RigidbodyModule(
             order=1,
             path=Path("1_rigidbody"),

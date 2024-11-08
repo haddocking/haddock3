@@ -21,10 +21,10 @@ def fixture_params():
 
 
 @pytest.fixture
-def ilrmsdmatrix():
+def ilrmsdmatrix(monkeypatch):
     """Return ilrmsdmatrix module."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        os.chdir(tmpdir)
+        monkeypatch.chdir(tmpdir)
         yield IlrmsdmatrixModule(
             order=1,
             path=Path("."),
@@ -33,10 +33,10 @@ def ilrmsdmatrix():
 
 
 @pytest.fixture(name="contact_obj")
-def fixture_contact_obj(protprot_input_list, params):
+def fixture_contact_obj(protprot_input_list, params, monkeypatch):
     """Return example Contact object."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield Contact(
             model_list=protprot_input_list,
             output_name="contact",
@@ -48,10 +48,10 @@ def fixture_contact_obj(protprot_input_list, params):
 
 
 @pytest.fixture(name="contact_job_obj")
-def fixture_contact_job_obj(contact_obj, params):
+def fixture_contact_job_obj(contact_obj, params, monkeypatch):
     """Return example ContactJob object."""
     with tempfile.TemporaryDirectory() as tempdir:
-        os.chdir(tempdir)
+        monkeypatch.chdir(tempdir)
         yield ContactJob(
             Path("contact_output"),
             params,

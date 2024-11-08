@@ -2152,6 +2152,78 @@ RESIdue XYS  !alpha-D-xylopyranose
 
 END
 
+RESIdue ABE  !alpha-D-Abequopyranose
+GROUP
+
+ATOM C1   TYPE=CCE  CHARge= 0.340   END
+ATOM H1   TYPE=HAS  CHARge= 0.090   END
+ATOM O1   TYPE=OH1  CHARge=-0.650   END
+ATOM HO1  TYPE=H    CHARge= 0.420   END
+ATOM C5   TYPE=CCS  CHARge= 0.110   END
+ATOM H5   TYPE=HAS  CHARge= 0.090   END
+ATOM O5   TYPE=OES  CHARge=-0.400   END
+ATOM C2   TYPE=CCS  CHARge= 0.140   END
+ATOM H2   TYPE=HAS  CHARge= 0.090   END
+ATOM O2   TYPE=OH1  CHARge=-0.650   END
+ATOM HO2  TYPE=H    CHARge= 0.420   END
+ATOM C3   TYPE=CCS  CHARge=-0.180   END
+ATOM H31  TYPE=HAS  CHARge= 0.090   END
+ATOM H32  TYPE=HAS  CHARge= 0.090   END
+ATOM C4   TYPE=CCS  CHARge= 0.140   END
+ATOM H4   TYPE=HAS  CHARge= 0.090   END
+ATOM O4   TYPE=OH1  CHARge=-0.650   END
+ATOM HO4  TYPE=H    CHARge= 0.420   END
+ATOM C6   TYPE=CC6  CHARge=-0.270   END
+ATOM H61  TYPE=HAS  CHARge= 0.090   END
+ATOM H62  TYPE=HAS  CHARge= 0.090   END
+ATOM H63  TYPE=HAS  CHARge= 0.090   END
+
+  BOND C1 O1
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H31
+  BOND C3 H32
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 H63
+  BOND C5 O5
+
+! dihedrals taken from alpha mannose
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+! DIHEDRAL H3 C3 O3 HO3 ! not present anymore, substituted by the H31 H32 C4 C2 improper taken from SIA
+  DIHEDRAL H4 C4 O4 HO4
+! DIHEDRAL H5 C5 C6 O6 ! not present anymore (missing O6)
+! DIHEDRAL C5 C6 O6 H61 ! not present anymore (missing O6)
+  DIHEDRAL H5 C5 C6 H61 ! taken from fucoses and RAM
+
+  IMPRoper H31 H32 C4 C2 {C3} ! this improper is used in SIA but there the atom type of C2 is not CCS but CCE. 
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+
+END
+
 !-------------------------------------------------------------------
 !-------------------------------------------------------------------
 
@@ -3021,4 +3093,3 @@ END
 !-------------------------------------------------------------------
 
 set message=$old_message echo=$old_echo end
-

@@ -26,6 +26,7 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     ParamMap,
+    Self,
     Union,
     )
 from haddock.gear.config import load as read_config
@@ -619,6 +620,48 @@ class CAPRI:
         # The scheduler will use the return of the `run` method as the output of the tasks
         return copy.deepcopy(self)
 
+    def __eq__(self, other: Self) -> bool:
+        if self.params["dockq"] and \
+                (self.dockq != float("nan") or other.dockq != float("nan")):
+            return self.dockq == other.dockq
+        elif self.params["fnat"] and \
+                (self.fnat != float("nan") or other.fnat != float("nan")):
+            return self.fnat == other.fnat
+        elif self.params["ilrmsd"] and \
+                (self.ilrmsd != float("nan") or other.ilrmsd != float("nan")):
+            return self.ilrmsd == other.ilrmsd
+        elif self.params["lrmsd"] and \
+                (self.lrmsd != float("nan") or other.lrmsd != float("nan")):
+            return self.lrmsd == other.lrmsd
+        elif self.params["irmsd"] and \
+                (self.irmsd != float("nan") or other.irmsd != float("nan")):
+            return self.irmsd == other.irmsd
+        elif self.params["global_rmsd"] and \
+                (self.rmsd != float("nan") or other.rmsd != float("nan")):
+            return self.rmsd == other.rmsd
+        return True
+
+    def __lt__(self, other: Self) -> bool:
+        if self.params["dockq"] and \
+                (self.dockq != float("nan") or other.dockq != float("nan")):
+            return self.dockq > other.dockq
+        elif self.params["fnat"] and \
+                (self.fnat != float("nan") or other.fnat != float("nan")):
+            return self.fnat > other.fnat
+        elif self.params["ilrmsd"] and \
+                (self.ilrmsd != float("nan") or other.ilrmsd != float("nan")):
+            return self.ilrmsd < other.ilrmsd
+        elif self.params["lrmsd"] and \
+                (self.lrmsd != float("nan") or other.lrmsd != float("nan")):
+            return self.lrmsd < other.lrmsd
+        elif self.params["irmsd"] and \
+                (self.irmsd != float("nan") or other.irmsd != float("nan")):
+            return self.irmsd < other.irmsd
+        elif self.params["global_rmsd"] and \
+                (self.rmsd != float("nan") or other.rmsd != float("nan")):
+            return self.rmsd < other.rmsd
+        return False
+
     @staticmethod
     def _load_atoms(
         model: PDBPath,
@@ -781,9 +824,23 @@ def extract_data_from_capri_class(
     Raises:
         (Include any specific exceptions the function may raise)
     """
+    # Group results by models
+    by_model_data: dict[int, dict[Path, CAPRI]] = {}
+    for capri in capri_objects:
+        model_data = by_model_data.setdefault(capri.identificator, [])
+        model_data.append(capri)
+    # Finds best performances
+    selected_capri_objects: list[CAPRI] = []
+    for references_perfs in by_model_data.values():
+        # Sort them using built in __eq__ and __lt__ CAPRI methods
+        sorted_perfs = sorted(references_perfs)
+        # Select first on (best)
+        best_perf = sorted_perfs[0]
+        # Hold that guy
+        selected_capri_objects.append(best_perf)
 
     data: dict[int, ParamDict] = {}
-    for i, c in enumerate(capri_objects, start=1):
+    for i, c in enumerate(selected_capri_objects, start=1):
         data[i] = {
             "model": c.model,
             "md5": c.md5,

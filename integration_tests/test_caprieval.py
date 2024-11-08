@@ -400,7 +400,7 @@ def test_caprieval_default(
 
 
 def test_ss_clt_relation(caprieval_module):
-    """Check if the values in the ss.tsv match the ones in clt.tsv"""
+    """Check if the values in the ss.tsv match the ones in clt.tsv."""
 
     caprieval_module.previous_io = MockPreviousIO_with_models_to_be_clustered(
         path=caprieval_module.path
@@ -431,28 +431,48 @@ def test_caprieval_references(caprieval_module, model_list, monkeypatch):
     """Check behavior of reference selection."""
     # Test without reference
     caprieval_module.params["reference_fname"] = None
-    reference = caprieval_module.get_reference(model_list)
+    references = caprieval_module.get_reference(model_list)
+    assert len(references) == 1
+    reference = references[0]
     assert model_list[0].file_name in str(reference)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
-        # Add a reference
+        # Add a single conformation reference
         shutil.copy(
             Path(UNITTESTS_GOLDEN_DATA, "protprot_complex_2.pdb"),
             Path(".", "protprot_complex_2.pdb"),
         )
         caprieval_module.params["reference_fname"] = "protprot_complex_2.pdb"
-        reference = caprieval_module.get_reference(model_list)
+        references = caprieval_module.get_reference(model_list)
+        assert len(references) == 1
+        reference = references[0]
         assert "protprot_complex_2.pdb" in str(reference)
 
         # Add a multi-conformation reference
         multiref = Path(".", "multiref.pdb")
         shutil.copy(Path(GOLDEN_DATA, "hpr_ensemble.pdb"), multiref)
         caprieval_module.params["reference_fname"] = multiref
-        reference = caprieval_module.get_reference(model_list)
+        # Hope to gather only one reference
+        references = caprieval_module.get_reference(model_list)
+        assert len(references) == 1
+        reference = references[0]
         # New file was created
         assert reference.exists()
         # It is different from the previous one
         assert reference.resolve() != multiref.resolve()
         # The size is indeed smaller (only first conformation)
         assert reference.stat().st_size < multiref.stat().st_size
+
+        # Set the multiple reference parameter to True
+        caprieval_module.params["multiple_references"] = True
+        # Hope to gather multiple references
+        references = caprieval_module.get_reference(model_list)
+        assert len(references) > 1
+        for reference in references:
+            # New file was created
+            assert reference.exists()
+            # It is different from the previous one
+            assert reference.resolve() != multiref.resolve()
+            # The size is indeed smaller (only first conformation)
+            assert reference.stat().st_size < multiref.stat().st_size

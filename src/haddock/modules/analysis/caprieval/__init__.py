@@ -209,15 +209,15 @@ class HaddockModule(BaseHaddockModule):
         jobs: list[CAPRI] = []
         # Loop over models
         for i, model_to_be_evaluated in enumerate(models, start=1):
+            # `models_to_be_evaluated` cannot be a list,
+            # `CAPRI` class is expecting a single model
+            if isinstance(model_to_be_evaluated, list):
+                raise ValueError(
+                    "CAPRI module cannot handle a list "
+                    "of `model_to_be_evaluated`"
+                    )
             # Loop over references
             for reference in references:
-                # `models_to_be_evaluated` cannot be a list,
-                # `CAPRI` class is expecting a single model
-                if isinstance(model_to_be_evaluated, list):
-                    raise ValueError(
-                        "CAPRI module cannot handle a list "
-                        "of `model_to_be_evaluated`"
-                    )
                 jobs.append(
                     CAPRI(
                         identificator=i,

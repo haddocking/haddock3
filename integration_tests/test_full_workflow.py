@@ -86,6 +86,7 @@ def test_interactive_analysis_on_workflow(monkeypatch):
         # now running interactive re-clustering
         clustfcc_dir = f"{run_dir}/2_clustfcc"
         from haddock.clis.cli_re import maincli
+        # faking sys.argv in input to haddock3-re
         monkeypatch.setattr("sys.argv",
                             ["haddock3-re", "clustfcc", clustfcc_dir, "-f", "0.7"]
                             )
@@ -96,6 +97,7 @@ def test_interactive_analysis_on_workflow(monkeypatch):
         
         # now running interactive re-scoring
         capri_dir = f"{run_dir}/3_caprieval"
+        # faking sys.argv in input to haddock3-re
         monkeypatch.setattr("sys.argv",
                             ["haddock3-re", "score", capri_dir, "-a", "1.0"]
                             )

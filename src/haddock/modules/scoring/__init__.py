@@ -66,7 +66,11 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         pdb_interfaces_scores: dict[tuple[Any, Any, Any], dict[str, dict[str, float]]] = {}  # noqa : E501
         # Loop over models to recover interfaces
         for pdb in self.output_models:
-            interfaces_scores = self.read_per_intreface_scores(pdb)
+            # Try to read pdb file and extract scores
+            try:
+                interfaces_scores = self.read_per_interface_scores(pdb)
+            except FileNotFoundError:
+                continue
             reversed_interfaces_scores = {}
 
             # Hold list of interfaces
@@ -122,7 +126,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         return
 
     @staticmethod
-    def read_per_intreface_scores(pdb: PDBFile) -> dict[str, dict[str, float]]:
+    def read_per_interface_scores(pdb: PDBFile) -> dict[str, dict[str, float]]:
         """Read a pdb file and parse per interface scores.
 
         Parameters

@@ -66,6 +66,9 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         pdb_interfaces_scores: dict[tuple[Any, Any, Any], dict[str, dict[str, float]]] = {}  # noqa : E501
         # Loop over models to recover interfaces
         for pdb in self.output_models:
+            # if the pdb does not exist, skip
+            if not Path(pdb.file_name).exists():
+                continue
             interfaces_scores = self.read_per_intreface_scores(pdb)
             reversed_interfaces_scores = {}
 

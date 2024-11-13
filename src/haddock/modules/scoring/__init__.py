@@ -69,7 +69,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
             # if the pdb does not exist, skip
             if not Path(pdb.file_name).exists():
                 continue
-            interfaces_scores = self.read_per_intreface_scores(pdb)
+            interfaces_scores = self.read_per_interface_scores(pdb)
             reversed_interfaces_scores = {}
 
             # Hold list of interfaces
@@ -125,7 +125,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         return
 
     @staticmethod
-    def read_per_intreface_scores(pdb: PDBFile) -> dict[str, dict[str, float]]:
+    def read_per_interface_scores(pdb: PDBFile) -> dict[str, dict[str, float]]:
         """Read a pdb file and parse per interface scores.
 
         Parameters

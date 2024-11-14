@@ -716,11 +716,17 @@ class OPENMM:
             qtemp = n * delta_temp
             integrator.setTemperature(qtemp * kelvin)
             simulation.step(int(eq_steps / nvt_sims))
+        # Try to obtain the degree of freedom
+        try:
+            dof = statereporter._dof
+        except AttributeError:
+            # may not exists if in implicit solvent..
+            dof = system.getNumParticles() * 3
         # Makes sure temperature of the system is reached
         self._stabilize_temperature(
             simulation,
-            qtemp,
-            statereporter._dof,
+            self.params["temperature_kelvin"],
+            dof,
             tolerance=5.0,
             steps=50
             )

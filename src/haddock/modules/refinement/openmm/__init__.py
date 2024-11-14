@@ -98,26 +98,17 @@ class HaddockModule(BaseHaddockModule):
         ThirdPartyIntallationError
             When OpenMM pdbfixer is not installed
         """
-        def run_subprocess(command_to_run: str) -> str:
-            """Run subprocess."""
-            subprocess_output = subprocrun(
-                [command_to_run],
-                shell=True,
-                capture_output=True,
-                encoding='utf-8',
-                )
-            return subprocess_output.stdout.strip()
-
-        checkOpenMM = run_subprocess("conda list openmm --json")
-        checkPdbfixer = run_subprocess("conda list pdbfixer --json")
-
-        if (checkOpenMM == "[]"):
+        try:
+            import openmm
+        except ModuleNotFoundError:
             raise ThirdPartyIntallationError(
-                "OpenMM is not installed in conda."
+                "OpenMM pdbfixer is not installed."
                 )
-        if (checkPdbfixer == "[]"):
+        try:
+            import pdbfixer
+        except ModuleNotFoundError:
             raise ThirdPartyIntallationError(
-                "OpenMM pdbfixer is not installed in conda."
+                "OpenMM pdbfixer is not installed."
                 )
         return None
     

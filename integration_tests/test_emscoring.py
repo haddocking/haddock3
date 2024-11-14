@@ -24,6 +24,7 @@ def emscoring_module():
         )
         # lower number of steps for faster testing
         emscoring_module.params["nemsteps"] = 5
+        emscoring_module.params["per_interface_scoring"] = True
         yield emscoring_module
 
 
@@ -75,4 +76,12 @@ def test_emscoring_default(emscoring_module, calc_fnat):
         native=Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
     )
     assert fnat == pytest.approx(0.95, abs=0.1)
+
+    # check the interface scoring
+    expected_interface_csv = Path(emscoring_module.path, "emscoring_A_B.tsv")
+    assert expected_interface_csv.exists(), f"{expected_interface_csv} does not exist"
+    df_perint = pd.read_csv(expected_interface_csv, sep="\t", comment="#")
+    # check that the score is equal to the global score (it's a dimer!)
+    assert df_perint["score"].tolist() == df["score"].tolist()
+    
 

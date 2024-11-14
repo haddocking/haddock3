@@ -27,7 +27,23 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 pip install haddock3
 ```
 
-Execute:
+For more detailed installation instructions (e.g. using `conda` or Python `venv`) and the installation of third-party additional software, please check the [INSTALL](docs/INSTALL.md) document. 
+
+You might also want to check the following utilities:
+
+- [`haddock-restraints`](https://github.com/haddocking/haddock-restraints): Tool to generate restraints to be used in `haddock3`.
+- [`haddock-runner`](https://github.com/haddocking/haddock-runner): Tool to run large scale `haddock3` simulations using multiple input molecules in different scenarios
+- [`haddock-tools`](https://github.com/haddocking/haddock-tools): Set of useful utility scripts developed over the years by the BonvinLab group members
+
+## Usage
+
+The most basic usage is:
+
+```bash
+haddock3 <configuration-file.toml>
+```
+
+For help on haddock3 usage:
 
 ```bash
 $ haddock3 -h
@@ -44,22 +60,6 @@ optional arguments:
   --setup               Only setup the run, do not execute
   --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
   -v, --version         show version
-```
-
-For the installation of third-party additional software, please check the [INSTALL](docs/INSTALL.md).
-
-You might also want to check the following utilities:
-
-- [`haddock-restraints`](https://github.com/haddocking/haddock-restraints): Tool to generate restraints to be used in `haddock3`.
-- [`haddock-runner`](https://github.com/haddocking/haddock-runner): Tool to run large scale `haddock3` simulations using multiple input molecules in different scenarios
-- [`haddock-tools`](https://github.com/haddocking/haddock-tools): Set of useful utility scripts developed over the years by the BonvinLab group members
-
-## Usage
-
-The most basic usage is:
-
-```bash
-haddock3 <configuration-file.toml>
 ```
 
 Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.

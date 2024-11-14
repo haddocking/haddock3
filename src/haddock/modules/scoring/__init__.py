@@ -36,8 +36,11 @@ class ScoringModule(BaseHaddockModule):
         df_sc = pd.DataFrame(sc_data, columns=df_columns)
         df_sc_sorted = df_sc.sort_values(by="score", ascending=ascending_sort)
         # writes to disk
-        df_sc_sorted.to_csv(output_fname, sep=sep, index=False, na_rep="None")
-
+        df_sc_sorted.to_csv(output_fname,
+                            sep=sep,
+                            index=False,
+                            na_rep="None",
+                            float_format="%.3f")
         return
 
 
@@ -118,6 +121,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                 sep=sep,
                 index=False,
                 na_rep="None",
+                float_format="%.3f",
                 )
         return
 

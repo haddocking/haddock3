@@ -383,18 +383,16 @@ remarks ===============================================================
 if ($data.ncomponents > 1) then
     if ($per_interface_scoring eq true) then
         evaluate($nchain1 = 1)
-        if ($data.ncomponents > 1) then
-            remarks Interface Chain1 Chain2 HADDOCKscore Evdw Eelec Edesol BSA
-            while ($nchain1 < $data.ncomponents) loop nloop1
-                eval($nchain2 = $nchain1 + 1)
-                while ($nchain2 <= $data.ncomponents) loop nloop2
-                    remarks Interface: $prot_segid_$nchain1 $prot_segid_$nchain2 $haddockscore_$nchain1_$nchain2 $vdw_$nchain1_$nchain2 $elec_$nchain1_$nchain2 $edesol_$nchain1_$nchain2 $bsa_$nchain1_$nchain2
-                    eval($nchain2 = $nchain2 + 1)
-                end loop nloop2
-                eval($nchain1 = $nchain1 + 1)
-            end loop nloop1
-            remarks Total HADDOCK score without restraints: $nrstscore
-        end if
+        remarks Interface Chain1 Chain2 HADDOCKscore Evdw Eelec Edesol BSA
+        while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain2 = $nchain1 + 1)
+            while ($nchain2 <= $data.ncomponents) loop nloop2
+                remarks Interface: $prot_segid_$nchain1 $prot_segid_$nchain2 $haddockscore_$nchain1_$nchain2 $vdw_$nchain1_$nchain2 $elec_$nchain1_$nchain2 $edesol_$nchain1_$nchain2 $bsa_$nchain1_$nchain2
+                eval($nchain2 = $nchain2 + 1)
+            end loop nloop2
+            eval($nchain1 = $nchain1 + 1)
+        end loop nloop1
+        remarks Total HADDOCK score without restraints: $nrstscore
     end if
 else
     remarks Total HADDOCK score without restraints: $nrstscore

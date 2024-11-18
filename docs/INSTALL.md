@@ -91,7 +91,7 @@ information.
 
 1. Install the latest version of openmm and pdbfixer
 
-The current implementation requires both OpanMM and pdbfixer, which should be installed using conda.
+The current implementation requires both OpenMM and pdbfixer, which should be installed using conda.
 
 ### In Conda
 ```bash

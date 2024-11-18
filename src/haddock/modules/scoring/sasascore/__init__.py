@@ -84,7 +84,7 @@ class HaddockModule(ScoringModule):
         self.output_models: list[PDBFile] = []
         # initialize jobs
         sasascore_jobs: list[AccScore] = []
-        for model_to_be_evaluated in models_to_score:
+        for i, model_to_be_evaluated in enumerate(models_to_score):
             accscore_obj = AccScore(
                 model=model_to_be_evaluated,
                 path=Path("."),
@@ -92,6 +92,7 @@ class HaddockModule(ScoringModule):
                 acc_resdic=acc_resdic,
                 cutoff=self.params["cutoff"],
                 probe_radius=self.params["probe_radius"],
+                identificator=i,
                 )
             sasascore_jobs.append(accscore_obj)
             # append model to output models
@@ -106,8 +107,12 @@ class HaddockModule(ScoringModule):
 
         # extract results and overwrite scores
         sasascore_jobs = engine.results
-        for i, pdb in enumerate(self.output_models):
-            pdb.score = sasascore_jobs[i].data[3]
+        sasascore_jobs = sorted(sasascore_jobs,
+                                key=lambda accscore: accscore.identificator)
+        
+        for i, job in enumerate(sasascore_jobs):
+            pdb = self.output_models[i]
+            pdb.score = job.data[3]
         output_name = Path("sasascore.tsv")
         self.output(output_name)
 

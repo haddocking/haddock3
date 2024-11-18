@@ -13,7 +13,7 @@ Updates
  - Changed the mapping routine to include DNA bead types (Rodrigo Honorato 2018)
  - Implemented feature to check if nucleic acid is a candidate for hbond (Rodrigo Honorato 2018)
 """
-import argparse
+
 import itertools
 import os
 import random
@@ -131,10 +131,11 @@ def map_cg(chain):
 
             bead_coord = center_of_mass(atoms)
 
-            atom_segment = " ".join([a for a in atom_segment.split()]).replace("*", "")
+            atom_segment = " ".join(list(atom_segment.split())).replace("*", "")
 
             # restrain for backmapping
-            restrain = "assign (segid {}CG and resid {:d} and name {}) (segid {} and resid {:d} and (name {})) 0 0 0".\
+            restrain = "assign (segid {}CG and resid {:d} and name {})"\
+                " (segid {} and resid {:d} and (name {})) 0 0 0".\
                 format(segid, resi, bead_name, segid, resi, " or name ".join(atom_segment.split()))
 
             m_dic[aares][bead_name] = bead_coord, code, restrain
@@ -200,19 +201,20 @@ def center_of_mass(entity, geometric=False):
 
     # If there is a single atom with undefined mass complain loudly.
     if "ukn" in set(masses) and not geometric:
-        raise ValueError("Some Atoms don't have an element assigned.\n"
-                         "Try adding them manually or calculate the geometrical center of mass instead.")
+        raise ValueError(f"Some Atoms don't have an element assigned.{os.linesep}"
+                         "Try adding them manually or calculate the geometrical "
+                         "center of mass instead.")
 
     if geometric:
         return [sum(coord_list) / len(masses) for coord_list in positions]
-    else:
-        w_pos = [[], [], []]
-        for atom_index, atom_mass in enumerate(masses):
-            w_pos[0].append(positions[0][atom_index] * atom_mass)
-            w_pos[1].append(positions[1][atom_index] * atom_mass)
-            w_pos[2].append(positions[2][atom_index] * atom_mass)
 
-        return [sum(coord_list) / sum(masses) for coord_list in w_pos]
+    w_pos = [[], [], []]
+    for atom_index, atom_mass in enumerate(masses):
+        w_pos[0].append(positions[0][atom_index] * atom_mass)
+        w_pos[1].append(positions[1][atom_index] * atom_mass)
+        w_pos[2].append(positions[2][atom_index] * atom_mass)
+
+    return [sum(coord_list) / sum(masses) for coord_list in w_pos]
 
 
 def determine_hbonds(structure):
@@ -404,7 +406,7 @@ def extract_groups(pair_list):
 
 def create_file_with_cryst(pdb_file: str) -> None:
     """
-    This function creates a new pdb because the CRYST line is missing from the pdf file.     
+    This function creates a new pdb because the CRYST line is missing from the pdf file.
     This line is necessary for DSSP.
 
     Args:
@@ -415,11 +417,12 @@ def create_file_with_cryst(pdb_file: str) -> None:
         pdb_file_copy: str
 
     """
-    with open(pdb_file, "r") as file_in, tempfile.NamedTemporaryFile(mode = "w", delete=False) as file_out:
+    with open(pdb_file, "r") as file_in,\
+    tempfile.NamedTemporaryFile(mode = "w", delete=False) as file_out:
         content = file_in.read()
         file_out.write(CRYST_LINE + content)
-    
-    return(file_out.name)
+
+    return file_out.name
 
 
 def determine_ss(structure, skipss, pdbf_path):
@@ -439,26 +442,26 @@ def determine_ss(structure, skipss, pdbf_path):
 
         if skipss:
             continue
-        else:
-            try:
-                tmp_file_name = create_file_with_cryst(pdbf_path)
-                p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                dssp_raw, errors = p.communicate()
-                dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
-            except:  # TODO: think about making this exception more specific
-                # no secondary structure detected for this model
-                log.warning('SS could not be assigned, assigning code 1 to all residues')
-                continue
-            finally:
-                if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
+        try:
+            tmp_file_name = create_file_with_cryst(pdbf_path)
+            p = subprocess.Popen(["dssp", tmp_file_name, "--output-format", "dssp"],
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE,
+                                 text=True)
+            dssp_raw, _ = p.communicate()
+            dssp_raw = dssp_raw.split('#')[1].split('\n')[1:-1]
+        except:  # TODO: think about making this exception more specific
+            # no secondary structure detected for this model
+            log.warning('SS could not be assigned, assigning code 1 to all residues')
+            continue
+        finally:
+            if Path(tmp_file_name).exists(): Path(tmp_file_name).unlink()
 
         dssp = {}
 
         for line in dssp_raw:
             var_a, var_b = line[11], line[16]
             dssp.setdefault(var_a, []).append(var_b)
-
-        calculated_chains = list(set([e[0] for e in dssp.keys()]))
 
         # Get SS information and translate it:
         # DSSP > MARTINI > HADDOCK
@@ -486,9 +489,11 @@ def rename_nucbases(structure):
     Returns:
 
     """
-    chainresdic = dict([(c.get_id(), [r.get_resname() for r in c.get_residues()]) for m in structure for c in m])
+    chainresdic = dict([(c.get_id(),
+                       [r.get_resname() for r in c.get_residues()]) for m in structure for c in m])
 
-    nucleotide_list = ["CYT", "C", "DC", "THY", "T", "DT", "ADE", "A", "DA", "G", "GUA", "DG", "U", "URI"]
+    nucleotide_list = ["CYT", "C", "DC", "THY", "T", "DT", "ADE",
+                       "A", "DA", "G", "GUA", "DG", "U", "URI"]
 
     if [True for c in chainresdic for e in chainresdic[c] if e in nucleotide_list]:
 
@@ -503,11 +508,21 @@ def rename_nucbases(structure):
             for chain in model:
                 for r in chain.get_residues():
                     if r.resname in ref_dic.keys():
-                        # rename!
+                        # rename
                         r.resname = ref_dic[r.resname]
 
 
 def martinize(input_pdb, output_path, skipss):
+    """
+    
+    Args:
+        input_pdb: str
+        output_path: str
+        skipss: boolean
+    
+    Returns:
+        cg_pdb_name: str
+    """
 
     if not input_pdb:
         emsg = "No input file detected"
@@ -565,7 +580,8 @@ def martinize(input_pdb, output_path, skipss):
                 if residue.id[0] != " ":  # filter HETATMS
                     continue
 
-                structure_builder.init_residue(residue.resname, residue.id[0], residue.id[1], residue.id[2])
+                structure_builder.init_residue(residue.resname, residue.id[0],
+                                               residue.id[1], residue.id[2])
 
                 for i, bead in enumerate(mapping_dic[residue]):
 
@@ -591,12 +607,12 @@ def martinize(input_pdb, output_path, skipss):
     # Write CG structure
     cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
     io.set_structure(cg_model)
-    io.save(cg_pdb_name, write_end=1)
+    io.save("temp.pdb", write_end=1)
 
     # make sure atom names are in the correct place
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
-    out = open("temp.pdb", "w")
-    for line in open(cg_pdb_name):
+    out = open(cg_pdb_name, "w")
+    for line in open("temp.pdb", "r"):
         if "ATOM" in line[:4]:
             atom_name = line[12:16].split()[0]
             # mind the spacing
@@ -612,7 +628,7 @@ def martinize(input_pdb, output_path, skipss):
             n_l = line
         out.write(n_l)
     out.close()
-    subprocess.call(f"mv temp.pdb {cg_pdb_name}", shell=True)
+    Path("temp.pdb").unlink(missing_ok=True)
 
     # Write Restraints
     tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl"
@@ -621,5 +637,5 @@ def martinize(input_pdb, output_path, skipss):
     tbl_file.write(f"\n{tbl_str}")
     tbl_file.close()
 
-    return(cg_pdb_name)
+    return cg_pdb_name
 

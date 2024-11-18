@@ -13,7 +13,7 @@ Updates
  - Changed the mapping routine to include DNA bead types (Rodrigo Honorato 2018)
  - Implemented feature to check if nucleic acid is a candidate for hbond (Rodrigo Honorato 2018)
 """
-import argparse
+
 import itertools
 import os
 import random

@@ -51,7 +51,7 @@ dev = [
   "coverage==7.6.4",
   "pytest==8.3.3",
   "pytest-cov==6.0.0",
-  "hypothesis==6.118.7",
+  "hypothesis==6.119.3",
   "pytest-mock==3.14.0",
   "fastapi==0.115.4",
   "httpx==0.27.2",

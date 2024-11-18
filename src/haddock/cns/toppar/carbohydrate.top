@@ -2031,7 +2031,6 @@ RESIdue MMA  ! methyl alpha-D-mannopyranoside  ! axial O-methyl group added to C
 
   BOND C1 O1  
   BOND C1 H1
-  BOND O1 HO1
   BOND C1 O5
   BOND C1 C2
   BOND C2 H2 
@@ -2064,7 +2063,6 @@ RESIdue MMA  ! methyl alpha-D-mannopyranoside  ! axial O-methyl group added to C
   DIHEDRAL C4 C5 O5 C1
   DIHEDRAL C5 O5 C1 C2
   DIHEDRAL O5 C1 C2 C3
-  DIHEDRAL H1 C1 O1 HO1
   DIHEDRAL H2 C2 O2 HO2
   DIHEDRAL H3 C3 O3 HO3
   DIHEDRAL H4 C4 O4 HO4

@@ -102,7 +102,7 @@ class HaddockModule(BaseHaddockModule):
             import openmm
         except ModuleNotFoundError:
             raise ThirdPartyIntallationError(
-                "OpenMM pdbfixer is not installed."
+                "OpenMM is not installed."
                 )
         try:
             import pdbfixer

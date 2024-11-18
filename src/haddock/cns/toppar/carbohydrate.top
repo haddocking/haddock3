@@ -30,6 +30,8 @@ REMARKS SIB:       beta-N-acetyl neuraminic acid - A. Bonvin
 REMARKS XYP:       beta-D-xylopyranose
 REMARKS BDP:       beta-D-glucoronic acid
 REMARKS MMA:       methyl alpha-D-mannopyranoside
+REMARKS XYS:       alpha-D-xylopyranose
+REMARKS ABE:       alpha-D-Abequopyranose
 REMARKS ----------------------------------------------------------
 REMARKS Links
 REMARKS B1N: N-linked glycan beta link from NAG and NDG to ASN (asparagine)

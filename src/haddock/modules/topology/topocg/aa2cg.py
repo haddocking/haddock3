@@ -201,7 +201,7 @@ def center_of_mass(entity, geometric=False):
 
     # If there is a single atom with undefined mass complain loudly.
     if "ukn" in set(masses) and not geometric:
-        raise ValueError("Some Atoms don't have an element assigned.\n"
+        raise ValueError(f"Some Atoms don't have an element assigned.{os.linesep}"
                          "Try adding them manually or calculate the geometrical "
                          "center of mass instead.")
 

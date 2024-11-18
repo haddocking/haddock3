@@ -89,11 +89,24 @@ information.
 
 ## `openmm`
 
-1. Install the latest version of openmm and pdbfixer
+Install the latest version of OpenMM and pdbfixer
 
-The current implementation requires both OpenMM and pdbfixer, which should be installed using conda.
+### In venv
 
-### In Conda
+```bash
+# Create a new virtual env
+python3.11 -m venv hd3-openmm
+source hd3-openmm/bin/activate
+# Install haddock3
+pip install .
+# Install OpenMM
+pip install openmm
+# Install openmm - pdbfixer
+pip install https://github.com/openmm/pdbfixer/archive/refs/tags/1.9.tar.gz
+```
+
+### In conda
+
 ```bash
 conda create -n hd3-p39-openmm python=3.9
 # Activate the haddock3 env

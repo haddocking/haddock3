@@ -440,8 +440,6 @@ def test_align_seq_inverted():
     with tempfile.TemporaryDirectory() as tmpdirname:
 
         observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
-        print(f"observed_numb_dic: {observed_numb_dic}")
-        print(f"observed_chm_dict: {observed_chm_dict}")
         expected_numb_keys = ["A", "B"]
         expected_chm_dict = {"A": "A", "B": "B"}
 

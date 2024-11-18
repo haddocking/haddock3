@@ -5,8 +5,10 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Optional
+from shutil import which
 
 from haddock import log
+from haddock.core.exceptions import HaddockTermination
 
 
 class MPIScheduler:
@@ -20,13 +22,21 @@ class MPIScheduler:
     def run(self) -> None:
         """Send it to the haddock3-mpitask runner."""
         pkl_tasks = self._pickle_tasks()
-        cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
-        log.debug(f"MPI cmd is {cmd}")
-
         log.info(
             f"Executing tasks with the haddock3-mpitask runner using "
             f"{self.ncores} processors..."
             )
+        if which("mpirun") is not None:
+            cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
+        elif which("srun") is not None:
+            cmd = f"srun haddock3-mpitask {pkl_tasks}"
+        else:
+            log.error("mpirun or srun are not available on the system")
+            log.error("Terminating run!")
+            raise HaddockTermination
+
+        log.debug(f"MPI cmd is {cmd}")
+
         p = subprocess.run(
             shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
@@ -36,7 +46,8 @@ class MPIScheduler:
 
         if err:
             log.error(err)
-            sys.exit()
+            log.error("Terminating run!")
+            raise HaddockTermination
 
     def _pickle_tasks(self) -> Path:
         """Pickle the tasks."""

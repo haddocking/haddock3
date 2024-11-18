@@ -27,7 +27,7 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 pip install haddock3
 ```
 
-For more detailed installation instructions (e.g. using `conda` or Python `venv`) and the installation of third-party additional software, please check the [INSTALL](docs/INSTALL.md) document. 
+For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md) 
 
 You might also want to check the following utilities:
 

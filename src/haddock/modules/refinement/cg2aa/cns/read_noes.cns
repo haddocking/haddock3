@@ -1,0 +1,65 @@
+! read_noes.cns
+!    Read the various restraints data
+!    In this version only distance-based restraints
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+! Ambiguous and unambiguous distance restraints, hbonds
+noe
+    reset
+    nrestraints = 12000000     ! allocate space for NOEs  
+    ceiling 1000
+end
+
+evaluate ($filenam0 = $ambig_fname + "_" + encode($count))
+fileexist $filenam0 end
+if ($result eq false) then
+    evaluate ($filenam0 = $ambig_fname)
+end if
+
+if ($filenam0 # "") then
+    fileexist $filenam0 end
+    if ($result eq true) then
+        noe class ambi @@$filenam0 end
+    end if
+end if
+
+if ($Data.randremoval eq true) then
+    noe part $Data.npart end
+end if
+
+if ($unambig_fname # "") then
+    fileexist $unambig_fname end
+    if ($result eq true) then
+        noe class dist @@$unambig_fname end
+    end if
+end if
+
+if ($hbond_fname # "") then
+    fileexist $hbond_fname end
+    if ($result eq true) then
+        noe class hbon @@$hbond_fname end
+    end if
+end if
+
+noe
+    averaging  * sum
+    potential  * soft
+    scale      * 1.0                           
+    sqconstant * 1.0
+    sqexponent * 2
+    soexponent * 1
+    rswitch    * 1.0
+    sqoffset   * 0.0
+    asymptote  * 2.0
+    msoexponent * 1
+    masymptote  * -0.1
+    mrswitch    * 1.0
+end

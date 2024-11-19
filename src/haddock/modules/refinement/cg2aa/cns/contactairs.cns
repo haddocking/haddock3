@@ -1,0 +1,27 @@
+! contactairs.cns
+!    Define ambiguous distance restraints between residues at interfaces
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+eval($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    eval($nchain1 = $nchain1 + 1)
+    for $id in id (tag and segid $prot_segid_$nchain1 
+                   and (not (segid $prot_segid_$nchain1 or resn ANI or resn DAN or resn XAN 
+                   or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM) around 5.0)) loop defnoe1
+        show (resid) (id $id)
+        evaluate ($inres = $result)
+        noe
+            assign (resid $inres and segid $prot_segid_$nchain1)
+                   (byres (not (segid $prot_segid_$nchain1 or resn ANI or resn DAN or resn XAN 
+                           or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM) 
+                    and (segid $prot_segid_$nchain1) around 5.0)) 2.0 2.0 0.0
+        end
+    end loop defnoe1
+end loop nloop1

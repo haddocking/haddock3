@@ -1,0 +1,677 @@
+! symmultimer.cns
+!    Define symmetry restraints
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+if ($Data.flags.sym eq true) then
+
+    noe class symm end
+
+    ! Define C2 symmetry restraints for symmetrical multimers
+    !
+    eval ($ncount = 0)
+    while ($ncount < $data.nc2sym) loop c2symloop
+
+        eval ($ncount = $ncount + 1)
+        evaluate ($i1start = $c2sym_sta1_$ncount)
+        evaluate ($i1end   = $c2sym_end1_$ncount)
+        evaluate ($chain1  = $c2sym_seg1_$ncount)
+        evaluate ($i2start = $c2sym_sta2_$ncount)
+        evaluate ($i2end   = $c2sym_end2_$ncount)
+        evaluate ($chain2  = $c2sym_seg2_$ncount)
+
+        !first check that the chain lengths are equal for the two defined molecules
+        evaluate ($diff1 = $i1end - $i1start)
+        evaluate ($diff2 = $i2end - $i2start)
+        if ($diff1 ne $diff2) then
+            display CHAIN LENGTH FOR SYMMETRY RESTRAINTS DOES NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+
+        eval ($icount = 0)
+        while ($i1start < $i1end) loop genc2sym
+
+            evaluate ($resid1 = $i1start)
+            evaluate ($resid2 = $i2end - $icount)
+            evaluate ($resid3 = $i2start)
+            evaluate ($resid4 = $i1end - $icount)
+
+            noe
+                assign (resid $resid1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resid2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resid3 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resid4 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+            end 
+
+            evaluate ($icount = $icount + 1)
+            evaluate ($i1start = $i1start + 1)
+            evaluate ($i2start = $i2start + 1)
+
+        end loop genc2sym
+
+    end loop c2symloop
+
+
+    ! Define C3 symmetry restraints for symmetrical multimers
+    !
+    eval ($ncount = 0)
+    while ($ncount < $data.nc3sym) loop c3symloop
+
+        eval ($ncount = $ncount + 1)
+        evaluate ($i1start = $c3sym_sta1_$ncount)
+        evaluate ($i1end   = $c3sym_end1_$ncount)
+        evaluate ($chain1  = $c3sym_seg1_$ncount)
+        evaluate ($i2start = $c3sym_sta2_$ncount)
+        evaluate ($i2end   = $c3sym_end2_$ncount)
+        evaluate ($chain2  = $c3sym_seg2_$ncount)
+        evaluate ($i3start = $c3sym_sta3_$ncount)
+        evaluate ($i3end   = $c3sym_end3_$ncount)
+        evaluate ($chain3  = $c3sym_seg3_$ncount)
+
+        !first check that the chain lengths are equal for the two defined molecules
+        evaluate ($diff1 = $i1end - $i1start)
+        evaluate ($diff2 = $i2end - $i2start)
+        evaluate ($diff3 = $i3end - $i3start)
+        if ($diff1 ne $diff2) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff1 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff2 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+
+        eval ($icount = 0)
+        while ($i1start < $i1end) loop genc3sym
+
+            evaluate ($resst1 = $i1start)
+            evaluate ($resst2 = $i2start)
+            evaluate ($resst3 = $i3start)
+            evaluate ($resen1 = $i1end - $icount)
+            evaluate ($resen2 = $i2end - $icount)
+            evaluate ($resen3 = $i3end - $icount)
+
+            noe
+
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resen2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resen2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+
+            end 
+
+            evaluate ($icount = $icount + 2)
+            evaluate ($i1start = $i1start + 2)
+            evaluate ($i2start = $i2start + 2)
+            evaluate ($i3start = $i3start + 2)
+
+        end loop genc3sym
+
+    end loop c3symloop
+
+    ! Define S3 symmetry restraints for symmetrical multimers
+    !
+    eval ($ncount = 0)
+    while ($ncount < $data.ns3sym) loop s3symloop
+
+        eval ($ncount = $ncount + 1)
+        evaluate ($i1start = $s3sym_sta1_$ncount)
+        evaluate ($i1end   = $s3sym_end1_$ncount)
+        evaluate ($chain1  = $s3sym_seg1_$ncount)
+        evaluate ($i2start = $s3sym_sta2_$ncount)
+        evaluate ($i2end   = $s3sym_end2_$ncount)
+        evaluate ($chain2  = $s3sym_seg2_$ncount)
+        evaluate ($i3start = $s3sym_sta3_$ncount)
+        evaluate ($i3end   = $s3sym_end3_$ncount)
+        evaluate ($chain3  = $s3sym_seg3_$ncount)
+
+        !first check that the chain lengths are equal for the two defined molecules
+        evaluate ($diff1 = $i1end - $i1start)
+        evaluate ($diff2 = $i2end - $i2start)
+        evaluate ($diff3 = $i3end - $i3start)
+        if ($diff1 ne $diff2) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff1 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff2 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+
+        eval ($icount = 0)
+        eval ($istep = 4)
+        eval ($istop = $i1end - $istep)
+        while ($i1start < $istop) loop gens3sym
+
+            evaluate ($resst11 = $i1start)
+            evaluate ($resst21 = $i1start+1)
+            evaluate ($resst12 = $i2start)
+            evaluate ($resst22 = $i2start+1)
+            evaluate ($resst13 = $i3start)
+            evaluate ($resst23 = $i3start+1)
+
+
+            noe
+
+                assign (resid $resst11 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst12 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst12 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst13 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resst21 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst22 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst22 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst23 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+            end 
+
+            evaluate ($icount = $icount + $istep)
+            evaluate ($i1start = $i1start + $istep)
+            evaluate ($i2start = $i2start + $istep)
+            evaluate ($i3start = $i3start + $istep)
+
+        end loop gens3sym
+
+    end loop s3symloop
+
+    ! Define C4 symmetry restraints for symmetrical multimers
+    !
+    eval ($istep = 10)
+    eval ($ncount = 0)
+    while ($ncount < $data.nc4sym) loop c4symloop
+
+        eval ($ncount = $ncount + 1)
+        evaluate ($i1start = $c4sym_sta1_$ncount)
+        evaluate ($i1end   = $c4sym_end1_$ncount)
+        evaluate ($chain1  = $c4sym_seg1_$ncount)
+        evaluate ($i2start = $c4sym_sta2_$ncount)
+        evaluate ($i2end   = $c4sym_end2_$ncount)
+        evaluate ($chain2  = $c4sym_seg2_$ncount)
+        evaluate ($i3start = $c4sym_sta3_$ncount)
+        evaluate ($i3end   = $c4sym_end3_$ncount)
+        evaluate ($chain3  = $c4sym_seg3_$ncount)
+        evaluate ($i4start = $c4sym_sta4_$ncount)
+        evaluate ($i4end   = $c4sym_end4_$ncount)
+        evaluate ($chain4  = $c4sym_seg4_$ncount)
+
+        !first check that the chain lengths are equal for the four defined molecules
+        evaluate ($diff1 = $i1end - $i1start)
+        evaluate ($diff2 = $i2end - $i2start)
+        evaluate ($diff3 = $i3end - $i3start)
+        evaluate ($diff4 = $i4end - $i4start)
+        if ($diff1 ne $diff2) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff1 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff1 ne $diff4) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff2 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff2 ne $diff4) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff3 ne $diff4) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+
+        eval ($icount = 0)
+        while ($i1start < $i1end) loop genc4sym
+
+            evaluate ($resst1 = $i1start)
+            evaluate ($resst2 = $i2start)
+            evaluate ($resst3 = $i3start)
+            evaluate ($resst4 = $i4start)
+            evaluate ($resen1 = $i1end - $icount)
+            evaluate ($resen2 = $i2end - $icount)
+            evaluate ($resen3 = $i3end - $icount)
+            evaluate ($resen4 = $i4end - $icount)
+
+            noe
+        
+                ! N to N sequential restraints to prevent anti-parallel arrangements
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                      (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+
+               ! N to C sequential restraints to assure planarity
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resen2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resen1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resen1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resen2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+
+                assign (resid $resen1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resen2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resen2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resen3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+
+                assign (resid $resen3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resen4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resen4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+                assign (resid $resen1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+
+            end 
+
+            evaluate ($icount = $icount + $istep)
+            evaluate ($i1start = $i1start + $istep)
+            evaluate ($i2start = $i2start + $istep)
+            evaluate ($i3start = $i3start + $istep)
+            evaluate ($i4start = $i4start + $istep)
+
+        end loop genc4sym
+
+    end loop c4symloop
+
+
+    ! Define C5 symmetry restraints for symmetrical multimers
+    !
+    eval ($istep = 4)
+    eval ($ncount = 0)
+    while ($ncount < $data.nc5sym) loop c5symloop
+
+        eval ($ncount = $ncount + 1)
+        evaluate ($i1start = $c5sym_sta1_$ncount)
+        evaluate ($i1end   = $c5sym_end1_$ncount)
+        evaluate ($chain1  = $c5sym_seg1_$ncount)
+        evaluate ($i2start = $c5sym_sta2_$ncount)
+        evaluate ($i2end   = $c5sym_end2_$ncount)
+        evaluate ($chain2  = $c5sym_seg2_$ncount)
+        evaluate ($i3start = $c5sym_sta3_$ncount)
+        evaluate ($i3end   = $c5sym_end3_$ncount)
+        evaluate ($chain3  = $c5sym_seg3_$ncount)
+        evaluate ($i4start = $c5sym_sta4_$ncount)
+        evaluate ($i4end   = $c5sym_end4_$ncount)
+        evaluate ($chain4  = $c5sym_seg4_$ncount)
+        evaluate ($i5start = $c5sym_sta5_$ncount)
+        evaluate ($i5end   = $c5sym_end5_$ncount)
+        evaluate ($chain5  = $c5sym_seg5_$ncount)
+
+        !first check that the chain lengths are equal for the two defined molecules
+        evaluate ($diff1 = $i1end - $i1start)
+        evaluate ($diff2 = $i2end - $i2start)
+        evaluate ($diff3 = $i3end - $i3start)
+        evaluate ($diff4 = $i4end - $i4start)
+        evaluate ($diff5 = $i5end - $i5start)
+        if ($diff1 ne $diff2) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff1 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff2 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff3 ne $diff4) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff4 ne $diff5) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+
+        eval ($icount = 0)
+        while ($i1start < $i1end) loop genc5sym
+
+            evaluate ($resst1 = $i1start)
+            evaluate ($resst2 = $i2start)
+            evaluate ($resst3 = $i3start)
+            evaluate ($resst4 = $i4start)
+            evaluate ($resst5 = $i5start)
+            evaluate ($resen1 = $i1end - $icount)
+            evaluate ($resen2 = $i2end - $icount)
+            evaluate ($resen3 = $i3end - $icount)
+            evaluate ($resen4 = $i4end - $icount)
+            evaluate ($resen5 = $i5end - $icount)
+
+            noe
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+            end 
+
+            evaluate ($icount = $icount + $istep)
+            evaluate ($i1start = $i1start + $istep)
+            evaluate ($i2start = $i2start + $istep)
+            evaluate ($i3start = $i3start + $istep)
+            evaluate ($i4start = $i4start + $istep)
+            evaluate ($i5start = $i5start + $istep)
+
+        end loop genc5sym
+
+    end loop c5symloop
+
+    ! Define C6 symmetry restraints for symmetrical multimers
+    !
+    eval ($istep = 10)
+    eval ($ncount = 0)
+    while ($ncount < $data.nc6sym) loop c6symloop
+
+        eval ($ncount = $ncount + 1)
+        evaluate ($i1start = $c6sym_sta1_$ncount)
+        evaluate ($i1end   = $c6sym_end1_$ncount)
+        evaluate ($chain1  = $c6sym_seg1_$ncount)
+        evaluate ($i2start = $c6sym_sta2_$ncount)
+        evaluate ($i2end   = $c6sym_end2_$ncount)
+        evaluate ($chain2  = $c6sym_seg2_$ncount)
+        evaluate ($i3start = $c6sym_sta3_$ncount)
+        evaluate ($i3end   = $c6sym_end3_$ncount)
+        evaluate ($chain3  = $c6sym_seg3_$ncount)
+        evaluate ($i4start = $c6sym_sta4_$ncount)
+        evaluate ($i4end   = $c6sym_end4_$ncount)
+        evaluate ($chain4  = $c6sym_seg4_$ncount)
+        evaluate ($i5start = $c6sym_sta5_$ncount)
+        evaluate ($i5end   = $c6sym_end5_$ncount)
+        evaluate ($chain5  = $c6sym_seg5_$ncount)
+        evaluate ($i6start = $c6sym_sta6_$ncount)
+        evaluate ($i6end   = $c6sym_end6_$ncount)
+        evaluate ($chain6  = $c6sym_seg6_$ncount)
+
+        !first check that the chain lengths are equal for the two defined molecules
+        evaluate ($diff1 = $i1end - $i1start)
+        evaluate ($diff2 = $i2end - $i2start)
+        evaluate ($diff3 = $i3end - $i3start)
+        evaluate ($diff4 = $i4end - $i4start)
+        evaluate ($diff5 = $i5end - $i5start)
+        evaluate ($diff6 = $i6end - $i6start)
+        if ($diff1 ne $diff2) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff1 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff2 ne $diff3) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff3 ne $diff4) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+           display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff4 ne $diff5) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+        if ($diff5 ne $diff6) then
+            display CHAIN LENGHT FOR SYMMETRY RESTRAINTS DO NOT MATCH
+            display PLEASE CHECK CAREFULLY YOUR INPUT
+            display ... stopping ...
+            stop
+        end if
+
+        eval ($icount = 0)
+        while ($i1start < $i1end) loop genc6sym
+
+            evaluate ($resst1 = $i1start)
+            evaluate ($resst2 = $i2start)
+            evaluate ($resst3 = $i3start)
+            evaluate ($resst4 = $i4start)
+            evaluate ($resst5 = $i5start)
+            evaluate ($resst6 = $i6start)
+            evaluate ($resen1 = $i1end - $icount)
+            evaluate ($resen2 = $i2end - $icount)
+            evaluate ($resen3 = $i3end - $icount)
+            evaluate ($resen4 = $i4end - $icount)
+            evaluate ($resen5 = $i5end - $icount)
+            evaluate ($resen6 = $i6end - $icount)
+
+            noe
+
+                ! Around the C6 ring
+                ! N to N sequential restraints to prevent anti-parallel arrangements
+
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resst3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resst4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resst5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resst6 and (name CA or name P or name BB)  and segid $chain6) 0 0 0
+
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resst6 and (name CA or name P or name BB)  and segid $chain6) 0 0 0
+                assign (resid $resst6 and (name CA or name P or name BB)  and segid $chain6)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resst6 and (name CA or name P or name BB)  and segid $chain6)
+                       (resid $resst1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resst2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0 
+
+               ! N to C sequential restraints to assure planarity
+
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resen2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resen5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resen5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resen6 and (name CA or name P or name BB)  and segid $chain6) 0 0 0
+
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resen6 and (name CA or name P or name BB)  and segid $chain6) 0 0 0
+                assign (resid $resst6 and (name CA or name P or name BB)  and segid $chain6)
+                       (resid $resen1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                ! Triples
+
+                assign (resid $resst1 and (name CA or name P or name BB)  and segid $chain1)
+                       (resid $resen3 and (name CA or name P or name BB)  and segid $chain3) 0 0 0
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+
+                assign (resid $resst3 and (name CA or name P or name BB)  and segid $chain3)
+                       (resid $resen5 and (name CA or name P or name BB)  and segid $chain5) 0 0 0
+                assign (resid $resst5 and (name CA or name P or name BB)  and segid $chain5)
+                       (resid $resen1 and (name CA or name P or name BB)  and segid $chain1) 0 0 0
+
+                assign (resid $resst2 and (name CA or name P or name BB)  and segid $chain2)
+                       (resid $resen4 and (name CA or name P or name BB)  and segid $chain4) 0 0 0
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resen6 and (name CA or name P or name BB)  and segid $chain6) 0 0 0
+
+                assign (resid $resst4 and (name CA or name P or name BB)  and segid $chain4)
+                       (resid $resen6 and (name CA or name P or name BB)  and segid $chain6) 0 0 0
+                assign (resid $resst6 and (name CA or name P or name BB)  and segid $chain6)
+                       (resid $resen2 and (name CA or name P or name BB)  and segid $chain2) 0 0 0
+
+            end 
+
+            evaluate ($icount = $icount + $istep)
+            evaluate ($i1start = $i1start + $istep)
+            evaluate ($i2start = $i2start + $istep)
+            evaluate ($i3start = $i3start + $istep)
+            evaluate ($i4start = $i4start + $istep)
+            evaluate ($i5start = $i5start + $istep)
+            evaluate ($i6start = $i6start + $istep)
+
+        end loop genc6sym
+
+    end loop c6symloop
+
+
+    noe
+        potential  symm symmetry
+        scale      symm $Data.ksym
+        sqconstant symm 1.0
+        sqexponent symm 2
+        soexponent symm 1
+        rswitch    symm 0.5
+        sqoffset   symm 0.0
+        asymptote  symm 1.0
+    end
+ 
+end if

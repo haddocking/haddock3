@@ -22,6 +22,11 @@ def mdscoring_module():
         mdscoring_module = mdscoringModule(
             order=0, path=Path(tmpdir), initial_params=DEFAULT_MDSCORING_CONFIG
         )
+        # lower number of steps for faster testing
+        mdscoring_module.params["watersteps"] = 200
+        mdscoring_module.params["watercoolsteps"] = 200
+        # enable per interface scoring
+        mdscoring_module.params["per_interface_scoring"] = True
         yield mdscoring_module
 
 
@@ -82,3 +87,10 @@ def test_mdscoring_default(mdscoring_module, calc_fnat):
         native=Path(GOLDEN_DATA, "protglyc_complex_1.pdb"),
     )
     assert fnat == pytest.approx(0.90, abs=0.1)
+
+    # check the interface scoring
+    expected_interface_csv = Path(mdscoring_module.path, "mdscoring_A_B.tsv")
+    assert expected_interface_csv.exists(), f"{expected_interface_csv} does not exist"
+    df_perint = pd.read_csv(expected_interface_csv, sep="\t", comment="#")
+    # check that the score is equal to the global score (it's a dimer!)
+    assert df_perint["score"].tolist() == df["score"].tolist()

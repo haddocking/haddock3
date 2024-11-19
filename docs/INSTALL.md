@@ -102,7 +102,7 @@ source hd3-openmm/bin/activate
 # Install haddock3
 pip install .
 # Install OpenMM
-pip install openmm
+pip install openmm==8.2.0
 # Install openmm - pdbfixer
 pip install https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz
 ```

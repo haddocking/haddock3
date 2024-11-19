@@ -120,7 +120,7 @@ pip install haddock3
 # libstdxx must be installed, maybe already present in your system
 conda install -c conda-forge libstdcxx-ng
 # Install OpenMM and related tools/binaries
-conda install -c conda-forge openmm==8.2.0 pdbfixer
+conda install -c conda-forge openmm==8.2.0 pdbfixer==1.10
 ```
 
 OpenMM should automatically detect the fastest platform among those available

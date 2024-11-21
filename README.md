@@ -23,8 +23,18 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
+Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3. 
+
 ```bash
 pip install haddock3
+```
+
+In case you rather install the latest unreleased version use instead:
+
+```bash
+git clone https://github.com/haddocking/haddock3.git
+cd haddock3
+pip install .
 ```
 
 For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md) 

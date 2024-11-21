@@ -50,7 +50,7 @@ from openmm.unit import (
 from pdbfixer import PDBFixer
 
 # Haddock libraries
-from pdbtools import pdb_delhetatm, pdb_mkensemble
+from pdbtools import pdb_delhetatm, pdb_mkensemble, pdb_tidy
 from haddock import log
 from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Optional, Union, ParamDict
@@ -136,10 +136,20 @@ class OPENMM:
                 pdb_filepath = str(Path(self.model.path, self.model.file_name))
         self.log.debug(f"pdb_filepath is {pdb_filepath}")
         return pdb_filepath
+    
+    def tidy_pdb(self, pdb_fpath: str) -> str:
+        output_filepath = os.path.join(
+            self.directory_dict["pdbfixer"],
+            f"tidy_{self.model.file_name}",
+            )
+        with open(output_filepath, "w") as filout, open(pdb_fpath, "r") as fin:
+            for _ in pdb_tidy.run(fin):
+                filout.write(_)
+        return output_filepath
 
     def openmm_pdbfixer(self):
         """Call Pdbfixer on the model pdb."""
-        pdb_filepath = self.get_pdb_filepath()
+        pdb_filepath = self.tidy_pdb(self.get_pdb_filepath())
         self.log.info(
             f"Fixing pdb: {self.model.file_name} (path {pdb_filepath})"
             )
@@ -302,14 +312,15 @@ class OPENMM:
 
             # 2. Add constraints to the protein atoms
             self.log.info("Adding protein constraints")
-            # Check is spring canstant > 0
-            if self.params["solv_eq_spring_constant"] == 0:
-                rest_force = self._gen_restrain_force(
-                    system_coordinates.topology.atoms(),
-                    system_coordinates.positions
-                    )
-                # Add the restrain force to the system
-                system.addForce(rest_force)
+            # Add position restraint force
+            rest_force, spring_force_index = self._gen_restrain_force(
+                system_coordinates.topology.atoms(),
+                system_coordinates.positions,
+                spring_constant=self.params["solv_eq_spring_constant"],
+                )
+            # Add the restrain force to the system
+            system.addForce(rest_force)
+
             # Initiate simulation object
             simulation = Simulation(
                 system_coordinates.topology,
@@ -348,11 +359,17 @@ class OPENMM:
             delta_temp = max_temperature / nvt_sims
             # Progressively warmup the system
             self.log.info("Warming system up...")
-            for n in range(1, nvt_sims):
+            integrator.setFriction(100 / picosecond)
+            for n in range(1, nvt_sims + 1):
+                # Compute new values
                 qtemp = n * delta_temp
+                # Set values
                 integrator.setTemperature(qtemp * kelvin)
+                # Run some md steps
                 simulation.step(delta_steps)
+            # Set final temperature and temperature coupling
             integrator.setTemperature(max_temperature * kelvin)
+            integrator.setFriction(1 / picosecond)
             # Makes sure temperature of the system is reached
             self._stabilize_temperature(
                 simulation,
@@ -372,7 +389,17 @@ class OPENMM:
                 f"(stepsize={self.params['solv_eq_stepsize_fs']} fs)..."
                 )
             # Do few simulation steps at max temperature
-            simulation.step(eq_steps)
+            # progressively releasing the position restraints on the protein
+            slow_reduction_steps = 10
+            red_delta_steps = int(eq_steps / slow_reduction_steps)
+            for n in range(slow_reduction_steps - 1, -1, -1):
+                const_stength = n / slow_reduction_steps
+                new_spring_const = self.params["solv_eq_spring_constant"] * const_stength
+                rest_force.setGlobalParameterDefaultValue(
+                    spring_force_index,
+                    new_spring_const,
+                    )
+                simulation.step(red_delta_steps)
             # Progressively freeze the system
             self.log.info("Cooling down the system...")
             for n in range(nvt_sims - 1, 0, -1):
@@ -414,7 +441,7 @@ class OPENMM:
             dof: int,
             tolerance: float = 5.0,
             steps: int = 50,
-            ) -> None:
+            ) -> int:
         """
         Make sure the simulated system reached the desired temperature.
         
@@ -432,18 +459,22 @@ class OPENMM:
             The number of steps to do before checking again that
             temperature was reached
         """
+        additional_steps: int = 0
         # Makes sure temperature of the system is reached
         while not ((temperature - tolerance)
                    <= self._get_simulation_temperature(simulation, dof)
                    <= (temperature + tolerance)):
             # Do several simulation steps
             simulation.step(steps)
+            additional_steps += steps
+        return additional_steps
 
     @staticmethod
     def _gen_restrain_force(
             atoms: list,
             positions: list,
             subset: Union[bool, list] = None,
+            spring_constant: float = 20.0,
             ) -> CustomExternalForce:
         """
         Generate CustomExternalForce aiming at restraining protein coordinates.
@@ -456,18 +487,28 @@ class OPENMM:
             Initial position of the particules in the system
         subset : list
             List of atom indexes on which to apply the restrain force
+        spring_constant : float
+            Initial value of the position restrain spring constant.
 
         Return
         ----------
         rest_force: :py:class:`openmm.openmm.CustomExternalForce`
             Set CustomExternalForce object restraining protein position
+        spring_force_index: int
+            Index of the spring force constant
         """
         # Initiate Custom Force to restrain positions
-        rest_force = CustomExternalForce('k*((x-x0)^2+(y-y0)^2+(z-z0)^2)')
+        rest_force = CustomExternalForce(
+            # could have been "k*((x-x0)^2+(y-y0)^2+(z-z0)^2)"
+            # but because we are in periodic boundary conditions,
+            # it is better to use "k*periodicdistance(x, y, z, x0, y0, z0)^2"
+            # c.f. OpenMM documentation
+            "k*periodicdistance(x, y, z, x0, y0, z0)^2"
+            )
         # Define spring constant value
-        rest_force.addGlobalParameter(
-            'k',
-            20000 * kilocalorie_per_mole / angstroms ** 2
+        spring_force_index = rest_force.addGlobalParameter(
+            "k",
+            spring_constant * kilocalorie_per_mole / angstroms ** 2
             )
         rest_force.addPerParticleParameter('x0')
         rest_force.addPerParticleParameter('y0')
@@ -487,7 +528,7 @@ class OPENMM:
                 continue
             # Hold index of the restrained atom
             rest_force.addParticle(atom.index, positions[atom.index])
-        return rest_force
+        return rest_force, spring_force_index
 
     def _gen_centroid_forces(self, system: System) -> None:
         """Add centroid forces between protein monomers to the system.
@@ -652,9 +693,7 @@ class OPENMM:
         pdb = openmmpdbfile(inputPDBfile)
         forcefield = ForceField(self.params['forcefield'], solvent_model)
         # system setup
-        nonbondedMethod = PME
-        if self.params["implicit_solvent"]:
-            nonbondedMethod = NoCutoff
+        nonbondedMethod = NoCutoff if self.params["implicit_solvent"] else PME
         # should give an ERROR when system_constraints = 'None'.
         system = forcefield.createSystem(
             pdb.topology,
@@ -710,12 +749,18 @@ class OPENMM:
             f"Warming up the system to {self.params['temperature_kelvin']}"
             f" K in ~{eq_steps} steps"
             )
+        # In how many iterations are we inceasing the temperature ?
         nvt_sims = 10
+        # How much should be increase the temperature at each iteration
         delta_temp = self.params["temperature_kelvin"] / nvt_sims
+        integrator.setFriction(100 / picosecond)
         for n in range(1, nvt_sims + 1):
             qtemp = n * delta_temp
             integrator.setTemperature(qtemp * kelvin)
             simulation.step(int(eq_steps / nvt_sims))
+        # Set final temperature and temperature coupling parameters
+        integrator.setTemperature(self.params["temperature_kelvin"] * kelvin)
+        integrator.setFriction(1 / picosecond)
         # Try to obtain the degree of freedom
         try:
             dof = statereporter._dof

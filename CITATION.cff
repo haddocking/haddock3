@@ -1,7 +1,7 @@
 # YAML 1.2
 # Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
 cff-version: 1.1.0
-# message: If you use this software, please cite it using these metadata.
+message: "If you use this software, please cite it using these metadata."
 # FIXME title as repository name might not be the best name, please make human readable
 title: 'HADDOCK3 - modular integrative modelling software'
 doi: 10.5281/zenodo.10527751

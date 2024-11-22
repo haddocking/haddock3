@@ -1,0 +1,254 @@
+evaluate ($kinter = 1)
+
+! Change segid of CG structure
+!
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  evaluate ($nchain = $nchain + 1)
+  if ($toppar.cg_$nchain eq true) then
+    evaluate($coor_infile_$nchain= "RUN:begin-aa/" + $Toppar.prot_root_$nchain + ".pdb")
+    coor @@ $coor_infile_$nchain
+  end if
+end loop nloop1
+
+! Read morphing restraints
+!
+noe 
+  nres 1000000
+  class cgaa @@RUN:data/distances/cg-to-aa.tbl
+  averaging  cgaa center
+  scale      cgaa 50.0
+  sqconstant cgaa 1.0
+  sqexponent cgaa 2
+  soexponent cgaa 1
+  rswitch    cgaa 1.0
+  sqoffset   cgaa 0.0
+  asymptote  cgaa 2.0
+  msoexponent cgaa 1
+  masymptote  cgaa -0.1
+  mrswitch    cgaa 1.0
+end
+
+! Fix the CG model and existing AA models
+!
+fix sele=(segid *CG) end
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  evaluate ($nchain = $nchain + 1)
+  if ($toppar.cg_$nchain eq false) then
+    fix sele=(segid $Toppar.prot_segid_$nchain) end
+  end if
+end loop nloop1
+
+parameter
+  nbonds
+    nbxmod=5 atom cdie shift
+    cutnb=6.5 ctofnb=5.5 ctonnb=4.5 eps=1.0 e14fac=0.4 inhibit 0.25
+    wmin=0.5 tolerance  0.5
+  end
+end
+
+
+evaluate ($kinter = 0.001)
+@RUN:protocols/scale_inter.cns
+
+flag excl * incl noe end
+
+energy end
+
+! Rigid body EM to position AA model onto CG model
+!
+minimize rigid
+  eval ($nchain = 0)
+  while ($nchain < $data.ncomponents) loop nloop1
+    eval($nchain = $nchain + 1)
+    if ($toppar.cg_$nchain eq true) then
+      group (segid $Toppar.prot_segid_$nchain)
+      translation=true
+    end if
+  end loop nloop1
+  nstep 200
+  nprint 10  
+end
+
+! Define secondary structure dihedral angle restraints
+!
+@RUN:protocols/protein-ss-restraints-alpha-beta.def
+
+! Check for fully flexible segments
+!
+evaluate($nchain1 = 0)
+evaluate($scalefac = 1.0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+  evaluate($nchain1 = $nchain1 + 1)
+  if ($Toppar.nfle_$nchain1 > 0) then
+    evaluate($scalefac = 10.0)
+  end if
+end loop nloop1
+
+! Starting the morphing for conformational changes
+! Powell EM, including covalent terms
+!
+
+
+flag excl * incl bond angl impr dihe vdw elec noe cdih end
+evaluate ($kinter = 0.01)
+@RUN:protocols/scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+evaluate ($kinter = 0.05)
+@RUN:protocols/scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+evaluate ($kinter = 0.1)
+@RUN:protocols/scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+{- Friction coefficient, in 1/ps. -}
+  do (fbeta=100) (not segid *CG)
+
+  evaluate ($bath=300.0)
+  evaluate ($nstep=500 * $scalefac)
+  evaluate ($timestep=0.0005)
+
+  do (vx=maxwell($bath)) (all)
+  do (vy=maxwell($bath)) (all)
+  do (vz=maxwell($bath)) (all)
+
+  dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+  end
+
+  minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@RUN:protocols/protein-ss-restraints-alpha-beta.def
+
+evaluate ($kinter = 0.5)
+@RUN:protocols/scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+{- Friction coefficient, in 1/ps. -}
+  do (fbeta=100) (not segid *CG)
+
+  evaluate ($bath=300.0)
+  evaluate ($nstep=500 * $scalefac)
+  evaluate ($timestep=0.0005)
+
+  do (vx=maxwell($bath)) (all)
+  do (vy=maxwell($bath)) (all)
+  do (vz=maxwell($bath)) (all)
+
+  dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+  end
+
+  minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@RUN:protocols/protein-ss-restraints-alpha-beta.def
+
+evaluate ($kinter = 1.0)
+@RUN:protocols/scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+{- Friction coefficient, in 1/ps. -}
+  do (fbeta=100) (not segid *CG)
+
+  evaluate ($bath=300.0)
+  evaluate ($nstep=500 * $scalefac)
+  evaluate ($timestep=0.0005)
+
+  do (vx=maxwell($bath)) (all)
+  do (vy=maxwell($bath)) (all)
+  do (vz=maxwell($bath)) (all)
+
+  dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+  end
+
+  minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+parameter
+  nbonds
+    nbxmod=5 atom cdie shift
+    cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+    wmin=0.5 tolerance  0.5
+  end
+end
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@RUN:protocols/protein-ss-restraints-alpha-beta.def
+
+evaluate ($kinter = 1.0)
+@RUN:protocols/scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+{- Friction coefficient, in 1/ps. -}
+  do (fbeta=100) (not segid *CG)
+
+  evaluate ($bath=300.0)
+  evaluate ($nstep=500 * $scalefac)
+  evaluate ($timestep=0.0005)
+
+  do (vx=maxwell($bath)) (all)
+  do (vy=maxwell($bath)) (all)
+  do (vz=maxwell($bath)) (all)
+
+  dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+  end
+
+  minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+minimize powell nstep=500 drop=40.0 nprint=25 end
+minimize powell nstep=500 drop=10.0 nprint=25 end
+
+energy end
+
+parameter nbonds eps=1.0 end end
+
+delete sele=(segid *CG) end
+

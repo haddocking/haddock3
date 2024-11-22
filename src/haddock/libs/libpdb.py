@@ -10,6 +10,7 @@ from pdbtools.pdb_tidy import run as tidy_pdbfile
 
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.typing import (
+    Any,
     Callable,
     FilePath,
     FilePathT,
@@ -296,3 +297,85 @@ def read_RECORD_section(
 
 read_chainids = partial(read_RECORD_section, section_slice=slc_chainid, func=list)  # noqa: E501
 read_segids = partial(read_RECORD_section, section_slice=slc_segid, func=list)
+
+
+def add_TER_on_chain_breaks(
+        input_pdb: FilePath,
+        output_pdb: FilePath,
+        ) -> None:
+    def euclidean_dist(ca1, ca2):
+        return sum([(c1 - c2) ** 2 for c1, c2 in zip(ca1, ca2)]) ** 0.5
+
+    def is_peptide_bound(residue1, residue2) -> bool:
+        # Expected backbone distances set
+        backbone_dists = {
+            "CA": (2, 6, ),
+            "BB": (2, 6, ),
+            "P": (5, 10, ),
+            }
+        # Maybe not a protein/RNA/DNA/CG model...
+        try:
+            bb_dt = backbone_dists[residue1["BB_atom"]]
+        except KeyError:
+            return False
+        else:
+            lower_b = bb_dt[0]
+            upper_var = bb_dt[1]
+        # Extract coordinates
+        bb1 = residue1["BB_coords"]
+        bb2 = residue2["BB_coords"]
+        # Check if distance is within peptide bond range
+        return lower_b < euclidean_dist(bb1, bb2) < upper_var
+
+    def write_residue(fhandler, residue) -> int:
+        for _ in residue["lines"]:
+            fhandler.write(_)
+
+    # Initiate parsing variables
+    BB_atomnames: tuple[str, str, str] = ("CA", "BB", "P", )
+    current_resid: tuple[str, str] = ("-", "-", )
+    previous_residue: dict[str, Any] = {"lines": []}
+    current_residue: dict[str, Any] = {"lines": []}
+    # Read input file
+    with open(input_pdb, "r") as fin, open(output_pdb, "w") as fout:
+        for _ in fin:
+            if _.startswith(("ATOM", "HETATM", )):
+                # Extract specific data from coordinates record
+                chainid = _[slc_chainid].strip()
+                resid = _[slc_resseq].strip()
+                atname = _[slc_name].strip()
+                # Case when new residue
+                if current_resid != (chainid, resid):
+                    # Make sure it is not first residue
+                    if len(previous_residue["lines"]) > 0:
+                        # Write previous residue
+                        write_residue(fout, previous_residue)
+                        # Check if peptide bond observed between -2 and -1
+                        if not is_peptide_bound(previous_residue, current_residue) or \
+                                chainid != current_resid[0]:
+                            fout.write(f"TER{os.linesep}")
+                    # Reset previous residue to current residue
+                    previous_residue = current_residue
+                    # Reset new residue
+                    current_resid = (chainid, resid, )
+                    current_residue: dict = {"lines": [_]}
+                # Case when it is the same residue
+                else:
+                    # Save the residue line
+                    current_residue["lines"].append(_)
+                # If atom name is in the backbone atoms
+                if atname in BB_atomnames:
+                    # Hold backbone atom data in current residue
+                    current_residue["BB_atom"] = atname
+                    current_residue["BB_coords"] = [
+                        float(_[slc_x]),
+                        float(_[slc_y]),
+                        float(_[slc_z]),
+                        ]
+            # Not a coordinate records
+            else:
+                # We are dealing with TER elsewhere, so continue
+                if _.startswith("TER"):
+                    continue
+                # Just write whatever is there
+                fout.write(_)

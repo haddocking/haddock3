@@ -55,6 +55,7 @@ from haddock import log
 from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Optional, Union, ParamDict
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libpdb import add_TER_on_chain_breaks
 
 
 class OPENMM:
@@ -137,19 +138,24 @@ class OPENMM:
         self.log.debug(f"pdb_filepath is {pdb_filepath}")
         return pdb_filepath
     
-    def tidy_pdb(self, pdb_fpath: str) -> str:
-        output_filepath = os.path.join(
+    def handle_chainbreaks(self, pdb_fpath: str) -> str:
+        tidy_output_filepath = os.path.join(
             self.directory_dict["pdbfixer"],
             f"tidy_{self.model.file_name}",
             )
-        with open(output_filepath, "w") as filout, open(pdb_fpath, "r") as fin:
+        with open(tidy_output_filepath, "w") as filout, open(pdb_fpath, "r") as fin:
             for _ in pdb_tidy.run(fin):
                 filout.write(_)
+        output_filepath = os.path.join(
+            self.directory_dict["pdbfixer"],
+            f"withTER_{self.model.file_name}",
+            )
+        add_TER_on_chain_breaks(tidy_output_filepath, output_filepath)
         return output_filepath
 
     def openmm_pdbfixer(self):
         """Call Pdbfixer on the model pdb."""
-        pdb_filepath = self.tidy_pdb(self.get_pdb_filepath())
+        pdb_filepath = self.handle_chainbreaks(self.get_pdb_filepath())
         self.log.info(
             f"Fixing pdb: {self.model.file_name} (path {pdb_filepath})"
             )

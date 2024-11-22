@@ -3,6 +3,7 @@ on:
     branches: [citation_validation]
     paths:
       - CITATION.cff
+  pull_request:
   workflow_dispatch:
 
 name: CITATION.cff

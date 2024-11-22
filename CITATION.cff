@@ -1,13 +1,13 @@
 # YAML 1.2
 # Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
-cff-version: 1.0.3
-message: If you use this software, please cite it using these metadata.
+cff-version: 1.1.0
+# message: If you use this software, please cite it using these metadata.
 # FIXME title as repository name might not be the best name, please make human readable
-title: 'haddocking/haddock3: v3.0.0-beta.5'
+title: 'HADDOCK3 - modular integrative modelling software'
 doi: 10.5281/zenodo.10527751
 # FIXME splitting of full names is error prone, please check if given/family name are correct
 authors:
-- given-names: João
+- given-names: Joao
   family-names: Teixeira
   name-particle: M.C.
   affiliation: Zymvol

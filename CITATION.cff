@@ -1,54 +1,43 @@
-# YAML 1.2
-# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
-cff-version: 1.0.3
+cff-version: 1.1.0
 message: If you use this software, please cite it using these metadata.
-# FIXME title as repository name might not be the best name, please make human readable
-title: 'haddocking/haddock3: v3.0.0-beta.5'
-doi: 10.5281/zenodo.10527751
-# FIXME splitting of full names is error prone, please check if given/family name are correct
+title:HADDOCK3 - modular integrative modelling software
 authors:
-- given-names: João
-  family-names: Teixeira
-  name-particle: M.C.
-  affiliation: Zymvol
-- given-names: Rodrigo
-  family-names: Honorato
-  name-particle: Vargas
-  affiliation: '@UtrechtUniversity'
-- given-names: Marco
-  family-names: Giulini
-  affiliation: Utrecht University
-- given-names: Alexandre
-  family-names: Bonvin
-  affiliation: '@UtrechtUniversity'
-- given-names: SarahAlidoost
-  family-names: ''
+- family-names: Alidoost
+  given-names: Sarah
   affiliation: Netherlands eScience center
-- given-names: Victor
-  family-names: Reys
-  affiliation: '@haddocking'
-- given-names: Brian
-  family-names: Jimenez
-  affiliation: '@zymvol'
-- given-names: Douwe
-  family-names: Schulte
-  affiliation: '@UtrechtUniversity'
-- given-names: Charlotte
-  family-names: van Noort
+- family-names: Bonvin
+  given-names: Alexandre
   affiliation: Utrecht University
-- given-names: Stefan
-  family-names: Verhoeven
+- family-names: Giulini
+  given-names: Marco
+  affiliation: Utrecht University
+- family-names: Honorato Vargas
+  given-names: Rodrigo
+  affiliation: Utrecht University
+- family-names: Jimenez
+  given-names: Brian
+  affiliation: Zymvol
+- family-names: Kravchenko
+  given-names: Anna
+  affiliation: Utrecht University
+- family-names: Reys
+  given-names: Victor
+  affiliation: Utrecht University
+- family-names: Teixeira
+  given-names: João
+  affiliation: Zymvol
+- family-names: van Noort
+  given-names: Charlotte
+  affiliation: Utrecht University
+- family-names: Verhoeven
+  given-names: Stefan
   affiliation: Netherlands eScience Center
-- given-names: Barbara
-  family-names: Vreede
-  affiliation:
-- given-names: SSchott
-  family-names: ''
-  affiliation:
-- given-names: Regen
-  family-names: Tsai
-  affiliation:
-version: 3.0.0-beta.5
-date-released: 2024-01-18
+- family-names: Versini
+  given-names: Raphaella
+  affiliation: Utrecht University
+- family-names: Vreede
+  given-names: Barbara
+  affiliation: Netherlands eScience Center
 repository-code: https://github.com/haddocking/haddock3
-license: cc-by-4.0
+version: v3.0.0-beta.6
+license: Apache2

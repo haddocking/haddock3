@@ -21,8 +21,8 @@ authors:
 - given-names: Alexandre
   family-names: Bonvin
   affiliation: '@UtrechtUniversity'
-- given-names: SarahAlidoost
-  family-names: ''
+- given-names: Sarah
+  family-names: Alidoost
   affiliation: Netherlands eScience center
 - given-names: Victor
   family-names: Reys
@@ -41,13 +41,9 @@ authors:
   affiliation: Netherlands eScience Center
 - given-names: Barbara
   family-names: Vreede
-  affiliation:
 - given-names: SSchott
-  family-names: ''
-  affiliation:
 - given-names: Regen
   family-names: Tsai
-  affiliation:
 version: 3.0.0-beta.5
 date-released: 2024-01-18
 repository-code: https://github.com/haddocking/haddock3

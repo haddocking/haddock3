@@ -1,6 +1,6 @@
 # YAML 1.2
 # Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
-cff-version: 1.1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 # FIXME title as repository name might not be the best name, please make human readable
 title: 'HADDOCK3 - modular integrative modelling software'
@@ -44,7 +44,7 @@ authors:
 - given-names: SSchott
 - given-names: Regen
   family-names: Tsai
-version: "3.0.0-beta.6"
+version: "2024.10.0b6"
 date-released: 2024-01-18
 repository-code: https://github.com/haddocking/haddock3
 license: CC-BY-4.0

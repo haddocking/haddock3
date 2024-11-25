@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [citation_validation]
+    branches: [main]
     paths:
       - CITATION.cff
   pull_request:

@@ -25,52 +25,27 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
 
 1.  [Fork][fork] the HADDOCK3 repository
 2.  Create a new branch in your fork (`git checkout -b <new_branch_name>`)
-3.  Develop your code and tests:
+3.  Develop your code:
 
     1.  HADDOCK3 source is in `src/haddock`. Always implement code in
     the lowest Python version supported (this case is 3.9).
-    2.  Tests sit in the `tests/` folder. Use
-    [pytest](https://docs.pytest.org/en/6.2.x/) for testing.
-    3. See more details on how to contribute with code and tests in the
+    2. See more details on how to contribute with code and tests in the
     subheadings below.
 
-4.  While you are developing (or when you think you have finished), you can
-    (should) use our `tox` environments to test your code. Use the
-    following commands from the main repository folder:
+4.  Test your code:
+    1.  Tests sit in the `tests/` folder. Use
+    [pytest](https://docs.pytest.org/en/6.2.x/) for testing by running `pytest tests/`.
+    2.  Integration tests are located in the `integration_tests/` folder.
+        You can run them with `pytest integration_tests/`.
 
-    1.  `tox -e test` runs tests in current python version. If you tox
-    to report test names and status for every single test (high verbosity) use
-    `tox -e test -- -vv`.
-    2.  `tox -e lint` shows you errors in the code style.
-    3.  `tox -e build` simulates building the HADDOCK3 package.
-    4.  Run the above altogether with the simple `tox` command
-    5.  If you want to submit high-quality code, you may wish to run
-    `tox -e radon` to assess your code cyclomatic complexity.
-
-5.  You can work on these `tox` tests until they all pass green before
+5.  You can work on these tests until they all pass green before
 submitting your PR.
 
 6. Check if your contribution fulfills the requeriments proposed in the
 PR template, these are based on the experience of some developers to ensure the long-term
 survival of the codebase. Suggestions are always welcomed.
 
-7.  We also have an `examples` folder with test cases that you can run
-(should) to ensure the integrity of the python shell as a whole:
-    1.  Navigate to any of the examples folder and run the `-test.cfg`
-    file (see [USAGE](USAGE.md)).
-    2. `*-test.cfg` runs are meant for testing purposes only. The
-    `examples/` folder also contain `*-full.cfg` files for production runs.
-    You don't need to run these for testin.
-    2.  If you have a powerful computer and want to run all tests in a
-    row, navigate to the `examples` folder and run `python run_tests.py
-    -b`. The `-b` flag ensures the run will stop asap an error is found.
-    3. if your computer is not powerful enough, you can ask us to run
-    those tests once you submitted the pull request.
-    4. For example, the `docking-protein-protein-test.cfg` run in less
-    than 3 minutes on a `Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz` laptop
-    using 7 cores. All `-test.cfg` together take about 45 minutes.
-
-8.  Add a list of your new additions to the `CHANGELOG.md` file by
+7.  Add a list of your new additions to the `CHANGELOG.md` file by
 adding a new sub-header as described bellow. This is mandatory for `tox
 -e build` to pass. Note this applies only after we have released the
 stable `3.0.0` version.
@@ -86,7 +61,7 @@ stable `3.0.0` version.
 (... the rest of the file ...)
 ```
 
-8.  If you have difficulties with `tox`, let us know. These `tox` tests
+8.  If you have difficulties with the `tests`, let us know. These tests
 are the same that run on the GitHub Actions once you send the PR. So,
 sending the PR is another way to ensure all tests pass.
 
@@ -106,7 +81,7 @@ contribute to that folder and respective files. Summarizing here:
 
 * New command-line clients go in the `clis/` folder. See how the current
   clients here created and use that as a template. Remember to update also the
-  `setup.py` file.
+  `pyproject.toml` file.
 * Add any new functions that you foresee are general and
   could serve different places in the code to the `libs/` folder. Find a
   `lib*.py` files that would serve your purpuses, otherwise create a new
@@ -130,8 +105,8 @@ you create new `*.py` files you should create a new test file of the
 same name, `test_new_file_name.py`. Aim at 100% test coverage for the
 code you have created. Write tests according to [pytest][pytest]. You
 can see examples in our `test_*.py` files. You can run the tests using
-the `tox -e test` commands explained above. Or, if you want to run the
-tests for a singly file use `tox -e test -- tests/test_myfile.py`.
+the `pytest tests/` command explained above. Or, if you want to run the
+tests for a singly file use `pytest tests/test_myfile.py`.
 
 ### 1.3 Dependencies
 
@@ -152,118 +127,16 @@ us by opening an issue.
 another project. If licenses are compatible, copy their code to the
 HADDOCK3 repository writing all necessary headers to grant authorship
 and comply with license requirements.
-    1. If licenses aren't compatible, talk is us. We may have an
+    1. If licenses aren't compatible, talk to us. We may have an
     alternative.
 1. Your new module largely depends on a library and reimplementing or
 copying is not an option. Then, consider if we can use that dependency
-as a **runtime dependency** (like `gdock` or `lightdock`) instead of an
+as a **runtime (thirdparty) dependency** (like `gdock` or `lightdock`) instead of an
 installation dependency.
 1. Nothing of the above is possible. You **really** need an *install
 dependency*. Talk with us before.
 
-### 1.4 Code style
-
-HADDOCK3 follows nice code style rules. These are *almost* hard rules,
-but there is some room for exceptions - common sense prevails. When
-developing code, run `tox -e lint` to inspect if your code follows our
-conventions. We use [flake8][flake] with the [following rules][fr] and
-docstrings follow [numpydoc][numpydoc] style. You can hold on our code
-for style. Nevertheless, here's a dummy code snippet for your reference.
-Line have a soft max of 80 chars.
-
-```python
-"""Module's docstring."""
-# any comments. You can add here licensing stuff
-# first import standard library
-import os
-from path import Pathlib
-
-# import third library
-import numpy as np
-
-# import from haddock3
-from haddock import log
-# multiline import
-from haddock.libs.libio import (
-    lib1,
-    lib2,
-    lib3,
-    lib4,
-    )
-
-
-# all this are possible
-GLOBAL_VARIBLE = None
-_hidden_global_variable = None
-
-avoid_lower_case_globals = None
-
-
-def my_nice_func(arg1, arg2, arg3):
-    """Docstring here."""
-    # do stuf
-
-# if the function has many arguments, separate them by new lines.
-# mind the identations
-def my_nice_func_with_big_name(
-        var1,
-        var2,
-        var3,
-        named_var1="something",
-        named_var2="else",
-        **kwargs,
-        ):
-    """Docstring here."""
-    # do stuff
-    return
-
-
-multiline_list = [
-    var1,
-    var2,
-    var3,
-    var4,
-    ]
-
-multiline_dict = {
-    "key1": 1,
-    "key2": 2,
-    "key3": 3,
-    "key4": 4,
-    "key5": 5,
-    }
-
-# separate comprehensions by sections if line don't fit 80 chars
-# same for dictionaries
-cool_list_comprehension = [
-    dome_some_long_stuff(i)
-    for i in some_iterable
-    if validate(i)
-    ]
-
-double_quotes_allowed = "string"
-single_quotes_allowed = 'string'
-# don't try to homogenize quotes all around the code, respect the
-# original input.
-
-# define first use later
-generator_with_a_large_name = zip(
-    iter1,
-    iter2,
-    iter3,
-    iter4,
-    iter5,
-    )
-
-for a, b, c, d, e in generator_with_a_large_name:
-    # do stuff
-
-# use noqa: E501 for slightly long lines, in case splitting into
-# multiple lines reduces readability
-this_is_a_long_line = that_makes_no_much_sense(to_separate, in_multiple_lines, abcd)  # noqa: E501
-```
-
-### 1.5 Code structure
+### 1.4 Code structure
 
 Write code in the form of small functions, because small functions are
 easier to test. Combine small functions to compose larger functions. If
@@ -276,7 +149,7 @@ needed. Write comments that explain why you do stuff, and not how you do
 stuff. Use the `TODO:` flag in your comments to note something for the
 future. If needed, raise an issue.
 
-### 1.6 Creating a new module
+### 1.5 Creating a new module
 
 To develop a new HADDOCK3 module follow our guidelines and templates
 under `src/haddock/modules/_template_cat/_template_mod/`.
@@ -302,9 +175,17 @@ the documentation website.
 
 You can render the documentation locally to inspect the end result
 before creating a pull request. To compile the documentation locally:
-activate the `haddock3` python environment inside the haddock3 github
-folder, run `tox -e docs` and then use your favourite browser to open the
-`haddock3-docs/index.html` file. We invite you to read through Sphinx-doc
+- install HADDOCK in development mode with the `docs` extra requirements
+  (`pip install -e '.[docs]'`)
+- activate the `haddock3` python environment inside the haddock3 github
+folder
+- run the following commands:
+```bash
+sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+sphinx-build -b html docs haddock3-docs
+```
+
+We invite you to read through Sphinx-doc
 webpage if you want to exploit any advanced feature of Sphinx, but we
 already provide examples for virtually any use you may need.
 
@@ -321,8 +202,6 @@ an example. See also the `docs/conf.py` file `setup(app)` line.
   need to add that library name to the `mock` list in the `docs/conf.py`
   file.
 
-
-[tox]: https://tox.wiki/en/latest/index.html "tox"
 [fork]: https://docs.github.com/en/get-started/quickstart/fork-a-repo
 [pytest]: https://docs.pytest.org/ "pytest"
 [flake]: https://flake8.pycqa.org/en/latest/ "flake8"

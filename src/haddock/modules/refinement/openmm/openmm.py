@@ -139,23 +139,17 @@ class OPENMM:
         return pdb_filepath
     
     def handle_chainbreaks(self, pdb_fpath: str) -> str:
-        tidy_output_filepath = os.path.join(
-            self.directory_dict["pdbfixer"],
-            f"tidy_{self.model.file_name}",
-            )
-        with open(tidy_output_filepath, "w") as filout, open(pdb_fpath, "r") as fin:
-            for _ in pdb_tidy.run(fin):
-                filout.write(_)
         output_filepath = os.path.join(
             self.directory_dict["pdbfixer"],
             f"withTER_{self.model.file_name}",
             )
-        add_TER_on_chain_breaks(tidy_output_filepath, output_filepath)
+        add_TER_on_chain_breaks(pdb_fpath, output_filepath)
         return output_filepath
 
     def openmm_pdbfixer(self):
         """Call Pdbfixer on the model pdb."""
-        pdb_filepath = self.handle_chainbreaks(self.get_pdb_filepath())
+        input_pdb_filepath = self.get_pdb_filepath()
+        pdb_filepath = self.handle_chainbreaks(input_pdb_filepath)
         self.log.info(
             f"Fixing pdb: {self.model.file_name} (path {pdb_filepath})"
             )

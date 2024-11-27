@@ -50,7 +50,7 @@ from openmm.unit import (
 from pdbfixer import PDBFixer
 
 # Haddock libraries
-from pdbtools import pdb_delhetatm, pdb_mkensemble, pdb_tidy
+from pdbtools import pdb_delhetatm, pdb_mkensemble
 from haddock import log
 from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Optional, Union, ParamDict

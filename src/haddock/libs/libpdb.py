@@ -474,7 +474,7 @@ def add_TER_on_chain_breaks(
             current_residue
             )
         # Last residue
-        write_residue(fout, current_residue)
+        write_residue(fout, current_residue["lines"])
         # Write final TER statement
         fout.write(f"TER{os.linesep}")
         # Write END statement

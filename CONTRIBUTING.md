@@ -33,7 +33,7 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
     subheadings below.
 
 4.  Test your code:
-    1.  Tests sit in the `tests/` folder. Use
+    1.  Unit tests sit in the `tests/` folder. Use
     [pytest](https://docs.pytest.org/en/6.2.x/) for testing by running `pytest tests/`.
     2.  Integration tests are located in the `integration_tests/` folder.
         You can run them with `pytest integration_tests/`.

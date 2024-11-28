@@ -1,3 +1,18 @@
+! cg-to-aa.cns
+!    Performs the backmapping of CG structures into AA structures
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+!==================================================================!
+! Initialisation of variables
+!==================================================================!
+
 evaluate ($kinter = 1)
 
 ! Change segid of CG structure

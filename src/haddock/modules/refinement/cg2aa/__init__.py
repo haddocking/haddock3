@@ -1,10 +1,7 @@
-"""Energy minimization refinement with CNS.
+"""Backmapping of Coarse-Grained structures into All-atom structures with CNS.
 
-The ``[emref]`` module refine the input complexes by energy minimization using
-conjugate gradient method implemented in CNS.
-
-Coordinates of the energy minimized structures are saved, and each
-complex is then evaluated using the HADDOCK scoring function.
+The ``[cgtoaa]`` module translate the CG conformations into AA representations, 
+implemented in CNS.
 """
 
 from pathlib import Path
@@ -32,7 +29,7 @@ class HaddockModule(BaseCNSModule):
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
         """."""
-        cns_script = Path(RECIPE_PATH, "cns", "emref.cns")
+        cns_script = Path(RECIPE_PATH, "cns", "cg-to-aa.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
@@ -89,24 +86,27 @@ class HaddockModule(BaseCNSModule):
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
+            #print(self.params["sampling_factor"])
             for _ in range(self.params["sampling_factor"]):
-                emref_input = prepare_cns_input(
+                cgtoaa_input = prepare_cns_input(
                     idx,
                     model,
                     self.path,
                     self.recipe_str,
                     self.params,
-                    "emref",
+                    "cgtoaa",
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
                 )
-                out_file = f"emref_{idx}.out"
-                err_fname = f"emref_{idx}.cnserr"
+                out_file = f"cgtoaa_{idx}.out"
+                err_fname = f"cgtoaa_{idx}.cnserr"
+
+                print("CGTOAA", cgtoaa_input)
 
                 # create the expected PDBobject
-                expected_pdb = prepare_expected_pdb(model, idx, ".", "emref")
+                expected_pdb = prepare_expected_pdb(model, idx, ".", "cgtoaa")
                 expected_pdb.restr_fname = ambig_fname
                 try:
                     expected_pdb.ori_name = model.file_name
@@ -114,15 +114,17 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(emref_input, out_file, err_fname, envvars=self.envvars)
+                job = CNSJob(cgtoaa_input, out_file, err_fname, envvars=self.envvars)
 
                 jobs.append(job)
+                print(job)
 
                 idx += 1
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
         Engine = get_engine(self.params["mode"], self.params)
+        print(self.params["mode"])
         engine = Engine(jobs)
         engine.run()
         self.log("CNS jobs have finished")

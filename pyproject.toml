@@ -54,7 +54,7 @@ dev = [
   "hypothesis==6.119.3",
   "pytest-mock==3.14.0",
   "fastapi==0.115.5",
-  "httpx==0.27.2",
+  "httpx==0.28.0",
   "mpi4py==4.0.1",
   "kaleido==0.4.1",
   "pytest-random-order==1.1.1",

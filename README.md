@@ -103,10 +103,17 @@ Please check [DEVELOPMENT](https://github.com/haddocking/haddock3/blob/main/DEVE
 
 The code documentation is automatically built and hosted at [bonvinlab.org/haddock3](https://www.bonvinlab.org/haddock3/).
 
-To build it locally (considering you have followed the installation instructions):
+To build it locally it is necessary to have some extra packages installed. You can install them using the following command:
 
 ```bash
-tox -e docs
+pip install -e '.[docs]'
+```
+
+Then, to build the documentation, run the following commands:
+
+```bash
+sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+sphinx-build -b html docs haddock3-docs
 ```
 
 > Warning messages are expected, but the documentation should be built successfully.

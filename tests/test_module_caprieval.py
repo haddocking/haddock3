@@ -73,7 +73,7 @@ def fixture_protdna_caprimodule(protdna_input_list, params):
     model = protdna_input_list[1]
     _path = protdna_input_list[0].path
     capri = CAPRI(
-        identificator=str(42),
+        identificator=42,
         reference=reference,
         model=model,
         path=_path,
@@ -92,7 +92,7 @@ def fixture_protlig_caprimodule(protlig_input_list, params):
     model = protlig_input_list[1]
     _path = protlig_input_list[0].path
     capri = CAPRI(
-        identificator=str(42),
+        identificator=42,
         reference=reference,
         model=model,
         path=_path,
@@ -130,7 +130,7 @@ def fixture_protprot_allatm_caprimodule(protprot_input_list, params_all):
     model = protprot_input_list[1]
     _path = protprot_input_list[0].path
     capri = CAPRI(
-        identificator=str(42),
+        identificator=42,
         reference=reference,
         model=model,
         path=_path,
@@ -909,7 +909,7 @@ def test_extract_data_from_capri_class(mocker, monkeypatch):
 
         c = CAPRI(
             path=Path("."),
-            identificator="42",
+            identificator=42,
             model=Path("anything"),
             reference=Path("anything"),
             params={
@@ -974,3 +974,155 @@ def test_extract_data_from_capri_class(mocker, monkeypatch):
         assert observed_data[1]["cluster_id"] == random_clt_id
         assert observed_data[1]["cluster_ranking"] == random_clt_rank
         assert observed_data[1]["model-cluster_ranking"] == random_clt_model_rank
+
+
+def test_extract_data_from_capri_class_multiple_refs(mocker, monkeypatch):
+    """Test that the best reference was used to write data in capri table."""
+    # Patch some functions/methods
+    mocker.patch(
+        "haddock.modules.analysis.caprieval.capri.write_nested_dic_to_file",
+        return_value=None,
+    )
+    mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
+
+    with tempfile.TemporaryDirectory() as tempdir:
+        monkeypatch.chdir(tempdir)
+        capri_objects: list[CAPRI] = []
+        # Create random entries (shared between model)
+        random_clt_id = random.randint(1, 100)
+        random_clt_rank = random.randint(1, 100)
+        random_clt_model_rank = random.randint(1, 100)
+        random_md5 = str(uuid.uuid4())
+        random_score = -random.random()
+        random_energy = random.random()
+        random_model = PDBFile(
+            file_name=str(uuid.uuid4()),
+            score=random_score,
+            unw_energies={"energy": random_energy},
+            )
+        # Loop over references
+        nb_refs = 3
+        for ref_index in range(1, nb_refs + 1):
+            # Create CAPRI object
+            c = CAPRI(
+                path=Path("."),
+                identificator=42,
+                model=Path("anything"),
+                reference=Path(f"anything_{ref_index}"),
+                params={
+                    "allatoms": True,
+                    "receptor_chain": "X",
+                    "ligand_chains": ["X"],
+                    "dockq": True,
+                    "fnat": True,
+                    "ilrmsd": True,
+                    "lrmsd": True,
+                    "irmsd": True,
+                    "global_rmsd": True,
+                    },
+                )
+            # Update object shared attributes
+            c.model = random_model
+            c.model.clt_id = random_clt_id
+            c.model.clt_rank = random_clt_rank
+            c.model.clt_model_rank = random_clt_model_rank
+            c.md5 = random_md5
+            c.score = random_score
+            # Update object specific performances
+            c.irmsd = ref_index
+            c.fnat = 1 - (ref_index / nb_refs)
+            c.lrmsd = ref_index
+            c.ilrmsd = ref_index
+            c.dockq = 1 - (ref_index / nb_refs)
+            c.rmsd = ref_index
+            # Hold that guy
+            capri_objects.append(c)
+
+        observed_data = extract_data_from_capri_class(
+            capri_objects=capri_objects,
+            sort_key="score",
+            sort_ascending=True,
+            output_fname=Path(""),
+        )
+
+        assert observed_data is not None
+        # Set expected selected reference index
+        expected_ref_index = 1
+        assert observed_data[1]["model"] == random_model
+        assert observed_data[1]["md5"] == random_md5
+        assert observed_data[1]["score"] == random_score
+        assert observed_data[1]["irmsd"] == expected_ref_index
+        assert observed_data[1]["fnat"] == 1 - (expected_ref_index / nb_refs)
+        assert observed_data[1]["lrmsd"] == expected_ref_index
+        assert observed_data[1]["ilrmsd"] == expected_ref_index
+        assert observed_data[1]["dockq"] == 1 - (expected_ref_index / nb_refs)
+        assert observed_data[1]["rmsd"] == expected_ref_index
+        assert observed_data[1]["energy"] == random_energy
+        assert observed_data[1]["cluster_id"] == random_clt_id
+        assert observed_data[1]["cluster_ranking"] == random_clt_rank
+        assert observed_data[1]["model-cluster_ranking"] == random_clt_model_rank
+
+
+def test_capri_object_sorting_methods(mocker):
+    """Test behavior of __eq__ and __lt__ methods for sorting CAPRI objects."""
+    mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
+    # Generate objects
+    capri_objects = [
+        CAPRI(
+            path=Path("."),
+            identificator=i,
+            model=Path("anything"),
+            reference=Path("anything"),
+            params={
+                "allatoms": True,
+                "receptor_chain": "X",
+                "ligand_chains": ["X"],
+                "dockq": False,
+                "fnat": False,
+                "ilrmsd": False,
+                "lrmsd": False,
+                "irmsd": False,
+                "global_rmsd": False,
+            },
+        )
+        for i in range(5)
+        ]
+
+    # No performances computed, input order
+    sorted_objects = sorted(capri_objects)
+    assert sorted_objects == list(range(5))
+
+    # Fake performances values
+    performances = {
+        "dockq": [0.1, 0.8, 0.7, 0.9, 0.1],
+        "fnat": [0.1, 0.8, 0.7, 0.9, 0.1],
+        "lrmsd": [7, 2, 3, 1, 7],
+        "irmsd": [7, 2, 3, 1, 7],
+        "ilrmsd": [7, 2, 3, 1, 7],
+        "rmsd": [7, 2, 3, 1, 7],
+        }
+    # Set the performance values for all capri objects
+    for perf_key, perfs in performances.items():
+        for i, capri_object in enumerate(capri_objects):
+            # Set metric value
+            setattr(capri_object, perf_key, perfs[i])
+
+    # Expected model order
+    expected_order = [3, 1, 2, 0, 4]
+
+    # Loop over performances keys
+    for perf_key, perfs in performances.items():
+        param_perf_key = perf_key
+        if perf_key == "rmsd":
+            param_perf_key = f"global_{perf_key}"
+        # Turn on the computation of a given metric for all objects
+        for capri_object in capri_objects:
+            capri_object.params[param_perf_key] = True
+
+        # Obtain sorting
+        sorted_objects_idx = [c.identificator for c in sorted(capri_objects)]
+        # Make sure order is fine
+        assert sorted_objects_idx == expected_order
+
+        # Turn off metric computation parameter
+        capri_object.params[param_perf_key] = False

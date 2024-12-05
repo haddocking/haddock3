@@ -927,9 +927,9 @@ def test_extract_data_from_capri_class(mocker, monkeypatch):
             unw_energies={"energy": random_energy},
         )
 
-        random_clt_id = random.randint(0, 100)
-        random_clt_rank = random.randint(0, 100)
-        random_clt_model_rank = random.randint(0, 100)
+        random_clt_id = random.randint(1, 100)
+        random_clt_rank = random.randint(1, 100)
+        random_clt_model_rank = random.randint(1, 100)
         random_md5 = str(uuid.uuid4())
         random_score = random.random()
         random_irmsd = random.random()

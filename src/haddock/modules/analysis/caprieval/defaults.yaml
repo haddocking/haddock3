@@ -8,18 +8,6 @@ reference_fname:
   group: analysis
   explevel: easy
 
-multiple_references:
-  default: false
-  type: boolean
-  title: Allow the use of multiple reference conformations.
-  short: Performs caprieval computation on multiple reference conformations.
-  long: Performs caprieval computation on multiple reference conformations.
-    Final values will contain the best performing metrics with respect to
-    all reference conformations. Usefull when evaluating docking poses against
-    NMR structures, for example.
-  group: analysis
-  explevel: expert
-
 irmsd:
   default: true
   type: boolean

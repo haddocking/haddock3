@@ -29,7 +29,7 @@ The following files are generated:
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Optional, Union
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
@@ -38,9 +38,9 @@ from haddock.modules.analysis.caprieval.capri import (
     capri_cluster_analysis,
     dump_weights,
     extract_data_from_capri_class,
+    extract_models_best_references,
     )
 from pdbtools.pdb_wc import run as pdb_wc
-from pdbtools.pdb_selmodel import run as pdb_selmodel
 from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
 
@@ -116,41 +116,19 @@ class HaddockModule(BaseHaddockModule):
             return [reference]
 
         self.log(
-            f"Multiple structures ({nb_models}) found in reference file."
+            f"Multiple structures ({nb_models}) found in reference file. "
+            "Using all conformations as reference."
             )
-        # Case where multiple reference files are allowed
-        if self.params["multiple_references"]:
-            self.log(
-                "`multiple_references` parameter set to `true` -> "
-                "Using all conformations as reference."
-                )
-            # Split models
-            with open(reference, "r") as ref_in:
-                pdb_splitmodel(ref_in, "reference_model")
-            # Gather individual references
-            references = list(Path(".").glob("reference_model_*.pdb"))
-            assert len(references) == nb_models, (
-                    "Issue while splitting references conformation: "
-                    f"{nb_models} detected, {len(references)} generated"
-                )
-            return references
-        # Case where multiple reference files is not allowed
-        else:
-            self.log(
-                "`multiple_references` parameter set to `false` -> "
-                "Using the first structure as reference. "
-                "Consider providing different ensemble elements as "
-                "reference_fname in sequential [caprieval] modules, "
-                "or set `multiple_references` parameter to `true`."
-                )
-            # Write first model as reference
-            first_model_path = Path("first_model_reference.pdb")
-            with open(reference, "r") as rin, \
-                    open(first_model_path, "w") as rout:
-                # Gather only first model (as string)
-                for line in pdb_selmodel(rin, [1]):
-                    rout.write(line)
-            return [first_model_path]
+        # Split models
+        with open(reference, "r") as ref_in:
+            pdb_splitmodel(ref_in, "reference_model")
+        # Gather individual references
+        references = list(Path(".").glob("reference_model_*.pdb"))
+        assert len(references) == nb_models, (
+                "Issue while splitting references conformation: "
+                f"{nb_models} detected, {len(references)} generated"
+            )
+        return references
 
     def get_reference(self, models: list[PDBFile]) -> list[Path]:
         """Manage to obtain the reference structure to be used downstream.
@@ -238,15 +216,18 @@ class HaddockModule(BaseHaddockModule):
         jobs = engine.results
         jobs = sorted(jobs, key=lambda capri: capri.identificator)
 
+        # Extract best references per input model
+        best_ref_jobs = extract_models_best_references(jobs)
+
         extract_data_from_capri_class(
-            capri_objects=jobs,
+            capri_objects=best_ref_jobs,
             output_fname=Path(".", "capri_ss.tsv"),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
         )
 
         capri_cluster_analysis(
-            capri_list=jobs,
+            capri_list=best_ref_jobs,
             model_list=models,  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
             output_fname="capri_clt.tsv",
             clt_threshold=self.params["clt_threshold"],

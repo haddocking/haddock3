@@ -1112,9 +1112,6 @@ def test_capri_object_sorting_methods(mocker):
 
     # Loop over performances keys
     for perf_key, perfs in performances.items():
-        print()
-        print(perf_key)
-        print()
         param_perf_key = perf_key
         if perf_key == "rmsd":
             param_perf_key = f"global_{perf_key}"
@@ -1127,5 +1124,5 @@ def test_capri_object_sorting_methods(mocker):
         # Make sure order is fine
         assert sorted_objects_idx == expected_order
 
-        # Reset parameter
+        # Turn off metric computation parameter
         capri_object.params[param_perf_key] = False

@@ -124,7 +124,7 @@ constraints:
   explevel: easy
 
 equilibration_timesteps:
-  default: 3000
+  default: 2000
   type: integer
   min: 0
   max: 100000
@@ -281,13 +281,13 @@ solv_eq_stepsize_fs:
 solv_eq_timesteps:
   default: 500
   min: 10
-  max: 10000
+  max: 50000
   type: integer
   title: Number of timesteps to be performed during solvent equilibration phase.
   short: Number of timesteps to be performed during solvent equilibration phase.
   long: Number of timesteps to be performed during solvent equilibration phase.
   group: 'sampling'
-  explevel: expert
+  explevel: guru
 
 solv_eq_spring_constant:
   default: 20.0
@@ -299,4 +299,4 @@ solv_eq_spring_constant:
   short: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.
   long: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
   group: 'sampling'
-  explevel: expert
+  explevel: guru

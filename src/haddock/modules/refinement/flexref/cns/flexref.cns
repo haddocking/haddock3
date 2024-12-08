@@ -173,9 +173,11 @@ evaluate ($whichMD="torsion")
 @MODULE:read_param.cns
 
 parameter
-    bond  (all) (all) 1000 TOKEN
+    bond  (resn WAT ) (resn WAT ) 1000 TOKEN
     angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
+    bond  (resn HOH ) (resn HOH ) 1000 TOKEN
     angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
+    bond  (resn TIP*) (resn TIP*) 1000 TOKEN
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
@@ -477,6 +479,13 @@ if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 
+if ($Data.dielec eq "rdie") then
+    parameter nbonds eps=$Data.epsilon rdie shift switch end end
+    ! shift statement needed first to activate switch (CNS bug?)
+else
+    parameter nbonds eps=$Data.epsilon cdie end end
+end if
+parameter nbonds ? end end
 inline @MODULE:calc_free-ene.cns
 
 fix sele=(not all) end

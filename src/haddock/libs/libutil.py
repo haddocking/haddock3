@@ -148,6 +148,8 @@ def cpu_count() -> int:
         _process_ncores = os.sched_getaffinity(0)
         if isinstance(_process_ncores, set):
             process_ncores = len(_process_ncores)
+        else:
+            process_ncores = int(_process_ncores)
     return process_ncores
 
 

@@ -89,17 +89,41 @@ information.
 
 ## `openmm`
 
-1. Install the latest version of openmm and pdbfixer
+The use of the openmm module requires the installation of both OpenMM and pdbfixer.
+
+### In venv
+
+The venv installation instruction uses `pip` and requires a python version >=3.10 (not functional with python3.9).
+
 ```bash
+# Create a new virtual env
+python3.12 -m venv hd3-openmm
+source hd3-openmm/bin/activate
+# Install haddock3
+pip install .
+# Install OpenMM
+pip install openmm==8.2.0
+# Install openmm - pdbfixer
+pip install https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz
+```
+
+### In conda
+
+The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.9 and 3.12.
+
+```bash
+conda create -n hd3-p39-openmm python=3.9
 # Activate the haddock3 env
-conda activate haddock3
+conda activate hd3-p39-openmm
+# Install haddock3
+pip install haddock3
 # libstdxx must be installed, maybe already present in your system
 conda install -c conda-forge libstdcxx-ng
 # Install OpenMM and related tools/binaries
-conda install -c conda-forge openmm pdbfixer
+conda install -c conda-forge openmm==8.2.0 pdbfixer==1.10
 ```
 
-Openmm should automatically detect the fastest platform among those available
+OpenMM should automatically detect the fastest platform among those available
 on your machine.
 
 Please refer to the [official page](http://docs.openmm.org/latest/userguide/)

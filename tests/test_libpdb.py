@@ -1,7 +1,15 @@
 """Test lib PDB."""
 import pytest
+import tempfile
 
-from haddock.libs import libpdb
+from pathlib import Path
+
+from . import data_folder
+from haddock.libs.libpdb import (
+    add_TER_on_chain_breaks,
+    read_chainids,
+    read_segids,
+    )
 
 
 chainC = [
@@ -18,7 +26,7 @@ chainC = [
         ),
     )
 def test_read_chain_ids(lines, expected):
-    result = libpdb.read_chainids(lines)
+    result = read_chainids(lines)
     assert result == expected
 
 
@@ -29,5 +37,24 @@ def test_read_chain_ids(lines, expected):
         ),
     )
 def test_read_seg_ids(lines, expected):
-    result = libpdb.read_segids(lines)
+    result = read_segids(lines)
     assert result == expected
+
+
+def test_add_TER_on_chain_breaks(monkeypatch):
+    """Test proper detection of chain breaks."""
+    with tempfile.TemporaryDirectory(".") as tdir:
+        output_fpath = Path(tdir, "test_withTER.pdb")
+        add_TER_on_chain_breaks(
+            Path(data_folder, "noTER.pdb"),
+            output_fpath,
+            )
+        # Make sure file was created
+        assert output_fpath.exists()
+        assert output_fpath.stat().st_size != 0
+        # Make sure the file resemble the reference one
+        with open(output_fpath, "r") as testfile, \
+                open(Path(data_folder, "withTER.pdb")) as reffile:
+            # Line by line comparisons
+            for test_, ref_ in zip(testfile, reffile):
+                assert test_.rstrip() == ref_.rstrip()

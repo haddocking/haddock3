@@ -56,9 +56,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#contributing-with-code-additional-details">1.1 Contributing with code (additional details)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#contributing-with-tests-additional-details">1.2 Contributing with tests (additional details)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#dependencies">1.3 Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#code-style">1.4 Code style</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#code-structure">1.5 Code structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#creating-a-new-module">1.6 Creating a new module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#code-structure">1.4 Code structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-new-module">1.5 Creating a new module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#contributing-with-documentation">2. Contributing with documentation</a></li>
@@ -111,60 +110,35 @@ instructions in this file.</p>
 <p>HADDOCK3 has two main testing workflows. Here, within the repository, we
 test the HADDOCK3’s Python shell, code style, and package building.  Our
 Continuous Integration (CI) pipeline is based on
-<a class="reference external" href="https://tox.wiki/en/latest/index.html" title="tox">tox</a> and GitHub Actions. We will
-explain you how to use them.</p>
+pytest and GitHub Actions. We will explain you how to use them.</p>
 <p>To contribute to the HADDOCK3’s Python shell, follow these steps:</p>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">Fork</a> the HADDOCK3 repository</p></li>
 <li><p>Create a new branch in your fork (<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">&lt;new_branch_name&gt;</span></code>)</p></li>
-<li><p>Develop your code and tests:</p>
+<li><p>Develop your code:</p>
 <ol class="arabic simple">
 <li><p>HADDOCK3 source is in <code class="docutils literal notranslate"><span class="pre">src/haddock</span></code>. Always implement code in
 the lowest Python version supported (this case is 3.9).</p></li>
-<li><p>Tests sit in the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> folder. Use
-<a class="reference external" href="https://docs.pytest.org/en/6.2.x/">pytest</a> for testing.</p></li>
 <li><p>See more details on how to contribute with code and tests in the
 subheadings below.</p></li>
 </ol>
 </li>
-<li><p>While you are developing (or when you think you have finished), you can
-(should) use our <code class="docutils literal notranslate"><span class="pre">tox</span></code> environments to test your code. Use the
-following commands from the main repository folder:</p>
+<li><p>Test your code:</p>
 <ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span></code> runs tests in current python version. If you tox
-to report test names and status for every single test (high verbosity) use
-<code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span> <span class="pre">--</span> <span class="pre">-vv</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">lint</span></code> shows you errors in the code style.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">build</span></code> simulates building the HADDOCK3 package.</p></li>
-<li><p>Run the above altogether with the simple <code class="docutils literal notranslate"><span class="pre">tox</span></code> command</p></li>
-<li><p>If you want to submit high-quality code, you may wish to run
-<code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">radon</span></code> to assess your code cyclomatic complexity.</p></li>
+<li><p>Unit tests sit in the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> folder. Use
+<a class="reference external" href="https://docs.pytest.org/en/6.2.x/">pytest</a> for testing by running <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/</span></code>.</p></li>
+<li><p>Integration tests are located in the <code class="docutils literal notranslate"><span class="pre">integration_tests/</span></code> folder.
+You can run them with <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">integration_tests/</span></code>.</p></li>
 </ol>
 </li>
-<li><p>You can work on these <code class="docutils literal notranslate"><span class="pre">tox</span></code> tests until they all pass green before
+<li><p>You can work on these tests until they all pass green before
 submitting your PR.</p></li>
 <li><p>Check if your contribution fulfills the requeriments proposed in the
 PR template, these are based on the experience of some developers to ensure the long-term
 survival of the codebase. Suggestions are always welcomed.</p></li>
-<li><p>We also have an <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder with test cases that you can run
-(should) to ensure the integrity of the python shell as a whole:</p>
-<ol class="arabic simple">
-<li><p>Navigate to any of the examples folder and run the <code class="docutils literal notranslate"><span class="pre">-test.cfg</span></code>
-file (see <a class="reference internal" href="USAGE.html"><span class="std std-doc">USAGE</span></a>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">*-test.cfg</span></code> runs are meant for testing purposes only. The
-<code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder also contain <code class="docutils literal notranslate"><span class="pre">*-full.cfg</span></code> files for production runs.
-You don’t need to run these for testin.</p></li>
-<li><p>If you have a powerful computer and want to run all tests in a
-row, navigate to the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder and run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run_tests.py</span> <span class="pre">-b</span></code>. The <code class="docutils literal notranslate"><span class="pre">-b</span></code> flag ensures the run will stop asap an error is found.</p></li>
-<li><p>if your computer is not powerful enough, you can ask us to run
-those tests once you submitted the pull request.</p></li>
-<li><p>For example, the <code class="docutils literal notranslate"><span class="pre">docking-protein-protein-test.cfg</span></code> run in less
-than 3 minutes on a <code class="docutils literal notranslate"><span class="pre">Intel(R)</span> <span class="pre">Core(TM)</span> <span class="pre">i7-8550U</span> <span class="pre">CPU</span> <span class="pre">&#64;</span> <span class="pre">1.80GHz</span></code> laptop
-using 7 cores. All <code class="docutils literal notranslate"><span class="pre">-test.cfg</span></code> together take about 45 minutes.</p></li>
-</ol>
-</li>
 <li><p>Add a list of your new additions to the <code class="docutils literal notranslate"><span class="pre">CHANGELOG.md</span></code> file by
-adding a new sub-header as described bellow. This is mandatory for <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">build</span></code> to pass. Note this applies only after we have released the
+adding a new sub-header as described bellow.
+Note this applies only after we have released the
 stable <code class="docutils literal notranslate"><span class="pre">3.0.0</span></code> version.</p></li>
 </ol>
 <div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span><span class="gh"># Changelog</span>
@@ -178,7 +152,7 @@ stable <code class="docutils literal notranslate"><span class="pre">3.0.0</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="8">
-<li><p>If you have difficulties with <code class="docutils literal notranslate"><span class="pre">tox</span></code>, let us know. These <code class="docutils literal notranslate"><span class="pre">tox</span></code> tests
+<li><p>If you have difficulties with the <code class="docutils literal notranslate"><span class="pre">tests</span></code>, let us know. These tests
 are the same that run on the GitHub Actions once you send the PR. So,
 sending the PR is another way to ensure all tests pass.</p></li>
 <li><p>Submit your PR if you haven’t done so yet :wink:</p>
@@ -199,7 +173,7 @@ contribute to that folder and respective files. Summarizing here:</p>
 <ul class="simple">
 <li><p>New command-line clients go in the <code class="docutils literal notranslate"><span class="pre">clis/</span></code> folder. See how the current
 clients here created and use that as a template. Remember to update also the
-<code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file.</p></li>
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p></li>
 <li><p>Add any new functions that you foresee are general and
 could serve different places in the code to the <code class="docutils literal notranslate"><span class="pre">libs/</span></code> folder. Find a
 <code class="docutils literal notranslate"><span class="pre">lib*.py</span></code> files that would serve your purpuses, otherwise create a new
@@ -224,8 +198,8 @@ you create new <code class="docutils literal notranslate"><span class="pre">*.py
 same name, <code class="docutils literal notranslate"><span class="pre">test_new_file_name.py</span></code>. Aim at 100% test coverage for the
 code you have created. Write tests according to <a class="reference external" href="https://docs.pytest.org/" title="pytest">pytest</a>. You
 can see examples in our <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> files. You can run the tests using
-the <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span></code> commands explained above. Or, if you want to run the
-tests for a singly file use <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span> <span class="pre">--</span> <span class="pre">tests/test_myfile.py</span></code>.</p>
+the <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/</span></code> command explained above. Or, if you want to run the
+tests for a singly file use <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/test_myfile.py</span></code>.</p>
 </section>
 <section id="dependencies">
 <h3>1.3 Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h3>
@@ -250,121 +224,20 @@ another project. If licenses are compatible, copy their code to the
 HADDOCK3 repository writing all necessary headers to grant authorship
 and comply with license requirements.</p>
 <ol class="arabic simple">
-<li><p>If licenses aren’t compatible, talk is us. We may have an
+<li><p>If licenses aren’t compatible, talk to us. We may have an
 alternative.</p></li>
 </ol>
 </li>
 <li><p>Your new module largely depends on a library and reimplementing or
 copying is not an option. Then, consider if we can use that dependency
-as a <strong>runtime dependency</strong> (like <code class="docutils literal notranslate"><span class="pre">gdock</span></code> or <code class="docutils literal notranslate"><span class="pre">lightdock</span></code>) instead of an
+as a <strong>runtime (thirdparty) dependency</strong> (like <code class="docutils literal notranslate"><span class="pre">gdock</span></code> or <code class="docutils literal notranslate"><span class="pre">lightdock</span></code>) instead of an
 installation dependency.</p></li>
 <li><p>Nothing of the above is possible. You <strong>really</strong> need an <em>install
 dependency</em>. Talk with us before.</p></li>
 </ol>
 </section>
-<section id="code-style">
-<h3>1.4 Code style<a class="headerlink" href="#code-style" title="Link to this heading"></a></h3>
-<p>HADDOCK3 follows nice code style rules. These are <em>almost</em> hard rules,
-but there is some room for exceptions - common sense prevails. When
-developing code, run <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">lint</span></code> to inspect if your code follows our
-conventions. We use <a class="reference external" href="https://flake8.pycqa.org/en/latest/" title="flake8">flake8</a> with the <a class="reference external" href="https://github.com/haddocking/haddock3/blob/b44304f0a1509d44d9689d7e2e4124f0ae3af0a1/tox.ini#L116-L130">following rules</a> and
-docstrings follow <a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/format.html">numpydoc</a> style. You can hold on our code
-for style. Nevertheless, here’s a dummy code snippet for your reference.
-Line have a soft max of 80 chars.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Module&#39;s docstring.&quot;&quot;&quot;</span>
-<span class="c1"># any comments. You can add here licensing stuff</span>
-<span class="c1"># first import standard library</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">path</span> <span class="kn">import</span> <span class="n">Pathlib</span>
-
-<span class="c1"># import third library</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="c1"># import from haddock3</span>
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="c1"># multiline import</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">lib1</span><span class="p">,</span>
-    <span class="n">lib2</span><span class="p">,</span>
-    <span class="n">lib3</span><span class="p">,</span>
-    <span class="n">lib4</span><span class="p">,</span>
-    <span class="p">)</span>
-
-
-<span class="c1"># all this are possible</span>
-<span class="n">GLOBAL_VARIBLE</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="n">_hidden_global_variable</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="n">avoid_lower_case_globals</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="k">def</span> <span class="nf">my_nice_func</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Docstring here.&quot;&quot;&quot;</span>
-    <span class="c1"># do stuf</span>
-
-<span class="c1"># if the function has many arguments, separate them by new lines.</span>
-<span class="c1"># mind the identations</span>
-<span class="k">def</span> <span class="nf">my_nice_func_with_big_name</span><span class="p">(</span>
-        <span class="n">var1</span><span class="p">,</span>
-        <span class="n">var2</span><span class="p">,</span>
-        <span class="n">var3</span><span class="p">,</span>
-        <span class="n">named_var1</span><span class="o">=</span><span class="s2">&quot;something&quot;</span><span class="p">,</span>
-        <span class="n">named_var2</span><span class="o">=</span><span class="s2">&quot;else&quot;</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Docstring here.&quot;&quot;&quot;</span>
-    <span class="c1"># do stuff</span>
-    <span class="k">return</span>
-
-
-<span class="n">multiline_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">var1</span><span class="p">,</span>
-    <span class="n">var2</span><span class="p">,</span>
-    <span class="n">var3</span><span class="p">,</span>
-    <span class="n">var4</span><span class="p">,</span>
-    <span class="p">]</span>
-
-<span class="n">multiline_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;key1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;key2&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;key3&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;key4&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;key5&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="p">}</span>
-
-<span class="c1"># separate comprehensions by sections if line don&#39;t fit 80 chars</span>
-<span class="c1"># same for dictionaries</span>
-<span class="n">cool_list_comprehension</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">dome_some_long_stuff</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">some_iterable</span>
-    <span class="k">if</span> <span class="n">validate</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-    <span class="p">]</span>
-
-<span class="n">double_quotes_allowed</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
-<span class="n">single_quotes_allowed</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>
-<span class="c1"># don&#39;t try to homogenize quotes all around the code, respect the</span>
-<span class="c1"># original input.</span>
-
-<span class="c1"># define first use later</span>
-<span class="n">generator_with_a_large_name</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
-    <span class="n">iter1</span><span class="p">,</span>
-    <span class="n">iter2</span><span class="p">,</span>
-    <span class="n">iter3</span><span class="p">,</span>
-    <span class="n">iter4</span><span class="p">,</span>
-    <span class="n">iter5</span><span class="p">,</span>
-    <span class="p">)</span>
-
-<span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">generator_with_a_large_name</span><span class="p">:</span>
-    <span class="c1"># do stuff</span>
-
-<span class="c1"># use noqa: E501 for slightly long lines, in case splitting into</span>
-<span class="c1"># multiple lines reduces readability</span>
-<span class="n">this_is_a_long_line</span> <span class="o">=</span> <span class="n">that_makes_no_much_sense</span><span class="p">(</span><span class="n">to_separate</span><span class="p">,</span> <span class="n">in_multiple_lines</span><span class="p">,</span> <span class="n">abcd</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
-</pre></div>
-</div>
-</section>
 <section id="code-structure">
-<h3>1.5 Code structure<a class="headerlink" href="#code-structure" title="Link to this heading"></a></h3>
+<h3>1.4 Code structure<a class="headerlink" href="#code-structure" title="Link to this heading"></a></h3>
 <p>Write code in the form of small functions, because small functions are
 easier to test. Combine small functions to compose larger functions. If
 you need to use a global variable in a function, pass it as a default
@@ -377,7 +250,7 @@ stuff. Use the <code class="docutils literal notranslate"><span class="pre">TODO
 future. If needed, raise an issue.</p>
 </section>
 <section id="creating-a-new-module">
-<h3>1.6 Creating a new module<a class="headerlink" href="#creating-a-new-module" title="Link to this heading"></a></h3>
+<h3>1.5 Creating a new module<a class="headerlink" href="#creating-a-new-module" title="Link to this heading"></a></h3>
 <p>To develop a new HADDOCK3 module follow our guidelines and templates
 under <code class="docutils literal notranslate"><span class="pre">src/haddock/modules/_template_cat/_template_mod/</span></code>.</p>
 </section>
@@ -399,10 +272,19 @@ how we have structured it and add/edit the files you find relevant. You
 will see that the structure of folders and files follows the design of
 the documentation website.</p>
 <p>You can render the documentation locally to inspect the end result
-before creating a pull request. To compile the documentation locally:
-activate the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> python environment inside the haddock3 github
-folder, run <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">docs</span></code> and then use your favourite browser to open the
-<code class="docutils literal notranslate"><span class="pre">haddock3-docs/index.html</span></code> file. We invite you to read through Sphinx-doc
+before creating a pull request. To compile the documentation locally:</p>
+<ul class="simple">
+<li><p>install HADDOCK in development mode with the <code class="docutils literal notranslate"><span class="pre">docs</span></code> extra requirements
+(<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">'.[docs]'</span></code>)</p></li>
+<li><p>activate the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> python environment inside the haddock3 github
+folder</p></li>
+<li><p>run the following commands:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sphinx-apidoc<span class="w"> </span>-f<span class="w"> </span>-e<span class="w"> </span>-o<span class="w"> </span>docs/<span class="w"> </span>src/haddock<span class="w"> </span>-d<span class="w"> </span><span class="m">1</span>
+sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>haddock3-docs
+</pre></div>
+</div>
+<p>We invite you to read through Sphinx-doc
 webpage if you want to exploit any advanced feature of Sphinx, but we
 already provide examples for virtually any use you may need.</p>
 <p>If you need to install any additional library, talk to us first. The
@@ -431,7 +313,7 @@ file.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 05, 2024.
+      <span class="lastupdated">Last updated on Dec 09, 2024.
       </span></p>
   </div>
 

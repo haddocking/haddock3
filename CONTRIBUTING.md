@@ -18,8 +18,7 @@ instructions in this file.
 HADDOCK3 has two main testing workflows. Here, within the repository, we
 test the HADDOCK3's Python shell, code style, and package building.  Our
 Continuous Integration (CI) pipeline is based on
-[tox][tox] and GitHub Actions. We will
-explain you how to use them.
+pytest and GitHub Actions. We will explain you how to use them.
 
 To contribute to the HADDOCK3's Python shell, follow these steps:
 
@@ -46,8 +45,8 @@ PR template, these are based on the experience of some developers to ensure the 
 survival of the codebase. Suggestions are always welcomed.
 
 7.  Add a list of your new additions to the `CHANGELOG.md` file by
-adding a new sub-header as described bellow. This is mandatory for `tox
--e build` to pass. Note this applies only after we have released the
+adding a new sub-header as described bellow.
+Note this applies only after we have released the
 stable `3.0.0` version.
 
 ```markdown
@@ -205,6 +204,5 @@ an example. See also the `docs/conf.py` file `setup(app)` line.
 [fork]: https://docs.github.com/en/get-started/quickstart/fork-a-repo
 [pytest]: https://docs.pytest.org/ "pytest"
 [flake]: https://flake8.pycqa.org/en/latest/ "flake8"
-[fr]: https://github.com/haddocking/haddock3/blob/b44304f0a1509d44d9689d7e2e4124f0ae3af0a1/tox.ini#L116-L130
 [numpydoc]: https://numpydoc.readthedocs.io/en/latest/format.html
 [numba]: https://numba.pydata.org/ "Numba"

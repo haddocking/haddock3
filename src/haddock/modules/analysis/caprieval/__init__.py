@@ -26,11 +26,10 @@ The following files are generated:
 """
 
 
-from os import linesep
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Optional, Union
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
@@ -39,9 +38,10 @@ from haddock.modules.analysis.caprieval.capri import (
     capri_cluster_analysis,
     dump_weights,
     extract_data_from_capri_class,
+    extract_models_best_references,
     )
 from pdbtools.pdb_wc import run as pdb_wc
-from pdbtools.pdb_selmodel import run as pdb_selmodel
+from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -73,7 +73,7 @@ class HaddockModule(BaseHaddockModule):
                 return True
         return False
 
-    def validate_reference(self, reference: Path) -> Path:
+    def handle_input_reference(self, reference: Path) -> list[Path]:
         """Validate the reference file by returning only one model.
 
         Parameters
@@ -114,23 +114,24 @@ class HaddockModule(BaseHaddockModule):
                 break
         # Return reference as only one structure present
         if nb_models == 1:
-            return reference
+            return [reference]
 
         self.log(
             f"Multiple structures ({nb_models}) found in reference file. "
-            "Using the first structure as reference. "
-            "Consider providing different ensemble elements as "
-            "reference_fname in sequential [caprieval] modules."
+            "Using all conformations as reference."
             )
-        # Write new reference
-        first_model_path = Path("first_model_reference.pdb")
-        with open(reference, "r") as rin, open(first_model_path, "w") as rout:
-            # Gather only first model (as string)
-            for line in pdb_selmodel(rin, [1]):
-                rout.write(line)
-        return first_model_path
+        # Split models
+        with open(reference, "r") as ref_in:
+            pdb_splitmodel(ref_in, "reference_model")
+        # Gather individual references
+        references = list(Path(".").glob("reference_model_*.pdb"))
+        assert len(references) == nb_models, (
+                "Issue while splitting references conformation: "
+                f"{nb_models} detected, {len(references)} generated"
+            )
+        return references
 
-    def get_reference(self, models: list[PDBFile]) -> Path:
+    def get_reference(self, models: list[PDBFile]) -> list[Path]:
         """Manage to obtain the reference structure to be used downstream.
 
         Parameters
@@ -141,12 +142,12 @@ class HaddockModule(BaseHaddockModule):
 
         Returns
         -------
-        reference : Path
-            Path to the reference structure to be used downstream.
+        references : list[Path]
+            List of paths to the reference(s) structure to be used downstream.
         """
         if self.params["reference_fname"]:
             _reference = Path(self.params["reference_fname"])
-            reference = self.validate_reference(_reference)
+            references = self.handle_input_reference(_reference)
         else:
             self.log(
                 "No reference structure provided. "
@@ -157,8 +158,8 @@ class HaddockModule(BaseHaddockModule):
             best_model = models[0]
             assert isinstance(best_model, PDBFile), "Best model is not a PDBFile"
             best_model_fname = best_model.rel_path
-            reference = best_model_fname
-        return reference
+            references = [best_model_fname]
+        return references
 
     def _run(self) -> None:
         """Execute module."""
@@ -178,13 +179,14 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Get reference file
-        reference = self.get_reference(models)
+        references = self.get_reference(models)
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
         #  we can handle scenarios in which the models are hetergoneous
         #  for example during CAPRI scoring
         jobs: list[CAPRI] = []
+        # Loop over models
         for i, model_to_be_evaluated in enumerate(models, start=1):
             # `models_to_be_evaluated` cannot be a list,
             # `CAPRI` class is expecting a single model
@@ -192,16 +194,18 @@ class HaddockModule(BaseHaddockModule):
                 raise ValueError(
                     "CAPRI module cannot handle a list "
                     "of `model_to_be_evaluated`"
+                    )
+            # Loop over references
+            for reference in references:
+                jobs.append(
+                    CAPRI(
+                        identificator=i,
+                        model=model_to_be_evaluated,
+                        path=Path("."),
+                        reference=reference,
+                        params=self.params,
+                    )
                 )
-            jobs.append(
-                CAPRI(
-                    identificator=i,
-                    model=model_to_be_evaluated,
-                    path=Path("."),
-                    reference=reference,
-                    params=self.params,
-                )
-            )
 
         engine = Scheduler(
             tasks=jobs,
@@ -213,15 +217,18 @@ class HaddockModule(BaseHaddockModule):
         jobs = engine.results
         jobs = sorted(jobs, key=lambda capri: capri.identificator)
 
+        # Extract best references per input model
+        best_ref_jobs = extract_models_best_references(jobs)
+
         extract_data_from_capri_class(
-            capri_objects=jobs,
+            capri_objects=best_ref_jobs,
             output_fname=Path(".", "capri_ss.tsv"),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
         )
 
         capri_cluster_analysis(
-            capri_list=jobs,
+            capri_list=best_ref_jobs,
             model_list=models,  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
             output_fname="capri_clt.tsv",
             clt_threshold=self.params["clt_threshold"],

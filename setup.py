@@ -50,7 +50,7 @@ class CustomBuild(build_ext):
                 "gcc",
                 "-Wall",
                 "-O3",
-                "-march=native",
+                # "-march=native",
                 "-std=c99",
                 "-o",
                 "fast-rmsdmatrix",

@@ -36,8 +36,11 @@ class ScoringModule(BaseHaddockModule):
         df_sc = pd.DataFrame(sc_data, columns=df_columns)
         df_sc_sorted = df_sc.sort_values(by="score", ascending=ascending_sort)
         # writes to disk
-        df_sc_sorted.to_csv(output_fname, sep=sep, index=False, na_rep="None")
-
+        df_sc_sorted.to_csv(output_fname,
+                            sep=sep,
+                            index=False,
+                            na_rep="None",
+                            float_format="%.3f")
         return
 
 
@@ -66,7 +69,10 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         pdb_interfaces_scores: dict[tuple[Any, Any, Any], dict[str, dict[str, float]]] = {}  # noqa : E501
         # Loop over models to recover interfaces
         for pdb in self.output_models:
-            interfaces_scores = self.read_per_intreface_scores(pdb)
+            # if the pdb does not exist, skip
+            if not Path(pdb.file_name).exists():
+                continue
+            interfaces_scores = self.read_per_interface_scores(pdb)
             reversed_interfaces_scores = {}
 
             # Hold list of interfaces
@@ -118,11 +124,12 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                 sep=sep,
                 index=False,
                 na_rep="None",
+                float_format="%.3f",
                 )
         return
 
     @staticmethod
-    def read_per_intreface_scores(pdb: PDBFile) -> dict[str, dict[str, float]]:
+    def read_per_interface_scores(pdb: PDBFile) -> dict[str, dict[str, float]]:
         """Read a pdb file and parse per interface scores.
 
         Parameters

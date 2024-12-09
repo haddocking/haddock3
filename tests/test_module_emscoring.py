@@ -53,13 +53,13 @@ def test_emscoring_output(emscoring_dna, protdna_input_list):
             Path(protdna_input_list[0].rel_path).name,
             Path(protdna_input_list[0].ori_name).name,
             "None",
-            str(protdna_input_list[0].score),
+            f"{protdna_input_list[0].score:.3f}",
         ],
         [
             Path(protdna_input_list[1].rel_path).name,
             Path(protdna_input_list[1].ori_name).name,
             "None",
-            str(protdna_input_list[1].score),
+            f"{protdna_input_list[1].score:.3f}",
         ],
     ]
 
@@ -69,5 +69,3 @@ def test_emscoring_output(emscoring_dna, protdna_input_list):
         assert i == j
 
     assert observed_outf_l == expected_outf_l
-
-    os.unlink(output_fname)

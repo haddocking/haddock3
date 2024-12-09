@@ -10,7 +10,7 @@ jobs:
   ci:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-13]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
       fail-fast: false
 
@@ -29,15 +29,13 @@ jobs:
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: Install system dependencies (macOS)
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-13'
         run: |
           brew update
-          brew install openmpi llvm
+          brew install openmpi
 
       - name: install haddock3 with extra dependencies
         run: |
-          export CC=gcc
-          export CXX=g++
           pip install '.[dev,docs]'
 
       - name: run unit tests

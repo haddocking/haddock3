@@ -1,13 +1,13 @@
 """General utilities."""
 import collections.abc
 import contextlib
+import os
 import re
 import shutil
 import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
-from os import sched_getaffinity
 from pathlib import Path
 
 from haddock import EmptyPath, log
@@ -135,12 +135,17 @@ def cpu_count(pid: int = 0) -> int:
 
     Note: pid 0 == current process
 
+    FIXME: from python3.13, better to use os.process_cpu_count()
+
     Returns
     -------
     process_ncores : int
         Number of cores allocated to the process pid.
     """
-    process_ncores = int(sched_getaffinity(pid))
+    try:
+        process_ncores = int(os.process_cpu_count())
+    except AttributeError:
+        process_ncores = int(os.sched_getaffinity(pid))
     return process_ncores
 
 

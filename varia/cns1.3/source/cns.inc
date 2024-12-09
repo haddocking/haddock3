@@ -21,7 +21,7 @@ C
 C word size
 C
       INTEGER    WORD_SIZE
-      PARAMETER (WORD_SIZE=160)
+      PARAMETER (WORD_SIZE=264)
 C
 C=================================================================
 C

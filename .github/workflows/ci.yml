@@ -32,7 +32,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           brew update
-          brew install openmpi
+          brew install openmpi gcc
 
       - name: install haddock3 with extra dependencies
         run: pip install '.[dev,docs]'

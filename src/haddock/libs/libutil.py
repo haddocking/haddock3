@@ -7,7 +7,7 @@ import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
-from os import cpu_count
+from os import sched_getaffinity
 from pathlib import Path
 
 from haddock import EmptyPath, log
@@ -126,6 +126,22 @@ def remove_dict_keys(d: ParamMap, keys: Container[str]) -> ParamDict:
         A copy of `d` dictionary without the `keys`.
     """
     return {k: deepcopy(v) for k, v in d.items() if k not in keys}
+
+
+def cpu_count(pid: int = 0) -> int:
+    """Count number of available CPU for the process.
+    
+    User suggestion, by https://github.com/EricDeveaud
+
+    Note: pid 0 == current process
+
+    Returns
+    -------
+    process_ncores : int
+        Number of cores allocated to the process pid.
+    """
+    process_ncores = sched_getaffinity(pid)
+    return process_ncores
 
 
 def parse_ncores(

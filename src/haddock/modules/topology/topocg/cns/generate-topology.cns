@@ -1,0 +1,261 @@
+! generate-topology.inp
+!     Generates missing coordinates and topology for coarse grained model
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * and from the CNS distriution of Brunger and Adams                   *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+
+define(
+
+{============================== important =================================}
+
+{* Different chains in the structure must have either unique segid or
+   chainid records. If this is no the case, the end of a chain must
+   be delimited by a TER card. *}
+
+{* A break in a chain can be detected automatically or should be delimited
+   by a BREAK card. In this case no patch (head, tail or link) will be 
+   applied between the residues that bound the chain break. *}
+
+{* NB. The input PDB file must finish with an END statement *}
+
+{* convert chainid to segid if chainid is non-blank *}
+{+ choice: true false +}
+{===>} convert=true;
+
+{* separate chains by segid - a new segid starts a new chain *}
+{+ choice: true false +}
+{===>} separate=true;
+
+{======================= automatic mainchain breaks ========================}
+
+{* automatically detect mainchain breaks in proteins based on distance *}
+{* the peptide link at break points will be removed *}
+{+ choice: true false +}
+{===>} auto_break=true;
+
+{* cutoff distance in Angstroms for identification of breaks *}
+{* the default of 8A for CG peptide bonds should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} pcgbreak_cutoff=8.0;
+{* the default of 10A for CG nucleic acid linkages should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} dnacgbreak_cutoff=10.0;
+
+{======================= automatic disulphide bonds ========================}
+
+{* cutoff distance in Angstroms for identification of disulphides *}
+{* the default of 3.0A should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} disulphide_dist=3.0;
+
+
+{======================= automatic cis peptide bonds =======================}
+
+{* select atoms to be included in calculation of omega angles *}
+{* to define cis peptides*}
+{===>} atom_select=(known and not hydrogen);
+
+{================== protein topology and parameter files ===================}
+
+{* protein topology file *}
+{===>} prot_topology_infile="TOPPAR:protein-CG-Martini-2-2.top";
+
+{* protein linkage file *}
+{===>} prot_link_infile="TOPPAR:protein-CG-Martini-2-2.link";
+
+{* protein parameter file *}
+{===>} prot_parameter_infile="TOPPAR:protein-CG-Martini-2-2.param";
+
+{================ nucleic acid topology and parameter files =================}
+
+{* nucleic acid topology file *}
+{===>} nucl_topology_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.top";
+
+{* nucleic acid linkage file *}
+{===>} nucl_link_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.link";
+
+{* nucleic acid parameter file *}
+{===>} nucl_parameter_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.param";
+
+{================= cofactor topology and parameter files ===================}
+
+{* co-factor topology file *}
+{===>} cofac_topology_infile="TOPPAR:ligand.top";
+
+{* co-factor linkage file *}
+{===>} cofac_link_infile="TOPPAR:ligand.pep";
+
+{* co-factor parameter file *}
+{===>} cofac_parameter_infile="TOPPAR:ligand.param";
+
+{================= shape topology and parameter files =====================}
+
+{* shape topology file *}
+{===>} shape_topology_infile="TOPPAR:shape.top";
+
+{* shape parameter file *}
+{===>} shape_parameter_infile="TOPPAR:shape.param";
+
+{===================== default number of histidines for patching ===========}
+
+ ) {- end block parameter definition -}
+
+if ( $cgffversion eq "martini2" ) then
+    {* protein topology file *}
+    eval ($prot_topology_infile="TOPPAR:protein-CG-Martini-2-2.top")
+    {* protein linkage file *}
+    eval ($prot_link_infile="TOPPAR:protein-CG-Martini-2-2.link")
+    {* protein parameter file *}
+    eval ($prot_parameter_infile="TOPPAR:protein-CG-Martini-2-2.param")
+elseif ( $cgffversion eq "martini3" ) then
+    display "CG force field version not yet implemented - stopping..."
+    stop
+end if
+
+if ( $cgffversion eq "martini2" ) then
+    {* nucleic acid topology file *}
+    eval ($nucl_topology_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.top")
+    {* nucleic acid linkage file *}
+    eval ($nucl_link_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.link")
+    {* nucleic acid parameter file *}
+    eval ($nucl_parameter_infile="TOPPAR:dna-rna-CG-MARTINI-2-1p.param")
+elseif ( $cgffversion eq "martini3" ) then
+    display "CG force field version not yet implemented - stopping..."
+    stop
+end if
+
+evaluate ($chain = 1)
+evaluate($coor_infile= $file)
+
+topology
+    if ( &BLANK%prot_topology_infile = false ) then
+        @@&prot_topology_infile
+    end if
+    if ( &BLANK%nucl_topology_infile = false ) then
+        @@&nucl_topology_infile
+    end if
+    if ( &BLANK%ligands_topology_infile = false ) then
+        @@&ligands_topology_infile
+    end if
+    if ( &BLANK%shape_topology_infile = false ) then
+        @@&shape_topology_infile
+    end if
+    fileexist $ligand_top_fname end
+    if ($result eq true) then
+        @@$ligand_top_fname
+    end if
+end
+
+parameter
+    if ( &BLANK%prot_parameter_infile = false ) then
+        @@&prot_parameter_infile
+    end if
+    if ( &BLANK%nucl_parameter_infile = false ) then
+        @@&nucl_parameter_infile
+    end if
+    if ( &BLANK%ligands_parameter_infile = false ) then
+        @@&ligands_parameter_infile
+    end if
+    if ( &BLANK%shape_parameter_infile = false ) then
+        @@&shape_parameter_infile
+    end if
+    fileexist $ligand_param_fname end
+    if ($result eq true) then
+        @@$ligand_param_fname
+    end if
+end
+
+segment
+    chain
+        if ( &convert = true ) then
+            convert=true
+        end if
+        if ( &separate = true ) then
+            separate=true
+        end if
+        if ( &BLANK%prot_link_infile = false ) then
+            @@&prot_link_infile
+        end if
+        if ( &BLANK%nucl_link_infile = false ) then
+            @@&nucl_link_infile
+        end if
+        if ( &BLANK%ligands_link_infile = false ) then
+            @@&ligands_link_infile
+        end if
+        coordinates @@$coor_infile
+    end
+end
+
+set seed=$iniseed end
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal") then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
+coordinates @@$coor_infile
+
+! next line to remove the MAP atom defined in the DUM residue
+! in case of use of dummy particles
+delete sele=(name MAP) end
+
+if ( &auto_break = true ) then
+    inline @MODULE:prot_break.cns
+    inline @MODULE:patch-breaks-cg-dna-rna.cns
+end if
+
+inline @MODULE:patch-types-cg.cns
+inline @MODULE:patch-bb-cg.cns
+inline @MODULE:patch-types-cg-hbond-dna-rna.cns
+
+show sum(1) ( not(hydrogen) and not(known) )
+if ( $select = 0 ) then
+    display  %INFO: There are no coordinates missing
+end if
+
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=10 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance 0.5
+    end
+end
+
+flag excl * include bond angle impr dihe vdw end
+
+energy end
+
+evaluate ($bonded = $bond + $angl + $impr)
+if ($bonded > 10000) then
+    minimize powell nstep=100 drop=10.0 nprint=10 end
+    energy end
+    evaluate ($bonded = $bond + $angl + $impr)
+end if
+if ($bonded > 10000) then
+    evaluate ($dispfile = $output_pdb_filename - ".pdb" + ".warn")
+    set display=$dispfile end
+    display WARNING: the bonded energy is very high:
+    display Ebonded-total=$bonded Ebond=$bond Eangl=$angl Eimpr=$impr
+    display Something is possibly wrong with your input structure
+    close $dispfile end
+end if
+
+write structure output=$output_psf_filename end
+write coordinates format=pdbo output=$output_pdb_filename end
+
+display OUTPUT: $output_pdb_filename
+display OUTPUT: $output_psf_filename
+
+stop
+
+

@@ -9,13 +9,12 @@ exclude .gitmodules
 exclude .bumpversion.cfg
 exclude .coveragerc
 exclude .readthedocs.yml
-exclude tox.ini
 prune devtools
 prune examples
 prune src/fcc
 prune tests
 # exclude params*.rst documentation that is generated with
-# `tox -e docs`
+# sphinx-apidoc
 exclude docs/modules/*/params/*.rst
 exclude docs/reference/core/mandatory_parameters.rst
 exclude docs/modules/general_module_params.rst

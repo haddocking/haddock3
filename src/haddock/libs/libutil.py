@@ -140,7 +140,7 @@ def cpu_count(pid: int = 0) -> int:
     process_ncores : int
         Number of cores allocated to the process pid.
     """
-    process_ncores = sched_getaffinity(pid)
+    process_ncores = int(sched_getaffinity(pid))
     return process_ncores
 
 

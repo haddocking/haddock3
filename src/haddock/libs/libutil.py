@@ -128,7 +128,7 @@ def remove_dict_keys(d: ParamMap, keys: Container[str]) -> ParamDict:
     return {k: deepcopy(v) for k, v in d.items() if k not in keys}
 
 
-def cpu_count(pid: int = 0) -> int:
+def cpu_count() -> int:
     """Count number of available CPU for the process.
     
     User suggestion, by https://github.com/EricDeveaud
@@ -145,7 +145,9 @@ def cpu_count(pid: int = 0) -> int:
     try:
         process_ncores = int(os.process_cpu_count())
     except AttributeError:
-        process_ncores = int(os.sched_getaffinity(pid))
+        _process_ncores = os.sched_getaffinity(0)
+        if isinstance(_process_ncores, set):
+            process_ncores = len(_process_ncores)
     return process_ncores
 
 

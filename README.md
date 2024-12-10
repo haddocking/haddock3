@@ -23,11 +23,37 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
+Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3. 
+
 ```bash
 pip install haddock3
 ```
 
-Execute:
+In case you rather install the latest unreleased version use instead:
+
+```bash
+git clone https://github.com/haddocking/haddock3.git
+cd haddock3
+pip install .
+```
+
+For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md) 
+
+You might also want to check the following utilities:
+
+- [`haddock-restraints`](https://github.com/haddocking/haddock-restraints): Tool to generate restraints to be used in `haddock3`.
+- [`haddock-runner`](https://github.com/haddocking/haddock-runner): Tool to run large scale `haddock3` simulations using multiple input molecules in different scenarios
+- [`haddock-tools`](https://github.com/haddocking/haddock-tools): Set of useful utility scripts developed over the years by the BonvinLab group members
+
+## Usage
+
+The most basic usage is:
+
+```bash
+haddock3 <configuration-file.toml>
+```
+
+For help on haddock3 usage:
 
 ```bash
 $ haddock3 -h
@@ -44,22 +70,6 @@ optional arguments:
   --setup               Only setup the run, do not execute
   --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
   -v, --version         show version
-```
-
-For the installation of third-party additional software, please check the [INSTALL](docs/INSTALL.md).
-
-You might also want to check the following utilities:
-
-- [`haddock-restraints`](https://github.com/haddocking/haddock-restraints): Tool to generate restraints to be used in `haddock3`.
-- [`haddock-runner`](https://github.com/haddocking/haddock-runner): Tool to run large scale `haddock3` simulations using multiple input molecules in different scenarios
-- [`haddock-tools`](https://github.com/haddocking/haddock-tools): Set of useful utility scripts developed over the years by the BonvinLab group members
-
-## Usage
-
-The most basic usage is:
-
-```bash
-haddock3 <configuration-file.toml>
 ```
 
 Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
@@ -93,10 +103,17 @@ Please check [DEVELOPMENT](https://github.com/haddocking/haddock3/blob/main/DEVE
 
 The code documentation is automatically built and hosted at [bonvinlab.org/haddock3](https://www.bonvinlab.org/haddock3/).
 
-To build it locally (considering you have followed the installation instructions):
+To build it locally it is necessary to have some extra packages installed. You can install them using the following command:
 
 ```bash
-tox -e docs
+pip install -e '.[docs]'
+```
+
+Then, to build the documentation, run the following commands:
+
+```bash
+sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+sphinx-build -b html docs haddock3-docs
 ```
 
 > Warning messages are expected, but the documentation should be built successfully.

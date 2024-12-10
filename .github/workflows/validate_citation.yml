@@ -1,0 +1,16 @@
+on:
+  pull_request:
+    paths:
+      - CITATION.cff
+  workflow_dispatch:
+
+jobs:
+  validate-citation:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dieghernan/cff-validator@v3

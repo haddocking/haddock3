@@ -38,6 +38,7 @@ from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import GenericTask, Scheduler
+from haddock.libs.libpdb import check_combination_chains
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -132,6 +133,7 @@ class HaddockModule(BaseCNSModule):
         _l = []
         idx = 1
         for combination in models_to_dock:
+            check_combination_chains(combination)
             for _ in range(sampling_factor):
                 ambig_fname = (
                     ambig_fnames[idx - 1]

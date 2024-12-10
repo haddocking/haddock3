@@ -1,11 +1,11 @@
 """Test libutil."""
-from os import cpu_count
 from pathlib import Path
 
 import pytest
 
 from haddock import EmptyPath
 from haddock.libs.libutil import (
+    cpu_count,
     extract_keys_recursive,
     get_number_from_path_stem,
     non_negative_int,

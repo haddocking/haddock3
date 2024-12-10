@@ -56,9 +56,8 @@ dev = [
   "fastapi==0.115.5",
   "httpx==0.28.0",
   "mpi4py==4.0.1",
-  "kaleido==0.4.1",
+  "kaleido==0.2.1",  # 0.4.1 when fixed... https://github.com/plotly/Kaleido/issues/226
   "pytest-random-order==1.1.1",
-
 ]
 docs = [
   "sphinx>=7",

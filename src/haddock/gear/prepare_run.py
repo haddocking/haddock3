@@ -70,7 +70,7 @@ from haddock.gear.yaml2cfg import (
     )
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
-from haddock.libs.libio import make_writeable_recursive
+from haddock.libs.libio import make_writeable_recursive, extract_files_flat
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_convert_paths_to_strings,
@@ -1040,8 +1040,7 @@ def copy_input_files_to_data_dir(
                     # account for input .tgz files
                     if name.endswith("tgz"):
                         log.info(f"Uncompressing tar {value}")
-                        with tarfile.open(target_path) as fin:
-                            fin.extractall(pf)
+                        extract_files_flat(value, pf)
 
 
 def check_run_dir_exists(run_dir: FilePath) -> None:

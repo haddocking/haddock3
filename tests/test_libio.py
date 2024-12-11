@@ -1,12 +1,14 @@
 """Test libio."""
 import tempfile
 from pathlib import Path
+import shutil
 
 import pytest
 
 from haddock.libs.libio import (
     clean_suffix,
     dot_suffix,
+    extract_files_flat,
     file_exists,
     folder_exists,
     read_from_yaml,
@@ -15,6 +17,7 @@ from haddock.libs.libio import (
     )
 
 from . import emptycfg, haddock3_yaml_cfg_examples
+from . import golden_data
 
 
 @pytest.mark.parametrize(
@@ -133,3 +136,15 @@ def test_folder_exists_wrong(i):
 def test_folder_exists_wrong_othererror():
     with pytest.raises(TypeError):
         folder_exists("some_bad_path", exception=TypeError)
+
+
+def test_extract_files_flat(monkeypatch):
+    """Test extract_files_flat."""
+    with tempfile.TemporaryDirectory() as tempdir:
+        reference_archive = Path(golden_data, "ambig.tbl.tgz")
+        shutil.copy(reference_archive, tempdir)
+        monkeypatch.chdir(tempdir)
+        archive = Path(reference_archive.name)
+        # extract the archive
+        extract_files_flat(archive, ".")
+        assert Path("ambig_1.tbl").exists()

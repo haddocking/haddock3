@@ -151,7 +151,7 @@
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.zerofill</span> <span class="kn">import</span> <span class="n">zero_fill</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">not_none</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">make_writeable_recursive</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">make_writeable_recursive</span><span class="p">,</span> <span class="n">extract_files_flat</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">extract_keys_recursive</span><span class="p">,</span>
     <span class="n">recursive_convert_paths_to_strings</span><span class="p">,</span>
@@ -1177,8 +1177,7 @@
                     <span class="c1"># account for input .tgz files</span>
                     <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;tgz&quot;</span><span class="p">):</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uncompressing tar </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">target_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
-                            <span class="n">fin</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span></div>
+                        <span class="n">extract_files_flat</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pf</span><span class="p">)</span></div>
 
 
 

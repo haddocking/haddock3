@@ -102,6 +102,7 @@
     <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">Mapping</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">sort_numbered_paths</span>
@@ -756,6 +757,31 @@
 
         <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">get_perm</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span> <span class="o">|</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWUSR</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_files_flat">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libio.html#haddock.libs.libio.extract_files_flat">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_files_flat</span><span class="p">(</span><span class="n">tar_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">],</span>
+                       <span class="n">dest_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract files from a tarball to a destination folder.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tar_path : str or Path</span>
+<span class="sd">        The path to the tarball file.</span>
+
+<span class="sd">    dest_path : str or Path</span>
+<span class="sd">        The path to the destination folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tar_path</span><span class="p">,</span> <span class="s2">&quot;r:gz&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">tar</span><span class="o">.</span><span class="n">getmembers</span><span class="p">():</span>
+            <span class="c1"># Extract only files (skip directories)</span>
+            <span class="k">if</span> <span class="n">member</span><span class="o">.</span><span class="n">isfile</span><span class="p">():</span>
+                <span class="c1"># Modify the member name to remove the directory structure</span>
+                <span class="n">member</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">tar</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -177,7 +177,9 @@ def test_convert_paths_to_strings_recursive():
 
 def test_cpu_count():
     """Test that cpu counts returns an integer > 0."""
-    assert cpu_count() > 0
+    ncores = cpu_count()
+    assert isinstance(ncores, int)
+    assert ncores > 0
 
 
 @pytest.mark.parametrize(

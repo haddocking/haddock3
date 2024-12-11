@@ -175,6 +175,11 @@ def test_convert_paths_to_strings_recursive():
     assert r == e
 
 
+def test_cpu_count():
+    """Test that cpu counts returns an integer > 0."""
+    assert cpu_count() > 0
+
+
 @pytest.mark.parametrize(
     'n,njobs,maxcpus,expected',
     [

@@ -120,6 +120,7 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libcns</span> <span class="kn">import</span> <span class="n">prepare_cns_input</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">GenericTask</span><span class="p">,</span> <span class="n">Scheduler</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libpdb</span> <span class="kn">import</span> <span class="n">check_combination_chains</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
 <span class="kn">from</span> <span class="nn">haddock.modules.base_cns_module</span> <span class="kn">import</span> <span class="n">BaseCNSModule</span>
@@ -227,6 +228,7 @@
         <span class="n">_l</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">:</span>
+            <span class="n">check_combination_chains</span><span class="p">(</span><span class="n">combination</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sampling_factor</span><span class="p">):</span>
                 <span class="n">ambig_fname</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">ambig_fnames</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
@@ -353,7 +355,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 10, 2024.
+      <span class="lastupdated">Last updated on Dec 11, 2024.
       </span></p>
   </div>
 

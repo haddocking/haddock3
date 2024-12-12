@@ -17,7 +17,7 @@ from haddock.core.typing import (
     Optional,
     Union,
     )
-from haddock.libs.libio import working_directory
+from haddock.libs.libio import working_directory, PDBFile
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
 
 
@@ -296,3 +296,18 @@ def read_RECORD_section(
 
 read_chainids = partial(read_RECORD_section, section_slice=slc_chainid, func=list)  # noqa: E501
 read_segids = partial(read_RECORD_section, section_slice=slc_segid, func=list)
+
+
+def check_combination_chains(combination: list[PDBFile]) -> list[str]:
+    """Check if chain IDs are unique for each pdb in combination."""
+    chainid_list: list[str] = []
+    for pdb in combination:
+        segids, chains = identify_chainseg(pdb.rel_path, sort=False)
+        chainsegs = sorted(list(set(segids) | set(chains)))
+        # check if any of chainsegs is already in chainid_list
+        if any(chainseg in chainid_list for chainseg in chainsegs):
+            raise ValueError(
+                f"Chain/seg IDs are not unique for pdbs {combination}."
+            )
+        chainid_list.extend(chainsegs)
+    return chainid_list

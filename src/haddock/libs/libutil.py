@@ -1,13 +1,13 @@
 """General utilities."""
 import collections.abc
 import contextlib
+import os
 import re
 import shutil
 import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
-from os import cpu_count
 from pathlib import Path
 
 from haddock import EmptyPath, log
@@ -126,6 +126,31 @@ def remove_dict_keys(d: ParamMap, keys: Container[str]) -> ParamDict:
         A copy of `d` dictionary without the `keys`.
     """
     return {k: deepcopy(v) for k, v in d.items() if k not in keys}
+
+
+def cpu_count() -> int:
+    """Count number of available CPU for the process.
+    
+    User suggestion, by https://github.com/EricDeveaud
+
+    Note: pid 0 == current process
+
+    FIXME: from python3.13, better to use os.process_cpu_count()
+
+    Returns
+    -------
+    process_ncores : int
+        Number of cores allocated to the process pid.
+    """
+    try:
+        process_ncores = int(os.process_cpu_count())
+    except AttributeError:
+        _process_ncores = os.sched_getaffinity(0)
+        if isinstance(_process_ncores, set):
+            process_ncores = len(_process_ncores)
+        else:
+            process_ncores = int(_process_ncores)
+    return process_ncores
 
 
 def parse_ncores(

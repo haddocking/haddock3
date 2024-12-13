@@ -142,14 +142,32 @@ def cpu_count() -> int:
     process_ncores : int
         Number of cores allocated to the process pid.
     """
+    def _cpu_count() -> int:
+        """Detect number of cores available.
+        
+        Returns
+        -------
+        ncores : int
+            Maximum number of cores that can be used.
+        """
+        try:
+            # Try to obtain the number of cpu allocated to the process
+            _process_ncores = os.sched_getaffinity(0)
+            if isinstance(_process_ncores, set):
+                ncores = len(_process_ncores)
+            else:
+                ncores = int(_process_ncores)
+        except AttributeError:
+            # If unsucessful, return the number cores detected in the machine
+            # Note: this can happen on MacOS, where the os.sched_getaffinity 
+            # may not be defined/exist.
+            ncores = int(os.cpu_count())
+        return ncores
+
     try:
         process_ncores = int(os.process_cpu_count())
     except AttributeError:
-        _process_ncores = os.sched_getaffinity(0)
-        if isinstance(_process_ncores, set):
-            process_ncores = len(_process_ncores)
-        else:
-            process_ncores = int(_process_ncores)
+        process_ncores = _cpu_count()
     return process_ncores
 
 

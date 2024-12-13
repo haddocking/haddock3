@@ -69,6 +69,7 @@ class PDBFile(Persistent):
         self,
         file_name: Union[Path, str],
         topology: Optional[Any] = None,
+        aa_topology: Optional[Any] = None,
         path: Union[Path, str] = ".",
         score: float = NaN,
         md5: Optional[str] = None,
@@ -78,6 +79,7 @@ class PDBFile(Persistent):
         super().__init__(file_name, Format.PDB, path, md5, restr_fname)
 
         self.topology = topology
+        self.aa_topology = aa_topology 
         self.score = score
         self.ori_name: Optional[str] = None
         self.clt_id: Union[str, int, None] = None

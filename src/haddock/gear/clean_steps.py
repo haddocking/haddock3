@@ -174,8 +174,8 @@ def unpack_compressed_and_archived_files(
                     pass
 
         for tar_file in tar_files:
-            with tarfile.open(tar_file) as fin:
-                fin.extractall(folder)
+            from haddock.libs.libio import extract_files_flat
+            extract_files_flat(tar_file, folder)
 
             tar_file.unlink()
 

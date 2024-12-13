@@ -21,6 +21,7 @@ from haddock.core.typing import (
     Iterable,
     Mapping,
     Optional,
+    Union,
     )
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
@@ -613,3 +614,25 @@ def make_writeable_recursive(path: FilePath) -> None:
 
         for file_ in (os.path.join(root, f) for f in files):
             os.chmod(file_, get_perm(file_) | stat.S_IWUSR)
+
+
+def extract_files_flat(tar_path: Union[str, FilePath],
+                       dest_path: Union[str, FilePath]) -> None:
+    """
+    Extract files from a tarball to a destination folder.
+    
+    Parameters
+    ----------
+    tar_path : str or Path
+        The path to the tarball file.
+
+    dest_path : str or Path
+        The path to the destination folder.
+    """
+    with tarfile.open(tar_path, "r:gz") as tar:
+        for member in tar.getmembers():
+            # Extract only files (skip directories)
+            if member.isfile():
+                # Modify the member name to remove the directory structure
+                member.name = os.path.basename(member.name)
+                tar.extract(member, dest_path)

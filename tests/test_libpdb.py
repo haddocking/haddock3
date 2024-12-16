@@ -4,9 +4,11 @@ import tempfile
 
 from pathlib import Path
 
-from . import data_folder
+from . import data_folder, golden_data
+from haddock.libs.libio import PDBFile
 from haddock.libs.libpdb import (
     add_TER_on_chain_breaks,
+    check_combination_chains,
     read_chainids,
     read_segids,
     )
@@ -58,3 +60,27 @@ def test_add_TER_on_chain_breaks(monkeypatch):
             # Line by line comparisons
             for test_, ref_ in zip(testfile, reffile):
                 assert test_.rstrip() == ref_.rstrip()
+
+                
+@pytest.fixture(name="wrong_rigid_molecules")
+def fixture_wrong_rigidbody_molecules():
+    """fixture for wrong rigidbody input molecules."""
+    receptor = PDBFile(Path(golden_data, "protprot_complex_1.pdb"))
+    ligand = PDBFile(Path(golden_data, "protprot_complex_2.pdb"))
+    return [receptor, ligand]
+
+@pytest.fixture(name="good_rigid_molecules")
+def fixture_good_rigidbody_molecules():
+    """fixture for good rigidbody input molecules."""
+    receptor = PDBFile(Path(golden_data, "e2aP_1F3G_haddock.pdb"))
+    ligand = PDBFile(Path(golden_data, "hpr_ensemble_1_haddock.pdb"))
+    return [receptor, ligand]
+
+def test_check_combination_chains(good_rigid_molecules, wrong_rigid_molecules):
+    """Test check_combination_chains."""
+    exp_chains = ["A", "B"]
+    obs_chains = check_combination_chains(good_rigid_molecules)
+    assert obs_chains == exp_chains
+    # when input molecules share chains there should be a ValueError
+    with pytest.raises(ValueError):
+        check_combination_chains(wrong_rigid_molecules)

@@ -243,14 +243,32 @@
 <span class="sd">    process_ncores : int</span>
 <span class="sd">        Number of cores allocated to the process pid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_cpu_count</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Detect number of cores available.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ncores : int</span>
+<span class="sd">            Maximum number of cores that can be used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to obtain the number of cpu allocated to the process</span>
+            <span class="n">_process_ncores</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sched_getaffinity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+                <span class="n">ncores</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ncores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># If unsucessful, return the number cores detected in the machine</span>
+            <span class="c1"># Note: this can happen on MacOS, where the os.sched_getaffinity </span>
+            <span class="c1"># may not be defined/exist.</span>
+            <span class="n">ncores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">ncores</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="n">process_ncores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">process_cpu_count</span><span class="p">())</span>
     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="n">_process_ncores</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sched_getaffinity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
-            <span class="n">process_ncores</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">process_ncores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">)</span>
+        <span class="n">process_ncores</span> <span class="o">=</span> <span class="n">_cpu_count</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">process_ncores</span></div>
 
 
@@ -540,7 +558,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 12, 2024.
+      <span class="lastupdated">Last updated on Dec 16, 2024.
       </span></p>
   </div>
 

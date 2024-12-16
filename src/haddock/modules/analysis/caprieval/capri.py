@@ -178,6 +178,7 @@ class CAPRI:
         path: Path,
         reference: PDBPath,
         params: ParamMap,
+        ref_id: int = 1,
     ) -> None:
         """
         Initialize the class.
@@ -223,6 +224,7 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
+        self.ref_id = ref_id
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -866,6 +868,7 @@ def extract_data_from_capri_class(
             "model": c.model,
             "md5": c.md5,
             "caprieval_rank": None,
+            "ref_id": c.ref_id,
             "score": c.score,
             "irmsd": c.irmsd,
             "fnat": c.fnat,

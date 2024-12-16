@@ -91,6 +91,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "model": "",
             "md5": "-",
             "caprieval_rank": 1,
+            "ref_id": 1,
             "score": 0.0,
             "irmsd": 0.000,
             "fnat": 1.000,
@@ -107,6 +108,7 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "model": "",
             "md5": "-",
             "caprieval_rank": 2,
+            "ref_id": 1,
             "score": 100.0,
             "irmsd": 8.327,
             "fnat": 0.050,
@@ -185,6 +187,11 @@ class MockPreviousIOMultipleRefInput:
         )
         with open(Path(self.path, "input_conformation.pdb"), 'r') as fin:
             pdb_splitmodel.run(fin)
+        # Sort conformations based on input order
+        ordered_conformations = sorted(
+            list(Path(self.path).glob("input_conformation_*.pdb")),
+            key=lambda k: int(k.stem.split("_")[-1]),
+            )
         model_list = [
             PDBFile(
                 file_name=str(path),
@@ -192,7 +199,7 @@ class MockPreviousIOMultipleRefInput:
                 unw_energies={"energy_term": 0.0},
                 score=0.0,
             )
-            for path in Path(self.path).glob("input_conformation_*.pdb")
+            for path in ordered_conformations
         ]
         return model_list
 
@@ -494,7 +501,7 @@ def test_caprieval_references_selection(caprieval_module, model_list, monkeypatc
 def test_caprieval_multi_references_comparisons(caprieval_module, monkeypatch):
     """Test behavior of comparisons against multiple references."""
     monkeypatch.chdir(caprieval_module.path)
-    # Evaluate the values obtained when running the workflow
+    # Set the reference file path containing multiple conformations
     multiref = Path(caprieval_module.path, "multiref.pdb")
     shutil.copy(Path(GOLDEN_DATA, "hpr_ensemble.pdb"), multiref)
     caprieval_module.params["reference_fname"] = multiref
@@ -504,11 +511,13 @@ def test_caprieval_multi_references_comparisons(caprieval_module, monkeypatch):
         path=caprieval_module.path
         )
     caprieval_module.run()
+    # Generate what output values we expect
     expect_ss_data = [
         {
             "model": "",
             "md5": "-",
             "caprieval_rank": rank,
+            "ref_id": rank,
             "score": 0.0,
             "irmsd": float("nan"),
             "fnat": float("nan"),
@@ -558,6 +567,7 @@ def test_caprieval_multi_references_comparisons(caprieval_module, monkeypatch):
             "caprieval_rank": 1,
         }
     ]
+    # Compare generated files to the expected values
     _check_capri_ss_tsv(
         capri_file=str(Path(caprieval_module.path, "capri_ss.tsv")),
         expected_data=expect_ss_data,

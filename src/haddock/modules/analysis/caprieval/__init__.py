@@ -123,8 +123,11 @@ class HaddockModule(BaseHaddockModule):
         # Split models
         with open(reference, "r") as ref_in:
             pdb_splitmodel(ref_in, "reference_model")
-        # Gather individual references
-        references = list(Path(".").glob("reference_model_*.pdb"))
+        # Gather individual references and sort them
+        references = sorted(
+            list(Path(".").glob("reference_model_*.pdb")),
+            key=lambda k: int(k.stem.split("_")[-1]),
+            )
         assert len(references) == nb_models, (
                 "Issue while splitting references conformation: "
                 f"{nb_models} detected, {len(references)} generated"
@@ -196,7 +199,7 @@ class HaddockModule(BaseHaddockModule):
                     "of `model_to_be_evaluated`"
                     )
             # Loop over references
-            for reference in references:
+            for ref_id, reference in enumerate(references, start=1):
                 jobs.append(
                     CAPRI(
                         identificator=i,
@@ -204,6 +207,7 @@ class HaddockModule(BaseHaddockModule):
                         path=Path("."),
                         reference=reference,
                         params=self.params,
+                        ref_id=ref_id,
                     )
                 )
 

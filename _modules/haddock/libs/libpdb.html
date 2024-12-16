@@ -96,6 +96,7 @@
     <span class="n">FilePathT</span><span class="p">,</span>
     <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">working_directory</span><span class="p">,</span> <span class="n">PDBFile</span>
@@ -410,6 +411,191 @@
 
 <span class="n">read_chainids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_chainid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
 <span class="n">read_segids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_segid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="add_TER_on_chain_breaks">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.add_TER_on_chain_breaks">[docs]</a>
+<span class="k">def</span> <span class="nf">add_TER_on_chain_breaks</span><span class="p">(</span>
+        <span class="n">input_pdb</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">output_pdb</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Detect chain breaks and add TER statements between them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_pdb : FilePath</span>
+<span class="sd">        Input PDB filepath with potential chain breaks.</span>
+<span class="sd">    output_pdb : FilePath</span>
+<span class="sd">        Output PDB filepath with added TER statements between chain breaks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Residue</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span>
+    <span class="n">residueT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;residueT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Residue</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">euclidean_dist</span><span class="p">(</span><span class="n">atm1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">atm2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute Euclidean distances between two points.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atm1 : list[float]</span>
+<span class="sd">            Atom 1 coordinates.</span>
+<span class="sd">        atm2 : list[float]</span>
+<span class="sd">            Atom 2 coordinates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Distance between the two atoms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([(</span><span class="n">c1</span> <span class="o">-</span> <span class="n">c2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">atm1</span><span class="p">,</span> <span class="n">atm2</span><span class="p">)])</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+    <span class="k">def</span> <span class="nf">detected_chain_break</span><span class="p">(</span><span class="n">residue1</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span> <span class="n">residue2</span><span class="p">:</span> <span class="n">residueT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Detect chain break between two consecutive residues.</span>
+
+<span class="sd">        Currently limitted to DNA and protein chains.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        residue1 : residueT</span>
+<span class="sd">            Previous residue (N-1)</span>
+<span class="sd">        residue2 : residueT</span>
+<span class="sd">            Current residue (N)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if chain break detected, else False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Expected backbone distances set</span>
+        <span class="n">backbone_dists</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;protein&quot;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>  <span class="c1"># very loose !</span>
+            <span class="s2">&quot;DNA&quot;</span><span class="p">:</span> <span class="mf">4.5</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="c1"># Detect type of residues</span>
+        <span class="c1"># DNA case</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Extract coordinates</span>
+            <span class="n">atm1</span> <span class="o">=</span> <span class="n">residue1</span><span class="p">[</span><span class="s2">&quot;O3&#39;&quot;</span><span class="p">]</span>
+            <span class="n">atm2</span> <span class="o">=</span> <span class="n">residue2</span><span class="p">[</span><span class="s2">&quot;O5&#39;&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># Protein case</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Extract coordinates</span>
+                <span class="n">atm1</span> <span class="o">=</span> <span class="n">residue1</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span>  <span class="c1"># C of -1 residue</span>
+                <span class="n">atm2</span> <span class="o">=</span> <span class="n">residue2</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]</span>  <span class="c1"># N of 0 residue</span>
+            <span class="c1"># Error in detection of any of the atoms</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># Must be a chain break</span>
+                <span class="c1"># FIXME : This assumes that it is NOT a DNA nor a protein.</span>
+                <span class="c1"># In the future, if future there is, it may cause an issue if</span>
+                <span class="c1"># lipids, glycans, other type of entities are added,</span>
+                <span class="c1"># as this will trigger a TER statement between them.</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">entity_type</span> <span class="o">=</span> <span class="s2">&quot;protein&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entity_type</span> <span class="o">=</span> <span class="s2">&quot;DNA&quot;</span>
+        <span class="c1"># Point distance</span>
+        <span class="n">upper_dist</span> <span class="o">=</span> <span class="n">backbone_dists</span><span class="p">[</span><span class="n">entity_type</span><span class="p">]</span>
+        <span class="c1"># Check if distance is within acceptable peptide bond limit</span>
+        <span class="k">return</span> <span class="n">euclidean_dist</span><span class="p">(</span><span class="n">atm1</span><span class="p">,</span> <span class="n">atm2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">upper_dist</span>
+
+    <span class="k">def</span> <span class="nf">write_residue</span><span class="p">(</span><span class="n">fhandler</span><span class="p">,</span> <span class="n">residue_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes residues line to file.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fhandler : _type_</span>
+<span class="sd">            File object on which to write the residue lines.</span>
+<span class="sd">        residue_lines : list[str]</span>
+<span class="sd">            Residue to write.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">residue_lines</span><span class="p">:</span>
+            <span class="n">fhandler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">write_previous_residue</span><span class="p">(</span>
+            <span class="n">fhandler</span><span class="p">,</span>
+            <span class="n">previous</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span>
+            <span class="n">current</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write residue lines to file, possibly ending by TER.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fhandler : _type_</span>
+<span class="sd">            File object on which to write the residue lines.</span>
+<span class="sd">        previous : residueT</span>
+<span class="sd">            Previous residue (N-1)</span>
+<span class="sd">        current : residueT</span>
+<span class="sd">            Current residue (N)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Write previous residue</span>
+        <span class="n">write_residue</span><span class="p">(</span><span class="n">fhandler</span><span class="p">,</span> <span class="n">previous</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">])</span>
+        <span class="c1"># Check if bond observed between -2 and -1</span>
+        <span class="n">chain_break</span> <span class="o">=</span> <span class="n">detected_chain_break</span><span class="p">(</span>
+            <span class="n">previous</span><span class="p">,</span>
+            <span class="n">current</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># If chain break detected or new chain in file</span>
+        <span class="k">if</span> <span class="n">chain_break</span> <span class="ow">or</span> <span class="n">previous</span><span class="p">[</span><span class="s2">&quot;chain&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">current</span><span class="p">[</span><span class="s2">&quot;chain&quot;</span><span class="p">]:</span>
+            <span class="n">fhandler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TER</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Initiate parsing variables</span>
+    <span class="n">BB_atomnames</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># for peptide bonds</span>
+        <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span>  <span class="c1"># for DNA/RNA</span>
+        <span class="p">)</span>
+    <span class="n">current_resid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">previous_residue</span><span class="p">:</span> <span class="n">residueT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lines&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">current_residue</span><span class="p">:</span> <span class="n">residueT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lines&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="c1"># Read input file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_pdb</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_pdb</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">,</span> <span class="p">)):</span>
+                <span class="c1"># Extract specific data from coordinates record</span>
+                <span class="n">chainid</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">slc_chainid</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">resid</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">slc_resseq</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">atname</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">slc_name</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="c1"># Case when new residue</span>
+                <span class="k">if</span> <span class="n">current_resid</span> <span class="o">!=</span> <span class="p">(</span><span class="n">chainid</span><span class="p">,</span> <span class="n">resid</span><span class="p">):</span>
+                    <span class="c1"># Make sure it is not first residue</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">previous_residue</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c1"># Write previous residue</span>
+                        <span class="n">write_previous_residue</span><span class="p">(</span>
+                            <span class="n">fout</span><span class="p">,</span>
+                            <span class="n">previous_residue</span><span class="p">,</span>
+                            <span class="n">current_residue</span>
+                            <span class="p">)</span>
+                    <span class="c1"># Reset previous residue to current residue</span>
+                    <span class="n">previous_residue</span> <span class="o">=</span> <span class="n">current_residue</span>
+                    <span class="c1"># Initialize new current residue</span>
+                    <span class="n">current_resid</span> <span class="o">=</span> <span class="p">(</span><span class="n">chainid</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="n">current_residue</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lines&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chainid</span><span class="p">}</span>
+
+                <span class="c1"># Hold residue line</span>
+                <span class="n">current_residue</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+
+                <span class="c1"># If atom name is in the backbone atoms</span>
+                <span class="k">if</span> <span class="n">atname</span> <span class="ow">in</span> <span class="n">BB_atomnames</span><span class="p">:</span>
+                    <span class="c1"># Hold backbone atom coordinates in current residue</span>
+                    <span class="n">current_residue</span><span class="p">[</span><span class="n">atname</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">slc_x</span><span class="p">]),</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">slc_y</span><span class="p">]),</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">slc_z</span><span class="p">]),</span>
+                        <span class="p">]</span>
+        <span class="c1"># Last previous residue</span>
+        <span class="n">write_previous_residue</span><span class="p">(</span>
+            <span class="n">fout</span><span class="p">,</span>
+            <span class="n">previous_residue</span><span class="p">,</span>
+            <span class="n">current_residue</span>
+            <span class="p">)</span>
+        <span class="c1"># Last residue</span>
+        <span class="n">write_residue</span><span class="p">(</span><span class="n">fout</span><span class="p">,</span> <span class="n">current_residue</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">])</span>
+        <span class="c1"># Write final TER statement</span>
+        <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TER</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Write END statement</span>
+        <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;END</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="check_combination_chains">

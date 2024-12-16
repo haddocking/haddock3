@@ -54,7 +54,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#gdock-outdated"><code class="docutils literal notranslate"><span class="pre">gdock</span></code> (outdated)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#openmm"><code class="docutils literal notranslate"><span class="pre">openmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#openmm"><code class="docutils literal notranslate"><span class="pre">openmm</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#in-venv">In venv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#in-conda">In conda</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
@@ -176,21 +180,41 @@ information.</p>
 </section>
 <section id="openmm">
 <h2><code class="docutils literal notranslate"><span class="pre">openmm</span></code><a class="headerlink" href="#openmm" title="Link to this heading"></a></h2>
-<ol class="arabic simple">
-<li><p>Install the latest version of openmm and pdbfixer</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Activate the haddock3 env</span>
-conda<span class="w"> </span>activate<span class="w"> </span>haddock3
+<p>The use of the openmm module requires the installation of both OpenMM and pdbfixer.</p>
+<section id="in-venv">
+<h3>In venv<a class="headerlink" href="#in-venv" title="Link to this heading"></a></h3>
+<p>The venv installation instruction uses <code class="docutils literal notranslate"><span class="pre">pip</span></code> and requires a python version &gt;=3.10 (not functional with python3.9).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new virtual env</span>
+python3.12<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>hd3-openmm
+<span class="nb">source</span><span class="w"> </span>hd3-openmm/bin/activate
+<span class="c1"># Install haddock3</span>
+pip<span class="w"> </span>install<span class="w"> </span>.
+<span class="c1"># Install OpenMM</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="nv">openmm</span><span class="o">==</span><span class="m">8</span>.2.0
+<span class="c1"># Install openmm - pdbfixer</span>
+pip<span class="w"> </span>install<span class="w"> </span>https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz
+</pre></div>
+</div>
+</section>
+<section id="in-conda">
+<h3>In conda<a class="headerlink" href="#in-conda" title="Link to this heading"></a></h3>
+<p>The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.9 and 3.12.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>hd3-p39-openmm<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+<span class="c1"># Activate the haddock3 env</span>
+conda<span class="w"> </span>activate<span class="w"> </span>hd3-p39-openmm
+<span class="c1"># Install haddock3</span>
+pip<span class="w"> </span>install<span class="w"> </span>haddock3
 <span class="c1"># libstdxx must be installed, maybe already present in your system</span>
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>libstdcxx-ng
 <span class="c1"># Install OpenMM and related tools/binaries</span>
-conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>openmm<span class="w"> </span>pdbfixer
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">openmm</span><span class="o">==</span><span class="m">8</span>.2.0<span class="w"> </span><span class="nv">pdbfixer</span><span class="o">==</span><span class="m">1</span>.10
 </pre></div>
 </div>
-<p>Openmm should automatically detect the fastest platform among those available
+<p>OpenMM should automatically detect the fastest platform among those available
 on your machine.</p>
 <p>Please refer to the <a class="reference external" href="http://docs.openmm.org/latest/userguide/">official page</a>
 of the project for a full description of the installation procedure.</p>
+</section>
 </section>
 </section>
 

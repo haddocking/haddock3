@@ -187,7 +187,7 @@ Expert
 equilibration_timesteps
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-| *default*: 3000
+| *default*: 2000
 | *type*: integer
 | *title*: Equilibration timesteps.
 | *min*: 0
@@ -262,19 +262,6 @@ solv_eq_max_temperature_kelvin
 | *group*: sampling
 | *explevel*: expert
 
-solv_eq_spring_constant
-~~~~~~~~~~~~~~~~~~~~~~~
-
-| *default*: 20.0
-| *type*: float
-| *title*: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
-| *min*: 0
-| *max*: 10000
-| *short description*: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.
-| *long description*: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
-| *group*: sampling
-| *explevel*: expert
-
 solv_eq_stepsize_fs
 ~~~~~~~~~~~~~~~~~~~
 
@@ -285,19 +272,6 @@ solv_eq_stepsize_fs
 | *max*: 4
 | *short description*: Step size (in femptoseconds) for the solvent equilibration phase.
 | *long description*: Step size (in femptoseconds) for the solvent equilibration phase.
-| *group*: sampling
-| *explevel*: expert
-
-solv_eq_timesteps
-~~~~~~~~~~~~~~~~~
-
-| *default*: 500
-| *type*: integer
-| *title*: Number of timesteps to be performed during solvent equilibration phase.
-| *min*: 10
-| *max*: 10000
-| *short description*: Number of timesteps to be performed during solvent equilibration phase.
-| *long description*: Number of timesteps to be performed during solvent equilibration phase.
 | *group*: sampling
 | *explevel*: expert
 
@@ -313,4 +287,34 @@ timestep_ps
 | *long description*: Definition of timestep used by the integrator to progress the simulation.
 | *group*: sampling
 | *explevel*: expert
+
+
+Guru
+````
+
+solv_eq_spring_constant
+~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 20.0
+| *type*: float
+| *title*: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
+| *min*: 0
+| *max*: 10000
+| *short description*: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.
+| *long description*: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
+| *group*: sampling
+| *explevel*: guru
+
+solv_eq_timesteps
+~~~~~~~~~~~~~~~~~
+
+| *default*: 500
+| *type*: integer
+| *title*: Number of timesteps to be performed during solvent equilibration phase.
+| *min*: 10
+| *max*: 50000
+| *short description*: Number of timesteps to be performed during solvent equilibration phase.
+| *long description*: Number of timesteps to be performed during solvent equilibration phase.
+| *group*: sampling
+| *explevel*: guru
 

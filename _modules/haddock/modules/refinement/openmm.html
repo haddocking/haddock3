@@ -190,26 +190,17 @@
 <span class="sd">        ThirdPartyIntallationError</span>
 <span class="sd">            When OpenMM pdbfixer is not installed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">run_subprocess</span><span class="p">(</span><span class="n">command_to_run</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Run subprocess.&quot;&quot;&quot;</span>
-            <span class="n">subprocess_output</span> <span class="o">=</span> <span class="n">subprocrun</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">command_to_run</span><span class="p">],</span>
-                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">return</span> <span class="n">subprocess_output</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-
-        <span class="n">checkOpenMM</span> <span class="o">=</span> <span class="n">run_subprocess</span><span class="p">(</span><span class="s2">&quot;conda list openmm --json&quot;</span><span class="p">)</span>
-        <span class="n">checkPdbfixer</span> <span class="o">=</span> <span class="n">run_subprocess</span><span class="p">(</span><span class="s2">&quot;conda list pdbfixer --json&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="n">checkOpenMM</span> <span class="o">==</span> <span class="s2">&quot;[]&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">openmm</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ThirdPartyIntallationError</span><span class="p">(</span>
-                <span class="s2">&quot;OpenMM is not installed in conda.&quot;</span>
+                <span class="s2">&quot;OpenMM is not installed.&quot;</span>
                 <span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">checkPdbfixer</span> <span class="o">==</span> <span class="s2">&quot;[]&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pdbfixer</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ThirdPartyIntallationError</span><span class="p">(</span>
-                <span class="s2">&quot;OpenMM pdbfixer is not installed in conda.&quot;</span>
+                <span class="s2">&quot;OpenMM pdbfixer is not installed.&quot;</span>
                 <span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 

@@ -278,7 +278,7 @@
 <section id="equilibration-timesteps">
 <h2>equilibration_timesteps<a class="headerlink" href="#equilibration-timesteps" title="Link to this heading"></a></h2>
 <div class="line-block">
-<div class="line"><em>default</em>: 3000</div>
+<div class="line"><em>default</em>: 2000</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Equilibration timesteps.</div>
 <div class="line"><em>min</em>: 0</div>
@@ -359,20 +359,6 @@
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
-<section id="solv-eq-spring-constant">
-<h2>solv_eq_spring_constant<a class="headerlink" href="#solv-eq-spring-constant" title="Link to this heading"></a></h2>
-<div class="line-block">
-<div class="line"><em>default</em>: 20.0</div>
-<div class="line"><em>type</em>: float</div>
-<div class="line"><em>title</em>: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.</div>
-<div class="line"><em>min</em>: 0</div>
-<div class="line"><em>max</em>: 10000</div>
-<div class="line"><em>short description</em>: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.</div>
-<div class="line"><em>long description</em>: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.</div>
-<div class="line"><em>group</em>: sampling</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
 <section id="solv-eq-stepsize-fs">
 <h2>solv_eq_stepsize_fs<a class="headerlink" href="#solv-eq-stepsize-fs" title="Link to this heading"></a></h2>
 <div class="line-block">
@@ -383,20 +369,6 @@
 <div class="line"><em>max</em>: 4</div>
 <div class="line"><em>short description</em>: Step size (in femptoseconds) for the solvent equilibration phase.</div>
 <div class="line"><em>long description</em>: Step size (in femptoseconds) for the solvent equilibration phase.</div>
-<div class="line"><em>group</em>: sampling</div>
-<div class="line"><em>explevel</em>: expert</div>
-</div>
-</section>
-<section id="solv-eq-timesteps">
-<h2>solv_eq_timesteps<a class="headerlink" href="#solv-eq-timesteps" title="Link to this heading"></a></h2>
-<div class="line-block">
-<div class="line"><em>default</em>: 500</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
-<div class="line"><em>min</em>: 10</div>
-<div class="line"><em>max</em>: 10000</div>
-<div class="line"><em>short description</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
-<div class="line"><em>long description</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
 <div class="line"><em>group</em>: sampling</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
@@ -413,6 +385,37 @@
 <div class="line"><em>long description</em>: Definition of timestep used by the integrator to progress the simulation.</div>
 <div class="line"><em>group</em>: sampling</div>
 <div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+<section id="guru">
+<h1>Guru<a class="headerlink" href="#guru" title="Link to this heading"></a></h1>
+<section id="solv-eq-spring-constant">
+<h2>solv_eq_spring_constant<a class="headerlink" href="#solv-eq-spring-constant" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 20.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 10000</div>
+<div class="line"><em>short description</em>: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.</div>
+<div class="line"><em>long description</em>: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="solv-eq-timesteps">
+<h2>solv_eq_timesteps<a class="headerlink" href="#solv-eq-timesteps" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 500</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
+<div class="line"><em>min</em>: 10</div>
+<div class="line"><em>max</em>: 50000</div>
+<div class="line"><em>short description</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
+<div class="line"><em>long description</em>: Number of timesteps to be performed during solvent equilibration phase.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
 </div>
 </section>
 </section>

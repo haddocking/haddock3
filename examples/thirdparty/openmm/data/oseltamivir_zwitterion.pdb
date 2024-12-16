@@ -1,0 +1,101 @@
+REMARK 200 Generated with PyMOL and psico                                       
+HETATM    1  C1  G39 B 500     -30.374 -53.143   6.122  1.00 31.18      B    C  
+HETATM    2  O1A G39 B 500     -31.439 -52.533   5.850  1.00 30.30      B    O  
+HETATM    3  O1B G39 B 500     -29.257 -52.625   5.879  1.00 31.23      B    O  
+HETATM    4  C2  G39 B 500     -30.437 -54.486   6.725  1.00 30.48      B    C  
+HETATM    5  C3  G39 B 500     -29.159 -55.188   7.132  1.00 30.04      B    C  
+HETATM    6  C4  G39 B 500     -29.380 -56.162   8.294  1.00 30.37      B    C  
+HETATM    7  N4  G39 B 500     -28.195 -56.994   8.430  1.00 30.09      B    N1+
+HETATM    8  C5  G39 B 500     -30.627 -57.033   8.097  1.00 29.53      B    C  
+HETATM    9  N5  G39 B 500     -30.803 -57.955   9.206  1.00 28.16      B    N  
+HETATM   10  C6  G39 B 500     -31.883 -56.178   7.937  1.00 30.53      B    C  
+HETATM   11  C7  G39 B 500     -31.632 -55.093   6.901  1.00 30.75      B    C  
+HETATM   12  O7  G39 B 500     -33.007 -56.989   7.531  1.00 31.80      B    O  
+HETATM   13  C8  G39 B 500     -34.158 -56.905   8.398  1.00 30.52      B    C  
+HETATM   14  C9  G39 B 500     -34.879 -55.553   8.283  1.00 31.36      B    C  
+HETATM   15  C10 G39 B 500     -30.683 -59.283   9.087  1.00 27.13      B    C  
+HETATM   16  O10 G39 B 500     -30.629 -59.863   8.010  1.00 26.14      B    O  
+HETATM   17  C11 G39 B 500     -30.611 -60.040  10.380  1.00 26.05      B    C  
+HETATM   18  C81 G39 B 500     -35.153 -58.020   8.079  1.00 29.88      B    C  
+HETATM   19  C82 G39 B 500     -34.654 -59.395   8.467  1.00 28.23      B    C  
+HETATM   20  C91 G39 B 500     -35.425 -55.279   6.891  1.00 32.33      B    C  
+HETATM   21  H01 G39 B 500     -27.912 -57.328   7.520  1.00 30.09      B    H  
+HETATM   22  H02 G39 B 500     -35.696 -56.221   6.414  1.00 32.33      B    H  
+HETATM   23  H03 G39 B 500     -28.427 -54.439   7.435  1.00 30.04      B    H  
+HETATM   24  H04 G39 B 500     -29.547 -55.584   9.203  1.00 30.37      B    H  
+HETATM   25  H05 G39 B 500     -28.402 -57.780   9.029  1.00 30.09      B    H  
+HETATM   26  H06 G39 B 500     -30.476 -57.606   7.182  1.00 29.53      B    H  
+HETATM   27  H07 G39 B 500     -31.028 -57.574  10.114  1.00 28.16      B    H  
+HETATM   28  H08 G39 B 500     -32.117 -55.721   8.898  1.00 30.53      B    H  
+HETATM   29  H09 G39 B 500     -32.463 -54.788   6.265  1.00 30.75      B    H  
+HETATM   30  H10 G39 B 500     -33.786 -57.011   9.417  1.00 30.52      B    H  
+HETATM   31  H11 G39 B 500     -34.175 -54.762   8.541  1.00 31.36      B    H  
+HETATM   32  H12 G39 B 500     -29.917 -60.874  10.275  1.00 26.05      B    H  
+HETATM   33  H13 G39 B 500     -35.351 -58.012   7.007  1.00 29.88      B    H  
+HETATM   34  H14 G39 B 500     -34.494 -59.991   7.568  1.00 28.23      B    H  
+HETATM   35  H15 G39 B 500     -34.665 -54.775   6.295  1.00 32.33      B    H  
+HETATM   36  H16 G39 B 500     -28.805 -55.763   6.276  1.00 30.04      B    H  
+HETATM   37  H17 G39 B 500     -27.447 -56.450   8.836  1.00 30.09      B    H  
+HETATM   38  H18 G39 B 500     -35.730 -55.583   8.963  1.00 31.36      B    H  
+HETATM   39  H19 G39 B 500     -31.600 -60.420  10.635  1.00 26.05      B    H  
+HETATM   40  H20 G39 B 500     -36.053 -57.826   8.662  1.00 29.88      B    H  
+HETATM   41  H21 G39 B 500     -35.393 -59.885   9.101  1.00 28.23      B    H  
+HETATM   42  H22 G39 B 500     -36.307 -54.643   6.966  1.00 32.33      B    H  
+HETATM   43  H23 G39 B 500     -30.263 -59.375  11.171  1.00 26.05      B    H  
+HETATM   44  H24 G39 B 500     -33.714 -59.300   9.011  1.00 28.23      B    H  
+CONECT    1    2
+CONECT    1    2
+CONECT    1    3    4
+CONECT    2    1
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1    5
+CONECT    4   11
+CONECT    4   11
+CONECT    5    4    6   23   36
+CONECT    6    5    7    8   24
+CONECT    7    6   21   25   37
+CONECT    8    6    9   10   26
+CONECT    9    8   15   27
+CONECT   10    8   11   12   28
+CONECT   11    4
+CONECT   11    4
+CONECT   11   10   29
+CONECT   12   10   13
+CONECT   13   12   14   18   30
+CONECT   14   13   20   31   38
+CONECT   15    9
+CONECT   15   16
+CONECT   15   16
+CONECT   15   17
+CONECT   16   15
+CONECT   16   15
+CONECT   17   15   32   39   43
+CONECT   18   13   19   33   40
+CONECT   19   18   34   41   44
+CONECT   20   14   22   35   42
+CONECT   21    7
+CONECT   22   20
+CONECT   23    5
+CONECT   24    6
+CONECT   25    7
+CONECT   26    8
+CONECT   27    9
+CONECT   28   10
+CONECT   29   11
+CONECT   30   13
+CONECT   31   14
+CONECT   32   17
+CONECT   33   18
+CONECT   34   19
+CONECT   35   20
+CONECT   36    5
+CONECT   37    7
+CONECT   38   14
+CONECT   39   17
+CONECT   40   18
+CONECT   41   19
+CONECT   42   20
+CONECT   43   17
+CONECT   44   19
+END

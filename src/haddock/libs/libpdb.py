@@ -15,6 +15,7 @@ from haddock.core.typing import (
     FilePathT,
     Iterable,
     Optional,
+    TypeVar,
     Union,
     )
 from haddock.libs.libio import working_directory, PDBFile
@@ -296,6 +297,188 @@ def read_RECORD_section(
 
 read_chainids = partial(read_RECORD_section, section_slice=slc_chainid, func=list)  # noqa: E501
 read_segids = partial(read_RECORD_section, section_slice=slc_segid, func=list)
+
+
+def add_TER_on_chain_breaks(
+        input_pdb: FilePath,
+        output_pdb: FilePath,
+        ) -> None:
+    """Detect chain breaks and add TER statements between them.
+
+    Parameters
+    ----------
+    input_pdb : FilePath
+        Input PDB filepath with potential chain breaks.
+    output_pdb : FilePath
+        Output PDB filepath with added TER statements between chain breaks.
+    """
+    Residue = dict[str, Union[list[str], list[float], str]]
+    residueT = TypeVar('residueT', bound=Residue)
+
+    def euclidean_dist(atm1: list[float], atm2: list[float]) -> float:
+        """Compute Euclidean distances between two points.
+
+        Parameters
+        ----------
+        atm1 : list[float]
+            Atom 1 coordinates.
+        atm2 : list[float]
+            Atom 2 coordinates.
+
+        Returns
+        -------
+        float
+            Distance between the two atoms.
+        """
+        return sum([(c1 - c2) ** 2 for c1, c2 in zip(atm1, atm2)]) ** 0.5
+
+    def detected_chain_break(residue1: residueT, residue2: residueT) -> bool:
+        """Detect chain break between two consecutive residues.
+
+        Currently limitted to DNA and protein chains.
+
+        Parameters
+        ----------
+        residue1 : residueT
+            Previous residue (N-1)
+        residue2 : residueT
+            Current residue (N)
+
+        Returns
+        -------
+        bool
+            True if chain break detected, else False
+        """
+        # Expected backbone distances set
+        backbone_dists = {
+            "protein": 3.5,  # very loose !
+            "DNA": 4.5,
+            }
+        # Detect type of residues
+        # DNA case
+        try:
+            # Extract coordinates
+            atm1 = residue1["O3'"]
+            atm2 = residue2["O5'"]
+        except KeyError:
+            # Protein case
+            try:
+                # Extract coordinates
+                atm1 = residue1["C"]  # C of -1 residue
+                atm2 = residue2["N"]  # N of 0 residue
+            # Error in detection of any of the atoms
+            except KeyError:
+                # Must be a chain break
+                # FIXME : This assumes that it is NOT a DNA nor a protein.
+                # In the future, if future there is, it may cause an issue if
+                # lipids, glycans, other type of entities are added,
+                # as this will trigger a TER statement between them.
+                return True
+            else:
+                entity_type = "protein"
+        else:
+            entity_type = "DNA"
+        # Point distance
+        upper_dist = backbone_dists[entity_type]
+        # Check if distance is within acceptable peptide bond limit
+        return euclidean_dist(atm1, atm2) > upper_dist
+
+    def write_residue(fhandler, residue_lines: list[str]) -> None:
+        """Writes residues line to file.
+        
+        Parameters
+        ----------
+        fhandler : _type_
+            File object on which to write the residue lines.
+        residue_lines : list[str]
+            Residue to write.
+        """
+        for _ in residue_lines:
+            fhandler.write(_)
+    
+    def write_previous_residue(
+            fhandler,
+            previous: residueT,
+            current: residueT,
+            ) -> None:
+        """Write residue lines to file, possibly ending by TER.
+
+        Parameters
+        ----------
+        fhandler : _type_
+            File object on which to write the residue lines.
+        previous : residueT
+            Previous residue (N-1)
+        current : residueT
+            Current residue (N)
+        """
+        # Write previous residue
+        write_residue(fhandler, previous["lines"])
+        # Check if bond observed between -2 and -1
+        chain_break = detected_chain_break(
+            previous,
+            current,
+            )
+        # If chain break detected or new chain in file
+        if chain_break or previous["chain"] != current["chain"]:
+            fhandler.write(f"TER{os.linesep}")
+
+    # Initiate parsing variables
+    BB_atomnames: tuple[str, str, str, str] = (
+        "C", "N",  # for peptide bonds
+        "O3'", "O5'",  # for DNA/RNA
+        )
+    current_resid: tuple[str, str] = ("-", "-", )
+    previous_residue: residueT = {"lines": []}
+    current_residue: residueT = {"lines": []}
+    # Read input file
+    with open(input_pdb, "r") as fin, open(output_pdb, "w") as fout:
+        for _ in fin:
+            if _.startswith(("ATOM", "HETATM", )):
+                # Extract specific data from coordinates record
+                chainid = _[slc_chainid].strip()
+                resid = _[slc_resseq].strip()
+                atname = _[slc_name].strip()
+
+                # Case when new residue
+                if current_resid != (chainid, resid):
+                    # Make sure it is not first residue
+                    if len(previous_residue["lines"]) > 0:
+                        # Write previous residue
+                        write_previous_residue(
+                            fout,
+                            previous_residue,
+                            current_residue
+                            )
+                    # Reset previous residue to current residue
+                    previous_residue = current_residue
+                    # Initialize new current residue
+                    current_resid = (chainid, resid, )
+                    current_residue = {"lines": [], "chain": chainid}
+
+                # Hold residue line
+                current_residue["lines"].append(_)
+
+                # If atom name is in the backbone atoms
+                if atname in BB_atomnames:
+                    # Hold backbone atom coordinates in current residue
+                    current_residue[atname] = [
+                        float(_[slc_x]),
+                        float(_[slc_y]),
+                        float(_[slc_z]),
+                        ]
+        # Last previous residue
+        write_previous_residue(
+            fout,
+            previous_residue,
+            current_residue
+            )
+        # Last residue
+        write_residue(fout, current_residue["lines"])
+        # Write final TER statement
+        fout.write(f"TER{os.linesep}")
+        # Write END statement
+        fout.write(f"END{os.linesep}")
 
 
 def check_combination_chains(combination: list[PDBFile]) -> list[str]:

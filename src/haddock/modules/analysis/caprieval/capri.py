@@ -839,27 +839,32 @@ def extract_data_from_capri_class(
     sort_key: str,
     sort_ascending: bool,
     output_fname: Path,
+    add_reference_id: bool = False,
 ) -> Union[dict[int, ParamDict], None]:
-    """
-    Extracts data attributes from a list of CAPRI objects into a structured dictionary,
-    optionally sorts the data based on a specified key, and writes the sorted data to
-    a file.
+    """Extracts data attributes from a list of CAPRI objects into a structured
+    dictionary, optionally sorts the data based on a specified key, and writes
+    the sorted data to a file.
 
-    Args:
-        capri_objects (list[CAPRI]): List of CAPRI objects containing data attributes
-                                     to be extracted.
-        sort_key (str): Key by which to sort the extracted data. Must correspond to
-                        a valid attribute in the CAPRI object (e.g., 'score', 'irmsd').
-        sort_ascending (bool): If True, sorts the data in ascending order based on
-                               the sort_key; if False, sorts in descending order.
-        output_fname (Path): Path to the output file where the sorted data will be written.
+    Parameters
+    ----------
+    capri_objects : list[CAPRI]
+        List of CAPRI objects containing data attributes to be extracted.
+    sort_key : str
+        Key by which to sort the extracted data. Must correspond to a valid
+        attribute in the CAPRI object (e.g., 'score', 'irmsd').
+    sort_ascending : bool
+        If True, sorts the data in ascending order based on the sort_key;
+        if False, sorts in descending order.
+    output_fname : Path
+        Path to the output file where the sorted data will be written.
+    add_reference_id : bool, optional
+        Should the reference id be added to the capri table?, by default False
 
-    Returns:
-        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if
-                                        successful, None if no data was processed.
-
-    Raises:
-        (Include any specific exceptions the function may raise)
+    Returns
+    -------
+    ranked_data : Union[dict[int, ParamDict], None]
+        The sorted and structured data dictionary if successful,
+        None if no data was processed.
     """
     # Retrieve data for each model
     data: dict[int, ParamDict] = {}
@@ -868,7 +873,6 @@ def extract_data_from_capri_class(
             "model": c.model,
             "md5": c.md5,
             "caprieval_rank": None,
-            "ref_id": c.ref_id,
             "score": c.score,
             "irmsd": c.irmsd,
             "fnat": c.fnat,
@@ -884,6 +888,8 @@ def extract_data_from_capri_class(
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)
+        if add_reference_id:
+            data[i]["ref_id"] = c.ref_id
     # Sort models
     ranked_data = rank_according_to_score(
         data, sort_key=sort_key, sort_ascending=sort_ascending

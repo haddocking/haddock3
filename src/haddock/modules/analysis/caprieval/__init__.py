@@ -224,13 +224,16 @@ class HaddockModule(BaseHaddockModule):
         # Extract best references per input model
         best_ref_jobs = extract_models_best_references(jobs)
 
+        # Write standard capri_ss file
         extract_data_from_capri_class(
             capri_objects=best_ref_jobs,
             output_fname=Path(".", "capri_ss.tsv"),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
+            add_reference_id=len(references) > 1,
         )
 
+        # Perform cluster analysis
         capri_cluster_analysis(
             capri_list=best_ref_jobs,
             model_list=models,  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
@@ -241,6 +244,17 @@ class HaddockModule(BaseHaddockModule):
             sort_ascending=self.params["sort_ascending"],
             path=Path("."),
         )
+
+        # In case multiple references are provided, generate an additional file
+        # containing the information to traceback metrics related to each ref
+        if len(references) > 1:
+            extract_data_from_capri_class(
+                capri_objects=jobs,
+                output_fname=Path(".", "capri_ss_multiref.tsv"),
+                sort_key=self.params["sortby"],
+                sort_ascending=self.params["sort_ascending"],
+                add_reference_id=True,
+            )
 
         # Send models to the next step,
         #  no operation is done on them

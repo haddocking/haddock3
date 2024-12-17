@@ -118,71 +118,8 @@
 </ul>
 </div>
 </section>
-<section id="module-haddock.modules.analysis.caprieval">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.analysis.caprieval" title="Link to this heading"></a></h2>
-<p>Calculate CAPRI metrics for the input models.</p>
-<p>By default the following metrics are calculated:</p>
-<ul class="simple">
-<li><dl class="simple">
-<dt>FNAT (fraction of native contacts), namely the fraction of</dt><dd><p>intermolecular contacts in the docked complex that are also
-present in the reference complex.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>IRMSD (interface root mean square deviation), namely the RMSD</dt><dd><p>of the interface of the docked complex with respect
-to the reference complex.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>LRMSD (ligand root mean square deviation), namely the RMSD of the</dt><dd><p>ligand of the docked complex with respect to the
-reference complex upon superposition of the receptor.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>DOCKQ, a measure of the quality of the docked model obtained</dt><dd><p>by combining FNAT, IRMSD and LRMSD (see
-Basu and Wallner 2016,  11 (8), e0161879).</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>ILRMSD (interface ligand root mean square deviation), the RMSD of the</dt><dd><p>ligand of the docked complex with respect to the reference complex
-upon superposition of the interface of the receptor.</p>
-</dd>
-</dl>
-</li>
-<li><p>GLOBAL_RMSD, the full RMSD between the reference and the model.</p></li>
-</ul>
-<p>The following files are generated:</p>
-<ul class="simple">
-<li><p><strong>capri_ss.tsv</strong>: a table with the CAPRI metrics for each model.</p></li>
-<li><p><strong>capri_clt.tsv</strong>: a table with the CAPRI metrics for each cluster of models (if clustering information is available).</p></li>
-</ul>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.caprieval.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.10.15/x64/lib/python3.10/site-packages/haddock/modules/analysis/caprieval/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a></p>
-<p>HADDOCK3 module to calculate the CAPRI metrics.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
-<dd><p>Confirm if contact executable is compiled.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.is_nested">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_nested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../reference/libs/haddock.libs.libontology.html#haddock.libs.libontology.PDBFile" title="haddock.libs.libontology.PDBFile"><span class="pre">PDBFile</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule.is_nested"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.is_nested" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'caprieval'</span></em><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.name" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 </section>
 <section id="default-parameters">
 <h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
@@ -416,7 +353,7 @@ upon superposition of the interface of the receptor.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 16, 2024.
+      <span class="lastupdated">Last updated on Dec 17, 2024.
       </span></p>
   </div>
 

@@ -71,7 +71,6 @@
           <li class="breadcrumb-item"><a href="../../../../haddock.html">haddock</a></li>
           <li class="breadcrumb-item"><a href="../../../modules.html">haddock.modules</a></li>
           <li class="breadcrumb-item"><a href="../../analysis.html">haddock.modules.analysis</a></li>
-          <li class="breadcrumb-item"><a href="../caprieval.html">haddock.modules.analysis.caprieval</a></li>
       <li class="breadcrumb-item active">haddock.modules.analysis.caprieval.capri</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -90,6 +89,7 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 
@@ -272,6 +272,7 @@
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
+        <span class="n">ref_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the class.</span>
@@ -317,6 +318,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_ss_fname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identificator</span> <span class="o">=</span> <span class="n">identificator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">core_model_idx</span> <span class="o">=</span> <span class="n">identificator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_id</span> <span class="o">=</span> <span class="n">ref_id</span>
 
 <div class="viewcode-block" id="CAPRI.calc_irmsd">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_irmsd">[docs]</a>
@@ -683,7 +685,6 @@
         <span class="k">return</span> <span class="n">has_cluster_info</span></div>
 
 
-
 <div class="viewcode-block" id="CAPRI.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.run">[docs]</a>
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;CAPRI&quot;</span><span class="p">]:</span>
@@ -737,6 +738,48 @@
         <span class="c1"># The scheduler will use the return of the `run` method as the output of the tasks</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dockq&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dockq</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">dockq</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dockq</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;fnat&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fnat</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">fnat</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">fnat</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ilrmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">ilrmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">ilrmsd</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;lrmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">lrmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">lrmsd</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;irmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">irmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">irmsd</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;global_rmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">rmsd</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dockq&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dockq</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">dockq</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">dockq</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;fnat&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fnat</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">fnat</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">fnat</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ilrmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">ilrmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ilrmsd</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">ilrmsd</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;lrmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">lrmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lrmsd</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">lrmsd</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;irmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">irmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">irmsd</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">irmsd</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;global_rmsd&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">rmsd</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">rmsd</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_load_atoms</span><span class="p">(</span>
@@ -883,6 +926,45 @@
 
 
 
+<div class="viewcode-block" id="extract_models_best_references">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.extract_models_best_references">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_models_best_references</span><span class="p">(</span><span class="n">capri_objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract best reference for each input model.</span>
+
+<span class="sd">    Same input models are combined and best reference is later found by</span>
+<span class="sd">    sorting the CAPRI objects. Only the best performing CAPRI object is</span>
+<span class="sd">    kept and returned.</span>
+<span class="sd">    This step was implemented to handle comparisons against multiple refs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    capri_objects : list[CAPRI]</span>
+<span class="sd">        List of CAPRI object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    selected_capri_objects : list[CAPRI]</span>
+<span class="sd">        List of selected best CAPIR object for each model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Group results by models</span>
+    <span class="n">by_model_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">CAPRI</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">capri</span> <span class="ow">in</span> <span class="n">capri_objects</span><span class="p">:</span>
+        <span class="n">model_data</span> <span class="o">=</span> <span class="n">by_model_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">capri</span><span class="o">.</span><span class="n">identificator</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">model_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">capri</span><span class="p">)</span>
+    <span class="c1"># Finds best performances for each model</span>
+    <span class="n">selected_capri_objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Loop over model referneces performances</span>
+    <span class="k">for</span> <span class="n">references_perfs</span> <span class="ow">in</span> <span class="n">by_model_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="c1"># Sort them using built in __eq__ and __lt__ CAPRI methods</span>
+        <span class="n">sorted_perfs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">references_perfs</span><span class="p">)</span>
+        <span class="c1"># Select first on (best)</span>
+        <span class="n">best_perf</span> <span class="o">=</span> <span class="n">sorted_perfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Hold that guy</span>
+        <span class="n">selected_capri_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_perf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">selected_capri_objects</span></div>
+
+
+
 <div class="viewcode-block" id="extract_data_from_capri_class">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.extract_data_from_capri_class">[docs]</a>
 <span class="k">def</span> <span class="nf">extract_data_from_capri_class</span><span class="p">(</span>
@@ -890,29 +972,34 @@
     <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">output_fname</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">add_reference_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extracts data attributes from a list of CAPRI objects into a structured dictionary,</span>
-<span class="sd">    optionally sorts the data based on a specified key, and writes the sorted data to</span>
-<span class="sd">    a file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts data attributes from a list of CAPRI objects into a structured</span>
+<span class="sd">    dictionary, optionally sorts the data based on a specified key, and writes</span>
+<span class="sd">    the sorted data to a file.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        capri_objects (list[CAPRI]): List of CAPRI objects containing data attributes</span>
-<span class="sd">                                     to be extracted.</span>
-<span class="sd">        sort_key (str): Key by which to sort the extracted data. Must correspond to</span>
-<span class="sd">                        a valid attribute in the CAPRI object (e.g., &#39;score&#39;, &#39;irmsd&#39;).</span>
-<span class="sd">        sort_ascending (bool): If True, sorts the data in ascending order based on</span>
-<span class="sd">                               the sort_key; if False, sorts in descending order.</span>
-<span class="sd">        output_fname (Path): Path to the output file where the sorted data will be written.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    capri_objects : list[CAPRI]</span>
+<span class="sd">        List of CAPRI objects containing data attributes to be extracted.</span>
+<span class="sd">    sort_key : str</span>
+<span class="sd">        Key by which to sort the extracted data. Must correspond to a valid</span>
+<span class="sd">        attribute in the CAPRI object (e.g., &#39;score&#39;, &#39;irmsd&#39;).</span>
+<span class="sd">    sort_ascending : bool</span>
+<span class="sd">        If True, sorts the data in ascending order based on the sort_key;</span>
+<span class="sd">        if False, sorts in descending order.</span>
+<span class="sd">    output_fname : Path</span>
+<span class="sd">        Path to the output file where the sorted data will be written.</span>
+<span class="sd">    add_reference_id : bool, optional</span>
+<span class="sd">        Should the reference id be added to the capri table?, by default False</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if</span>
-<span class="sd">                                        successful, None if no data was processed.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        (Include any specific exceptions the function may raise)</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ranked_data : Union[dict[int, ParamDict], None]</span>
+<span class="sd">        The sorted and structured data dictionary if successful,</span>
+<span class="sd">        None if no data was processed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
+    <span class="c1"># Retrieve data for each model</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">capri_objects</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -934,7 +1021,9 @@
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">unw_energies</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">unw_energies</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="n">add_reference_id</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;ref_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ref_id</span>
+    <span class="c1"># Sort models</span>
     <span class="n">ranked_data</span> <span class="o">=</span> <span class="n">rank_according_to_score</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">sort_key</span><span class="o">=</span><span class="n">sort_key</span><span class="p">,</span> <span class="n">sort_ascending</span><span class="o">=</span><span class="n">sort_ascending</span>
     <span class="p">)</span>
@@ -1184,7 +1273,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 16, 2024.
+      <span class="lastupdated">Last updated on Dec 17, 2024.
       </span></p>
   </div>
 

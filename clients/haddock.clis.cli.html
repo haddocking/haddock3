@@ -51,13 +51,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="haddock.clis.html">Command-line interfaces</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#subpackages">Subpackages</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="haddock.clis.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Run HADDOCK3</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli.cli"><code class="docutils literal notranslate"><span class="pre">cli()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli.load_args"><code class="docutils literal notranslate"><span class="pre">load_args()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#haddock.clis.cli.maincli"><code class="docutils literal notranslate"><span class="pre">maincli()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Run HADDOCK3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_analyse.html">Analysis client</a></li>
 <li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_cfg.html">Retrieve config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="haddock.clis.cli_clean.html">Clean HADDOCK3 runs</a></li>
@@ -107,56 +101,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-haddock.clis.cli">
-<span id="run-haddock3"></span><h1>Run HADDOCK3<a class="headerlink" href="#module-haddock.clis.cli" title="Link to this heading"></a></h1>
-<p>Run HADDOCK3 docking simulation.</p>
-<p>This is the main command-line client to run HADDOCK3 docking
-simulations. To prepare a simulation, setup configuration file defining
-a HADDOCK3 workflow and use this command-line client to execute that
-workflow.</p>
-<p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="o">-</span><span class="n">h</span>
-<span class="n">haddock3</span> <span class="o">&lt;</span><span class="n">CONFIG</span> <span class="n">FILE</span><span class="o">&gt;</span>
-</pre></div>
-</div>
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.clis.cli.cli">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli.</span></span><span class="sig-name descname"><span class="pre">cli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.13)"><span class="pre">ArgumentParser</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">main</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli.html#cli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli.cli" title="Link to this definition"></a></dt>
-<dd><p>Command-line interface entry point.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.clis.cli.load_args">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli.</span></span><span class="sig-name descname"><span class="pre">load_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser" title="(in Python v3.13)"><span class="pre">ArgumentParser</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.13)"><span class="pre">Namespace</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli.html#load_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli.load_args" title="Link to this definition"></a></dt>
-<dd><p>Load argument parser args.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.clis.cli.main">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workflow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'INFO'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'DEBUG'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ERROR'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'WARNING'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'CRITICAL'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'INFO'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli.main" title="Link to this definition"></a></dt>
-<dd><p>Run an HADDOCK3 workflow.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>workflow</strong> (<em>str or pathlib.Path</em>) – The path to the workflow (config file).</p></li>
-<li><p><strong>restart</strong> (<em>int</em>) – The step to restart the run from (inclusive).
-Defaults to None, which ignores this option.</p></li>
-<li><p><strong>extend_run</strong> (<em>str or Path</em>) – The path created with <cite>haddock3-copy</cite> to start the run from.
-Defaults to None, which ignores this option.</p></li>
-<li><p><strong>setup_only</strong> (<em>bool, optional</em>) – Whether to setup the run without running it.
-Defaults to False.</p></li>
-<li><p><strong>log_level</strong> (<em>str, optional</em>) – The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.clis.cli.maincli">
-<span class="sig-prename descclassname"><span class="pre">haddock.clis.cli.</span></span><span class="sig-name descname"><span class="pre">maincli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/cli.html#maincli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.cli.maincli" title="Link to this definition"></a></dt>
-<dd><p>Execute main client.</p>
-</dd></dl>
-
+  <section id="run-haddock3">
+<h1>Run HADDOCK3<a class="headerlink" href="#run-haddock3" title="Link to this heading"></a></h1>
 </section>
 
 
@@ -171,7 +117,7 @@ Defaults to False.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 16, 2024.
+      <span class="lastupdated">Last updated on Dec 17, 2024.
       </span></p>
   </div>
 

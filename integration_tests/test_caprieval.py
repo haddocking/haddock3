@@ -91,7 +91,6 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "model": "",
             "md5": "-",
             "caprieval_rank": 1,
-            "ref_id": 1,
             "score": 0.0,
             "irmsd": 0.000,
             "fnat": 1.000,
@@ -108,7 +107,6 @@ def expected_ss_data() -> list[dict[str, Union[int, str, float]]]:
             "model": "",
             "md5": "-",
             "caprieval_rank": 2,
-            "ref_id": 1,
             "score": 100.0,
             "irmsd": 8.327,
             "fnat": 0.050,
@@ -231,7 +229,8 @@ def _compare_polymorphic_data(
             obs_val = observed[key]
 
             # Check the type match
-            assert type(exp_val) == type(obs_val), f"Type mismatch for {key}"
+            assert type(exp_val) == type(obs_val), \
+                f"Type mismatch for {key}: {type(exp_val)} != {type(obs_val)}"
 
             # Check float
             if isinstance(exp_val, float):
@@ -276,14 +275,13 @@ def _check_capri_ss_tsv(
         assert col_name in observed_header_cols, f"{col_name} not found in the header"
 
     oberseved_data: list[dict[str, Union[int, str, float]]] = []
-    data = lines[1:]
-    for line in data:
+    for line in lines[1:]:
 
         # Check there is one value for each column
         assert len(line) == len(expected_header_cols), "Values mismatch"
 
         data_dict = {}
-        for h, v in zip(expected_header_cols, line):
+        for h, v in zip(observed_header_cols, line):
             data_dict[h] = _cast_float_str_int(v)
 
         oberseved_data.append(data_dict)
@@ -576,3 +574,7 @@ def test_caprieval_multi_references_comparisons(caprieval_module, monkeypatch):
         capri_file=str(Path(caprieval_module.path, "capri_clt.tsv")),
         expected_data=expect_clt_dt,
     )
+    # Make sure the multiref performance file was created
+    capriss_multiref = Path(caprieval_module.path, "capri_ss_multiref.tsv")
+    assert capriss_multiref.exists(), f"{capriss_multiref} not created"
+    assert capriss_multiref.stat().st_size > 0, f"{capriss_multiref} contains nothing"

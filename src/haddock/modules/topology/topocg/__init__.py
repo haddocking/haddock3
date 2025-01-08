@@ -203,6 +203,8 @@ class HaddockModule(BaseCNSModule):
         models_dic: dict[int, list[Path]] = {}
         ens_dic: dict[int, dict[int, str]] = {}
         origi_ens_dic: dict[int, dict[int, str]] = {}
+        # get the all-atom psf files in a list
+        psf_files = []
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.with_parent}")
             models_dic[i] = []
@@ -229,7 +231,7 @@ class HaddockModule(BaseCNSModule):
             for task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
-                print("MODEL!!!", model)
+                psf_files.append(Path(model.as_posix()[:-4]+".psf"))
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
@@ -253,7 +255,6 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                     write_to_disk=self.params["debug"],
                 )
-                print(topocg_input)
 
                 self.log("Topology CNS input created")
 
@@ -321,18 +322,15 @@ class HaddockModule(BaseCNSModule):
                 pdb = PDBFile(
                     file_name=processed_pdb,
                     topology=topology,
-                    aa_topology="test",#self.output_models,
+                    aa_topology=psf_files[i-1],
                     path=".",
                     md5=md5_hash,
                 )
                 pdb.ori_name = model.stem
-                print("MODEL STEM", model.stem)
                 expected[i][j] = pdb
 
         #self.previous_io.add([{"topology_aa": "this is a test"}], mode="o")
 
         # Save module information
         self.output_models = list(expected.values())  # type: ignore
-        print(expected.values())
         self.export_io_models(faulty_tolerance=self.params["tolerance"])
-        print(self.export_io_models)

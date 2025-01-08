@@ -395,4 +395,5 @@ def prepare_expected_pdb(
         pdb.topology = model_obj.topology
         pdb.seed = model_obj.seed
     pdb.aa_topology = model_obj.aa_topology
+    pdb.aatocg_tbl = model_obj.aatocg_tbl
     return pdb

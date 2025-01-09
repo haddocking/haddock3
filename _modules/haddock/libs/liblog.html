@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.liblog &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -80,15 +80,15 @@
              
   <h1>Source code for haddock.libs.liblog</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Manage logging and logging helper functions.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">FileHandler</span><span class="p">,</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">StreamHandler</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileHandler</span><span class="p">,</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">StreamHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextIO</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">StreamHandlerT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">StreamHandlerT</span>
 
 
 <span class="n">log_file_name</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span>
@@ -120,7 +120,7 @@
 
 <div class="viewcode-block" id="add_loglevel_arg">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.liblog.html#haddock.libs.liblog.add_loglevel_arg">[docs]</a>
-<span class="k">def</span> <span class="nf">add_loglevel_arg</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_loglevel_arg</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add log level argument to CLI.&quot;&quot;&quot;</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--log-level&quot;</span><span class="p">,</span>
@@ -133,7 +133,7 @@
 
 <div class="viewcode-block" id="add_handler">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.liblog.html#haddock.libs.liblog.add_handler">[docs]</a>
-<span class="k">def</span> <span class="nf">add_handler</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_handler</span><span class="p">(</span>
         <span class="n">log_obj</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
         <span class="n">handler</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">StreamHandlerT</span><span class="p">],</span>
         <span class="n">stream</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">FilePath</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">],</span>
@@ -151,7 +151,7 @@
 
 <div class="viewcode-block" id="add_log_for_CLI">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.liblog.html#haddock.libs.liblog.add_log_for_CLI">[docs]</a>
-<span class="k">def</span> <span class="nf">add_log_for_CLI</span><span class="p">(</span><span class="n">log</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logfile</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_log_for_CLI</span><span class="p">(</span><span class="n">log</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logfile</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Configure log for command-line clients.&quot;&quot;&quot;</span>
     <span class="n">llu</span> <span class="o">=</span> <span class="n">log_level</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
 
@@ -180,8 +180,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

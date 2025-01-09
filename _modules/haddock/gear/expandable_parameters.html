@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.expandable_parameters &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -152,13 +152,13 @@
 <span class="sd">molecule 1. These parameters are allowed to expand only to the maximum</span>
 <span class="sd">of input molecules, and at most to the max number of molecules allowed.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">it</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">max_molecules_allowed</span>
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">max_molecules_allowed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">AnyT</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
@@ -216,7 +216,7 @@
 <span class="c1"># functions the specify its behaviour. This engine is used in</span>
 <span class="c1"># `get_single_index_groups` and `get_multiple_index_groups`, for</span>
 <span class="c1"># example. The latter are defined later on with `partial`.</span>
-<span class="k">def</span> <span class="nf">_get_groups</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_groups</span><span class="p">(</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
     <span class="n">belongs_to_group</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">bool</span><span class="p">],</span>
     <span class="n">make_param_name</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
@@ -282,7 +282,7 @@
 
 <div class="viewcode-block" id="remove_ghost_groups">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.remove_ghost_groups">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_ghost_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">:</span> <span class="n">GroupDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GroupDict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_ghost_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">:</span> <span class="n">GroupDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GroupDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove ghost groups from dictionary.</span>
 
@@ -327,7 +327,7 @@
 <span class="c1"># `read_single_idx_groups_user_config` and</span>
 <span class="c1"># `read_multiple_idx_groups_user_config`, for example. The latter are</span>
 <span class="c1"># defined later on with `partial`.</span>
-<span class="k">def</span> <span class="nf">_read_groups_in_user_config</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_groups_in_user_config</span><span class="p">(</span>
     <span class="n">user_config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">default_groups</span><span class="p">:</span> <span class="n">GroupDict</span><span class="p">,</span>
     <span class="n">get_user_groups</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">GroupDict</span><span class="p">],</span>
@@ -421,7 +421,7 @@
 
 <div class="viewcode-block" id="read_simplest_expandable">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.read_simplest_expandable">[docs]</a>
-<span class="k">def</span> <span class="nf">read_simplest_expandable</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_simplest_expandable</span><span class="p">(</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">expparams</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> 
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -454,7 +454,7 @@
 
 <div class="viewcode-block" id="get_mol_parameters">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.get_mol_parameters">[docs]</a>
-<span class="k">def</span> <span class="nf">get_mol_parameters</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mol_parameters</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify expandable `mol` parameters.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span> <span class="k">if</span> <span class="n">is_mol_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">))</span></div>
 
@@ -462,7 +462,7 @@
 
 <div class="viewcode-block" id="is_mol_parameter">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.is_mol_parameter">[docs]</a>
-<span class="k">def</span> <span class="nf">is_mol_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_mol_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify if a parameter is a `mol` parameter.&quot;&quot;&quot;</span>
     <span class="n">parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mol_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span></div>
@@ -471,7 +471,7 @@
 
 <div class="viewcode-block" id="read_mol_parameters">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.read_mol_parameters">[docs]</a>
-<span class="k">def</span> <span class="nf">read_mol_parameters</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_mol_parameters</span><span class="p">(</span>
     <span class="n">user_config</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span>
     <span class="n">default_groups</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">max_mols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">max_molecules_allowed</span><span class="p">,</span>
@@ -515,7 +515,7 @@
 
 <div class="viewcode-block" id="remove_trail_idx">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.remove_trail_idx">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_trail_idx</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_trail_idx</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove the trailing integer from a parameter.</span>
 
@@ -546,7 +546,7 @@
 
 <div class="viewcode-block" id="get_trail_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.get_trail_index">[docs]</a>
-<span class="k">def</span> <span class="nf">get_trail_index</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_trail_index</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the trail index if underscored.</span>
 
@@ -586,7 +586,7 @@
 
 <div class="viewcode-block" id="make_param_name_single_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.make_param_name_single_index">[docs]</a>
-<span class="k">def</span> <span class="nf">make_param_name_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AnyT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AnyT</span><span class="p">,</span> <span class="n">AnyT</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_param_name_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AnyT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AnyT</span><span class="p">,</span> <span class="n">AnyT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make the key name from param parts.</span>
 
@@ -598,7 +598,7 @@
 
 <div class="viewcode-block" id="make_param_name_multiple_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.make_param_name_multiple_index">[docs]</a>
-<span class="k">def</span> <span class="nf">make_param_name_multiple_index</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_param_name_multiple_index</span><span class="p">(</span>
     <span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SupportsAddT</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">SupportsAddT</span><span class="p">,</span> <span class="n">SupportsAddT</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -612,7 +612,7 @@
 
 <div class="viewcode-block" id="belongs_to_single_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.belongs_to_single_index">[docs]</a>
-<span class="k">def</span> <span class="nf">belongs_to_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">belongs_to_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assert param belong to single index group.</span>
 
@@ -643,7 +643,7 @@
 
 <div class="viewcode-block" id="belongs_to_multiple_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.belongs_to_multiple_index">[docs]</a>
-<span class="k">def</span> <span class="nf">belongs_to_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">belongs_to_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assert param belong to multiple index group.</span>
 
@@ -674,7 +674,7 @@
 
 <div class="viewcode-block" id="rejoin_parts_single_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.rejoin_parts_single_index">[docs]</a>
-<span class="k">def</span> <span class="nf">rejoin_parts_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rejoin_parts_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Join parameter name parts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">param_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 
@@ -682,7 +682,7 @@
 
 <div class="viewcode-block" id="rejoin_parts_multiple_index">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.rejoin_parts_multiple_index">[docs]</a>
-<span class="k">def</span> <span class="nf">rejoin_parts_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rejoin_parts_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Join parameter name parts.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">param_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span></div>
 
@@ -690,7 +690,7 @@
 
 <div class="viewcode-block" id="extract_single_index_params">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.extract_single_index_params">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_single_index_params</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_single_index_params</span><span class="p">(</span>
     <span class="n">user_config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -759,7 +759,7 @@
 
 <div class="viewcode-block" id="extract_multiple_index_params">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.extract_multiple_index_params">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_multiple_index_params</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_multiple_index_params</span><span class="p">(</span>
     <span class="n">user_config</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1019,7 +1019,7 @@
 
 <div class="viewcode-block" id="populate_mol_parameters_in_module">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.expandable_parameters.html#haddock.gear.expandable_parameters.populate_mol_parameters_in_module">[docs]</a>
-<span class="k">def</span> <span class="nf">populate_mol_parameters_in_module</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">populate_mol_parameters_in_module</span><span class="p">(</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">,</span> <span class="n">num_mols</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">defaults</span><span class="p">:</span> <span class="n">ParamMap</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1070,8 +1070,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

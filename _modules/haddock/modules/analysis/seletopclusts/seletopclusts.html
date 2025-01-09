@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.seletopclusts.seletopclusts &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -84,16 +84,16 @@
   <h1>Source code for haddock.modules.analysis.seletopclusts.seletopclusts</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Set of functions related to the selection of top clusters.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
 
 
 <div class="viewcode-block" id="select_top_clusts_models">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.seletopclusts.seletopclusts.html#haddock.modules.analysis.seletopclusts.seletopclusts.select_top_clusts_models">[docs]</a>
-<span class="k">def</span> <span class="nf">select_top_clusts_models</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_top_clusts_models</span><span class="p">(</span>
         <span class="n">sortby</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">models_to_select</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
         <span class="n">top_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -175,7 +175,7 @@
 
 <div class="viewcode-block" id="sort_models">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.seletopclusts.seletopclusts.html#haddock.modules.analysis.seletopclusts.seletopclusts.sort_models">[docs]</a>
-<span class="k">def</span> <span class="nf">sort_models</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sort_models</span><span class="p">(</span>
         <span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort models based on their rank in cluster.</span>
@@ -205,7 +205,7 @@
 
 <div class="viewcode-block" id="rank_clust_order">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.seletopclusts.seletopclusts.html#haddock.modules.analysis.seletopclusts.seletopclusts.rank_clust_order">[docs]</a>
-<span class="k">def</span> <span class="nf">rank_clust_order</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rank_clust_order</span><span class="p">(</span>
         <span class="n">by_clusters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Select best clusters based on structures scores.</span>
@@ -234,7 +234,7 @@
 
 <div class="viewcode-block" id="size_clust_order">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.seletopclusts.seletopclusts.html#haddock.modules.analysis.seletopclusts.seletopclusts.size_clust_order">[docs]</a>
-<span class="k">def</span> <span class="nf">size_clust_order</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">size_clust_order</span><span class="p">(</span>
         <span class="n">by_clusters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Select best clusters based on structures scores.</span>
@@ -267,7 +267,7 @@
 
 <div class="viewcode-block" id="map_clusters_models">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.seletopclusts.seletopclusts.html#haddock.modules.analysis.seletopclusts.seletopclusts.map_clusters_models">[docs]</a>
-<span class="k">def</span> <span class="nf">map_clusters_models</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_clusters_models</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Group models by clusters.</span>
 
 <span class="sd">    Parameters</span>
@@ -295,7 +295,7 @@
 
 <div class="viewcode-block" id="write_selected_models">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.seletopclusts.seletopclusts.html#haddock.modules.analysis.seletopclusts.seletopclusts.write_selected_models">[docs]</a>
-<span class="k">def</span> <span class="nf">write_selected_models</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_selected_models</span><span class="p">(</span>
         <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
         <span class="n">module_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -350,8 +350,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.rmsdmatrix.rmsd &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -83,19 +83,19 @@
              
   <h1>Source code for haddock.modules.analysis.rmsdmatrix.rmsd</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;RMSD calculations.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">AtomsDict</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">get_atoms</span><span class="p">,</span> <span class="n">load_coords</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">BaseJob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomsDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libalign</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_atoms</span><span class="p">,</span> <span class="n">load_coords</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseJob</span>
 
 
 <div class="viewcode-block" id="RMSDJob">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.RMSDJob">[docs]</a>
-<span class="k">class</span> <span class="nc">RMSDJob</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RMSDJob</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a subprocess job with inverted args and input.</span>
 
@@ -106,7 +106,7 @@
 
 <div class="viewcode-block" id="RMSDJob.make_cmd">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.RMSDJob.make_cmd">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
             <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executable</span><span class="p">),</span>
@@ -120,7 +120,7 @@
 
 <div class="viewcode-block" id="get_pair">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.get_pair">[docs]</a>
-<span class="k">def</span> <span class="nf">get_pair</span><span class="p">(</span><span class="n">nmodels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pair</span><span class="p">(</span><span class="n">nmodels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the pair of structures given the 1D matrix index.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">nmodels</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">err</span> <span class="o">=</span> <span class="s2">&quot;get_pair cannot accept negative numbers&quot;</span>
@@ -136,7 +136,7 @@
 
 <div class="viewcode-block" id="rmsd_dispatcher">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.rmsd_dispatcher">[docs]</a>
-<span class="k">def</span> <span class="nf">rmsd_dispatcher</span><span class="p">(</span><span class="n">nmodels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tot_npairs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rmsd_dispatcher</span><span class="p">(</span><span class="n">nmodels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tot_npairs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                     <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimal dispatching of rmsd jobs.&quot;&quot;&quot;</span>
     <span class="n">base_pairs</span> <span class="o">=</span> <span class="n">tot_npairs</span> <span class="o">//</span> <span class="n">ncores</span>
@@ -162,10 +162,10 @@
 
 <div class="viewcode-block" id="XYZWriterJob">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriterJob">[docs]</a>
-<span class="k">class</span> <span class="nc">XYZWriterJob</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XYZWriterJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Job dedicated to the parallel writing of xyz files.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">xyzwriter_obj</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise XYZWriterJob.&quot;&quot;&quot;</span>
@@ -174,7 +174,7 @@
 
 <div class="viewcode-block" id="XYZWriterJob.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriterJob.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this XYZWriterJob.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">xyzwriter_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running XYZWriter...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xyzwriter_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -185,10 +185,10 @@
 
 <div class="viewcode-block" id="XYZWriter">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriter">[docs]</a>
-<span class="k">class</span> <span class="nc">XYZWriter</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XYZWriter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;XYZWriter class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_list</span><span class="p">,</span>
             <span class="n">output_name</span><span class="p">,</span>
@@ -209,7 +209,7 @@
         
 <div class="viewcode-block" id="XYZWriter.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.rmsd.html#haddock.modules.analysis.rmsdmatrix.rmsd.XYZWriter.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;write xyz coordinates.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">traj_xyz</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">:</span>
@@ -239,8 +239,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

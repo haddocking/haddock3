@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libfunc &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -84,16 +84,16 @@
 
 <span class="sd">From: https://github.com/joaomcteixeira/libfuncpy</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">is_not</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_not</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Literal</span>
 
 
 <div class="viewcode-block" id="chainf">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.chainf">[docs]</a>
-<span class="k">def</span> <span class="nf">chainf</span><span class="p">(</span><span class="n">init</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">common</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chainf</span><span class="p">(</span><span class="n">init</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">common</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply a sequence of functions to an initial value.</span>
 
@@ -124,7 +124,7 @@
 
 <div class="viewcode-block" id="chainfs">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.chainfs">[docs]</a>
-<span class="k">def</span> <span class="nf">chainfs</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">common</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chainfs</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">common</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Store functions be executed on a value.</span>
 
@@ -138,7 +138,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    :py:func:`chainf`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">chainf</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">execute</span></div>
@@ -147,7 +147,7 @@
 
 <div class="viewcode-block" id="give_same">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.give_same">[docs]</a>
-<span class="k">def</span> <span class="nf">give_same</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">give_same</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return what is given.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">value</span></div>
 
@@ -155,7 +155,7 @@
 
 <div class="viewcode-block" id="true">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.true">[docs]</a>
-<span class="k">def</span> <span class="nf">true</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">true</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give True regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -163,7 +163,7 @@
 
 <div class="viewcode-block" id="false">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.false">[docs]</a>
-<span class="k">def</span> <span class="nf">false</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">false</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
@@ -171,7 +171,7 @@
 
 <div class="viewcode-block" id="none">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.none">[docs]</a>
-<span class="k">def</span> <span class="nf">none</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">none</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give None regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -179,7 +179,7 @@
 
 <div class="viewcode-block" id="nan">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.nan">[docs]</a>
-<span class="k">def</span> <span class="nf">nan</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">nan</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give nan regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span></div>
 
@@ -187,7 +187,7 @@
 
 <div class="viewcode-block" id="not_none">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.not_none">[docs]</a>
-<span class="k">def</span> <span class="nf">not_none</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">not_none</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Give True if value is not None, or False otherwise.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">is_not</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
@@ -195,9 +195,9 @@
 
 <div class="viewcode-block" id="exec_time">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libfunc.html#haddock.libs.libfunc.exec_time">[docs]</a>
-<span class="k">def</span> <span class="nf">exec_time</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">exec_time</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">timeit_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timeit_wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -215,8 +215,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

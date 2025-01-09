@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.rmsdmatrix &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -109,23 +109,23 @@
 <span class="sd">to 4 of chain B for the alignment and RMSD calculation.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">RMSD_path</span><span class="p">,</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">FAST_RMSDMATRIX_EXEC</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">AtomsDict</span><span class="p">,</span> <span class="n">FilePath</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">check_common_atoms</span><span class="p">,</span> <span class="n">rearrange_xyz_files</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">RMSDFile</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">get_index_list</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">parse_ncores</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMSD_path</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">FAST_RMSDMATRIX_EXEC</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">AtomsDict</span><span class="p">,</span> <span class="n">FilePath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libalign</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_common_atoms</span><span class="p">,</span> <span class="n">rearrange_xyz_files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">RMSDFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libparallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_index_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_ncores</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">confirm_resdic_chainid_length</span><span class="p">,</span>
     <span class="n">get_analysis_exec_mode</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.rmsdmatrix.rmsd</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.rmsdmatrix.rmsd</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">RMSDJob</span><span class="p">,</span>
     <span class="n">XYZWriter</span><span class="p">,</span>
     <span class="n">XYZWriterJob</span><span class="p">,</span>
@@ -140,12 +140,12 @@
 
 <div class="viewcode-block" id="HaddockModule">
 <a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.html#haddock.modules.analysis.rmsdmatrix.HaddockModule">[docs]</a>
-<span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for clustering with RMSD.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
@@ -153,7 +153,7 @@
 <div class="viewcode-block" id="HaddockModule.confirm_installation">
 <a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.html#haddock.modules.analysis.rmsdmatrix.HaddockModule.confirm_installation">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if fast-rmsdmatrix is installed and available.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">EXEC_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
@@ -168,7 +168,7 @@
         <span class="k">return</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_rearrange_output</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rearrange_output</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine different rmsd outputs in a single file.&quot;&quot;&quot;</span>
@@ -187,7 +187,7 @@
 
 <div class="viewcode-block" id="HaddockModule.update_params">
 <a class="viewcode-back" href="../../../../modules/analysis/haddock.modules.analysis.rmsdmatrix.html#haddock.modules.analysis.rmsdmatrix.HaddockModule.update_params">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update parameters.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
@@ -196,7 +196,7 @@
         <span class="n">confirm_resdic_chainid_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Get the models generated in previous step</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="p">)</span> <span class="o">==</span> <span class="nb">iter</span><span class="p">:</span>
@@ -327,8 +327,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

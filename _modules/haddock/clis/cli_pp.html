@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_pp &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -101,21 +101,21 @@
 <span class="sd">    haddock-pp file1.pdb file2.pdb --suffix _new</span>
 <span class="sd">    haddock-pp file1.pdb file2.pdb --dry</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ArgumentParser</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">Namespace</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.preprocessing</span> <span class="kn">import</span> <span class="n">process_pdbs</span><span class="p">,</span> <span class="n">read_additional_residues</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libcli</span> <span class="kn">import</span> <span class="n">add_output_dir_arg</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">add_suffix_to_files</span><span class="p">,</span> <span class="n">save_lines_to_files</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_pdbs</span><span class="p">,</span> <span class="n">read_additional_residues</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcli</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_output_dir_arg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_suffix_to_files</span><span class="p">,</span> <span class="n">save_lines_to_files</span>
 
 
 <span class="n">SUFFIX_DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;_processed&quot;</span>
@@ -156,13 +156,13 @@
 
 
 <span class="c1"># client helper functions</span>
-<span class="k">def</span> <span class="nf">_ap</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ap</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">ap</span>
 
 
 <div class="viewcode-block" id="load_args">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_pp.html#haddock.clis.cli_pp.load_args">[docs]</a>
-<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
@@ -170,7 +170,7 @@
 
 <div class="viewcode-block" id="cli">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_pp.html#haddock.clis.cli_pp.cli">[docs]</a>
-<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
     <span class="c1"># I use this `pop` structure to maintain the unpacking argument in</span>
@@ -182,7 +182,7 @@
 
 <div class="viewcode-block" id="maincli">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_pp.html#haddock.clis.cli_pp.maincli">[docs]</a>
-<span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
     <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
 
@@ -190,7 +190,7 @@
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_pp.html#haddock.clis.cli_pp.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
     <span class="o">*</span><span class="n">pdb_files</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">dry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">output_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -268,8 +268,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

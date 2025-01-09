@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libhpc &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,17 +81,17 @@
   <h1>Source code for haddock.libs.libhpc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module in charge of running tasks in HPC.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Container</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.yaml2cfg</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNSJob</span>
 
 
 <span class="n">STATE_REGEX</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;JobState=(\w*)&quot;</span>
@@ -125,10 +125,10 @@
 
 <div class="viewcode-block" id="HPCWorker">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCWorker">[docs]</a>
-<span class="k">class</span> <span class="nc">HPCWorker</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HPCWorker</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines the HPC Job.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CNSJob</span><span class="p">],</span>
         <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -162,7 +162,7 @@
 
 <div class="viewcode-block" id="HPCWorker.prepare_job_file">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCWorker.prepare_job_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">prepare_job_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;slurm&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_job_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;slurm&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare the job file for all the jobs in the task list.&quot;&quot;&quot;</span>
         <span class="n">job_file_contents</span> <span class="o">=</span> <span class="n">create_job_header_funcs</span><span class="p">[</span><span class="n">queue_type</span><span class="p">](</span>
             <span class="n">job_name</span><span class="o">=</span><span class="s2">&quot;haddock3&quot;</span><span class="p">,</span>
@@ -191,7 +191,7 @@
 
 <div class="viewcode-block" id="HPCWorker.run">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCWorker.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the tasks.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prepare_job_file</span><span class="p">(</span><span class="n">queue_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workload_manager</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sbatch </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job_fname</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -202,7 +202,7 @@
 
 <div class="viewcode-block" id="HPCWorker.update_status">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCWorker.update_status">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the status of this worker.&quot;&quot;&quot;</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scontrol show jobid -dd </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -219,7 +219,7 @@
 
 <div class="viewcode-block" id="HPCWorker.cancel">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCWorker.cancel">[docs]</a>
-    <span class="k">def</span> <span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bypass_statuses</span><span class="p">:</span> <span class="n">Container</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;finished&quot;</span><span class="p">,</span> <span class="s2">&quot;failed&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bypass_statuses</span><span class="p">:</span> <span class="n">Container</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;finished&quot;</span><span class="p">,</span> <span class="s2">&quot;failed&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Cancel the execution.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_status</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bypass_statuses</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Canceling </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job_fname</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -231,10 +231,10 @@
 
 <div class="viewcode-block" id="HPCScheduler">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCScheduler">[docs]</a>
-<span class="k">class</span> <span class="nc">HPCScheduler</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HPCScheduler</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedules tasks to run in HPC.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CNSJob</span><span class="p">],</span>
         <span class="n">target_queue</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">HPCWorker_QUEUE_DEFAULT</span><span class="p">,</span>
@@ -264,7 +264,7 @@
 
 <div class="viewcode-block" id="HPCScheduler.run">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCScheduler.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run tasks in the Queue.&quot;&quot;&quot;</span>
         <span class="c1"># split by maximum number of submission so we do it in batches</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
@@ -327,7 +327,7 @@
 
 <div class="viewcode-block" id="HPCScheduler.terminate">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.HPCScheduler.terminate">[docs]</a>
-    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Terminate all jobs in the queue in a controlled way.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Terminate signal received, removing jobs from the queue...&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_list</span><span class="p">:</span>
@@ -340,7 +340,7 @@
 
 <div class="viewcode-block" id="create_slurm_header">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.create_slurm_header">[docs]</a>
-<span class="k">def</span> <span class="nf">create_slurm_header</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_header</span><span class="p">(</span>
     <span class="n">job_name</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;haddock3_slurm_job&quot;</span><span class="p">,</span>
     <span class="n">work_dir</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
     <span class="n">stdout_path</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;haddock3_job.out&quot;</span><span class="p">,</span>
@@ -387,7 +387,7 @@
 
 <div class="viewcode-block" id="create_torque_header">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.create_torque_header">[docs]</a>
-<span class="k">def</span> <span class="nf">create_torque_header</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_torque_header</span><span class="p">(</span>
     <span class="n">job_name</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;haddock3_slurm_job&quot;</span><span class="p">,</span>
     <span class="n">work_dir</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
     <span class="n">stdout_path</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;haddock3_job.out&quot;</span><span class="p">,</span>
@@ -430,7 +430,7 @@
 
 <div class="viewcode-block" id="to_torque_time">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.to_torque_time">[docs]</a>
-<span class="k">def</span> <span class="nf">to_torque_time</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_torque_time</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert time in minutes to the form hh:mm:ss.</span>
 
 <span class="sd">    Parameters</span>
@@ -455,7 +455,7 @@
 
 <div class="viewcode-block" id="extract_slurm_status">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.extract_slurm_status">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_slurm_status</span><span class="p">(</span><span class="n">slurm_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_slurm_status</span><span class="p">(</span><span class="n">slurm_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract job status from slurm scontrol stdout.</span>
 
 <span class="sd">    Parameters</span>
@@ -479,7 +479,7 @@
 
 <div class="viewcode-block" id="create_CNS_export_envvars">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libhpc.html#haddock.libs.libhpc.create_CNS_export_envvars">[docs]</a>
-<span class="k">def</span> <span class="nf">create_CNS_export_envvars</span><span class="p">(</span><span class="o">**</span><span class="n">envvars</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_CNS_export_envvars</span><span class="p">(</span><span class="o">**</span><span class="n">envvars</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a string exporting envvars needed for CNS.</span>
 
 <span class="sd">    Parameters</span>
@@ -519,8 +519,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

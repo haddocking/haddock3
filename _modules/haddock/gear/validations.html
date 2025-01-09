@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.validations &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -80,11 +80,11 @@
              
   <h1>Source code for haddock.gear.validations</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module to define specific validations in Haddock3.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">config_expert_levels</span><span class="p">,</span> <span class="n">_hidden_level</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">RUNDIR</span><span class="p">,</span> <span class="n">valid_run_dir_chars</span>
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ParamDict</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span><span class="p">,</span> <span class="n">check_yaml_duplicated_parameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_expert_levels</span><span class="p">,</span> <span class="n">_hidden_level</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">RUNDIR</span><span class="p">,</span> <span class="n">valid_run_dir_chars</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ParamDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml</span><span class="p">,</span> <span class="n">check_yaml_duplicated_parameters</span>
 
 <span class="n">_allowed_expert_levels</span> <span class="o">=</span> <span class="n">config_expert_levels</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">_hidden_level</span><span class="p">)</span>
 <span class="n">YAML_PARAMETER_BASE_SCHEME</span> <span class="o">=</span> <span class="p">(</span>
@@ -103,7 +103,7 @@
 
 <div class="viewcode-block" id="v_rundir">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.v_rundir">[docs]</a>
-<span class="k">def</span> <span class="nf">v_rundir</span><span class="p">(</span><span class="n">rundir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">v_rundir</span><span class="p">(</span><span class="n">rundir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate string defining the run directory.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rundir</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">valid_run_dir_chars</span><span class="p">):</span>
         <span class="n">emsg</span> <span class="o">=</span> <span class="p">(</span>
@@ -116,7 +116,7 @@
 
 <div class="viewcode-block" id="validate_yaml_params_scheme">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.validate_yaml_params_scheme">[docs]</a>
-<span class="k">def</span> <span class="nf">validate_yaml_params_scheme</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_yaml_params_scheme</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a defaults.yaml file module parameters schemes.</span>
 
 <span class="sd">    Parameters</span>
@@ -136,7 +136,7 @@
 
 <div class="viewcode-block" id="validate_parameter_scheme">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.validate_parameter_scheme">[docs]</a>
-<span class="k">def</span> <span class="nf">validate_parameter_scheme</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_parameter_scheme</span><span class="p">(</span>
         <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="n">ParamDict</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -184,7 +184,7 @@
 
 <div class="viewcode-block" id="validate_defaults_yaml">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.validations.html#haddock.gear.validations.validate_defaults_yaml">[docs]</a>
-<span class="k">def</span> <span class="nf">validate_defaults_yaml</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_defaults_yaml</span><span class="p">(</span><span class="n">yaml_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a defaults.yaml file.</span>
 
 <span class="sd">    Parameters</span>
@@ -207,8 +207,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

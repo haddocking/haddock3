@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libcns &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,21 +81,21 @@
   <h1>Source code for haddock.libs.libcns</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;CNS scripts util functions.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">linesep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core</span> <span class="kn">import</span> <span class="n">cns_paths</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">FilePathT</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">haddock.libs</span> <span class="kn">import</span> <span class="n">libpdb</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">false</span><span class="p">,</span> <span class="n">true</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libmath</span> <span class="kn">import</span> <span class="n">RandomNumberGenerator</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libpdb</span> <span class="kn">import</span> <span class="n">check_combination_chains</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">transform_to_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">cns_paths</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">FilePathT</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs</span><span class="w"> </span><span class="kn">import</span> <span class="n">libpdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfunc</span><span class="w"> </span><span class="kn">import</span> <span class="n">false</span><span class="p">,</span> <span class="n">true</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libmath</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomNumberGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_combination_chains</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform_to_list</span>
 
 
 <span class="n">RND</span> <span class="o">=</span> <span class="n">RandomNumberGenerator</span><span class="p">()</span>
@@ -103,7 +103,7 @@
 
 <div class="viewcode-block" id="generate_default_header">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.generate_default_header">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_default_header</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_default_header</span><span class="p">(</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate CNS default header.&quot;&quot;&quot;</span>
@@ -137,7 +137,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_is_nan</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_nan</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inspect if is nan.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -147,7 +147,7 @@
 
 <div class="viewcode-block" id="filter_empty_vars">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.filter_empty_vars">[docs]</a>
-<span class="k">def</span> <span class="nf">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Filter empty variables.</span>
 
@@ -187,7 +187,7 @@
 
 <div class="viewcode-block" id="load_workflow_params">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.load_workflow_params">[docs]</a>
-<span class="k">def</span> <span class="nf">load_workflow_params</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_workflow_params</span><span class="p">(</span>
     <span class="n">param_header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Parameters</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -221,7 +221,7 @@
 
 <div class="viewcode-block" id="write_eval_line">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.write_eval_line">[docs]</a>
-<span class="k">def</span> <span class="nf">write_eval_line</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">eval_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval ($</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_eval_line</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">eval_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval ($</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the CNS eval line depending on the type of `value`.&quot;&quot;&quot;</span>
     <span class="n">eval_line</span> <span class="o">+=</span> <span class="n">linesep</span>
 
@@ -252,7 +252,7 @@
 
 <div class="viewcode-block" id="load_link">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.load_link">[docs]</a>
-<span class="k">def</span> <span class="nf">load_link</span><span class="p">(</span><span class="n">mol_link</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_link</span><span class="p">(</span><span class="n">mol_link</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add the link header.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
         <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Link file</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">link_file</span><span class="o">=</span><span class="n">mol_link</span>
@@ -282,7 +282,7 @@
 
 <div class="viewcode-block" id="load_scatter">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.load_scatter">[docs]</a>
-<span class="k">def</span> <span class="nf">load_scatter</span><span class="p">(</span><span class="n">scatter_lib</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_scatter</span><span class="p">(</span><span class="n">scatter_lib</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add scatter library.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
         <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Scatter lib</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scatter_lib</span><span class="o">=</span><span class="n">scatter_lib</span>
@@ -292,7 +292,7 @@
 
 <div class="viewcode-block" id="load_boxtyp20">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.load_boxtyp20">[docs]</a>
-<span class="k">def</span> <span class="nf">load_boxtyp20</span><span class="p">(</span><span class="n">waterbox_param</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_boxtyp20</span><span class="p">(</span><span class="n">waterbox_param</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add boxtyp20 eval line.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
         <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Water box</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">boxtyp20</span><span class="o">=</span><span class="n">waterbox_param</span>
@@ -303,7 +303,7 @@
 <span class="c1"># This is used by docking</span>
 <div class="viewcode-block" id="prepare_multiple_input">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.prepare_multiple_input">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_multiple_input</span><span class="p">(</span><span class="n">pdb_input_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">psf_input_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_multiple_input</span><span class="p">(</span><span class="n">pdb_input_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">psf_input_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare multiple input files.&quot;&quot;&quot;</span>
     <span class="n">input_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Input structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">psf_input_list</span><span class="p">:</span>
@@ -332,7 +332,7 @@
 <span class="c1"># This is used by Topology and Scoring</span>
 <div class="viewcode-block" id="prepare_single_input">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.prepare_single_input">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_single_input</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_single_input</span><span class="p">(</span>
     <span class="n">pdb_input</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">psf_input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">FilePathT</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Input of the CNS file.</span>
@@ -374,7 +374,7 @@
 
 <div class="viewcode-block" id="prepare_cns_input">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.prepare_cns_input">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_cns_input</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_cns_input</span><span class="p">(</span>
     <span class="n">model_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">input_element</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
     <span class="n">step_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
@@ -483,7 +483,7 @@
 
 <div class="viewcode-block" id="prepare_expected_pdb">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.prepare_expected_pdb">[docs]</a>
-<span class="k">def</span> <span class="nf">prepare_expected_pdb</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_expected_pdb</span><span class="p">(</span>
     <span class="n">model_obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
     <span class="n">model_nb</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
@@ -508,8 +508,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

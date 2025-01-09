@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.yaml2cfg &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -87,26 +87,26 @@
 <span class="sd">configuration files which have specific keys.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">_hidden_level</span><span class="p">,</span> <span class="n">config_expert_levels</span>
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">_hidden_level</span><span class="p">,</span> <span class="n">config_expert_levels</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ExpertLevel</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">ParamDict</span><span class="p">,</span>
     <span class="n">ParamMap</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml</span>
 
 
 <div class="viewcode-block" id="yaml2cfg_text">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.yaml2cfg_text">[docs]</a>
-<span class="k">def</span> <span class="nf">yaml2cfg_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">yaml2cfg_text</span><span class="p">(</span>
     <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -162,7 +162,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_yaml2cfg_text</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_yaml2cfg_text</span><span class="p">(</span>
     <span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -289,7 +289,7 @@
 
 <div class="viewcode-block" id="read_from_yaml_config">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.read_from_yaml_config">[docs]</a>
-<span class="k">def</span> <span class="nf">read_from_yaml_config</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_from_yaml_config</span><span class="p">(</span>
     <span class="n">cfg_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">default_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read config from yaml by collapsing the expert levels.</span>
@@ -322,7 +322,7 @@
 
 <div class="viewcode-block" id="flat_yaml_cfg">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.flat_yaml_cfg">[docs]</a>
-<span class="k">def</span> <span class="nf">flat_yaml_cfg</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flat_yaml_cfg</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="n">ParamMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Flat a yaml config.&quot;&quot;&quot;</span>
     <span class="n">new</span><span class="p">:</span> <span class="n">ParamDict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -350,7 +350,7 @@
 
 <div class="viewcode-block" id="find_incompatible_parameters">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.yaml2cfg.html#haddock.gear.yaml2cfg.find_incompatible_parameters">[docs]</a>
-<span class="k">def</span> <span class="nf">find_incompatible_parameters</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_incompatible_parameters</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads a YAML configuration file and identifies nodes containing the &#39;incompatible&#39; key.</span>
 
@@ -387,8 +387,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

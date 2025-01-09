@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.restart_run &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -80,12 +80,12 @@
              
   <h1>Source code for haddock.gear.restart_run</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Features to allow run restart from a given step.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">non_negative_int</span><span class="p">,</span> <span class="n">remove_folder</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_negative_int</span><span class="p">,</span> <span class="n">remove_folder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_module_steps_folders</span>
 
 
 <span class="n">_help_cli</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Restart the run from a given step. Previous folders from</span>
@@ -101,7 +101,7 @@
 
 <div class="viewcode-block" id="add_restart_arg">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.restart_run.html#haddock.gear.restart_run.add_restart_arg">[docs]</a>
-<span class="k">def</span> <span class="nf">add_restart_arg</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_restart_arg</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add `--restart` option to argument parser.&quot;&quot;&quot;</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--restart&quot;</span><span class="p">,</span>
@@ -114,7 +114,7 @@
 
 <div class="viewcode-block" id="remove_folders_after_number">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.restart_run.html#haddock.gear.restart_run.remove_folders_after_number">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_folders_after_number</span><span class="p">(</span><span class="n">run_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_folders_after_number</span><span class="p">(</span><span class="n">run_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove calculation folder after (included) a given number.</span>
 
@@ -161,8 +161,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

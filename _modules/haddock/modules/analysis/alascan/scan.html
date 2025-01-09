@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.alascan.scan &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -83,20 +83,20 @@
              
   <h1>Source code for haddock.modules.analysis.alascan.scan</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;alascan module.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">redirect_stdout</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">redirect_stdout</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="n">get_atoms</span><span class="p">,</span> <span class="n">load_coords</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libplots</span> <span class="kn">import</span> <span class="n">make_alascan_plot</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval.capri</span> <span class="kn">import</span> <span class="n">CAPRI</span>
-<span class="kn">from</span> <span class="nn">haddock.clis</span> <span class="kn">import</span> <span class="n">cli_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libalign</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_atoms</span><span class="p">,</span> <span class="n">load_coords</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_alascan_plot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.caprieval.capri</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAPRI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.clis</span><span class="w"> </span><span class="kn">import</span> <span class="n">cli_score</span>
 
 <span class="n">ATOMS_TO_BE_MUTATED</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;CA&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;CB&#39;</span><span class="p">]</span>
 
@@ -149,7 +149,7 @@
 
 <div class="viewcode-block" id="mutate">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.mutate">[docs]</a>
-<span class="k">def</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">target_chain</span><span class="p">,</span> <span class="n">target_resnum</span><span class="p">,</span> <span class="n">mut_resname</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">target_chain</span><span class="p">,</span> <span class="n">target_resnum</span><span class="p">,</span> <span class="n">mut_resname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mutate a residue in a PDB file into a different residue.</span>
 <span class="sd">    </span>
@@ -203,7 +203,7 @@
 
 <div class="viewcode-block" id="add_delta_to_bfactor">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.add_delta_to_bfactor">[docs]</a>
-<span class="k">def</span> <span class="nf">add_delta_to_bfactor</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">df_scan</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_delta_to_bfactor</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">df_scan</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add delta scores as b-factors.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -248,7 +248,7 @@
 
 <div class="viewcode-block" id="get_score_string">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.get_score_string">[docs]</a>
-<span class="k">def</span> <span class="nf">get_score_string</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_score_string</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get score output from cli_score.main.</span>
 
 <span class="sd">    Parameters</span>
@@ -274,7 +274,7 @@
 
 <div class="viewcode-block" id="calc_score">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.calc_score">[docs]</a>
-<span class="k">def</span> <span class="nf">calc_score</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_score</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the score of a model.</span>
 
 <span class="sd">    Parameters</span>
@@ -313,7 +313,7 @@
 
 <div class="viewcode-block" id="add_zscores">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.add_zscores">[docs]</a>
-<span class="k">def</span> <span class="nf">add_zscores</span><span class="p">(</span><span class="n">df_scan_clt</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s1">&#39;delta_score&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_zscores</span><span class="p">(</span><span class="n">df_scan_clt</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s1">&#39;delta_score&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add z-scores to the dataframe.</span>
 
 <span class="sd">    Parameters</span>
@@ -341,7 +341,7 @@
 
 <div class="viewcode-block" id="alascan_cluster_analysis">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.alascan_cluster_analysis">[docs]</a>
-<span class="k">def</span> <span class="nf">alascan_cluster_analysis</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">alascan_cluster_analysis</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform cluster analysis on the alascan data.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -445,7 +445,7 @@
 
 <div class="viewcode-block" id="generate_alascan_output">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.generate_alascan_output">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the alascan output files.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -477,7 +477,7 @@
 
 <div class="viewcode-block" id="create_alascan_plots">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.create_alascan_plots">[docs]</a>
-<span class="k">def</span> <span class="nf">create_alascan_plots</span><span class="p">(</span><span class="n">clt_alascan</span><span class="p">,</span> <span class="n">scan_residue</span><span class="p">,</span> <span class="n">offline</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_alascan_plots</span><span class="p">(</span><span class="n">clt_alascan</span><span class="p">,</span> <span class="n">scan_residue</span><span class="p">,</span> <span class="n">offline</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the alascan plots.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">clt_id</span> <span class="ow">in</span> <span class="n">clt_alascan</span><span class="p">:</span>
         <span class="n">scan_clt_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">.csv&quot;</span>
@@ -508,10 +508,10 @@
 
 <div class="viewcode-block" id="ScanJob">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.ScanJob">[docs]</a>
-<span class="k">class</span> <span class="nc">ScanJob</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScanJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Job dedicated to the parallel alanine scanning of models.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">output</span><span class="p">,</span>
             <span class="n">params</span><span class="p">,</span>
@@ -524,7 +524,7 @@
 
 <div class="viewcode-block" id="ScanJob.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.ScanJob.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this ScanJob.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scan_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running Scan...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scan_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -536,10 +536,10 @@
 
 <div class="viewcode-block" id="Scan">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.Scan">[docs]</a>
-<span class="k">class</span> <span class="nc">Scan</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scan</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Scan class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_list</span><span class="p">,</span>
             <span class="n">output_name</span><span class="p">,</span>
@@ -565,7 +565,7 @@
 
 <div class="viewcode-block" id="Scan.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.Scan.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run alascan calculations.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">native</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">:</span>
             <span class="c1"># here we rescore the native model for consistency, as the score</span>
@@ -663,7 +663,7 @@
     
 <div class="viewcode-block" id="Scan.output">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.Scan.output">[docs]</a>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write down unique contacts to file.&quot;&quot;&quot;</span>
         <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_fh</span><span class="p">:</span>
@@ -682,8 +682,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

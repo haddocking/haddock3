@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.fcc.cluster_fcc &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -94,26 +94,26 @@
 
 <div class="viewcode-block" id="Element">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.Element">[docs]</a>
-<span class="k">class</span> <span class="nc">Element</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Element</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a &#39;clusterable&#39; Element&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;cluster&quot;</span><span class="p">,</span> <span class="s2">&quot;neighbors&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Element.add_neighbor">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.Element.add_neighbor">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_neighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_neighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neighbor</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds another element to the neighbor list&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Element.assign_cluster">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.Element.assign_cluster">[docs]</a>
-    <span class="k">def</span> <span class="nf">assign_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clust_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clust_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assigns the Element to Cluster. 0 if unclustered&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="n">clust_id</span></div>
 </div>
@@ -122,12 +122,12 @@
 
 <div class="viewcode-block" id="Cluster">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.Cluster">[docs]</a>
-<span class="k">class</span> <span class="nc">Cluster</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cluster</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines a Cluster. A Cluster is created with a name and a center (Element class)&quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="s2">&quot;members&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">center</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">center</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">center</span>
@@ -136,12 +136,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">populate</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">members</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 Center</span>
 
 <div class="viewcode-block" id="Cluster.populate">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.Cluster.populate">[docs]</a>
-    <span class="k">def</span> <span class="nf">populate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">populate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Populates the Cluster member list through the</span>
 <span class="sd">        neighbor list of its center.</span>
@@ -162,7 +162,7 @@
 
 <div class="viewcode-block" id="Cluster.add_member">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.Cluster.add_member">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_member</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_member</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds one single element to the cluster.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -175,7 +175,7 @@
 
 <div class="viewcode-block" id="read_matrix">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.read_matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">read_matrix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">strictness</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_matrix</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">strictness</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads in a four column matrix (1 2 0.123 0.456\n)</span>
 <span class="sd">    and creates an dictionary of Elements.</span>
@@ -226,7 +226,7 @@
 
 <div class="viewcode-block" id="remove_true_singletons">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.remove_true_singletons">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_true_singletons</span><span class="p">(</span><span class="n">element_pool</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_true_singletons</span><span class="p">(</span><span class="n">element_pool</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes from the pool elements without any neighbor&quot;&quot;&quot;</span>
 
     <span class="n">ep</span> <span class="o">=</span> <span class="n">element_pool</span>
@@ -248,7 +248,7 @@
 
 <div class="viewcode-block" id="cluster_elements">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.cluster_elements">[docs]</a>
-<span class="k">def</span> <span class="nf">cluster_elements</span><span class="p">(</span><span class="n">element_pool</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_elements</span><span class="p">(</span><span class="n">element_pool</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Groups Elements within a given threshold</span>
 <span class="sd">    together in the same cluster.</span>
@@ -285,7 +285,7 @@
 
 <div class="viewcode-block" id="output_clusters">
 <a class="viewcode-back" href="../../../haddock.fcc.cluster_fcc.html#haddock.fcc.cluster_fcc.output_clusters">[docs]</a>
-<span class="k">def</span> <span class="nf">output_clusters</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">output_clusters</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Outputs the cluster name, center, and members.&quot;&quot;&quot;</span>
 
     <span class="n">write</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">write</span>
@@ -305,8 +305,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

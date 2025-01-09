@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.scoring &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,21 +81,21 @@
              
   <h1>Source code for haddock.modules.scoring</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 modules to score models.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.base_cns_module</span> <span class="kn">import</span> <span class="n">BaseCNSModule</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.base_cns_module</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCNSModule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">PDBFile</span>
 
 
 <div class="viewcode-block" id="ScoringModule">
 <a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.ScoringModule">[docs]</a>
-<span class="k">class</span> <span class="nc">ScoringModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScoringModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for Scoring modules.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ScoringModule.output">
 <a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.ScoringModule.output">[docs]</a>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
             <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -134,12 +134,12 @@
 
 <div class="viewcode-block" id="CNSScoringModule">
 <a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule">[docs]</a>
-<span class="k">class</span> <span class="nc">CNSScoringModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">,</span> <span class="n">ScoringModule</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CNSScoringModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">,</span> <span class="n">ScoringModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parent class for CNS Scoring modules.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="CNSScoringModule.per_interface_output">
 <a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.per_interface_output">[docs]</a>
-    <span class="k">def</span> <span class="nf">per_interface_output</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">per_interface_output</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
             <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -224,7 +224,7 @@
 <div class="viewcode-block" id="CNSScoringModule.read_per_interface_scores">
 <a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.read_per_interface_scores">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">read_per_interface_scores</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_per_interface_scores</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a pdb file and parse per interface scores.</span>
 
 <span class="sd">        Parameters</span>
@@ -277,8 +277,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

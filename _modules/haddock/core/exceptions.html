@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.core.exceptions &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,13 +81,13 @@
   <h1>Source code for haddock.core.exceptions</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK library custom errors.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">linesep</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span>
 
 <div class="viewcode-block" id="HaddockError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.HaddockError">[docs]</a>
-<span class="k">class</span> <span class="nc">HaddockError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HaddockError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in HADDOCK3.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -96,7 +96,7 @@
 
 <div class="viewcode-block" id="ConfigurationError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.ConfigurationError">[docs]</a>
-<span class="k">class</span> <span class="nc">ConfigurationError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigurationError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in the configuration file.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -105,7 +105,7 @@
 
 <div class="viewcode-block" id="ModuleError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.ModuleError">[docs]</a>
-<span class="k">class</span> <span class="nc">ModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 module.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -114,7 +114,7 @@
 
 <div class="viewcode-block" id="StepError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.StepError">[docs]</a>
-<span class="k">class</span> <span class="nc">StepError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StepError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 workflow step.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -123,7 +123,7 @@
 
 <div class="viewcode-block" id="JobRunningError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.JobRunningError">[docs]</a>
-<span class="k">class</span> <span class="nc">JobRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JobRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;General job running error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -132,7 +132,7 @@
 
 <div class="viewcode-block" id="CNSRunningError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.CNSRunningError">[docs]</a>
-<span class="k">class</span> <span class="nc">CNSRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CNSRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;CNS run error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -140,15 +140,15 @@
 
 <div class="viewcode-block" id="KnownCNSError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.KnownCNSError">[docs]</a>
-<span class="k">class</span> <span class="nc">KnownCNSError</span><span class="p">(</span><span class="n">CNSRunningError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KnownCNSError</span><span class="p">(</span><span class="n">CNSRunningError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Detected CNS output error.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cns_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cns_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cns_error</span> <span class="o">=</span> <span class="n">cns_message</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hint</span> <span class="o">=</span> <span class="n">hint</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span>
     
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate custom string representation of this exception.&quot;&quot;&quot;</span>
         <span class="n">full_msg</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;A CNS error occured: `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cns_error</span><span class="si">}</span><span class="s2">`.</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -160,7 +160,7 @@
 
 <div class="viewcode-block" id="HaddockModuleError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.HaddockModuleError">[docs]</a>
-<span class="k">class</span> <span class="nc">HaddockModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HaddockModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;General error in a HADDOCK3 module.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -169,7 +169,7 @@
 
 <div class="viewcode-block" id="ThirdPartyIntallationError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.ThirdPartyIntallationError">[docs]</a>
-<span class="k">class</span> <span class="nc">ThirdPartyIntallationError</span><span class="p">(</span><span class="n">HaddockModuleError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThirdPartyIntallationError</span><span class="p">(</span><span class="n">HaddockModuleError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;General error when a third party module is not properly installed.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -177,7 +177,7 @@
 
 <div class="viewcode-block" id="SetupError">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.SetupError">[docs]</a>
-<span class="k">class</span> <span class="nc">SetupError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SetupError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -186,7 +186,7 @@
 
 <div class="viewcode-block" id="HaddockTermination">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.exceptions.html#haddock.core.exceptions.HaddockTermination">[docs]</a>
-<span class="k">class</span> <span class="nc">HaddockTermination</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HaddockTermination</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Terminates HADDOCK.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
@@ -200,8 +200,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

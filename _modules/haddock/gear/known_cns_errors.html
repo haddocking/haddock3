@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.known_cns_errors &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -85,12 +85,12 @@
 <span class="sd">https://github.com/haddocking/haddock25/blob/main/tools/check-error-messages.sh</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedReader</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">KnownCNSError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">KnownCNSError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="c1"># Dictionary of known errors</span>
 <span class="c1"># as key:    How to catch it in the cns.cnserr</span>
@@ -144,7 +144,7 @@
 
 <div class="viewcode-block" id="find_cns_errors">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.known_cns_errors.html#haddock.gear.known_cns_errors.find_cns_errors">[docs]</a>
-<span class="k">def</span> <span class="nf">find_cns_errors</span><span class="p">(</span><span class="n">cns_out_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KnownCNSError</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_cns_errors</span><span class="p">(</span><span class="n">cns_out_fpath</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KnownCNSError</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Detect if a known CNS error is in a cns.cnserr file.</span>
 
 <span class="sd">    Parameters</span>
@@ -177,7 +177,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_find_cns_errors</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_cns_errors</span><span class="p">(</span>
         <span class="n">file_handle</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">gzip</span><span class="o">.</span><span class="n">GzipFile</span><span class="p">,</span> <span class="n">BufferedReader</span><span class="p">],</span>
         <span class="n">known_errors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">,</span>
@@ -237,7 +237,7 @@
 
 <div class="viewcode-block" id="find_all_cns_errors">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.known_cns_errors.html#haddock.gear.known_cns_errors.find_all_cns_errors">[docs]</a>
-<span class="k">def</span> <span class="nf">find_all_cns_errors</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_all_cns_errors</span><span class="p">(</span>
         <span class="n">directory_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">KnownCNSError</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all errors in a directory.</span>
@@ -277,8 +277,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

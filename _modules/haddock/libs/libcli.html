@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libcli &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -80,12 +80,12 @@
              
   <h1>Source code for haddock.libs.libcli</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Add functionalities for CLIs.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">version</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">file_exists</span><span class="p">,</span> <span class="n">folder_exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">file_exists</span><span class="p">,</span> <span class="n">folder_exists</span>
 
 
 <span class="n">arg_file_exist</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
@@ -103,7 +103,7 @@
 
 <div class="viewcode-block" id="add_version_arg">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcli.html#haddock.libs.libcli.add_version_arg">[docs]</a>
-<span class="k">def</span> <span class="nf">add_version_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_version_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add version `-v` argument to client.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
@@ -117,7 +117,7 @@
 
 <div class="viewcode-block" id="add_rundir_arg">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcli.html#haddock.libs.libcli.add_rundir_arg">[docs]</a>
-<span class="k">def</span> <span class="nf">add_rundir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_rundir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add run directory option.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;run_dir&quot;</span><span class="p">,</span>
@@ -129,7 +129,7 @@
 
 <div class="viewcode-block" id="add_ncores_arg">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcli.html#haddock.libs.libcli.add_ncores_arg">[docs]</a>
-<span class="k">def</span> <span class="nf">add_ncores_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_ncores_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add number of cores option.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
@@ -150,7 +150,7 @@
 
 <div class="viewcode-block" id="add_output_dir_arg">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcli.html#haddock.libs.libcli.add_output_dir_arg">[docs]</a>
-<span class="k">def</span> <span class="nf">add_output_dir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_output_dir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add output dir argument.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-odir&quot;</span><span class="p">,</span>
@@ -163,7 +163,7 @@
 
 
 
-<span class="k">class</span> <span class="nc">_ParamsToDict</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ParamsToDict</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert command-line parameters in an argument to a dictionary.</span>
 
@@ -178,7 +178,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">ivalues</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">ivalues</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute.&quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">ivalues</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">ivalues</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
@@ -205,8 +205,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

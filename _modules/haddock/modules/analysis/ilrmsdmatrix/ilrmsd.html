@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.ilrmsdmatrix.ilrmsd &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -83,26 +83,26 @@
              
   <h1>Source code for haddock.modules.analysis.ilrmsdmatrix.ilrmsd</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;ilRMSD calculations.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libalign</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_atoms</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.caprieval.capri</span> <span class="kn">import</span> <span class="n">load_contacts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.caprieval.capri</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_contacts</span>
 
 
 <div class="viewcode-block" id="ContactJob">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob">[docs]</a>
-<span class="k">class</span> <span class="nc">ContactJob</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContactJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Job dedicated to the fast retrieval of receptor contacts.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">output</span><span class="p">,</span>
             <span class="n">params</span><span class="p">,</span>
@@ -116,7 +116,7 @@
 
 <div class="viewcode-block" id="ContactJob.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.ContactJob.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run this ContactJob.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;core </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">, running Contact...&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contact_obj</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -128,10 +128,10 @@
 
 <div class="viewcode-block" id="Contact">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact">[docs]</a>
-<span class="k">class</span> <span class="nc">Contact</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Contact</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Contact class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
             <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -156,7 +156,7 @@
         
 <div class="viewcode-block" id="Contact.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run contact calculations.&quot;&quot;&quot;</span>
         <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_list</span><span class="p">)</span>
         <span class="c1"># create empty set of receptor interface residues</span>
@@ -191,7 +191,7 @@
        
 <div class="viewcode-block" id="Contact.output">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.ilrmsdmatrix.ilrmsd.html#haddock.modules.analysis.ilrmsdmatrix.ilrmsd.Contact.output">[docs]</a>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write down unique contacts to file.&quot;&quot;&quot;</span>
         <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_name</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_fh</span><span class="p">:</span>
@@ -216,8 +216,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.restraints.z_surface_restraints &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -105,19 +105,19 @@
 <span class="sd">  --output myZrestaints</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.librestraints</span> <span class="kn">import</span> <span class="n">read_structure</span><span class="p">,</span> <span class="n">calc_euclidean</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.librestraints</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_structure</span><span class="p">,</span> <span class="n">calc_euclidean</span>
 
 
 <span class="c1"># As this script is a subcommand of the `haddock3-restraints` cli,</span>
 <span class="c1"># it requires its own options and arguments that are managed here.</span>
 <div class="viewcode-block" id="add_z_surf_restraints_arguments">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.add_z_surf_restraints_arguments">[docs]</a>
-<span class="k">def</span> <span class="nf">add_z_surf_restraints_arguments</span><span class="p">(</span><span class="n">z_surf_restraints_subcommand</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_z_surf_restraints_arguments</span><span class="p">(</span><span class="n">z_surf_restraints_subcommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add arguments to the z_plan subcommand.&quot;&quot;&quot;</span>
     <span class="n">z_surf_restraints_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
@@ -199,7 +199,7 @@
 
 <div class="viewcode-block" id="setup_logging">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.setup_logging">[docs]</a>
-<span class="k">def</span> <span class="nf">setup_logging</span><span class="p">(</span><span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_logging</span><span class="p">(</span><span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set log level and format.&quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
         <span class="n">level</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span>
@@ -214,7 +214,7 @@
 <span class="c1">############################</span>
 <div class="viewcode-block" id="load_selected_resiudes_coords">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.load_selected_resiudes_coords">[docs]</a>
-<span class="k">def</span> <span class="nf">load_selected_resiudes_coords</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_selected_resiudes_coords</span><span class="p">(</span>
         <span class="n">pdb_fpath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">selections</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
@@ -263,7 +263,7 @@
 
 <div class="viewcode-block" id="compute_barycenter">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.compute_barycenter">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_barycenter</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_barycenter</span><span class="p">(</span>
         <span class="n">resi_coords</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute center of mass of multiple resiudes coordinates.</span>
@@ -296,7 +296,7 @@
 
 <div class="viewcode-block" id="load_selections">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.load_selections">[docs]</a>
-<span class="k">def</span> <span class="nf">load_selections</span><span class="p">(</span><span class="n">residues_lists</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_selections</span><span class="p">(</span><span class="n">residues_lists</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split and cast residues from an initial string to list.</span>
 
 <span class="sd">    Parameters</span>
@@ -332,7 +332,7 @@
 
 <div class="viewcode-block" id="get_z_coords">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.get_z_coords">[docs]</a>
-<span class="k">def</span> <span class="nf">get_z_coords</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_z_coords</span><span class="p">(</span>
         <span class="n">select_coords</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
         <span class="n">padding</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
@@ -406,7 +406,7 @@
 
 <div class="viewcode-block" id="gen_z_restraints">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.gen_z_restraints">[docs]</a>
-<span class="k">def</span> <span class="nf">gen_z_restraints</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_z_restraints</span><span class="p">(</span>
         <span class="n">res_select</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
         <span class="n">selection_z</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
         <span class="n">rest_dist</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">7.5</span><span class="p">,</span>
@@ -492,7 +492,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_compile_multiple_cns_selections</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compile_multiple_cns_selections</span><span class="p">(</span>
         <span class="n">selection_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">selections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">logical_operator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;OR&#39;</span><span class="p">,</span>
@@ -525,7 +525,7 @@
 
 <div class="viewcode-block" id="output_data">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.output_data">[docs]</a>
-<span class="k">def</span> <span class="nf">output_data</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">output_data</span><span class="p">(</span>
         <span class="n">restraints</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">plans</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -566,7 +566,7 @@
 
 <div class="viewcode-block" id="gen_bead_plans">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.gen_bead_plans">[docs]</a>
-<span class="k">def</span> <span class="nf">gen_bead_plans</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_bead_plans</span><span class="p">(</span>
         <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
         <span class="n">x_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
         <span class="n">y_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
@@ -611,7 +611,7 @@
     
 <div class="viewcode-block" id="bead_plan">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.bead_plan">[docs]</a>
-<span class="k">def</span> <span class="nf">bead_plan</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bead_plan</span><span class="p">(</span>
         <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
         <span class="n">x_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
         <span class="n">y_size</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
@@ -657,7 +657,7 @@
 
 <div class="viewcode-block" id="step_coords">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.step_coords">[docs]</a>
-<span class="k">def</span> <span class="nf">step_coords</span><span class="p">(</span><span class="n">_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">_spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">step_coords</span><span class="p">(</span><span class="n">_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">_spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate set of evenly spaced coordinates between of defined size.</span>
 
 <span class="sd">    Parameters</span>
@@ -683,7 +683,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_step_coords</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_step_coords</span><span class="p">(</span><span class="n">size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate set of evenly spaced coordinates between of defined size.</span>
 
 <span class="sd">    Parameters</span>
@@ -710,7 +710,7 @@
 
 <div class="viewcode-block" id="shape_bead">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.shape_bead">[docs]</a>
-<span class="k">def</span> <span class="nf">shape_bead</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">shape_bead</span><span class="p">(</span>
         <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">z</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -748,7 +748,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_ideal_restraint_dist</span><span class="p">(</span><span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_ideal_restraint_dist</span><span class="p">(</span><span class="n">spacing</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes ideal restraint distance based on spacing.</span>
 
 <span class="sd">    Basically, want to return (spacing / 2) - 2</span>
@@ -772,7 +772,7 @@
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.z_surface_restraints.html#haddock.clis.restraints.z_surface_restraints.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
         <span class="n">pdb</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">residues</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -840,7 +840,7 @@
 <span class="c1"># COMMAND LINE ENTRY POINT #</span>
 <span class="c1">############################</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">argparse</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
     <span class="c1"># Command line interface parser</span>
     <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;haddock3-restraints&quot;</span><span class="p">,</span>
@@ -872,8 +872,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

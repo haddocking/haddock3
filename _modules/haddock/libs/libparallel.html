@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libparallel &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,11 +81,11 @@
   <h1>Source code for haddock.libs.libparallel</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Module in charge of parallelizing the execution of tasks.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnyT</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">Generator</span><span class="p">,</span>
@@ -94,12 +94,12 @@
     <span class="n">SupportsRunT</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">parse_ncores</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_ncores</span>
 
 
 <div class="viewcode-block" id="split_tasks">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.split_tasks">[docs]</a>
-<span class="k">def</span> <span class="nf">split_tasks</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_tasks</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split tasks into N-sized chunks.&quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
@@ -110,7 +110,7 @@
 
 <div class="viewcode-block" id="get_index_list">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.get_index_list">[docs]</a>
-<span class="k">def</span> <span class="nf">get_index_list</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">ncores</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_index_list</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">ncores</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimal distribution of models among cores</span>
 
@@ -147,10 +147,10 @@
 
 <div class="viewcode-block" id="GenericTask">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.GenericTask">[docs]</a>
-<span class="k">class</span> <span class="nc">GenericTask</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenericTask</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic task to be executed.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The &#39;function&#39; argument must be callable&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
@@ -159,7 +159,7 @@
 
 <div class="viewcode-block" id="GenericTask.run">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.GenericTask.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
 
@@ -167,10 +167,10 @@
 
 <div class="viewcode-block" id="Worker">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.Worker">[docs]</a>
-<span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Worker</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Work on tasks.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SupportsRunT</span><span class="p">],</span> <span class="n">results</span><span class="p">:</span> <span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SupportsRunT</span><span class="p">],</span> <span class="n">results</span><span class="p">:</span> <span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Worker</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="n">tasks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">result_queue</span> <span class="o">=</span> <span class="n">results</span>
@@ -178,7 +178,7 @@
 
 <div class="viewcode-block" id="Worker.run">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.Worker.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute tasks.&quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
@@ -203,10 +203,10 @@
 
 <div class="viewcode-block" id="Scheduler">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.Scheduler">[docs]</a>
-<span class="k">class</span> <span class="nc">Scheduler</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scheduler</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedules tasks to run in multiprocessing.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SupportsRunT</span><span class="p">],</span>
         <span class="n">ncores</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -253,12 +253,12 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tasks</span><span class="si">}</span><span class="s2"> tasks ready.&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of processors to use.&quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ncores</span>
 
     <span class="nd">@num_processes</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">num_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ncores</span> <span class="o">=</span> <span class="n">parse_ncores</span><span class="p">(</span>
             <span class="n">n</span><span class="p">,</span>
             <span class="n">njobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tasks</span><span class="p">,</span>
@@ -268,7 +268,7 @@
 
 <div class="viewcode-block" id="Scheduler.run">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.Scheduler.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run tasks in parallel.&quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -306,7 +306,7 @@
 
 <div class="viewcode-block" id="Scheduler.terminate">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libparallel.html#haddock.libs.libparallel.Scheduler.terminate">[docs]</a>
-    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Terminate tasks in a controlled way.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_list</span><span class="p">:</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
@@ -323,8 +323,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

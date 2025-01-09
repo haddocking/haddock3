@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_re &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -82,13 +82,13 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">HADDOCK 3.0 CLI for interactive tasks.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">haddock.clis.re.clustfcc</span> <span class="kn">import</span> <span class="n">add_clustfcc_arguments</span><span class="p">,</span> <span class="n">reclustfcc</span>
-<span class="kn">from</span> <span class="nn">haddock.clis.re.clustrmsd</span> <span class="kn">import</span> <span class="n">add_clustrmsd_arguments</span><span class="p">,</span> <span class="n">reclustrmsd</span>
-<span class="kn">from</span> <span class="nn">haddock.clis.re.score</span> <span class="kn">import</span> <span class="n">add_rescore_arguments</span><span class="p">,</span> <span class="n">rescore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.clis.re.clustfcc</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_clustfcc_arguments</span><span class="p">,</span> <span class="n">reclustfcc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.clis.re.clustrmsd</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_clustrmsd_arguments</span><span class="p">,</span> <span class="n">reclustrmsd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.clis.re.score</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_rescore_arguments</span><span class="p">,</span> <span class="n">rescore</span>
 
 <span class="c1"># Command line interface parser</span>
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
@@ -115,13 +115,13 @@
 <span class="n">clustfcc_subcommand</span> <span class="o">=</span> <span class="n">add_clustfcc_arguments</span><span class="p">(</span><span class="n">clustfcc_subcommand</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ap</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ap</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">ap</span>
 
 
 <div class="viewcode-block" id="load_args">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_re.html#haddock.clis.cli_re.load_args">[docs]</a>
-<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
@@ -129,7 +129,7 @@
 
 <div class="viewcode-block" id="maincli">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_re.html#haddock.clis.cli_re.maincli">[docs]</a>
-<span class="k">def</span> <span class="nf">maincli</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">maincli</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
@@ -154,8 +154,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

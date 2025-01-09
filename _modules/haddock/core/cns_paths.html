@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.core.cns_paths &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -96,10 +96,10 @@
 <span class="sd">paths. This is useful for those cases when the `cns/` folder is moved</span>
 <span class="sd">to a different folder.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">toppar_path</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">toppar_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span>
 
 
 <span class="c1"># exact file names as present in the cns/ scripts folder</span>
@@ -114,7 +114,7 @@
 
 <div class="viewcode-block" id="get_translation_vectors">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.cns_paths.html#haddock.core.cns_paths.get_translation_vectors">[docs]</a>
-<span class="k">def</span> <span class="nf">get_translation_vectors</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_translation_vectors</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate paths for translation vectors.</span>
 
@@ -137,7 +137,7 @@
 
 <div class="viewcode-block" id="get_tensors">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.cns_paths.html#haddock.core.cns_paths.get_tensors">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tensors</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tensors</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate paths for tensors.&quot;&quot;&quot;</span>
     <span class="n">tensors</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;tensor_psf&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;tensor.psf&quot;</span><span class="p">),</span>
@@ -153,7 +153,7 @@
 
 <div class="viewcode-block" id="get_axis">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.cns_paths.html#haddock.core.cns_paths.get_axis">[docs]</a>
-<span class="k">def</span> <span class="nf">get_axis</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_axis</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate paths for axis.&quot;&quot;&quot;</span>
     <span class="n">axis</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;top_axis&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;top_axis.pro&quot;</span><span class="p">),</span>
@@ -166,7 +166,7 @@
 
 <div class="viewcode-block" id="get_water_box">
 <a class="viewcode-back" href="../../../reference/core/haddock.core.cns_paths.html#haddock.core.cns_paths.get_water_box">[docs]</a>
-<span class="k">def</span> <span class="nf">get_water_box</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_water_box</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate paths for water box.&quot;&quot;&quot;</span>
     <span class="n">water_box</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;boxtyp20&quot;</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;boxtyp20.pdb&quot;</span><span class="p">),</span>
@@ -188,8 +188,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

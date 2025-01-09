@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.clustfcc.clustfcc &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -84,18 +84,18 @@
   <h1>Source code for haddock.modules.analysis.clustfcc.clustfcc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;FCC clustering.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libfcc</span> <span class="kn">import</span> <span class="n">cluster_elements</span><span class="p">,</span> <span class="n">output_clusters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfcc</span><span class="w"> </span><span class="kn">import</span> <span class="n">cluster_elements</span><span class="p">,</span> <span class="n">output_clusters</span>
 
 
 <div class="viewcode-block" id="iterate_clustering">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.iterate_clustering">[docs]</a>
-<span class="k">def</span> <span class="nf">iterate_clustering</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">min_population_param</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">iterate_clustering</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">min_population_param</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Iterate over the clustering process until a cluster is found.</span>
 
@@ -139,7 +139,7 @@
 
 <div class="viewcode-block" id="write_clusters">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.write_clusters">[docs]</a>
-<span class="k">def</span> <span class="nf">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">out_filename</span><span class="o">=</span><span class="s2">&quot;cluster.out&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">out_filename</span><span class="o">=</span><span class="s2">&quot;cluster.out&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the clusters to the cluster.out file.</span>
 
@@ -166,7 +166,7 @@
 
 <div class="viewcode-block" id="get_cluster_centers">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.get_cluster_centers">[docs]</a>
-<span class="k">def</span> <span class="nf">get_cluster_centers</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">models_to_cluster</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_centers</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">models_to_cluster</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the cluster centers and the cluster dictionary.</span>
 
@@ -208,7 +208,7 @@
 
 <div class="viewcode-block" id="write_clustfcc_file">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.write_clustfcc_file">[docs]</a>
-<span class="k">def</span> <span class="nf">write_clustfcc_file</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_clustfcc_file</span><span class="p">(</span>
     <span class="n">clusters</span><span class="p">,</span>
     <span class="n">clt_centers</span><span class="p">,</span>
     <span class="n">clt_dic</span><span class="p">,</span>
@@ -309,8 +309,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.librestraints &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -79,15 +79,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.libs.librestraints</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">Bio.PDB</span> <span class="kn">import</span> <span class="n">PDBParser</span><span class="p">,</span> <span class="n">NeighborSearch</span>
-<span class="kn">from</span> <span class="nn">freesasa</span> <span class="kn">import</span> <span class="n">Classifier</span><span class="p">,</span> <span class="n">structureFromBioPDB</span><span class="p">,</span> <span class="n">calc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio.PDB</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBParser</span><span class="p">,</span> <span class="n">NeighborSearch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">freesasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">Classifier</span><span class="p">,</span> <span class="n">structureFromBioPDB</span><span class="p">,</span> <span class="n">calc</span>
 
 <span class="c1"># Scaling factors for relative ASA</span>
 <span class="c1"># Calculated using extended ALA-X-ALA peptides</span>
@@ -228,7 +228,7 @@
 
 <div class="viewcode-block" id="get_surface_resids">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.get_surface_resids">[docs]</a>
-<span class="k">def</span> <span class="nf">get_surface_resids</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_surface_resids</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calls freesasa using its Python API and returns</span>
 <span class="sd">    per-residue accessibilities.</span>
@@ -280,7 +280,7 @@
 
 <div class="viewcode-block" id="parse_actpass_file">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.parse_actpass_file">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_actpass_file</span><span class="p">(</span><span class="n">actpass_file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_actpass_file</span><span class="p">(</span><span class="n">actpass_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse actpass file</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -310,7 +310,7 @@
 
 <div class="viewcode-block" id="active_passive_to_ambig">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.active_passive_to_ambig">[docs]</a>
-<span class="k">def</span> <span class="nf">active_passive_to_ambig</span><span class="p">(</span><span class="n">active1</span><span class="p">,</span> <span class="n">passive1</span><span class="p">,</span> <span class="n">active2</span><span class="p">,</span> <span class="n">passive2</span><span class="p">,</span> <span class="n">segid1</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">segid2</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">active_passive_to_ambig</span><span class="p">(</span><span class="n">active1</span><span class="p">,</span> <span class="n">passive1</span><span class="p">,</span> <span class="n">active2</span><span class="p">,</span> <span class="n">passive2</span><span class="p">,</span> <span class="n">segid1</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">segid2</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert active and passive residues to Ambiguous Interaction Restraints</span>
 
 <span class="sd">    Parameters</span>
@@ -371,14 +371,14 @@
 
 <div class="viewcode-block" id="calc_euclidean">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.calc_euclidean">[docs]</a>
-<span class="k">def</span> <span class="nf">calc_euclidean</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_euclidean</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
 	<span class="k">return</span> <span class="p">((</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">i</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span></div>
 
 
 
 <div class="viewcode-block" id="read_structure">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.read_structure">[docs]</a>
-<span class="k">def</span> <span class="nf">read_structure</span><span class="p">(</span><span class="n">pdbf</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_structure</span><span class="p">(</span><span class="n">pdbf</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Reads a PDB file and returns a list of parsed atoms</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -414,7 +414,7 @@
 
 <div class="viewcode-block" id="get_bodies">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.get_bodies">[docs]</a>
-<span class="k">def</span> <span class="nf">get_bodies</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">prot_threshold</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">dna_threshold</span><span class="o">=</span><span class="mf">7.5</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bodies</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">prot_threshold</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">dna_threshold</span><span class="o">=</span><span class="mf">7.5</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Determines gaps in an atom list following simple distance based criteria.</span>
 <span class="sd">	Returns continuous fragments.</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="build_restraints">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.build_restraints">[docs]</a>
-<span class="k">def</span> <span class="nf">build_restraints</span><span class="p">(</span><span class="n">bodies</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_restraints</span><span class="p">(</span><span class="n">bodies</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Generates distance restraints to maintain the relative</span>
 <span class="sd">	orientation of the different bodies during the simulations.</span>
@@ -469,7 +469,7 @@
 <span class="sd">	and using their exact euclidean distance as target distance.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-	<span class="k">def</span> <span class="nf">pick_residues</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">max_trials</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+	<span class="k">def</span><span class="w"> </span><span class="nf">pick_residues</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">max_trials</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 		<span class="c1"># Pick two random residues in each body</span>
 		<span class="c1"># Make sure they are far apart from each other</span>
 		<span class="n">n_trials</span> <span class="o">=</span> <span class="mi">0</span>
@@ -516,7 +516,7 @@
 
 <div class="viewcode-block" id="generate_tbl">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.generate_tbl">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_tbl</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">restraints</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_tbl</span><span class="p">(</span><span class="n">atom_lst</span><span class="p">,</span> <span class="n">restraints</span><span class="p">):</span>
 <span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Makes a list of TBL-formatted restraints.</span>
 
@@ -543,7 +543,7 @@
 
 <div class="viewcode-block" id="check_parenthesis">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.check_parenthesis">[docs]</a>
-<span class="k">def</span> <span class="nf">check_parenthesis</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_parenthesis</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
     <span class="n">open_parenthesis</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[(]&#39;</span><span class="p">)</span>
     <span class="n">close_parenthesis</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[)]&#39;</span><span class="p">)</span>
     <span class="n">quotation_marks</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[</span><span class="se">\&quot;</span><span class="s1">]&#39;</span><span class="p">)</span>
@@ -567,7 +567,7 @@
 
 <div class="viewcode-block" id="validate_tbldata">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.validate_tbldata">[docs]</a>
-<span class="k">def</span> <span class="nf">validate_tbldata</span><span class="p">(</span><span class="n">restraints</span><span class="p">,</span> <span class="n">pcs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_tbldata</span><span class="p">(</span><span class="n">restraints</span><span class="p">,</span> <span class="n">pcs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># List of selection keywords</span>
     <span class="n">selectors</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;resn&#39;</span><span class="p">,</span> <span class="s1">&#39;atom&#39;</span><span class="p">,</span> <span class="s1">&#39;resi&#39;</span><span class="p">,</span> <span class="s1">&#39;attr&#39;</span><span class="p">,</span> <span class="s1">&#39;segi&#39;</span><span class="p">,</span> <span class="s1">&#39;chem&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;byres&#39;</span><span class="p">,</span> <span class="s1">&#39;not&#39;</span><span class="p">)</span>
@@ -803,7 +803,7 @@
 
 <div class="viewcode-block" id="passive_from_active_raw">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.librestraints.html#haddock.libs.librestraints.passive_from_active_raw">[docs]</a>
-<span class="k">def</span> <span class="nf">passive_from_active_raw</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">surface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.5</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">passive_from_active_raw</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">surface</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the passive residues.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -839,7 +839,7 @@
             <span class="n">atom_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">()]</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Chain </span><span class="si">{0}</span><span class="s1"> does not exist in the PDB file </span><span class="si">{1}</span><span class="s1">, please enter a proper chain id&#39;</span><span class="o">.</span>
-              <span class="nb">format</span><span class="p">(</span><span class="n">chain_id</span><span class="p">,</span> <span class="n">structure</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+              <span class="nb">format</span><span class="p">(</span><span class="n">chain_id</span><span class="p">,</span> <span class="n">structure</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">act_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">get_coord</span><span class="p">()</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atom_list</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">id</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">active</span><span class="p">]</span>
 
@@ -847,7 +847,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">surface</span><span class="p">:</span>
             <span class="n">surface</span> <span class="o">=</span> <span class="n">get_surface_resids</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;There was an error while calculating surface residues: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;There was an error while calculating surface residues: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="n">ns</span> <span class="o">=</span> <span class="n">NeighborSearch</span><span class="p">(</span><span class="n">atom_list</span><span class="p">)</span>
     <span class="n">neighbors</span> <span class="o">=</span> <span class="p">[]</span>
@@ -871,8 +871,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

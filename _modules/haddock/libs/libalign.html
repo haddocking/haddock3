@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.libs.libalign &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -98,22 +98,22 @@
 <span class="sd">* :py:func:`dump_as_izone`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">Bio</span> <span class="kn">import</span> <span class="n">Align</span>
-<span class="kn">from</span> <span class="nn">Bio.Align</span> <span class="kn">import</span> <span class="n">substitution_matrices</span>
-<span class="kn">from</span> <span class="nn">Bio.Seq</span> <span class="kn">import</span> <span class="n">Seq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Align</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Align</span><span class="w"> </span><span class="kn">import</span> <span class="n">substitution_matrices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Bio.Seq</span><span class="w"> </span><span class="kn">import</span> <span class="n">Seq</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">AtomsDict</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">pdb_path_exists</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libpdb</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomsDict</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdb_path_exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">slc_chainid</span><span class="p">,</span>
     <span class="n">slc_element</span><span class="p">,</span>
     <span class="n">slc_name</span><span class="p">,</span>
@@ -449,10 +449,10 @@
 
 <div class="viewcode-block" id="ALIGNError">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.ALIGNError">[docs]</a>
-<span class="k">class</span> <span class="nc">ALIGNError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ALIGNError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when something goes wrong with the ALIGNMENT library.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div>
 
@@ -460,7 +460,7 @@
 
 <div class="viewcode-block" id="calc_rmsd">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.calc_rmsd">[docs]</a>
-<span class="k">def</span> <span class="nf">calc_rmsd</span><span class="p">(</span><span class="n">V</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_rmsd</span><span class="p">(</span><span class="n">V</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the RMSD from two vectors.</span>
 
@@ -482,7 +482,7 @@
 
 <div class="viewcode-block" id="kabsch">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.kabsch">[docs]</a>
-<span class="k">def</span> <span class="nf">kabsch</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kabsch</span><span class="p">(</span><span class="n">P</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">,</span> <span class="n">Q</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the rotation matrix using Kabsch algorithm.</span>
 
@@ -513,7 +513,7 @@
 
 <div class="viewcode-block" id="centroid">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.centroid">[docs]</a>
-<span class="k">def</span> <span class="nf">centroid</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">centroid</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">NDFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDFloat</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the centroid.</span>
 
@@ -533,7 +533,7 @@
 
 <div class="viewcode-block" id="load_coords">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.load_coords">[docs]</a>
-<span class="k">def</span> <span class="nf">load_coords</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_coords</span><span class="p">(</span>
     <span class="n">pdb_f</span><span class="p">,</span>
     <span class="n">atoms</span><span class="p">,</span>
     <span class="n">filter_resdic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -670,7 +670,7 @@
 
 <div class="viewcode-block" id="get_atoms">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_atoms">[docs]</a>
-<span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_atoms</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomsDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify what is the molecule type of each PDB.</span>
 
 <span class="sd">    Parameters</span>
@@ -770,7 +770,7 @@
 
 <div class="viewcode-block" id="pdb2fastadic">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.pdb2fastadic">[docs]</a>
-<span class="k">def</span> <span class="nf">pdb2fastadic</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pdb2fastadic</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the sequence as a fasta.</span>
 
@@ -864,7 +864,7 @@
 
 <div class="viewcode-block" id="get_align">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_align">[docs]</a>
-<span class="k">def</span> <span class="nf">get_align</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_align</span><span class="p">(</span>
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">FilePath</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">partial</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -900,7 +900,7 @@
 
 <div class="viewcode-block" id="align_strct">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_strct">[docs]</a>
-<span class="k">def</span> <span class="nf">align_strct</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">align_strct</span><span class="p">(</span>
     <span class="n">reference</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
     <span class="n">output_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
@@ -1049,7 +1049,7 @@
 
 <div class="viewcode-block" id="write_alignment">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.write_alignment">[docs]</a>
-<span class="k">def</span> <span class="nf">write_alignment</span><span class="p">(</span><span class="n">top_aln</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_alignment</span><span class="p">(</span><span class="n">top_aln</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the alignment to a file.</span>
 
@@ -1071,7 +1071,7 @@
 
 <div class="viewcode-block" id="sequence_alignment">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.sequence_alignment">[docs]</a>
-<span class="k">def</span> <span class="nf">sequence_alignment</span><span class="p">(</span><span class="n">seq_ref</span><span class="p">,</span> <span class="n">seq_model</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sequence_alignment</span><span class="p">(</span><span class="n">seq_ref</span><span class="p">,</span> <span class="n">seq_model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform a sequence alignment.</span>
 
@@ -1118,10 +1118,10 @@
 
 <div class="viewcode-block" id="SeqAlign">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.SeqAlign">[docs]</a>
-<span class="k">class</span> <span class="nc">SeqAlign</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SeqAlign</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;SeqAlign class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">align_dic</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># the alignment dictionary, important for CAPRI</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model2ref_chain_dict</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># model to reference chain dictionary</span>
@@ -1137,7 +1137,7 @@
 
 <div class="viewcode-block" id="SeqAlign.postprocess_alignment">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.SeqAlign.postprocess_alignment">[docs]</a>
-    <span class="k">def</span> <span class="nf">postprocess_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span><span class="p">,</span> <span class="n">align_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">postprocess_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ref_ch</span><span class="p">,</span> <span class="n">mod_ch</span><span class="p">,</span> <span class="n">align_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Postprocess the alignment.</span>
 
@@ -1204,7 +1204,7 @@
 
 <div class="viewcode-block" id="align_seq">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_seq">[docs]</a>
-<span class="k">def</span> <span class="nf">align_seq</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">align_seq</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sequence align and get the numbering relationship.</span>
 
@@ -1322,7 +1322,7 @@
 
 <div class="viewcode-block" id="make_range">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.make_range">[docs]</a>
-<span class="k">def</span> <span class="nf">make_range</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_range</span><span class="p">(</span>
     <span class="n">chain_range_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1349,7 +1349,7 @@
 
 <div class="viewcode-block" id="dump_as_izone">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.dump_as_izone">[docs]</a>
-<span class="k">def</span> <span class="nf">dump_as_izone</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">numbering_dic</span><span class="p">,</span> <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_as_izone</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">numbering_dic</span><span class="p">,</span> <span class="n">model2ref_chain_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dump the numbering dictionary as .izone.</span>
 
@@ -1381,7 +1381,7 @@
 
 <div class="viewcode-block" id="rearrange_xyz_files">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.rearrange_xyz_files">[docs]</a>
-<span class="k">def</span> <span class="nf">rearrange_xyz_files</span><span class="p">(</span><span class="n">output_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rearrange_xyz_files</span><span class="p">(</span><span class="n">output_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine different xyz outputs in a single file.</span>
 
 <span class="sd">    Parameters</span>
@@ -1414,7 +1414,7 @@
 
 <div class="viewcode-block" id="check_common_atoms">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_common_atoms">[docs]</a>
-<span class="k">def</span> <span class="nf">check_common_atoms</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">,</span> <span class="n">atom_similarity</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_common_atoms</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">filter_resdic</span><span class="p">,</span> <span class="n">allatoms</span><span class="p">,</span> <span class="n">atom_similarity</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the models share the same atoms.</span>
 
@@ -1482,7 +1482,7 @@
 <span class="c1"># TODO: Add type signature</span>
 <div class="viewcode-block" id="check_chains">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.check_chains">[docs]</a>
-<span class="k">def</span> <span class="nf">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="n">inp_r_chain</span><span class="p">,</span> <span class="n">inp_l_chains</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_chains</span><span class="p">(</span><span class="n">obs_chains</span><span class="p">,</span> <span class="n">inp_r_chain</span><span class="p">,</span> <span class="n">inp_l_chains</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check observed chains against the expected ones.</span>
 
 <span class="sd">    Logic: if at least one of inp_l_chains is among the observed chains and is</span>
@@ -1521,8 +1521,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

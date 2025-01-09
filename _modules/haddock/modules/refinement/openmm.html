@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.refinement.openmm &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -109,21 +109,21 @@
 <span class="sd">topologies by simply adding a `[topoaa]` step in the workflow.</span>
 <span class="sd">See examples in `examples/thirdparty/openmm` folder.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">subprocrun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">subprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">subprocrun</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ThirdPartyIntallationError</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThirdPartyIntallationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
 
 <span class="c1"># allow general testing when OpenMM is not installed</span>
 <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">haddock.modules.refinement.openmm.openmm</span> <span class="kn">import</span> <span class="n">OPENMM</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.refinement.openmm.openmm</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPENMM</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -132,17 +132,17 @@
 
 <div class="viewcode-block" id="HaddockModule">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule">[docs]</a>
-<span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 OpenMM module.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HaddockModule.create_directories">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.create_directories">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the necessary directories and provides the paths.&quot;&quot;&quot;</span>
         <span class="n">directory_list</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;pdbfixer&quot;</span><span class="p">,</span>
@@ -164,7 +164,7 @@
     
 <div class="viewcode-block" id="HaddockModule.remove_directories">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.remove_directories">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove unnecessary directories full of heavy files.&quot;&quot;&quot;</span>
         <span class="n">directory_list</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;pdbfixer&quot;</span><span class="p">,</span>
@@ -180,7 +180,7 @@
 <div class="viewcode-block" id="HaddockModule.confirm_installation">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.confirm_installation">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm installation of openmm and pdfixer.</span>
 
 <span class="sd">        Raises</span>
@@ -191,13 +191,13 @@
 <span class="sd">            When OpenMM pdbfixer is not installed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">openmm</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">openmm</span>
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ThirdPartyIntallationError</span><span class="p">(</span>
                 <span class="s2">&quot;OpenMM is not installed.&quot;</span>
                 <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">pdbfixer</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pdbfixer</span>
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ThirdPartyIntallationError</span><span class="p">(</span>
                 <span class="s2">&quot;OpenMM pdbfixer is not installed.&quot;</span>
@@ -208,13 +208,13 @@
 <div class="viewcode-block" id="HaddockModule.set_max_cpu">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.openmm.html#haddock.modules.refinement.openmm.HaddockModule.set_max_cpu">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">set_max_cpu</span><span class="p">(</span><span class="n">nbcpu</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">openmm</span> <span class="kn">import</span> <span class="n">Platform</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_max_cpu</span><span class="p">(</span><span class="n">nbcpu</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">openmm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Platform</span>
         <span class="n">cpu_platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">getPlatformByName</span><span class="p">(</span><span class="s1">&#39;CPU&#39;</span><span class="p">)</span>
         <span class="n">cpu_platform</span><span class="o">.</span><span class="n">setPropertyDefaultValue</span><span class="p">(</span><span class="s1">&#39;Threads&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbcpu</span><span class="p">))</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Retrieve previous models</span>
         <span class="n">previous_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span>
@@ -285,8 +285,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

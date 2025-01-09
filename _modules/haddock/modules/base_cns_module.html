@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.base_cns_module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,30 +81,30 @@
              
   <h1>Source code for haddock.modules.base_cns_module</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functionalities related to CNS modules.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">toppar_path</span> <span class="k">as</span> <span class="n">global_toppar</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">cns_exec</span> <span class="k">as</span> <span class="n">global_cns_exec</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.expandable_parameters</span> <span class="kn">import</span> <span class="n">populate_mol_parameters_in_module</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">working_directory</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">sort_numbered_paths</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">toppar_path</span> <span class="k">as</span> <span class="n">global_toppar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">cns_exec</span> <span class="k">as</span> <span class="n">global_cns_exec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.expandable_parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">populate_mol_parameters_in_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">working_directory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">sort_numbered_paths</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span>
 
 
 <div class="viewcode-block" id="BaseCNSModule">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseCNSModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseCNSModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Operation module for CNS.</span>
 
 <span class="sd">    Contains additional functionalities excusive for CNS modules.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
                  <span class="n">cns_script</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantitate CNSModule.</span>
@@ -123,7 +123,7 @@
 
 <div class="viewcode-block" id="BaseCNSModule.run">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the module.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Running [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">] module&#39;</span><span class="p">)</span>
 
@@ -151,7 +151,7 @@
 
 <div class="viewcode-block" id="BaseCNSModule.default_envvars">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.default_envvars">[docs]</a>
-    <span class="k">def</span> <span class="nf">default_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return default env vars updated to `envvars` (if given).&quot;&quot;&quot;</span>
         <span class="n">default_envvars</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;MODULE&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cns_folder_path</span><span class="p">),</span>
@@ -164,7 +164,7 @@
 
 <div class="viewcode-block" id="BaseCNSModule.save_envvars">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.save_envvars">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;envvars&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="s2">&quot;envvars&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save envvars needed for CNS to a file in the module&#39;s folder.&quot;&quot;&quot;</span>
         <span class="c1"># there are so few variables, best to handle them by hand</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span>
@@ -183,7 +183,7 @@
 
 <div class="viewcode-block" id="BaseCNSModule.make_self_contained">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.make_self_contained">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_self_contained</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_self_contained</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create folders to make run self-contained.&quot;&quot;&quot;</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cns_folder_path</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span>
@@ -211,7 +211,7 @@
 
 <div class="viewcode-block" id="BaseCNSModule.get_ambig_fnames">
 <a class="viewcode-back" href="../../../modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.get_ambig_fnames">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_ambig_fnames</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ambig_fnames</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">prev_ambig_fnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">]]</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FilePath</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the correct ambiguous restraint names.</span>
@@ -261,8 +261,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

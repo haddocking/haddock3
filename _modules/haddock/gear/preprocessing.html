@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.gear.preprocessing &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -164,15 +164,15 @@
 
 <span class="sd">https://github.com/haddocking/haddock3/projects/16</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">it</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">linesep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">pdbtools</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pdbtools</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">pdb_chain</span><span class="p">,</span>
     <span class="n">pdb_chainxseg</span><span class="p">,</span>
     <span class="n">pdb_element</span><span class="p">,</span>
@@ -187,16 +187,16 @@
     <span class="n">pdb_tidy</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">HaddockError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.supported_molecules</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.supported_molecules</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">supported_ATOM</span><span class="p">,</span>
     <span class="n">supported_HETATM</span><span class="p">,</span>
     <span class="n">supported_non_ions</span><span class="p">,</span>
     <span class="n">supported_single_ions_atoms_map</span><span class="p">,</span>
     <span class="n">supported_single_ions_resnames_map</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Container</span><span class="p">,</span>
@@ -206,9 +206,9 @@
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">chainf</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_lines</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libpdb</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfunc</span><span class="w"> </span><span class="kn">import</span> <span class="n">chainf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_lines</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">format_atom_name</span><span class="p">,</span>
     <span class="n">read_chainids</span><span class="p">,</span>
     <span class="n">read_segids</span><span class="p">,</span>
@@ -226,14 +226,14 @@
 
 <div class="viewcode-block" id="ModelsDifferError">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.ModelsDifferError">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelsDifferError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelsDifferError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;MODELS of the PDB differ in atom labels.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_report</span><span class="p">(</span><span class="n">log_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_report</span><span class="p">(</span><span class="n">log_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add report functionality to the function (decorator).</span>
 
@@ -250,9 +250,9 @@
 <span class="sd">    such as ``itertools.cycle``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span>
             <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">report</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
@@ -293,7 +293,7 @@
     <span class="k">return</span> <span class="n">decorator</span>
 
 
-<span class="k">def</span> <span class="nf">_open_or_give</span><span class="p">(</span><span class="n">inputdata</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">LineIterSource</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_open_or_give</span><span class="p">(</span><span class="n">inputdata</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">LineIterSource</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Adapt input to the functions.</span>
 
@@ -332,7 +332,7 @@
 <span class="sd">        In any other circumstances.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">get_line</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_line</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Ignore empty lines.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">linesep</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">line</span><span class="p">]</span>
 
@@ -355,7 +355,7 @@
 
 
 <span class="nd">@read_lines</span>
-<span class="k">def</span> <span class="nf">read_additional_residues</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_additional_residues</span><span class="p">(</span>
     <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -409,7 +409,7 @@
 
 <div class="viewcode-block" id="process_pdbs">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.process_pdbs">[docs]</a>
-<span class="k">def</span> <span class="nf">process_pdbs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_pdbs</span><span class="p">(</span>
     <span class="o">*</span><span class="n">inputdata</span><span class="p">:</span> <span class="n">LineIterSource</span><span class="p">,</span>
     <span class="n">dry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">user_supported_residues</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -548,7 +548,7 @@
 <div class="viewcode-block" id="replace_HETATM_to_ATOM">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_HETATM_to_ATOM">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replacing HETATM to ATOM for residue </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">replace_HETATM_to_ATOM</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">replace_HETATM_to_ATOM</span><span class="p">(</span>
     <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">res</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -580,7 +580,7 @@
 <div class="viewcode-block" id="replace_residue">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.replace_residue">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Replace residue ATOM/HETATM </span><span class="si">{!r}</span><span class="s2"> to ATOM </span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">replace_residue</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">replace_residue</span><span class="p">(</span>
     <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resin</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">resout</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -664,7 +664,7 @@
 <div class="viewcode-block" id="remove_unsupported_molecules">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.remove_unsupported_molecules">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Remove unsupported molecules&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">remove_unsupported_molecules</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_unsupported_molecules</span><span class="p">(</span>
     <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">haddock3_defined</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">user_defined</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -769,7 +769,7 @@
 <div class="viewcode-block" id="add_charges_to_ions">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.add_charges_to_ions">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Add charges to ions.&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">add_charges_to_ions</span><span class="p">(</span><span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_charges_to_ions</span><span class="p">(</span><span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add charges to ions according to HADDOCK3 specifications.</span>
 
@@ -846,7 +846,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_process_ion_case_resname</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_ion_case_resname</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process ion information based on resnames.</span>
 
@@ -872,7 +872,7 @@
     <span class="k">return</span> <span class="n">new_line</span>
 
 
-<span class="k">def</span> <span class="nf">_process_ion_case_atom</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_ion_case_atom</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process ion information based on atom names.</span>
 
@@ -903,7 +903,7 @@
     <span class="k">return</span> <span class="n">new_line</span>
 
 
-<span class="k">def</span> <span class="nf">_process_ion_case_element_charge</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_ion_case_element_charge</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process ion information based on element and charge.</span>
 
@@ -931,7 +931,7 @@
 <div class="viewcode-block" id="convert_record">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.convert_record">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Convert record: </span><span class="si">{!r}</span><span class="s2"> to </span><span class="si">{!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">convert_record</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_record</span><span class="p">(</span>
     <span class="n">fhandler</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">record</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">other_record</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">residues</span><span class="p">:</span> <span class="n">Container</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -998,7 +998,7 @@
 <div class="viewcode-block" id="solve_no_chainID_no_segID">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.solve_no_chainID_no_segID">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Solving chain/seg ID issues.&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">solve_no_chainID_no_segID</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">solve_no_chainID_no_segID</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Solve inconsistencies with chainID and segID.</span>
 
@@ -1050,7 +1050,7 @@
 <div class="viewcode-block" id="homogenize_chains">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.homogenize_chains">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Homogenizes chains&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">homogenize_chains</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">homogenize_chains</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Homogenize chainIDs within the same PDB.</span>
 
@@ -1083,7 +1083,7 @@
 
 <div class="viewcode-block" id="correct_equal_chain_segids">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.correct_equal_chain_segids">[docs]</a>
-<span class="k">def</span> <span class="nf">correct_equal_chain_segids</span><span class="p">(</span><span class="n">structures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_equal_chain_segids</span><span class="p">(</span><span class="n">structures</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Correct for repeated chainID in the input PDB files.</span>
 
@@ -1142,7 +1142,7 @@
 <div class="viewcode-block" id="models_should_have_the_same_labels">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.preprocessing.html#haddock.gear.preprocessing.models_should_have_the_same_labels">[docs]</a>
 <span class="nd">@_report</span><span class="p">(</span><span class="s2">&quot;Check models are the same&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">models_should_have_the_same_labels</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">models_should_have_the_same_labels</span><span class="p">(</span><span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Confirm models have the same labels.</span>
 
@@ -1211,8 +1211,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.re.clustfcc &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,26 +81,26 @@
   <h1>Source code for haddock.clis.re.clustfcc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;haddock3-re clustfcc subcommand.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">haddock.fcc</span> <span class="kn">import</span> <span class="n">cluster_fcc</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">save</span> <span class="k">as</span> <span class="n">save_config</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.fcc</span><span class="w"> </span><span class="kn">import</span> <span class="n">cluster_fcc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">save</span> <span class="k">as</span> <span class="n">save_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libclust</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">add_cluster_info</span><span class="p">,</span>
     <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">,</span>
     <span class="n">plot_cluster_matrix</span><span class="p">,</span>
     <span class="n">rank_clusters</span><span class="p">,</span>
     <span class="n">write_structure_list</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libfcc</span> <span class="kn">import</span> <span class="n">read_matrix</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libinteractive</span> <span class="kn">import</span> <span class="n">look_for_capri</span><span class="p">,</span> <span class="n">rewrite_capri_tables</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustfcc.clustfcc</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfcc</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libinteractive</span><span class="w"> </span><span class="kn">import</span> <span class="n">look_for_capri</span><span class="p">,</span> <span class="n">rewrite_capri_tables</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.clustfcc.clustfcc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_cluster_centers</span><span class="p">,</span>
     <span class="n">iterate_clustering</span><span class="p">,</span>
     <span class="n">write_clusters</span><span class="p">,</span>
@@ -110,7 +110,7 @@
 
 <div class="viewcode-block" id="add_clustfcc_arguments">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustfcc.html#haddock.clis.re.clustfcc.add_clustfcc_arguments">[docs]</a>
-<span class="k">def</span> <span class="nf">add_clustfcc_arguments</span><span class="p">(</span><span class="n">clustfcc_subcommand</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_clustfcc_arguments</span><span class="p">(</span><span class="n">clustfcc_subcommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add arguments to the clustfcc subcommand.&quot;&quot;&quot;</span>
     <span class="n">clustfcc_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;clustfcc_dir&quot;</span><span class="p">,</span>
@@ -156,7 +156,7 @@
 
 <div class="viewcode-block" id="reclustfcc">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustfcc.html#haddock.clis.re.clustfcc.reclustfcc">[docs]</a>
-<span class="k">def</span> <span class="nf">reclustfcc</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reclustfcc</span><span class="p">(</span>
     <span class="n">clustfcc_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">clust_cutoff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">strictness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -309,8 +309,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

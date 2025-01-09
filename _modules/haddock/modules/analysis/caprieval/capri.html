@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.caprieval.capri &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -83,25 +83,25 @@
   <h1>Source code for haddock.modules.analysis.caprieval.capri</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;CAPRI module.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isnan</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">isnan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OPENBLAS_NUM_THREADS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pdbtools</span> <span class="kn">import</span> <span class="n">pdb_segxchain</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pdbtools</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdb_segxchain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">cdist</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">CNS_MODULES</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNS_MODULES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">AtomsDict</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
@@ -112,8 +112,8 @@
     <span class="n">ParamMap</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libalign</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libalign</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ALIGNError</span><span class="p">,</span>
     <span class="n">calc_rmsd</span><span class="p">,</span>
     <span class="n">centroid</span><span class="p">,</span>
@@ -124,9 +124,9 @@
     <span class="n">load_coords</span><span class="p">,</span>
     <span class="n">make_range</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">write_dic_to_file</span><span class="p">,</span> <span class="n">write_nested_dic_to_file</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_dic_to_file</span><span class="p">,</span> <span class="n">write_nested_dic_to_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">PDBPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_module_steps_folders</span>
 
 
 <span class="n">WEIGHTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;w_elec&quot;</span><span class="p">,</span> <span class="s2">&quot;w_vdw&quot;</span><span class="p">,</span> <span class="s2">&quot;w_desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;w_bsa&quot;</span><span class="p">,</span> <span class="s2">&quot;w_air&quot;</span><span class="p">]</span>
@@ -134,7 +134,7 @@
 
 <div class="viewcode-block" id="get_previous_cns_step">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.get_previous_cns_step">[docs]</a>
-<span class="k">def</span> <span class="nf">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">st_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">st_order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the previous CNS step.</span>
 
@@ -167,7 +167,7 @@
 
 <div class="viewcode-block" id="save_scoring_weights">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.save_scoring_weights">[docs]</a>
-<span class="k">def</span> <span class="nf">save_scoring_weights</span><span class="p">(</span><span class="n">cns_step</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_scoring_weights</span><span class="p">(</span><span class="n">cns_step</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the scoring weights in a json file.</span>
 
 <span class="sd">    Parameters</span>
@@ -198,7 +198,7 @@
 
 <div class="viewcode-block" id="load_contacts">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.load_contacts">[docs]</a>
-<span class="k">def</span> <span class="nf">load_contacts</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_contacts</span><span class="p">(</span>
     <span class="n">pdb_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">],</span>
     <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
     <span class="n">numbering_dic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -262,10 +262,10 @@
 
 <div class="viewcode-block" id="CAPRI">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI">[docs]</a>
-<span class="k">class</span> <span class="nc">CAPRI</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CAPRI</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;CAPRI class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">identificator</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
@@ -322,7 +322,7 @@
 
 <div class="viewcode-block" id="CAPRI.calc_irmsd">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_irmsd">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_irmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_irmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the I-RMSD.</span>
 
 <span class="sd">        Parameters</span>
@@ -382,7 +382,7 @@
 
 <div class="viewcode-block" id="CAPRI.calc_lrmsd">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_lrmsd">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_lrmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_lrmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the L-RMSD.&quot;&quot;&quot;</span>
         <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -483,7 +483,7 @@
 
 <div class="viewcode-block" id="CAPRI.calc_ilrmsd">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_ilrmsd">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_ilrmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_ilrmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the Interface Ligand RMSD.</span>
 
 <span class="sd">        Parameters</span>
@@ -588,7 +588,7 @@
 
 <div class="viewcode-block" id="CAPRI.calc_fnat">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_fnat">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_fnat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_fnat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the frequency of native contacts.</span>
 
 <span class="sd">        Parameters</span>
@@ -616,7 +616,7 @@
 
 <div class="viewcode-block" id="CAPRI.calc_global_rmsd">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_global_rmsd">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_global_rmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_global_rmsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the full structure RMSD.&quot;&quot;&quot;</span>
         <span class="c1"># Load reference atomic coordinates</span>
         <span class="n">ref_coord_dic</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
@@ -655,7 +655,7 @@
 
 <div class="viewcode-block" id="CAPRI.calc_dockq">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.calc_dockq">[docs]</a>
-    <span class="k">def</span> <span class="nf">calc_dockq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_dockq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the DockQ metric.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fnat</span><span class="p">:</span>
@@ -670,7 +670,7 @@
 
 <div class="viewcode-block" id="CAPRI.has_cluster_info">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.has_cluster_info">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_cluster_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_cluster_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check wether this object contains cluster information.</span>
 
@@ -687,7 +687,7 @@
 
 <div class="viewcode-block" id="CAPRI.run">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;CAPRI&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;CAPRI&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the CAPRI metrics.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">align_func</span> <span class="o">=</span> <span class="n">get_align</span><span class="p">(</span>
@@ -739,7 +739,7 @@
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dockq&quot;</span><span class="p">]</span> <span class="ow">and</span> \
                 <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dockq</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">dockq</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dockq</span>
@@ -760,7 +760,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rmsd</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">rmsd</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dockq&quot;</span><span class="p">]</span> <span class="ow">and</span> \
                 <span class="ow">not</span> <span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dockq</span><span class="p">)</span> <span class="ow">or</span> <span class="n">isnan</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">dockq</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockq</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">dockq</span>
@@ -782,7 +782,7 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_atoms</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_atoms</span><span class="p">(</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
         <span class="n">reference</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
         <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -814,7 +814,7 @@
 <div class="viewcode-block" id="CAPRI.identify_interface">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">identify_interface</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identify_interface</span><span class="p">(</span>
         <span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span>
         <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
@@ -857,7 +857,7 @@
 <div class="viewcode-block" id="CAPRI.add_chain_from_segid">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRI.add_chain_from_segid">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">add_chain_from_segid</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_chain_from_segid</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace the chainID with the segID.</span>
 
@@ -882,7 +882,7 @@
 
 <div class="viewcode-block" id="rank_according_to_score">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.rank_according_to_score">[docs]</a>
-<span class="k">def</span> <span class="nf">rank_according_to_score</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rank_according_to_score</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">],</span> <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -928,7 +928,7 @@
 
 <div class="viewcode-block" id="extract_models_best_references">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.extract_models_best_references">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_models_best_references</span><span class="p">(</span><span class="n">capri_objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_models_best_references</span><span class="p">(</span><span class="n">capri_objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract best reference for each input model.</span>
 
 <span class="sd">    Same input models are combined and best reference is later found by</span>
@@ -967,7 +967,7 @@
 
 <div class="viewcode-block" id="extract_data_from_capri_class">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.extract_data_from_capri_class">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_data_from_capri_class</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_data_from_capri_class</span><span class="p">(</span>
     <span class="n">capri_objects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">],</span>
     <span class="n">sort_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">sort_ascending</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -1038,7 +1038,7 @@
 
 <div class="viewcode-block" id="calc_stats">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.calc_stats">[docs]</a>
-<span class="k">def</span> <span class="nf">calc_stats</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_stats</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the mean and stdev.</span>
 
@@ -1066,7 +1066,7 @@
 
 <div class="viewcode-block" id="capri_cluster_analysis">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.capri_cluster_analysis">[docs]</a>
-<span class="k">def</span> <span class="nf">capri_cluster_analysis</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">capri_cluster_analysis</span><span class="p">(</span>
     <span class="n">capri_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">CAPRI</span><span class="p">],</span>
     <span class="n">model_list</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
     <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
@@ -1193,10 +1193,10 @@
 
 <div class="viewcode-block" id="CAPRIError">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.CAPRIError">[docs]</a>
-<span class="k">class</span> <span class="nc">CAPRIError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CAPRIError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when something goes wrong with the CAPRI class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div>
 
@@ -1204,7 +1204,7 @@
 
 <div class="viewcode-block" id="dump_weights">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.caprieval.capri.html#haddock.modules.analysis.caprieval.capri.dump_weights">[docs]</a>
-<span class="k">def</span> <span class="nf">dump_weights</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump_weights</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">sel_steps</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">))</span>
     <span class="n">cns_step</span> <span class="o">=</span> <span class="n">get_previous_cns_step</span><span class="p">(</span><span class="n">sel_steps</span><span class="o">=</span><span class="n">sel_steps</span><span class="p">,</span> <span class="n">st_order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cns_step</span><span class="p">:</span>
@@ -1272,8 +1272,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

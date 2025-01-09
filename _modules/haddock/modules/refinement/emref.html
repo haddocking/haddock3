@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.refinement.emref &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -89,16 +89,16 @@
 <span class="sd">complex is then evaluated using the HADDOCK scoring function.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">FilePath</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.haddockmodel</span> <span class="kn">import</span> <span class="n">HaddockModel</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libcns</span> <span class="kn">import</span> <span class="n">prepare_cns_input</span><span class="p">,</span> <span class="n">prepare_expected_pdb</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">CNSJob</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_engine</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.base_cns_module</span> <span class="kn">import</span> <span class="n">BaseCNSModule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.haddockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcns</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_cns_input</span><span class="p">,</span> <span class="n">prepare_expected_pdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNSJob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.base_cns_module</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCNSModule</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -107,12 +107,12 @@
 
 <div class="viewcode-block" id="HaddockModule">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.emref.html#haddock.modules.refinement.emref.HaddockModule">[docs]</a>
-<span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseCNSModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module energy minimization refinement.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;.&quot;&quot;&quot;</span>
@@ -122,12 +122,12 @@
 <div class="viewcode-block" id="HaddockModule.confirm_installation">
 <a class="viewcode-back" href="../../../../modules/refinement/haddock.modules.refinement.emref.html#haddock.modules.refinement.emref.HaddockModule.confirm_installation">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm module is installed.&quot;&quot;&quot;</span>
         <span class="k">return</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Pool of jobs to be executed by the CNS engine</span>
         <span class="n">jobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CNSJob</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -237,8 +237,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

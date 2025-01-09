@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.re.clustrmsd &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -80,16 +80,16 @@
              
   <h1>Source code for haddock.clis.re.clustrmsd</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;haddock3-re clustrmsd subcommand.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">save</span> <span class="k">as</span> <span class="n">save_config</span>
-<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">get_module_steps_folders</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">save</span> <span class="k">as</span> <span class="n">save_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_module_steps_folders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libclust</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">add_cluster_info</span><span class="p">,</span>
     <span class="n">clustrmsd_tolerance_params</span><span class="p">,</span>
     <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">,</span>
@@ -97,9 +97,9 @@
     <span class="n">rank_clusters</span><span class="p">,</span>
     <span class="n">write_structure_list</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libinteractive</span> <span class="kn">import</span> <span class="n">look_for_capri</span><span class="p">,</span> <span class="n">rewrite_capri_tables</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span>
-<span class="kn">from</span> <span class="nn">haddock.modules.analysis.clustrmsd.clustrmsd</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libinteractive</span><span class="w"> </span><span class="kn">import</span> <span class="n">look_for_capri</span><span class="p">,</span> <span class="n">rewrite_capri_tables</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.clustrmsd.clustrmsd</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_clusters</span><span class="p">,</span>
     <span class="n">get_matrix_path</span><span class="p">,</span>
     <span class="n">iterate_min_population</span><span class="p">,</span>
@@ -111,7 +111,7 @@
 
 <div class="viewcode-block" id="add_clustrmsd_arguments">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustrmsd.html#haddock.clis.re.clustrmsd.add_clustrmsd_arguments">[docs]</a>
-<span class="k">def</span> <span class="nf">add_clustrmsd_arguments</span><span class="p">(</span><span class="n">clustrmsd_subcommand</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_clustrmsd_arguments</span><span class="p">(</span><span class="n">clustrmsd_subcommand</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add arguments to the clustrmsd subcommand.&quot;&quot;&quot;</span>
     <span class="n">clustrmsd_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;clustrmsd_dir&quot;</span><span class="p">,</span>
@@ -157,7 +157,7 @@
 
 <div class="viewcode-block" id="reclustrmsd">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustrmsd.html#haddock.clis.re.clustrmsd.reclustrmsd">[docs]</a>
-<span class="k">def</span> <span class="nf">reclustrmsd</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reclustrmsd</span><span class="p">(</span>
         <span class="n">clustrmsd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">n_clusters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">clust_cutoff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -347,7 +347,7 @@
 
 <div class="viewcode-block" id="search_previousstep_matrix">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.re.clustrmsd.html#haddock.clis.re.clustrmsd.search_previousstep_matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">search_previousstep_matrix</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_previousstep_matrix</span><span class="p">(</span><span class="n">clustrmsd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the path of the previous step matrix_json file.</span>
 
 <span class="sd">    Parameters</span>
@@ -386,8 +386,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

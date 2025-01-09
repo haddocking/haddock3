@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -81,19 +81,19 @@
   <h1>Source code for haddock.modules</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 modules.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">linesep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
-<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_IO_FILE</span><span class="p">,</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
-<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_IO_FILE</span><span class="p">,</span> <span class="n">INTERACTIVE_RE_SUFFIX</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Container</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
@@ -103,18 +103,18 @@
     <span class="n">ParamDict</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.gear</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.clean_steps</span> <span class="kn">import</span> <span class="n">clean_output</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.known_cns_errors</span> <span class="kn">import</span> <span class="n">find_all_cns_errors</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.parameters</span> <span class="kn">import</span> <span class="n">config_mandatory_general_parameters</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span><span class="p">,</span> <span class="n">find_incompatible_parameters</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libhpc</span> <span class="kn">import</span> <span class="n">HPCScheduler</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">folder_exists</span><span class="p">,</span> <span class="n">working_directory</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libmpi</span> <span class="kn">import</span> <span class="n">MPIScheduler</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">Scheduler</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libtimer</span> <span class="kn">import</span> <span class="n">log_time</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">recursive_dict_update</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.clean_steps</span><span class="w"> </span><span class="kn">import</span> <span class="n">clean_output</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.known_cns_errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_all_cns_errors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_mandatory_general_parameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.yaml2cfg</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml_config</span><span class="p">,</span> <span class="n">find_incompatible_parameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libhpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">HPCScheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">folder_exists</span><span class="p">,</span> <span class="n">working_directory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libmpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPIScheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libparallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Scheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libtimer</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">recursive_dict_update</span>
 
 
 <span class="n">modules_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -181,7 +181,7 @@
 
 
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">_not_valid_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_not_valid_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">yield</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
@@ -189,17 +189,17 @@
             <span class="s2">&quot;The configuration file extension is not supported. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Supported types are </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_readers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
-        <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+        <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
 
 
 <div class="viewcode-block" id="BaseHaddockModule">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseHaddockModule</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseHaddockModule</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module&#39;s base class.&quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">params_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">params_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        HADDOCK3 modules base class.</span>
 
@@ -224,13 +224,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="o">=</span><span class="n">params_fname</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Configuration parameters.&quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
 
 <div class="viewcode-block" id="BaseHaddockModule.reset_params">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.reset_params">[docs]</a>
-    <span class="k">def</span> <span class="nf">reset_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset parameters to the ones used to instantiate the class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_original_params</span><span class="p">)</span></div>
@@ -238,7 +238,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.update_params">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.update_params">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_params</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">update_from_cfg_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -295,7 +295,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.save_config">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.save_config">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save current parameters to a HADDOCK3 config file.&quot;&quot;&quot;</span>
         <span class="c1"># creates this dictionary for the config to have the module name</span>
         <span class="c1"># key in brackets, for example:</span>
@@ -316,7 +316,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.add_parent_to_paths">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.add_parent_to_paths">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_parent_to_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_parent_to_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add parent path to paths.&quot;&quot;&quot;</span>
         <span class="c1"># convert paths to relative by appending parent</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -327,11 +327,11 @@
 
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 
 <div class="viewcode-block" id="BaseHaddockModule.run">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the module.&quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] module&quot;</span><span class="p">)</span>
 
@@ -346,7 +346,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.clean_output">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.clean_output">[docs]</a>
-    <span class="k">def</span> <span class="nf">clean_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clean module output folder.</span>
 
@@ -362,7 +362,7 @@
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.confirm_installation">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Confirm the third-party software needed for the module is installed.</span>
 
@@ -373,7 +373,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.export_io_models">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.export_io_models">[docs]</a>
-    <span class="k">def</span> <span class="nf">export_io_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faulty_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_io_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faulty_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export input/output to the ModuleIO interface.</span>
 
@@ -417,16 +417,16 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.finish_with_error">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.finish_with_error">[docs]</a>
-    <span class="k">def</span> <span class="nf">finish_with_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finish_with_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish with error message.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reason</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">reason</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Module has failed.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">reason</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_load_previous_io</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_previous_io</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">MODULE_IO_FILE</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleIO</span><span class="p">:</span>
@@ -446,7 +446,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.previous_path">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.previous_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">previous_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">previous_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Give the path from the previous calculation.&quot;&quot;&quot;</span>
         <span class="n">previous</span> <span class="o">=</span> <span class="n">get_module_steps_folders</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
 
@@ -460,7 +460,7 @@
 <div class="viewcode-block" id="BaseHaddockModule.last_step_folder">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.last_step_folder">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">last_step_folder</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">last_step_folder</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve last step folder.&quot;&quot;&quot;</span>
         <span class="n">with_ind</span> <span class="o">=</span> <span class="p">[</span><span class="n">folder</span> <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">index</span><span class="p">]</span>
         <span class="n">nb_with_ind</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">with_ind</span><span class="p">)</span>
@@ -480,7 +480,7 @@
 
 <div class="viewcode-block" id="BaseHaddockModule.log">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.log">[docs]</a>
-    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Log a message with a common header.</span>
 
@@ -498,13 +498,13 @@
         <span class="nb">getattr</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">level</span><span class="p">)(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_confirm_fnames_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_confirm_fnames_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                     <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fill_emptypaths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_emptypaths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill empty paths.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
@@ -517,7 +517,7 @@
 
 <div class="viewcode-block" id="get_engine">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.get_engine">[docs]</a>
-<span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">(</span>
     <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">partial</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">HPCScheduler</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">MPIScheduler</span><span class="p">]]:</span>
@@ -564,7 +564,7 @@
 
 <div class="viewcode-block" id="get_module_steps_folders">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.get_module_steps_folders">[docs]</a>
-<span class="k">def</span> <span class="nf">get_module_steps_folders</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_module_steps_folders</span><span class="p">(</span>
     <span class="n">folder</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">modules</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Container</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -618,7 +618,7 @@
 
 <div class="viewcode-block" id="is_step_folder">
 <a class="viewcode-back" href="../../modules/index.html#haddock.modules.is_step_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">is_step_folder</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_step_folder</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assess whether a folder is a possible step folder.</span>
 
@@ -653,8 +653,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

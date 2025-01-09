@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.clis.cli_score &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -97,18 +97,18 @@
 <span class="sd">    haddock3-score complex.pdb -p nemsteps 50 w_air 1 electflag True</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
-<span class="kn">from</span> <span class="nn">haddock.core.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">ArgumentParser</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">FilePath</span><span class="p">,</span>
     <span class="n">Namespace</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libcli</span> <span class="kn">import</span> <span class="n">_ParamsToDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcli</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ParamsToDict</span>
 
 
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
@@ -166,13 +166,13 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_ap</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ap</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">ap</span>
 
 
 <div class="viewcode-block" id="load_args">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_score.html#haddock.clis.cli_score.load_args">[docs]</a>
-<span class="k">def</span> <span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Namespace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load argument parser args.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div>
 
@@ -180,7 +180,7 @@
 
 <div class="viewcode-block" id="cli">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_score.html#haddock.clis.cli_score.cli">[docs]</a>
-<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">main</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command-line interface entry point.&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;other_params&quot;</span><span class="p">)</span>
@@ -190,7 +190,7 @@
 
 <div class="viewcode-block" id="maincli">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_score.html#haddock.clis.cli_score.maincli">[docs]</a>
-<span class="k">def</span> <span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">maincli</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
     <span class="n">cli</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span></div>
 
@@ -198,7 +198,7 @@
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_score.html#haddock.clis.cli_score.main">[docs]</a>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span>
         <span class="n">pdb_file</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
         <span class="n">run_dir</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
         <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -235,19 +235,19 @@
 <span class="sd">        Any additional arguments that will be passed to the ``emscoring``</span>
 <span class="sd">        module.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="kn">import</span> <span class="nn">logging</span>
-    <span class="kn">import</span> <span class="nn">shutil</span>
-    <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-    <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-    <span class="kn">from</span> <span class="nn">haddock.gear.haddockmodel</span> <span class="kn">import</span> <span class="n">HaddockModel</span>
-    <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
-    <span class="kn">from</span> <span class="nn">haddock.gear.zerofill</span> <span class="kn">import</span> <span class="n">zero_fill</span>
-    <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">working_directory</span>
-    <span class="kn">from</span> <span class="nn">haddock.libs.libworkflow</span> <span class="kn">import</span> <span class="n">WorkflowManager</span>
-    <span class="kn">from</span> <span class="nn">haddock.modules.scoring.emscoring</span> <span class="kn">import</span> <span class="n">DEFAULT_CONFIG</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.haddockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockModel</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.yaml2cfg</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml_config</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.zerofill</span><span class="w"> </span><span class="kn">import</span> <span class="n">zero_fill</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">working_directory</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libworkflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkflowManager</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.scoring.emscoring</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_CONFIG</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 
@@ -388,8 +388,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

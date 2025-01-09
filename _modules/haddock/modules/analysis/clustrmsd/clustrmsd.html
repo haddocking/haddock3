@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.modules.analysis.clustrmsd.clustrmsd &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -83,19 +83,19 @@
              
   <h1>Source code for haddock.modules.analysis.clustrmsd.clustrmsd</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;RMSD clustering.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.cluster.hierarchy</span> <span class="kn">import</span> <span class="n">fcluster</span><span class="p">,</span> <span class="n">linkage</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.cluster.hierarchy</span><span class="w"> </span><span class="kn">import</span> <span class="n">fcluster</span><span class="p">,</span> <span class="n">linkage</span>
 
-<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">RMSDFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">RMSDFile</span>
 
 
 <div class="viewcode-block" id="get_matrix_path">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.get_matrix_path">[docs]</a>
-<span class="k">def</span> <span class="nf">get_matrix_path</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">:</span> <span class="n">RMSDFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_matrix_path</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">:</span> <span class="n">RMSDFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;From an RMSDFile object returns the rmsd matrix path.</span>
 
 <span class="sd">    Parameters</span>
@@ -123,7 +123,7 @@
 
 <div class="viewcode-block" id="write_clusters">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.write_clusters">[docs]</a>
-<span class="k">def</span> <span class="nf">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">cluster_arr</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">out_filename</span><span class="o">=</span><span class="s2">&quot;cluster.out&quot;</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># noqa: E501</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">cluster_arr</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">out_filename</span><span class="o">=</span><span class="s2">&quot;cluster.out&quot;</span><span class="p">,</span> <span class="n">centers</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># noqa: E501</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the clusters to a file.</span>
 
@@ -180,7 +180,7 @@
 
 <div class="viewcode-block" id="read_matrix">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.read_matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">read_matrix</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">:</span> <span class="n">RMSDFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_matrix</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">:</span> <span class="n">RMSDFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read the RMSD matrix.</span>
 
@@ -223,7 +223,7 @@
 
 <div class="viewcode-block" id="get_dendrogram">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.get_dendrogram">[docs]</a>
-<span class="k">def</span> <span class="nf">get_dendrogram</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">linkage_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dendrogram</span><span class="p">(</span><span class="n">rmsd_matrix</span><span class="p">,</span> <span class="n">linkage_type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get and save the dendrogram.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -247,7 +247,7 @@
 
 <div class="viewcode-block" id="get_clusters">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.get_clusters">[docs]</a>
-<span class="k">def</span> <span class="nf">get_clusters</span><span class="p">(</span><span class="n">dendrogram</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_clusters</span><span class="p">(</span><span class="n">dendrogram</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Obtain the clusters.&quot;&quot;&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clustering dendrogram...&quot;</span><span class="p">)</span>
     <span class="n">cluster_arr</span> <span class="o">=</span> <span class="n">fcluster</span><span class="p">(</span><span class="n">dendrogram</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">)</span>
@@ -257,7 +257,7 @@
 
 <div class="viewcode-block" id="apply_min_population">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.apply_min_population">[docs]</a>
-<span class="k">def</span> <span class="nf">apply_min_population</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_min_population</span><span class="p">(</span>
         <span class="n">cluster_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">min_population</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -295,7 +295,7 @@
 
 <div class="viewcode-block" id="iterate_min_population">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.iterate_min_population">[docs]</a>
-<span class="k">def</span> <span class="nf">iterate_min_population</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">iterate_min_population</span><span class="p">(</span>
         <span class="n">cluster_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">min_population</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -335,7 +335,7 @@
 
 <div class="viewcode-block" id="cond_index">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.cond_index">[docs]</a>
-<span class="k">def</span> <span class="nf">cond_index</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cond_index</span><span class="p">(</span><span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the condensed index from two matrix indexes.</span>
 
@@ -354,7 +354,7 @@
 
 <div class="viewcode-block" id="get_cluster_center">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.get_cluster_center">[docs]</a>
-<span class="k">def</span> <span class="nf">get_cluster_center</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_center</span><span class="p">(</span>
         <span class="n">npw</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">n_obs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">rmsd_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -392,7 +392,7 @@
 
 <div class="viewcode-block" id="write_clustrmsd_file">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.write_clustrmsd_file">[docs]</a>
-<span class="k">def</span> <span class="nf">write_clustrmsd_file</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">cluster_centers</span><span class="p">,</span> <span class="n">score_dic</span><span class="p">,</span> <span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">output_fname</span><span class="o">=</span><span class="s1">&#39;clustrmsd.txt&#39;</span><span class="p">):</span>  <span class="c1"># noqa E501</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_clustrmsd_file</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">,</span> <span class="n">cluster_centers</span><span class="p">,</span> <span class="n">score_dic</span><span class="p">,</span> <span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">output_fname</span><span class="o">=</span><span class="s1">&#39;clustrmsd.txt&#39;</span><span class="p">):</span>  <span class="c1"># noqa E501</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the clustrmsd.txt file.</span>
 
@@ -474,7 +474,7 @@
 
 <div class="viewcode-block" id="order_clusters">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustrmsd.clustrmsd.html#haddock.modules.analysis.clustrmsd.clustrmsd.order_clusters">[docs]</a>
-<span class="k">def</span> <span class="nf">order_clusters</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">order_clusters</span><span class="p">(</span><span class="n">cluster_arr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Order the clusters by population.</span>
 <span class="sd">    </span>
@@ -524,8 +524,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

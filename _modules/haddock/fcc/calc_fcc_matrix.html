@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>haddock.fcc.calc_fcc_matrix &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d10597a4" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
@@ -95,7 +95,7 @@
 <span class="c1"># Contact Parsing routines</span>
 <div class="viewcode-block" id="parse_contact_file">
 <a class="viewcode-back" href="../../../haddock.fcc.calc_fcc_matrix.html#haddock.fcc.calc_fcc_matrix.parse_contact_file">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_contact_file</span><span class="p">(</span><span class="n">f_list</span><span class="p">,</span> <span class="n">ignore_chain</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_contact_file</span><span class="p">(</span><span class="n">f_list</span><span class="p">,</span> <span class="n">ignore_chain</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a list of contact files.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">ignore_chain</span><span class="p">:</span>
@@ -112,7 +112,7 @@
 <span class="c1"># FCC Calculation Routine</span>
 <div class="viewcode-block" id="calculate_fcc">
 <a class="viewcode-back" href="../../../haddock.fcc.calc_fcc_matrix.html#haddock.fcc.calc_fcc_matrix.calculate_fcc">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_fcc</span><span class="p">(</span><span class="n">listA</span><span class="p">,</span> <span class="n">listB</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_fcc</span><span class="p">(</span><span class="n">listA</span><span class="p">,</span> <span class="n">listB</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the fraction of common elements between two lists</span>
 <span class="sd">    taking into account chain IDs</span>
@@ -127,7 +127,7 @@
 
 <div class="viewcode-block" id="calculate_fcc_nc">
 <a class="viewcode-back" href="../../../haddock.fcc.calc_fcc_matrix.html#haddock.fcc.calc_fcc_matrix.calculate_fcc_nc">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_fcc_nc</span><span class="p">(</span><span class="n">listA</span><span class="p">,</span> <span class="n">listB</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_fcc_nc</span><span class="p">(</span><span class="n">listA</span><span class="p">,</span> <span class="n">listB</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the fraction of common elements between two lists</span>
 <span class="sd">    not taking into account chain IDs. Much Slower.</span>
@@ -144,7 +144,7 @@
 
 <div class="viewcode-block" id="calculate_pairwise_matrix">
 <a class="viewcode-back" href="../../../haddock.fcc.calc_fcc_matrix.html#haddock.fcc.calc_fcc_matrix.calculate_pairwise_matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_pairwise_matrix</span><span class="p">(</span><span class="n">contacts</span><span class="p">,</span> <span class="n">ignore_chain</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_pairwise_matrix</span><span class="p">(</span><span class="n">contacts</span><span class="p">,</span> <span class="n">ignore_chain</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates a matrix of pairwise fraction of common contacts (FCC).</span>
 <span class="sd">    Outputs numeric indexes.</span>
 
@@ -176,7 +176,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_output_fcc</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">f_buffer</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_output_fcc</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">f_buffer</span><span class="p">):</span>
 
     <span class="n">buf</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
@@ -196,8 +196,8 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, BonvinLab.
-      <span class="lastupdated">Last updated on Dec 17, 2024.
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jan 09, 2025.
       </span></p>
   </div>
 

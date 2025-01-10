@@ -1,0 +1,80 @@
+#
+# Group scoring
+#
+w_haddock:
+  default: 1.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the HADDOCK score
+  short: Weight of the HADDOCK score in HADDOCKsaxs.
+  long: Weight of the HADDOCK score in the HADDOCKsaxs score.
+    The HADDOCK score from the previous module is multiplied by this weight
+    and added to the chi term to get the HADDOCKsaxs score.
+  group: "scoring"
+  explevel: expert
+w_saxs:
+  default: 50.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the SAXS term
+  short: Weight of the SAXS term in the scoring function.
+  long: Weight of the SAXS term in the scoring function.
+    The chi value is multiplied by this weight
+    and added to the HADDOCK score to get the HADDOCKsaxs score.
+  group: "scoring"
+  explevel: expert
+#
+# Group CRYSOL
+#
+saxs_fname:
+  default: ""
+  type: file
+  title: Path to SAXS data
+  short: Path to SAXS data.
+  long: Path to the .dat file containing SAXS data for CRYSOL.
+    Two or three columns separated by whitespace, containing (in this order)
+    momentum transfer, scattering intensity, and (optional) standard deviation.
+  group: "scoring"
+  explevel: easy
+lm:
+  default: 18
+  type: integer
+  min: 1
+  max: 100
+  title: Maximum order of harmonics
+  short: Maximum order of harmonics.
+  long: Maximum order of harmonics for CRYSOL.
+  group: "scoring"
+  explevel: expert
+ns:
+  default: 256
+  type: integer
+  min: 1
+  max: 10001
+  title: Number of calculated data points in computed curve
+  short: Number of calculated data points in computed curve.
+  long: Number of calculated data points in computed curve from CRYSOL.
+  group: "scoring"
+  explevel: expert
+cst:
+  default: true
+  type: boolean
+  title: Subtract constant
+  short: Subtract constant.
+  long: Subtract constant in CRYSOL.
+  group: "scoring"
+  explevel: expert
+atsas_path:
+  default: "~/software/ATSAS"
+  type: string
+  minchars: 5
+  maxchars: 4095
+  title: Path to ATSAS installation
+  short: Path to ATSAS installation.
+  long: Path to the installation of ATSAS.
+  group: "scoring"
+  explevel: easy

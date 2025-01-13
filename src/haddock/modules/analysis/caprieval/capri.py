@@ -6,6 +6,7 @@ import os
 import shutil
 import tempfile
 from itertools import combinations
+from math import isnan
 from pathlib import Path
 
 
@@ -177,6 +178,7 @@ class CAPRI:
         path: Path,
         reference: PDBPath,
         params: ParamMap,
+        ref_id: int = 1,
     ) -> None:
         """
         Initialize the class.
@@ -222,6 +224,7 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
+        self.ref_id = ref_id
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -567,7 +570,6 @@ class CAPRI:
             has_cluster_info = True
         return has_cluster_info
 
-
     def run(self) -> Union[None, "CAPRI"]:
         """Get the CAPRI metrics."""
         try:
@@ -618,6 +620,48 @@ class CAPRI:
 
         # The scheduler will use the return of the `run` method as the output of the tasks
         return copy.deepcopy(self)
+
+    def __eq__(self, other):
+        if self.params["dockq"] and \
+                not (isnan(self.dockq) or isnan(other.dockq)):
+            return self.dockq == other.dockq
+        elif self.params["fnat"] and \
+                not (isnan(self.fnat) or isnan(other.fnat)):
+            return self.fnat == other.fnat
+        elif self.params["ilrmsd"] and \
+                not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
+            return self.ilrmsd == other.ilrmsd
+        elif self.params["lrmsd"] and \
+                not (isnan(self.lrmsd) or isnan(other.lrmsd)):
+            return self.lrmsd == other.lrmsd
+        elif self.params["irmsd"] and \
+                not (isnan(self.irmsd) or isnan(other.irmsd)):
+            return self.irmsd == other.irmsd
+        elif self.params["global_rmsd"] and \
+                not (isnan(self.rmsd) or isnan(other.rmsd)):
+            return self.rmsd == other.rmsd
+        return True
+
+    def __lt__(self, other):
+        if self.params["dockq"] and \
+                not (isnan(self.dockq) or isnan(other.dockq)):
+            return self.dockq > other.dockq
+        elif self.params["fnat"] and \
+                not (isnan(self.fnat) or isnan(other.fnat)):
+            return self.fnat > other.fnat
+        elif self.params["ilrmsd"] and \
+                not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
+            return self.ilrmsd < other.ilrmsd
+        elif self.params["lrmsd"] and \
+                not (isnan(self.lrmsd) or isnan(other.lrmsd)):
+            return self.lrmsd < other.lrmsd
+        elif self.params["irmsd"] and \
+                not (isnan(self.irmsd) or isnan(other.irmsd)):
+            return self.irmsd < other.irmsd
+        elif self.params["global_rmsd"] and \
+                not (isnan(self.rmsd) or isnan(other.rmsd)):
+            return self.rmsd < other.rmsd
+        return False
 
     @staticmethod
     def _load_atoms(
@@ -754,34 +798,75 @@ def rank_according_to_score(
     return _data
 
 
+def extract_models_best_references(capri_objects: list[CAPRI]) -> list[CAPRI]:
+    """Extract best reference for each input model.
+
+    Same input models are combined and best reference is later found by
+    sorting the CAPRI objects. Only the best performing CAPRI object is
+    kept and returned.
+    This step was implemented to handle comparisons against multiple refs.
+
+    Parameters
+    ----------
+    capri_objects : list[CAPRI]
+        List of CAPRI object.
+
+    Returns
+    -------
+    selected_capri_objects : list[CAPRI]
+        List of selected best CAPIR object for each model.
+    """
+    # Group results by models
+    by_model_data: dict[int, dict[Path, CAPRI]] = {}
+    for capri in capri_objects:
+        model_data = by_model_data.setdefault(capri.identificator, [])
+        model_data.append(capri)
+    # Finds best performances for each model
+    selected_capri_objects: list[CAPRI] = []
+    # Loop over model referneces performances
+    for references_perfs in by_model_data.values():
+        # Sort them using built in __eq__ and __lt__ CAPRI methods
+        sorted_perfs = sorted(references_perfs)
+        # Select first on (best)
+        best_perf = sorted_perfs[0]
+        # Hold that guy
+        selected_capri_objects.append(best_perf)
+    return selected_capri_objects
+
+
 def extract_data_from_capri_class(
     capri_objects: list[CAPRI],
     sort_key: str,
     sort_ascending: bool,
     output_fname: Path,
+    add_reference_id: bool = False,
 ) -> Union[dict[int, ParamDict], None]:
+    """Extracts data attributes from a list of CAPRI objects into a structured
+    dictionary, optionally sorts the data based on a specified key, and writes
+    the sorted data to a file.
+
+    Parameters
+    ----------
+    capri_objects : list[CAPRI]
+        List of CAPRI objects containing data attributes to be extracted.
+    sort_key : str
+        Key by which to sort the extracted data. Must correspond to a valid
+        attribute in the CAPRI object (e.g., 'score', 'irmsd').
+    sort_ascending : bool
+        If True, sorts the data in ascending order based on the sort_key;
+        if False, sorts in descending order.
+    output_fname : Path
+        Path to the output file where the sorted data will be written.
+    add_reference_id : bool, optional
+        Should the reference id be added to the capri table?, by default False
+
+    Returns
+    -------
+    ranked_data : Union[dict[int, ParamDict], None]
+        The sorted and structured data dictionary if successful,
+        None if no data was processed.
     """
-    Extracts data attributes from a list of CAPRI objects into a structured dictionary,
-    optionally sorts the data based on a specified key, and writes the sorted data to
-    a file.
-
-    Args:
-        capri_objects (list[CAPRI]): List of CAPRI objects containing data attributes
-                                     to be extracted.
-        sort_key (str): Key by which to sort the extracted data. Must correspond to
-                        a valid attribute in the CAPRI object (e.g., 'score', 'irmsd').
-        sort_ascending (bool): If True, sorts the data in ascending order based on
-                               the sort_key; if False, sorts in descending order.
-        output_fname (Path): Path to the output file where the sorted data will be written.
-
-    Returns:
-        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if
-                                        successful, None if no data was processed.
-
-    Raises:
-        (Include any specific exceptions the function may raise)
-    """
-
+    # Retrieve data for each model
     data: dict[int, ParamDict] = {}
     for i, c in enumerate(capri_objects, start=1):
         data[i] = {
@@ -803,7 +888,9 @@ def extract_data_from_capri_class(
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)
-
+        if add_reference_id:
+            data[i]["ref_id"] = c.ref_id
+    # Sort models
     ranked_data = rank_according_to_score(
         data, sort_key=sort_key, sort_ascending=sort_ascending
     )

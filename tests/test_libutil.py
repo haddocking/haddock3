@@ -1,11 +1,11 @@
 """Test libutil."""
-from os import cpu_count
 from pathlib import Path
 
 import pytest
 
 from haddock import EmptyPath
 from haddock.libs.libutil import (
+    cpu_count,
     extract_keys_recursive,
     get_number_from_path_stem,
     non_negative_int,
@@ -173,6 +173,13 @@ def test_convert_paths_to_strings_recursive():
 
     r = recursive_convert_paths_to_strings(i)
     assert r == e
+
+
+def test_cpu_count():
+    """Test that cpu counts returns an integer > 0."""
+    ncores = cpu_count()
+    assert isinstance(ncores, int)
+    assert ncores > 0
 
 
 @pytest.mark.parametrize(

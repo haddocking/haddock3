@@ -7,10 +7,10 @@ from typing import Union
 
 import pytest
 
+from pdbtools import pdb_splitmodel
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.caprieval import (
     DEFAULT_CONFIG as DEFAULT_CAPRIEVAL_CONFIG,
-    capri,
 )
 from haddock.modules.analysis.caprieval import HaddockModule as CaprievalModule
 from tests import golden_data as UNITTESTS_GOLDEN_DATA
@@ -174,6 +174,37 @@ class MockPreviousIO_with_models_to_be_clustered:
         return None
 
 
+class MockPreviousIOMultipleRefInput:
+    def __init__(self, path):
+        self.path = path
+
+    def retrieve_models(self, individualize: bool = True):
+        shutil.copy(
+            Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
+            Path(self.path, "input_conformation.pdb"),
+        )
+        with open(Path(self.path, "input_conformation.pdb"), 'r') as fin:
+            pdb_splitmodel.run(fin)
+        # Sort conformations based on input order
+        ordered_conformations = sorted(
+            list(Path(self.path).glob("input_conformation_*.pdb")),
+            key=lambda k: int(k.stem.split("_")[-1]),
+            )
+        model_list = [
+            PDBFile(
+                file_name=str(path),
+                path=".",
+                unw_energies={"energy_term": 0.0},
+                score=0.0,
+            )
+            for path in ordered_conformations
+        ]
+        return model_list
+
+    def output(self):
+        return None
+
+
 def _cast_float_str_int(v: Union[int, str, float]) -> Union[int, str, float]:
     """Helper function to cast a value string to a float, int or str."""
     try:
@@ -198,27 +229,28 @@ def _compare_polymorphic_data(
             obs_val = observed[key]
 
             # Check the type match
-            assert type(exp_val) == type(obs_val), f"Type mismatch for {key}"
+            assert type(exp_val) == type(obs_val), \
+                f"Type mismatch for {key}: {type(exp_val)} != {type(obs_val)}"
 
             # Check float
             if isinstance(exp_val, float):
                 if math.isnan(exp_val):
                     assert isinstance(obs_val, float) and math.isnan(
                         obs_val
-                    ), f"Value mismatch for {key}"
+                    ), f"Value mismatch for {key}: {exp_val} != {obs_val}"
                 else:
                     assert (
                         isinstance(obs_val, (int, float))
                         and pytest.approx(exp_val, rel=1e-3) == obs_val
-                    ), f"Value mismatch for {key}"
+                    ), f"Value mismatch for {key}: {exp_val} != {obs_val}"
 
             # Check int
             elif isinstance(exp_val, int):
-                assert exp_val == obs_val, f"Value mismatch for {key}"
+                assert exp_val == obs_val, f"Value mismatch for {key}: {exp_val} != {obs_val}"
 
             # Check str
             elif isinstance(exp_val, str):
-                assert exp_val == obs_val, f"Value mismatch for {key}"
+                assert exp_val == obs_val, f"Value mismatch for {key}: {exp_val} != {obs_val}"
 
             # Value is not float, int or str
             else:
@@ -243,14 +275,13 @@ def _check_capri_ss_tsv(
         assert col_name in observed_header_cols, f"{col_name} not found in the header"
 
     oberseved_data: list[dict[str, Union[int, str, float]]] = []
-    data = lines[1:]
-    for line in data:
+    for line in lines[1:]:
 
         # Check there is one value for each column
         assert len(line) == len(expected_header_cols), "Values mismatch"
 
         data_dict = {}
-        for h, v in zip(expected_header_cols, line):
+        for h, v in zip(observed_header_cols, line):
             data_dict[h] = _cast_float_str_int(v)
 
         oberseved_data.append(data_dict)
@@ -400,7 +431,7 @@ def test_caprieval_default(
 
 
 def test_ss_clt_relation(caprieval_module):
-    """Check if the values in the ss.tsv match the ones in clt.tsv"""
+    """Check if the values in the ss.tsv match the ones in clt.tsv."""
 
     caprieval_module.previous_io = MockPreviousIO_with_models_to_be_clustered(
         path=caprieval_module.path
@@ -425,3 +456,125 @@ def test_ss_clt_relation(caprieval_module):
             target_metric=metric,
             top_n=caprieval_module.params["clt_threshold"],
         )
+
+
+def test_caprieval_references_selection(caprieval_module, model_list, monkeypatch):
+    """Check behavior of reference selection."""
+    # Test without reference
+    caprieval_module.params["reference_fname"] = None
+    references = caprieval_module.get_reference(model_list)
+    assert len(references) == 1
+    reference = references[0]
+    assert model_list[0].file_name in str(reference)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        # Add a single conformation reference
+        shutil.copy(
+            Path(UNITTESTS_GOLDEN_DATA, "protprot_complex_2.pdb"),
+            Path(".", "protprot_complex_2.pdb"),
+        )
+        caprieval_module.params["reference_fname"] = "protprot_complex_2.pdb"
+        references = caprieval_module.get_reference(model_list)
+        assert len(references) == 1
+        reference = references[0]
+        assert "protprot_complex_2.pdb" in str(reference)
+
+        # Set reference to a multi-conformation one
+        multiref = Path(".", "multiref.pdb")
+        shutil.copy(Path(GOLDEN_DATA, "hpr_ensemble.pdb"), multiref)
+        caprieval_module.params["reference_fname"] = multiref
+        # Hope to gather multiple references
+        references = caprieval_module.get_reference(model_list)
+        assert len(references) > 1
+        for reference in references:
+            # New file was created
+            assert reference.exists()
+            # It is different from the previous one
+            assert reference.resolve() != multiref.resolve()
+            # The size is indeed smaller (only first conformation)
+            assert reference.stat().st_size < multiref.stat().st_size
+
+
+def test_caprieval_multi_references_comparisons(caprieval_module, monkeypatch):
+    """Test behavior of comparisons against multiple references."""
+    monkeypatch.chdir(caprieval_module.path)
+    # Set the reference file path containing multiple conformations
+    multiref = Path(caprieval_module.path, "multiref.pdb")
+    shutil.copy(Path(GOLDEN_DATA, "hpr_ensemble.pdb"), multiref)
+    caprieval_module.params["reference_fname"] = multiref
+    # Hope to gather multiple references
+    references = caprieval_module.get_reference(model_list)
+    caprieval_module.previous_io = MockPreviousIOMultipleRefInput(
+        path=caprieval_module.path
+        )
+    caprieval_module.run()
+    # Generate what output values we expect
+    expect_ss_data = [
+        {
+            "model": "",
+            "md5": "-",
+            "caprieval_rank": rank,
+            "ref_id": rank,
+            "score": 0.0,
+            "irmsd": float("nan"),
+            "fnat": float("nan"),
+            "lrmsd": float("nan"),
+            "ilrmsd": float("nan"),
+            "dockq": float("nan"),
+            "rmsd": 0.000,
+            "cluster_id": "-",
+            "cluster_ranking": "-",
+            "model-cluster_ranking": "-",
+            "energy_term": 0.000,
+        }
+        for rank, _ref in enumerate(references, start=1)
+    ]
+    expect_clt_dt = [
+        {
+            "cluster_rank": "-",
+            "cluster_id": "-",
+            "n": len(references),
+            "under_eval": "-",
+            "score": 0.0,
+            "score_std": 0.0,
+            "irmsd": float("nan"),
+            "irmsd_std": float("nan"),
+            "fnat":float("nan"),
+            "fnat_std": float("nan"),
+            "lrmsd": float("nan"),
+            "lrmsd_std": float("nan"),
+            "dockq": float("nan"),
+            "dockq_std": float("nan"),
+            "ilrmsd": float("nan"),
+            "ilrmsd_std": float("nan"),
+            "rmsd": 0.0,
+            "rmsd_std": 0.0,
+            "air": float("nan"),
+            "air_std": float("nan"),
+            "bsa": float("nan"),
+            "bsa_std": float("nan"),
+            "desolv": float("nan"),
+            "desolv_std": float("nan"),
+            "elec": float("nan"),
+            "elec_std": float("nan"),
+            "total": float("nan"),
+            "total_std": float("nan"),
+            "vdw": float("nan"),
+            "vdw_std": float("nan"),
+            "caprieval_rank": 1,
+        }
+    ]
+    # Compare generated files to the expected values
+    _check_capri_ss_tsv(
+        capri_file=str(Path(caprieval_module.path, "capri_ss.tsv")),
+        expected_data=expect_ss_data,
+    )
+    _check_capri_clt_tsv(
+        capri_file=str(Path(caprieval_module.path, "capri_clt.tsv")),
+        expected_data=expect_clt_dt,
+    )
+    # Make sure the multiref performance file was created
+    capriss_multiref = Path(caprieval_module.path, "capri_ss_multiref.tsv")
+    assert capriss_multiref.exists(), f"{capriss_multiref} not created"
+    assert capriss_multiref.stat().st_size > 0, f"{capriss_multiref} contains nothing"

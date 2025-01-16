@@ -1,8 +1,8 @@
 ! cg-to-aa.cns
-!    Performs an energy minimization
+!    Converts a CG model to all atoms
 !
 ! ***********************************************************************
-! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2025 Alexandre Bonvin, Utrecht University.           *
 ! * This code is part of the HADDOCK software and governed by its       *
 ! * license. Please see the LICENSE file that should have been included *
 ! * as part of this package.                                            *
@@ -109,6 +109,14 @@ evaluate ($refine.keepwater = false)
 
 !==================================================================!
 
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
 {* Read paramters and set various force field related variables *}
 
 @MODULE:read_param.cns
@@ -134,6 +142,286 @@ if ($data.flags.dihed eq true) then
   flag include dihed end
 end if
 
+if ($data.flags.elec eq false) then
+    evaluate ($elec=0.0)
+    flag exclude elec end
+end if
+
+! Parameters for the presence of a CG model
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance 0.5
+     end
+end
+
+parameter nbonds ? end end
+
+
+{* set the energy flags ======================================================== *}
+
+inline @MODULE:setflags.cns
+
+
+{* Define restraint function =================================================== *}
+
+noe 
+  nres 1000000
+  averaging  cgaa center
+  scale      cgaa 50.0
+  sqconstant cgaa 1.0
+  sqexponent cgaa 2
+  soexponent cgaa 1
+  rswitch    cgaa 1.0
+  sqoffset   cgaa 0.0
+  asymptote  cgaa 2.0
+  msoexponent cgaa 1
+  masymptote  cgaa -0.1
+  mrswitch    cgaa 1.0
+end
+
+
+{* Change segid of CG model and read AA pdb, psf and restraint files =========== *}
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+    evaluate ($nchain = $nchain + 1)
+    evaluate ($newseg = $prot_segid_$nchain + "CG")
+    do (segid = $newseg) (segid $prot_segid_$nchain)
+    evaluate($psf_infile_$nchain= "RUN:begin-aa/" + $Toppar.prot_root_$nchain + ".psf")
+    structure @@$input_aa_psf_filename_$nchain end
+    coor @@$input_aa_pdb_filename_$nchain
+    noe @$input_cgtbl_filename_$nchain
+end loop nloop1
+
+
+{* Check for the presence of ions and add distance restraints / covalent bond == *}
+
+@MODULE:restrain-ions.cns
+
+
+{* Morph AA model to CG model ================================================== *}
+
+
+! Fix the CG model
+fix sele=(segid *CG) end
+
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=6.5 ctofnb=5.5 ctonnb=4.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance  0.5
+    end
+end
+
+evaluate ($kinter = 0.001)
+@MODULE:scale_inter.cns
+
+flag excl * incl noe end
+
+energy end
+
+! Rigid body EM to position AA model onto CG model
+!
+minimize rigid
+    eval ($nchain = 0)
+    while ($nchain < $data.ncomponents) loop nloop1
+        eval($nchain = $nchain + 1)
+        group (segid $Toppar.prot_segid_$nchain)
+        translation=true
+    end loop nloop1
+    nstep 200
+    nprint 10  
+end
+
+! Define secondary structure dihedral angle restraints
+!
+@MODULE:protein-ss-restraints-alpha-beta.def
+
+! Check for fully flexible segments and increase the MD refinement length if detected
+!
+evaluate($scalefac = 1.0)
+if ($nfle > 0) then
+    evaluate($scalefac = 10.0)
+end if
+
+! Starting the morphing for conformational changes
+! Powell EM, including covalent terms
+!
+
+flag excl * incl bond angl impr dihe vdw elec noe cdih end
+evaluate ($kinter = 0.01)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+evaluate ($kinter = 0.05)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+evaluate ($kinter = 0.1)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@MODULE:protein-ss-restraints-alpha-beta.def
+
+evaluate ($kinter = 0.5)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@MODULE:protein-ss-restraints-alpha-beta.def
+
+evaluate ($kinter = 1.0)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance 0.5
+    end
+end
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@MODULE:protein-ss-restraints-alpha-beta.def
+
+evaluate ($kinter = 1.0)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+minimize powell nstep=500 drop=40.0 nprint=25 end
+minimize powell nstep=500 drop=10.0 nprint=25 end
+
+energy end
+
+parameter nbonds eps=1.0 end end
+
+delete sele=(segid *CG) end
+
+
+! Define AA parameters
+
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance  0.5
+    end
+end
+
 if ($data.flags.elec eq true) then
     flag include elec end
     if ($data.dielec eq "rdie") then
@@ -147,172 +435,8 @@ else
     flag exclude elec end
 end if
 
-! check for the presence of a CG model
-! and adapt non-bonded parameters
-do (store4 = 0) (all)
-do (store4 = 1) (name BB or name BB#)
-show sum (store4) (all)
-if ($result > 0) then
-    parameter
-        nbonds
-            nbxmod=5 atom cdie shift
-            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
-            wmin=0.5 tolerance 0.5
-        end
-    end
-    evaluate ($coarse = TRUE)
-end if
 
-parameter nbonds ? end end
-
-{* Read the distance restraints ================================ *}
-set seed $seed end
-set message=normal echo=on end
-inline @MODULE:read_data.cns
-
-! random removal of restaints
-if ($data.randremoval eq true) then
-    noe cv $npart ? end
-end if
-
-if ( $log_level = "verbose" ) then
-    set message=normal echo=on end
-elseif ( $log_level = "normal" ) then
-    set message=normal echo=off end
-else
-    set message=off echo=off end
-end if
-
-
-evaluate ($numnoe = 0)
-
-!Make sure that at least as many distance restraints are successfully
-!read as the number of partitions for cross-validation
-evaluate ($numnoe = 999)
-noe ? end
-
-if ($NUMNOE lt $data.npart) then
-    noe part=1 end
-    evaluate ($data.npart = 1)
-    evaluate ($data.randremoval = FALSE)
-end if
-
-noe
-    averaging  * sum
-    potential  * soft
-    scale      * 1.0
-    scale ambi $ambig_scale
-    scale dist $unambig_scale
-    scale hbon $hbond_scale
-    sqconstant * 1.0
-    sqexponent * 2
-    soexponent * 1
-    rswitch    * 0.5
-    sqoffset   * 0.0
-    asymptote  * 0.1
-    msoexponent * 1
-    masymptote  * -0.1
-    mrswitch    * 0.5
-end
-
-{* set the energy flags ======================================================== *}
-
-inline @MODULE:setflags.cns
-
-
-{* Check for other restraints ================================================== *}
-
-@MODULE:symmultimer.cns
-
-if ($data.contactairs eq true ) then
-    @MODULE:contactairs.cns
-end if
-
-if ($data.dnarest eq true ) then
-    @MODULE:dna-rna_restraints.cns
-end if
-
-if ($data.ssdihed eq "all" ) then
-    inline @MODULE:/protein-ss-restraints-all.cns
-end if
-if ($data.ssdihed eq "alpha" ) then
-    inline @MODULE:protein-ss-restraints-alpha.cns
-end if
-if ($data.ssdihed eq "alphabeta" ) then
-    inline @MODULE:protein-ss-restraints-alpha-beta.cns
-end if
-
-
-restraints dihedral
-    scale=$data.dihedrals_scale
-end
-
-if ($data.flags.cdih eq true) then
-  flag incl cdih end
-end if
-
-
-{* Check for the presence of ions and add distance restraints / covalent bond == *}
-
-@MODULE:restrain-ions.cns
-
-{* Energy minimisation ========================================================= *}
-
-fix sele = (not all) end
-
-! fix the shape
-fix sele = (resn SHA) end
-
-! fix rigid molecules
-evaluate($nchain1 = 0)
-while ($nchain1 < $data.ncomponents) loop nloop1
-    evaluate($nchain1 = $nchain1 + 1)
-    evaluate($fcounter=0)
-    if ($nseg$nchain1 = 0) then
-        display NO FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
-        display FIXING IT
-        fix sele = (segid $prot_segid_$nchain1 and not name H*) end
-    end if
-end loop nloop1
-
-! first round of minimization with weak harmonic restraints on non interface heavy atoms
-do (refx=x) (all)
-do (refy=y) (all)
-do (refz=z) (all)
-restraints harmonic
-   exponent = 2
-end
-do (harm = 0)  (all)
-do (harm = 5)  (not name h* and not resn ANI and not resn DAN and not resn XAN and not (resn WAT or resn HOH or resn TIP3))
-
-!define flexible segments:
-@MODULE:flex_segment_back.cns
-
-eval ($nchain1 = 0)
-while ($nchain1 < $data.ncomponents) loop nloop1
-    eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1)
-end loop nloop1
-
-if ($nemsteps > 0) then
-    minimize powell nstep=$nemsteps drop=10 nprint=10 end
-end if
-
-! second round of minimization with weak harmonic restraints on non interface backbone atoms
-do (harm = 0)  (all)
-do (harm = 1)  (name CA or name BB or name BB# or name C or name N or name P or name C# or name C##)
-
-eval ($nchain1 = 0)
-while ($nchain1 < $data.ncomponents) loop nloop1
-    eval ($nchain1=$nchain1+1)
-    do (harm = 0)  (attribute store5 = $nchain1)
-end loop nloop1
-
-if ($nemsteps > 0) then
-    minimize powell nstep=$nemsteps drop=10 nprint=10 end
-end if
-
-! final minimization without harmonic restraints
+! final minimization
 
 flag excl harm end
 mini powell nstep=$nemsteps drop=10 nprint=10 end

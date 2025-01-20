@@ -198,7 +198,10 @@ def load_boxtyp20(waterbox_param: Path) -> str:
 
 
 # This is used by docking
-def prepare_multiple_input(pdb_input_list: list[str], psf_input_list: list[str]) -> str:
+def prepare_multiple_input(
+    pdb_input_list: list[str], 
+    psf_input_list: list[str]
+) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -272,6 +275,7 @@ def prepare_cns_input(
     identifier: str,
     ambig_fname: FilePath = "",
     native_segid: bool = False,
+    cgtoaa: bool = False,
     default_params_path: Optional[Path] = None,
     debug: Optional[bool] = False,
     seed: Optional[int] = None,
@@ -322,10 +326,46 @@ def prepare_cns_input(
         psf_fname = pdb.topology.rel_path
         psf_list.append(psf_fname)
 
+    aa_psf_list: list[Path] = []
+    aatocg_tbl_list: list[Path] = []
+    if cgtoaa==True:
+        if isinstance(input_element.aa_topology, (list)):
+            for psf in input_element.aa_topology:
+                if psf is None:
+                    raise ValueError(f"AA Topology not found {input_element.rel_path}.")
+                else:
+                    aa_psf_list.append(psf.as_posix())
+            for tbl in input_element.aatocg_tbl :
+                if tbl is None:
+                    raise ValueError(f"AA to CG restraint file not found {input_element.rel_path}.")
+                else:
+                    aatocg_tbl_list.append(tbl.as_posix())
+        else:
+            pdb = input_element
+            if pdb.aa_topology is None:
+                raise ValueError(f"AA Topology not found {input_element.rel_path}.")
+            aa_psf_list.append(pdb.aa_topology.as_posix())
+            if pdb.aatocg_tbl is None:
+                raise ValueError(f"AA to CG restraint file not found {input_element.rel_path}.")
+            aatocg_tbl_list.append(pdb.aatocg_tbl.as_posix())
+
     input_str = prepare_multiple_input(
         pdb_input_list=[str(p) for p in pdb_list],
         psf_input_list=[str(p) for p in psf_list],
     )
+    
+    if cgtoaa==True:
+        for i in range(len(aa_psf_list)):
+            # eval line for psf
+            param_psf = "input_aa_psf_filename_" + str(i+1)
+            input_str += write_eval_line(param_psf, aa_psf_list[i])
+            # eval line for pdb
+            param_pdb = "input_aa_pdb_filename_" + str(i+1)
+            input_str += write_eval_line(param_pdb, aa_psf_list[i][:-4]+".pdb")
+        for i in range(len(aatocg_tbl_list)):
+            # eval line for tbl
+            param_tbl = "input_cgtbl_filename_" + str(i+1)
+            input_str += write_eval_line(param_tbl, aatocg_tbl_list[i])
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
 

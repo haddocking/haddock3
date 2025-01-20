@@ -99,15 +99,15 @@ class HaddockModule(BaseCNSModule):
                     native_segid=True,
                     debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
+                    cgtoaa=True
                 )
                 out_file = f"cgtoaa_{idx}.out"
                 err_fname = f"cgtoaa_{idx}.cnserr"
 
-                print("CGTOAA", cgtoaa_input)
-
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "cgtoaa")
                 expected_pdb.restr_fname = ambig_fname
+                # DO: expected_pdb.topology = expected_pdb.aa_topology
                 try:
                     expected_pdb.ori_name = model.file_name
                 except AttributeError:
@@ -117,7 +117,6 @@ class HaddockModule(BaseCNSModule):
                 job = CNSJob(cgtoaa_input, out_file, err_fname, envvars=self.envvars)
 
                 jobs.append(job)
-                print(job)
 
                 idx += 1
 

@@ -189,7 +189,6 @@ while ($nchain < $data.ncomponents) loop nloop1
     evaluate ($nchain = $nchain + 1)
     evaluate ($newseg = $prot_segid_$nchain + "CG")
     do (segid = $newseg) (segid $prot_segid_$nchain)
-    evaluate($psf_infile_$nchain= "RUN:begin-aa/" + $Toppar.prot_root_$nchain + ".psf")
     structure @@$input_aa_psf_filename_$nchain end
     coor @@$input_aa_pdb_filename_$nchain
     noe @$input_cgtbl_filename_$nchain

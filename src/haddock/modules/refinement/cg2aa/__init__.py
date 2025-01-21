@@ -67,23 +67,9 @@ class HaddockModule(BaseCNSModule):
                 " decrease the sampling_factor."
             )
 
-        # checking the ambig_fname:
-        try:
-            prev_ambig_fnames = [mod.restr_fname for mod in models_to_refine]
-        except Exception as e:  # noqa:F841
-            # cannot extract restr_fname info from tuples
-            prev_ambig_fnames = [None for model in models_to_refine]
-
-        ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
-
         model_idx = 0
         idx = 1
         for model in models_to_refine:
-            # assign ambig_fname
-            if ambig_fnames:
-                ambig_fname = ambig_fnames[model_idx]
-            else:
-                ambig_fname = self.params["ambig_fname"]
             model_idx += 1
 
             #print(self.params["sampling_factor"])
@@ -95,7 +81,6 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "cgtoaa",
-                    ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
@@ -106,7 +91,6 @@ class HaddockModule(BaseCNSModule):
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "cgtoaa")
-                expected_pdb.restr_fname = ambig_fname
                 # DO: expected_pdb.topology = expected_pdb.aa_topology
                 try:
                     expected_pdb.ori_name = model.file_name

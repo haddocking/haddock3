@@ -91,7 +91,7 @@ class HaddockModule(BaseCNSModule):
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "cgtoaa")
-                # DO: expected_pdb.topology = expected_pdb.aa_topology
+                expected_pdb.topology = expected_pdb.aa_topology
                 try:
                     expected_pdb.ori_name = model.file_name
                 except AttributeError:
@@ -107,7 +107,6 @@ class HaddockModule(BaseCNSModule):
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
         Engine = get_engine(self.params["mode"], self.params)
-        print(self.params["mode"])
         engine = Engine(jobs)
         engine.run()
         self.log("CNS jobs have finished")

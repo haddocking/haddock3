@@ -29,7 +29,7 @@ class HaddockModule(BaseCNSModule):
         self, order: int, path: Path, initial_params: FilePath = DEFAULT_CONFIG
     ) -> None:
         """."""
-        cns_script = Path(RECIPE_PATH, "cns", "cg-to-aa.cns")
+        cns_script = Path(RECIPE_PATH, "cns", "cgtoaa.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod

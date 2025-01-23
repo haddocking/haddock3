@@ -41,36 +41,6 @@ evaluate ($data.error_dih =$error_dih)
 ! planarity restraints
 evaluate ($data.flags.plan =  false)
 
-! distance restraints
-evaluate ($data.flags.noe  =  true)
-evaluate ($data.randremoval=$randremoval)
-evaluate ($data.npart=$npart)
-
-evaluate ($data.ambig_scale=$ambig_scale)
-evaluate ($data.unambig_scale=$unambig_scale)
-evaluate ($data.hbond_scale=$hbond_scale)
-
-evaluate ($data.contactairs=$contactairs)
-if ($data.contactairs eq true) then
-    evaluate ($data.randremoval = false)
-end if
-evaluate ($data.kcont=$kcont)
-
-! NCS restraints
-evaluate ($data.kncs = $kncs)
-evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.nncs = $nncs)
-
-! Symmetry restraints
-evaluate ($data.ksym = $ksym)
-evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.nc2sym = $nc2sym)
-evaluate ($data.nc3sym = $nc3sym)
-evaluate ($data.ns3sym = $ns3sym)
-evaluate ($data.nc4sym = $nc4sym)
-evaluate ($data.nc5sym = $nc5sym)
-evaluate ($data.nc6sym = $nc6sym)
-
 !Dihedral angle energy term:
 evaluate ($data.flags.dihed = true)
 
@@ -117,57 +87,43 @@ else
     set message=off echo=off end
 end if
 
+
+{* Change segid of CG model and read AA pdb, psf and restraint files =========== *}
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+    evaluate ($nchain = $nchain + 1)
+    evaluate ($newseg = $prot_segid_$nchain + "CG")
+    do (segid = $newseg) (segid $prot_segid_$nchain)
+    structure @@$input_aa_psf_filename_$nchain end
+    coor @@$input_aa_pdb_filename_$nchain
+end loop nloop1
+
+
 {* Read paramters and set various force field related variables *}
 
 @MODULE:read_param.cns
 
+! short nonbonded cutoff first to speed up calculations
 parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=6.5 ctofnb=5.5 ctonnb=4.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance  0.5
+    end
     bond  (all) (all) 1000 TOKEN
     angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
     angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
-igroup
-    interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
-                 (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
-    interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
-                 (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
-    interaction  (resn SHA) (not resn SHA) weight * 0 end
-end
+set message=normal echo=on end
 
-flag include bond angle impr vdw end
-
-if ($data.flags.dihed eq true) then
-  flag include dihed end
-end if
-
-if ($data.flags.elec eq false) then
-    evaluate ($elec=0.0)
-    flag exclude elec end
-end if
-
-! Parameters for the presence of a CG model
-parameter
-    nbonds
-        nbxmod=5 atom cdie shift
-        cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
-        wmin=0.5 tolerance 0.5
-     end
-end
-
-parameter nbonds ? end end
-
-
-{* set the energy flags ======================================================== *}
-
-inline @MODULE:setflags.cns
-
-
-{* Define restraint function =================================================== *}
+{* Define restraining function and read CGtoAA restraints ====================== *}
 
 noe 
   nres 1000000
+  class      cgaa
   averaging  cgaa center
   scale      cgaa 50.0
   sqconstant cgaa 1.0
@@ -181,45 +137,30 @@ noe
   mrswitch    cgaa 1.0
 end
 
-
-{* Change segid of CG model and read AA pdb, psf and restraint files =========== *}
-
 evaluate ($nchain=0)
 while ($nchain < $data.ncomponents) loop nloop1
     evaluate ($nchain = $nchain + 1)
-    evaluate ($newseg = $prot_segid_$nchain + "CG")
-    do (segid = $newseg) (segid $prot_segid_$nchain)
-    structure @@$input_aa_psf_filename_$nchain end
-    coor @@$input_aa_pdb_filename_$nchain
-    noe @$input_cgtbl_filename_$nchain
+    noe @@$input_cgtbl_filename_$nchain end
 end loop nloop1
 
-
-{* Check for the presence of ions and add distance restraints / covalent bond == *}
-
-@MODULE:restrain-ions.cns
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
 
 
 {* Morph AA model to CG model ================================================== *}
 
-
-! Fix the CG model
-fix sele=(segid *CG) end
-
-parameter
-    nbonds
-        nbxmod=5 atom cdie shift
-        cutnb=6.5 ctofnb=5.5 ctonnb=4.5 eps=1.0 e14fac=0.4 inhibit 0.25
-        wmin=0.5 tolerance  0.5
-    end
-end
-
 evaluate ($kinter = 0.001)
-@MODULE:scale_inter.cns
+@MODULE:scale_cg-to-aa.cns
 
 flag excl * incl noe end
 
-energy end
+! Fix the CG model
+fix sele=(segid *CG) end
 
 ! Rigid body EM to position AA model onto CG model
 !
@@ -227,16 +168,24 @@ minimize rigid
     eval ($nchain = 0)
     while ($nchain < $data.ncomponents) loop nloop1
         eval($nchain = $nchain + 1)
-        group (segid $Toppar.prot_segid_$nchain)
+        group (segid $prot_segid_$nchain)
         translation=true
     end loop nloop1
     nstep 200
     nprint 10  
 end
 
+
 ! Define secondary structure dihedral angle restraints
 !
-@MODULE:protein-ss-restraints-alpha-beta.def
+@MODULE:protein-ss-restraints-alpha-beta.cns
+
+
+! Check for the presence of ions and add distance restraints / covalent bond 
+
+@MODULE:restrain-ions.cns
+
+
 
 ! Check for fully flexible segments and increase the MD refinement length if detected
 !
@@ -291,7 +240,7 @@ end if
 ! Define secondary structure dihedral angle restraints
 !
 rest dihe reset end
-@MODULE:protein-ss-restraints-alpha-beta.def
+@MODULE:protein-ss-restraints-alpha-beta.cns
 
 evaluate ($kinter = 0.5)
 @MODULE:scale_cg-to-aa.cns
@@ -326,7 +275,7 @@ end if
 ! Define secondary structure dihedral angle restraints
 !
 rest dihe reset end
-@MODULE:protein-ss-restraints-alpha-beta.def
+@MODULE:protein-ss-restraints-alpha-beta.cns
 
 evaluate ($kinter = 1.0)
 @MODULE:scale_cg-to-aa.cns
@@ -358,6 +307,7 @@ if ($failure eq false) then
 
 end if
 
+! Define regular AA nonbonded settings
 parameter
     nbonds
         nbxmod=5 atom cdie shift
@@ -369,7 +319,7 @@ end
 ! Define secondary structure dihedral angle restraints
 !
 rest dihe reset end
-@MODULE:protein-ss-restraints-alpha-beta.def
+@MODULE:protein-ss-restraints-alpha-beta.cns
 
 evaluate ($kinter = 1.0)
 @MODULE:scale_cg-to-aa.cns
@@ -411,16 +361,6 @@ parameter nbonds eps=1.0 end end
 delete sele=(segid *CG) end
 
 
-! Define AA parameters
-
-parameter
-    nbonds
-        nbxmod=5 atom cdie shift
-        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
-        wmin=0.5 tolerance  0.5
-    end
-end
-
 if ($data.flags.elec eq true) then
     flag include elec end
     if ($data.dielec eq "rdie") then
@@ -439,6 +379,7 @@ end if
 
 flag excl harm end
 mini powell nstep=$nemsteps drop=10 nprint=10 end
+
 
 {* ======================= calculate free molecules internal energy ============ *}
 
@@ -502,70 +443,16 @@ else
     @MODULE:scale_intra_only.cns
 end if
 
-noe
-    scale dist $data.unambig_scale
-    scale ambi $data.ambig_scale
-    scale hbon $data.hbond_scale
-    scale symm 0.0
-    scale cont 0.0
-end
 energy end
 evaluate ($eair= $noe)
-
 evaluate ($esym = 0.0)
 evaluate ($ncs = 0.0)
 evaluate ($zhar = 0.0)
 evaluate ($rms_test_noe = 0.0)
 evaluate ($violations_test_noe = 0)
-if ($data.flags.sym eq true) then
-    ! calculatee first the symmetry energy
-    noe reset nres= 1200000 end
-    @MODULE:symmultimer.cns
-    noe
-        scale symm $data.ksym
-    end
-    energy end
-    evaluate ($esym = $noe)
-    if ($data.randremoval eq true) then
-        evaluate ($violations_test_noe=0)
-        evaluate ($rms_test_noe=0.0)
-        display Print out of cross-validated violations and rms not
-        display possible in combination with symmetry restraints
-        display CV values set therefore to 0
-    end if
-    noe reset end
-    set seed=$seed end
-    !read back all the distance restraints:
-    @@MODULE:read_noes.cns
-    !random removal of restaints
-    if ($data.randremoval eq true) then
-        noe cv $npart ? end
-    end if
-    noe
-        scale dist $data.unambig_scale
-        scale ambi $data.ambig_scale
-        scale hbon $data.hbond_scale
-    end
-    print threshold=0.3 noe
-    evaluate ($rms_noe=$result)
-    evaluate ($violations_noe=$violations)
-    if ($data.randremoval eq true) then
-        evaluate ($rms_test_noe=$test_rms)
-        evaluate ($violations_test_noe=$test_violations)
-    end if
-else
-    print threshold=0.3 noe
-    evaluate ($rms_noe=$result)
-    evaluate ($violations_noe=$violations)
-    if ($data.randremoval eq true) then
-        evaluate ($rms_test_noe=$test_rms)
-        evaluate ($violations_test_noe=$test_violations)
-    end if
-end if
-
-if ($data.dnarest eq true ) then
-    @MODULE:dna-rna_restraints.cns
-end if
+print threshold=0.3 noe
+evaluate ($rms_noe=$result)
+evaluate ($violations_noe=$violations)
 
 energy end
 evaluate ($etot = $ener - $noe)

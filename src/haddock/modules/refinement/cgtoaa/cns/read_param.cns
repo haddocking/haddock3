@@ -62,14 +62,6 @@ parameter
     @@$nuclcg_parameter_infile
 end
 
-parameter
-    nbonds
-        nbxmod=5 atom cdie shift
-        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
-        wmin=0.5 tolerance  0.5
-    end
-end
-
 igroup
   interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
                (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
@@ -79,4 +71,3 @@ igroup
 
 end
 
-inline @MODULE:charge-beads-interactions.cns

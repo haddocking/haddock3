@@ -18,19 +18,19 @@ igroup
   while ($nchain1 < $data.ncomponents) loop nloop1
     eval($nchain1 = $nchain1 + 1)
     
-    eval($scalfac = $kinter * $Toppar.int_$nchain1_$nchain1)
+    eval($scalfac = $kinter * $scale.int_$nchain1_$nchain1)
     
-    interaction (segid $Toppar.prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) 
-                (segid $Toppar.prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1.0 vdw $scalfac elec $scalfac end
-    interaction (segid $Toppar.prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) 
+    interaction (segid $prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) 
+                (segid $prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1.0 vdw $scalfac elec $scalfac end
+    interaction (segid $prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) 
                 ((resn WAT or resn HOH or resn TIP* or resn DMS)) weight * 1.0 vdw $kinter elec $kinter end
   
     eval($nchain2 = $nchain1 )
     while ($nchain2 < $data.ncomponents) loop nloop2
       eval($nchain2 = $nchain2 + 1)
-      eval($scalfac = $kinter * $Toppar.int_$nchain1_$nchain2)
-      interaction (segid $Toppar.prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
-                  (segid $Toppar.prot_segid_$nchain2 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1.0 vdw $scalfac elec $scalfac end
+      eval($scalfac = $kinter * $scale.int_$nchain1_$nchain2)
+      interaction (segid $prot_segid_$nchain1 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+                  (segid $prot_segid_$nchain2 and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1.0 vdw $scalfac elec $scalfac end
     end loop nloop2
 
   end loop nloop1

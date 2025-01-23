@@ -18,8 +18,131 @@ mol_shape_1:
   group: 'molecule'
   explevel: easy
 #
+# Group distance restraints
+#
+ambig_fname:
+  default: ''
+  type: file
+  title: Ambiguous distance restraints filename
+  short: Filename of the ambiguous distance restraints file
+  long: Filename of the ambiguous distance restraints file. By default 50% of those restraints will be randomly discared. 
+    This can be changed/turned off and is controlled by the randremoval and npart parameters.
+    Note that this file can contain both ambiguous and unambiguous restraints.
+  group: 'distance restraints'
+  explevel: easy
+previous_ambig:
+  default: false
+  type: boolean
+  title: Boolean condition on the previous ambiguous distance restraints file
+  short: Boolean condition on the previous ambiguous distance restraints file.
+    If true, use the the restraint information coming from the previous CNS module. If false, don't use previous information.
+  long: Boolean condition on the ambiguous distance restraints file.
+    If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
+    If false, don't use previous information.
+  group: 'distance restraints'
+  explevel: expert
+unambig_fname:
+  default: ''
+  type: file
+  title: Unambiguous restraints filename
+  short: Filename of the unambiguous distance restraints file
+  long: Filename of the unambiguous distance restraints file. All restraints in that file will be used. 
+    Note that this file can contain both ambiguous and unambiguous restraints.
+  group: 'distance restraints'
+  explevel: easy
+hbond_fname:
+  default: ''
+  type: file
+  title: H-bond restraints filename
+  short: Filename of the hydrogen bond distance restraints file
+  long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
+  group: 'distance restraints'
+  explevel: easy
+ambig_scale:
+  default: 50
+  type: integer
+  min: 0
+  max: 1000
+  title: Force constant for ambiguous distance restraints
+  short: Force constant applied to the distance restraints defined in ambig_fname.
+  long: Force constant applied to the distance restraints defined in ambig_fname.
+  group: 'distance restraints'
+  explevel: expert
+unambig_scale:
+  default: 50
+  type: integer
+  min: 0
+  max: 1000
+  title: Force constant for unambiguous distance restraints
+  short: Force constant applied to the distance restraints defined in unambig_fname.
+  long: Force constant applied to the distance restraints defined in unambig_fname.
+  group: 'distance restraints'
+  explevel: expert
+hbond_scale:
+  default: 50
+  type: integer
+  min: 0
+  max: 1000
+  title: Force constant for hbonds distance restraints
+  short: Force constant applied to the distance restraints defined in hbond_fname.
+  long: Force constant applied to the distance restraints defined in hbond_fname.
+  group: 'distance restraints'
+  explevel: expert
+randremoval:
+  default: true
+  type: boolean
+  title: Random removal of ambiguous restraints
+  short: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated.
+  long: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated. 
+    The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. 
+    The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
+  group: 'distance restraints'
+  explevel: expert
+npart:
+  default: 2
+  type: integer
+  min: 1
+  max: 20
+  title: Number partitions for ambiguous restraints
+  short: Number of sets into which to randomly partition the ambiguous restraints. 
+  long: Number of sets into which to randomly partition the ambiguous restraints. 
+    The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. 
+    The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
+  group: 'distance restraints'
+  explevel: expert
+contactairs:
+  default: false
+  type: boolean
+  title: Contact restraints
+  short: Contact restraints between molecules
+  long: Contact restraints between molecules. These are defined as ambiguous distance restraint
+    between each residue of a molecule and all residues of the other molecules with 5A from that residue.
+    This can be used to restraint the contacts between the interfaces. Note that this can generate a large number of ambiguous restraints
+    and slow down the computations
+  group: 'distance restraints'
+  explevel: expert
+kcont:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Contact restraints force constant
+  short: Force constant applied to the contact restraints.
+  long: Force constant applied to the contact restraints.
+  group: 'distance restraints'
+  explevel: expert
+#
 # Group dihedral restraints
 #
+dihe_fname:
+  default: ''
+  type: file
+  title: Dihedral angle restraints filename
+  short: Filename of the Dihedral angle restraints file
+  long: Filename of the Dihedral angle restraints file. 
+  group: 'dihedral restraints'
+  explevel: easy
 dihedrals_on:
   default: false
   type: boolean
@@ -83,6 +206,890 @@ dnarest_on:
     - Watson-Crick base pairing"
   group: 'other restraints'
   explevel: easy
+#
+# Group symmetry
+#
+sym_on:
+  default: false
+  type: boolean
+  title: Symmetry restraints
+  short: Enables symmetry restraints
+  long: Enables symmetry restraints. The symmetry type (C2,C3,C4,C5,C6,S3 supported) 
+    and the segments to which those apply must be defined. In addition a custom symmetry restraint file can be supplied (symrest_fname).
+  group: 'symmetry'
+  explevel: expert
+ksym:
+  default: 10.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Force constant for symmetry restraints
+  short: Force constant for symmetry restraints
+  long: Force constant for symmetry restraints
+  group: 'symmetry'
+  explevel: expert
+symtbl_fname:
+  default: ''
+  type: file
+  title: Custom symmetry restraints filename
+  short: Filename of the custom symmetry restraints file
+  long: Filename of the custom symmetry restraints file. 
+  group: 'symmetry'
+  explevel: expert
+nc2sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 40
+  title: Number of C2 symmetry restraints
+  short: Defines the number of C2 symmetry restraints.
+  long: Defines the number of C2 symmetry restraints. 
+    For each, a pair of segments on which the symmetry restraint is applied will have to be defined.
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: hidden
+c2sym_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C2 symmetry segment
+  long: Residue number of first residue in the first C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c2sym_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C2 symmetry segment
+  long: Residue number of last residue in the first C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c2sym_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of first C2 segment
+  short: Segment ID of first C2 segment
+  long: Segment ID of first C2 segment
+  group: 'symmetry'
+  explevel: expert
+c2sym_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C2 symmetry segment
+  long: Residue number of first residue in the second C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c2sym_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C2 symmetry segment
+  long: Residue number of last residue in the second C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c2sym_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of second C2 segment
+  short: Segment ID of second C2 segment
+  long: Segment ID of second C2 segment
+  group: 'symmetry'
+  explevel: expert
+nc3sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 10
+  title: Number of C3 symmetry restraints
+  short: Defines the number of C3 symmetry restraints.
+  long: Defines the number of C3 symmetry restraints. 
+    For each, three segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: hidden
+c3sym_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C3 symmetry segment
+  long: Residue number of first residue in the first C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C3 symmetry segment
+  long: Residue number of last residue in the first C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of first C3 segment
+  short: Segment ID of first C3 segment
+  long: Segment ID of first C3 segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C3 symmetry segment
+  long: Residue number of first residue in the second C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C3 symmetry segment
+  long: Residue number of last residue in the second C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of second C3 segment
+  short: Segment ID of second C3 segment
+  long: Segment ID of second C3 segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_sta3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C3 symmetry segment
+  long: Residue number of first residue in the third C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_end3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C3 symmetry segment
+  long: Residue number of last residue in the third C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c3sym_seg3_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of third C3 segment
+  short: Segment ID of third C3 segment
+  long: Segment ID of third C3 segment
+  group: 'symmetry'
+  explevel: expert
+nc4sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 10
+  title: Number of C4 symmetry restraints
+  short: Defines the number of C4 symmetry restraints.
+  long: Defines the number of C4 symmetry restraints. 
+    For each, four segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: hidden
+c4sym_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C4 symmetry segment
+  long: Residue number of first residue in the first C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C4 symmetry segment
+  long: Residue number of last residue in the first C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of first C4 segment
+  short: Segment ID of first C4 segment
+  long: Segment ID of first C4 segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C4 symmetry segment
+  long: Residue number of first residue in the second C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C4 symmetry segment
+  long: Residue number of last residue in the second C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of second C4 segment
+  short: Segment ID of second C4 segment
+  long: Segment ID of second C4 segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_sta3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C4 symmetry segment
+  long: Residue number of first residue in the third C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_end3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C4 symmetry segment
+  long: Residue number of last residue in the third C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_seg3_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of third C4 segment
+  short: Segment ID of third C4 segment
+  long: Segment ID of third C4 segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_sta4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the fourth C4 symmetry segment
+  long: Residue number of first residue in the fourth C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_end4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the fourth C4 symmetry segment
+  long: Residue number of last residue in the fourth C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c4sym_seg4_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of fourth C4 segment
+  short: Segment ID of fourth C4 segment
+  long: Segment ID of fourth C4 segment
+  group: 'symmetry'
+  explevel: expert
+nc5sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 10
+  title: Number of C5 symmetry restraints
+  short: Defines the number of C5 symmetry restraints.
+  long: Defines the number of C5 symmetry restraints. 
+    For each, five segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: hidden
+c5sym_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C5 symmetry segment
+  long: Residue number of first residue in the first C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C5 symmetry segment
+  long: Residue number of last residue in the first C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of first C5 segment
+  short: Segment ID of first C5 segment
+  long: Segment ID of first C5 segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C5 symmetry segment
+  long: Residue number of first residue in the second C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C5 symmetry segment
+  long: Residue number of last residue in the second C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of second C5 segment
+  short: Segment ID of second C5 segment
+  long: Segment ID of second C5 segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_sta3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C5 symmetry segment
+  long: Residue number of first residue in the third C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_end3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C5 symmetry segment
+  long: Residue number of last residue in the third C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_seg3_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of third C5 segment
+  short: Segment ID of third C5 segment
+  long: Segment ID of third C5 segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_sta4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the fourth C5 symmetry segment
+  long: Residue number of first residue in the fourth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_end4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the fourth C5 symmetry segment
+  long: Residue number of last residue in the fourth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_seg4_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of fourth C5 segment
+  short: Segment ID of fourth C5 segment
+  long: Segment ID of fourth C5 segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_sta5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the fifth C5 symmetry segment
+  long: Residue number of first residue in the fifth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_end5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the fifth C5 symmetry segment
+  long: Residue number of last residue in the fifth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c5sym_seg5_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of fifth C5 segment
+  short: Segment ID of fifth C5 segment
+  long: Segment ID of fifth C5 segment
+  group: 'symmetry'
+  explevel: expert
+nc6sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 10
+  title: Number of C6 symmetry restraints
+  short: Defines the number of C6 symmetry restraints.
+  long: Defines the number of C6 symmetry restraints. 
+    For each, six segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: hidden
+c6sym_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C6 symmetry segment
+  long: Residue number of first residue in the first C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C6 symmetry segment
+  long: Residue number of last residue in the first C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of first C6 segment
+  short: Segment ID of first C6 segment
+  long: Segment ID of first C6 segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C6 symmetry segment
+  long: Residue number of first residue in the second C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C6 symmetry segment
+  long: Residue number of last residue in the second C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of second C6 segment
+  short: Segment ID of second C6 segment
+  long: Segment ID of second C6 segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_sta3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C6 symmetry segment
+  long: Residue number of first residue in the third C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_end3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C6 symmetry segment
+  long: Residue number of last residue in the third C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_seg3_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of third C6 segment
+  short: Segment ID of third C6 segment
+  long: Segment ID of third C6 segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_sta4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the fourth C6 symmetry segment
+  long: Residue number of first residue in the fourth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_end4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the fourth C6 symmetry segment
+  long: Residue number of last residue in the fourth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_seg4_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of fourth C6 segment
+  short: Segment ID of fourth C6 segment
+  long: Segment ID of fourth C6 segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_sta5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the fifth C6 symmetry segment
+  long: Residue number of first residue in the fifth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_end5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the fifth C6 symmetry segment
+  long: Residue number of last residue in the fifth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_seg5_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of fifth C6 segment
+  short: Segment ID of fifth C6 segment
+  long: Segment ID of fifth C6 segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_sta6_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the sixth C6 symmetry segment
+  long: Residue number of first residue in the sixth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_end6_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the sixth C6 symmetry segment
+  long: Residue number of last residue in the sixth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+c6sym_seg6_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of sixth C6 segment
+  short: Segment ID of sixth C6 segment
+  long: Segment ID of sixth C6 segment
+  group: 'symmetry'
+  explevel: expert
+ns3sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 10
+  title: Number of S3 symmetry restraints
+  short: Defines the number of S3 symmetry restraints.
+  long: Defines the number of S3 symmetry restraints. 
+    For each, three segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: hidden
+s3sym_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first S3 symmetry segment
+  long: Residue number of first residue in the first S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first S3 symmetry segment
+  long: Residue number of last residue in the first S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of first S3 segment
+  short: Segment ID of first S3 segment
+  long: Segment ID of first S3 segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second S3 symmetry segment
+  long: Residue number of first residue in the second S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second S3 symmetry segment
+  long: Residue number of last residue in the second S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of second S3 segment
+  short: Segment ID of second S3 segment
+  long: Segment ID of second S3 segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_sta3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the third S3 symmetry segment
+  long: Residue number of first residue in the third S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_end3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the third S3 symmetry segment
+  long: Residue number of last residue in the third S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
+s3sym_seg3_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 4
+  title: Segment ID of third S3 segment
+  short: Segment ID of third S3 segment
+  long: Segment ID of third S3 segment
+  group: 'symmetry'
+  explevel: expert
+ncs_on:
+  default: false
+  type: boolean
+  title: Non-crystallographic symmetry restraints
+  short: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.
+  long: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.
+    This does not apply any symmetry between the two molecules but rather defines restraints such as the RMSD between those is 0.
+  group: 'symmetry'
+  explevel: expert
+kncs:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Force constant for non-crystallographic restraints
+  short: Force constant for non-crystallographic restraints
+  long: Force constant for non-crystallographic restraints
+  group: 'symmetry'
+  explevel: expert
+nncs:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of non-crystallographic symmetry restraints
+  short: Number of non-crystallographic symmetry restraints (NCS).
+  long: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined.
+    Note that those must contain exactly the same residues/atom combinations.
+  group: 'symmetry'
+  explevel: hidden
+ncs_sta1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the first NCS segment
+  long: Residue number of first residue in the first NCS segment
+  group: 'symmetry'
+  explevel: expert
+ncs_end1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the first NCS segment
+  long: Residue number of last residue in the first NCS segment
+  group: 'symmetry'
+  explevel: expert
+ncs_seg1_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: Segment ID of first NCS segment
+  short: Segment ID of first NCS segment
+  long: Segment ID of first NCS segment
+  group: 'symmetry'
+  explevel: expert
+ncs_sta2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of first residue
+  short: Residue number of first residue in the second NCS segment
+  long: Residue number of first residue in the second NCS segment
+  group: 'symmetry'
+  explevel: expert
+ncs_end2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Residue number of last residue
+  short: Residue number of last residue in the second NCS segment
+  long: Residue number of last residue in the second NCS segment
+  group: 'symmetry'
+  explevel: expert
+ncs_seg2_1:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: Segment ID of second NCS segment
+  short: Segment ID of second NCS segment
+  long: Segment ID of second NCS segment
+  group: 'symmetry'
+  explevel: expert
 #
 # Group scoring
 #

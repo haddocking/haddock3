@@ -334,7 +334,7 @@ def prepare_cns_input(
                 if psf is None:
                     raise ValueError(f"AA Topology not found {input_element.rel_path}.")
                 else:
-                    aa_psf_list.append(psf.as_posix())
+                    aa_psf_list.append(psf.rel_path.as_posix())
             for tbl in input_element.aatocg_tbl :
                 if tbl is None:
                     raise ValueError(f"AA to CG restraint file not found {input_element.rel_path}.")
@@ -344,7 +344,7 @@ def prepare_cns_input(
             pdb = input_element
             if pdb.aa_topology is None:
                 raise ValueError(f"AA Topology not found {input_element.rel_path}.")
-            aa_psf_list.append(pdb.aa_topology.as_posix())
+            aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
             if pdb.aatocg_tbl is None:
                 raise ValueError(f"AA to CG restraint file not found {input_element.rel_path}.")
             aatocg_tbl_list.append(pdb.aatocg_tbl.as_posix())

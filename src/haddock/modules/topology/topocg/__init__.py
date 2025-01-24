@@ -319,18 +319,19 @@ class HaddockModule(BaseCNSModule):
                         )
 
                 topology = TopologyFile(processed_topology, path=".")
+                psf_file_uniq = psf_files[i-1].as_posix().split('/') 
+                aa_topo_path = psf_file_uniq[0] + "/" + psf_file_uniq[1]
+                aa_topology = TopologyFile(psf_file_uniq[2], path=aa_topo_path)
                 pdb = PDBFile(
                     file_name=processed_pdb,
                     topology=topology,
-                    aa_topology=psf_files[i-1],
+                    aa_topology=aa_topology,
                     aatocg_tbl=Path("../"+self.path.as_posix()+"/"+model_name+"_aa_to_cg.tbl"),
                     path=".",
                     md5=md5_hash,
                 )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
-
-        #self.previous_io.add([{"topology_aa": "this is a test"}], mode="o")
 
         # Save module information
         self.output_models = list(expected.values())  # type: ignore

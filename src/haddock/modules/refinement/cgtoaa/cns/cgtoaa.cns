@@ -31,12 +31,9 @@ evaluate ($toppar.par_nonbonded = "OPLSX" )
 
 
 !Dihedrals, DNA and distance restraints
-evaluate ($data.dihedrals_scale=$dihedrals_scale)
-evaluate ($data.flags.cdih =$dihedrals_on)
-evaluate ($data.dnarest =$dnarest_on)
-evaluate ($data.ssdihed =$ssdihed)
-evaluate ($data.error_dih =$error_dih)
-
+evaluate ($data.dihedrals_scale= 200)
+evaluate ($data.flags.cdih = false)
+evaluate ($data.error_dih = 10)
 
 ! planarity restraints
 evaluate ($data.flags.plan =  false)

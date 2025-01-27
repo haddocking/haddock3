@@ -18,75 +18,6 @@ mol_shape_1:
   group: 'molecule'
   explevel: easy
 #
-# Group distance restraints
-#
-#
-# Group dihedral restraints
-#
-dihedrals_on:
-  default: false
-  type: boolean
-  title: Use dihedral angle restraints
-  short: Turns on dihedral angle restraints.
-  long: Turns on dihedral angle restraints. Those should be defined in the dihe_fname file.
-  group: 'dihedral restraints'
-  explevel: easy
-dihedrals_scale:
-  default: 200
-  type: integer
-  min: 0
-  max: 9999
-  title: Force constant for dihedral angle restraints
-  short: Force constant applied to the dihedral angle restraints read from dihe_fname.
-  long: Force constant applied to the dihedral angle restraints read from dihe_fname.
-  group: 'dihedral restraints'
-  explevel: easy
-ssdihed:
-  default: none
-  type: string
-  minchars: 0
-  maxchars: 100
-  choices:
-    - none
-    - all
-    - alpha
-    - alphabeta
-  title: Define automatically backbone dihedral angle restraints
-  short: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.
-  long: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions.
-    The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from
-    the measured angle in the input structure, and the error bound defined by the error_dih parameter.
-    Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or
-    only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.
-  group: 'dihedral restraints'
-  explevel: easy
-error_dih:
-  default: 10
-  type: integer
-  min: 0
-  max: 180
-  title: Force constant for backbone dihedral angle restraints
-  short: Force constant for backbone dihedral angle restraints (ssdihed option)
-  long: Force constant for backbone dihedral angle restraints (ssdihed option)
-  group: 'dihedral restraints'
-  explevel: easy
-#
-# Group other restraints
-#
-dnarest_on:
-  default: false
-  type: boolean
-  title: Restrain the DNA conformation
-  short: Automatically creates restraints to maintain the conformation of DNA/RNA
-  long: "This option allows to restraint the conformation of nucleic acids based on the values from the input structures.
-    The following restraints will be automatically defined:
-    - single base planarity
-    - sugar pucker
-    - phosphate backbone diherdral angle restraints
-    - Watson-Crick base pairing"
-  group: 'other restraints'
-  explevel: easy
-#
 # Group scoring
 #
 w_air:
@@ -387,14 +318,6 @@ iniseed:
   title: Random seed
   short: Random seed used in CNS to initialize the random seed function
   long: Random seed used in CNS to initialize the random seed function
-  group: 'sampling'
-  explevel: guru
-keepwater:
-  default: false
-  type: boolean
-  title: Write water molecules to output file
-  short: Write water molecules if present to the output file.
-  long: Write water molecules if present to the output file.
   group: 'sampling'
   explevel: guru
 tolerance:

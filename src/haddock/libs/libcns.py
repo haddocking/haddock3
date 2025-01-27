@@ -346,7 +346,7 @@ def prepare_cns_input(
                 raise ValueError(f"AA Topology not found {input_element.rel_path}.")
             aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
             if pdb.aatocg_tbl is None:
-                raise ValueError(f"AA to CG restraint file not found {input_element.rel_path}.")
+                raise ValueError(f"CG to AA restraint file not found for entry: {input_element.rel_path}.")
             aatocg_tbl_list.append(pdb.aatocg_tbl.as_posix())
 
     input_str = prepare_multiple_input(

@@ -70,7 +70,7 @@ class PDBFile(Persistent):
         file_name: Union[Path, str],
         topology: Optional[Any] = None,
         aa_topology: Optional[Any] = None,
-        aatocg_tbl:Optional[Any] = None,
+        cgtoaa_tbl:Optional[Any] = None,
         path: Union[Path, str] = ".",
         score: float = NaN,
         md5: Optional[str] = None,
@@ -81,7 +81,7 @@ class PDBFile(Persistent):
 
         self.topology = topology
         self.aa_topology = aa_topology 
-        self.aatocg_tbl = aatocg_tbl
+        self.cgtoaa_tbl = cgtoaa_tbl
         self.score = score
         self.ori_name: Optional[str] = None
         self.clt_id: Union[str, int, None] = None

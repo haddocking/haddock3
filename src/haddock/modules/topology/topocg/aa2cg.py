@@ -631,7 +631,7 @@ def martinize(input_pdb, output_path, skipss):
     Path("temp.pdb").unlink(missing_ok=True)
 
     # Write Restraints
-    tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_aa_to_cg.tbl"
+    tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg_to_aa.tbl"
     tbl_file = open(tbl_file_name, "w")
     tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
     tbl_file.write(f"\n{tbl_str}")

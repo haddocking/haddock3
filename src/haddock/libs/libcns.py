@@ -327,7 +327,7 @@ def prepare_cns_input(
         psf_list.append(psf_fname)
 
     aa_psf_list: list[Path] = []
-    aatocg_tbl_list: list[Path] = []
+    cgtoaa_tbl_list: list[Path] = []
     if cgtoaa==True:
         if isinstance(input_element.aa_topology, (list)):
             for psf in input_element.aa_topology:
@@ -335,19 +335,19 @@ def prepare_cns_input(
                     raise ValueError(f"All-Atom Topology not found {input_element.rel_path}.")
                 else:
                     aa_psf_list.append(psf.rel_path.as_posix())
-            for tbl in input_element.aatocg_tbl :
+            for tbl in input_element.cgtoaa_tbl :
                 if tbl is None:
                     raise ValueError(f"Coarse-Crain to All-Atom restraint file not found {input_element.rel_path}.")
                 else:
-                    aatocg_tbl_list.append(tbl.as_posix())
+                    cgtoaa_tbl_list.append(tbl.as_posix())
         else:
             pdb = input_element
             if pdb.aa_topology is None:
                 raise ValueError(f"All-Atom Topology not found {input_element.rel_path}.")
             aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
-            if pdb.aatocg_tbl is None:
+            if pdb.cgtoaa_tbl is None:
                 raise ValueError(f"Coarse-Crain to All-Atom restraint file not found for entry: {input_element.rel_path}.")
-            aatocg_tbl_list.append(pdb.aatocg_tbl.as_posix())
+            cgtoaa_tbl_list.append(pdb.cgtoaa_tbl.as_posix())
 
     input_str = prepare_multiple_input(
         pdb_input_list=[str(p) for p in pdb_list],
@@ -362,10 +362,10 @@ def prepare_cns_input(
             # eval line for pdb
             param_pdb = "input_aa_pdb_filename_" + str(i+1)
             input_str += write_eval_line(param_pdb, aa_psf_list[i][:-4]+".pdb")
-        for i in range(len(aatocg_tbl_list)):
+        for i in range(len(cgtoaa_tbl_list)):
             # eval line for tbl
             param_tbl = "input_cgtbl_filename_" + str(i+1)
-            input_str += write_eval_line(param_tbl, aatocg_tbl_list[i])
+            input_str += write_eval_line(param_tbl, cgtoaa_tbl_list[i])
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
 
@@ -435,5 +435,5 @@ def prepare_expected_pdb(
         pdb.topology = model_obj.topology
         pdb.seed = model_obj.seed
     pdb.aa_topology = model_obj.aa_topology
-    pdb.aatocg_tbl = model_obj.aatocg_tbl
+    pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
     return pdb

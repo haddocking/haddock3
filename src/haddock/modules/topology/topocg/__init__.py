@@ -326,7 +326,7 @@ class HaddockModule(BaseCNSModule):
                     file_name=processed_pdb,
                     topology=topology,
                     aa_topology=aa_topology,
-                    aatocg_tbl=Path("../"+self.path.as_posix()+"/"+model_name+"_aa_to_cg.tbl"),
+                    cgtoaa_tbl=Path("../"+self.path.as_posix()+"/"+model_name+"_cg_to_aa.tbl"),
                     path=".",
                     md5=md5_hash,
                 )

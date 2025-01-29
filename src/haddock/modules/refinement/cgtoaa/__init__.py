@@ -73,7 +73,7 @@ class HaddockModule(BaseCNSModule):
             model_idx += 1
 
             #print(self.params["sampling_factor"])
-            for _ in range(self.params["sampling_factor"]):
+            for s_ind in range(self.params["sampling_factor"]):
                 cgtoaa_input = prepare_cns_input(
                     idx,
                     model,
@@ -83,7 +83,7 @@ class HaddockModule(BaseCNSModule):
                     "cgtoaa",
                     native_segid=True,
                     debug=self.params["debug"],
-                    seed=model.seed if isinstance(model, PDBFile) else None,
+                    seed=(model.seed + s_ind) if isinstance(model, PDBFile) else None,
                     cgtoaa=True
                 )
                 out_file = f"cgtoaa_{idx}.out"

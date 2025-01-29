@@ -370,9 +370,9 @@ def get_top_ranked_mapping(
         cluster_ranking: ClRank,
         clustered_topX: int = 4,
         unclustered_topX: int = 10,
-        ) -> dict[Path, str]:
+        ) -> dict[Path, Path]:
     # Set mapping of generated files
-    top_ranked_mapping: dict[Path, str] = {}
+    top_ranked_mapping: dict[Path, Path] = {}
 
     # Read table
     capri_df = read_capri_table(capri_filename, comment="#")
@@ -413,15 +413,15 @@ def get_top_ranked_mapping(
                 struct_gz = Path(f"{struct}.gz")
                 # copy the structure
                 if Path(struct).exists():
-                    top_ranked_mapping[struct] = target_name
+                    top_ranked_mapping[struct] = Path(target_name)
                 elif struct_gz.exists():
-                    top_ranked_mapping[struct_gz] = target_name
+                    top_ranked_mapping[struct_gz] = Path(target_name)
                 else:
                     log.warning(f"structure {struct} not found")
     return top_ranked_mapping
 
 def zip_top_ranked(
-        top_ranked_mapping: dict[Path, str],
+        top_ranked_mapping: dict[Path, Path],
         summary_name: str,
         gen_archive: bool,
         ) -> Optional[Path]:
@@ -451,9 +451,9 @@ def zip_top_ranked(
     for ori_fpath, new_name in top_ranked_mapping.items():
         # If already compressed
         if ori_fpath.suffix == ".gz":
-            copied_fpath = shutil.copy(ori_fpath, ".")
+            copied_fpath = Path(shutil.copy(ori_fpath, "."))
             # unpack the file
-            _unpack_gz(copied_fpath.name)
+            _unpack_gz(copied_fpath)
             # Rename it
             shutil.move(copied_fpath.name.replace(".gz", ""), new_name)
         else:
@@ -482,7 +482,7 @@ def zip_top_ranked(
             # Create new path
             next_filepath = Path(output_fname, str(new_name))
             # Hold it in mapping dict
-            top_ranked_mapping[ori_fpath] = str(next_filepath)
+            top_ranked_mapping[ori_fpath] = Path(next_filepath)
             # Displace file
             shutil.move(new_name, top_ranked_mapping[ori_fpath])
         log.info(f"Top structures copied into {output_fname}!")
@@ -778,13 +778,12 @@ def main(
                 offline=offline,
                 mode=mode,
                 ncores=ncores,
-                #self_contained=self_contained,
-                self_contained=True,
+                self_contained=self_contained,
                 )
         except Exception as e:
             log.warning(
                 f"Could not execute the analysis for step {step}. "
-                f"The following error occurred {e}"
+                f"The following error occurred: {e}"
                 )
             bad_folder_paths.append(target_path)
         else:

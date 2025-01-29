@@ -332,21 +332,21 @@ def prepare_cns_input(
         if isinstance(input_element.aa_topology, (list)):
             for psf in input_element.aa_topology:
                 if psf is None:
-                    raise ValueError(f"AA Topology not found {input_element.rel_path}.")
+                    raise ValueError(f"All-Atom Topology not found {input_element.rel_path}.")
                 else:
                     aa_psf_list.append(psf.rel_path.as_posix())
             for tbl in input_element.aatocg_tbl :
                 if tbl is None:
-                    raise ValueError(f"AA to CG restraint file not found {input_element.rel_path}.")
+                    raise ValueError(f"Coarse-Crain to All-Atom restraint file not found {input_element.rel_path}.")
                 else:
                     aatocg_tbl_list.append(tbl.as_posix())
         else:
             pdb = input_element
             if pdb.aa_topology is None:
-                raise ValueError(f"AA Topology not found {input_element.rel_path}.")
+                raise ValueError(f"All-Atom Topology not found {input_element.rel_path}.")
             aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
             if pdb.aatocg_tbl is None:
-                raise ValueError(f"CG to AA restraint file not found for entry: {input_element.rel_path}.")
+                raise ValueError(f"Coarse-Crain to All-Atom restraint file not found for entry: {input_element.rel_path}.")
             aatocg_tbl_list.append(pdb.aatocg_tbl.as_posix())
 
     input_str = prepare_multiple_input(

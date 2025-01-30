@@ -155,7 +155,7 @@ ap.add_argument(
 
 ap.add_argument(
     "--self-contained",
-    help="Should the models be accessed locally?",
+    help="If self-contained is set, models will be copied locally in the analysis directory, allowing to visualize structures outside of the haddock3 run.",
     required=False,
     default=False,
     type=bool,

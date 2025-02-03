@@ -1,0 +1,484 @@
+! cg-to-aa.cns
+!    Converts a CG model to all atoms
+!
+! ***********************************************************************
+! * Copyright 2003-2025 Alexandre Bonvin, Utrecht University.           *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
+!==================================================================!
+! Initialisation of variables
+!==================================================================!
+
+evaluate ($ini_count    =1)
+
+evaluate ($data.ncomponents=$ncomponents)
+
+
+! non-bonded parameter set to use
+evaluate ($toppar.par_nonbonded = "OPLSX" )
+
+
+!Dihedrals, DNA and distance restraints
+evaluate ($data.dihedrals_scale= 200)
+evaluate ($data.flags.cdih = false)
+evaluate ($data.error_dih = 10)
+
+! planarity restraints
+evaluate ($data.flags.plan =  false)
+
+!Dihedral angle energy term:
+evaluate ($data.flags.dihed = true)
+
+!Electrostatics:
+evaluate ($data.flags.elec =$elecflag)
+evaluate ($data.epsilon =$epsilon)
+evaluate ($Data.epsilon_cg =$epsilon_cg)
+evaluate ($data.dielec  =$dielec)
+
+!Interaction matrix:
+evaluate ($nmol1=1)
+while ($nmol1 <=$data.ncomponents) loop mol1
+    evaluate ($nmol2=$nmol1 + 1)
+    evaluate ($scale.int_$nmol1_$nmol1 =$int_$nmol1_$nmol1)
+    while ($nmol2 <=$data.ncomponents) loop mol2
+        evaluate ($scale.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
+        evaluate ($nmol2=$nmol2 + 1)
+    end loop mol2
+    evaluate ($nmol1 = $nmol1 + 1)
+end loop mol1
+
+
+! Unsupported restraints
+evaluate ($data.flags.em   = false)
+evaluate ($data.flags.rg   = false)
+evaluate ($data.flags.zres = false)
+evaluate ($data.flags.sani = false)
+evaluate ($data.flags.xrdc = false)
+evaluate ($data.flags.xpcs = false)
+evaluate ($data.flags.dani = false)
+evaluate ($data.flags.vean = false)
+
+! Other parameters
+evaluate ($refine.keepwater = false)
+
+!==================================================================!
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
+
+{* Change segid of CG model and read AA pdb, psf and restraint files =========== *}
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+    evaluate ($nchain = $nchain + 1)
+    evaluate ($newseg = $prot_segid_$nchain + "CG")
+    do (segid = $newseg) (segid $prot_segid_$nchain)
+    structure @@$input_aa_psf_filename_$nchain end
+    coor @@$input_aa_pdb_filename_$nchain
+end loop nloop1
+
+
+{* Read paramters and set various force field related variables *}
+
+@MODULE:read_param.cns
+
+! short nonbonded cutoff first to speed up calculations
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=6.5 ctofnb=5.5 ctonnb=4.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance  0.5
+    end
+    bond  (all) (all) 1000 TOKEN
+    angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
+    angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
+    angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
+end
+
+set message=normal echo=on end
+
+{* Define restraining function and read CGtoAA restraints ====================== *}
+
+noe 
+  nres 1000000
+  class      cgaa
+  averaging  cgaa center
+  scale      cgaa 50.0
+  sqconstant cgaa 1.0
+  sqexponent cgaa 2
+  soexponent cgaa 1
+  rswitch    cgaa 1.0
+  sqoffset   cgaa 0.0
+  asymptote  cgaa 2.0
+  msoexponent cgaa 1
+  masymptote  cgaa -0.1
+  mrswitch    cgaa 1.0
+end
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+    evaluate ($nchain = $nchain + 1)
+    noe @@$input_cgtbl_filename_$nchain end
+end loop nloop1
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
+
+{* Morph AA model to CG model ================================================== *}
+
+evaluate ($kinter = 0.001)
+@MODULE:scale_cg-to-aa.cns
+
+flag excl * incl noe end
+
+! Fix the CG model
+fix sele=(segid *CG) end
+
+! Rigid body EM to position AA model onto CG model
+!
+minimize rigid
+    eval ($nchain = 0)
+    while ($nchain < $data.ncomponents) loop nloop1
+        eval($nchain = $nchain + 1)
+        group (segid $prot_segid_$nchain)
+        translation=true
+    end loop nloop1
+    nstep 200
+    nprint 10  
+end
+
+
+! Define secondary structure dihedral angle restraints
+!
+@MODULE:protein-ss-restraints-alpha-beta.cns
+
+
+! Check for the presence of ions and add distance restraints / covalent bond 
+
+@MODULE:restrain-ions.cns
+
+
+
+! Check for fully flexible segments and increase the MD refinement length if detected
+!
+evaluate($scalefac = 1.0)
+if ($nfle > 0) then
+    evaluate($scalefac = 10.0)
+end if
+
+! Starting the morphing for conformational changes
+! Powell EM, including covalent terms
+!
+
+flag excl * incl bond angl impr dihe vdw elec noe cdih end
+evaluate ($kinter = 0.01)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+evaluate ($kinter = 0.05)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+evaluate ($kinter = 0.1)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@MODULE:protein-ss-restraints-alpha-beta.cns
+
+evaluate ($kinter = 0.5)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@MODULE:protein-ss-restraints-alpha-beta.cns
+
+evaluate ($kinter = 1.0)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+! Define regular AA nonbonded settings
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance 0.5
+    end
+end
+
+! Define secondary structure dihedral angle restraints
+!
+rest dihe reset end
+@MODULE:protein-ss-restraints-alpha-beta.cns
+
+evaluate ($kinter = 1.0)
+@MODULE:scale_cg-to-aa.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (not segid *CG)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500 * $scalefac)
+    evaluate ($timestep=0.0005)
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)
+
+    dynamics cartesian
+        nstep=$nstep
+        timestep=$timestep
+        tcoupling=true temperature=$bath
+        nprint=50
+        cmremove=true
+    end
+
+    minimize powell nstep=500 drop=40.0 nprint=25 end
+
+end if
+
+minimize powell nstep=500 drop=40.0 nprint=25 end
+minimize powell nstep=500 drop=10.0 nprint=25 end
+
+energy end
+
+parameter nbonds eps=1.0 end end
+
+delete sele=(segid *CG) end
+
+
+if ($data.flags.elec eq true) then
+    flag include elec end
+    if ($data.dielec eq "rdie") then
+        parameter nbonds eps=$data.epsilon rdie shift switch end end
+        ! shift statement needed first to activate switch (CNS bug?)
+    else
+        parameter nbonds eps=$data.epsilon cdie end end
+    end if
+else
+    evaluate ($elec=0.0)
+    flag exclude elec end
+end if
+
+
+! final minimization
+
+flag excl harm end
+mini powell nstep=$nemsteps drop=10 nprint=10 end
+
+
+{* ======================= calculate free molecules internal energy ============ *}
+
+igroup
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
+                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
+end
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
+
+flag excl noe dani sani vean xrdc xpcs coll cdih zhar end
+flag include bond angle dihe impr vdw end
+
+evaluate ($elec = 0.0)
+evaluate ($eintfree = 0.0)
+if ($data.flags.elec eq true) then
+    flag include elec end
+end if
+
+inline @MODULE:calc_free-ene.cns
+
+fix sele=(not all) end
+
+do (x = refx) (all)
+do (y = refy) (all)
+do (z = refz) (all)
+
+
+{* ===================== calculate complex internal energy *}
+
+evaluate ($kinter = 1.0)
+flag include bond angle dihe impr vdw end
+energy end
+
+@MODULE:scale_intra_only.cns
+
+evaluate ($elec = 0.0)
+evaluate ($eintcplx = 0.0)
+if ($data.flags.elec eq true) then
+    flag include elec end
+    ! reset epsilon to the default AA value
+    parameter nbonds eps=$Data.epsilon end end
+end if
+
+energy end
+
+evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+
+
+{* ===================== calculate final energies and write structure *}
+evaluate ($cdih=0.0)
+flag incl noe cdih end
+if ($data.ncomponents > 1) then
+    evaluate ($kinter = 1.0)
+    @MODULE:scale_inter_final.cns
+else
+    @MODULE:scale_intra_only.cns
+end if
+
+energy end
+evaluate ($eair= $noe)
+evaluate ($esym = 0.0)
+evaluate ($ncs = 0.0)
+evaluate ($zhar = 0.0)
+evaluate ($rms_test_noe = 0.0)
+evaluate ($violations_test_noe = 0)
+print threshold=0.3 noe
+evaluate ($rms_noe=$result)
+evaluate ($violations_noe=$violations)
+
+energy end
+evaluate ($etot = $ener - $noe)
+evaluate ($noe = $eair)
+evaluate ($etot = $etot + $noe)
+
+inline @MODULE:print_coorheader.cns
+
+
+{* determine whether the final models should be reoriented along their principal *}
+{* axes before writing to file ================================================= *}
+eval($reorient = true)
+evaluate ($ncount = 0)
+while ($ncount < $data.ncomponents) loop orientmol
+    evaluate ($ncount = $ncount + 1)
+    eval($watersegname_$ncount="WA" + encode($ncount))
+    if ($mol_fix_origin_$ncount eq true) then
+        eval($reorient = false)
+    end if
+end loop orientmol
+
+if ($reorient = true) then
+    coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
+end if
+
+write coordinates format=pdbo output=$output_pdb_filename end
+
+set message=normal echo=on end
+
+display OUTPUT: $output_pdb_filename
+
+stop

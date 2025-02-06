@@ -48,13 +48,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "coverage==7.6.8",
-  "pytest==8.3.3",
+  "coverage==7.6.10",
+  "pytest==8.3.4",
   "pytest-cov==6.0.0",
-  "hypothesis==6.122.0",
+  "hypothesis==6.123.2",
   "pytest-mock==3.14.0",
-  "fastapi==0.115.5",
-  "httpx==0.28.0",
+  "fastapi==0.115.6",
+  "httpx==0.28.1",
   "mpi4py==4.0.1",
   "kaleido==0.2.1",
   "pytest-random-order==1.1.1",

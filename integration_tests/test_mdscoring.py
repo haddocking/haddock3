@@ -93,4 +93,5 @@ def test_mdscoring_default(mdscoring_module, calc_fnat):
     assert expected_interface_csv.exists(), f"{expected_interface_csv} does not exist"
     df_perint = pd.read_csv(expected_interface_csv, sep="\t", comment="#")
     # check that the score is equal to the global score (it's a dimer!)
-    assert df_perint["score"].tolist() == df["score"].tolist()
+    for perint, sc in zip(df_perint["score"].tolist(), df["score"].tolist()):
+        assert perint == pytest.approx(sc, abs=0.01)

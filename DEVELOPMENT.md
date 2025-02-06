@@ -94,6 +94,32 @@ pytest tests/
 pytest integration_tests/
 ```
 
+## Troubleshooting the CNS executable
+
+Depending on your architecture, the CNS executable coming with the `pip install` command (see above), might give errors because of some missing libraries.
+In such a case you should recompile CNS (see the `CNS.md` file in the `docs` directory). Once you have tested your newly compiled executable you can place it in the install haddock3 version. For this do the following:
+
+1) First get the location where haddock3 has been installed:
+
+```bash
+> pip show haddock3
+Name: haddock3
+Version: 2024.10.0b7
+Summary: HADDOCK3
+Home-page: 
+Author: 
+Author-email: BonvinLab <bonvinlab.support@uu.nl>
+License: Apache License 2.0
+Location: /home/testuser/.venv/lib/python3.9/site-packages
+...
+```
+
+2) Copy your CNS executable to the haddock3 installation:
+
+```bash
+> cp <cns.binary> /home/testuser/.venv/lib/python3.9/site-packages/haddock/bin/cns
+```
+
 ## Installation in an HPC environment
 
 **Please get in contact with the system administrator before doing development in a shared HPC environment.**

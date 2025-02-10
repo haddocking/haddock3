@@ -40,7 +40,7 @@ Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html
 ## Troubleshooting the CNS executable
 
 Depending on your architecture, the CNS executable coming with the `pip install` command (see above), might give errors because of some missing libraries.
-In such a case you should recompile CNS (see the `CNS.md` file in the `docs` directory). Once you have tested your newly compiled executable you can place it in the install haddock3 version. For this do the following:
+In such a case you should recompile CNS (see the [`CNS.md`](CNS.md) file in the `docs` directory). Once you have tested your newly compiled executable you can place it in the install haddock3 version. For this do the following:
 
 1) First get the location where haddock3 has been installed, e.g.:
 

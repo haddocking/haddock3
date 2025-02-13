@@ -883,7 +883,6 @@
 <span class="sd">    align_func : functools.partial</span>
 <span class="sd">        desired alignment function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> alignment&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;structure&quot;</span><span class="p">:</span>
         <span class="n">align_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">align_strct</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="o">=</span><span class="n">lovoalign_exec</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sequence&quot;</span><span class="p">:</span>
@@ -996,7 +995,6 @@
 
         <span class="c1"># dump this alignment to a file</span>
         <span class="n">aln_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;lovoalign_</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">.aln&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing alignment to </span><span class="si">{</span><span class="n">aln_fname</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">aln_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">aln_l</span><span class="p">))</span>
 
@@ -1040,7 +1038,6 @@
                     <span class="n">numbering_dic</span><span class="p">[</span><span class="n">chain</span><span class="p">][</span><span class="n">resnum_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">resnum_a</span>  <span class="c1"># type: ignore</span>
 
     <span class="n">izone_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;lovoalign.izone&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving .izone to </span><span class="si">{</span><span class="n">izone_fname</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">dump_as_izone</span><span class="p">(</span><span class="n">izone_fname</span><span class="p">,</span> <span class="n">numbering_dic</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">numbering_dic</span></div>
@@ -1062,7 +1059,6 @@
 <span class="sd">        reference chain</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">aln_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;blosum62_</span><span class="si">{</span><span class="n">ref_ch</span><span class="si">}</span><span class="s2">.aln&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing alignment to </span><span class="si">{</span><span class="n">aln_fname</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">aln_fname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
         <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">top_aln</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">aln_fname</span></div>
@@ -1221,7 +1217,6 @@
 <span class="sd">    align_dic : dict</span>
 <span class="sd">        dictionary of sequence alignments (one per chain)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># print(f&quot;running align_seq on {reference} and {model}&quot;)</span>
     <span class="n">SeqAln</span> <span class="o">=</span> <span class="n">SeqAlign</span><span class="p">()</span>
     <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span> <span class="o">=</span> <span class="n">pdb2fastadic</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
     <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span> <span class="o">=</span> <span class="n">pdb2fastadic</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
@@ -1313,7 +1308,6 @@
             <span class="n">matches</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="c1"># dump the .izone file</span>
     <span class="n">izone_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;blosum62.izone&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving .izone to </span><span class="si">{</span><span class="n">izone_fname</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">dump_as_izone</span><span class="p">(</span><span class="n">izone_fname</span><span class="p">,</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">align_dic</span><span class="p">,</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">ref2model_chain_dict</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">align_dic</span><span class="p">,</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">model2ref_chain_dict</span></div>
@@ -1522,7 +1516,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 11, 2025.
+      <span class="lastupdated">Last updated on Feb 13, 2025.
       </span></p>
   </div>
 

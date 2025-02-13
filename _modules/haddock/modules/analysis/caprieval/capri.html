@@ -706,33 +706,24 @@
         <span class="c1"># print(f&quot;model2ref_numbering {self.model2ref_numbering}&quot;)</span>
         <span class="c1"># print(f&quot;model2ref_chain_dict {self.model2ref_chain_dict}&quot;)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;fnat&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating FNAT&quot;</span><span class="p">)</span>
             <span class="n">fnat_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;fnat_cutoff&quot;</span><span class="p">]</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; cutoff: </span><span class="si">{</span><span class="n">fnat_cutoff</span><span class="si">}</span><span class="s2">A&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_fnat</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">fnat_cutoff</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;irmsd&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating I-RMSD&quot;</span><span class="p">)</span>
             <span class="n">irmsd_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;irmsd_cutoff&quot;</span><span class="p">]</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; cutoff: </span><span class="si">{</span><span class="n">irmsd_cutoff</span><span class="si">}</span><span class="s2">A&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_irmsd</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">irmsd_cutoff</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;lrmsd&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating L-RMSD&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_lrmsd</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ilrmsd&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating I-L-RMSD&quot;</span><span class="p">)</span>
             <span class="n">ilrmsd_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;irmsd_cutoff&quot;</span><span class="p">]</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; cutoff: </span><span class="si">{</span><span class="n">ilrmsd_cutoff</span><span class="si">}</span><span class="s2">A&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_ilrmsd</span><span class="p">(</span><span class="n">cutoff</span><span class="o">=</span><span class="n">ilrmsd_cutoff</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;dockq&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating DockQ metric&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_dockq</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;global_rmsd&quot;</span><span class="p">]:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;id </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identificator</span><span class="si">}</span><span class="s2">, calculating global RMSD&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">calc_global_rmsd</span><span class="p">()</span>
 
         <span class="c1"># The scheduler will use the return of the `run` method as the output of the tasks</span>
@@ -1273,7 +1264,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 11, 2025.
+      <span class="lastupdated">Last updated on Feb 13, 2025.
       </span></p>
   </div>
 

@@ -35,7 +35,7 @@ from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
 
-import haddock.modules.topology.topocg.aa2cg
+from haddock.libs.libaa2cg import martinize 
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -63,7 +63,7 @@ def generate_topology(
     )
 
     # AA to CG
-    cg_pdb_name = aa2cg.martinize(input_pdb, output_path, False)
+    cg_pdb_name = martinize(input_pdb, output_path, False)
 
     output = prepare_output(
         output_pdb_filename=f"{cg_pdb_name[:-4]}_processed{input_pdb.suffix}",

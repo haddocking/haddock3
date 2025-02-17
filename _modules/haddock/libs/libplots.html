@@ -319,14 +319,12 @@
     <span class="n">px_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
         <span class="s2">&quot;xaxis&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">x_label</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">x_label</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">)),</span>
             <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-            <span class="n">titlefont_size</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="s2">&quot;yaxis&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">y_label</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">y_label</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">40</span><span class="p">)),</span>
             <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-            <span class="n">titlefont_size</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="s2">&quot;legend&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">),</span>
         <span class="s2">&quot;hoverlabel&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">),</span>
@@ -1575,16 +1573,14 @@
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scan_res</span><span class="si">}</span><span class="s2"> scanning cluster </span><span class="si">{</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Residue Name&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Residue Name&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">)),</span>
             <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-            <span class="n">titlefont_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
             <span class="n">tick0</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
             <span class="c1"># in case we want to show less residues</span>
             <span class="c1"># dtick=10,</span>
             <span class="p">),</span>
         <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Average Delta (WT - mutant)&quot;</span><span class="p">,</span>
-            <span class="n">titlefont_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Average Delta (WT - mutant)&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">)),</span>
             <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">),</span>
@@ -1746,7 +1742,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 13, 2025.
+      <span class="lastupdated">Last updated on Feb 17, 2025.
       </span></p>
   </div>
 

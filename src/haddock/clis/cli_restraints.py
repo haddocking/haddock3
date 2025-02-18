@@ -107,9 +107,6 @@ def load_args(ap):
 
 def maincli():
     """Execute main client."""
-    log.info(
-        "[DEPRECATION NOTICE] This command will soon be replaced with `haddock-restraints`"
-    )
     args = ap.parse_args()
     cmd = vars(load_args(ap))
     cmd.pop("func")

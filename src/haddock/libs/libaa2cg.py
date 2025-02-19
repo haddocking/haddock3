@@ -42,7 +42,6 @@ from Bio.PDB import PDBParser
 from Bio.PDB.StructureBuilder import StructureBuilder
 
 from haddock.core.exceptions import ModuleError
-#from haddock.modules.topology.topocg.helper import *
 
 warnings.filterwarnings("ignore")
 

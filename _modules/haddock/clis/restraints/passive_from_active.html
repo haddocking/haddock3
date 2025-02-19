@@ -82,13 +82,13 @@
 <span></span><span class="sd">&quot;&quot;&quot;haddock3-restraints passive_from_active subcommand.</span>
 
 <span class="sd">Given a list of active_residues and a PDB structure, it will return a list of</span>
-<span class="sd">surface exposed passive residues within a 6.5A radius from the active residues.</span>
+<span class="sd">surface exposed passive residues within a 6.5A radius (by default) from the active residues.</span>
 
 <span class="sd">When provided with a list of surface residues, it will filter the list for those</span>
-<span class="sd">that are within 6.5A from the active residues.</span>
+<span class="sd">that are within the radius (6.5A by default) from the active residues.</span>
 
 <span class="sd">Usage:</span>
-<span class="sd">    haddock3-restraints passive_from_active &lt;pdb_file&gt; &lt;active_list&gt; [-c &lt;chain_id&gt;] [-s &lt;surface_list&gt;]</span>
+<span class="sd">    haddock3-restraints passive_from_active &lt;pdb_file&gt; &lt;active_list&gt; [-c &lt;chain_id&gt;] [-s &lt;surface_list&gt;] [-r &lt;radius&gt;]</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -126,6 +126,15 @@
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="p">)</span>
+    
+    <span class="n">pass_from_act_subcommand</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--radius&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Radius to consider for the passive residues (default: 6.5A)&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">6.5</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">pass_from_act_subcommand</span></div>
 
@@ -133,7 +142,7 @@
 
 <div class="viewcode-block" id="passive_from_active">
 <a class="viewcode-back" href="../../../../clients/haddock.clis.restraints.passive_from_active.html#haddock.clis.restraints.passive_from_active.passive_from_active">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">passive_from_active</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">active_list</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">surface_list</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">passive_from_active</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">active_list</span><span class="p">,</span> <span class="n">chain_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">surface_list</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the passive residues.&quot;&quot;&quot;</span>
 
     <span class="n">active</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">active_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
@@ -143,7 +152,7 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">passive</span> <span class="o">=</span> <span class="n">passive_from_active_raw</span><span class="p">(</span>
-            <span class="n">structure</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">,</span> <span class="n">surface</span>
+            <span class="n">structure</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">,</span> <span class="n">surface</span><span class="p">,</span> <span class="n">radius</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -162,7 +171,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 17, 2025.
+      <span class="lastupdated">Last updated on Feb 19, 2025.
       </span></p>
   </div>
 

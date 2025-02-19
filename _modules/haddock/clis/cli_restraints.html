@@ -193,9 +193,6 @@
 <a class="viewcode-back" href="../../../clients/haddock.clis.cli_restraints.html#haddock.clis.cli_restraints.maincli">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">maincli</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute main client.&quot;&quot;&quot;</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;[DEPRECATION NOTICE] This command will soon be replaced with `haddock-restraints`&quot;</span>
-    <span class="p">)</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">ap</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">load_args</span><span class="p">(</span><span class="n">ap</span><span class="p">))</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;func&quot;</span><span class="p">)</span>
@@ -215,7 +212,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 17, 2025.
+      <span class="lastupdated">Last updated on Feb 19, 2025.
       </span></p>
   </div>
 

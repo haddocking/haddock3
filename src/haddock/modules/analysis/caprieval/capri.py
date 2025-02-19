@@ -589,33 +589,24 @@ class CAPRI:
         # print(f"model2ref_numbering {self.model2ref_numbering}")
         # print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
         if self.params["fnat"]:
-            log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
-            log.debug(f" cutoff: {fnat_cutoff}A")
             self.calc_fnat(cutoff=fnat_cutoff)
 
         if self.params["irmsd"]:
-            log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
-            log.debug(f" cutoff: {irmsd_cutoff}A")
             self.calc_irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:
-            log.debug(f"id {self.identificator}, calculating L-RMSD")
             self.calc_lrmsd()
 
         if self.params["ilrmsd"]:
-            log.debug(f"id {self.identificator}, calculating I-L-RMSD")
             ilrmsd_cutoff = self.params["irmsd_cutoff"]
-            log.debug(f" cutoff: {ilrmsd_cutoff}A")
             self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
 
         if self.params["dockq"]:
-            log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
 
         if self.params["global_rmsd"]:
-            log.debug(f"id {self.identificator}, calculating global RMSD")
             self.calc_global_rmsd()
 
         # The scheduler will use the return of the `run` method as the output of the tasks

@@ -779,7 +779,6 @@ def get_align(
     align_func : functools.partial
         desired alignment function
     """
-    log.debug(f"Using {method} alignment")
     if method == "structure":
         align_func = partial(align_strct, lovoalign_exec=lovoalign_exec)
     elif method == "sequence":
@@ -889,7 +888,6 @@ def align_strct(
 
         # dump this alignment to a file
         aln_fname = Path(output_path, f"lovoalign_{chain}.aln")
-        log.debug(f"Writing alignment to {aln_fname.name}")
         with open(aln_fname, "w") as fh:
             fh.write(os.linesep.join(aln_l))
 
@@ -933,7 +931,6 @@ def align_strct(
                     numbering_dic[chain][resnum_b] = resnum_a  # type: ignore
 
     izone_fname = Path(output_path, "lovoalign.izone")
-    log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, numbering_dic)
 
     return numbering_dic
@@ -952,7 +949,6 @@ def write_alignment(top_aln, output_path, ref_ch):
         reference chain
     """
     aln_fname = Path(output_path, f"blosum62_{ref_ch}.aln")
-    log.debug(f"Writing alignment to {aln_fname.name}")
     with open(aln_fname, "w") as fh:
         fh.write(str(top_aln))
     return aln_fname
@@ -1099,7 +1095,6 @@ def align_seq(reference, model, output_path):
     align_dic : dict
         dictionary of sequence alignments (one per chain)
     """
-    # print(f"running align_seq on {reference} and {model}")
     SeqAln = SeqAlign()
     SeqAln.seqdic_ref = pdb2fastadic(reference)
     SeqAln.seqdic_model = pdb2fastadic(model)
@@ -1191,7 +1186,6 @@ def align_seq(reference, model, output_path):
             matches += 1
     # dump the .izone file
     izone_fname = Path(output_path, "blosum62.izone")
-    log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, SeqAln.align_dic, SeqAln.ref2model_chain_dict)
 
     return SeqAln.align_dic, SeqAln.model2ref_chain_dict

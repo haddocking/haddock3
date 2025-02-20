@@ -59,16 +59,25 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
     # `unpack_compressed_and_archived_files` so that the
     # uncompressing routines when restarting the run work.
 
+    # Files to delete (all)
+    file_to_delete_all = (
+        "mpi.pkl",
+        )
+    for extension in file_to_delete_all:
+        for file_ in glob_folder(path, extension):
+            Path(file_).unlink()
+
     # Files to delete
     # deletes all except the first one
-    files_to_delete = [
+    # (keeping one for debugging purposes)
+    files_to_delete = (
         ".inp",
         ".inp.gz",
         ".out",
         ".out.gz",
         ".job",
         ".err",
-        ]
+        )
 
     for extension in files_to_delete:
         flist = glob_folder(path, extension)
@@ -76,11 +85,11 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
             Path(file_).unlink()
 
     # files to archive (all files in single .gz)
-    files_to_archive = [
+    files_to_archive = (
         ".seed",
         ".seed.gz",
         ".con",
-        ]
+        )
 
     archive_ready = partial(_archive_and_remove_files, path=path)
     _ncores = min(ncores, len(files_to_archive))
@@ -90,13 +99,13 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
             pass
 
     # files to compress in .gz
-    files_to_compress = [
+    files_to_compress = (
         ".inp",
         ".out",
         ".pdb",
         ".psf",
         ".cnserr",
-        ]
+        )
 
     for ftc in files_to_compress:
         found = compress_files_ext(path, ftc, ncores=ncores)
@@ -111,9 +120,11 @@ def _archive_and_remove_files(fta: str, path: FilePath) -> None:
 
 
 # eventually this function can be moved to `libs.libio` in case of future need.
-def unpack_compressed_and_archived_files(folders: Iterable[FilePathT],
-                                         ncores: int = 1,
-                                         dec_all: bool = False) -> None:
+def unpack_compressed_and_archived_files(
+        folders: Iterable[FilePathT],
+        ncores: int = 1,
+        dec_all: bool = False,
+        ) -> None:
     """
     Unpack compressed and archived files in a folders.
 

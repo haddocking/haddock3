@@ -32,7 +32,7 @@ keywords = [
   "Protein docking",
   "Proteins",
 ]
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.9, <3.14"
 dependencies = [
   'pdb-tools>=2.5.0',
   'biopython==1.*',

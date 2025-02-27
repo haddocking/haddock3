@@ -30,7 +30,6 @@ from haddock.libs.libcns import (
     )
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
-from haddock.libs.libstructure import Molecule
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule

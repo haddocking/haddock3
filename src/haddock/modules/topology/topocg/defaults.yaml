@@ -7,8 +7,7 @@ cgffversion:
     - martini2
   title: MARTINI Force-field version
   short: Force-field version for the coarse-grain mapping and parameters
-  long: CNS, the computational engine used by HADDOCK can generate a lot of output
-    messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
+  long: Force-field version for the coarse-grain mapping and parameters. 
   group: module
   explevel: expert
 autohis:

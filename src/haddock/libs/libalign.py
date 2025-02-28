@@ -638,7 +638,9 @@ def load_coords(
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
+def get_atoms(pdb: PDBPath, 
+              full: bool = False,
+              cg: bool = False) -> AtomsDict:
     """Identify what is the molecule type of each PDB.
 
     Parameters
@@ -656,13 +658,23 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
-    atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
-    atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
+    if not cg:
+        atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
+        atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
+        atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
+    elif cg:
+        atom_dic.update((r, PROT_ATOMS_MARTINI) for r in PROT_RES)
+        # ADD DNA 
+        # ADD RNA
     if full:
-        atom_dic.update(PROT_SIDE_CHAINS_DICT)
-        atom_dic.update(DNA_FULL_DICT)
-        atom_dic.update(RNA_FULL_DICT)
+        if not cg:
+            atom_dic.update(PROT_SIDE_CHAINS_DICT)
+            atom_dic.update(DNA_FULL_DICT)
+            atom_dic.update(RNA_FULL_DICT)
+        elif cg:
+            atom_dic.update(PROT_SIDE_CHAINS_DICT_MARTINI2)
+            # ADD DNA
+            # ADD RNA
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

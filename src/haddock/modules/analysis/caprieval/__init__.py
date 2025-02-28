@@ -40,6 +40,7 @@ from haddock.modules.analysis.caprieval.capri import (
     extract_data_from_capri_class,
     extract_models_best_references,
     )
+from haddock.libs.libaa2cg import martinize 
 from pdbtools.pdb_wc import run as pdb_wc
 from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
@@ -182,7 +183,16 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Get reference file
-        references = self.get_reference(models)
+        if self.params["cgffversion"] == "None":
+            references = self.get_reference(models)
+            cg = False
+        elif self.params["cgffversion"] == "martini2":
+            references_aa = self.get_reference(models)
+            references = []
+            for ref_aa in references_aa:
+                ref_cg = martinize(ref_aa, self.path, False)
+                references.append(Path(ref_cg))
+            cg = True
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -208,6 +218,7 @@ class HaddockModule(BaseHaddockModule):
                         reference=reference,
                         params=self.params,
                         ref_id=ref_id,
+                        cg=cg
                     )
                 )
 

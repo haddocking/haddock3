@@ -438,6 +438,8 @@ class Scan:
         self.path = path
         self.scan_res = params['params']['scan_residue']
         self.int_cutoff = params["params"]["int_cutoff"]
+        self.chains = params["params"]["chains"]
+        self.output_mutants = params["params"]["output_mutants"]
         # initialising resdic
         if "params" in params.keys():
             self.filter_resdic = {
@@ -456,20 +458,41 @@ class Scan:
             n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
                                                               run_dir=sc_dir)
             scan_data = []
-            # check if the user wants to mutate only some residues
-            if self.filter_resdic != {'_': []}:
-                interface = self.filter_resdic
-            else:
-                interface = CAPRI.identify_interface(
-                    native.rel_path,
-                    cutoff=self.int_cutoff
-                    )
-                    
+
+            # load the coordinates
             atoms = get_atoms(native.rel_path)
             coords, chain_ranges = load_coords(native.rel_path,
                                                atoms,
                                                add_resname=True
                                                )
+            
+            # check if the user wants to mutate only some residues
+            if self.filter_resdic != {'_': []}:
+                interface = {}
+                for chain in self.filter_resdic:
+                    if chain in chain_ranges:
+                        chain_aas = [aa[1] for aa in coords if aa[0] == chain]
+                        unique_aas = list(set(chain_aas))
+                        # the interface here is the intersection of the
+                        # residues in filter_resdic and the residues actually 
+                        # present in the model
+                        interface[chain] = [
+                            res for res in self.filter_resdic[chain]
+                            if res in unique_aas
+                            ]
+            else:
+                interface = CAPRI.identify_interface(
+                    native.rel_path,
+                    cutoff=self.int_cutoff
+                    )
+                # in case the user wants to scan only some chains (this is
+                # superseded by filter_resdic)
+                if self.chains != []:
+                    interface = {
+                        chain: interface[chain] for chain in self.chains
+                        if chain in interface
+                        }
+            
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():
                 key = f"{chain}-{resid}"
@@ -512,7 +535,10 @@ class Scan:
                                           c_bsa, delta_score,
                                           delta_vdw, delta_elec, delta_desolv,
                                           delta_bsa])
-                        os.remove(mut_pdb_name)
+                        # if self.output_mutants is false, remove the 
+                        # mutated pdb file
+                        if not self.output_mutants:
+                            os.remove(mut_pdb_name)
             # write output
             df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
                           'score', 'vdw', 'elec', 'desolv', 'bsa',

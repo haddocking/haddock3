@@ -54,6 +54,15 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(e)
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)
+        # output mutants is only possible if there is only one model
+        if self.params["output_mutants"]:
+            if nmodels != 1:
+                log.warning(
+                    "output_mutants is set to True but more than one model "
+                    "was found. Setting output mutants to False."
+                    )
+                self.params["output_mutants"] = False
+
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
 
         log.info(f"Running on {ncores} cores")
@@ -95,12 +104,13 @@ class HaddockModule(BaseHaddockModule):
                 self.params["scan_residue"],
                 offline=self.params["offline"],
                 )
-        # if output is true, write the models and export them
-        if self.params["output"] is True:
+        # if output_bfactor is true, write the models and export them
+        if self.params["output_bfactor"] is True:
             models_to_export = generate_alascan_output(models, self.path)
             self.output_models = models_to_export
         else:
             # Send models to the next step,
             #  no operation is done on them
             self.output_models = models
+        print(f"Output models: {self.output_models}")
         self.export_io_models()

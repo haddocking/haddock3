@@ -192,7 +192,7 @@ class HaddockModule(BaseHaddockModule):
             for ref_aa in references_aa:
                 ref_cg = martinize(ref_aa, self.path, False)
                 references.append(Path(ref_cg))
-            cg = True
+            cg = 2
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job

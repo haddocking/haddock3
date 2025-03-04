@@ -211,6 +211,8 @@ DNA_ATOMS = [
     "O6",
 ]
 
+DNA_ATOMS_MARTINI = ["BB1", "BB2", "BB3"]
+
 DNA_FULL_DICT = {
     "DA": [
         "P",
@@ -330,8 +332,16 @@ DNA_FULL_DICT = {
     ],
 }
 
+DNA_FULL_DICT_MARTINI2 = {
+    "DA" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "DC" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+    "DG" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "DT" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
+}
+
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+RNA_ATOMS_MARTINI = ["BB1", "BB2", "BB3"]
 
 RNA_FULL_DICT = {
     "A": [
@@ -429,6 +439,13 @@ RNA_FULL_DICT = {
         "C5",
         "C6",
     ],
+}
+
+RNA_FULL_DICT_MARTINI2 = {
+    "A" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "C" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+    "G" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "U" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
 
 
@@ -664,8 +681,8 @@ def get_atoms(pdb: PDBPath,
         atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
     elif cg:
         atom_dic.update((r, PROT_ATOMS_MARTINI) for r in PROT_RES)
-        # ADD DNA 
-        # ADD RNA
+        atom_dic.update((r, DNA_ATOMS_MARTINI) for r in DNA_RES)
+        atom_dic.update((r, RNA_ATOMS_MARTINI) for r in RNA_RES)
     if full:
         if not cg:
             atom_dic.update(PROT_SIDE_CHAINS_DICT)
@@ -673,8 +690,8 @@ def get_atoms(pdb: PDBPath,
             atom_dic.update(RNA_FULL_DICT)
         elif cg:
             atom_dic.update(PROT_SIDE_CHAINS_DICT_MARTINI2)
-            # ADD DNA
-            # ADD RNA
+            atom_dic.update(DNA_FULL_DICT_MARTINI2)
+            atom_dic.update(RNA_FULL_DICT_MARTINI2)
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

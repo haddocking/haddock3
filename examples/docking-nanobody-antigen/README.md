@@ -1,0 +1,11 @@
+## docking-nanobody-antigen
+
+A nanobody-antigen ensemble docking example making use of different levels of knowledge about the antigen epitope, namely:
+
+- __true epitope__ : true epitope definition, epitope residues treated as active (ideal scenario, see [`docking-nanobody-antigen-Para-Epi-full.cfg`](../examples/docking-nanobody-antigen/docking-nanobody-antigen-Para-Epi-full.cfg))
+- __loose epitope__ : loose definition of the epitope, where only a region of the antigen has been identified. Here those amino acids are treated as passive ([`docking-nanobody-antigen-CDR-loose-epi-full.cfg`](../examples/docking-nanobody-antigen/docking-nanobody-antigen-CDR-loose-epi-full.cfg)).
+- __mutagenesis-mapped epitope__ : scenario where two residues have been identified through mutagenesis. Those are defined as active, while the surrounding, solvent-exposed amino acids are defined as passive ([`docking-nanobody-antigen-CDR-mutagenesis-epi-full.cfg`](../examples/docking-nanobody-antigen/docking-nanobody-antigen-CDR-mutagenesis-epi-full.cfg)).
+
+In all these cases the solvent-exposed residues of the three hypervariable loops are used to guide the docking on the nanobody side. In the [docking-nanobody-antigen-mix-loose-epi-full.cfg](../examples/docking-nanobody-antigen/docking-nanobody-antigen-mix-loose-epi-full.cfg), a different approach is used, where two ambig.tbl files are compressed into a .tgz archive and used at the same time. The first contains simply the three HV loops defined as active, while in the second file only the H3 loop is fully active, with H1, H2, and some framework amino acids are defined as "ambiguously active" (see [7tgfB_mix_1.tbl](../examples/docking-nanobody-antigen/data/7tgfB_mix_1.tbl)). This is done to incorporate explicitly (and ambiguously) the importance of the nanobody framework for the interaction, and at the same time to slightly penalize the H1 and H2 loops that can be not involved in the binding.
+
+The standard HADDOCK workflow is used, with 1000 rigidbody docking models, selection of top200 for flexible refinement (flexref) + energy minimisation (emref).

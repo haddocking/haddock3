@@ -1,13 +1,45 @@
-"""HADDOCK3 module for alanine scan.
+"""
+HADDOCK3 module for alanine scan.
 
-This module is responsible for the alanine scan analysis of the models
-generated in the previous step of the workflow. For each model, the module
-will mutate the interface residues and calculate the energy differences
-between the wild type and the mutant, thus providing a measure of the impact
-of such mutation.
+This module is responsible for the alanine (or any other residue) scan analysi
+of the models generated in the previous step of the workflow.
+For each model, the module will mutate the interface residues and calculate
+the energy differences between the wild type and the mutant, thus providing a
+measure of the impact of such mutation. Such difference (delta_score) is always
+calculated as:
+
+    delta_score = score_wildtype - score_mutant
+
+Therefore, a positive delta_score indicates that the mutation is destabilizing
+while a negative delta_score indicates that the mutation is stabilizing.
 
 If cluster information is available, the module will also calculate the
-average energy difference for each cluster of models.
+average energy difference for each cluster of models. For each amino acid, a Z
+score is calculated as:
+
+    Z = (delta_score - mean) / std
+
+where mean and std are the mean and standard deviation of the delta_score over 
+all the amino acids.
+
+The module will also generate plots of the alanine scan data, showing the
+distribution of the delta_score (and every component) for each amino acid at the
+interface.
+
+You can use the parameters below to customize the behavior of the module:
+
+    * `chains`: list of chains to be considered for the alanine scan. In some
+      cases you may want to limit the analysis to a single chain.
+    * `output_mutants`: if True, the module will output the models with the
+      mutations applied (only possible if there is only one model)
+    * `output_bfactor`: if True, the module will output the non-mutated models
+      with the rescaled delta_score in the B-factor column
+    * `plot`: if True, the module will generate plots of the alanine scan data
+    * `scan_residue`: the residue to scan (default is 'ALA')
+    * `resdic`: list of residues to be used for the scanning. An example is:
+
+    >>> resdic_A = [1,2,3,4]
+    >>> resdic_B = [2,3,4]
 """
 from pathlib import Path
 
@@ -112,5 +144,4 @@ class HaddockModule(BaseHaddockModule):
             # Send models to the next step,
             #  no operation is done on them
             self.output_models = models
-        print(f"Output models: {self.output_models}")
         self.export_io_models()

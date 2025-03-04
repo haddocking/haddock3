@@ -58,6 +58,8 @@ def fixture_params():
         "plot": False,
         "scan_residue": "ALA",
         "resdic_A": [19, 20],
+        "chains": [],
+        "output_mutants": False,
     }
 
 

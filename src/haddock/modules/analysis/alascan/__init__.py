@@ -106,16 +106,13 @@ class HaddockModule(BaseHaddockModule):
             output_name = "alascan_" + str(core) + ".scan"
             scan_obj = Scan(
                 model_list=models[index_list[core]:index_list[core + 1]],
-                output_name=output_name,
                 core=core,
                 path=Path("."),
                 params=self.params,
                 )
             # running now the ScanJob
-            job_f = Path(output_name)
             # init ScanJob
             job = ScanJob(
-                job_f,
                 self.params,
                 scan_obj,
                 )

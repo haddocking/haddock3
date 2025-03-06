@@ -404,12 +404,10 @@ class ScanJob:
 
     def __init__(
             self,
-            output,
             params,
             scan_obj):
 
         log.info(f"core {scan_obj.core}, initialising Scan...")
-        self.output = output
         self.params = params
         self.scan_obj = scan_obj
 
@@ -417,7 +415,6 @@ class ScanJob:
         """Run this ScanJob."""
         log.info(f"core {self.scan_obj.core}, running Scan...")
         self.scan_obj.run()
-        self.scan_obj.output()
         return
 
 
@@ -427,14 +424,12 @@ class Scan:
     def __init__(
             self,
             model_list,
-            output_name,
             core,
             path,
             **params,
             ):
         """Initialise Scan class."""
         self.model_list = model_list
-        self.output_name = output_name
         self.core = core
         self.path = path
         self.scan_res = params['params']['scan_residue']
@@ -499,8 +494,8 @@ class Scan:
                 key = f"{chain}-{resid}"
                 if key not in resname_dict:
                     resname_dict[key] = resname
-            # self.log(f'Mutating interface of {native.file_name}...')
-            # self.log(f"Interface: {interface}")
+            
+            # loop over the interface
             for chain in interface:
                 for res in interface[chain]:
                     ori_resname = resname_dict[f"{chain}-{res}"]
@@ -568,12 +563,3 @@ class Scan:
                 f.write(f"{os.linesep}")
                 f.write(f"##########################################################{os.linesep}")  # noqa E501
                 f.write(fl_content)
-    
-    def output(self):
-        """Write down unique contacts to file."""
-        output_fname = Path(self.path, self.output_name)
-        with open(output_fname, "w") as out_fh:
-            out_fh.write(
-                f"core {self.core} wrote alascan data "
-                f"for {len(self.model_list)} models{os.linesep}"
-                )

@@ -84,7 +84,6 @@ def fixture_scanjob_obj(scan_obj, params, monkeypatch):
         monkeypatch.chdir(tmpdir)
         yield ScanJob(
             scan_obj=scan_obj,
-            output=Path("."),
             params=params,
         )
 
@@ -280,7 +279,6 @@ def test_run(
 
 def test_scanjob_run(scanjob_obj, mocker):
     mocker.patch("haddock.modules.analysis.alascan.scan.Scan.run", return_value=None)
-    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.output", return_value=None)
     scanjob_obj.run()
 
 
@@ -293,9 +291,6 @@ def test_scan_run_output(mocker, scan_obj):
     scan_obj.run()
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 2
-
-    scan_obj.output()
-    assert Path(scan_obj.path, "alascan").exists()
 
 
 def test_scan_run_interface(mocker, scan_obj):

@@ -265,8 +265,6 @@ def alascan_cluster_analysis(models):
             cl_pops[cl_id] += 1
         # read the scan file
         alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
-        print(f"alascan_fname: {alascan_fname}")
-        #alascan_fname = Path(path, alascan_fname)
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
         # loop over the scan file
         for row_idx in range(df_scan.shape[0]):

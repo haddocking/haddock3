@@ -99,7 +99,7 @@ class Worker(Process):
         # Signal completion by putting a unique identifier into the queue
         self.result_queue.put(f"{self.name}_done")
 
-        log.debug(f"{self.name} executed")
+        # log.debug(f"{self.name} executed")
 
 
 class Scheduler:

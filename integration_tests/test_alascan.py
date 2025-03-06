@@ -72,9 +72,9 @@ def test_alascan_default(alascan_module, mocker):
     alascan_module.previous_io = MockPreviousIO(path=alascan_module.path)
     alascan_module.run()
 
-    expected_csv1 = Path(alascan_module.path, "scan_protprot_complex_1.csv")
-    expected_csv2 = Path(alascan_module.path, "scan_protprot_complex_2.csv")
-    expected_clt_csv = Path(alascan_module.path, "scan_clt_-.csv")
+    expected_csv1 = Path(alascan_module.path, "scan_protprot_complex_1.tsv")
+    expected_csv2 = Path(alascan_module.path, "scan_protprot_complex_2.tsv")
+    expected_clt_csv = Path(alascan_module.path, "scan_clt_-.tsv")
 
     assert expected_csv1.exists(), f"{expected_csv1} does not exist"
     assert expected_csv2.exists(), f"{expected_csv2} does not exist"
@@ -99,9 +99,9 @@ def test_alascan_single_model(alascan_module, mocker):
     """Test the alascan module with only one model (saving mutants)."""
     alascan_module.previous_io = MockPreviousIO_single_model(path=alascan_module.path)
     alascan_module.run()
-    
-    expected_csv = Path(alascan_module.path, "scan_2oob.csv")
-    expected_clt_csv = Path(alascan_module.path, "scan_clt_-.csv")
+
+    expected_csv = Path(alascan_module.path, "scan_2oob.tsv")
+    expected_clt_csv = Path(alascan_module.path, "scan_clt_-.tsv")
 
     assert expected_csv.exists(), f"{expected_csv} does not exist"
     assert expected_clt_csv.exists(), f"{expected_clt_csv} does not exist"

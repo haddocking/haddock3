@@ -189,7 +189,7 @@ def example_df_scan_clt():
 @pytest.fixture(name="scan_file")
 def fixture_scan_file():
     """Return example alascan file."""
-    yield Path(golden_data, "scan_protprot_complex_1.csv")
+    yield Path(golden_data, "scan_protprot_complex_1.tsv")
 
 
 def test_scan_obj(scan_obj, protprot_model_list):
@@ -258,8 +258,8 @@ def test_run(
     # Only add files that are used within the body of the `run` method!
 
     Path(alascan.path, "alascan_0.scan").touch()
-    ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
-    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
+    ala_path = Path(golden_data, "scan_protprot_complex_1.tsv")
+    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.tsv"))
 
     alascan.params["plot"] = True
 
@@ -270,7 +270,7 @@ def test_run(
     )
 
     alascan.run()
-    assert Path(alascan.path, "scan_clt_-.csv").exists()
+    assert Path(alascan.path, "scan_clt_-.tsv").exists()
     assert Path(alascan.path, "scan_clt_-.html").exists()
 
     alascan.params["output"] = True
@@ -289,7 +289,7 @@ def test_scan_run_output(mocker, scan_obj):
         return_value=(-106.7, -29, -316, -13, 1494),
     )
     scan_obj.run()
-    assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
+    assert Path(scan_obj.path, "scan_protprot_complex_1.tsv").exists()
     assert scan_obj.df_scan.shape[0] == 2
 
 
@@ -303,7 +303,7 @@ def test_scan_run_interface(mocker, scan_obj):
     )
     scan_obj.run()
 
-    assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
+    assert Path(scan_obj.path, "scan_protprot_complex_1.tsv").exists()
     assert scan_obj.df_scan.shape[0] == 5
 
 
@@ -337,7 +337,7 @@ def test_calc_score_wrong(mocker):
 def test_generate_alascan_output(mocker, protprot_model_list, scan_file, monkeypatch):
     """Test the generate_alascan_output method."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
+        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.tsv"))
         monkeypatch.chdir(tmpdir)
         models_to_export = generate_alascan_output(protprot_model_list, path=tmpdir)
         assert len(models_to_export) == 1
@@ -377,17 +377,17 @@ def test_alascan_cluster_analysis(protprot_input_list, scan_file, monkeypatch):
     """Test alascan_cluster_analysis."""
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
-        shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
-        shutil.copy(scan_file, Path("scan_protprot_complex_2.csv"))
+        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
+        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
         alascan_cluster_analysis(protprot_input_list)
 
-        assert Path("scan_clt_-.csv").exists()
+        assert Path("scan_clt_-.tsv").exists()
 
         protprot_input_list[1].clt_id = 1
         alascan_cluster_analysis(protprot_input_list)
 
-        assert Path("scan_clt_1.csv").exists()
-        assert Path("scan_clt_-.csv").exists()
+        assert Path("scan_clt_1.tsv").exists()
+        assert Path("scan_clt_-.tsv").exists()
 
 
 def test_create_alascan_plots(mocker, caplog):

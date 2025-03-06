@@ -264,7 +264,7 @@ def alascan_cluster_analysis(models):
         else:
             cl_pops[cl_id] += 1
         # read the scan file
-        alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.csv"
+        alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
         print(f"alascan_fname: {alascan_fname}")
         #alascan_fname = Path(path, alascan_fname)
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
@@ -299,7 +299,7 @@ def alascan_cluster_analysis(models):
                 clt_scan[cl_id][ident]['frac_pr'] += 1
     # now average the data
     for cl_id in clt_scan:
-        scan_clt_filename = f"scan_clt_{cl_id}.csv"
+        scan_clt_filename = f"scan_clt_{cl_id}.tsv"
         log.info(f"Writing {scan_clt_filename}")
         clt_data = []
         for ident in clt_scan[cl_id]:
@@ -358,7 +358,7 @@ def generate_alascan_output(models, path):
         # changing attributes
         name_path = Path(name)
         shutil.copy(Path(model.path, model.file_name), name_path) 
-        alascan_fname = f"scan_{model.file_name.removesuffix('.pdb')}.csv"
+        alascan_fname = f"scan_{model.file_name.removesuffix('.pdb')}.tsv"
         # add delta_score as a bfactor to the model
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
         add_delta_to_bfactor(name, df_scan)
@@ -373,8 +373,8 @@ def generate_alascan_output(models, path):
 
 def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     """Create the alascan plots."""
-    for clt_id in clt_alascan:
-        scan_clt_filename = f"scan_clt_{clt_id}.csv"
+    for clt_id in clt_alascan:            
+        scan_clt_filename = f"scan_clt_{clt_id}.tsv"
         if not os.path.exists(scan_clt_filename):
             log.warning(f"Could not find {scan_clt_filename}")
             continue
@@ -541,7 +541,7 @@ class Scan:
                           'delta_score', 'delta_vdw', 'delta_elec',
                           'delta_desolv', 'delta_bsa']
             self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
-            alascan_fname = Path(self.path, f"scan_{native.file_name.removesuffix('.pdb')}.csv")
+            alascan_fname = Path(self.path, f"scan_{native.file_name.removesuffix('.pdb')}.tsv")
             # add zscore
             self.df_scan = add_zscores(self.df_scan, 'delta_score')
 

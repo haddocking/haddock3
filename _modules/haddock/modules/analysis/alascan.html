@@ -81,16 +81,48 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.alascan</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for alanine scan.</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">HADDOCK3 module for alanine scan.</span>
 
-<span class="sd">This module is responsible for the alanine scan analysis of the models</span>
-<span class="sd">generated in the previous step of the workflow. For each model, the module</span>
-<span class="sd">will mutate the interface residues and calculate the energy differences</span>
-<span class="sd">between the wild type and the mutant, thus providing a measure of the impact</span>
-<span class="sd">of such mutation.</span>
+<span class="sd">This module is responsible for the alanine (or any other residue) scan analysi</span>
+<span class="sd">of the models generated in the previous step of the workflow.</span>
+<span class="sd">For each model, the module will mutate the interface residues and calculate</span>
+<span class="sd">the energy differences between the wild type and the mutant, thus providing a</span>
+<span class="sd">measure of the impact of such mutation. Such difference (delta_score) is always</span>
+<span class="sd">calculated as:</span>
+
+<span class="sd">    delta_score = score_wildtype - score_mutant</span>
+
+<span class="sd">Therefore, a positive delta_score indicates that the mutation is destabilizing</span>
+<span class="sd">while a negative delta_score indicates that the mutation is stabilizing.</span>
 
 <span class="sd">If cluster information is available, the module will also calculate the</span>
-<span class="sd">average energy difference for each cluster of models.</span>
+<span class="sd">average energy difference for each cluster of models. For each amino acid, a Z</span>
+<span class="sd">score is calculated as:</span>
+
+<span class="sd">    Z = (delta_score - mean) / std</span>
+
+<span class="sd">where mean and std are the mean and standard deviation of the delta_score over </span>
+<span class="sd">all the amino acids.</span>
+
+<span class="sd">The module will also generate plots of the alanine scan data, showing the</span>
+<span class="sd">distribution of the delta_score (and every component) for each amino acid at the</span>
+<span class="sd">interface.</span>
+
+<span class="sd">You can use the parameters below to customize the behavior of the module:</span>
+
+<span class="sd">    * `chains`: list of chains to be considered for the alanine scan. In some</span>
+<span class="sd">      cases you may want to limit the analysis to a single chain.</span>
+<span class="sd">    * `output_mutants`: if True, the module will output the models with the</span>
+<span class="sd">      mutations applied (only possible if there is only one model)</span>
+<span class="sd">    * `output_bfactor`: if True, the module will output the non-mutated models</span>
+<span class="sd">      with the rescaled delta_score in the B-factor column</span>
+<span class="sd">    * `plot`: if True, the module will generate plots of the alanine scan data</span>
+<span class="sd">    * `scan_residue`: the residue to scan (default is &#39;ALA&#39;)</span>
+<span class="sd">    * `resdic`: list of residues to be used for the scanning. An example is:</span>
+
+<span class="sd">    &gt;&gt;&gt; resdic_A = [1,2,3,4]</span>
+<span class="sd">    &gt;&gt;&gt; resdic_B = [2,3,4]</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -142,6 +174,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="c1"># Parallelisation : optimal dispatching of models</span>
         <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="c1"># output mutants is only possible if there is only one model</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_mutants&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">nmodels</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;output_mutants is set to True but more than one model &quot;</span>
+                    <span class="s2">&quot;was found. Setting output mutants to False.&quot;</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_mutants&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="n">ncores</span> <span class="o">=</span> <span class="n">parse_ncores</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ncores&#39;</span><span class="p">],</span> <span class="n">njobs</span><span class="o">=</span><span class="n">nmodels</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running on </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> cores&quot;</span><span class="p">)</span>
@@ -153,16 +194,13 @@
             <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;alascan_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.scan&quot;</span>
             <span class="n">scan_obj</span> <span class="o">=</span> <span class="n">Scan</span><span class="p">(</span>
                 <span class="n">model_list</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span><span class="p">]:</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span>
-                <span class="n">output_name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span>
                 <span class="n">core</span><span class="o">=</span><span class="n">core</span><span class="p">,</span>
                 <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
                 <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="c1"># running now the ScanJob</span>
-            <span class="n">job_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
             <span class="c1"># init ScanJob</span>
             <span class="n">job</span> <span class="o">=</span> <span class="n">ScanJob</span><span class="p">(</span>
-                <span class="n">job_f</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                 <span class="n">scan_obj</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -183,8 +221,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scan_residue&quot;</span><span class="p">],</span>
                 <span class="n">offline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;offline&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
-        <span class="c1"># if output is true, write the models and export them</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># if output_bfactor is true, write the models and export them</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_bfactor&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">models_to_export</span> <span class="o">=</span> <span class="n">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_export</span>
         <span class="k">else</span><span class="p">:</span>
@@ -203,7 +241,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 03, 2025.
+      <span class="lastupdated">Last updated on Mar 10, 2025.
       </span></p>
   </div>
 

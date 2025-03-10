@@ -80,6 +80,18 @@
              
   <section id="easy">
 <h1>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h1>
+<section id="chains">
+<h2>chains<a class="headerlink" href="#chains" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: []</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: ChainIDs to be considered for the scanning.</div>
+<div class="line"><em>short description</em>: ChainIDs to be considered for the scanning.</div>
+<div class="line"><em>long description</em>: ChainIDs to be considered for the scanning. If empty, all the chains will be considered. If not empty, only residues part of the specified chains will be mutated. Do not use this parameter if you are using the resdic_* parameter.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="int-cutoff">
 <h2>int_cutoff<a class="headerlink" href="#int-cutoff" title="Link to this heading"></a></h2>
 <div class="line-block">
@@ -94,14 +106,26 @@
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
-<section id="output">
-<h2>output<a class="headerlink" href="#output" title="Link to this heading"></a></h2>
+<section id="output-bfactor">
+<h2>output_bfactor<a class="headerlink" href="#output-bfactor" title="Link to this heading"></a></h2>
 <div class="line-block">
 <div class="line"><em>default</em>: False</div>
 <div class="line"><em>type</em>: boolean</div>
-<div class="line"><em>title</em>: Dump all the models in the output folder</div>
-<div class="line"><em>short description</em>: Dump all the models in the output folder with the delta_score written in the b-factor column.</div>
-<div class="line"><em>long description</em>: Dump all the models in the output folder with the delta_score written in the b-factor column.</div>
+<div class="line"><em>title</em>: Dump the input models with the rescaled delta_score written in the b-factor column.</div>
+<div class="line"><em>short description</em>: Dump the input models with the rescaled delta_score written in the b-factor column.</div>
+<div class="line"><em>long description</em>: Dump the input models with the rescaled delta_score written in the b-factor column. Those files do not contain the mutations, but rather will display the normalized (between 0 and 100) delta HADDOCK score (100 * (delta_score - min_score) / (max_score - min_score)) in the b-factor column. The higher the b-factor, the more favourable (or less unfavourable) the mutation. You can color the PDB files according to this attribute (in pymol, type “spectrum b”)</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="output-mutants">
+<h2>output_mutants<a class="headerlink" href="#output-mutants" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Dump the mutated, energy-minimized PDB files.</div>
+<div class="line"><em>short description</em>: Dump the mutated, energy-minimized PDB files.</div>
+<div class="line"><em>long description</em>: Dump the mutated, energy-minimized PDB files. As the number of mutants can be very large, this option is allowed only when a single model is provided in input.</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -157,7 +181,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 03, 2025.
+      <span class="lastupdated">Last updated on Mar 10, 2025.
       </span></p>
   </div>
 

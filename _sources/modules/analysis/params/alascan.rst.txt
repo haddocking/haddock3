@@ -3,6 +3,17 @@
 Easy
 ````
 
+chains
+~~~~~~
+
+| *default*: []
+| *type*: list
+| *title*: ChainIDs to be considered for the scanning.
+| *short description*: ChainIDs to be considered for the scanning.
+| *long description*: ChainIDs to be considered for the scanning. If empty, all the chains will be considered. If not empty, only residues part of the specified chains will be mutated. Do not use this parameter if you are using the resdic_* parameter.
+| *group*: analysis
+| *explevel*: easy
+
 int_cutoff
 ~~~~~~~~~~
 
@@ -16,14 +27,25 @@ int_cutoff
 | *group*: analysis
 | *explevel*: easy
 
-output
-~~~~~~
+output_bfactor
+~~~~~~~~~~~~~~
 
 | *default*: False
 | *type*: boolean
-| *title*: Dump all the models in the output folder
-| *short description*: Dump all the models in the output folder with the delta_score written in the b-factor column.
-| *long description*: Dump all the models in the output folder with the delta_score written in the b-factor column.
+| *title*: Dump the input models with the rescaled delta_score written in the b-factor column.
+| *short description*: Dump the input models with the rescaled delta_score written in the b-factor column.
+| *long description*: Dump the input models with the rescaled delta_score written in the b-factor column. Those files do not contain the mutations, but rather will display the normalized (between 0 and 100) delta HADDOCK score (100 * (delta_score - min_score) / (max_score - min_score)) in the b-factor column. The higher the b-factor, the more favourable (or less unfavourable) the mutation. You can color the PDB files according to this attribute (in pymol, type "spectrum b")
+| *group*: analysis
+| *explevel*: easy
+
+output_mutants
+~~~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Dump the mutated, energy-minimized PDB files.
+| *short description*: Dump the mutated, energy-minimized PDB files.
+| *long description*: Dump the mutated, energy-minimized PDB files. As the number of mutants can be very large, this option is allowed only when a single model is provided in input.
 | *group*: analysis
 | *explevel*: easy
 

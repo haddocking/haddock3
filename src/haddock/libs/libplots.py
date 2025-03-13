@@ -227,14 +227,12 @@ def update_layout_plotly(
     px_dict = {
         "title": title,
         "xaxis": dict(
-            title=x_label,
+            title=dict(text=x_label, font=dict(size=40)),
             tickfont_size=14,
-            titlefont_size=40,
             ),
         "yaxis": dict(
-            title=y_label,
+            title=dict(text=y_label, font=dict(size=40)),
             tickfont_size=14,
-            titlefont_size=40,
             ),
         "legend": dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
         "hoverlabel": dict(font_size=16, font_family="Helvetica"),
@@ -1458,16 +1456,14 @@ def make_alascan_plot(
     fig.update_layout(
         title=f"{scan_res} scanning cluster {clt_id}",
         xaxis=dict(
-            title="Residue Name",
+            title=dict(text="Residue Name", font=dict(size=16)),
             tickfont_size=14,
-            titlefont_size=16,
             tick0=df["full_resname"],
             # in case we want to show less residues
             # dtick=10,
             ),
         yaxis=dict(
-            title="Average Delta (WT - mutant)",
-            titlefont_size=16,
+            title=dict(text="Average Delta (WT - mutant)", font=dict(size=16)),
             tickfont_size=14,
             ),
         legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),

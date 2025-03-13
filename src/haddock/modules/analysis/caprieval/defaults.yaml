@@ -210,5 +210,5 @@ cgffversion:
   short: Force-field version for the coarse-grain mapping and parameters.
   long: Force-field version for the coarse-grain mapping and parameters. To be 
         used when working with coarsed-grained structures.
-  group: module
+  group: force-field
   explevel: expert

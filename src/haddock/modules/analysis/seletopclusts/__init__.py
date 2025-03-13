@@ -50,7 +50,7 @@ class HaddockModule(BaseHaddockModule):
             _msg = "top_models must be either > 0 or nan."
             self.finish_with_error(_msg)
 
-        if not isinstance(self.params["top_cluster"], int):
+        if not isinstance(self.params["top_clusters"], int):
             _msg = "top_cluster must be an integer."
             self.finish_with_error(_msg)
 
@@ -69,7 +69,7 @@ class HaddockModule(BaseHaddockModule):
         selected_models, _notes = select_top_clusts_models(
             self.params["sortby"],
             models_to_select,
-            self.params["top_cluster"],
+            self.params["top_clusters"],
             self.params["top_models"],
             )
         # Log notes

@@ -185,14 +185,14 @@ class HaddockModule(BaseHaddockModule):
         # Get reference file
         if self.params["cgffversion"] == "None":
             references = self.get_reference(models)
-            cg = False
+            cg = 0
         elif self.params["cgffversion"] == "martini2":
             references_aa = self.get_reference(models)
             references = []
             for ref_aa in references_aa:
                 ref_cg = martinize(ref_aa, self.path, False)
                 references.append(Path(ref_cg))
-            cg = 2
+            cg = 1
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job

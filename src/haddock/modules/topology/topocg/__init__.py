@@ -49,6 +49,7 @@ def generate_topology(
     mol_params: ParamMap,
     default_params_path: Optional[FilePath] = None,
     write_to_disk: Optional[bool] = True,
+    force_field: str = "martini2",
 ) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
@@ -65,8 +66,8 @@ def generate_topology(
     cg_pdb_name = martinize(input_pdb, output_path, False)
 
     output = prepare_output(
-        output_pdb_filename=f"{cg_pdb_name[:-4]}_processed{input_pdb.suffix}",
-        output_psf_filename=f"{cg_pdb_name[:-4]}_processed.{Format.TOPOLOGY}",
+        output_pdb_filename=f"{cg_pdb_name[:-4]}_{force_field}{input_pdb.suffix}",
+        output_psf_filename=f"{cg_pdb_name[:-4]}_{force_field}.{Format.TOPOLOGY}",
     )
 
     input_str = prepare_single_input(str(cg_pdb_name))
@@ -204,6 +205,9 @@ class HaddockModule(BaseCNSModule):
         origi_ens_dic: dict[int, dict[int, str]] = {}
         # get the all-atom psf files in a list
         psf_files = []
+
+        force_field = self.params["cgffversion"]
+
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.with_parent}")
             models_dic[i] = []
@@ -253,6 +257,7 @@ class HaddockModule(BaseCNSModule):
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
                     write_to_disk=self.params["debug"],
+                    force_field=force_field,
                 )
 
                 self.log("Topology CNS input created")
@@ -280,6 +285,7 @@ class HaddockModule(BaseCNSModule):
         # Check for generated output, fail it not all expected files
         #  are found
         expected: dict[int, dict[int, PDBFile]] = {}
+
         for i in models_dic:
             expected[i] = {}
             md5_dic = ens_dic[i]
@@ -295,8 +301,8 @@ class HaddockModule(BaseCNSModule):
                     md5_hash = md5_dic[model_id]
 
                 model_name = model.stem
-                processed_pdb = Path(f"{model_name}_cg_processed.{Format.PDB}")
-                processed_topology = Path(f"{model_name}_cg_processed.{Format.TOPOLOGY}")
+                processed_pdb = Path(f"{model_name}_cg_{force_field}.{Format.PDB}")
+                processed_topology = Path(f"{model_name}_cg_{force_field}.{Format.TOPOLOGY}")
 
                 # Check if origin or md5 is available
                 if md5_hash or model_id in origin_names.keys():
@@ -311,10 +317,10 @@ class HaddockModule(BaseCNSModule):
                         model_name = f"{prefix_name}_from_{model_name}"
                         # Rename files
                         processed_pdb = processed_pdb.rename(
-                            f"{model_name}_haddock_cg_processed.{Format.PDB}"
+                            f"{model_name}_haddock_cg_{force_field}.{Format.PDB}"
                         )
                         processed_topology = processed_topology.rename(
-                            f"{model_name}_haddock_cg_processed.{Format.TOPOLOGY}"
+                            f"{model_name}_haddock_cg_{force_field}.{Format.TOPOLOGY}"
                         )
 
                 topology = TopologyFile(processed_topology, path=".")

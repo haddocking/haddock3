@@ -183,16 +183,17 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Get reference file
-        if self.params["cgffversion"] == "None":
-            references = self.get_reference(models)
-            cg = 0
-        elif self.params["cgffversion"] == "martini2":
+        cgffversion = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
+        if cgffversion == "martini2":
             references_aa = self.get_reference(models)
             references = []
             for ref_aa in references_aa:
                 ref_cg = martinize(ref_aa, self.path, False)
                 references.append(Path(ref_cg))
-            cg = 1
+            cg = cgffversion
+        else:
+            references = self.get_reference(models)
+            cg = "aa"
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job

@@ -197,18 +197,3 @@ allatoms:
         backbone atoms will be considered, otherwise all the heavy-atoms.
   group: analysis
   explevel: easy
-
-cgffversion:
-  default: None
-  type: string
-  minchars: 0
-  maxchars: 100
-  choices:
-    - None
-    - martini2
-  title: MARTINI Force-field version
-  short: Force-field version for the coarse-grain mapping and parameters.
-  long: Force-field version for the coarse-grain mapping and parameters. To be 
-        used when working with coarsed-grained structures.
-  group: force-field
-  explevel: expert

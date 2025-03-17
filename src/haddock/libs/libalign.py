@@ -74,11 +74,12 @@ DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
 PROT_ATOMS_AA = ["C", "N", "CA", "O"]
 PROT_ATOMS_MARTINI2 = ["BB"]
-PROT_ATOMS = [
-    PROT_ATOMS_AA,
-    PROT_ATOMS_MARTINI2,
-    PROT_ATOMS_MARTINI2 # The backbone particle is identical between MARTINI 2 and 3
-]
+PROT_ATOMS = {
+    "aa" : PROT_ATOMS_AA,
+    "martini2" : PROT_ATOMS_MARTINI2,
+    "martini3" : PROT_ATOMS_MARTINI2 # The backbone particle is identical between MARTINI 2 and 3
+}
+
 # Side chains
 PROT_SIDE_CHAINS_DICT_AA = {
     "ALA": ["C", "N", "CA", "O", "CB"],
@@ -196,11 +197,11 @@ PROT_SIDE_CHAINS_DICT_MARTINI3 = {
     "TRP": ['BB', 'SC1', 'SC2', 'SC3', 'SC4', 'SC5'],    
 }
 
-PROT_SIDE_CHAINS_DICT = [
-    PROT_SIDE_CHAINS_DICT_AA,
-    PROT_SIDE_CHAINS_DICT_MARTINI2,
-    PROT_SIDE_CHAINS_DICT_MARTINI3
-]
+PROT_SIDE_CHAINS_DICT = {
+    "aa" : PROT_SIDE_CHAINS_DICT_AA,
+    "martini2" : PROT_SIDE_CHAINS_DICT_MARTINI2,
+    "martini3" : PROT_SIDE_CHAINS_DICT_MARTINI3
+}
 
 # Bases
 DNA_ATOMS_AA = [
@@ -223,11 +224,11 @@ DNA_ATOMS_AA = [
 ]
 DNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
 
-DNA_ATOMS = [
-    DNA_ATOMS_AA,
-    DNA_ATOMS_MARTINI2,
-    DNA_ATOMS_MARTINI2
-]
+DNA_ATOMS = {
+    "aa" : DNA_ATOMS_AA,
+    "martini2" : DNA_ATOMS_MARTINI2,
+    "martini3" : DNA_ATOMS_MARTINI2
+}
 
 DNA_FULL_DICT_AA = {
     "DA": [
@@ -355,21 +356,21 @@ DNA_FULL_DICT_MARTINI2 = {
     "DT" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
 
-DNA_FULL_DICT = [
-    DNA_FULL_DICT_AA,
-    DNA_FULL_DICT_MARTINI2,
-    DNA_FULL_DICT_MARTINI2
-]
+DNA_FULL_DICT = {
+    "aa" : DNA_FULL_DICT_AA,
+    "martini2" : DNA_FULL_DICT_MARTINI2,
+    "martini3" : DNA_FULL_DICT_MARTINI2
+}
 
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS_AA = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 RNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
 
-RNA_ATOMS = [
-    RNA_ATOMS_AA,
-    RNA_ATOMS_MARTINI2,
-    RNA_ATOMS_MARTINI2
-]
+RNA_ATOMS = {
+    "aa" : RNA_ATOMS_AA,
+    "martini2" : RNA_ATOMS_MARTINI2,
+    "martini3" : RNA_ATOMS_MARTINI2
+}
 
 RNA_FULL_DICT_AA = {
     "A": [
@@ -476,11 +477,11 @@ RNA_FULL_DICT_MARTINI2 = {
     "U" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
 
-RNA_FULL_DICT = [
-    RNA_FULL_DICT_AA,
-    RNA_FULL_DICT_MARTINI2,
-    RNA_FULL_DICT_MARTINI2
-]
+RNA_FULL_DICT = {
+    "aa" : RNA_FULL_DICT_AA,
+    "martini2" : RNA_FULL_DICT_MARTINI2,
+    "martini3" : RNA_FULL_DICT_MARTINI2
+}
 
 
 class ALIGNError(Exception):
@@ -691,7 +692,7 @@ def load_coords(
 
 def get_atoms(pdb: PDBPath, 
               full: bool = False,
-              cg: bool = False) -> AtomsDict:
+              cg: str = "aa") -> AtomsDict:
     """Identify what is the molecule type of each PDB.
 
     Parameters

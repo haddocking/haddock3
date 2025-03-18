@@ -1,0 +1,42 @@
+! flexauto-neighbors.cns
+!    Automatic definition of flexible segments for docking for contacting residues
+!    including neighboring residues of residues making contacts
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+evaluate ($flcut = 5.0)
+
+do (store5 = $nchain1) (byres (segid $prot_segid_$nchain1 
+                               and (not (segid $prot_segid_$nchain1 or resn SHA)) around $flcut))
+
+do (store6 = 0) (segid $prot_segid_$nchain1)
+for $id in id (tag and attr store5 >0 and not ((resn WAT or resn HOH or resn TIP*) or resn DMSO) and segid $prot_segid_$nchain1) loop flexres1
+    show (resid) (id $id)
+    evaluate ($inres = decode($result))
+    evaluate ($preres = $inres)
+    evaluate ($nexres = $inres)
+    evaluate ($preres = $preres - 1)
+    do (store6 = $nchain1) (resid $preres and segid $prot_segid_$nchain1)
+    do (store6 = $nchain1) (resid $nexres and segid $prot_segid_$nchain1)
+end loop flexres1
+
+do (store5 = store6) (segid $prot_segid_$nchain1)
+
+display THE FOLLOWING RESIDUES HAVE BEEN DEFINED AS FLEXIBLE for molecule $nchain1
+for $id in id (tag and attr store5 >0 and not ((resn WAT or resn HOH or resn TIP*) or resn DMSO) and segid $prot_segid_$nchain1) loop flexres2
+    show (resid) (id $id)
+    evaluate ($inres = $result)
+    show (resn) (id $id)
+    evaluate ($nares = $result)
+    show (segid) (id $id)
+    evaluate ($seres = $result)
+    display AUTOMATICALLY SELECTED SEGMENT: $nares,$inres,$seres
+end loop flexres2
+

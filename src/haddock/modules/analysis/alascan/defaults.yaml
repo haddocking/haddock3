@@ -23,12 +23,12 @@ int_cutoff:
   long: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
   group: analysis
   explevel: easy
-output:
+output_bfactor:
   default: false
   type: boolean
-  title: Dump all the models in the output folder
-  short: Dump all the models in the output folder with the delta_score written in the b-factor column.
-  long: Dump all the models in the output folder with the delta_score written in the b-factor column.
+  title: Dump the input models with the rescaled delta_score written in the b-factor column.
+  short: Dump the input models with the rescaled delta_score written in the b-factor column. 
+  long: Dump the input models with the rescaled delta_score written in the b-factor column. Those files do not contain the mutations, but rather will display the normalized (between 0 and 100) delta HADDOCK score (100 * (delta_score - min_score) / (max_score - min_score)) in the b-factor column. The higher the b-factor, the more favourable (or less unfavourable) the mutation. You can color the PDB files according to this attribute (in pymol, type "spectrum b")
   group: analysis
   explevel: easy
 scan_residue:
@@ -48,5 +48,23 @@ plot:
   title: Plot scanning data.
   short: Plot scanning data.
   long: Plot scanning data.
+  group: analysis
+  explevel: easy
+chains:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 10
+  title: ChainIDs to be considered for the scanning.
+  short: ChainIDs to be considered for the scanning.
+  long: ChainIDs to be considered for the scanning. If empty, all the chains will be considered. If not empty, only residues part of the specified chains will be mutated. Do not use this parameter if you are using the resdic_* parameter.
+  group: analysis
+  explevel: easy
+output_mutants:
+  default: false
+  type: boolean
+  title: Dump the mutated, energy-minimized PDB files.
+  short: Dump the mutated, energy-minimized PDB files.
+  long: Dump the mutated, energy-minimized PDB files. As the number of mutants can be very large, this option is allowed only when a single model is provided in input.
   group: analysis
   explevel: easy

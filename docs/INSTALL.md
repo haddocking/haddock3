@@ -42,22 +42,22 @@ Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html
 Depending on your architecture, the CNS executable coming with the `pip install` command (see above), might give errors because of some missing libraries.
 In such a case you should recompile CNS (see the [`CNS.md`](CNS.md) file in the `docs` directory). Once you have tested your newly compiled executable you can place it in the install haddock3 version. For this do the following:
 
-1) First get the location where haddock3 has been installed, e.g.:
+1. First get the location where haddock3 has been installed, e.g.:
 
 ```bash
 > pip show haddock3
 Name: haddock3
 Version: 2024.10.0b7
 Summary: HADDOCK3
-Home-page: 
-Author: 
+Home-page:
+Author:
 Author-email: BonvinLab <bonvinlab.support@uu.nl>
 License: Apache License 2.0
 Location: /home/testuser/.venv/lib/python3.9/site-packages
 ...
 ```
 
-2) Copy your CNS executable to the haddock3 installation:
+2. Copy your CNS executable to the haddock3 installation:
 
 ```bash
 > cp <my-cns-binary> /home/testuser/.venv/lib/python3.9/site-packages/haddock/bin/cns
@@ -135,7 +135,7 @@ pip install https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz
 
 ### In conda
 
-The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.9 and 3.12.
+The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.9 and 3.13.
 
 ```bash
 conda create -n hd3-p39-openmm python=3.9

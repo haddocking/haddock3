@@ -264,8 +264,7 @@ def alascan_cluster_analysis(models):
         else:
             cl_pops[cl_id] += 1
         # read the scan file
-        alascan_fname = f"scan_{native.file_name.rstrip('.pdb')}.csv"
-        #alascan_fname = Path(path, alascan_fname)
+        alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
         # loop over the scan file
         for row_idx in range(df_scan.shape[0]):
@@ -298,7 +297,7 @@ def alascan_cluster_analysis(models):
                 clt_scan[cl_id][ident]['frac_pr'] += 1
     # now average the data
     for cl_id in clt_scan:
-        scan_clt_filename = f"scan_clt_{cl_id}.csv"
+        scan_clt_filename = f"scan_clt_{cl_id}.tsv"
         log.info(f"Writing {scan_clt_filename}")
         clt_data = []
         for ident in clt_scan[cl_id]:
@@ -353,11 +352,11 @@ def generate_alascan_output(models, path):
     """
     models_to_export = []
     for model in models:
-        name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
+        name = f"{model.file_name.removesuffix('.pdb')}_alascan.pdb"
         # changing attributes
         name_path = Path(name)
         shutil.copy(Path(model.path, model.file_name), name_path) 
-        alascan_fname = f"scan_{model.file_name.rstrip('.pdb')}.csv"
+        alascan_fname = f"scan_{model.file_name.removesuffix('.pdb')}.tsv"
         # add delta_score as a bfactor to the model
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
         add_delta_to_bfactor(name, df_scan)
@@ -372,8 +371,8 @@ def generate_alascan_output(models, path):
 
 def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     """Create the alascan plots."""
-    for clt_id in clt_alascan:
-        scan_clt_filename = f"scan_clt_{clt_id}.csv"
+    for clt_id in clt_alascan:            
+        scan_clt_filename = f"scan_clt_{clt_id}.tsv"
         if not os.path.exists(scan_clt_filename):
             log.warning(f"Could not find {scan_clt_filename}")
             continue
@@ -403,12 +402,10 @@ class ScanJob:
 
     def __init__(
             self,
-            output,
             params,
             scan_obj):
 
         log.info(f"core {scan_obj.core}, initialising Scan...")
-        self.output = output
         self.params = params
         self.scan_obj = scan_obj
 
@@ -416,7 +413,6 @@ class ScanJob:
         """Run this ScanJob."""
         log.info(f"core {self.scan_obj.core}, running Scan...")
         self.scan_obj.run()
-        self.scan_obj.output()
         return
 
 
@@ -426,18 +422,18 @@ class Scan:
     def __init__(
             self,
             model_list,
-            output_name,
             core,
             path,
             **params,
             ):
         """Initialise Scan class."""
         self.model_list = model_list
-        self.output_name = output_name
         self.core = core
         self.path = path
         self.scan_res = params['params']['scan_residue']
         self.int_cutoff = params["params"]["int_cutoff"]
+        self.chains = params["params"]["chains"]
+        self.output_mutants = params["params"]["output_mutants"]
         # initialising resdic
         if "params" in params.keys():
             self.filter_resdic = {
@@ -456,27 +452,48 @@ class Scan:
             n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
                                                               run_dir=sc_dir)
             scan_data = []
-            # check if the user wants to mutate only some residues
-            if self.filter_resdic != {'_': []}:
-                interface = self.filter_resdic
-            else:
-                interface = CAPRI.identify_interface(
-                    native.rel_path,
-                    cutoff=self.int_cutoff
-                    )
-                    
+
+            # load the coordinates
             atoms = get_atoms(native.rel_path)
             coords, chain_ranges = load_coords(native.rel_path,
                                                atoms,
                                                add_resname=True
                                                )
+            
+            # check if the user wants to mutate only some residues
+            if self.filter_resdic != {'_': []}:
+                interface = {}
+                for chain in self.filter_resdic:
+                    if chain in chain_ranges:
+                        chain_aas = [aa[1] for aa in coords if aa[0] == chain]
+                        unique_aas = list(set(chain_aas))
+                        # the interface here is the intersection of the
+                        # residues in filter_resdic and the residues actually 
+                        # present in the model
+                        interface[chain] = [
+                            res for res in self.filter_resdic[chain]
+                            if res in unique_aas
+                            ]
+            else:
+                interface = CAPRI.identify_interface(
+                    native.rel_path,
+                    cutoff=self.int_cutoff
+                    )
+                # in case the user wants to scan only some chains (this is
+                # superseded by filter_resdic)
+                if self.chains != []:
+                    interface = {
+                        chain: interface[chain] for chain in self.chains
+                        if chain in interface
+                        }
+            
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():
                 key = f"{chain}-{resid}"
                 if key not in resname_dict:
                     resname_dict[key] = resname
-            # self.log(f'Mutating interface of {native.file_name}...')
-            # self.log(f"Interface: {interface}")
+            
+            # loop over the interface
             for chain in interface:
                 for res in interface[chain]:
                     ori_resname = resname_dict[f"{chain}-{res}"]
@@ -512,14 +529,17 @@ class Scan:
                                           c_bsa, delta_score,
                                           delta_vdw, delta_elec, delta_desolv,
                                           delta_bsa])
-                        os.remove(mut_pdb_name)
+                        # if self.output_mutants is false, remove the 
+                        # mutated pdb file
+                        if not self.output_mutants:
+                            os.remove(mut_pdb_name)
             # write output
             df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
                           'score', 'vdw', 'elec', 'desolv', 'bsa',
                           'delta_score', 'delta_vdw', 'delta_elec',
                           'delta_desolv', 'delta_bsa']
             self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
-            alascan_fname = Path(self.path, f"scan_{native.file_name.rstrip('.pdb')}.csv")
+            alascan_fname = Path(self.path, f"scan_{native.file_name.removesuffix('.pdb')}.tsv")
             # add zscore
             self.df_scan = add_zscores(self.df_scan, 'delta_score')
 
@@ -541,12 +561,3 @@ class Scan:
                 f.write(f"{os.linesep}")
                 f.write(f"##########################################################{os.linesep}")  # noqa E501
                 f.write(fl_content)
-    
-    def output(self):
-        """Write down unique contacts to file."""
-        output_fname = Path(self.path, self.output_name)
-        with open(output_fname, "w") as out_fh:
-            out_fh.write(
-                f"core {self.core} wrote alascan data "
-                f"for {len(self.model_list)} models{os.linesep}"
-                )

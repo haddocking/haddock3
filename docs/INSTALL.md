@@ -154,3 +154,24 @@ on your machine.
 
 Please refer to the [official page](http://docs.openmm.org/latest/userguide/)
 of the project for a full description of the installation procedure.
+
+
+
+## `voroscoring`
+
+The use of the `[voroscoring]` module requires:
+- A cluster with SLURM installed
+- The setup of a conda environement (e.g.: ftdmp), in which you will install FTDMP
+- A functional installation of [FTDMP](https://github.com/kliment-olechnovic)
+
+Once those three conditions are fulfilled, when using the `[voroscoring]` module in haddock3, the configuration file must be tuned to contain parameters describing how to load the appropriate conda env (ftdmp) and where to find FTDMP scripts and executables:
+
+```TOML
+[voroscoring]
+# This parameter defines the base directory where conda / miniconda is installed
+conda_install_dir = "/absolute/path/to/conda/"
+# This parameter defines the name of the conda env that you created and where FTDMP is installled
+conda_env_name = "ftdmp"
+# This parameter defines where FTDMP scripts / executables can be found
+ftdmp_install_dir = "/absolute/path/to/FTDMP/"
+```

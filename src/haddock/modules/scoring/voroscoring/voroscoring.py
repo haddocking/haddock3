@@ -21,6 +21,8 @@ from haddock.core.typing import Any, Generator, Path, Union
 from haddock.libs.libontology import NaN, PDBFile
 
 
+# Defines the SLURM job template
+# Notes: Please feel free to modify the #SBATCH entries to fit your needs/setup
 VOROMQA_CFG_TEMPLATE = """#!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -48,8 +50,8 @@ OUT_MSG="Output file is here: $OUTPUT_FPATH"
 
 # 1. Setup enviroments
 # Load the gnu12 module...
-# NOTE: specific to tintin users...
-module load gnu12
+# NOTE: specific to haddock-team users...
+# module load gnu12
 # Activate conda env
 source "$CONDA_INSTALL_DIR/bin/activate"
 conda activate $CONDA_ENV_NAME

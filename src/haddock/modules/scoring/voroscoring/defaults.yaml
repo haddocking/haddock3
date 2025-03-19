@@ -63,15 +63,3 @@ nb_gpus:
   group: execution
   explevel: easy
 
-concat_chain_:
-  default: []
-  type: list
-  minitems: 0
-  maxitems: 100
-  title: List of residues supposed to be buried
-  short: List of residues supposed to be buried
-  long: concat_chain_* is an expandable parameter. You can provide concat_chain_1,
-    concat_chain_2, concat_chain_3, etc. For each selection, enlisted chains will
-    be concatenated as one prior to scoring.
-  group: analysis
-  explevel: expert

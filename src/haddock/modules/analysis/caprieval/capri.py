@@ -1,10 +1,12 @@
 """CAPRI module."""
 
 import copy
+import json
 import os
 import shutil
 import tempfile
 from itertools import combinations
+from math import isnan
 from pathlib import Path
 
 
@@ -26,8 +28,8 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    Type,
-)
+    )
+from haddock.gear.config import load as read_config
 from haddock.libs.libalign import (
     ALIGNError,
     calc_rmsd,
@@ -38,16 +40,13 @@ from haddock.libs.libalign import (
     kabsch,
     load_coords,
     make_range,
-)
+    )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.modules import get_module_steps_folders
 
 
 WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
-import json
-
-from haddock.gear.config import load as read_config
 
 
 def get_previous_cns_step(sel_steps: list, st_order: int) -> Union[str, None]:
@@ -174,19 +173,19 @@ class CAPRI:
 
     def __init__(
         self,
-        identificator: str,
+        identificator: int,
         model: PDBPath,
         path: Path,
         reference: PDBPath,
         params: ParamMap,
-        less_io: Optional[bool] = False,
+        ref_id: int = 1,
     ) -> None:
         """
         Initialize the class.
 
         Parameters
         ----------
-        identificator : str
+        identificator : int
             The identificator of the object.
         model : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             The model to be evaluated.
@@ -225,7 +224,7 @@ class CAPRI:
         self.output = self.output_ss_fname
         self.identificator = identificator
         self.core_model_idx = identificator
-        self.less_io = less_io
+        self.ref_id = ref_id
 
     def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
@@ -508,7 +507,7 @@ class CAPRI:
                 self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
-    
+
     def calc_global_rmsd(self) -> None:
         """Calculate the full structure RMSD."""
         # Load reference atomic coordinates
@@ -520,7 +519,7 @@ class CAPRI:
                 self.atoms,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
-                )
+            )
         except ALIGNError as alignerror:
             log.warning(alignerror)
             return
@@ -571,41 +570,6 @@ class CAPRI:
             has_cluster_info = True
         return has_cluster_info
 
-    def make_output(self) -> None:
-        """Output the CAPRI results to a .tsv file."""
-        data = {}
-        # keep always "model" the first key
-        data["model"] = self.model
-        data["md5"] = self.model.md5
-        # create the empty rank here so that it will appear
-        #  as the second column
-        data["caprieval_rank"] = None
-        data["score"] = self.model.score
-        data["irmsd"] = self.irmsd
-        data["fnat"] = self.fnat
-        data["lrmsd"] = self.lrmsd
-        data["ilrmsd"] = self.ilrmsd
-        data["dockq"] = self.dockq
-        data["rmsd"] = self.rmsd
-
-        if self.has_cluster_info():
-            data["cluster_id"] = self.model.clt_id
-            data["cluster_ranking"] = self.model.clt_rank
-            data["model-cluster_ranking"] = self.model.clt_model_rank
-        else:
-            data["cluster_id"] = None
-            data["cluster_ranking"] = None
-            data["model-cluster_ranking"] = None
-
-        # energies
-        if self.model.unw_energies:
-            for key in self.model.unw_energies:
-                data[key] = self.model.unw_energies[key]
-
-        output_fname = Path(self.path, self.output_ss_fname)
-
-        write_dic_to_file(data, output_fname)
-
     def run(self) -> Union[None, "CAPRI"]:
         """Get the CAPRI metrics."""
         try:
@@ -625,41 +589,70 @@ class CAPRI:
         # print(f"model2ref_numbering {self.model2ref_numbering}")
         # print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
         if self.params["fnat"]:
-            log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
-            log.debug(f" cutoff: {fnat_cutoff}A")
             self.calc_fnat(cutoff=fnat_cutoff)
 
         if self.params["irmsd"]:
-            log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
-            log.debug(f" cutoff: {irmsd_cutoff}A")
             self.calc_irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:
-            log.debug(f"id {self.identificator}, calculating L-RMSD")
             self.calc_lrmsd()
 
         if self.params["ilrmsd"]:
-            log.debug(f"id {self.identificator}, calculating I-L-RMSD")
             ilrmsd_cutoff = self.params["irmsd_cutoff"]
-            log.debug(f" cutoff: {ilrmsd_cutoff}A")
             self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
 
         if self.params["dockq"]:
-            log.debug(f"id {self.identificator}, calculating DockQ metric")
             self.calc_dockq()
-        
+
         if self.params["global_rmsd"]:
-            log.debug(f"id {self.identificator}, calculating global RMSD")
             self.calc_global_rmsd()
 
-        if not self.less_io:
-            self.make_output()
-        else:
-            # The scheduler will use the return of the `run` method as the output of the tasks
-            #  Here to avoid writing a file, return a copy of this instance
-            return copy.deepcopy(self)
+        # The scheduler will use the return of the `run` method as the output of the tasks
+        return copy.deepcopy(self)
+
+    def __eq__(self, other):
+        if self.params["dockq"] and \
+                not (isnan(self.dockq) or isnan(other.dockq)):
+            return self.dockq == other.dockq
+        elif self.params["fnat"] and \
+                not (isnan(self.fnat) or isnan(other.fnat)):
+            return self.fnat == other.fnat
+        elif self.params["ilrmsd"] and \
+                not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
+            return self.ilrmsd == other.ilrmsd
+        elif self.params["lrmsd"] and \
+                not (isnan(self.lrmsd) or isnan(other.lrmsd)):
+            return self.lrmsd == other.lrmsd
+        elif self.params["irmsd"] and \
+                not (isnan(self.irmsd) or isnan(other.irmsd)):
+            return self.irmsd == other.irmsd
+        elif self.params["global_rmsd"] and \
+                not (isnan(self.rmsd) or isnan(other.rmsd)):
+            return self.rmsd == other.rmsd
+        return True
+
+    def __lt__(self, other):
+        if self.params["dockq"] and \
+                not (isnan(self.dockq) or isnan(other.dockq)):
+            return self.dockq > other.dockq
+        elif self.params["fnat"] and \
+                not (isnan(self.fnat) or isnan(other.fnat)):
+            return self.fnat > other.fnat
+        elif self.params["ilrmsd"] and \
+                not (isnan(self.ilrmsd) or isnan(other.ilrmsd)):
+            return self.ilrmsd < other.ilrmsd
+        elif self.params["lrmsd"] and \
+                not (isnan(self.lrmsd) or isnan(other.lrmsd)):
+            return self.lrmsd < other.lrmsd
+        elif self.params["irmsd"] and \
+                not (isnan(self.irmsd) or isnan(other.irmsd)):
+            return self.irmsd < other.irmsd
+        elif self.params["global_rmsd"] and \
+                not (isnan(self.rmsd) or isnan(other.rmsd)):
+            return self.rmsd < other.rmsd
+        return False
 
     @staticmethod
     def _load_atoms(
@@ -753,122 +746,6 @@ class CAPRI:
         return new_pdb_path
 
 
-def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
-    """Merge CAPRI data."""
-    # Set of attributes/keys we want to extract
-    target_keys = ("irmsd", "fnat", "ilrmsd", "lrmsd", "dockq", "rmsd", )
-    # Initiate holder
-    capri_dic: dict[str, dict[str, float]] = {}
-    # Loop over jobs ids
-    for ident in range(1, len(capri_jobs) + 1):
-        # Point tsv file
-        out_file = Path(f"capri_ss_{ident}.tsv")
-        if not out_file.exists():
-            continue
-        # Read it
-        header, content = out_file.read_text().split(os.linesep, 1)
-        header_data = header.split("\t")
-        content_data = content.split("\t")
-        # Find model name
-        model_name = Path(content_data[header_data.index("model")]).name
-        # Gather data for this model
-        capri_dic[model_name] = {
-            key: float(content_data[header_data.index(key)])
-            for key in target_keys
-            }
-
-    for j in capri_jobs:
-        for m in capri_dic:
-            jm = j.model
-            file_name = jm.name if isinstance(jm, Path) else jm.file_name
-            if m == file_name:
-                # add the data
-                for target_key in target_keys:
-                   # Set a new target_key attribute to object with capri_dic[m][target_key] value
-                    j.__setattr__(target_key, capri_dic[m][target_key])
-
-    return capri_jobs
-
-
-def rearrange_ss_capri_output(
-    output_name: str,
-    output_count: int,
-    sort_key: str,
-    sort_ascending: bool,
-    path: FilePath,
-) -> None:
-    """Combine different capri outputs in a single file.
-
-    Parameters
-    ----------
-    output_name : str
-        Name of the output file.
-    output_count : int
-        Number of output files to combine.
-    sort_key : str
-        Key to sort the output files.
-    path : Path
-        Path to the output directory.
-    """
-    # this would be easier and more readable with pandas (:
-    output_fname = Path(path, output_name)
-    log.info(f"Rearranging output files into {output_fname}")
-    keyword = output_name.split(".")[0]
-    split_dict = {
-        "capri_ss": "model-cluster_ranking",
-        "capri_clt": "caprieval_rank",
-    }
-    if keyword not in split_dict.keys():
-        raise Exception(f"Keyword {keyword} does not exist.")
-
-    # Load the information of each intermediate file
-    data: dict[int, ParamDict] = {}
-    for ident in range(1, output_count + 1):
-        out_file = Path(path, f"{keyword}_{ident}.tsv")
-
-        # raise a warning if file does not exist.
-        if not out_file.exists():
-            log.warning(
-                (
-                    f"Output file {out_file} does not exist. "
-                    "Caprieval will not be exhaustive..."
-                )
-            )
-            continue
-
-        data[ident] = {}
-        header, content = out_file.read_text().split(os.linesep, 1)
-
-        header_data = header.split("\t")
-        content_data = content.split("\t")
-
-        # find out the data type of each field
-        value: Union[float, str]
-        for key, value in zip(header_data, content_data):
-            try:
-                value = int(value)
-            except ValueError:
-                try:
-                    value = float(value)
-                except ValueError:
-                    value = str(value).strip(os.linesep)
-            data[ident][key] = value
-
-        out_file.unlink()
-
-    ranked_data = rank_according_to_score(
-        data, sort_key=sort_key, sort_ascending=sort_ascending
-    )
-
-    data = ranked_data
-
-    if not data:
-        # This means no files have been collected
-        return
-    else:
-        write_nested_dic_to_file(data, output_name)
-
-
 def rank_according_to_score(
     data: dict[int, ParamDict], sort_key: str, sort_ascending: bool
 ) -> dict[int, ParamDict]:
@@ -912,34 +789,75 @@ def rank_according_to_score(
     return _data
 
 
+def extract_models_best_references(capri_objects: list[CAPRI]) -> list[CAPRI]:
+    """Extract best reference for each input model.
+
+    Same input models are combined and best reference is later found by
+    sorting the CAPRI objects. Only the best performing CAPRI object is
+    kept and returned.
+    This step was implemented to handle comparisons against multiple refs.
+
+    Parameters
+    ----------
+    capri_objects : list[CAPRI]
+        List of CAPRI object.
+
+    Returns
+    -------
+    selected_capri_objects : list[CAPRI]
+        List of selected best CAPIR object for each model.
+    """
+    # Group results by models
+    by_model_data: dict[int, dict[Path, CAPRI]] = {}
+    for capri in capri_objects:
+        model_data = by_model_data.setdefault(capri.identificator, [])
+        model_data.append(capri)
+    # Finds best performances for each model
+    selected_capri_objects: list[CAPRI] = []
+    # Loop over model referneces performances
+    for references_perfs in by_model_data.values():
+        # Sort them using built in __eq__ and __lt__ CAPRI methods
+        sorted_perfs = sorted(references_perfs)
+        # Select first on (best)
+        best_perf = sorted_perfs[0]
+        # Hold that guy
+        selected_capri_objects.append(best_perf)
+    return selected_capri_objects
+
+
 def extract_data_from_capri_class(
     capri_objects: list[CAPRI],
     sort_key: str,
     sort_ascending: bool,
     output_fname: Path,
+    add_reference_id: bool = False,
 ) -> Union[dict[int, ParamDict], None]:
+    """Extracts data attributes from a list of CAPRI objects into a structured
+    dictionary, optionally sorts the data based on a specified key, and writes
+    the sorted data to a file.
+
+    Parameters
+    ----------
+    capri_objects : list[CAPRI]
+        List of CAPRI objects containing data attributes to be extracted.
+    sort_key : str
+        Key by which to sort the extracted data. Must correspond to a valid
+        attribute in the CAPRI object (e.g., 'score', 'irmsd').
+    sort_ascending : bool
+        If True, sorts the data in ascending order based on the sort_key;
+        if False, sorts in descending order.
+    output_fname : Path
+        Path to the output file where the sorted data will be written.
+    add_reference_id : bool, optional
+        Should the reference id be added to the capri table?, by default False
+
+    Returns
+    -------
+    ranked_data : Union[dict[int, ParamDict], None]
+        The sorted and structured data dictionary if successful,
+        None if no data was processed.
     """
-    Extracts data attributes from a list of CAPRI objects into a structured dictionary,
-    optionally sorts the data based on a specified key, and writes the sorted data to
-    a file.
-
-    Args:
-        capri_objects (list[CAPRI]): List of CAPRI objects containing data attributes
-                                     to be extracted.
-        sort_key (str): Key by which to sort the extracted data. Must correspond to
-                        a valid attribute in the CAPRI object (e.g., 'score', 'irmsd').
-        sort_ascending (bool): If True, sorts the data in ascending order based on
-                               the sort_key; if False, sorts in descending order.
-        output_fname (Path): Path to the output file where the sorted data will be written.
-
-    Returns:
-        Optional[dict[int, ParamDict]]: The sorted and structured data dictionary if
-                                        successful, None if no data was processed.
-
-    Raises:
-        (Include any specific exceptions the function may raise)
-    """
-
+    # Retrieve data for each model
     data: dict[int, ParamDict] = {}
     for i, c in enumerate(capri_objects, start=1):
         data[i] = {
@@ -961,7 +879,9 @@ def extract_data_from_capri_class(
         }
         if c.model.unw_energies is not None:
             data[i].update(c.model.unw_energies)
-
+        if add_reference_id:
+            data[i]["ref_id"] = c.ref_id
+    # Sort models
     ranked_data = rank_according_to_score(
         data, sort_key=sort_key, sort_ascending=sort_ascending
     )
@@ -995,9 +915,7 @@ def calc_stats(data: list) -> tuple[float, float]:
 
 
 # Define dict types
-CltData = dict[
-    tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]
-]
+CltData = dict[tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]]
 
 
 def capri_cluster_analysis(

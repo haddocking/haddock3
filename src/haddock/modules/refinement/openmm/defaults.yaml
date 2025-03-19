@@ -1,0 +1,302 @@
+forcefield:
+  default: 'amber14-all.xml'
+  type: string
+  minchars: 10
+  maxchars: 100
+  choices:
+    - 'amber14-all.xml'
+    - 'amber14/protein.ff14SB.xml'
+    - 'amber14/protein.ff15ipq.xml'
+    - 'amber14/DNA.OL15.xml'
+    - 'amber14/DNA.bsc1.xml'
+    - 'amber14/RNA.OL3.xml'
+    - 'amber14/lipid17.xml'
+    - 'amber14/GLYCAM_06j-1.xml'
+    - 'charmm36.xml'
+  title: Forcefield used by OpenMM.
+  short: Forcefields that can be used by OpenMM.
+  long: Forcefields that can be used by OpenMM.
+  group: 'force field'
+  explevel: easy
+
+explicit_solvent_model:
+  default: 'amber14/tip3p.xml'
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - 'amber14/tip3p.xml'
+    - 'amber14/spce.xml'
+    - 'charmm36/spce.xml'
+    - 'amber14/tip4pew.xml'
+    - 'charmm36/tip4pew.xml'
+    - 'charmm36/tip5p.xml'
+  title: Explicit solvent models.
+  short: Solvent models supported by the OpenMM modeller to build the water solvation box.
+  long: Solvent models supported by the OpenMM modeller to build the water solvation box.
+  group: 'force field'
+  explevel: easy
+
+ph:
+  default: 7.4
+  type: float
+  precision: 1
+  min: -3.0
+  max: 12
+  title: pH of the buffer.
+  short: pH of the buffer.
+  long: pH of the buffer. This has an infulence on the protonation states of the resiudes.
+  group: simulation
+  explevel: expert
+
+keep_solvent:
+  default: false
+  type: boolean
+  title: Whether-or-not solvent be removed from provided structures.
+  short: Whether-or-not solvent be removed from provided structures.
+  long: Whether-or-not solvent be removed from provided structures.
+    If 'false', all HETATM atoms will be removed.
+  group: 'post processing'
+  explevel: easy
+
+implicit_solvent:
+  default: false
+  type: boolean
+  title: Indicate use of implicit solvent.
+  short: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.
+  long: Indicate use of implicit solvent, avoids building a water solvation box around pdbs. 
+  group: 'force field'
+  explevel: easy
+
+implicit_solvent_model:
+  default: 'implicit/hct.xml'
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - 'implicit/hct.xml'
+    - 'implicit/obc1.xml'
+    - 'implicit/obc2.xml'
+    - 'implicit/gbn.xml'
+    - 'implicit/gbn2.xml'
+  title: Implicit solvent models.
+  short: Implicit solvent models supported by OpenMM.
+  long: Implicit solvent models supported by OpenMM.
+  group: 'force field'
+  explevel: easy
+
+add_extra_particles_for_forcefield:
+  default: false
+  type: boolean
+  title: Add extra particles for forcefield.
+  short: Add extra particles for forcefield if needed such as e.g. Drude particles.
+  long: Add extra particles for forcefield if needed such as e.g. Drude particles.
+  group: 'force field'
+  explevel: easy
+
+timestep_ps:
+  default: 0.002
+  type: float
+  precision: 3
+  min: 0.001
+  max: 0.004
+  title: Timestep definition.
+  short: Definition of timestep used by the integrator to progress the simulation.
+  long: Definition of timestep used by the integrator to progress the simulation.
+  group: 'sampling'
+  explevel: expert
+
+constraints:
+  default: 'HBonds'
+  type: string
+  minchars: 1
+  maxchars: 20
+  choices:
+    - 'None'
+    - 'HBonds'
+    - 'AllBonds'
+    - 'HAngles'
+  title: Integration constraints.
+  short: Integration constraints used to allow for larger integration time step.
+  long: Integration constraints used to allow for larger integration time step.
+        For extra info see http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints
+  group: 'restraints'
+  explevel: easy
+
+equilibration_timesteps:
+  default: 2000
+  type: integer
+  min: 0
+  max: 100000
+  title: Equilibration timesteps.
+  short: Equilibration timesteps performed without saving the simulation state.
+  long: Equilibration timesteps performed without saving the simulation state.
+  group: 'sampling'
+  explevel: expert
+
+simulation_timesteps:
+  default: 2000
+  type: integer
+  min: 0
+  max: 1000000
+  title: Simulation timesteps.
+  short: Simulation timesteps performed during the simulation.
+  long: Simulation timesteps performed during the simulation.
+  group: 'sampling'
+  explevel: expert
+
+sampling_factor:
+  default: 1
+  type: integer
+  min: 1
+  max: 20
+  title: Number of simulation replicas.
+  short: Number of simulation replicas.
+  long: Number of simulation replicas.
+  group: 'sampling'
+  explevel: easy
+
+temperature_kelvin:
+  default: 298.15
+  type: float
+  precision: 2
+  min: 1.00
+  max: 1000.00
+  title: Average temperature.
+  short: Average temperature used by e.g. the integrator or by for temperature coupling.
+  long: Average temperature used by e.g. the integrator or by for temperature coupling.
+  group: 'sampling'
+  explevel: easy
+
+remove_center_of_mass_motion:
+  default: true
+  type: boolean
+  title: Remove center of mass motion.
+  short: Remove center of mass motion when overall molecular drift is detected.
+  long: Remove center of mass motion when overall molecular drift is detected.
+  group: 'sampling'
+  explevel: easy
+
+generate_ensemble:
+  default: true
+  type: boolean
+  title: Generate ensemble of configurations.
+  short: Generate ensemble of configurations.
+  long: If 'true', generates 1 single ensemble .pdb file holding various configurations; composed of the equilibrated one, all intermediates and the final one. If 'false', only return the last configuration obtained after 'simulation_timesteps' steps.
+  group: 'post processing'
+  explevel: easy
+
+save_intermediate:
+  default: 1
+  type: integer
+  min: 0
+  max: 100
+  title: Number of intermediate configurations to save.
+  short: Number of intermediate configurations to save during the simulation.
+  long: Number of intermediate configurations to save during the simulation. The code divides the length of the simulation (simulation_timesteps) by this parameter to get how often configurations should be saved.
+  group: 'sampling'
+  explevel: expert
+
+padding:
+  default: 1.0
+  type: float
+  precision: 3
+  min: 0.3
+  max: 10
+  title: Padding value in nanometers.
+  short: Padding value in nanometers.
+  long: Padding value in nanometers. This is used to create the solvation box by adding water molecules around the molecule up to this padding distance. 
+    When performing a long refinement of a complex, increase this parameter as the molecules will likely move away from each other.
+  group: 'sampling'
+  explevel: expert
+
+rigid_water:
+  default: true
+  type: boolean
+  title: Use rigid water.
+  short: Use of rigid water in the simulation.
+  long: Use of rigid water in the simulation. Flexible water molecules usually require a slower taken timestep by the used integrator.
+  group: 'restraints'
+  explevel: easy
+
+iniseed:
+  default: 917
+  type: integer
+  min: 0
+  max: 1000000
+  title: Simulation seed.
+  short: Set a pseudo-random seed for the simulation.
+  long: Set a pseudo-random seed for the simulation. This defines how the
+    initial velocities are created, but has no effect on the randomicity
+    of the solvation box.
+  group: 'sampling'
+  explevel: easy
+
+ion_concentration:
+  default: 0.15
+  precision: 3
+  min: 0
+  max: 5
+  type: float
+  title: Ion concentration.
+  short: Ion concentration in Molar.
+  long: Ion concentration in Molar.
+  group: 'sampling'
+  explevel: easy
+
+solv_equilibration:
+  default: true
+  type: boolean
+  title: Process the solvent equilibration phase.
+  short: Process the solvent equilibration phase.
+  long: Process the solvent equilibration phase. 
+    If 'true', the solvent will be equilibrated while constraining proteins positions to intial ones.
+  group: 'sampling'
+  explevel: easy
+
+solv_eq_max_temperature_kelvin:
+  default: 310.0
+  precision: 1
+  min: 1
+  max: 400
+  type: float
+  title: Upper boundary of temperature to reach during solvent eauilibration phase.
+  short: Upper boundary of temperature to reach during solvent eauilibration phase.
+  long: Upper boundary of temperature to reach during solvent eauilibration phase.
+  group: 'sampling'
+  explevel: expert
+
+solv_eq_stepsize_fs:
+  default: 2.0
+  precision: 1
+  min: 0.5
+  max: 4
+  type: float
+  title: Step size for the solvent equilibration phase.
+  short: Step size (in femptoseconds) for the solvent equilibration phase.
+  long: Step size (in femptoseconds) for the solvent equilibration phase.
+  group: 'sampling'
+  explevel: expert
+
+solv_eq_timesteps:
+  default: 500
+  min: 10
+  max: 50000
+  type: integer
+  title: Number of timesteps to be performed during solvent equilibration phase.
+  short: Number of timesteps to be performed during solvent equilibration phase.
+  long: Number of timesteps to be performed during solvent equilibration phase.
+  group: 'sampling'
+  explevel: guru
+
+solv_eq_spring_constant:
+  default: 20.0
+  precision: 1
+  min: 0
+  max: 10000
+  type: float
+  title: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
+  short: Spring constant (k) used to restrain protein coordintes during solvent equilibration phase.
+  long: Spring constant (k) used to restrain protein coordinates during solvent equilibration phase.
+  group: 'sampling'
+  explevel: guru

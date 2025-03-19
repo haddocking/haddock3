@@ -6,10 +6,11 @@ dynamics in torsion angle space.
 
 
 This semi-flexible SA consists of several stages:
-- High temperature rigid body molecular dynamics
-- Rigid body SA
-- Semi-flexible SA with flexible side-chains at the interface
-- Semi-flexible SA with fully flexible interface (both backbone and side-chains)
+
+* High temperature rigid body molecular dynamics
+* Rigid body SA
+* Semi-flexible SA with flexible side-chains at the interface
+* Semi-flexible SA with fully flexible interface (both backbone and side-chains)
 
 By default, only the interface regions is treated as flexible. It is automatically
 defined based on the intermolecular contacts made. It is also possible to manually
@@ -22,6 +23,7 @@ The temperature and number of steps for the various stages can be tuned.
 
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
@@ -32,7 +34,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseCNSModule):
@@ -112,11 +114,12 @@ class HaddockModule(BaseCNSModule):
                     "flexref",
                     ambig_fname=ambig_fname,
                     native_segid=True,
-                    less_io=self.params["less_io"],
+                    debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
                 )
 
                 out_file = f"flexref_{idx}.out"
+                err_fname = f"flexref_{idx}.cnserr"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(model, idx, ".", "flexref")
@@ -127,7 +130,7 @@ class HaddockModule(BaseCNSModule):
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
 
-                job = CNSJob(flexref_input, out_file, envvars=self.envvars)
+                job = CNSJob(flexref_input, out_file, err_fname, envvars=self.envvars)
 
                 jobs.append(job)
 

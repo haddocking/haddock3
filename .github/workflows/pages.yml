@@ -1,3 +1,4 @@
+---
 name: pages
 
 on:
@@ -9,37 +10,26 @@ jobs:
   pages:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.10"
 
-      - name: Install dependencies
+      - name: install system dependencies
         run: |
-          python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
-          pip install virtualenv==20.23.0 tox==4.5.1.1
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
-      # needs to install hd3 so the command-line pages are
-      # rendered properly
-      - name: Install HADDOCK3
-        run: |
-          pwd
-          ls -lsa
-          mkdir bin
-          touch bin/cns
-          cd src/fcc/src
-          chmod u+x Makefile
-          ./Makefile 2>%1 >/dev/null || true
-          cd -
+      - name: install haddock3 with extra dependencies
+        run: pip install '.[dev,docs]'
 
       - name: Generate docs
         run: |
-          tox -e docs
-          touch haddock3-docs/.nojekyll
+         sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+         sphinx-build -b html docs haddock3-docs
+         touch haddock3-docs/.nojekyll
 
       - name: deploy
         uses: s0/git-publish-subdir-action@develop

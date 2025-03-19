@@ -59,17 +59,17 @@ evaluate ($data.kcont=$kcont)
 ! NCS restraints
 evaluate ($data.kncs = $kncs)
 evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
+evaluate ($data.nncs = $nncs)
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($data.nums3sym = $nums3sym)
-evaluate ($data.numc4sym = $numc4sym)
-evaluate ($data.numc5sym = $numc5sym)
-evaluate ($data.numc6sym = $numc6sym)
+evaluate ($data.nc2sym = $nc2sym)
+evaluate ($data.nc3sym = $nc3sym)
+evaluate ($data.ns3sym = $ns3sym)
+evaluate ($data.nc4sym = $nc4sym)
+evaluate ($data.nc5sym = $nc5sym)
+evaluate ($data.nc6sym = $nc6sym)
 
 !Dihedral angle energy term:
 evaluate ($data.flags.dihed = true)
@@ -198,7 +198,6 @@ noe
     msoexponent * 1
     masymptote  * -0.1
     mrswitch    * 0.5
-    avexpo hbond 20
 end
 
 {* set the energy flags ======================================================== *}

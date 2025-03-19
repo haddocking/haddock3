@@ -5,7 +5,7 @@ import random
 import sys
 from datetime import datetime
 from functools import partial
-from typing import Sequence, Callable
+from typing import Callable, Sequence
 
 from haddock import contact_us, version
 
@@ -31,8 +31,18 @@ international_good_byes = [
 feedback_urls = {
     "GitHub issues": "https://github.com/haddocking/haddock3/issues",
     "BioExcel feedback": "https://www.bonvinlab.org/feedback",
-    "BioExcel survey": "https://bioexcel.eu/bioexcel-survey-2024/",
-    }
+    #"BioExcel survey": "https://bioexcel.eu/bioexcel-survey-2024/",
+    "BioExcel forum": "https://ask.bioexcel.eu/c/haddock/6",
+}
+
+
+DISCLAIMER = (
+    "!! Some of the HADDOCK3 components use CNS (Crystallographic and NMR System)"
+    f" which is free of use for non-profit applications. !!{os.linesep}"
+    "!! For commercial use it is your own responsibility"
+    f" to have a proper license. !!{os.linesep}"
+    "!! For details refer to the DISCLAIMER file in the HADDOCK3 repository. !!"
+)
 
 
 def get_initial_greeting() -> str:
@@ -43,11 +53,13 @@ def get_initial_greeting() -> str:
         f"""{os.linesep}"""
         f"""##############################################{os.linesep}"""
         f"""#                                            #{os.linesep}"""
-        f"""#                 HADDOCK 3                  #{os.linesep}"""
+        f"""#                 HADDOCK3                   #{os.linesep}"""
         f"""#                                            #{os.linesep}"""
         f"""##############################################{os.linesep}"""
         f"""{os.linesep}"""
-        f"""Starting HADDOCK {version} on {now}{os.linesep}"""
+        f"""{DISCLAIMER}{os.linesep}"""
+        f"""{os.linesep}"""
+        f"""Starting HADDOCK3 v{version} on {now}{os.linesep}"""
         f"""{os.linesep}"""
         f"""Python {python_version}{os.linesep}"""
     )
@@ -81,7 +93,7 @@ def get_goodbye_help() -> str:
 
 def gen_feedback_messages(print_function: Callable) -> None:
     """Print list of feedbacks urls.
-    
+
     Parameters
     ----------
     print_function : Callable
@@ -92,8 +104,8 @@ def gen_feedback_messages(print_function: Callable) -> None:
         (
             "Your feedback matters in Haddock3!"
             " Share your experience and help us grow:"
-            )
         )
+    )
     for name, url in feedback_urls.items():
         print_function(f"{name}: {url}")
 

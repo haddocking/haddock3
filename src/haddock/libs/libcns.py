@@ -13,6 +13,7 @@ from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true
 from haddock.libs.libmath import RandomNumberGenerator
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libpdb import check_combination_chains
 from haddock.libs.libutil import transform_to_list
 
 
@@ -273,7 +274,7 @@ def prepare_cns_input(
     ambig_fname: FilePath = "",
     native_segid: bool = False,
     default_params_path: Optional[Path] = None,
-    less_io: Optional[bool] = True,
+    debug: Optional[bool] = False,
     seed: Optional[int] = None,
 ) -> Union[Path, str]:
     """
@@ -335,25 +336,14 @@ def prepare_cns_input(
     # prepare chain/seg IDs
     segid_str = ""
     if native_segid:
-        chainid_list: list[str] = []
         if isinstance(input_element, (list, tuple)):
-            for pdb in input_element:
-
-                segids, chains = libpdb.identify_chainseg(pdb.rel_path, sort=False)
-
-                chainsegs = sorted(list(set(segids) | set(chains)))
-                # check if any of chainsegs is already in chainid_list
-                if not identifier.endswith("scoring"):
-                    if any(chainseg in chainid_list for chainseg in chainsegs):
-                        raise ValueError(
-                            f"Chain/seg IDs are not unique for pdbs {input_element}."
-                        )
-                chainid_list.extend(chainsegs)
+            chainid_list = check_combination_chains(input_element)
 
             for i, _chainseg in enumerate(chainid_list, start=1):
                 segid_str += write_eval_line(f"prot_segid_{i}", _chainseg)
 
         else:
+            chainid_list: list[str] = []
             segids, chains = libpdb.identify_chainseg(
                 input_element.rel_path, sort=False
             )
@@ -372,7 +362,7 @@ def prepare_cns_input(
 
     inp = default_params + input_str + seed_str + output + segid_str + recipe_str
 
-    if less_io:
+    if not debug:
         return inp
     else:
         inp_file = Path(f"{identifier}_{model_number}.inp")

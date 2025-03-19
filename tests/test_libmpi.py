@@ -8,6 +8,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from haddock.libs.libmpi import MPIScheduler
+from haddock.core.exceptions import HaddockTermination
 
 
 @pytest.fixture
@@ -64,8 +65,9 @@ def test_mpischduler_run(mocker, mpischeduler):
 
     # Test error case
     mock_process.stderr.decode.return_value = "Error occurred"
-    mpischeduler.run()
-    mock_sys_exit.assert_called_once()
+    with pytest.raises(HaddockTermination) as e:
+        nothing = mpischeduler.run()
+        assert nothing is None
 
 
 def test__pickle_tasks(mpischeduler):

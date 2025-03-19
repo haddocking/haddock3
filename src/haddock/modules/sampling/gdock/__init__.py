@@ -9,6 +9,7 @@ from pathlib import Path
 from pdbtools import pdb_tidy
 
 from haddock import log
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.libs import libpdb
 from haddock.libs.libontology import PDBFile
@@ -16,7 +17,7 @@ from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 def ambig2dic(ambig_f: FilePath) -> dict[str, list[int]]:

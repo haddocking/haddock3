@@ -118,17 +118,17 @@ end if
 ! NCS restraints
 evaluate ($data.kncs = $kncs)
 evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
+evaluate ($data.nncs = $nncs)
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($data.nums3sym = $nums3sym)
-evaluate ($data.numc4sym = $numc4sym)
-evaluate ($data.numc5sym = $numc5sym)
-evaluate ($data.numc6sym = $numc6sym)
+evaluate ($data.nc2sym = $nc2sym)
+evaluate ($data.nc3sym = $nc3sym)
+evaluate ($data.ns3sym = $ns3sym)
+evaluate ($data.nc4sym = $nc4sym)
+evaluate ($data.nc5sym = $nc5sym)
+evaluate ($data.nc6sym = $nc6sym)
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)
@@ -366,8 +366,11 @@ if ($failure eq false) then
 
     {* Stage 1 ======================================= rigid body high temperature search*}
 
+    if ($nfle > 0) then
+        ! reduce timestep in case of fully flexible segments
+        evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+    end if
     if ($SaProtocol.initiosteps > 0) then
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -378,12 +381,14 @@ if ($failure eq false) then
 
     if ($SaProtocol.cool1_steps > 0) then
         if ($torsiondone ne true) then
-            evaluate ($nfletot = 150)
             inline @MODULE:flex_segment.cns
             @MODULE:torsiontop.cns
             eval ($torsiondone = true)
         end if
-        evaluate ($SaProtocol.tadfactor = 4)
+        if ($nfle > 0) then
+            ! reduce timestep in case of fully flexible segments
+            evaluate ($SaProtocol.tadfactor = min(4,$SaProtocol.tadfactor))
+        end if
         @MODULE:sa_ltad_cool1.cns
     end if
 
@@ -394,7 +399,6 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment_side.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)
@@ -409,7 +413,6 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        evaluate ($nfletot = 150)
         inline @MODULE:flex_segment_back.cns
         @MODULE:torsiontop.cns
         eval ($torsiondone = true)

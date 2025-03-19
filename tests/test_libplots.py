@@ -1,25 +1,56 @@
 """Test finding the best structures in libplots."""
 
+import os
+
 from pathlib import Path
-import numpy as np
 
 import pandas as pd
 import pytest
+import tempfile
 
-from haddock.libs.libplots import create_other_cluster, find_best_struct, make_alascan_plot, read_capri_table
-
+from haddock.libs.libplots import (
+    box_plot_handler,   
+    create_other_cluster,
+    find_best_struct,
+    make_alascan_plot,
+    offline_js_manager,
+    scatter_plot_handler,
+    read_capri_table,
+    )
 from . import data_folder, golden_data
 
 
-@pytest.fixture
-def example_capri_ss():
-    """Provide example capri_ss.tsv df."""
-    return read_capri_table(Path(golden_data, "capri_ss_example.tsv"))
+@pytest.fixture(name="example_capri_ss")
+def fixture_example_capri_ss():
+    """Provide example capri_ss.tsv filepath."""
+    return Path(golden_data, "capri_ss_example.tsv")
 
 
-def test_find_best_struct_best1(example_capri_ss):
+@pytest.fixture(name="loaded_capri_ss")
+def fixture_loaded_capri_ss(example_capri_ss):
+    """Provide loaded example capri_ss.tsv."""
+    return read_capri_table(example_capri_ss)
+
+
+@pytest.fixture(name="example_capri_clt")
+def fixture_example_capri_clt():
+    """Provide example capri_clt.tsv filepath."""
+    return Path(golden_data, "capri_ss_example.tsv")
+
+@pytest.fixture(name="cluster_ranking")
+def fixture_cluster_ranking(example_capri_clt):
+    """Provide top 10 ranking from capri_clt.tsv."""
+    from haddock.clis.cli_analyse import get_cluster_ranking
+    _cluster_ranking = get_cluster_ranking(
+        example_capri_clt,
+        10,
+        )
+    return _cluster_ranking
+
+
+def test_find_best_struct_best1(loaded_capri_ss):
     """Finds one best structure."""
-    result = find_best_struct(example_capri_ss, 1)
+    result = find_best_struct(loaded_capri_ss, 1)
     cluster1 = result[result["cluster_id"] == 1]
 
     expected = pd.DataFrame(
@@ -33,9 +64,9 @@ def test_find_best_struct_best1(example_capri_ss):
     pd.testing.assert_frame_equal(cluster1, expected)
 
 
-def test_find_best_struct_best5_withmssing(example_capri_ss):
+def test_find_best_struct_best5_withmssing(loaded_capri_ss):
     """Finds 20 best structures if possible."""
-    result = find_best_struct(example_capri_ss, 5)
+    result = find_best_struct(loaded_capri_ss, 5)
     # cluster 37 has only 4 structures
     cluster37 = result[result["cluster_id"] == 37].reset_index(drop=True)
     expected = pd.DataFrame(
@@ -51,9 +82,9 @@ def test_find_best_struct_best5_withmssing(example_capri_ss):
     pd.testing.assert_frame_equal(cluster37, expected)
 
 
-def test_find_best_struct_bestdefault(example_capri_ss):
+def test_find_best_struct_bestdefault(loaded_capri_ss):
     """Finds 4 best structures if possible."""
-    result = find_best_struct(example_capri_ss)
+    result = find_best_struct(loaded_capri_ss)
     cluster1 = result[result["cluster_id"] == 1]
 
     expected = pd.DataFrame(
@@ -222,11 +253,13 @@ def example_df_scan_clt():
     yield example_df_scan_clt
 
 
-def test_make_alascan_plot(example_df_scan_clt):
+def test_make_alascan_plot(example_df_scan_clt, monkeypatch):
     """Test make_alascan_plot."""
-    make_alascan_plot(example_df_scan_clt, clt_id="-")
-    # assert existence of plot
-    assert Path("scan_clt_-.html").exists()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        make_alascan_plot(example_df_scan_clt, clt_id="-")
+        # assert existence of plot
+        assert Path("scan_clt_-.html").exists()
 
 
 def test_plotly_cdn_url():
@@ -241,3 +274,75 @@ def test_plotly_offline():
     from plotly.offline.offline import get_plotlyjs
     plotly_self_contained = get_plotlyjs()
     assert type(plotly_self_contained) == str
+
+
+def test_offline_js_manager():
+    """Test offline manager behavior."""
+    # Offline == True
+    with tempfile.TemporaryDirectory(".") as tmpdir:
+        figurepath = Path(tmpdir, "figure.html")
+        offline_plotly_js = offline_js_manager(figurepath, offline=True)
+        assert "plotly_bundle.js" in offline_plotly_js
+        assert Path(tmpdir, "plotly_bundle.js").exists()
+    # Offline == False
+    from plotly.io._utils import plotly_cdn_url
+    plotly_cdn_full_url = plotly_cdn_url()
+    offline_plotly_js = offline_js_manager(tmpdir, offline=False)
+    assert plotly_cdn_full_url in offline_plotly_js
+
+
+def test_box_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
+    """Test box plot generation without format definition."""
+    initdir = os.getcwd()
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        box_plot_handler(
+            example_capri_ss.resolve(),
+            cluster_ranking,
+            None,  # When not set (default), goes for html file generation
+            1.0,
+            )
+        assert len(list(Path(".").glob("*.html"))) > 0
+        assert len(list(Path(".").glob("*.png"))) == 0
+
+
+def test_box_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch):
+    """Test box plot generation with png format definition."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        box_plot_handler(
+            example_capri_ss.resolve(),
+            cluster_ranking,
+            "png",
+            1.0,
+            )
+        assert len(list(Path(".").glob("*.html"))) > 0
+        assert len(list(Path(".").glob("*.png"))) > 0
+
+
+def test_scatter_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
+    """Test scatter plot generation without format definition."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        scatter_plot_handler(
+            example_capri_ss.resolve(),
+            cluster_ranking,
+            None,  # When not set (default), goes for html file generation
+            1.0,
+            )
+        assert len(list(Path(".").glob("*.html"))) > 0
+        assert len(list(Path(".").glob("*.png"))) == 0
+
+
+def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch):
+    """Test scatter plot generation with png format definition."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        scatter_plot_handler(
+            example_capri_ss.resolve(),
+            cluster_ranking,
+            "png",
+            1.0,
+            )
+        assert len(list(Path(".").glob("*.html"))) > 0
+        assert len(list(Path(".").glob("*.png"))) > 0

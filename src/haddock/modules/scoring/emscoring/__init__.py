@@ -7,6 +7,7 @@ Note that no restraints (AIRs) are applied during this step.
 
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
@@ -17,7 +18,7 @@ from haddock.modules.scoring import CNSScoringModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(CNSScoringModule):
@@ -56,11 +57,12 @@ class HaddockModule(CNSScoringModule):
                 self.params,
                 "emscoring",
                 native_segid=True,
-                less_io=self.params["less_io"],
+                debug=self.params["debug"],
                 seed=model.seed if isinstance(model, PDBFile) else None,
             )
 
             scoring_out = f"emscoring_{model_num}.out"
+            err_fname = f"emscoring_{model_num}.cnserr"
 
             # create the expected PDBobject
             expected_pdb = prepare_expected_pdb(model, model_num, ".", "emscoring")
@@ -71,7 +73,7 @@ class HaddockModule(CNSScoringModule):
 
             self.output_models.append(expected_pdb)
 
-            job = CNSJob(scoring_input, scoring_out, envvars=self.envvars)
+            job = CNSJob(scoring_input, scoring_out, err_fname, envvars=self.envvars)
 
             jobs.append(job)
 
@@ -98,7 +100,9 @@ class HaddockModule(CNSScoringModule):
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
+        self.export_io_models(faulty_tolerance=self.params["tolerance"])
+        
         if self.params["per_interface_scoring"]:
             self.per_interface_output(output_fname)
 
-        self.export_io_models(faulty_tolerance=self.params["tolerance"])
+        

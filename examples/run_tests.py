@@ -106,6 +106,7 @@ examples = (
     ("docking-multiple-ambig", "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein", "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex", "refine-complex-test.cfg"),  # noqa: E203, E501
+    ("peptide-cyclisation" , "cyclise-peptide-test.cfg"),  # noqa: E203, E501
     ("scoring", "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring", "mdscoring-test.cfg"),  # noqa: E203, E501
     ("scoring", "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501

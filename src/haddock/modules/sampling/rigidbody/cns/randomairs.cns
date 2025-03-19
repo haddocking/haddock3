@@ -83,6 +83,7 @@ do (store3 = store3 / 170.0) (resn U)
 !
 evaluate ($icount = 1)
 do (store4 = 0) (all)
+do (store5 = 0) (all)
 
 ! Check if segments defined from which to sample random AIRs
 evaluate($nchain1 = 0)
@@ -94,15 +95,12 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     if ($nrair_$nchain1 = 0) then
         evaluate($samplesurf = true)
     end if
-    if ($nrair_$nchain1 = -1) then
-        evaluate($samplesurf = true)
-    end if
 
     if ($samplesurf eq true) then
         do (store5 = $nchain1) (segid $prot_segid_$nchain1)
         display RANDOM AIRS SAMPLED FROM ENTIRE SURFACE FOR MOLECULE $nchain1
     else
-        evaluate ($numseg = abs($nrair_$nchain1))
+        evaluate ($numseg = $nrair_$nchain1)
         display RANDOM AIRS SAMPLED FROM SEGMENTS FOR MOLECULE $nchain1
         while ($fcounter < $numseg) loop Xflex
             evaluate($fcounter=$fcounter + 1)
@@ -148,6 +146,7 @@ else
     while ($done = 0) loop trial
         evaluate ($iselres1 = 0)
         evaluate ($iselres1 = int(ran() * $rmax) + 1)
+        evaluate ($iselres1 = min($iselres1, $rmax))
         show sum (store3) (attribute store4 = $iselres1)
         if ($result > 0.2) then
             evaluate ($done = 1)

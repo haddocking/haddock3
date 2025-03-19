@@ -138,15 +138,17 @@ offline:
     generated files, therefore completely isolating haddock3 from any web call.
   group: "execution"
   explevel: easy
-less_io:
+debug:
   default: false
   type: boolean
-  title: Reduce the amount of I/O operations.
-  short: Reduce the amount of I/O operations.
-  long: This option will reduce the amount of I/O operations by writing
-    less files to disk. This can be useful for example when running on
-    a network file system where I/O operations are slow.
+  title: Write intermediate and stdout files.
+  short: Write intermediate and stdout files.
+  long: When set to true, this option will increase the amount of I/O 
+    operations by writing intermediate input, output and error files on disk.
+    Turning it to false can be useful for example when running on a network
+    file system where I/O operations are slow.
   group: "execution"
   explevel: easy
   incompatible:
-    mode: batch
+    false:
+      mode: batch

@@ -1,22 +1,31 @@
 """All default parameters used by the framework."""
+
+import os
 import string
 import sys
+from importlib.resources import files
 from pathlib import Path
 
 import yaml
 
-from haddock import core_path, haddock3_repository_path, log
+import haddock
+from haddock import core_path, log
 
 
-# Locate the CNS binary
-cns_exec = Path(haddock3_repository_path, "bin", "cns")
+cns_exec = Path(files(haddock).joinpath("bin/cns"))  # type: ignore
 if not cns_exec.exists():
-    log.error(
-        'CNS executable `bin/cns` not found. '
-        'Please check the install instructions.'
+    log.warning("CNS executable not found at %s", cns_exec)
+    _cns_exec = os.environ.get("CNS_EXEC")
+    if _cns_exec is None:
+        log.error(
+            "Please define the location the CNS binary by setting a CNS_EXEC system variable"
         )
-    sys.exit()
+        sys.exit(1)
+    else:
+        cns_exec = Path(_cns_exec)
 
+CONTACT_FCC_EXEC = Path(files("haddock").joinpath("bin/contact_fcc"))  # type: ignore
+FAST_RMSDMATRIX_EXEC = Path(files("haddock").joinpath("bin/fast-rmsdmatrix"))  # type: ignore
 
 MODULE_PATH_NAME = "step_"
 """
@@ -37,16 +46,14 @@ RUNDIR = "run_dir"
 INTERACTIVE_RE_SUFFIX = "interactive"
 """Suffix added to interactive haddock3-re runs."""
 
-CNS_MODULES = ["rigidbody",
-               "flexref",
-               "emscoring",
-               "mdscoring",
-               "mdref",
-               "emref"]
+MODULE_DEFAULT_YAML = "defaults.yaml"
+"""Default name of the yaml default parameters file."""
+
+CNS_MODULES = ["rigidbody", "flexref", "emscoring", "mdscoring", "mdref", "emref"]
 """List of CNS modules available in HADDOCK3."""
 
 
-with open(Path(core_path, "mandatory.yaml"), 'r') as fin:
+with open(Path(core_path, "mandatory.yaml"), "r") as fin:
     _ycfg = yaml.safe_load(fin)
 max_molecules_allowed = _ycfg["molecules"]["maxitems"]
 del _ycfg

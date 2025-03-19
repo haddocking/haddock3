@@ -1,55 +1,71 @@
 """Test the emscoring module."""
+
 import os
+import tempfile
 from pathlib import Path
 
 import pytest
 
-from haddock.libs.libontology import PDBFile
-from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as emscoring_pars
-from haddock.modules.scoring.emscoring import HaddockModule
-
-from . import golden_data
+from haddock.modules.scoring.emscoring import \
+    DEFAULT_CONFIG as DEFAULT_EMSCORING_PARAMS
+from haddock.modules.scoring.emscoring import HaddockModule as EMScoring
 
 
-@pytest.fixture
-def output_models():
-    """Prot-DNA models using for emscoring output."""
-    return [
-        PDBFile(
-            Path(golden_data, "protdna_complex_1.pdb"),
-            path=golden_data,
-            score=42.0
-            ),
-        PDBFile(
-            Path(golden_data, "protdna_complex_2.pdb"),
-            path=golden_data,
-            score=-28.0
-            )]
+@pytest.fixture(name="emscoring")
+def fixture_emscoring(monkeypatch):
+    """???"""
 
-
-def test_emscoring_output(output_models):
-    """Test emscoring expected output."""
-    ems_module = HaddockModule(
-        order=1,
-        path=Path("1_emscoring"),
-        initial_params=emscoring_pars
+    with tempfile.TemporaryDirectory() as tempdir:
+        monkeypatch.chdir(tempdir)
+        yield EMScoring(
+            order=1, path=Path("."), initial_params=DEFAULT_EMSCORING_PARAMS
         )
-    # original names
-    ems_module.output_models = output_models
-    for mod in range(len(output_models)):
-        ori_name = "original_name_" + str(mod) + ".pdb"
-        ems_module.output_models[mod].ori_name = ori_name
-    # creating output
+
+
+@pytest.fixture(name="emscoring_dna")
+def fixture_emscoring_dna(emscoring, protdna_input_list):
+    """???"""
+
+    protdna_input_list[0].score = -28.0
+    protdna_input_list[0].ori_name = "original_name_1.pdb"
+
+    protdna_input_list[1].score = 42.0
+    protdna_input_list[1].ori_name = "original_name_2.pdb"
+
+    emscoring.output_models = protdna_input_list
+
+    yield emscoring
+
+
+def test_emscoring_output(emscoring_dna, protdna_input_list):
+    """Test emscoring expected output."""
+
     output_fname = Path("emscoring.tsv")
-    ems_module.output(output_fname)
-    observed_outf_l = [e.split() for e in open(
-        output_fname).readlines() if not e.startswith('#')]
+    emscoring_dna.output(output_fname)
+
+    with open(output_fname, "r", encoding="utf-8") as fh:
+        observed_outf_l = [l.split() for l in fh.readlines() if not l.startswith("#")]
+
     # expected output
     expected_outf_l = [
         ["structure", "original_name", "md5", "score"],
-        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "-28.0"],
-        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "42.0"]]
-        
-    assert observed_outf_l == expected_outf_l
+        [
+            Path(protdna_input_list[0].rel_path).name,
+            Path(protdna_input_list[0].ori_name).name,
+            "None",
+            f"{protdna_input_list[0].score:.3f}",
+        ],
+        [
+            Path(protdna_input_list[1].rel_path).name,
+            Path(protdna_input_list[1].ori_name).name,
+            "None",
+            f"{protdna_input_list[1].score:.3f}",
+        ],
+    ]
 
-    os.unlink(output_fname)
+    assert len(observed_outf_l) == len(expected_outf_l)
+
+    for i, j in zip(observed_outf_l, expected_outf_l):
+        assert i == j
+
+    assert observed_outf_l == expected_outf_l

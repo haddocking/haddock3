@@ -58,26 +58,26 @@ evaluate ($toppar.par_nonbonded = "OPLSX")
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($data.nums3sym= $nums3sym)
-evaluate ($data.numc4sym = $numc4sym)
-evaluate ($data.numc5sym = $numc5sym)
-evaluate ($data.numc6sym = $numc6sym)
+evaluate ($data.nc2sym = $nc2sym)
+evaluate ($data.nc3sym = $nc3sym)
+evaluate ($data.ns3sym = $ns3sym)
+evaluate ($data.nc4sym = $nc4sym)
+evaluate ($data.nc5sym = $nc5sym)
+evaluate ($data.nc6sym = $nc6sym)
 
-if ( $data.numc2sym eq 6) then
+if ( $data.nc2sym eq 6) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc3sym ne 0) then
+if ( $data.nc3sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc4sym ne 0) then
+if ( $data.nc4sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc5sym ne 0) then
+if ( $data.nc5sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
-if ( $data.numc6sym ne 0) then
+if ( $data.nc6sym ne 0) then
     evaluate ($saprotocol.rotate180 = false)
 end if
 
@@ -263,16 +263,9 @@ if ($Data.ranair eq true) then
         reset
         nrestraints = 100000     ! allocate space for NOEs
         ceiling 1000
+        class ambi
     end
     @MODULE:randomairs.cns
-
-    !Read back in hbond data
-    if ($hbond_fname # "") then
-        fileexist $hbond_fname end
-        if ($result eq true) then
-            noe @@$hbond_fname end
-        end if
-    end if
 
     noe
         averaging  * sum
@@ -559,7 +552,7 @@ evaluate ($hbond_scale = $Data.hbond_scale)
 noe
     scale dist $unambig_scale
     scale ambi $ambig_scale
-    scale hbon 0.0
+    scale hbon $hbond_scale
     scale cont 0.0
 end
 

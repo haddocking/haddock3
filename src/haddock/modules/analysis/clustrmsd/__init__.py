@@ -31,7 +31,8 @@ matrix.
 from pathlib import Path
 
 from haddock import log
-# from haddock.core.typing import FilePath
+from haddock.core.defaults import MODULE_DEFAULT_YAML
+from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
     clustrmsd_tolerance_params,
@@ -52,10 +53,9 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     write_clusters,
     write_clustrmsd_file,
     )
-from typing import Union
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -179,7 +179,10 @@ class HaddockModule(BaseHaddockModule):
                 matrix_cluster_dt=matrix_cluster_dt,
                 cluster_limits=cluster_limits,
                 )
-            log.info(f"Plotting matrix in {html_matrixpath}")
+            if html_matrixpath:
+                log.info(f"Plotting matrix in {html_matrixpath}")
+            else:
+                log.warning("Cluster matrix was not generated")
 
         self.export_io_models()
         # sending matrix to next step of the workflow

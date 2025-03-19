@@ -1,13 +1,13 @@
 """haddock3-restraints passive_from_active subcommand.
 
 Given a list of active_residues and a PDB structure, it will return a list of
-surface exposed passive residues within a 6.5A radius from the active residues.
+surface exposed passive residues within a 6.5A radius (by default) from the active residues.
 
 When provided with a list of surface residues, it will filter the list for those
-that are within 6.5A from the active residues.
+that are within the radius (6.5A by default) from the active residues.
 
 Usage:
-    haddock3-restraints passive_from_active <pdb_file> <active_list> [-c <chain_id>] [-s <surface_list>]
+    haddock3-restraints passive_from_active <pdb_file> <active_list> [-c <chain_id>] [-s <surface_list>] [-r <radius>]
 """
 
 import sys
@@ -43,11 +43,20 @@ def add_pass_from_act_arguments(pass_from_act_subcommand):
         required=False,
         type=str,
         )
+    
+    pass_from_act_subcommand.add_argument(
+        "-r",
+        "--radius",
+        help="Radius to consider for the passive residues (default: 6.5A)",
+        required=False,
+        type=float,
+        default=6.5,
+        )
 
     return pass_from_act_subcommand
 
 
-def passive_from_active(structure, active_list, chain_id=None, surface_list=""):
+def passive_from_active(structure, active_list, chain_id=None, surface_list="", radius=6.5):
     """Get the passive residues."""
 
     active = [int(res) for res in active_list.split(',')]
@@ -57,7 +66,7 @@ def passive_from_active(structure, active_list, chain_id=None, surface_list=""):
 
     try:
         passive = passive_from_active_raw(
-            structure, active, chain_id, surface
+            structure, active, chain_id, surface, radius
         )
     except Exception as e:
         print(e)

@@ -80,6 +80,7 @@ dict_like_par:
   short: Some short explanation on dick_like_par
   long: Some long explanationon dick_like_par
   group: "the group it belongs"
+  type: dict
   # here are the parameters belonging to the `dict_like_par` key
   somepar:
     default: 0.2

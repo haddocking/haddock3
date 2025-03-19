@@ -24,7 +24,11 @@ from haddock.libs.libio import read_from_yaml
 
 
 def yaml2cfg_text(
-    ymlcfg: dict, module: str, explevel: str, details: bool = False
+    ymlcfg: dict,
+    module: str,
+    explevel: str,
+    details: bool = False,
+    mandatory_param: bool = False,
 ) -> str:
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
@@ -46,6 +50,16 @@ def yaml2cfg_text(
 
     details : bool
         Whether to add the 'long' description of each parameter.
+    
+    mandatory_param : bool
+        Whether this current parameters are mandatory ones. Special case where
+        this must be set as they do not contain `default` value, therefore the
+        downstream functions are not valid anymore.
+
+    Returns
+    -------
+    textual_config : str
+        Textual representation of a YAML configuration file.
     """
     new_config: list[str] = []
     if module is not None:
@@ -57,14 +71,19 @@ def yaml2cfg_text(
             module,
             explevel,
             details=details,
+            mandatory_param=mandatory_param,
         )
     )
-
-    return os.linesep.join(new_config) + os.linesep
+    textual_config = os.linesep.join(new_config) + os.linesep
+    return textual_config
 
 
 def _yaml2cfg_text(
-    ymlcfg: dict, module: str, explevel: str, details: bool = False
+    ymlcfg: dict,
+    module: str,
+    explevel: str,
+    details: bool = False,
+    mandatory_param: bool = False,
 ) -> str:
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
@@ -89,6 +108,16 @@ def _yaml2cfg_text(
 
     details : bool
         Whether to add the 'long' description of each parameter.
+
+    mandatory_param : bool
+        Whether this current parameters are mandatory ones. Special case where
+        this must be set as they do not contain `default` value, therefore the
+        downstream functions are not valid anymore.
+
+    Returns
+    -------
+    str_config : str
+        String representation of the YAML configuration file.
     """
     params: list[str] = []
     exp_levels = {
@@ -97,69 +126,81 @@ def _yaml2cfg_text(
     exp_level_idx = exp_levels[explevel]
 
     # define set of undesired parameter keys
-    undesired = ("default", "explevel", "type")
+    undesired = ["default", "explevel", "type"]
     if not details:
-        undesired = undesired + ("long",)  # type: ignore
+        # Add long description to undesired if not asked for detailed info
+        undesired.append("long")
 
     for param_name, param in ymlcfg.items():
-        # treats parameters that are subdictionaries of parameters
-        if isinstance(param, Mapping) and "default" not in param:
-            params.append("")  # give extra space
-            if module is not None:
-                curr_module = f"{module}.{param_name}"
+        # Check if param is a dictionary
+        if isinstance(param, Mapping):
+            # Without `default` key parameter, assumes this `param`
+            # is a subdictionaries of parameters
+            if "default" not in param and not mandatory_param:
+                params.append("")  # give extra space
+                if module is not None:
+                    curr_module = f"{module}.{param_name}"
+                else:
+                    curr_module = param_name
+                params.append(f"[{curr_module}]")
+                _ = _yaml2cfg_text(
+                    param,  # type: ignore
+                    module=curr_module,
+                    explevel=explevel,
+                    details=details,
+                    )
+                params.append(_)
+
+            # treats normal parameters
             else:
-                curr_module = param_name
-            params.append(f"[{curr_module}]")
-            _ = _yaml2cfg_text(
-                param,  # type: ignore
-                module=curr_module,
-                explevel=explevel,
-                details=details,
-            )
-            params.append(_)
-
-        # treats normal parameters
-        elif isinstance(param, Mapping):
-            if exp_levels[param["explevel"]] > exp_level_idx:
-                # ignore this parameter because is of an expert level
-                # superior to the one request:
-                continue
-
-            comment: list[str] = []
-            for _comment, cvalue in param.items():
-                if _comment in undesired:
+                if exp_levels[param["explevel"]] > exp_level_idx:
+                    # ignore this parameter because is of an expert level
+                    # superior to the one request:
                     continue
 
-                if cvalue == "":
-                    continue
+                comment: list[str] = []
+                for _comment, cvalue in param.items():
+                    if _comment in undesired:
+                        continue
 
-                comment.append(f"${_comment} {cvalue}")
+                    if cvalue == "":
+                        continue
 
-            default_value = param["default"]
+                    comment.append(f"${_comment} {cvalue}")
 
-            # boolean values have to be lower for compatibility with toml cfg
-            if isinstance(default_value, bool):
-                default_value = str(default_value).lower()
-                param_line = "{} = {}  # {}"
-            else:
-                param_line = "{} = {!r}  # {}"
+                # In the case of mandatory global parameters, there is
+                # no defined default parameters, so we create a `fake` one
+                if mandatory_param:
+                    default_value = "Must be defined!"
+                else:
+                    default_value = param["default"]
 
-            params.append(
-                param_line.format(
-                    param_name,
-                    default_value,
-                    " / ".join(comment),
-                )
-            )
+                # boolean values have to be lower for compatibility
+                # with toml cfg
+                if isinstance(default_value, bool):
+                    default_value = str(default_value).lower()
+                    param_line = "{} = {}  # {}"
+                else:
+                    param_line = "{} = {!r}  # {}"
 
-            if param["type"] == "list":
-                params.append(os.linesep)
+                params.append(
+                    param_line.format(
+                        param_name,
+                        default_value,
+                        " / ".join(comment),
+                        )
+                    )
+
+                if param["type"] == "list":
+                    params.append(os.linesep)
 
         else:
             # ignore some other parameters that are defined for sections.
             continue
 
-    return os.linesep.join(params)
+    # Generate one single string containing all parameters representation
+    str_config = os.linesep.join(params)
+    return str_config
 
 
 def read_from_yaml_config(

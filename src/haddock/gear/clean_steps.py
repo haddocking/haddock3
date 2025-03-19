@@ -16,6 +16,7 @@ See also the command-line clients ``haddock3-clean`` and
 import gzip
 import shutil
 import tarfile
+
 from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
@@ -61,12 +62,12 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
     # Files to delete
     # deletes all except the first one
     files_to_delete = [
-        '.inp',
-        '.inp.gz',
-        '.out',
-        '.out.gz',
-        '.job',
-        '.err',
+        ".inp",
+        ".inp.gz",
+        ".out",
+        ".out.gz",
+        ".job",
+        ".err",
         ]
 
     for extension in files_to_delete:
@@ -76,9 +77,9 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
 
     # files to archive (all files in single .gz)
     files_to_archive = [
-        '.seed',
-        '.seed.gz',
-        '.con',
+        ".seed",
+        ".seed.gz",
+        ".con",
         ]
 
     archive_ready = partial(_archive_and_remove_files, path=path)
@@ -90,10 +91,11 @@ def clean_output(path: FilePath, ncores: int = 1) -> None:
 
     # files to compress in .gz
     files_to_compress = [
-        '.inp',
-        '.out',
-        '.pdb',
-        '.psf',
+        ".inp",
+        ".out",
+        ".pdb",
+        ".psf",
+        ".cnserr",
         ]
 
     for ftc in files_to_compress:
@@ -132,9 +134,9 @@ def unpack_compressed_and_archived_files(folders: Iterable[FilePathT],
     UNPACK_FOLDERS.clear()
 
     files_to_decompress = [
-        '.pdb.gz',
-        '.psf.gz',
-        '.seed.gz',
+        ".pdb.gz",
+        ".psf.gz",
+        ".seed.gz",
         ]
 
     for folder in folders:
@@ -161,8 +163,8 @@ def unpack_compressed_and_archived_files(folders: Iterable[FilePathT],
                     pass
 
         for tar_file in tar_files:
-            with tarfile.open(tar_file) as fin:
-                fin.extractall(folder)
+            from haddock.libs.libio import extract_files_flat
+            extract_files_flat(tar_file, folder)
 
             tar_file.unlink()
 
@@ -170,8 +172,8 @@ def unpack_compressed_and_archived_files(folders: Iterable[FilePathT],
 def _unpack_gz(gz_file: Path) -> None:
     out_file = Path(gz_file.parent, gz_file.stem)
 
-    with gzip.open(gz_file, 'rb') as fin, \
-            open(out_file, 'wb') as fout:
+    with gzip.open(gz_file, "rb") as fin, \
+            open(out_file, "wb") as fout:
         shutil.copyfileobj(fin, fout, 2 * 10**8)
 
     gz_file.unlink()

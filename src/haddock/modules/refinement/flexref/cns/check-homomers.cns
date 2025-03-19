@@ -22,32 +22,32 @@ while ($ncount < $data.ncomponents) loop checkmol
 end loop checkmol
 
 if ($data.flags.sym eq true) then
-    if ($data.numc2sym > 0) then
+    if ($data.nc2sym > 0) then
         if ($n_moving_mol = 2) then
             evaluate ($homosymmetry = true)
         end if
     end if
-    if ($data.numc2sym = 6) then
+    if ($data.nc2sym = 6) then
         if ($n_moving_mol = 4) then
             evaluate ($homosymmetry = true)
         end if
     end if
-    if ($data.numc3sym > 0) then
+    if ($data.nc3sym > 0) then
         if ($n_moving_mol = 3) then
             evaluate ($homosymmetry = true)
         end if
     end if
-    if ($data.numc4sym > 0) then
+    if ($data.nc4sym > 0) then
         if ($n_moving_mol = 4) then
             evaluate ($homosymmetry = true)
         end if
     end if
-    if ($data.numc5sym > 0) then
+    if ($data.nc5sym > 0) then
         if ($n_moving_mol = 5) then
             evaluate ($homosymmetry = true)
         end if
     end if
-    if ($data.numc6sym > 0) then
+    if ($data.nc6sym > 0) then
         if ($n_moving_mol = 6) then
             evaluate ($homosymmetry = true)
         end if

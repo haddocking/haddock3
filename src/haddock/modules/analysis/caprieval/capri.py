@@ -112,7 +112,7 @@ def load_contacts(
     cutoff: float = 5.0,
     numbering_dic: Optional[dict[str, dict[int, int]]] = None,
     model2ref_chain_dict: Optional[dict[str, str]] = None,
-    cg: bool = False
+    cg: str = "aa"
 ) -> set[tuple]:
     """Load residue-based contacts.
 
@@ -180,7 +180,7 @@ class CAPRI:
         reference: PDBPath,
         params: ParamMap,
         ref_id: int = 1,
-        cg: bool = False
+        cg: str = "aa"
     ) -> None:
         """
         Initialize the class.
@@ -663,7 +663,7 @@ class CAPRI:
         model: PDBPath,
         reference: PDBPath,
         full: bool = False,
-        cg: bool = False,
+        cg: str = "aa",
     ) -> AtomsDict:
         """
         Load atoms from a model and reference.
@@ -693,7 +693,7 @@ class CAPRI:
     def identify_interface(
         pdb_f: PDBPath,
         cutoff: float = 5.0,
-        cg: bool = False,
+        cg: str = "aa",
     ) -> dict[str, list[int]]:
         """Identify the interface.
 

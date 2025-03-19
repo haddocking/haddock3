@@ -79,8 +79,8 @@ def test_voroscoring_output(output_models):
     # expected output
     expected_outf_l = [
         ["structure", "original_name", "md5", "score"],
-        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "-0.42"],
-        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "-0.28"],
+        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "-0.420"],
+        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "-0.280"],
         ["protdna_complex_3.pdb", "original_name_2.pdb", "None", "None"],
         ]
         

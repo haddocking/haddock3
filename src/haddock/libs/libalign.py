@@ -72,16 +72,16 @@ PROT_RES = [
 
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
-PROT_ATOMS_AA = ["C", "N", "CA", "O"]
+PROT_ATOMS = ["C", "N", "CA", "O"]
 PROT_ATOMS_MARTINI2 = ["BB"]
-PROT_ATOMS = {
-    "aa" : PROT_ATOMS_AA,
+PROT_ATOMS_all = {
+    "aa" : PROT_ATOMS,
     "martini2" : PROT_ATOMS_MARTINI2,
     "martini3" : PROT_ATOMS_MARTINI2 # The backbone particle is identical between MARTINI 2 and 3
 }
 
 # Side chains
-PROT_SIDE_CHAINS_DICT_AA = {
+PROT_SIDE_CHAINS_DICT = {
     "ALA": ["C", "N", "CA", "O", "CB"],
     "ARG": ["C", "N", "CA", "O", "CB", "CG", "CD", "NE", "CZ", "NH1", "NH2"],
     "ASN": ["C", "N", "CA", "O", "CB", "CG", "OD1", "ND2"],
@@ -197,14 +197,14 @@ PROT_SIDE_CHAINS_DICT_MARTINI3 = {
     "TRP": ['BB', 'SC1', 'SC2', 'SC3', 'SC4', 'SC5'],    
 }
 
-PROT_SIDE_CHAINS_DICT = {
-    "aa" : PROT_SIDE_CHAINS_DICT_AA,
+PROT_SIDE_CHAINS_DICT_all = {
+    "aa" : PROT_SIDE_CHAINS_DICT,
     "martini2" : PROT_SIDE_CHAINS_DICT_MARTINI2,
     "martini3" : PROT_SIDE_CHAINS_DICT_MARTINI3
 }
 
 # Bases
-DNA_ATOMS_AA = [
+DNA_ATOMS = [
     "C5",
     "N9",
     "N2",
@@ -224,13 +224,13 @@ DNA_ATOMS_AA = [
 ]
 DNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
 
-DNA_ATOMS = {
-    "aa" : DNA_ATOMS_AA,
+DNA_ATOMS_all = {
+    "aa" : DNA_ATOMS,
     "martini2" : DNA_ATOMS_MARTINI2,
     "martini3" : DNA_ATOMS_MARTINI2
 }
 
-DNA_FULL_DICT_AA = {
+DNA_FULL_DICT = {
     "DA": [
         "P",
         "O1P",
@@ -356,23 +356,23 @@ DNA_FULL_DICT_MARTINI2 = {
     "DT" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
 
-DNA_FULL_DICT = {
-    "aa" : DNA_FULL_DICT_AA,
+DNA_FULL_DICT_all = {
+    "aa" : DNA_FULL_DICT,
     "martini2" : DNA_FULL_DICT_MARTINI2,
     "martini3" : DNA_FULL_DICT_MARTINI2
 }
 
 RNA_RES = ["A", "G", "C", "U"]
-RNA_ATOMS_AA = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 RNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
 
-RNA_ATOMS = {
-    "aa" : RNA_ATOMS_AA,
+RNA_ATOMS_all = {
+    "aa" : RNA_ATOMS,
     "martini2" : RNA_ATOMS_MARTINI2,
     "martini3" : RNA_ATOMS_MARTINI2
 }
 
-RNA_FULL_DICT_AA = {
+RNA_FULL_DICT = {
     "A": [
         "P",
         "OP1",
@@ -477,8 +477,8 @@ RNA_FULL_DICT_MARTINI2 = {
     "U" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
 }
 
-RNA_FULL_DICT = {
-    "aa" : RNA_FULL_DICT_AA,
+RNA_FULL_DICT_all = {
+    "aa" : RNA_FULL_DICT,
     "martini2" : RNA_FULL_DICT_MARTINI2,
     "martini3" : RNA_FULL_DICT_MARTINI2
 }
@@ -710,13 +710,13 @@ def get_atoms(pdb: PDBPath,
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    atom_dic.update((r, PROT_ATOMS[cg]) for r in PROT_RES)
-    atom_dic.update((r, DNA_ATOMS[cg]) for r in DNA_RES)
-    atom_dic.update((r, RNA_ATOMS[cg]) for r in RNA_RES)
+    atom_dic.update((r, PROT_ATOMS_all[cg]) for r in PROT_RES)
+    atom_dic.update((r, DNA_ATOMS_all[cg]) for r in DNA_RES)
+    atom_dic.update((r, RNA_ATOMS_all[cg]) for r in RNA_RES)
     if full:
-        atom_dic.update(PROT_SIDE_CHAINS_DICT[cg])
-        atom_dic.update(DNA_FULL_DICT[cg])
-        atom_dic.update(RNA_FULL_DICT[cg])
+        atom_dic.update(PROT_SIDE_CHAINS_DICT_all[cg])
+        atom_dic.update(DNA_FULL_DICT_all[cg])
+        atom_dic.update(RNA_FULL_DICT_all[cg])
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

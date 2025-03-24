@@ -23,7 +23,6 @@ from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.contactmap.contmap import (
     ContactsMap,
-    ContactsMapJob,
     ClusteredContactMap,
     get_clusters_sets,
     make_contactmap_report,
@@ -73,9 +72,9 @@ class HaddockModule(BaseHaddockModule):
         # Initiate holder of all jobs to be run by the `Scheduler`
         contact_jobs: list[SupportsRunT] = []
         # Loop over clusters
-        for clustid, clt_models in clusters_sets.items():
+        for (clust_id, clust_rank), clt_models in clusters_sets.items():
             # In case of unclustered models
-            if clustid is None:
+            if clust_id is None:
                 # Obtain subset of top models
                 top_models = topX_models(clt_models, topX=self.params["topX"])
 
@@ -85,34 +84,25 @@ class HaddockModule(BaseHaddockModule):
 
                 # Loop over models to analyse
                 for model in top_models:
+                    # Set names
                     modelfname = Path(model.file_name).stem
-                    # Create a job object
-                    contmap_job = ContactsMapJob(
-                        Path(f"Unclustered_contmap_{modelfname}"),
+                    jobname = f"Unclustered_{modelfname}"
+                    # Create a contact map object
+                    contmap_job = ContactsMap(
+                        Path(model.rel_path),
+                        Path(jobname),
                         single_models_params,
-                        modelfname,
-                        # Create a contact map object
-                        ContactsMap(
-                            Path(model.rel_path),
-                            Path(f"Unclustered_contmap_{modelfname}"),
-                            single_models_params,
-                            ),
                         )
                     contact_jobs.append(contmap_job)
 
             # For clustered models
             else:
-                # Create a job object
-                contmap_job = ContactsMapJob(
-                    Path(f"cluster{clustid}_contmap"),
+                name = f"cluster{clust_id}_rank{clust_rank}"
+                # Create a contact map object
+                contmap_job = ClusteredContactMap(
+                    [Path(model.rel_path) for model in clt_models],
+                    Path(name),
                     self.params,
-                    f"Cluster_{clustid}",
-                    # Create a contact map object
-                    ClusteredContactMap(
-                        [Path(model.rel_path) for model in clt_models],
-                        Path(f"cluster{clustid}_contmap"),
-                        self.params,
-                        ),
                     )
                 contact_jobs.append(contmap_job)
 

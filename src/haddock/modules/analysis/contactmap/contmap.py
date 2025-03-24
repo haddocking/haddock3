@@ -155,29 +155,7 @@ CHAIN_COLORS = CHAIN_COLORS[::-1]
 ##################
 # Define classes #
 ##################
-class ContactsMapJob(SupportsRun):
-    """A Job dedicated to the running of contact maps objects."""
-
-    def __init__(
-            self,
-            output,
-            params,
-            name,
-            contact_obj,
-            ):
-        super(ContactsMapJob, self).__init__()
-        self.params = params
-        self.output = output
-        self.name = name
-        self.contact_obj = contact_obj
-
-    def run(self):
-        """Run this ContactMap Object Job."""
-        self.contact_obj.run()
-        return
-
-
-class ContactsMap():
+class ContactsMap(SupportsRun):
     """ContactMap analysis for single structure."""
 
     def __init__(
@@ -311,7 +289,7 @@ class ContactsMap():
         self.files['atom-atom-interchain-contacts'] = fpath2
 
 
-class ClusteredContactMap():
+class ClusteredContactMap(SupportsRun):
     """ContactMap analysis for set of clustered structures."""
 
     def __init__(
@@ -536,7 +514,7 @@ class ClusteredContactMap():
 
 
 def make_contactmap_report(
-        contactmap_jobs: list[ContactsMapJob],
+        contactmap_jobs: list[Union[ContactsMap, ClusteredContactMap]],
         outputpath: Union[str, Path],
         ) -> Union[str, Path]:
     """Generate a HTML navigation page holding all generated files.
@@ -591,7 +569,7 @@ def make_contactmap_report(
         # Combine all links in one string
         job_list_combined = ', '.join(job_list)
         # Create final string
-        job_access = f"<b>{job.name}:</b> {job_list_combined}"
+        job_access = f"<b>{job.output}:</b> {job_list_combined}"
         # Hold that guy
         ordered_files.append(job_access)
 
@@ -616,7 +594,9 @@ def make_contactmap_report(
     return outputpath
 
 
-def get_clusters_sets(models: list[PDBFile]) -> dict:
+def get_clusters_sets(
+        models: list[PDBFile],
+        ) -> dict[tuple[Optional[int], Optional[int]], list[PDBFile]]:
     """Split models by clusters ids.
 
     Parameters
@@ -626,15 +606,20 @@ def get_clusters_sets(models: list[PDBFile]) -> dict:
 
     Return
     ------
-    clusters_sets : dict
-        Dictionary of models acccessible by their cluster ids as keys.
+    clust_sets : dict[tuple[Optional[int], Optional[int]], list[PDBFile]]
+        Dictionary of (cluster ids, cluster rank) keys containing their
+        respective models as list of PDBFiles.
     """
-    clusters_sets: dict = {}
+    clust_sets: dict[tuple[Optional[int], Optional[int]], list[PDBFile]] = {}
+    # Loop over models
     for model in models:
-        if model.clt_id not in clusters_sets.keys():
-            clusters_sets[model.clt_id] = []
-        clusters_sets[model.clt_id].append(model)
-    return clusters_sets
+        # Set key
+        cluster_key = (model.clt_id, model.clt_rank)
+        # Create/Gather the corresponding list
+        cluster_list = clust_sets.setdefault(cluster_key, [])
+        # Add model
+        cluster_list.append(model)
+    return clust_sets
 
 
 def topX_models(models: list[PDBFile], topX: int = 10) -> list[Any]:

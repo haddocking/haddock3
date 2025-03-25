@@ -44,7 +44,7 @@ dependencies = [
   'toml>=0.10.2',
   'pandas==2.*',
   'prodigy-prot>=2',
-  'prodigy-lig==1.1.2',
+  'prodigy-lig>=1.1',
   'plotly==6.0.0',
   'freesasa>=2.2.1',
 ]

@@ -4,7 +4,7 @@ DevNotes:
 The magic happens in haddock/libs/libprodigy.py
 """
 
-from haddock.core.typing import FilePath, ParamDict
+from haddock.core.typing import FilePath, Optional, ParamDict
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libprodigy import ProdigyBaseJob, ProdigyWorker
 
@@ -17,7 +17,28 @@ class ProdigyProtein(ProdigyWorker):
         super().__init__(model, params)
         # Hold specific parameters
         self.acc_cutoff = params["accessibility_cutoff"]
-        self.chains = params["chains"]
+        self.chains = self.convert_chains(params["chains"])
+
+    @staticmethod
+    def convert_chains(chains: Optional[list[str]]) -> Optional[list[str]]:
+        """Read and convert the `chains` parameter.
+
+        Parameters
+        ----------
+        chains : Optional[list[str]]
+            Content of the chains parameter as provided by the user.
+
+        Returns
+        -------
+        Optional[list[str]]
+            None or list of strings containing the chains.
+        """
+        if not isinstance(chains, list):
+            return None
+        else:
+            # Removes potential spaces if user is inputing something wrong
+            # e.g.: "A, B" needs to be "A,B"
+            return [c.replace(" ", "") for c in chains]
 
     def evaluate_complex(self) -> float:
         """Evaluate a complex with prodigy-prot.

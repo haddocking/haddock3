@@ -12,7 +12,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libprodigy import CheckInstall
 from haddock.modules import get_engine
 from haddock.modules.scoring import ScoringModule
-from haddock.modules.scoring.prodigyligand.prodigy import ProdigyJob
+from haddock.modules.scoring.prodigyligand.prodigylig import ProdigyJob
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -66,7 +66,7 @@ class HaddockModule(ScoringModule):
         engine.run()
         self.log("Prodigy jobs have finished")
 
-        # Check for generated output, fail it not all expected files are found
+        # Loop over results and set computed scores are attributes to models
         for model_score in engine.results:
             # point score stored in engine
             prodigy_score = model_score.score
@@ -74,8 +74,9 @@ class HaddockModule(ScoringModule):
             # Point corresponding model
             self.output_models[model_index].score = prodigy_score
 
-        output_fname = "prodigy.tsv"
+        # Generate a tsv file containing the computed scores
+        output_fname = "prodigyligand.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
-
+        # Finalise module by exporting models
         self.export_io_models()

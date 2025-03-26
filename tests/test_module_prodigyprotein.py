@@ -30,6 +30,7 @@ def fixture_prodigyprot() -> Generator[ProdigyJob, None, None]:
 
 
 def test_prodigyprot_output_pKd(prodigyprot):
+    """Test prodigy pKd values."""
     output = prodigyprot.run()
     assert not prodigyprot.score.error
     assert prodigyprot.score.index == 1
@@ -40,6 +41,7 @@ def test_prodigyprot_output_pKd(prodigyprot):
 
 
 def test_prodigyprot_output_temperature(prodigyprot):
+    """Test prodigy pKd values when modifying the temperature."""
     prodigyprot.worker.temperature = 36
     output = prodigyprot.run()
     assert not prodigyprot.score.error
@@ -51,6 +53,7 @@ def test_prodigyprot_output_temperature(prodigyprot):
 
 
 def test_prodigyprot_output_DeltaG(prodigyprot):
+    """Test prodigy output as DeltaG."""
     prodigyprot.worker.topKd = False
     output = prodigyprot.run()
     assert not prodigyprot.score.error
@@ -62,6 +65,7 @@ def test_prodigyprot_output_DeltaG(prodigyprot):
 
 
 def test_prodigyprot_output_wrong_chains(prodigyprot):
+    """Test prodigy output when wrong chains are selected."""
     prodigyprot.worker.chains = ["A", "B"]
     output = prodigyprot.run()
     assert prodigyprot.score.index == 1

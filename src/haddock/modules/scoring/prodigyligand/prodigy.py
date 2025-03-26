@@ -45,15 +45,12 @@ class ProdigyLigand(ProdigyWorker):
 
         with open(self.model) as in_file:
             # try to set electrostatics from input file if not provided by user
-            electrostatics = False
-            try:
-                electrostatics = extract_electrostatics(in_file)
-            except Exception:
-                pass
+            electrostatics = extract_electrostatics(in_file)
+            # Setup the prodigy lig object
             prodigy_lig = ProdigyLig(
                 parser.get_structure(fname, in_file),
                 chains=[
-                    f"{self.receptor_chain}:{self.lig_chain}",
+                    f"{self.receptor_chain},{self.lig_chain}",
                     f"{self.lig_chain}:{self.lig_resname}",
                     ],
                 electrostatics=electrostatics,

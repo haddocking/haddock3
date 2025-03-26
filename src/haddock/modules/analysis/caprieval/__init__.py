@@ -186,7 +186,10 @@ class HaddockModule(BaseHaddockModule):
         try:
             cgffversion = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
         except TypeError:
-            cgffversion = False
+            try:
+                cgffversion = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
+            except TypeError:
+                cgffversion = False
         if cgffversion == "martini2":
             references_aa = self.get_reference(models)
             references = []

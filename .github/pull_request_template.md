@@ -5,7 +5,7 @@
 - [ ] Tests added for the new code
 - [ ] Documentation added for the code changes
 - [ ] Modifications / enhancements are reflected on the [haddock3 user-manual](https://github.com/haddocking/haddock3-user-manual)
-- [ ] [CHANGELOG.md](CHANGELOG.md) is updated to incorporate new changes
+- [ ] `CHANGELOG.md` is updated to incorporate new changes
 - [ ] Does not break licensing
 - [ ] Does not add any dependencies, if it does please add a thorough explanation
 

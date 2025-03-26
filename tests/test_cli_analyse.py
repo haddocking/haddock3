@@ -8,6 +8,7 @@ import pytest
 
 from haddock.clis.cli_analyse import (
     get_cluster_ranking,
+    get_top_ranked_mapping,
     main,
     update_capri_dict,
     zip_top_ranked,
@@ -51,11 +52,13 @@ def test_update_capri_dict(default_capri):
 def test_get_cluster_ranking(example_capri_clt):
     """Test get_cluster_ranking."""
     obs_cl_ranking = get_cluster_ranking(example_capri_clt, 5)
-    exp_cl_ranking = {16: 1,
-                      1: 2,
-                      13: 3,
-                      4: 4,
-                      5: 5}
+    exp_cl_ranking = {
+        16: 1,
+        1: 2,
+        13: 3,
+        4: 4,
+        5: 5,
+        }
     assert exp_cl_ranking == obs_cl_ranking
 
 
@@ -109,8 +112,19 @@ def test_zip_top_ranked(example_capri_ss, monkeypatch):
         monkeypatch.chdir(rigid_dir_analysis)
         
         exp_cl_ranking = {1: 2}
-        zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
+        top_ranked_mapping = get_top_ranked_mapping(
+            example_capri_ss,
+            exp_cl_ranking,
+            )
+        # Archive version
+        zip_top_ranked(top_ranked_mapping, "summary", True)
         assert os.path.isfile("summary.tgz") is True
+
+        # Non-Archived version
+        zip_top_ranked(top_ranked_mapping, "notarchived", False)
+        assert not os.path.isfile("notarchived.tgz")
+        assert os.path.isdir("notarchived")
+        assert len(list(Path("notarchived").glob("*.pdb"))) > 0
 
 
 def test_main_offline(example_capri_ss, example_capri_clt, tmp_path):

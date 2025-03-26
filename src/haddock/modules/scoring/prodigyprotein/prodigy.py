@@ -20,7 +20,7 @@ class ProdigyProtein(ProdigyWorker):
         self.chains = self.convert_chains(params["chains"])
 
     @staticmethod
-    def convert_chains(chains: Optional[list[str]]) -> Optional[list[str]]:
+    def convert_chains(chains: list[str]) -> Optional[list[str]]:
         """Read and convert the `chains` parameter.
 
         Parameters
@@ -33,7 +33,7 @@ class ProdigyProtein(ProdigyWorker):
         Optional[list[str]]
             None or list of strings containing the chains.
         """
-        if not isinstance(chains, list):
+        if len(chains) == 0:
             return None
         else:
             # Removes potential spaces if user is inputing something wrong

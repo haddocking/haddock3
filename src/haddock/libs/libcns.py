@@ -429,9 +429,11 @@ def prepare_expected_pdb(
     pdb = PDBFile(expected_pdb_fname, path=path)
     if isinstance(model_obj, tuple):
         pdb.topology = [p.topology for p in model_obj]
+        pdb.aa_topology = [p.aa_topology for p in model_obj]
+        pdb.cgtoaa_tbl = [p.cgtoaa_tbl for p in model_obj]
     else:
         pdb.topology = model_obj.topology
         pdb.seed = model_obj.seed
-    pdb.aa_topology = model_obj.aa_topology
-    pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
+        pdb.aa_topology = model_obj.aa_topology
+        pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
     return pdb

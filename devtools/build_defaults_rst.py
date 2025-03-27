@@ -41,6 +41,8 @@ MODULE_TITLE_DICT = {
     "exit": "Exit module",
     "openmm": "OpenMM Molecular Dynamics module",
     "sasascore": "Surface Accessibility Scoring module",
+    "prodigyprotein": "Binding affinity prediction with PRODIGY",
+    "prodigyligand": "Ligand binding affinity prediction with PRODIGY-lig",
 }
 
 CATEGORY_TITLE_DICT = {
@@ -85,6 +87,7 @@ REFERENCE_TITLE_DICT = {
     "libs.libparallel": "libparallel: multiprocessing helping functions",
     "libs.libpdb": "libpdb: PDB helping functions",
     "libs.libplots": "libplots: plotting functionalities",
+    "libs.libprodigy": "libprodigy: classes and functions related to the use of prodigy",
     "libs.librestraints": "librestraints: functions related to restraints",
     "libs.libstructure": "libstructure: functions related to structures",
     "libs.libsubprocess": "libsubprocess: subprocess execution functions",

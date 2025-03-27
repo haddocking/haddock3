@@ -154,6 +154,8 @@ class ProdigyBaseJob(ABC):
             self.worker.run()
         except Exception as e:
             log.error(e)
+            self.worker.error = str(e)
+            self.score.error = str(e)
         else:
             self.score.score = self.worker.score
             self.score.error = self.worker.error

@@ -70,5 +70,7 @@ def test_prodigyprot_output_wrong_chains(prodigyprot):
     output = prodigyprot.run()
     assert prodigyprot.score.index == 1
     assert not prodigyprot.score.score
+    assert prodigyprot.score.error
     assert output.index == 1
     assert not output.score
+    assert output.error

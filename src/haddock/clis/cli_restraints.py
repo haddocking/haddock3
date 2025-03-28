@@ -46,6 +46,10 @@ from haddock.clis.restraints.z_surface_restraints import (
     add_z_surf_restraints_arguments,
     gen_z_surface_restraints,
     )
+from haddock.clis.restraints.random_removal import (
+    add_rand_removal_arguments,
+    main as random_removal,
+    )
 
 
 # Command line interface parser
@@ -95,6 +99,12 @@ z_surface_restraints_subcommand = add_z_surf_restraints_arguments(
     z_surface_restraints_subcommand
 )
 
+# random_removal subcommand
+restraints_random_removal_subcommand = subparsers.add_parser("random_removal")
+restraints_random_removal_subcommand.set_defaults(func=random_removal)
+restraints_random_removal_subcommand = add_rand_removal_arguments(
+    restraints_random_removal_subcommand
+)
 
 def _ap():
     return ap

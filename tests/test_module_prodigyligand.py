@@ -28,6 +28,7 @@ def fixture_prodigyligand(monkeypatch) -> Generator[ProdigyJob, None, None]:
                 "distance_cutoff": 10.5,
                 "temperature": 25.0,
                 "to_pkd": True,
+                "electrostatics": True,
                 },
             index=1,
             )
@@ -105,3 +106,16 @@ def test_prodigyligand_output_wrong_ligand_resname(prodigyligand):
     assert output.index == 1
     assert not output.score
     assert output.error
+
+
+def test_prodigyligand_no_electrostatics(prodigyligand):
+    """Test prodigy-lig output no electrostatics."""
+    # Set wrong ligand chain
+    prodigyligand.worker.electrostatics = False
+    output = prodigyligand.run()
+    assert not prodigyligand.score.error
+    assert prodigyligand.score.index == 1
+    assert prodigyligand.score.score == pytest.approx(-5.12, 0.01)
+    assert not output.error
+    assert output.index == 1
+    assert output.score == pytest.approx(-5.12, 0.01)

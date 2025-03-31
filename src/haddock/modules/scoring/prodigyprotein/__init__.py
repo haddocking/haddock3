@@ -1,7 +1,9 @@
-"""EM scoring module.
+"""PRODIGY protein complex scoring module
 
-This module performs energy minimization and scoring of the models generated in
-the previous step of the workflow. No restraints are applied during this step.
+This module performs scoring of input complexes using PRODIGY (protein).
+It predicts deltaG of the complex and can return perdictions as either deltaG.
+
+Note that PRODIGY-protein is limitted to natural amino-acids.
 """
 
 from pathlib import Path

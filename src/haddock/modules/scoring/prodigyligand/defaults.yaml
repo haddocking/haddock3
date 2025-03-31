@@ -45,12 +45,12 @@ temperature:
 
 electrostatics:
   default: true
-  type: bool
+  type: boolean
   title: Use the electrostatic component.
   short: Use the electrostatic component from the input model to make the prediction.
-  long: Use the electrostatic component from the input model to make the prediction.
-    The electroststics must have been computed by HADDOCK and written in
-    the REMARK of the model.
+  long: Use the electrostatic component from the input model to make the prediction,
+    if available. The electroststics must have been computed by HADDOCK and written
+    in the REMARK of the model.
   group: scoring
   explevel: expert
 

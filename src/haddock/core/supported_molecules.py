@@ -23,7 +23,7 @@ not done automatically on purpose.
 * ``protein-allhdg5-4.top``
 * ``solvent-allhdg5-4.top``
 * ``shape.top``
-* ``cofacts.top``
+* ``cofactors.top``
 
 DNA-related files are all concatenated into a single DNA-supported
 residues datastructure. The same occurs for protein residues (natural or

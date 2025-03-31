@@ -1,0 +1,2449 @@
+REMARKS file toppar/cofactors.param
+REMARKS Victor Reys - 19/03/2025
+REMARKS Parameters added for common co-factors
+REMARKS ADN-ADP-AMP-ATP-CIT-FAD-FLC-GDP-GMP-GTP-NAD-NAP-NDP
+
+! History:
+! Victor Reys - 19/03/2025
+! - Parameters taken from PRODRG version 070118.0614
+! - AtomType midfix for ADN: A0
+! - AtomType midfix for ADP: A2
+! - AtomType midfix for AMP: A1
+! - AtomType midfix for ATP: A3
+! - AtomType midfix for CIT: CI
+! - AtomType midfix for FAD: F2
+! - AtomType midfix for FLC: CT
+! - AtomType midfix for GDP: G2
+! - AtomType midfix for GMP: G1
+! - AtomType midfix for GTP: G3
+! - AtomType midfix for NAD: N2
+! - AtomType midfix for NAP: N3
+! - AtomType midfix for NDP: NP
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+! Set the pd_x var for all
+evaluate ($pd_x = 1.0)
+
+! Adding parameter definition for residue ADN
+
+eval ($pd_v=$pd_x* 15000.0) BOND  OA0L  HA04 $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  OA0L  CA00 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA00  CA0G $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CA00  CA0T $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CA0G  OA0O $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA0G  CA0N $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA0O  HA0P $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CA0N  CA0O $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CA0N  OA0S $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA0O  OA0M $pd_v   1.430
+eval ($pd_v=$pd_x* 15000.0) BOND  OA0M  HA0K $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  OA0S  CA0T $pd_v   1.435
+eval ($pd_v=$pd_x* 12000.0) BOND  CA0T  NA0X $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NA0X  CA0L $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA0X  CA0D $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA0L  NA0O $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA0O  CA04 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA04  CA0D $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA04  CA0U $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA0D  NA0E $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NA0E  CA0E $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CA0E  NA0N $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NA0N  CA0U $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CA0U  NA09 $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NA09  HA05 $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NA09  HA0O $pd_v   1.000
+
+eval ($pd_v=$pd_x*   760.0) ANGLE  HA04  OA0L  CA00 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA0L  CA00  CA0G $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA0L  CA00  CA0T $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA0G  CA00  CA0T $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA00  CA0G  OA0O $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA00  CA0G  CA0N $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA0O  CA0G  CA0N $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA0G  OA0O  HA0P $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CA0G  CA0N  CA0O $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA0G  CA0N  OA0S $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA0O  CA0N  OA0S $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA0N  CA0O  OA0M $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA0O  OA0M  HA0K $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA0N  OA0S  CA0T $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA00  CA0T  OA0S $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA00  CA0T  NA0X $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  OA0S  CA0T  NA0X $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0T  NA0X  CA0L $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0T  NA0X  CA0D $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0L  NA0X  CA0D $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0X  CA0L  NA0O $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0L  NA0O  CA04 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0O  CA04  CA0D $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0O  CA04  CA0U $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0D  CA04  CA0U $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0X  CA0D  CA04 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0X  CA0D  NA0E $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA04  CA0D  NA0E $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0D  NA0E  CA0E $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0E  CA0E  NA0N $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA0E  NA0N  CA0U $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA04  CA0U  NA0N $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA04  CA0U  NA09 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA0N  CA0U  NA09 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA0U  NA09  HA05 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA0U  NA09  HA0O $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HA05  NA09  HA0O $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NA0X  CA0T  CA0L  CA0D $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA04  CA0U  CA0D  NA0O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0D  NA0E  CA04  NA0X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0U  CA04  NA0N  NA09 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA09  CA0U  HA05  HA0O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CA00  OA0L  CA0G  CA0T $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA0G  CA00  OA0O  CA0N $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA0N  CA0G  OA0S  CA0O $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA0T  CA00  NA0X  OA0S $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NA0X  CA0L  NA0O  CA04 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0L  NA0O  CA04  CA0D $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA0O  CA04  CA0D  NA0X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA04  CA0D  NA0X  CA0L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0D  NA0X  CA0L  NA0O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA04  CA0D  NA0E  CA0E $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0D  NA0E  CA0E  NA0N $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA0E  CA0E  NA0N  CA0U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0E  NA0N  CA0U  CA04 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA0N  CA0U  CA04  CA0D $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA0U  CA04  CA0D  NA0E $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*     0.9) DIHE  CA0T  CA00  OA0L  HA04 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA0N  CA0G  CA00  OA0L $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  OA0L  CA00  CA0T  NA0X $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA00  CA0G  OA0O  HA0P $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA00  CA0G  CA0N  OA0S $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA0G  CA0N  CA0O  OA0M $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CA0G  CA0N  OA0S  CA0T $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA0N  CA0O  OA0M  HA0K $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NA0X  CA0T  OA0S  CA0N $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  CA00  CA0T  NA0X  CA0D $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CA04  CA0U  NA09  HA0O $pd_v 2 180.000
+
+
+NONBONDED  OA0L  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA04  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA00  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA0G  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA0O  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA0P  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA0N  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA0O  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA0M  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA0K  0.10000 1.42544 0.10000 1.15817
+NONBONDED  OA0S  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA0T  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA0X  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA0L  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA0O  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA04  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA0D  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA0E  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA0E  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA0N  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA0U  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA09  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HA05  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HA0O  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue ADP
+
+
+eval ($pd_v=$pd_x* 12000.0) BOND  OA2J  PA2N $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PA2N  OA2Z $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PA2N  OA2B $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PA2N  OA2L $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OA2L  PA22 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PA22  OA2N $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PA22  OA2D $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PA22  OA2A $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OA2A  CA21 $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CA21  CA2W $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CA2W  OA2H $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA2W  CA2K $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OA2H  CA2Z $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA2K  OA2Q $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA2K  CA2X $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA2Q  HA2Q $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CA2X  OA2E $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA2X  CA2Z $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA2E  HA22 $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CA2Z  NA2H $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NA2H  CA2C $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA2H  CA27 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA2C  NA2B $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA2B  CA2V $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA2V  CA27 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA2V  CA29 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA27  NA27 $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NA27  CA2T $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CA2T  NA2G $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NA2G  CA29 $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CA29  NA29 $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NA29  HA2I $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NA29  HA2C $pd_v   1.000
+
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2J  PA2N  OA2Z $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2J  PA2N  OA2B $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2J  PA2N  OA2L $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2Z  PA2N  OA2B $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2Z  PA2N  OA2L $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2B  PA2N  OA2L $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PA2N  OA2L  PA22 $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2L  PA22  OA2N $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2L  PA22  OA2D $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2L  PA22  OA2A $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2N  PA22  OA2D $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2N  PA22  OA2A $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA2D  PA22  OA2A $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PA22  OA2A  CA21 $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA2A  CA21  CA2W $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA21  CA2W  OA2H $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CA21  CA2W  CA2K $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA2H  CA2W  CA2K $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA2W  OA2H  CA2Z $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA2W  CA2K  OA2Q $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA2W  CA2K  CA2X $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA2Q  CA2K  CA2X $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA2K  OA2Q  HA2Q $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA2K  CA2X  OA2E $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA2K  CA2X  CA2Z $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA2E  CA2X  CA2Z $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA2X  OA2E  HA22 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA2H  CA2Z  CA2X $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OA2H  CA2Z  NA2H $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA2X  CA2Z  NA2H $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2Z  NA2H  CA2C $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2Z  NA2H  CA27 $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2C  NA2H  CA27 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA2H  CA2C  NA2B $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2C  NA2B  CA2V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA2B  CA2V  CA27 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA2B  CA2V  CA29 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA27  CA2V  CA29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA2H  CA27  CA2V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA2H  CA27  NA27 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2V  CA27  NA27 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA27  NA27  CA2T $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA27  CA2T  NA2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2T  NA2G  CA29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2V  CA29  NA2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA2V  CA29  NA29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA2G  CA29  NA29 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA29  NA29  HA2I $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA29  NA29  HA2C $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HA2I  NA29  HA2C $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NA2H  CA2Z  CA2C  CA27 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA2V  CA29  CA27  NA2B $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA27  NA27  CA2V  NA2H $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA29  CA2V  NA2G  NA29 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA29  CA29  HA2I  HA2C $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  PA2N  OA2J  OA2Z  OA2B $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PA22  OA2L  OA2N  OA2D $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA2W  CA21  CA2K  OA2H $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA2K  CA2W  CA2X  OA2Q $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA2X  CA2K  CA2Z  OA2E $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA2Z  OA2H  CA2X  NA2H $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NA2H  CA2C  NA2B  CA2V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA2C  NA2B  CA2V  CA27 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA2B  CA2V  CA27  NA2H $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA2V  CA27  NA2H  CA2C $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA27  NA2H  CA2C  NA2B $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA2V  CA27  NA27  CA2T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA27  NA27  CA2T  NA2G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA27  CA2T  NA2G  CA29 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA2T  NA2G  CA29  CA2V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA2G  CA29  CA2V  CA27 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA29  CA2V  CA27  NA27 $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*     0.6) DIHE  PA22  OA2L  PA2N  OA2J $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PA22  OA2L  PA2N  OA2J $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PA2N  OA2L  PA22  OA2A $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PA2N  OA2L  PA22  OA2A $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CA21  OA2A  PA22  OA2L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CA21  OA2A  PA22  OA2L $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PA22  OA2A  CA21  CA2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA2K  CA2W  CA21  OA2A $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CA21  CA2W  OA2H  CA2Z $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA21  CA2W  CA2K  CA2X $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NA2H  CA2Z  OA2H  CA2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA2W  CA2K  OA2Q  HA2Q $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA2Z  CA2X  CA2K  CA2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA2K  CA2X  OA2E  HA22 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA2K  CA2X  CA2Z  NA2H $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  OA2H  CA2Z  NA2H  CA27 $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CA2V  CA29  NA29  HA2C $pd_v 2 180.000
+
+
+NONBONDED  OA2J  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PA2N  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OA2Z  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA2B  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA2L  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PA22  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OA2N  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA2D  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA2A  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA21  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA2W  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA2H  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA2K  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA2Q  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA2Q  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA2X  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA2E  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA22  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA2Z  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA2H  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA2C  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA2B  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA2V  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA27  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA27  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA2T  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA2G  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA29  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA29  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HA2I  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HA2C  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue AMP
+
+
+eval ($pd_v=$pd_x* 12000.0) BOND  OA1Q  PA1L $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PA1L  OA12 $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PA1L  OA14 $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PA1L  OA1S $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OA1S  CA1H $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CA1H  CA1J $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CA1J  OA1H $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA1J  CA1Y $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OA1H  CA1F $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA1Y  OA1C $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA1Y  CA1K $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA1C  HA1N $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CA1K  OA16 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA1K  CA1F $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA16  HA1H $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CA1F  NA1V $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NA1V  CA19 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA1V  CA1U $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA19  NA17 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA17  CA1A $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA1A  CA1U $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA1A  CA1L $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA1U  NA13 $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NA13  CA1C $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CA1C  NA16 $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NA16  CA1L $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CA1L  NA1G $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NA1G  HA1W $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NA1G  HA12 $pd_v   1.000
+
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA1Q  PA1L  OA12 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA1Q  PA1L  OA14 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA1Q  PA1L  OA1S $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA12  PA1L  OA14 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA12  PA1L  OA1S $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA14  PA1L  OA1S $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PA1L  OA1S  CA1H $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA1S  CA1H  CA1J $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA1H  CA1J  OA1H $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CA1H  CA1J  CA1Y $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA1H  CA1J  CA1Y $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA1J  OA1H  CA1F $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA1J  CA1Y  OA1C $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA1J  CA1Y  CA1K $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA1C  CA1Y  CA1K $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA1Y  OA1C  HA1N $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA1Y  CA1K  OA16 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA1Y  CA1K  CA1F $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA16  CA1K  CA1F $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA1K  OA16  HA1H $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA1H  CA1F  CA1K $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OA1H  CA1F  NA1V $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA1K  CA1F  NA1V $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1F  NA1V  CA19 $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1F  NA1V  CA1U $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA19  NA1V  CA1U $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA1V  CA19  NA17 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA19  NA17  CA1A $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA17  CA1A  CA1U $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA17  CA1A  CA1L $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1U  CA1A  CA1L $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA1V  CA1U  CA1A $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA1V  CA1U  NA13 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1A  CA1U  NA13 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1U  NA13  CA1C $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA13  CA1C  NA16 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1C  NA16  CA1L $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1A  CA1L  NA16 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA1A  CA1L  NA1G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA16  CA1L  NA1G $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA1L  NA1G  HA1W $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA1L  NA1G  HA12 $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HA1W  NA1G  HA12 $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NA1V  CA1F  CA19  CA1U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1A  CA1L  CA1U  NA17 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1U  NA13  CA1A  NA1V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1L  CA1A  NA16  NA1G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA1G  CA1L  HA1W  HA12 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  PA1L  OA1Q  OA14  OA12 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA1J  CA1H  CA1Y  OA1H $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA1Y  CA1J  CA1K  OA1C $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA1K  CA1Y  CA1F  OA16 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA1F  OA1H  CA1K  NA1V $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NA1V  CA19  NA17  CA1A $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA19  NA17  CA1A  CA1U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA17  CA1A  CA1U  NA1V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1A  CA1U  NA1V  CA19 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1U  NA1V  CA19  NA17 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1A  CA1U  NA13  CA1C $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1U  NA13  CA1C  NA16 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA13  CA1C  NA16  CA1L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1C  NA16  CA1L  CA1A $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA16  CA1L  CA1A  CA1U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA1L  CA1A  CA1U  NA13 $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*     0.6) DIHE  CA1H  OA1S  PA1L  OA1Q $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CA1H  OA1S  PA1L  OA1Q $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PA1L  OA1S  CA1H  CA1J $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA1Y  CA1J  CA1H  OA1S $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CA1H  CA1J  OA1H  CA1F $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA1H  CA1J  CA1Y  CA1K $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NA1V  CA1F  OA1H  CA1J $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA1J  CA1Y  OA1C  HA1N $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA1F  CA1K  CA1Y  CA1J $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA1Y  CA1K  OA16  HA1H $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA1Y  CA1K  CA1F  NA1V $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  OA1H  CA1F  NA1V  CA1U $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CA1A  CA1L  NA1G  HA12 $pd_v 2 180.000
+
+
+NONBONDED  OA1Q  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PA1L  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OA12  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA14  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA1S  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA1H  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA1J  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA1H  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA1Y  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA1C  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA1N  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA1K  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA16  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA1H  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA1F  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA1V  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA19  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA17  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA1A  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA1U  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA13  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA1C  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA16  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA1L  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA1G  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HA1W  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HA12  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue ATP
+
+
+eval ($pd_v=$pd_x* 12000.0) BOND  OA3H  PA3Q $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PA3Q  OA3D $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PA3Q  OA3S $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PA3Q  OA3U $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OA3U  PA38 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PA38  OA3Z $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PA38  OA3O $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PA38  OA3H $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OA3H  PA3N $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PA3N  OA39 $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PA3N  OA3T $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PA3N  OA36 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OA36  CA31 $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CA31  CA3K $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CA3K  OA32 $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA3K  CA3E $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OA32  CA37 $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CA3E  OA34 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA3E  CA33 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA34  HA37 $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CA33  OA3E $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CA33  CA37 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OA3E  HA3W $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CA37  NA3X $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NA3X  CA3P $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA3X  CA3L $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA3P  NA3U $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NA3U  CA32 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CA32  CA3L $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA32  CA34 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CA3L  NA3G $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NA3G  CA3F $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CA3F  NA3N $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NA3N  CA34 $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CA34  NA3M $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NA3M  HA3Q $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NA3M  HA35 $pd_v   1.000
+
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3H  PA3Q  OA3D $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3H  PA3Q  OA3S $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3H  PA3Q  OA3U $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3D  PA3Q  OA3S $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3D  PA3Q  OA3U $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3S  PA3Q  OA3U $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PA3Q  OA3U  PA38 $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3U  PA38  OA3Z $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3U  PA38  OA3O $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3U  PA38  OA3H $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3Z  PA38  OA3O $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3Z  PA38  OA3H $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3O  PA38  OA3H $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PA38  OA3H  PA3N $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3H  PA3N  OA39 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3H  PA3N  OA3T $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3H  PA3N  OA36 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA39  PA3N  OA3T $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA39  PA3N  OA36 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OA3T  PA3N  OA36 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PA3N  OA36  CA31 $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA36  CA31  CA3K $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA31  CA3K  OA32 $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CA31  CA3K  CA3E $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA32  CA3K  CA3E $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA3K  OA32  CA37 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA3K  CA3E  OA34 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA3K  CA3E  CA33 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA34  CA3E  CA33 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA3E  OA34  HA37 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA3E  CA33  OA3E $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CA3E  CA33  CA37 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA3E  CA33  CA37 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CA33  OA3E  HA3W $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OA32  CA37  CA33 $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OA32  CA37  NA3X $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CA33  CA37  NA3X $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA37  NA3X  CA3P $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA37  NA3X  CA3L $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA3P  NA3X  CA3L $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3X  CA3P  NA3U $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA3P  NA3U  CA32 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3U  CA32  CA3L $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3U  CA32  CA34 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA3L  CA32  CA34 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3X  CA3L  CA32 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3X  CA3L  NA3G $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA32  CA3L  NA3G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA3L  NA3G  CA3F $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3G  CA3F  NA3N $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA3F  NA3N  CA34 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA32  CA34  NA3N $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CA32  CA34  NA3M $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NA3N  CA34  NA3M $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA34  NA3M  HA3Q $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CA34  NA3M  HA35 $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HA3Q  NA3M  HA35 $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NA3X  CA37  CA3P  CA3L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA32  CA34  CA3L  NA3U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA3L  NA3G  CA32  NA3X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA34  CA32  NA3N  NA3M $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA3M  CA34  HA3Q  HA35 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  PA3Q  OA3H  OA3D  OA3S $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PA38  OA3U  OA3Z  OA3O $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PA3N  OA3H  OA3T  OA39 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA3K  CA31  CA3E  OA32 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA3E  CA3K  CA33  OA34 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA33  CA3E  CA37  OA3E $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CA37  OA32  CA33  NA3X $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NA3X  CA3P  NA3U  CA32 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA3P  NA3U  CA32  CA3L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA3U  CA32  CA3L  NA3X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA32  CA3L  NA3X  CA3P $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA3L  NA3X  CA3P  NA3U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA32  CA3L  NA3G  CA3F $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA3L  NA3G  CA3F  NA3N $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA3G  CA3F  NA3N  CA34 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA3F  NA3N  CA34  CA32 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NA3N  CA34  CA32  CA3L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CA34  CA32  CA3L  NA3G $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*     0.6) DIHE  PA38  OA3U  PA3Q  OA3H $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PA38  OA3U  PA3Q  OA3H $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PA3Q  OA3U  PA38  OA3H $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PA3Q  OA3U  PA38  OA3H $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PA3N  OA3H  PA38  OA3U $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PA3N  OA3H  PA38  OA3U $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PA38  OA3H  PA3N  OA36 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PA38  OA3H  PA3N  OA36 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CA31  OA36  PA3N  OA3H $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CA31  OA36  PA3N  OA3H $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PA3N  OA36  CA31  CA3K $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA3E  CA3K  CA31  OA36 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CA31  CA3K  OA32  CA37 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA31  CA3K  CA3E  CA33 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NA3X  CA37  OA32  CA3K $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA3K  CA3E  OA34  HA37 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA37  CA33  CA3E  CA3K $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CA3E  CA33  OA3E  HA3W $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CA3E  CA33  CA37  NA3X $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  OA32  CA37  NA3X  CA3L $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CA32  CA34  NA3M  HA35 $pd_v 2 180.000
+
+
+NONBONDED  OA3H  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PA3Q  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OA3D  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA3S  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA3U  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PA38  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OA3Z  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA3O  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA3H  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PA3N  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OA39  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA3T  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OA36  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA31  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA3K  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA32  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CA3E  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA34  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA37  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA33  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OA3E  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HA3W  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CA37  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA3X  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA3P  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA3U  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA32  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CA3L  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA3G  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA3F  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA3N  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CA34  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NA3M  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HA3Q  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HA35  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue CIT
+
+
+eval ($pd_v=$pd_x* 20000.0) BOND  OCIM  CCIV $pd_v   1.250
+eval ($pd_v=$pd_x* 20000.0) BOND  CCIV  OCIX $pd_v   1.250
+eval ($pd_v=$pd_x* 16000.0) BOND  CCIV  CCII $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CCII  CCIU $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CCIU  CCIY $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CCIU  OCIG $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CCIU  CCIE $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CCIY  OCIC $pd_v   1.250
+eval ($pd_v=$pd_x* 20000.0) BOND  CCIY  OCIT $pd_v   1.250
+eval ($pd_v=$pd_x* 15000.0) BOND  OCIG  HCIT $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CCIE  CCIB $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CCIB  OCI9 $pd_v   1.250
+eval ($pd_v=$pd_x* 20000.0) BOND  CCIB  OCID $pd_v   1.250
+
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCIM  CCIV  OCIX $pd_v 126.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCIM  CCIV  CCII $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCIX  CCIV  CCII $pd_v 117.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCIV  CCII  CCIU $pd_v 111.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCII  CCIU  CCIY $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCII  CCIU  OCIG $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCII  CCIU  CCIE $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CCIY  CCIU  OCIG $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCIY  CCIU  CCIE $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OCIG  CCIU  CCIE $pd_v 109.500
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCIU  CCIY  OCIC $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCIU  CCIY  OCIT $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCIC  CCIY  OCIT $pd_v 126.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  CCIU  OCIG  HCIT $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCIU  CCIE  CCIB $pd_v 111.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCIE  CCIB  OCI9 $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCIE  CCIB  OCID $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCI9  CCIB  OCID $pd_v 126.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  CCIV  CCII  OCIX  OCIM $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CCIY  CCIU  OCIT  OCIC $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CCIB  CCIE  OCID  OCI9 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CCIU  CCII  OCIG  CCIY $pd_v 0  35.264
+
+eval ($pd_v=$pd_x*     0.1) DIHE  CCIU  CCII  CCIV  OCIM $pd_v 6   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CCIV  CCII  CCIU  CCIE $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CCII  CCIU  CCIY  OCIT $pd_v 6   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CCII  CCIU  OCIG  HCIT $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CCIB  CCIE  CCIU  CCII $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CCIU  CCIE  CCIB  OCID $pd_v 6   0.000
+
+
+NONBONDED  OCIM  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CCIV  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OCIX  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CCII  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CCIU  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CCIY  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OCIC  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OCIT  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OCIG  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HCIT  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CCIE  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CCIB  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OCI9  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OCID  0.10000 2.58361 0.10000 2.31634
+
+
+
+! Adding parameter definition for residue FAD
+
+
+eval ($pd_v=$pd_x* 24000.0) BOND  OF2N  CF2T $pd_v   1.230
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2T  NF2Y $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2T  CF2L $pd_v   1.390
+eval ($pd_v=$pd_x* 17900.0) BOND  NF2Y  HF2U $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  NF2Y  CF24 $pd_v   1.400
+eval ($pd_v=$pd_x* 24000.0) BOND  CF24  OF2G $pd_v   1.230
+eval ($pd_v=$pd_x* 16000.0) BOND  CF24  NF2W $pd_v   1.400
+eval ($pd_v=$pd_x* 17900.0) BOND  NF2W  HF2N $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  NF2W  CF2V $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2V  CF2L $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2V  NF2G $pd_v   1.400
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2L  NF2R $pd_v   1.400
+eval ($pd_v=$pd_x* 17900.0) BOND  NF2R  HF25 $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  NF2R  CF2E $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2E  CF23 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2E  CF2G $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CF23  CF2M $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2M  CF29 $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2M  CF27 $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CF27  CF2D $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CF27  CF21 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CF21  CF2G $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2G  NF2G $pd_v   1.400
+eval ($pd_v=$pd_x* 16000.0) BOND  NF2G  CF2W $pd_v   1.480
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2W  CF2N $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2N  OF2M $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2N  CF22 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OF2M  HF2I $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CF22  OF22 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CF22  CF2Y $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OF22  HF2V $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2Y  OF25 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2Y  CF26 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OF25  HF27 $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CF26  OF2X $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  OF2X  PF2N $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PF2N  OF20 $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PF2N  OF21 $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PF2N  OF2A $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OF2A  PF2S $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PF2S  OF2Y $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PF2S  OF2Q $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PF2S  OF2W $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OF2W  CF2U $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CF2U  CF2K $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CF2K  OF2V $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2K  CF2Q $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OF2V  CF20 $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2Q  OF2E $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2Q  CF2R $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OF2E  HF2X $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2R  OF2C $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CF2R  CF20 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OF2C  HF2F $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CF20  NF2O $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NF2O  CF2B $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NF2O  CF25 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2B  NF2X $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NF2X  CF2S $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2S  CF25 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2S  CF2A $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CF25  NF2Z $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NF2Z  CF2F $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CF2F  NF21 $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NF21  CF2A $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CF2A  NF29 $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NF29  HF2C $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NF29  HF2K $pd_v   1.000
+
+eval ($pd_v=$pd_x*   800.0) ANGLE  OF2N  CF2T  NF2Y $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  OF2N  CF2T  CF2L $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2Y  CF2T  CF2L $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  CF2T  NF2Y  HF2U $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2T  NF2Y  CF24 $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  HF2U  NF2Y  CF24 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2Y  CF24  OF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2Y  CF24  NF2W $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  OF2G  CF24  NF2W $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  CF24  NF2W  HF2N $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF24  NF2W  CF2V $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  HF2N  NF2W  CF2V $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2W  CF2V  CF2L $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2W  CF2V  NF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2L  CF2V  NF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2T  CF2L  CF2V $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2T  CF2L  NF2R $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2V  CF2L  NF2R $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  CF2L  NF2R  HF25 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2L  NF2R  CF2E $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  HF25  NF2R  CF2E $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2R  CF2E  CF23 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2R  CF2E  CF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF23  CF2E  CF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2E  CF23  CF2M $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF23  CF2M  CF29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF23  CF2M  CF27 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF29  CF2M  CF27 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2M  CF27  CF2D $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2M  CF27  CF21 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2D  CF27  CF21 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF27  CF21  CF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2E  CF2G  CF21 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2E  CF2G  NF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF21  CF2G  NF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2V  NF2G  CF2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2V  NF2G  CF2W $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2G  NF2G  CF2W $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  NF2G  CF2W  CF2N $pd_v 111.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2W  CF2N  OF2M $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2W  CF2N  CF22 $pd_v 111.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF2M  CF2N  CF22 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CF2N  OF2M  HF2I $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2N  CF22  OF22 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2N  CF22  CF2Y $pd_v 111.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF22  CF22  CF2Y $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CF22  OF22  HF2V $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF22  CF2Y  OF25 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF22  CF2Y  CF26 $pd_v 111.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF25  CF2Y  CF26 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CF2Y  OF25  HF27 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2Y  CF26  OF2X $pd_v 111.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  CF26  OF2X  PF2N $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2X  PF2N  OF20 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2X  PF2N  OF21 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2X  PF2N  OF2A $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF20  PF2N  OF21 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF20  PF2N  OF2A $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF21  PF2N  OF2A $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PF2N  OF2A  PF2S $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2A  PF2S  OF2Y $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2A  PF2S  OF2Q $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2A  PF2S  OF2W $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2Y  PF2S  OF2Q $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2Y  PF2S  OF2W $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OF2Q  PF2S  OF2W $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PF2S  OF2W  CF2U $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF2W  CF2U  CF2K $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CF2U  CF2K  OF2V $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CF2U  CF2K  CF2Q $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF2V  CF2K  CF2Q $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2K  OF2V  CF20 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2K  CF2Q  OF2E $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2K  CF2Q  CF2R $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF2E  CF2Q  CF2R $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CF2Q  OF2E  HF2X $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2Q  CF2R  OF2C $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CF2Q  CF2R  CF20 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF2C  CF2R  CF20 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CF2R  OF2C  HF2F $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OF2V  CF20  CF2R $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OF2V  CF20  NF2O $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CF2R  CF20  NF2O $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF20  NF2O  CF2B $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF20  NF2O  CF25 $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2B  NF2O  CF25 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2O  CF2B  NF2X $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2B  NF2X  CF2S $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2X  CF2S  CF25 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2X  CF2S  CF2A $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF25  CF2S  CF2A $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2O  CF25  CF2S $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2O  CF25  NF2Z $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2S  CF25  NF2Z $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF25  NF2Z  CF2F $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF2Z  CF2F  NF21 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2F  NF21  CF2A $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2S  CF2A  NF21 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CF2S  CF2A  NF29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NF21  CF2A  NF29 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CF2A  NF29  HF2C $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CF2A  NF29  HF2K $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HF2C  NF29  HF2K $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2T  CF2L  NF2Y  OF2N $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2Y  CF24  HF2U  CF2T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF24  NF2Y  NF2W  OF2G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2W  CF2V  HF2N  CF24 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2V  NF2W  NF2G  CF2L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2L  NF2R  CF2V  CF2T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2R  CF2E  HF25  CF2L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2E  NF2R  CF2G  CF23 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2M  CF23  CF27  CF29 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF27  CF2M  CF21  CF2D $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2G  CF2E  NF2G  CF21 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2G  CF2V  CF2G  CF2W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2O  CF20  CF2B  CF25 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2S  CF2A  CF25  NF2X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF25  NF2Z  CF2S  NF2O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2A  CF2S  NF21  NF29 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF29  CF2A  HF2C  HF2K $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CF2N  CF2W  OF2M  CF22 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CF22  CF2N  OF22  CF2Y $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CF2Y  CF22  OF25  CF26 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PF2N  OF2X  OF20  OF21 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PF2S  OF2A  OF2Q  OF2Y $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CF2K  CF2U  CF2Q  OF2V $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CF2Q  CF2K  CF2R  OF2E $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CF2R  CF2Q  CF20  OF2C $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CF20  OF2V  CF2R  NF2O $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2O  CF2B  NF2X  CF2S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2B  NF2X  CF2S  CF25 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2X  CF2S  CF25  NF2O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2S  CF25  NF2O  CF2B $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF25  NF2O  CF2B  NF2X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2E  CF23  CF2M  CF27 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF23  CF2M  CF27  CF21 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2M  CF27  CF21  CF2G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF27  CF21  CF2G  CF2E $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF21  CF2G  CF2E  CF23 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2G  CF2E  CF23  CF2M $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2T  NF2Y  CF24  NF2W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2Y  CF24  NF2W  CF2V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF24  NF2W  CF2V  CF2L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2W  CF2V  CF2L  CF2T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2V  CF2L  CF2T  NF2Y $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2L  CF2T  NF2Y  CF24 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2S  CF25  NF2Z  CF2F $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF25  NF2Z  CF2F  NF21 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF2Z  CF2F  NF21  CF2A $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2F  NF21  CF2A  CF2S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NF21  CF2A  CF2S  CF25 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CF2A  CF2S  CF25  NF2Z $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*   640.0) DIHE  CF2W  NF2G  CF2V  NF2W $pd_v 2 180.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CF2E  NF2R  CF2L  CF2T $pd_v 2 180.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CF2L  NF2R  CF2E  CF2G $pd_v 2 180.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CF2W  NF2G  CF2G  CF2E $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CF2V  NF2G  CF2W  CF2N $pd_v 6   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  NF2G  CF2W  CF2N  CF22 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CF2W  CF2N  OF2M  HF2I $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CF2Y  CF22  CF2N  CF2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CF2N  CF22  OF22  HF2V $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CF26  CF2Y  CF22  CF2N $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CF22  CF2Y  OF25  HF27 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  OF2X  CF26  CF2Y  CF22 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PF2N  OF2X  CF26  CF2Y $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CF26  OF2X  PF2N  OF2A $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CF26  OF2X  PF2N  OF2A $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PF2S  OF2A  PF2N  OF2X $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PF2S  OF2A  PF2N  OF2X $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PF2N  OF2A  PF2S  OF2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PF2N  OF2A  PF2S  OF2W $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CF2U  OF2W  PF2S  OF2A $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CF2U  OF2W  PF2S  OF2A $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PF2S  OF2W  CF2U  CF2K $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CF2Q  CF2K  CF2U  OF2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CF2U  CF2K  OF2V  CF20 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CF2U  CF2K  CF2Q  CF2R $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NF2O  CF20  OF2V  CF2K $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CF2K  CF2Q  OF2E  HF2X $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CF20  CF2R  CF2Q  CF2K $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CF2Q  CF2R  OF2C  HF2F $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CF2Q  CF2R  CF20  NF2O $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  OF2V  CF20  NF2O  CF25 $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CF2S  CF2A  NF29  HF2K $pd_v 2 180.000
+
+
+NONBONDED  OF2N  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CF2T  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF2Y  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HF2U  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF24  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF2G  0.10000 2.58361 0.10000 2.31634
+NONBONDED  NF2W  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HF2N  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF2V  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF2L  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF2R  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HF25  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF2E  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF23  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF2M  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF29  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF27  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF2D  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF21  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF2G  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF2G  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CF2W  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF2N  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF2M  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HF2I  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF22  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF22  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HF2V  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF2Y  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF25  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HF27  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF26  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF2X  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PF2N  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OF20  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OF21  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OF2A  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PF2S  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OF2Y  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OF2Q  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OF2W  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CF2U  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF2K  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF2V  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CF2Q  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF2E  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HF2X  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF2R  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OF2C  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HF2F  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CF20  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF2O  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CF2B  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF2X  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CF2S  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CF25  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF2Z  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CF2F  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF21  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CF2A  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NF29  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HF2C  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HF2K  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue FLC
+
+
+eval ($pd_v=$pd_x* 20000.0) BOND  OCTT  CCT5 $pd_v   1.250
+eval ($pd_v=$pd_x* 20000.0) BOND  CCT5  OCT7 $pd_v   1.250
+eval ($pd_v=$pd_x* 16000.0) BOND  CCT5  CCTK $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CCTK  CCT2 $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CCT2  CCTO $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CCT2  OCT6 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CCT2  CCTA $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CCTO  OCTX $pd_v   1.250
+eval ($pd_v=$pd_x* 20000.0) BOND  CCTO  OCT9 $pd_v   1.250
+eval ($pd_v=$pd_x* 15000.0) BOND  OCT6  HCTU $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CCTA  CCTH $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CCTH  OCTR $pd_v   1.250
+eval ($pd_v=$pd_x* 20000.0) BOND  CCTH  OCT8 $pd_v   1.250
+
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCTT  CCT5  OCT7 $pd_v 126.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCTT  CCT5  CCTK $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCT7  CCT5  CCTK $pd_v 117.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCT5  CCTK  CCT2 $pd_v 111.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCTK  CCT2  CCTO $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCTK  CCT2  OCT6 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCTK  CCT2  CCTA $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CCTO  CCT2  OCT6 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCTO  CCT2  CCTA $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OCT6  CCT2  CCTA $pd_v 109.500
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCT2  CCTO  OCTX $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCT2  CCTO  OCT9 $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCTX  CCTO  OCT9 $pd_v 126.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  CCT2  OCT6  HCTU $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CCT2  CCTA  CCTH $pd_v 111.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCTA  CCTH  OCTR $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  CCTA  CCTH  OCT8 $pd_v 117.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  OCTR  CCTH  OCT8 $pd_v 126.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  CCT5  CCTK  OCT7  OCTT $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CCTO  CCT2  OCT9  OCTX $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CCTH  CCTA  OCT8  OCTR $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CCT2  CCTK  CCTO  OCT6 $pd_v 0  35.264
+
+eval ($pd_v=$pd_x*     0.1) DIHE  CCT2  CCTK  CCT5  OCTT $pd_v 6   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CCT5  CCTK  CCT2  CCTA $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CCTK  CCT2  CCTO  OCT9 $pd_v 6   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CCTK  CCT2  OCT6  HCTU $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CCTH  CCTA  CCT2  CCTK $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CCT2  CCTA  CCTH  OCT8 $pd_v 6   0.000
+
+
+NONBONDED  OCTT  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CCT5  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OCT7  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CCTK  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CCT2  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CCTO  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OCTX  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OCT9  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OCT6  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HCTU  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CCTA  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CCTH  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OCTR  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OCT8  0.10000 2.58361 0.10000 2.31634
+
+
+
+! Adding parameter definition for residue GDP
+
+
+eval ($pd_v=$pd_x* 12000.0) BOND  OG29  PG23 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PG23  OG2Y $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PG23  OG26 $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PG23  OG2J $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OG2J  PG2T $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PG2T  OG2O $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PG2T  OG2V $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PG2T  OG25 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OG25  CG26 $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CG26  CG2B $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CG2B  OG2C $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CG2B  CG2G $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OG2C  CG21 $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CG2G  OG2H $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CG2G  CG2R $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OG2H  HG2V $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CG2R  OG2F $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CG2R  CG21 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OG2F  HG25 $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CG21  NG2W $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NG2W  CG2P $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NG2W  CG2V $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG2P  NG2Q $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NG2Q  CG2Z $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG2Z  CG2V $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CG2Z  CG27 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CG2V  NG2G $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NG2G  CG2O $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CG2O  NG2J $pd_v   1.330
+eval ($pd_v=$pd_x* 16000.0) BOND  CG2O  NG2K $pd_v   1.400
+eval ($pd_v=$pd_x* 17900.0) BOND  NG2J  HG2P $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NG2J  HG2U $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NG2K  HG2B $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  NG2K  CG27 $pd_v   1.400
+eval ($pd_v=$pd_x* 24000.0) BOND  CG27  OG2E $pd_v   1.230
+
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG29  PG23  OG2Y $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG29  PG23  OG26 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG29  PG23  OG2J $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2Y  PG23  OG26 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2Y  PG23  OG2J $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG26  PG23  OG2J $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PG23  OG2J  PG2T $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2J  PG2T  OG2O $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2J  PG2T  OG2V $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2J  PG2T  OG25 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2O  PG2T  OG2V $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2O  PG2T  OG25 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG2V  PG2T  OG25 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PG2T  OG25  CG26 $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG25  CG26  CG2B $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CG26  CG2B  OG2C $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CG26  CG2B  CG2G $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG2C  CG2B  CG2G $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG2B  OG2C  CG21 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG2B  CG2G  OG2H $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG2B  CG2G  CG2R $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG2H  CG2G  CG2R $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG2G  OG2H  HG2V $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG2G  CG2R  OG2F $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG2G  CG2R  CG21 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG2F  CG2R  CG21 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG2R  OG2F  HG25 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG2C  CG21  CG2R $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OG2C  CG21  NG2W $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CG2R  CG21  NG2W $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG21  NG2W  CG2P $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG21  NG2W  CG2V $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2P  NG2W  CG2V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2W  CG2P  NG2Q $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2P  NG2Q  CG2Z $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2Q  CG2Z  CG2V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2Q  CG2Z  CG27 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2V  CG2Z  CG27 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2W  CG2V  CG2Z $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2W  CG2V  NG2G $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2Z  CG2V  NG2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2V  NG2G  CG2O $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2G  CG2O  NG2J $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2G  CG2O  NG2K $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2J  CG2O  NG2K $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CG2O  NG2J  HG2P $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CG2O  NG2J  HG2U $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HG2P  NG2J  HG2U $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  CG2O  NG2K  HG2B $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2O  NG2K  CG27 $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  HG2B  NG2K  CG27 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2Z  CG27  NG2K $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG2Z  CG27  OG2E $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG2K  CG27  OG2E $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2W  CG21  CG2P  CG2V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2Z  CG27  CG2V  NG2Q $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2V  NG2G  CG2Z  NG2W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2O  NG2G  NG2K  NG2J $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2J  CG2O  HG2P  HG2U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2K  CG27  HG2B  CG2O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG27  CG2Z  NG2K  OG2E $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  PG23  OG29  OG26  OG2Y $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PG2T  OG2J  OG2O  OG2V $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG2B  CG26  CG2G  OG2C $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG2G  CG2B  CG2R  OG2H $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG2R  CG2G  CG21  OG2F $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG21  OG2C  CG2R  NG2W $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2W  CG2P  NG2Q  CG2Z $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2P  NG2Q  CG2Z  CG2V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2Q  CG2Z  CG2V  NG2W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2Z  CG2V  NG2W  CG2P $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2V  NG2W  CG2P  NG2Q $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2Z  CG2V  NG2G  CG2O $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2V  NG2G  CG2O  NG2K $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2G  CG2O  NG2K  CG27 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG2O  NG2K  CG27  CG2Z $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG2K  CG27  CG2Z  CG2V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG27  CG2Z  CG2V  NG2G $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*     0.6) DIHE  PG2T  OG2J  PG23  OG29 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PG2T  OG2J  PG23  OG29 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PG23  OG2J  PG2T  OG25 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PG23  OG2J  PG2T  OG25 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CG26  OG25  PG2T  OG2J $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CG26  OG25  PG2T  OG2J $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PG2T  OG25  CG26  CG2B $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG2G  CG2B  CG26  OG25 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CG26  CG2B  OG2C  CG21 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG26  CG2B  CG2G  CG2R $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NG2W  CG21  OG2C  CG2B $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG2B  CG2G  OG2H  HG2V $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG21  CG2R  CG2G  CG2B $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG2G  CG2R  OG2F  HG25 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG2G  CG2R  CG21  NG2W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  OG2C  CG21  NG2W  CG2V $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  NG2G  CG2O  NG2J  HG2U $pd_v 2 180.000
+
+
+NONBONDED  OG29  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PG23  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OG2Y  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG26  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG2J  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PG2T  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OG2O  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG2V  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG25  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CG26  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CG2B  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG2C  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CG2G  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG2H  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG2V  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG2R  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG2F  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG25  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG21  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG2W  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG2P  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG2Q  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG2Z  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CG2V  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG2G  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG2O  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG2J  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HG2P  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HG2U  0.10000 1.42544 0.10000 1.15817
+NONBONDED  NG2K  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HG2B  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG27  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG2E  0.10000 2.58361 0.10000 2.31634
+
+
+
+! Adding parameter definition for residue GMP
+
+
+eval ($pd_v=$pd_x* 24000.0) BOND  OG1N  CG17 $pd_v   1.230
+eval ($pd_v=$pd_x* 16000.0) BOND  CG17  NG1T $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CG17  CG1S $pd_v   1.390
+eval ($pd_v=$pd_x* 17900.0) BOND  NG1T  HG16 $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  NG1T  CG1O $pd_v   1.400
+eval ($pd_v=$pd_x* 18000.0) BOND  CG1O  NG14 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG1O  NG1K $pd_v   1.340
+eval ($pd_v=$pd_x* 17900.0) BOND  NG14  HG12 $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NG14  HG18 $pd_v   1.000
+eval ($pd_v=$pd_x* 20000.0) BOND  NG1K  CG14 $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  CG14  CG1S $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CG14  NG15 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG1S  NG19 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NG19  CG1V $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG1V  NG15 $pd_v   1.330
+eval ($pd_v=$pd_x* 12000.0) BOND  NG15  CG1J $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  CG1J  OG1V $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CG1J  CG1Q $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OG1V  CG1A $pd_v   1.435
+eval ($pd_v=$pd_x* 12000.0) BOND  CG1A  CG1R $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CG1A  CG16 $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CG1R  OG1P $pd_v   1.430
+eval ($pd_v=$pd_x* 15000.0) BOND  OG1P  HG1N $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CG16  OG1R $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CG16  CG1Q $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OG1R  HG1M $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CG1Q  OG1O $pd_v   1.430
+eval ($pd_v=$pd_x* 15000.0) BOND  OG1O  HG1Z $pd_v   1.000
+
+eval ($pd_v=$pd_x*   800.0) ANGLE  OG1N  CG17  NG1T $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  OG1N  CG17  CG1S $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG1T  CG17  CG1S $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  CG17  NG1T  HG16 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG17  NG1T  CG1O $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  HG16  NG1T  CG1O $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG1T  CG1O  NG14 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG1T  CG1O  NG1K $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG14  CG1O  NG1K $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CG1O  NG14  HG12 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CG1O  NG14  HG18 $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HG12  NG14  HG18 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG1O  NG1K  CG14 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG1K  CG14  CG1S $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG1K  CG14  NG15 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG1S  CG14  NG15 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG17  CG1S  CG14 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG17  CG1S  NG19 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG14  CG1S  NG19 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG1S  NG19  CG1V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG19  CG1V  NG15 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG14  NG15  CG1V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG14  NG15  CG1J $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG1V  NG15  CG1J $pd_v 126.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  NG15  CG1J  OG1V $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  NG15  CG1J  CG1Q $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG1V  CG1J  CG1Q $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG1J  OG1V  CG1A $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OG1V  CG1A  CG1R $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG1V  CG1A  CG16 $pd_v 104.000
+eval ($pd_v=$pd_x*   480.0) ANGLE  CG1R  CG1A  CG16 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG1A  CG1R  OG1P $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG1R  OG1P  HG1N $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG1A  CG16  OG1R $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG1A  CG16  CG1Q $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG1R  CG16  CG1Q $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG16  OG1R  HG1M $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG1J  CG1Q  CG16 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG1J  CG1Q  OG1O $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG16  CG1Q  OG1O $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG1Q  OG1O  HG1Z $pd_v 109.500
+
+eval ($pd_v=$pd_x*   800.0) IMPR  CG17  CG1S  NG1T  OG1N $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG1T  CG1O  HG16  CG17 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG1O  NG1T  NG1K  NG14 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG14  CG1O  HG12  HG18 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG14  NG1K  CG1S  NG15 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG1S  CG17  CG14  NG19 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG15  CG14  CG1V  CG1J $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CG1J  NG15  OG1V  CG1Q $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG1A  OG1V  CG1R  CG16 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG16  CG1A  CG1Q  OG1R $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG1Q  CG1J  OG1O  CG16 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  CG14  CG1S  NG19  CG1V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG1S  NG19  CG1V  NG15 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG19  CG1V  NG15  CG14 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG1V  NG15  CG14  CG1S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG15  CG14  CG1S  NG19 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG17  NG1T  CG1O  NG1K $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG1T  CG1O  NG1K  CG14 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG1O  NG1K  CG14  CG1S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG1K  CG14  CG1S  CG17 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG14  CG1S  CG17  NG1T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG1S  CG17  NG1T  CG1O $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*   640.0) DIHE  NG1T  CG1O  NG14  HG18 $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.0) DIHE  CG1Q  CG1J  NG15  CG14 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NG15  CG1J  OG1V  CG1A $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  NG15  CG1J  CG1Q  OG1O $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CG16  CG1A  OG1V  CG1J $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  OG1V  CG1A  CG1R  OG1P $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  OG1V  CG1A  CG16  CG1Q $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG1A  CG1R  OG1P  HG1N $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG1A  CG16  OG1R  HG1M $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  OG1O  CG1Q  CG16  CG1A $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG1J  CG1Q  OG1O  HG1Z $pd_v 3   0.000
+
+
+NONBONDED  OG1N  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CG17  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG1T  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HG16  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG1O  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG14  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HG12  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HG18  0.10000 1.42544 0.10000 1.15817
+NONBONDED  NG1K  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG14  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CG1S  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG19  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG1V  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG15  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG1J  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG1V  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CG1A  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CG1R  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG1P  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG1N  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG16  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG1R  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG1M  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG1Q  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG1O  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG1Z  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue GTP
+
+
+eval ($pd_v=$pd_x* 12000.0) BOND  OG31  PG3E $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PG3E  OG3D $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PG3E  OG38 $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PG3E  OG33 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OG33  PG3T $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PG3T  OG3O $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PG3T  OG3S $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PG3T  OG3E $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OG3E  PG3C $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PG3C  OG3V $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PG3C  OG3W $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PG3C  OG3M $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  OG3M  CG34 $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CG34  CG37 $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CG37  OG3J $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CG37  CG3H $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  OG3J  CG3J $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CG3H  OG3X $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CG3H  CG31 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OG3X  HG3F $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CG31  OG3Y $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CG31  CG3J $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  OG3Y  HG3L $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CG3J  NG31 $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NG31  CG3U $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NG31  CG3E $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG3U  NG3W $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NG3W  CG3V $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CG3V  CG3E $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CG3V  CG3R $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CG3E  NG3C $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NG3C  CG3W $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CG3W  NG3J $pd_v   1.330
+eval ($pd_v=$pd_x* 16000.0) BOND  CG3W  NG3D $pd_v   1.400
+eval ($pd_v=$pd_x* 17900.0) BOND  NG3J  HG35 $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NG3J  HG3H $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NG3D  HG3Q $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  NG3D  CG3R $pd_v   1.400
+eval ($pd_v=$pd_x* 24000.0) BOND  CG3R  OG3F $pd_v   1.230
+
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG31  PG3E  OG3D $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG31  PG3E  OG38 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG31  PG3E  OG33 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3D  PG3E  OG38 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3D  PG3E  OG33 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG38  PG3E  OG33 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PG3E  OG33  PG3T $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG33  PG3T  OG3O $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG33  PG3T  OG3S $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG33  PG3T  OG3E $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3O  PG3T  OG3S $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3O  PG3T  OG3E $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3S  PG3T  OG3E $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PG3T  OG3E  PG3C $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3E  PG3C  OG3V $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3E  PG3C  OG3W $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3E  PG3C  OG3M $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3V  PG3C  OG3W $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3V  PG3C  OG3M $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  OG3W  PG3C  OG3M $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PG3C  OG3M  CG34 $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG3M  CG34  CG37 $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CG34  CG37  OG3J $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CG34  CG37  CG3H $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG3J  CG37  CG3H $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG37  OG3J  CG3J $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG37  CG3H  OG3X $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG37  CG3H  CG31 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG3X  CG3H  CG31 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG3H  OG3X  HG3F $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG3H  CG31  OG3Y $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CG3H  CG31  CG3J $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG3Y  CG31  CG3J $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CG31  OG3Y  HG3L $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  OG3J  CG3J  CG31 $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  OG3J  CG3J  NG31 $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CG31  CG3J  NG31 $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3J  NG31  CG3U $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3J  NG31  CG3E $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3U  NG31  CG3E $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG31  CG3U  NG3W $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3U  NG3W  CG3V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG3W  CG3V  CG3E $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG3W  CG3V  CG3R $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3E  CG3V  CG3R $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG31  CG3E  CG3V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG31  CG3E  NG3C $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3V  CG3E  NG3C $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3E  NG3C  CG3W $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG3C  CG3W  NG3J $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG3C  CG3W  NG3D $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG3J  CG3W  NG3D $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CG3W  NG3J  HG35 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CG3W  NG3J  HG3H $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HG35  NG3J  HG3H $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  CG3W  NG3D  HG3Q $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3W  NG3D  CG3R $pd_v 120.000
+eval ($pd_v=$pd_x*   720.0) ANGLE  HG3Q  NG3D  CG3R $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3V  CG3R  NG3D $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CG3V  CG3R  OG3F $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NG3D  CG3R  OG3F $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NG31  CG3J  CG3U  CG3E $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3V  CG3R  CG3E  NG3W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3E  NG3C  CG3V  NG31 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3W  NG3C  NG3D  NG3J $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG3J  CG3W  HG35  HG3H $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG3D  CG3R  HG3Q  CG3W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3R  CG3V  NG3D  OG3F $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  PG3E  OG31  OG38  OG3D $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PG3T  OG33  OG3O  OG3S $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PG3C  OG3E  OG3V  OG3W $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG37  CG34  CG3H  OG3J $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG3H  CG37  CG31  OG3X $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG31  CG3H  CG3J  OG3Y $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CG3J  OG3J  CG31  NG31 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NG31  CG3U  NG3W  CG3V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3U  NG3W  CG3V  CG3E $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG3W  CG3V  CG3E  NG31 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3V  CG3E  NG31  CG3U $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3E  NG31  CG3U  NG3W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3V  CG3E  NG3C  CG3W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3E  NG3C  CG3W  NG3D $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG3C  CG3W  NG3D  CG3R $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3W  NG3D  CG3R  CG3V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NG3D  CG3R  CG3V  CG3E $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CG3R  CG3V  CG3E  NG3C $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*     0.6) DIHE  PG3T  OG33  PG3E  OG31 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PG3T  OG33  PG3E  OG31 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PG3E  OG33  PG3T  OG3E $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PG3E  OG33  PG3T  OG3E $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PG3C  OG3E  PG3T  OG33 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PG3C  OG3E  PG3T  OG33 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PG3T  OG3E  PG3C  OG3M $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PG3T  OG3E  PG3C  OG3M $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CG34  OG3M  PG3C  OG3E $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CG34  OG3M  PG3C  OG3E $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PG3C  OG3M  CG34  CG37 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG3H  CG37  CG34  OG3M $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CG34  CG37  OG3J  CG3J $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG34  CG37  CG3H  CG31 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NG31  CG3J  OG3J  CG37 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG37  CG3H  OG3X  HG3F $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG3J  CG31  CG3H  CG37 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CG3H  CG31  OG3Y  HG3L $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CG3H  CG31  CG3J  NG31 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  OG3J  CG3J  NG31  CG3E $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  NG3C  CG3W  NG3J  HG3H $pd_v 2 180.000
+
+
+NONBONDED  OG31  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PG3E  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OG3D  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG38  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG33  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PG3T  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OG3O  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG3S  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG3E  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PG3C  0.10000 3.38542 0.10000 3.11815
+NONBONDED  OG3V  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG3W  0.10000 2.58361 0.10000 2.31634
+NONBONDED  OG3M  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CG34  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CG37  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG3J  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CG3H  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG3X  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG3F  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG31  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG3Y  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HG3L  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG3J  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG31  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG3U  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG3W  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG3V  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CG3E  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG3C  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CG3W  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NG3J  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HG35  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HG3H  0.10000 1.42544 0.10000 1.15817
+NONBONDED  NG3D  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HG3Q  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CG3R  0.10000 3.29633 0.10000 3.02906
+NONBONDED  OG3F  0.10000 2.58361 0.10000 2.31634
+
+
+
+! Adding parameter definition for residue NAD
+
+
+eval ($pd_v=$pd_x* 17900.0) BOND  NN2Q  HN27 $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NN2Q  HN24 $pd_v   1.000
+eval ($pd_v=$pd_x* 18000.0) BOND  NN2Q  CN28 $pd_v   1.330
+eval ($pd_v=$pd_x* 24000.0) BOND  CN28  ON2B $pd_v   1.230
+eval ($pd_v=$pd_x* 16000.0) BOND  CN28  CN2N $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2N  CN24 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2N  CN29 $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CN24  NN20 $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CN29  CN2P $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2P  CN2G $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2G  NN20 $pd_v   1.400
+eval ($pd_v=$pd_x* 16000.0) BOND  NN20  CN2I $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  CN2I  ON2D $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2I  CN22 $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ON2D  CN2O $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN22  ON27 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN22  CN2A $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON27  HN2M $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2A  ON2N $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2A  CN2O $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON2N  HN2Q $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CN2O  CN27 $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CN27  ON2L $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  ON2L  PN2D $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PN2D  ON2U $pd_v   1.480
+eval ($pd_v=$pd_x* 18000.0) BOND  PN2D  ON2F $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PN2D  ON2R $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  ON2R  PN21 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PN21  ON26 $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PN21  ON2V $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PN21  ON24 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  ON24  CN25 $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CN25  CN2L $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CN2L  ON2H $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2L  CN2U $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ON2H  CN2E $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2U  ON29 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2U  CN2C $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON29  HN2B $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2C  ON22 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN2C  CN2E $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON22  HN2I $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CN2E  NN2T $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NN2T  CN2W $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NN2T  CN2Q $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2W  NN25 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NN25  CN2S $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2S  CN2Q $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2S  CN2R $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2Q  NN2H $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NN2H  CN2F $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2F  NN2I $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NN2I  CN2R $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CN2R  NN24 $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NN24  HN2K $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NN24  HN26 $pd_v   1.000
+
+eval ($pd_v=$pd_x*   640.0) ANGLE  HN27  NN2Q  HN24 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  HN27  NN2Q  CN28 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  HN24  NN2Q  CN28 $pd_v 120.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  NN2Q  CN28  ON2B $pd_v 124.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  NN2Q  CN28  CN2N $pd_v 115.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  ON2B  CN28  CN2N $pd_v 121.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN28  CN2N  CN24 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN28  CN2N  CN29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN24  CN2N  CN29 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2N  CN24  NN20 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2N  CN29  CN2P $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN29  CN2P  CN2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2P  CN2G  NN20 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN24  NN20  CN2G $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN24  NN20  CN2I $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2G  NN20  CN2I $pd_v 120.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  NN20  CN2I  ON2D $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  NN20  CN2I  CN22 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON2D  CN2I  CN22 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2I  ON2D  CN2O $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2I  CN22  ON27 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2I  CN22  CN2A $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON27  CN22  CN2A $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN22  ON27  HN2M $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN22  CN2A  ON2N $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN22  CN2A  CN2O $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON2N  CN2A  CN2O $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN2A  ON2N  HN2Q $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON2D  CN2O  CN2A $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  ON2D  CN2O  CN27 $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CN2A  CN2O  CN27 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2O  CN27  ON2L $pd_v 111.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN27  ON2L  PN2D $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2L  PN2D  ON2U $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2L  PN2D  ON2F $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2L  PN2D  ON2R $pd_v 103.000
+eval ($pd_v=$pd_x*  1120.0) ANGLE  ON2U  PN2D  ON2F $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2U  PN2D  ON2R $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2F  PN2D  ON2R $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PN2D  ON2R  PN21 $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2R  PN21  ON26 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2R  PN21  ON2V $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2R  PN21  ON24 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON26  PN21  ON2V $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON26  PN21  ON24 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON2V  PN21  ON24 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PN21  ON24  CN25 $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON24  CN25  CN2L $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CN25  CN2L  ON2H $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CN25  CN2L  CN2U $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON2H  CN2L  CN2U $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2L  ON2H  CN2E $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2L  CN2U  ON29 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2L  CN2U  CN2C $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON29  CN2U  CN2C $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN2U  ON29  HN2B $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2U  CN2C  ON22 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN2U  CN2C  CN2E $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON22  CN2C  CN2E $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN2C  ON22  HN2I $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON2H  CN2E  CN2C $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  ON2H  CN2E  NN2T $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CN2C  CN2E  NN2T $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2E  NN2T  CN2W $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2E  NN2T  CN2Q $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2W  NN2T  CN2Q $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN2T  CN2W  NN25 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2W  NN25  CN2S $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN25  CN2S  CN2Q $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN25  CN2S  CN2R $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2Q  CN2S  CN2R $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN2T  CN2Q  CN2S $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN2T  CN2Q  NN2H $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2S  CN2Q  NN2H $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2Q  NN2H  CN2F $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN2H  CN2F  NN2I $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2F  NN2I  CN2R $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2S  CN2R  NN2I $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2S  CN2R  NN24 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN2I  CN2R  NN24 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CN2R  NN24  HN2K $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CN2R  NN24  HN26 $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HN2K  NN24  HN26 $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NN2Q  HN27  HN24  CN28 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN28  NN2Q  CN2N  ON2B $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2N  CN29  CN24  CN28 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN20  CN2I  CN2G  CN24 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN2T  CN2E  CN2W  CN2Q $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2S  CN2R  CN2Q  NN25 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2Q  NN2H  CN2S  NN2T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2R  CN2S  NN2I  NN24 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN24  CN2R  HN2K  HN26 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2I  NN20  ON2D  CN22 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN22  CN2I  ON27  CN2A $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2A  CN22  ON2N  CN2O $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2O  ON2D  CN27  CN2A $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PN2D  ON2L  ON2F  ON2U $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PN21  ON2R  ON26  ON2V $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2L  CN25  CN2U  ON2H $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2U  CN2L  CN2C  ON29 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2C  CN2U  CN2E  ON22 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN2E  ON2H  CN2C  NN2T $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NN2T  CN2W  NN25  CN2S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2W  NN25  CN2S  CN2Q $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN25  CN2S  CN2Q  NN2T $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2S  CN2Q  NN2T  CN2W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2Q  NN2T  CN2W  NN25 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2N  CN24  NN20  CN2G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN24  NN20  CN2G  CN2P $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN20  CN2G  CN2P  CN29 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2G  CN2P  CN29  CN2N $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2P  CN29  CN2N  CN24 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN29  CN2N  CN24  NN20 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2S  CN2Q  NN2H  CN2F $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2Q  NN2H  CN2F  NN2I $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN2H  CN2F  NN2I  CN2R $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2F  NN2I  CN2R  CN2S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN2I  CN2R  CN2S  CN2Q $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2R  CN2S  CN2Q  NN2H $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*   640.0) DIHE  CN2N  CN28  NN2Q  HN27 $pd_v 2 180.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN29  CN2N  CN28  NN2Q $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.0) DIHE  CN24  NN20  CN2I  CN22 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NN20  CN2I  ON2D  CN2O $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  NN20  CN2I  CN22  CN2A $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CN27  CN2O  ON2D  CN2I $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN2I  CN22  ON27  HN2M $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN2O  CN2A  CN22  CN2I $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN22  CN2A  ON2N  HN2Q $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN22  CN2A  CN2O  CN27 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  ON2D  CN2O  CN27  ON2L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PN2D  ON2L  CN27  CN2O $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CN27  ON2L  PN2D  ON2R $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CN27  ON2L  PN2D  ON2R $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PN21  ON2R  PN2D  ON2L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PN21  ON2R  PN2D  ON2L $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PN2D  ON2R  PN21  ON24 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PN2D  ON2R  PN21  ON24 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CN25  ON24  PN21  ON2R $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CN25  ON24  PN21  ON2R $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PN21  ON24  CN25  CN2L $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN2U  CN2L  CN25  ON24 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CN25  CN2L  ON2H  CN2E $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN25  CN2L  CN2U  CN2C $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NN2T  CN2E  ON2H  CN2L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN2L  CN2U  ON29  HN2B $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN2E  CN2C  CN2U  CN2L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN2U  CN2C  ON22  HN2I $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN2U  CN2C  CN2E  NN2T $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  ON2H  CN2E  NN2T  CN2Q $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CN2S  CN2R  NN24  HN26 $pd_v 2 180.000
+
+
+NONBONDED  NN2Q  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HN27  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HN24  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN28  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON2B  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN2N  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN24  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN29  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN2P  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN2G  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN20  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN2I  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON2D  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN22  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON27  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN2M  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN2A  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON2N  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN2Q  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN2O  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN27  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON2L  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PN2D  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ON2U  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON2F  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON2R  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PN21  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ON26  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON2V  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON24  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN25  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN2L  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON2H  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN2U  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON29  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN2B  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN2C  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON22  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN2I  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN2E  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN2T  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN2W  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN25  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN2S  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN2Q  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN2H  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN2F  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN2I  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN2R  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN24  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HN2K  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HN26  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue NAP
+
+
+eval ($pd_v=$pd_x* 17900.0) BOND  NN36  HN3X $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NN36  HN3C $pd_v   1.000
+eval ($pd_v=$pd_x* 18000.0) BOND  NN36  CN37 $pd_v   1.330
+eval ($pd_v=$pd_x* 24000.0) BOND  CN37  ON34 $pd_v   1.230
+eval ($pd_v=$pd_x* 16000.0) BOND  CN37  CN3Y $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3Y  CN35 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3Y  CN3X $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CN35  NN3L $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3X  CN3S $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3S  CN3M $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CN3M  NN3L $pd_v   1.400
+eval ($pd_v=$pd_x* 16000.0) BOND  NN3L  CN39 $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  CN39  ON3U $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN39  CN34 $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ON3U  CN3T $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN34  ON3N $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN34  CN3W $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON3N  HN3S $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CN3W  ON3C $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN3W  CN3T $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON3C  HN34 $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CN3T  CN3G $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CN3G  ON30 $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  ON30  PN3X $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PN3X  ON35 $pd_v   1.480
+eval ($pd_v=$pd_x* 18000.0) BOND  PN3X  ON3B $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PN3X  ON33 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  ON33  PN3P $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PN3P  ON3O $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PN3P  ON3K $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PN3P  ON3Y $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  ON3Y  CN3R $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CN3R  CN3L $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CN3L  ON3Z $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN3L  CN3Z $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ON3Z  CN3U $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CN3Z  ON38 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN3Z  CN32 $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ON38  HN3F $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CN32  ON3A $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CN32  CN3U $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ON3A  PN3Q $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PN3Q  ON3M $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PN3Q  ON39 $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PN3Q  ON3W $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  CN3U  NN3H $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NN3H  CN31 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NN3H  CN3P $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN31  NN3G $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NN3G  CN3V $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3V  CN3P $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3V  CN3B $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3P  NN3M $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NN3M  CN3D $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CN3D  NN34 $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NN34  CN3B $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CN3B  NN3I $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NN3I  HN31 $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NN3I  HN3W $pd_v   1.000
+
+eval ($pd_v=$pd_x*   640.0) ANGLE  HN3X  NN36  HN3C $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  HN3X  NN36  CN37 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  HN3C  NN36  CN37 $pd_v 120.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  NN36  CN37  ON34 $pd_v 124.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  NN36  CN37  CN3Y $pd_v 115.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  ON34  CN37  CN3Y $pd_v 121.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN37  CN3Y  CN35 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN37  CN3Y  CN3X $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN35  CN3Y  CN3X $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3Y  CN35  NN3L $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3Y  CN3X  CN3S $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3X  CN3S  CN3M $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3S  CN3M  NN3L $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN35  NN3L  CN3M $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN35  NN3L  CN39 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3M  NN3L  CN39 $pd_v 120.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  NN3L  CN39  ON3U $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  NN3L  CN39  CN34 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3U  CN39  CN34 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN39  ON3U  CN3T $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN39  CN34  ON3N $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN39  CN34  CN3W $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3N  CN34  CN3W $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN34  ON3N  HN3S $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN34  CN3W  ON3C $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN34  CN3W  CN3T $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3C  CN3W  CN3T $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN3W  ON3C  HN34 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3U  CN3T  CN3W $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  ON3U  CN3T  CN3G $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CN3W  CN3T  CN3G $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN3T  CN3G  ON30 $pd_v 111.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN3G  ON30  PN3X $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON30  PN3X  ON35 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON30  PN3X  ON3B $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON30  PN3X  ON33 $pd_v 103.000
+eval ($pd_v=$pd_x*  1120.0) ANGLE  ON35  PN3X  ON3B $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON35  PN3X  ON33 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3B  PN3X  ON33 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PN3X  ON33  PN3P $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON33  PN3P  ON3O $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON33  PN3P  ON3K $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON33  PN3P  ON3Y $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3O  PN3P  ON3K $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3O  PN3P  ON3Y $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3K  PN3P  ON3Y $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PN3P  ON3Y  CN3R $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3Y  CN3R  CN3L $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CN3R  CN3L  ON3Z $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CN3R  CN3L  CN3Z $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3Z  CN3L  CN3Z $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN3L  ON3Z  CN3U $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN3L  CN3Z  ON38 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN3L  CN3Z  CN32 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON38  CN3Z  CN32 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN3Z  ON38  HN3F $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN3Z  CN32  ON3A $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CN3Z  CN32  CN3U $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3A  CN32  CN3U $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CN32  ON3A  PN3Q $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3A  PN3Q  ON3M $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3A  PN3Q  ON39 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3A  PN3Q  ON3W $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3M  PN3Q  ON39 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON3M  PN3Q  ON3W $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ON39  PN3Q  ON3W $pd_v 109.600
+eval ($pd_v=$pd_x*   880.0) ANGLE  ON3Z  CN3U  CN32 $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  ON3Z  CN3U  NN3H $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CN32  CN3U  NN3H $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3U  NN3H  CN31 $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3U  NN3H  CN3P $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN31  NN3H  CN3P $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN3H  CN31  NN3G $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN31  NN3G  CN3V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN3G  CN3V  CN3P $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN3G  CN3V  CN3B $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3P  CN3V  CN3B $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN3H  CN3P  CN3V $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN3H  CN3P  NN3M $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3V  CN3P  NN3M $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3P  NN3M  CN3D $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN3M  CN3D  NN34 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3D  NN34  CN3B $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3V  CN3B  NN34 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN3V  CN3B  NN3I $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN34  CN3B  NN3I $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CN3B  NN3I  HN31 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CN3B  NN3I  HN3W $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HN31  NN3I  HN3W $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NN36  HN3X  HN3C  CN37 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN37  NN36  CN3Y  ON34 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3Y  CN3X  CN35  CN37 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3L  CN39  CN3M  CN35 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3H  CN3U  CN31  CN3P $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3V  CN3B  CN3P  NN3G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3P  NN3M  CN3V  NN3H $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3B  CN3V  NN34  NN3I $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3I  CN3B  HN31  HN3W $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CN39  NN3L  ON3U  CN34 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN34  CN39  ON3N  CN3W $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN3W  CN34  ON3C  CN3T $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN3T  ON3U  CN3G  CN3W $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PN3X  ON30  ON3B  ON35 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PN3P  ON33  ON3K  ON3O $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN3L  CN3R  CN3Z  ON3Z $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN3Z  CN3L  CN32  ON38 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN32  CN3Z  CN3U  ON3A $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PN3Q  ON3A  ON39  ON3M $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CN3U  ON3Z  CN32  NN3H $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3H  CN31  NN3G  CN3V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN31  NN3G  CN3V  CN3P $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3G  CN3V  CN3P  NN3H $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3V  CN3P  NN3H  CN31 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3P  NN3H  CN31  NN3G $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3Y  CN35  NN3L  CN3M $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN35  NN3L  CN3M  CN3S $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3L  CN3M  CN3S  CN3X $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3M  CN3S  CN3X  CN3Y $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3S  CN3X  CN3Y  CN35 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3X  CN3Y  CN35  NN3L $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3V  CN3P  NN3M  CN3D $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3P  NN3M  CN3D  NN34 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3M  CN3D  NN34  CN3B $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3D  NN34  CN3B  CN3V $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN34  CN3B  CN3V  CN3P $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN3B  CN3V  CN3P  NN3M $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*   640.0) DIHE  CN3Y  CN37  NN36  HN3X $pd_v 2 180.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN3X  CN3Y  CN37  NN36 $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.0) DIHE  CN35  NN3L  CN39  CN34 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NN3L  CN39  ON3U  CN3T $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  NN3L  CN39  CN34  CN3W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CN3G  CN3T  ON3U  CN39 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN39  CN34  ON3N  HN3S $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN3T  CN3W  CN34  CN39 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN34  CN3W  ON3C  HN34 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN34  CN3W  CN3T  CN3G $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  ON3U  CN3T  CN3G  ON30 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PN3X  ON30  CN3G  CN3T $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CN3G  ON30  PN3X  ON33 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CN3G  ON30  PN3X  ON33 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PN3P  ON33  PN3X  ON30 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PN3P  ON33  PN3X  ON30 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PN3X  ON33  PN3P  ON3Y $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PN3X  ON33  PN3P  ON3Y $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CN3R  ON3Y  PN3P  ON33 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CN3R  ON3Y  PN3P  ON33 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PN3P  ON3Y  CN3R  CN3L $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN3Z  CN3L  CN3R  ON3Y $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CN3R  CN3L  ON3Z  CN3U $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN3R  CN3L  CN3Z  CN32 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NN3H  CN3U  ON3Z  CN3L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN3L  CN3Z  ON38  HN3F $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN3U  CN32  CN3Z  CN3L $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CN3Z  CN32  ON3A  PN3Q $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CN3Z  CN32  CN3U  NN3H $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CN32  ON3A  PN3Q  ON3W $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CN32  ON3A  PN3Q  ON3W $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  ON3Z  CN3U  NN3H  CN3P $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CN3V  CN3B  NN3I  HN3W $pd_v 2 180.000
+
+
+NONBONDED  NN36  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HN3X  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HN3C  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN37  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON34  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN3Y  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN35  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN3X  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN3S  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN3M  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN3L  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN39  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON3U  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN34  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON3N  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN3S  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN3W  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON3C  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN34  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN3T  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN3G  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON30  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PN3X  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ON35  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON3B  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON33  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PN3P  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ON3O  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON3K  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON3Y  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN3R  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN3L  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON3Z  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN3Z  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON38  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HN3F  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CN32  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ON3A  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PN3Q  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ON3M  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON39  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ON3W  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CN3U  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN3H  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN31  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN3G  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN3V  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN3P  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN3M  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN3D  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN34  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN3B  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN3I  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HN31  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HN3W  0.10000 1.42544 0.10000 1.15817
+
+
+
+! Adding parameter definition for residue NDP
+
+
+eval ($pd_v=$pd_x* 17900.0) BOND  NNPN  HNPG $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NNPN  HNPM $pd_v   1.000
+eval ($pd_v=$pd_x* 18000.0) BOND  NNPN  CNP1 $pd_v   1.330
+eval ($pd_v=$pd_x* 24000.0) BOND  CNP1  ONPY $pd_v   1.230
+eval ($pd_v=$pd_x* 16000.0) BOND  CNP1  CNP6 $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CNP6  CNP2 $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CNP6  CNPL $pd_v   1.530
+eval ($pd_v=$pd_x* 16000.0) BOND  CNP2  NNP7 $pd_v   1.400
+eval ($pd_v=$pd_x* 20000.0) BOND  CNPL  CNP9 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CNP9  CNP7 $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CNP7  NNP7 $pd_v   1.400
+eval ($pd_v=$pd_x* 16000.0) BOND  NNP7  CNPI $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  CNPI  ONPA $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPI  CNPC $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ONPA  CNPO $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPC  ONPN $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPC  CNPE $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ONPN  HNP5 $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPE  ONP2 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPE  CNPO $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ONP2  HNPA $pd_v   1.000
+eval ($pd_v=$pd_x* 12000.0) BOND  CNPO  CNPP $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CNPP  ONPZ $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  ONPZ  PNP4 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PNP4  ONPG $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PNP4  ONPM $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PNP4  ONPF $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  ONPF  PNPT $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PNPT  ONP5 $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PNPT  ONPB $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  PNPT  ONP6 $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  ONP6  CNPU $pd_v   1.430
+eval ($pd_v=$pd_x* 12000.0) BOND  CNPU  CNPG $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  CNPG  ONPU $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPG  CNPY $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ONPU  CNP0 $pd_v   1.435
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPY  ONPW $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPY  CNPF $pd_v   1.530
+eval ($pd_v=$pd_x* 15000.0) BOND  ONPW  HNPH $pd_v   1.000
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPF  ONP8 $pd_v   1.430
+eval ($pd_v=$pd_x* 16000.0) BOND  CNPF  CNP0 $pd_v   1.530
+eval ($pd_v=$pd_x* 12000.0) BOND  ONP8  PNPL $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PNPL  ONPO $pd_v   1.610
+eval ($pd_v=$pd_x* 12000.0) BOND  PNPL  ONPV $pd_v   1.610
+eval ($pd_v=$pd_x* 18000.0) BOND  PNPL  ONPX $pd_v   1.480
+eval ($pd_v=$pd_x* 12000.0) BOND  CNP0  NNPK $pd_v   1.480
+eval ($pd_v=$pd_x* 20000.0) BOND  NNPK  CNPN $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NNPK  CNP4 $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CNPN  NNPR $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NNPR  CNPK $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CNPK  CNP4 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CNPK  CNP8 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CNP4  NNPG $pd_v   1.340
+eval ($pd_v=$pd_x* 20000.0) BOND  NNPG  CNPT $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  CNPT  NNPF $pd_v   1.320
+eval ($pd_v=$pd_x* 20000.0) BOND  NNPF  CNP8 $pd_v   1.340
+eval ($pd_v=$pd_x* 18000.0) BOND  CNP8  NNPW $pd_v   1.330
+eval ($pd_v=$pd_x* 17900.0) BOND  NNPW  HNPX $pd_v   1.000
+eval ($pd_v=$pd_x* 17900.0) BOND  NNPW  HNPS $pd_v   1.000
+
+eval ($pd_v=$pd_x*   640.0) ANGLE  HNPG  NNPN  HNPM $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  HNPG  NNPN  CNP1 $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  HNPM  NNPN  CNP1 $pd_v 120.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  NNPN  CNP1  ONPY $pd_v 124.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  NNPN  CNP1  CNP6 $pd_v 115.000
+eval ($pd_v=$pd_x*   960.0) ANGLE  ONPY  CNP1  CNP6 $pd_v 121.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP1  CNP6  CNP2 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP1  CNP6  CNPL $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP2  CNP6  CNPL $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP6  CNP2  NNP7 $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNP6  CNPL  CNP9 $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPL  CNP9  CNP7 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP9  CNP7  NNP7 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP2  NNP7  CNP7 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP2  NNP7  CNPI $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP7  NNP7  CNPI $pd_v 120.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  NNP7  CNPI  ONPA $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  NNP7  CNPI  CNPC $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONPA  CNPI  CNPC $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPI  ONPA  CNPO $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPI  CNPC  ONPN $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPI  CNPC  CNPE $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONPN  CNPC  CNPE $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CNPC  ONPN  HNP5 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPC  CNPE  ONP2 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPC  CNPE  CNPO $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONP2  CNPE  CNPO $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CNPE  ONP2  HNPA $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONPA  CNPO  CNPE $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  ONPA  CNPO  CNPP $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CNPE  CNPO  CNPP $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPO  CNPP  ONPZ $pd_v 111.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  CNPP  ONPZ  PNP4 $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPZ  PNP4  ONPG $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPZ  PNP4  ONPM $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPZ  PNP4  ONPF $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPG  PNP4  ONPM $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPG  PNP4  ONPF $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPM  PNP4  ONPF $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PNP4  ONPF  PNPT $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPF  PNPT  ONP5 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPF  PNPT  ONPB $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPF  PNPT  ONP6 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONP5  PNPT  ONPB $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONP5  PNPT  ONP6 $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPB  PNPT  ONP6 $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  PNPT  ONP6  CNPU $pd_v 120.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONP6  CNPU  CNPG $pd_v 111.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  CNPU  CNPG  ONPU $pd_v 109.500
+eval ($pd_v=$pd_x*   480.0) ANGLE  CNPU  CNPG  CNPY $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONPU  CNPG  CNPY $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPG  ONPU  CNP0 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPG  CNPY  ONPW $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPG  CNPY  CNPF $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONPW  CNPY  CNPF $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CNPY  ONPW  HNPH $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPY  CNPF  ONP8 $pd_v 109.500
+eval ($pd_v=$pd_x*   880.0) ANGLE  CNPY  CNPF  CNP0 $pd_v 104.000
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONP8  CNPF  CNP0 $pd_v 109.500
+eval ($pd_v=$pd_x*   760.0) ANGLE  CNPF  ONP8  PNPL $pd_v 120.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONP8  PNPL  ONPO $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONP8  PNPL  ONPV $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONP8  PNPL  ONPX $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPO  PNPL  ONPV $pd_v 103.000
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPO  PNPL  ONPX $pd_v 109.600
+eval ($pd_v=$pd_x*   760.0) ANGLE  ONPV  PNPL  ONPX $pd_v 109.600
+eval ($pd_v=$pd_x*   880.0) ANGLE  ONPU  CNP0  CNPF $pd_v 104.000
+eval ($pd_v=$pd_x*   544.0) ANGLE  ONPU  CNP0  NNPK $pd_v 109.500
+eval ($pd_v=$pd_x*   544.0) ANGLE  CNPF  CNP0  NNPK $pd_v 109.500
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP0  NNPK  CNPN $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP0  NNPK  CNP4 $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPN  NNPK  CNP4 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPK  CNPN  NNPR $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPN  NNPR  CNPK $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPR  CNPK  CNP4 $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPR  CNPK  CNP8 $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP4  CNPK  CNP8 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPK  CNP4  CNPK $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPK  CNP4  NNPG $pd_v 132.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPK  CNP4  NNPG $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNP4  NNPG  CNPT $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPG  CNPT  NNPF $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPT  NNPF  CNP8 $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPK  CNP8  NNPF $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNPK  CNP8  NNPW $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NNPF  CNP8  NNPW $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CNP8  NNPW  HNPX $pd_v 120.000
+eval ($pd_v=$pd_x*   560.0) ANGLE  CNP8  NNPW  HNPS $pd_v 120.000
+eval ($pd_v=$pd_x*   640.0) ANGLE  HNPX  NNPW  HNPS $pd_v 120.000
+
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPN  HNPG  HNPM  CNP1 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP1  NNPN  CNP6  ONPY $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP6  CNPL  CNP2  CNP1 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NNP7  CNPI  CNP7  CNP2 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPK  CNP0  CNPN  CNP4 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNPK  CNP8  CNP4  NNPR $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP4  NNPG  CNPK  NNPK $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP8  CNPK  NNPF  NNPW $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPW  CNP8  HNPX  HNPS $pd_v 0   0.000
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPI  NNP7  ONPA  CNPC $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPC  CNPI  ONPN  CNPE $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPE  CNPC  ONP2  CNPO $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPO  ONPA  CNPP  CNPE $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PNP4  ONPZ  ONPM  ONPG $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PNPT  ONPF  ONP5  ONPB $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPG  CNPU  CNPY  ONPU $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPY  CNPG  CNPF  ONPW $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNPF  CNPY  CNP0  ONP8 $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  PNPL  ONP8  ONPV  ONPO $pd_v 0  35.264
+eval ($pd_v=$pd_x*   400.0) IMPR  CNP0  ONPU  CNPF  NNPK $pd_v 0  35.264
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPK  CNPN  NNPR  CNPK $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNPN  NNPR  CNPK  CNP4 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPR  CNPK  CNP4  NNPK $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNPK  CNP4  NNPK  CNPN $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP4  NNPK  CNPN  NNPR $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNPK  CNP4  NNPG  CNPT $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP4  NNPG  CNPT  NNPF $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPG  CNPT  NNPF  CNP8 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNPT  NNPF  CNP8  CNPK $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NNPF  CNP8  CNPK  CNP4 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CNP8  CNPK  CNP4  NNPG $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*   640.0) DIHE  CNP6  CNP1  NNPN  HNPG $pd_v 2 180.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNPL  CNP6  CNP1  NNPN $pd_v 2 180.000
+eval ($pd_v=$pd_x*  1000.0) DIHE  CNP1  CNP6  CNP2  NNP7 $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CNP1  CNP6  CNPL  CNP9 $pd_v 6   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CNP6  CNP2  NNP7  CNPI $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.1) DIHE  CNP6  CNPL  CNP9  CNP7 $pd_v 6   0.000
+eval ($pd_v=$pd_x*  1000.0) DIHE  CNPL  CNP9  CNP7  NNP7 $pd_v 2 180.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CNP9  CNP7  NNP7  CNPI $pd_v 2 180.000
+eval ($pd_v=$pd_x*     0.0) DIHE  CNP2  NNP7  CNPI  CNPC $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NNP7  CNPI  ONPA  CNPO $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  NNP7  CNPI  CNPC  CNPE $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CNPP  CNPO  ONPA  CNPI $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CNPI  CNPC  ONPN  HNP5 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNPO  CNPE  CNPC  CNPI $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CNPC  CNPE  ONP2  HNPA $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNPC  CNPE  CNPO  CNPP $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  ONPA  CNPO  CNPP  ONPZ $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PNP4  ONPZ  CNPP  CNPO $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CNPP  ONPZ  PNP4  ONPF $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CNPP  ONPZ  PNP4  ONPF $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PNPT  ONPF  PNP4  ONPZ $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PNPT  ONPF  PNP4  ONPZ $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  PNP4  ONPF  PNPT  ONP6 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  PNP4  ONPF  PNPT  ONP6 $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CNPU  ONP6  PNPT  ONPF $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CNPU  ONP6  PNPT  ONPF $pd_v 2   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  PNPT  ONP6  CNPU  CNPG $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNPY  CNPG  CNPU  ONP6 $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  CNPU  CNPG  ONPU  CNP0 $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNPU  CNPG  CNPY  CNPF $pd_v 3   0.000
+eval ($pd_v=$pd_x*     8.1) DIHE  NNPK  CNP0  ONPU  CNPG $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CNPG  CNPY  ONPW  HNPH $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNP0  CNPF  CNPY  CNPG $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.9) DIHE  CNPY  CNPF  ONP8  PNPL $pd_v 3   0.000
+eval ($pd_v=$pd_x*    19.6) DIHE  CNPY  CNPF  CNP0  NNPK $pd_v 3   0.000
+eval ($pd_v=$pd_x*     0.6) DIHE  CNPF  ONP8  PNPL  ONPX $pd_v 3   0.000
+eval ($pd_v=$pd_x*     5.6) DIHE  CNPF  ONP8  PNPL  ONPX $pd_v 2   0.000
+eval ($pd_v=$pd_x*     0.0) DIHE  ONPU  CNP0  NNPK  CNP4 $pd_v 2   0.000
+eval ($pd_v=$pd_x*   640.0) DIHE  CNPK  CNP8  NNPW  HNPS $pd_v 2 180.000
+
+
+NONBONDED  NNPN  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HNPG  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HNPM  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CNP1  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONPY  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CNP6  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNP2  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNPL  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNP9  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNP7  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NNP7  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CNPI  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONPA  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CNPC  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONPN  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HNP5  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CNPE  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONP2  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HNPA  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CNPO  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNPP  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONPZ  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PNP4  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ONPG  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ONPM  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ONPF  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PNPT  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ONP5  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ONPB  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ONP6  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CNPU  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNPG  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONPU  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CNPY  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONPW  0.10000 2.58361 0.10000 2.31634
+NONBONDED  HNPH  0.10000 1.42544 0.10000 1.15817
+NONBONDED  CNPF  0.10000 3.29633 0.10000 3.02906
+NONBONDED  ONP8  0.10000 2.58361 0.10000 2.31634
+NONBONDED  PNPL  0.10000 3.38542 0.10000 3.11815
+NONBONDED  ONPO  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ONPV  0.10000 2.58361 0.10000 2.31634
+NONBONDED  ONPX  0.10000 2.58361 0.10000 2.31634
+NONBONDED  CNP0  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NNPK  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CNPN  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NNPR  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CNPK  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNP4  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NNPG  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CNPT  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NNPF  0.10000 2.67270 0.10000 2.40543
+NONBONDED  CNP8  0.10000 3.29633 0.10000 3.02906
+NONBONDED  NNPW  0.10000 2.67270 0.10000 2.40543
+NONBONDED  HNPX  0.10000 1.42544 0.10000 1.15817
+NONBONDED  HNPS  0.10000 1.42544 0.10000 1.15817
+
+set message=$old_message echo=$old_echo end

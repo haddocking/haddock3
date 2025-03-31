@@ -16,7 +16,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -r RATIO, --ratio RATIO
-                        Ratio of restraints to be randomely removed.
+                        Ratio of restraints to be randomly removed.
   -s SEED, --seed SEED  Pseudo-random seed.
   -n NB_TBL, --nb-tbl NB_TBL
                         Number of ambiguous files to generate in the archive.
@@ -42,7 +42,7 @@ def add_rand_removal_arguments(rand_removal_subcommand):
     rand_removal_subcommand.add_argument(
         "-r",
         "--ratio",
-        help="Ratio of restraints to be randomely removed.",
+        help="Ratio of restraints to be randomly removed.",
         required=False,
         default=0.5,
         type=float,

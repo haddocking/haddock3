@@ -1,7 +1,7 @@
 """PRODIGY-ligand scoring module
 
 This module performs scoring of input complexes using PRODIGY-ligand.
-It predicts deltaG of the complex and can return perdictions as either deltaG.
+It predicts deltaG of the complex and can return predictions as either deltaG.
 """
 
 from pathlib import Path

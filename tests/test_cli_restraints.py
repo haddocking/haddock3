@@ -307,6 +307,16 @@ def test_random_removal_ratio(example_tbl_file):
     assert ex_0_5.lower().count("assi") < ex_0_2.lower().count("assi")
     output_filepath2.unlink()
 
+    # Check for errors in ratio selection
+    # Ratio removed == 0
+    with pytest.raises(ValueError):
+        output_error = random_removal(example_tbl_file, 0, nb_tbl=1)
+        assert output_error is None
+    # Ratio removed == 1
+    with pytest.raises(ValueError):
+        output_error2 = random_removal(example_tbl_file, 1, nb_tbl=1)
+        assert output_error2 is None
+
 
 def test_random_removal_seed(example_tbl_file):
     """Test random removal seed."""

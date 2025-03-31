@@ -19,6 +19,7 @@ class ProdigyLigand(ProdigyWorker):
         self.receptor_chain = params["receptor_chain"]
         self.lig_resname = params["ligand_resname"]
         self.lig_chain = params["ligand_chain"]
+        self.use_electrostatics = params["electrostatics"]
 
     def evaluate_complex(self) -> float:
         """Evaluate a complex with prodigy-lig.
@@ -59,7 +60,10 @@ class ProdigyLigand(ProdigyWorker):
         # Run predictions
         prodigy_lig.predict()
         # Retrieve DeltaG
-        deltaG = prodigy_lig.dg_elec if prodigy_lig.dg_elec else prodigy_lig.dg
+        if self.use_electrostatics and prodigy_lig.dg_elec:
+            deltaG = prodigy_lig.dg_elec
+        else:
+            deltaG = prodigy_lig.dg
         return deltaG
 
 

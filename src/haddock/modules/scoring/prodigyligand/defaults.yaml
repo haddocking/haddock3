@@ -43,6 +43,17 @@ temperature:
   group: conversion
   explevel: easy
 
+electrostatics:
+  default: true
+  type: bool
+  title: Use the electrostatic component.
+  short: Use the electrostatic component from the input model to make the prediction.
+  long: Use the electrostatic component from the input model to make the prediction.
+    The electroststics must have been computed by HADDOCK and written in
+    the REMARK of the model.
+  group: scoring
+  explevel: expert
+
 to_pkd:
   default: true
   type: boolean

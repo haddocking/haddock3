@@ -1,9 +1,10 @@
 """PRODIGY protein complex scoring module
 
-This module performs scoring of input complexes using PRODIGY (protein).
-It predicts deltaG of the complex and can return perdictions as either deltaG.
+This module performs the scoring of input complexes using PRODIGY (protein).
+It predicts deltaG of the complex and can return predictions as either deltaG
+or pKd values.
 
-Note that PRODIGY-protein is limitted to natural amino-acids.
+Note that PRODIGY-protein is limited to natural amino-acids.
 """
 
 from pathlib import Path

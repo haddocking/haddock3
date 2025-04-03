@@ -89,6 +89,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pdbtools.pdb_splitmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">split_model</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pdbtools.pdb_tidy</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">tidy_pdbfile</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.supported_molecules</span><span class="w"> </span><span class="kn">import</span> <span class="n">supported_residues</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callable</span><span class="p">,</span>
@@ -195,6 +196,7 @@
     <span class="s2">&quot; 0.00969&quot;</span><span class="p">:</span> <span class="s2">&quot; 0.00   &quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
+<span class="c1"># Get list of supported residues to keep when pre-processing</span>
 <span class="n">_to_keep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">supported_residues</span><span class="p">)</span>
 
 
@@ -284,8 +286,15 @@
                 <span class="n">res</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">res</span> <span class="ow">and</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">_to_keep</span><span class="p">:</span>
                     <span class="n">good_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="c1"># Terminate file with an END statement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good_lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">good_lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;END&quot;</span><span class="p">:</span>
             <span class="n">good_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;END&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if anything has been kept from this file</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SetupError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No coordinates kept after sanitzing </span><span class="si">{</span><span class="n">pdb_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_handler</span><span class="p">:</span>
@@ -624,7 +633,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 01, 2025.
+      <span class="lastupdated">Last updated on Apr 03, 2025.
       </span></p>
   </div>
 

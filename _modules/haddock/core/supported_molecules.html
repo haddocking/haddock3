@@ -104,6 +104,7 @@
 <span class="sd">* ``protein-allhdg5-4.top``</span>
 <span class="sd">* ``solvent-allhdg5-4.top``</span>
 <span class="sd">* ``shape.top``</span>
+<span class="sd">* ``cofactors.top``</span>
 
 <span class="sd">DNA-related files are all concatenated into a single DNA-supported</span>
 <span class="sd">residues datastructure. The same occurs for protein residues (natural or</span>
@@ -123,6 +124,7 @@
 <span class="sd">* :py:data:`supported_nucleic_resnames`</span>
 <span class="sd">* :py:data:`supported_solvents_resnames`</span>
 <span class="sd">* :py:data:`supported_shape`</span>
+<span class="sd">* :py:data:`supported_cofactors_resnames`</span>
 
 <span class="sd">* :py:data:`supported_ATOM` (contains residues and nucleic acids)</span>
 <span class="sd">* :py:data:`supported_HETATM` (everything not contained in ATOM)</span>
@@ -289,7 +291,7 @@
     <span class="n">atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">charges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">residues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CNSTopologyResidue</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">in_residue</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">in_residue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1"># all lines are striped before looping</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>  <span class="c1"># it is important to strip spaces</span>
@@ -380,6 +382,7 @@
 <span class="sd">    * ``protein-allhdg5-4.top``</span>
 <span class="sd">    * ``solvent-allhdg5-4.top``</span>
 <span class="sd">    * ``shape.top``</span>
+<span class="sd">    * ``cofactors.top``</span>
 
 <span class="sd">    You need to edit this function to account for any additional</span>
 <span class="sd">    ``.top`` file that is added to the ``source_path`` on top of the</span>
@@ -404,6 +407,7 @@
     <span class="n">protein_martini_top</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s2">&quot;protein-CG-Martini.top&quot;</span><span class="p">)</span>
     <span class="n">solvent_top</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s2">&quot;solvent-allhdg5-4.top&quot;</span><span class="p">)</span>
     <span class="n">shape_top</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s2">&quot;shape.top&quot;</span><span class="p">)</span>
+    <span class="n">cofactors_top</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="s2">&quot;cofactors.top&quot;</span><span class="p">)</span>
 
     <span class="c1"># supported Residues (tuple of namedtuples)</span>
     <span class="n">supported_carbohydrates</span> <span class="o">=</span> <span class="n">read_residues_from_top_file</span><span class="p">(</span><span class="n">carbo_top</span><span class="p">)</span>
@@ -442,6 +446,7 @@
 
     <span class="n">supported_solvents</span> <span class="o">=</span> <span class="n">read_residues_from_top_file</span><span class="p">(</span><span class="n">solvent_top</span><span class="p">)</span>
     <span class="n">supported_shape</span> <span class="o">=</span> <span class="n">read_residues_from_top_file</span><span class="p">(</span><span class="n">shape_top</span><span class="p">)</span>
+    <span class="n">supported_cofactors</span> <span class="o">=</span> <span class="n">read_residues_from_top_file</span><span class="p">(</span><span class="n">cofactors_top</span><span class="p">)</span>
 
     <span class="c1"># supported resnames</span>
     <span class="n">supported_carbo_resnames</span> <span class="o">=</span> <span class="n">get_resnames</span><span class="p">(</span><span class="n">supported_carbohydrates</span><span class="p">)</span>
@@ -453,6 +458,7 @@
     <span class="n">supported_aminoacids_resnames</span> <span class="o">=</span> <span class="n">get_resnames</span><span class="p">(</span><span class="n">supported_aminoacids</span><span class="p">)</span>
     <span class="n">supported_solvents_resnames</span> <span class="o">=</span> <span class="n">get_resnames</span><span class="p">(</span><span class="n">supported_solvents</span><span class="p">)</span>
     <span class="n">supported_shape_resnames</span> <span class="o">=</span> <span class="n">get_resnames</span><span class="p">(</span><span class="n">supported_shape</span><span class="p">)</span>
+    <span class="n">supported_cofactors_resnames</span> <span class="o">=</span> <span class="n">get_resnames</span><span class="p">(</span><span class="n">supported_cofactors</span><span class="p">)</span>
 
     <span class="c1"># other attributes</span>
     <span class="k">for</span> <span class="n">ion</span> <span class="ow">in</span> <span class="n">supported_single_ions</span><span class="p">:</span>
@@ -475,6 +481,7 @@
         <span class="n">supported_aminoacids_resnames</span><span class="p">,</span>
         <span class="n">supported_solvents_resnames</span><span class="p">,</span>
         <span class="n">supported_shape_resnames</span><span class="p">,</span>
+        <span class="n">supported_cofactors_resnames</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -490,7 +497,8 @@
     <span class="n">_supported_multiatom_ions_resnames</span><span class="p">,</span> \
     <span class="n">_supported_aminoacids_resnames</span><span class="p">,</span> \
     <span class="n">_supported_solvents_resnames</span><span class="p">,</span> \
-    <span class="n">_supported_shape_resnames</span> <span class="o">=</span> <span class="n">read_supported_residues</span><span class="p">(</span><span class="n">toppar_path</span><span class="p">)</span>
+    <span class="n">_supported_shape_resnames</span><span class="p">,</span> \
+    <span class="n">_supported_cofactors_resnames</span> <span class="o">=</span> <span class="n">read_supported_residues</span><span class="p">(</span><span class="n">toppar_path</span><span class="p">)</span>
 
 <span class="c1"># render docstrings</span>
 <span class="n">supported_carbo_resnames</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_supported_carbo_resnames</span><span class="p">)</span>
@@ -535,6 +543,9 @@
 <span class="n">supported_shape_resnames</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_supported_shape_resnames</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;Supported shape.&quot;&quot;&quot;</span>
 
+<span class="n">supported_cofactors_resnames</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_supported_cofactors_resnames</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Supported cofactors.&quot;&quot;&quot;</span>
+
 <span class="c1">#</span>
 <span class="c1"># Residues that must be set as ATOM</span>
 <span class="n">supported_ATOM</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
@@ -557,6 +568,7 @@
     <span class="n">supported_hemes_resnames</span><span class="p">,</span>
     <span class="n">supported_solvents_resnames</span><span class="p">,</span>
     <span class="n">supported_shape_resnames</span><span class="p">,</span>
+    <span class="n">supported_cofactors_resnames</span><span class="p">,</span>
     <span class="p">))</span>
 
 <span class="c1"># Residues that must be set as HETATM</span>
@@ -567,6 +579,7 @@
     <span class="n">supported_single_ions_resnames</span><span class="p">,</span>
     <span class="n">supported_multiatom_ions_resnames</span><span class="p">,</span>
     <span class="n">supported_solvents_resnames</span><span class="p">,</span>
+    <span class="n">supported_cofactors_resnames</span><span class="p">,</span>
     <span class="p">))</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Supported ``HETATM`` residues.</span>
@@ -577,6 +590,7 @@
 
 <span class="n">supported_residues</span> <span class="o">=</span> <span class="n">supported_ATOM</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">supported_HETATM</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;All HADDOCK3 supported residues.&quot;&quot;&quot;</span>
+
 </pre></div>
 
            </div>
@@ -587,7 +601,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 01, 2025.
+      <span class="lastupdated">Last updated on Apr 03, 2025.
       </span></p>
   </div>
 

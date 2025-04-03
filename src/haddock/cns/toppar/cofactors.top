@@ -1,0 +1,2934 @@
+REMARKS file toppar/cofactors.top
+REMARKS Victor Reys - 19/03/2025
+REMARKS Topologies added for common co-factors
+REMARKS ADN-ADP-AMP-ATP-CIT-FAD-FLC-GDP-GMP-GTP-NAD-NAP-NDP
+
+! History:
+! Victor Reys - 19/03/2025
+! - Topology taken from PRODRG version 070118.0614
+! - AtomType midfix for ADN: A0
+! - AtomType midfix for ADP: A2
+! - AtomType midfix for AMP: A1
+! - AtomType midfix for ATP: A3
+! - AtomType midfix for CIT: CI
+! - AtomType midfix for FAD: F2
+! - AtomType midfix for FLC: CT
+! - AtomType midfix for GDP: G2
+! - AtomType midfix for GMP: G1
+! - AtomType midfix for GTP: G3
+! - AtomType midfix for NAD: N2
+! - AtomType midfix for NAP: N3
+! - AtomType midfix for NDP: NP
+
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+autogenerate
+  angles=true
+  dihedrals=false
+end
+
+
+! Adding topology definition for residue ADN
+
+MASS  OA0L  15.9994   ! equivalent to    OA
+MASS  HA04   1.0080   ! equivalent to    HO
+MASS  CA00  13.0190   ! equivalent to   CH1
+MASS  CA0G  13.0190   ! equivalent to   CH1
+MASS  OA0O  15.9994   ! equivalent to    OA
+MASS  HA0P   1.0080   ! equivalent to    HO
+MASS  CA0N  13.0190   ! equivalent to   CS1
+MASS  CA0O  14.0270   ! equivalent to   CH2
+MASS  OA0M  15.9994   ! equivalent to    OA
+MASS  HA0K   1.0080   ! equivalent to    HO
+MASS  OA0S  15.9994   ! equivalent to    OS
+MASS  CA0T  13.0190   ! equivalent to   CS1
+MASS  NA0X  14.0067   ! equivalent to  NR5*
+MASS  CA0L  13.0190   ! equivalent to  CR51
+MASS  NA0O  14.0067   ! equivalent to   NR5
+MASS  CA04  12.0110   ! equivalent to    CB
+MASS  CA0D  12.0110   ! equivalent to    CB
+MASS  NA0E  14.0067   ! equivalent to   NR6
+MASS  CA0E  13.0190   ! equivalent to  CR61
+MASS  NA0N  14.0067   ! equivalent to   NR6
+MASS  CA0U  12.0110   ! equivalent to    CB
+MASS  NA09  14.0067   ! equivalent to    NT
+MASS  HA05   1.0080   ! equivalent to     H
+MASS  HA0O   1.0080   ! equivalent to     H
+
+RESIdue ADN  
+GROUP
+  ATOM O2'  TYPE= OA0L CHARGE=-0.168 END
+  ATOM HO2'  TYPE= HA04 CHARGE= 0.070 END
+  ATOM C2'  TYPE= CA00 CHARGE= 0.148 END
+  ATOM C3'  TYPE= CA0G CHARGE= 0.148 END
+  ATOM O3'  TYPE= OA0O CHARGE=-0.168 END
+  ATOM HO3'  TYPE= HA0P CHARGE= 0.070 END
+  ATOM C4'  TYPE= CA0N CHARGE= 0.235 END
+  ATOM C5'  TYPE= CA0O CHARGE= 0.085 END
+  ATOM O5'  TYPE= OA0M CHARGE=-0.168 END
+  ATOM HO5'  TYPE= HA0K CHARGE= 0.070 END
+  ATOM O4'  TYPE= OA0S CHARGE=-0.159 END
+  ATOM C1'  TYPE= CA0T CHARGE= 0.235 END
+  ATOM N9   TYPE= NA0X CHARGE= 0.255 END
+  ATOM C8   TYPE= CA0L CHARGE=-0.019 END
+  ATOM N7   TYPE= NA0O CHARGE=-0.484 END
+  ATOM C5   TYPE= CA04 CHARGE= 0.155 END
+  ATOM C4   TYPE= CA0D CHARGE= 0.292 END
+  ATOM N3   TYPE= NA0E CHARGE=-0.498 END
+  ATOM C2   TYPE= CA0E CHARGE=-0.019 END
+  ATOM N1   TYPE= NA0N CHARGE=-0.498 END
+  ATOM C6   TYPE= CA0U CHARGE= 0.291 END
+  ATOM N6   TYPE= NA09 CHARGE= 0.079 END
+  ATOM HN61  TYPE= HA05 CHARGE= 0.024 END
+  ATOM HN62  TYPE= HA0O CHARGE= 0.024 END
+
+  BOND O2'  HO2' 
+  BOND O2'  C2' 
+  BOND C2'  C3' 
+  BOND C2'  C1' 
+  BOND C3'  O3' 
+  BOND C3'  C4' 
+  BOND O3'  HO3' 
+  BOND C4'  C5' 
+  BOND C4'  O4' 
+  BOND C5'  O5' 
+  BOND O5'  HO5' 
+  BOND O4'  C1' 
+  BOND C1'  N9  
+  BOND N9   C8  
+  BOND N9   C4  
+  BOND C8   N7  
+  BOND N7   C5  
+  BOND C5   C4  
+  BOND C5   C6  
+  BOND C4   N3  
+  BOND N3   C2  
+  BOND C2   N1  
+  BOND N1   C6  
+  BOND C6   N6  
+  BOND N6   HN61 
+  BOND N6   HN62 
+
+  ANGLE HO2'  O2'  C2' 
+  ANGLE O2'  C2'  C3' 
+  ANGLE O2'  C2'  C1' 
+  ANGLE C3'  C2'  C1' 
+  ANGLE C2'  C3'  O3' 
+  ANGLE C2'  C3'  C4' 
+  ANGLE O3'  C3'  C4' 
+  ANGLE C3'  O3'  HO3' 
+  ANGLE C3'  C4'  C5' 
+  ANGLE C3'  C4'  O4' 
+  ANGLE C5'  C4'  O4' 
+  ANGLE C4'  C5'  O5' 
+  ANGLE C5'  O5'  HO5' 
+  ANGLE C4'  O4'  C1' 
+  ANGLE C2'  C1'  O4' 
+  ANGLE C2'  C1'  N9  
+  ANGLE O4'  C1'  N9  
+  ANGLE C1'  N9   C8  
+  ANGLE C1'  N9   C4  
+  ANGLE C8   N9   C4  
+  ANGLE N9   C8   N7  
+  ANGLE C8   N7   C5  
+  ANGLE N7   C5   C4  
+  ANGLE N7   C5   C6  
+  ANGLE C4   C5   C6  
+  ANGLE N9   C4   C5  
+  ANGLE N9   C4   N3  
+  ANGLE C5   C4   N3  
+  ANGLE C4   N3   C2  
+  ANGLE N3   C2   N1  
+  ANGLE C2   N1   C6  
+  ANGLE C5   C6   N1  
+  ANGLE C5   C6   N6  
+  ANGLE N1   C6   N6  
+  ANGLE C6   N6   HN61 
+  ANGLE C6   N6   HN62 
+  ANGLE HN61  N6   HN62 
+
+  IMPROPER N9   C1'  C8   C4  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C6   C5   N1   N6  
+  IMPROPER N6   C6   HN61  HN62 
+  IMPROPER C2'  O2'  C3'  C1' 
+  IMPROPER C3'  C2'  O3'  C4' 
+  IMPROPER C4'  C3'  O4'  C5' 
+  IMPROPER C1'  C2'  N9   O4' 
+  IMPROPER N9   C8   N7   C5  
+  IMPROPER C8   N7   C5   C4  
+  IMPROPER N7   C5   C4   N9  
+  IMPROPER C5   C4   N9   C8  
+  IMPROPER C4   N9   C8   N7  
+  IMPROPER C5   C4   N3   C2  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C6  
+  IMPROPER C2   N1   C6   C5  
+  IMPROPER N1   C6   C5   C4  
+  IMPROPER C6   C5   C4   N3  
+
+  DIHEDRAL C1'  C2'  O2'  HO2' 
+  DIHEDRAL C4'  C3'  C2'  O2' 
+  DIHEDRAL O2'  C2'  C1'  N9  
+  DIHEDRAL C2'  C3'  O3'  HO3' 
+  DIHEDRAL C2'  C3'  C4'  O4' 
+  DIHEDRAL C3'  C4'  C5'  O5' 
+  DIHEDRAL C3'  C4'  O4'  C1' 
+  DIHEDRAL C4'  C5'  O5'  HO5' 
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL C2'  C1'  N9   C4  
+  DIHEDRAL C5   C6   N6   HN62 
+END
+
+
+! Adding topology definition for residue ADP
+
+MASS  OA2J  15.9994   ! equivalent to    OA
+MASS  PA2N  30.9738   ! equivalent to     P
+MASS  OA2Z  15.9994   ! equivalent to    OA
+MASS  OA2B  15.9994   ! equivalent to    OM
+MASS  OA2L  15.9994   ! equivalent to    OS
+MASS  PA22  30.9738   ! equivalent to     P
+MASS  OA2N  15.9994   ! equivalent to    OA
+MASS  OA2D  15.9994   ! equivalent to    OM
+MASS  OA2A  15.9994   ! equivalent to    OS
+MASS  CA21  14.0270   ! equivalent to   CH2
+MASS  CA2W  13.0190   ! equivalent to   CS1
+MASS  OA2H  15.9994   ! equivalent to    OS
+MASS  CA2K  13.0190   ! equivalent to   CH1
+MASS  OA2Q  15.9994   ! equivalent to    OA
+MASS  HA2Q   1.0080   ! equivalent to    HO
+MASS  CA2X  13.0190   ! equivalent to   CH1
+MASS  OA2E  15.9994   ! equivalent to    OA
+MASS  HA22   1.0080   ! equivalent to    HO
+MASS  CA2Z  13.0190   ! equivalent to   CS1
+MASS  NA2H  14.0067   ! equivalent to  NR5*
+MASS  CA2C  13.0190   ! equivalent to  CR51
+MASS  NA2B  14.0067   ! equivalent to   NR5
+MASS  CA2V  12.0110   ! equivalent to    CB
+MASS  CA27  12.0110   ! equivalent to    CB
+MASS  NA27  14.0067   ! equivalent to   NR6
+MASS  CA2T  13.0190   ! equivalent to  CR61
+MASS  NA2G  14.0067   ! equivalent to   NR6
+MASS  CA29  12.0110   ! equivalent to    CB
+MASS  NA29  14.0067   ! equivalent to    NT
+MASS  HA2I   1.0080   ! equivalent to     H
+MASS  HA2C   1.0080   ! equivalent to     H
+
+RESIdue ADP  
+GROUP
+  ATOM O2B  TYPE= OA2J CHARGE=-1.064 END
+  ATOM PB   TYPE= PA2N CHARGE= 1.206 END
+  ATOM O3B  TYPE= OA2Z CHARGE=-1.064 END
+  ATOM O1B  TYPE= OA2B CHARGE=-0.770 END
+  ATOM O3A  TYPE= OA2L CHARGE=-0.192 END
+  ATOM PA   TYPE= PA22 CHARGE= 1.206 END
+  ATOM O2A  TYPE= OA2N CHARGE=-0.897 END
+  ATOM O1A  TYPE= OA2D CHARGE=-0.604 END
+  ATOM O5'  TYPE= OA2A CHARGE=-0.192 END
+  ATOM C5'  TYPE= CA21 CHARGE= 0.052 END
+  ATOM C4'  TYPE= CA2W CHARGE= 0.202 END
+  ATOM O4'  TYPE= OA2H CHARGE=-0.192 END
+  ATOM C3'  TYPE= CA2K CHARGE= 0.115 END
+  ATOM O3'  TYPE= OA2Q CHARGE=-0.201 END
+  ATOM HAA  TYPE= HA2Q CHARGE= 0.037 END
+  ATOM C2'  TYPE= CA2X CHARGE= 0.115 END
+  ATOM O2'  TYPE= OA2E CHARGE=-0.201 END
+  ATOM HO2'  TYPE= HA22 CHARGE= 0.037 END
+  ATOM C1'  TYPE= CA2Z CHARGE= 0.202 END
+  ATOM N9   TYPE= NA2H CHARGE= 0.222 END
+  ATOM C8   TYPE= CA2C CHARGE=-0.052 END
+  ATOM N7   TYPE= NA2B CHARGE=-0.517 END
+  ATOM C5   TYPE= CA2V CHARGE= 0.122 END
+  ATOM C4   TYPE= CA27 CHARGE= 0.258 END
+  ATOM N3   TYPE= NA27 CHARGE=-0.531 END
+  ATOM C2   TYPE= CA2T CHARGE=-0.052 END
+  ATOM N1   TYPE= NA2G CHARGE=-0.531 END
+  ATOM C6   TYPE= CA29 CHARGE= 0.258 END
+  ATOM N6   TYPE= NA29 CHARGE= 0.046 END
+  ATOM HN61  TYPE= HA2I CHARGE=-0.009 END
+  ATOM HN62  TYPE= HA2C CHARGE=-0.009 END
+
+  BOND O2B  PB  
+  BOND PB   O3B 
+  BOND PB   O1B 
+  BOND PB   O3A 
+  BOND O3A  PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5' 
+  BOND O5'  C5' 
+  BOND C5'  C4' 
+  BOND C4'  O4' 
+  BOND C4'  C3' 
+  BOND O4'  C1' 
+  BOND C3'  O3' 
+  BOND C3'  C2' 
+  BOND O3'  HAA 
+  BOND C2'  O2' 
+  BOND C2'  C1' 
+  BOND O2'  HO2' 
+  BOND C1'  N9  
+  BOND N9   C8  
+  BOND N9   C4  
+  BOND C8   N7  
+  BOND N7   C5  
+  BOND C5   C4  
+  BOND C5   C6  
+  BOND C4   N3  
+  BOND N3   C2  
+  BOND C2   N1  
+  BOND N1   C6  
+  BOND C6   N6  
+  BOND N6   HN61 
+  BOND N6   HN62 
+
+  ANGLE O2B  PB   O3B 
+  ANGLE O2B  PB   O1B 
+  ANGLE O2B  PB   O3A 
+  ANGLE O3B  PB   O1B 
+  ANGLE O3B  PB   O3A 
+  ANGLE O1B  PB   O3A 
+  ANGLE PB   O3A  PA  
+  ANGLE O3A  PA   O2A 
+  ANGLE O3A  PA   O1A 
+  ANGLE O3A  PA   O5' 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5' 
+  ANGLE O1A  PA   O5' 
+  ANGLE PA   O5'  C5' 
+  ANGLE O5'  C5'  C4' 
+  ANGLE C5'  C4'  O4' 
+  ANGLE C5'  C4'  C3' 
+  ANGLE O4'  C4'  C3' 
+  ANGLE C4'  O4'  C1' 
+  ANGLE C4'  C3'  O3' 
+  ANGLE C4'  C3'  C2' 
+  ANGLE O3'  C3'  C2' 
+  ANGLE C3'  O3'  HAA 
+  ANGLE C3'  C2'  O2' 
+  ANGLE C3'  C2'  C1' 
+  ANGLE O2'  C2'  C1' 
+  ANGLE C2'  O2'  HO2' 
+  ANGLE O4'  C1'  C2' 
+  ANGLE O4'  C1'  N9  
+  ANGLE C2'  C1'  N9  
+  ANGLE C1'  N9   C8  
+  ANGLE C1'  N9   C4  
+  ANGLE C8   N9   C4  
+  ANGLE N9   C8   N7  
+  ANGLE C8   N7   C5  
+  ANGLE N7   C5   C4  
+  ANGLE N7   C5   C6  
+  ANGLE C4   C5   C6  
+  ANGLE N9   C4   C5  
+  ANGLE N9   C4   N3  
+  ANGLE C5   C4   N3  
+  ANGLE C4   N3   C2  
+  ANGLE N3   C2   N1  
+  ANGLE C2   N1   C6  
+  ANGLE C5   C6   N1  
+  ANGLE C5   C6   N6  
+  ANGLE N1   C6   N6  
+  ANGLE C6   N6   HN61 
+  ANGLE C6   N6   HN62 
+  ANGLE HN61  N6   HN62 
+
+  IMPROPER N9   C1'  C8   C4  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C6   C5   N1   N6  
+  IMPROPER N6   C6   HN61  HN62 
+  IMPROPER PB   O2B  O3B  O1B 
+  IMPROPER PA   O3A  O2A  O1A 
+  IMPROPER C4'  C5'  C3'  O4' 
+  IMPROPER C3'  C4'  C2'  O3' 
+  IMPROPER C2'  C3'  C1'  O2' 
+  IMPROPER C1'  O4'  C2'  N9  
+  IMPROPER N9   C8   N7   C5  
+  IMPROPER C8   N7   C5   C4  
+  IMPROPER N7   C5   C4   N9  
+  IMPROPER C5   C4   N9   C8  
+  IMPROPER C4   N9   C8   N7  
+  IMPROPER C5   C4   N3   C2  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C6  
+  IMPROPER C2   N1   C6   C5  
+  IMPROPER N1   C6   C5   C4  
+  IMPROPER C6   C5   C4   N3  
+
+  DIHEDRAL PA   O3A  PB   O2B 
+  DIHEDRAL PA   O3A  PB   O2B 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL PA   O5'  C5'  C4' 
+  DIHEDRAL C3'  C4'  C5'  O5' 
+  DIHEDRAL C5'  C4'  O4'  C1' 
+  DIHEDRAL C5'  C4'  C3'  C2' 
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL C4'  C3'  O3'  HAA 
+  DIHEDRAL C1'  C2'  C3'  C4' 
+  DIHEDRAL C3'  C2'  O2'  HO2' 
+  DIHEDRAL C3'  C2'  C1'  N9  
+  DIHEDRAL O4'  C1'  N9   C4  
+  DIHEDRAL C5   C6   N6   HN62 
+END
+
+
+! Adding topology definition for residue AMP
+
+MASS  OA1Q  15.9994   ! equivalent to    OA
+MASS  PA1L  30.9738   ! equivalent to     P
+MASS  OA12  15.9994   ! equivalent to    OA
+MASS  OA14  15.9994   ! equivalent to    OM
+MASS  OA1S  15.9994   ! equivalent to    OS
+MASS  CA1H  14.0270   ! equivalent to   CH2
+MASS  CA1J  13.0190   ! equivalent to   CS1
+MASS  OA1H  15.9994   ! equivalent to    OS
+MASS  CA1Y  13.0190   ! equivalent to   CH1
+MASS  OA1C  15.9994   ! equivalent to    OA
+MASS  HA1N   1.0080   ! equivalent to    HO
+MASS  CA1K  13.0190   ! equivalent to   CH1
+MASS  OA16  15.9994   ! equivalent to    OA
+MASS  HA1H   1.0080   ! equivalent to    HO
+MASS  CA1F  13.0190   ! equivalent to   CS1
+MASS  NA1V  14.0067   ! equivalent to  NR5*
+MASS  CA19  13.0190   ! equivalent to  CR51
+MASS  NA17  14.0067   ! equivalent to   NR5
+MASS  CA1A  12.0110   ! equivalent to    CB
+MASS  CA1U  12.0110   ! equivalent to    CB
+MASS  NA13  14.0067   ! equivalent to   NR6
+MASS  CA1C  13.0190   ! equivalent to  CR61
+MASS  NA16  14.0067   ! equivalent to   NR6
+MASS  CA1L  12.0110   ! equivalent to    CB
+MASS  NA1G  14.0067   ! equivalent to    NT
+MASS  HA1W   1.0080   ! equivalent to     H
+MASS  HA12   1.0080   ! equivalent to     H
+
+RESIdue AMP  
+GROUP
+  ATOM O2P  TYPE= OA1Q CHARGE=-1.045 END
+  ATOM P    TYPE= PA1L CHARGE= 1.225 END
+  ATOM O3P  TYPE= OA12 CHARGE=-1.045 END
+  ATOM O1P  TYPE= OA14 CHARGE=-0.751 END
+  ATOM O5'  TYPE= OA1S CHARGE=-0.173 END
+  ATOM C5'  TYPE= CA1H CHARGE= 0.071 END
+  ATOM C4'  TYPE= CA1J CHARGE= 0.221 END
+  ATOM O4'  TYPE= OA1H CHARGE=-0.173 END
+  ATOM C3'  TYPE= CA1Y CHARGE= 0.134 END
+  ATOM O3'  TYPE= OA1C CHARGE=-0.182 END
+  ATOM HAA  TYPE= HA1N CHARGE= 0.056 END
+  ATOM C2'  TYPE= CA1K CHARGE= 0.134 END
+  ATOM O2'  TYPE= OA16 CHARGE=-0.182 END
+  ATOM HO2'  TYPE= HA1H CHARGE= 0.056 END
+  ATOM C1'  TYPE= CA1F CHARGE= 0.221 END
+  ATOM N9   TYPE= NA1V CHARGE= 0.241 END
+  ATOM C8   TYPE= CA19 CHARGE=-0.033 END
+  ATOM N7   TYPE= NA17 CHARGE=-0.498 END
+  ATOM C5   TYPE= CA1A CHARGE= 0.141 END
+  ATOM C4   TYPE= CA1U CHARGE= 0.277 END
+  ATOM N3   TYPE= NA13 CHARGE=-0.512 END
+  ATOM C2   TYPE= CA1C CHARGE=-0.033 END
+  ATOM N1   TYPE= NA16 CHARGE=-0.512 END
+  ATOM C6   TYPE= CA1L CHARGE= 0.277 END
+  ATOM N6   TYPE= NA1G CHARGE= 0.065 END
+  ATOM HN62  TYPE= HA1W CHARGE= 0.010 END
+  ATOM HN61  TYPE= HA12 CHARGE= 0.010 END
+
+  BOND O2P  P   
+  BOND P    O3P 
+  BOND P    O1P 
+  BOND P    O5' 
+  BOND O5'  C5' 
+  BOND C5'  C4' 
+  BOND C4'  O4' 
+  BOND C4'  C3' 
+  BOND O4'  C1' 
+  BOND C3'  O3' 
+  BOND C3'  C2' 
+  BOND O3'  HAA 
+  BOND C2'  O2' 
+  BOND C2'  C1' 
+  BOND O2'  HO2' 
+  BOND C1'  N9  
+  BOND N9   C8  
+  BOND N9   C4  
+  BOND C8   N7  
+  BOND N7   C5  
+  BOND C5   C4  
+  BOND C5   C6  
+  BOND C4   N3  
+  BOND N3   C2  
+  BOND C2   N1  
+  BOND N1   C6  
+  BOND C6   N6  
+  BOND N6   HN62 
+  BOND N6   HN61 
+
+  ANGLE O2P  P    O3P 
+  ANGLE O2P  P    O1P 
+  ANGLE O2P  P    O5' 
+  ANGLE O3P  P    O1P 
+  ANGLE O3P  P    O5' 
+  ANGLE O1P  P    O5' 
+  ANGLE P    O5'  C5' 
+  ANGLE O5'  C5'  C4' 
+  ANGLE C5'  C4'  O4' 
+  ANGLE C5'  C4'  C3' 
+  ANGLE O4'  C4'  C3' 
+  ANGLE C4'  O4'  C1' 
+  ANGLE C4'  C3'  O3' 
+  ANGLE C4'  C3'  C2' 
+  ANGLE O3'  C3'  C2' 
+  ANGLE C3'  O3'  HAA 
+  ANGLE C3'  C2'  O2' 
+  ANGLE C3'  C2'  C1' 
+  ANGLE O2'  C2'  C1' 
+  ANGLE C2'  O2'  HO2' 
+  ANGLE O4'  C1'  C2' 
+  ANGLE O4'  C1'  N9  
+  ANGLE C2'  C1'  N9  
+  ANGLE C1'  N9   C8  
+  ANGLE C1'  N9   C4  
+  ANGLE C8   N9   C4  
+  ANGLE N9   C8   N7  
+  ANGLE C8   N7   C5  
+  ANGLE N7   C5   C4  
+  ANGLE N7   C5   C6  
+  ANGLE C4   C5   C6  
+  ANGLE N9   C4   C5  
+  ANGLE N9   C4   N3  
+  ANGLE C5   C4   N3  
+  ANGLE C4   N3   C2  
+  ANGLE N3   C2   N1  
+  ANGLE C2   N1   C6  
+  ANGLE C5   C6   N1  
+  ANGLE C5   C6   N6  
+  ANGLE N1   C6   N6  
+  ANGLE C6   N6   HN62 
+  ANGLE C6   N6   HN61 
+  ANGLE HN62  N6   HN61 
+
+  IMPROPER N9   C1'  C8   C4  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C6   C5   N1   N6  
+  IMPROPER N6   C6   HN62  HN61 
+  IMPROPER P    O2P  O1P  O3P 
+  IMPROPER C4'  C5'  C3'  O4' 
+  IMPROPER C3'  C4'  C2'  O3' 
+  IMPROPER C2'  C3'  C1'  O2' 
+  IMPROPER C1'  O4'  C2'  N9  
+  IMPROPER N9   C8   N7   C5  
+  IMPROPER C8   N7   C5   C4  
+  IMPROPER N7   C5   C4   N9  
+  IMPROPER C5   C4   N9   C8  
+  IMPROPER C4   N9   C8   N7  
+  IMPROPER C5   C4   N3   C2  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C6  
+  IMPROPER C2   N1   C6   C5  
+  IMPROPER N1   C6   C5   C4  
+  IMPROPER C6   C5   C4   N3  
+
+  DIHEDRAL C5'  O5'  P    O2P 
+  DIHEDRAL C5'  O5'  P    O2P 
+  DIHEDRAL P    O5'  C5'  C4' 
+  DIHEDRAL C3'  C4'  C5'  O5' 
+  DIHEDRAL C5'  C4'  O4'  C1' 
+  DIHEDRAL C5'  C4'  C3'  C2' 
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL C4'  C3'  O3'  HAA 
+  DIHEDRAL C1'  C2'  C3'  C4' 
+  DIHEDRAL C3'  C2'  O2'  HO2' 
+  DIHEDRAL C3'  C2'  C1'  N9  
+  DIHEDRAL O4'  C1'  N9   C4  
+  DIHEDRAL C5   C6   N6   HN61 
+END
+
+
+! Adding topology definition for residue ATP
+
+MASS  OA3H  15.9994   ! equivalent to    OA
+MASS  PA3Q  30.9738   ! equivalent to     P
+MASS  OA3D  15.9994   ! equivalent to    OA
+MASS  OA3S  15.9994   ! equivalent to    OM
+MASS  OA3U  15.9994   ! equivalent to    OS
+MASS  PA38  30.9738   ! equivalent to     P
+MASS  OA3Z  15.9994   ! equivalent to    OA
+MASS  OA3O  15.9994   ! equivalent to    OM
+MASS  OA3H  15.9994   ! equivalent to    OS
+MASS  PA3N  30.9738   ! equivalent to     P
+MASS  OA39  15.9994   ! equivalent to    OA
+MASS  OA3T  15.9994   ! equivalent to    OM
+MASS  OA36  15.9994   ! equivalent to    OS
+MASS  CA31  14.0270   ! equivalent to   CH2
+MASS  CA3K  13.0190   ! equivalent to   CS1
+MASS  OA32  15.9994   ! equivalent to    OS
+MASS  CA3E  13.0190   ! equivalent to   CH1
+MASS  OA34  15.9994   ! equivalent to    OA
+MASS  HA37   1.0080   ! equivalent to    HO
+MASS  CA33  13.0190   ! equivalent to   CH1
+MASS  OA3E  15.9994   ! equivalent to    OA
+MASS  HA3W   1.0080   ! equivalent to    HO
+MASS  CA37  13.0190   ! equivalent to   CS1
+MASS  NA3X  14.0067   ! equivalent to  NR5*
+MASS  CA3P  13.0190   ! equivalent to  CR51
+MASS  NA3U  14.0067   ! equivalent to   NR5
+MASS  CA32  12.0110   ! equivalent to    CB
+MASS  CA3L  12.0110   ! equivalent to    CB
+MASS  NA3G  14.0067   ! equivalent to   NR6
+MASS  CA3F  13.0190   ! equivalent to  CR61
+MASS  NA3N  14.0067   ! equivalent to   NR6
+MASS  CA34  12.0110   ! equivalent to    CB
+MASS  NA3M  14.0067   ! equivalent to    NT
+MASS  HA3Q   1.0080   ! equivalent to     H
+MASS  HA35   1.0080   ! equivalent to     H
+
+RESIdue ATP  
+GROUP
+  ATOM O2G  TYPE= OA3H CHARGE=-1.078 END
+  ATOM PG   TYPE= PA3Q CHARGE= 1.191 END
+  ATOM O3G  TYPE= OA3D CHARGE=-1.079 END
+  ATOM O1G  TYPE= OA3S CHARGE=-0.785 END
+  ATOM O3B  TYPE= OA3U CHARGE=-0.206 END
+  ATOM PB   TYPE= PA38 CHARGE= 1.191 END
+  ATOM O2B  TYPE= OA3Z CHARGE=-0.912 END
+  ATOM O1B  TYPE= OA3O CHARGE=-0.618 END
+  ATOM O3A  TYPE= OA3H CHARGE=-0.206 END
+  ATOM PA   TYPE= PA3N CHARGE= 1.191 END
+  ATOM O2A  TYPE= OA39 CHARGE=-0.912 END
+  ATOM O1A  TYPE= OA3T CHARGE=-0.618 END
+  ATOM O5'  TYPE= OA36 CHARGE=-0.206 END
+  ATOM C5'  TYPE= CA31 CHARGE= 0.037 END
+  ATOM C4'  TYPE= CA3K CHARGE= 0.187 END
+  ATOM O4'  TYPE= OA32 CHARGE=-0.206 END
+  ATOM C3'  TYPE= CA3E CHARGE= 0.100 END
+  ATOM O3'  TYPE= OA34 CHARGE=-0.215 END
+  ATOM HAA  TYPE= HA37 CHARGE= 0.022 END
+  ATOM C2'  TYPE= CA33 CHARGE= 0.100 END
+  ATOM O2'  TYPE= OA3E CHARGE=-0.215 END
+  ATOM HO2'  TYPE= HA3W CHARGE= 0.022 END
+  ATOM C1'  TYPE= CA37 CHARGE= 0.187 END
+  ATOM N9   TYPE= NA3X CHARGE= 0.208 END
+  ATOM C8   TYPE= CA3P CHARGE=-0.068 END
+  ATOM N7   TYPE= NA3U CHARGE=-0.532 END
+  ATOM C5   TYPE= CA32 CHARGE= 0.108 END
+  ATOM C4   TYPE= CA3L CHARGE= 0.244 END
+  ATOM N3   TYPE= NA3G CHARGE=-0.546 END
+  ATOM C2   TYPE= CA3F CHARGE=-0.067 END
+  ATOM N1   TYPE= NA3N CHARGE=-0.546 END
+  ATOM C6   TYPE= CA34 CHARGE= 0.244 END
+  ATOM N6   TYPE= NA3M CHARGE= 0.031 END
+  ATOM HN61  TYPE= HA3Q CHARGE=-0.024 END
+  ATOM HN62  TYPE= HA35 CHARGE=-0.024 END
+
+  BOND O2G  PG  
+  BOND PG   O3G 
+  BOND PG   O1G 
+  BOND PG   O3B 
+  BOND O3B  PB  
+  BOND PB   O2B 
+  BOND PB   O1B 
+  BOND PB   O3A 
+  BOND O3A  PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5' 
+  BOND O5'  C5' 
+  BOND C5'  C4' 
+  BOND C4'  O4' 
+  BOND C4'  C3' 
+  BOND O4'  C1' 
+  BOND C3'  O3' 
+  BOND C3'  C2' 
+  BOND O3'  HAA 
+  BOND C2'  O2' 
+  BOND C2'  C1' 
+  BOND O2'  HO2' 
+  BOND C1'  N9  
+  BOND N9   C8  
+  BOND N9   C4  
+  BOND C8   N7  
+  BOND N7   C5  
+  BOND C5   C4  
+  BOND C5   C6  
+  BOND C4   N3  
+  BOND N3   C2  
+  BOND C2   N1  
+  BOND N1   C6  
+  BOND C6   N6  
+  BOND N6   HN61 
+  BOND N6   HN62 
+
+  ANGLE O2G  PG   O3G 
+  ANGLE O2G  PG   O1G 
+  ANGLE O2G  PG   O3B 
+  ANGLE O3G  PG   O1G 
+  ANGLE O3G  PG   O3B 
+  ANGLE O1G  PG   O3B 
+  ANGLE PG   O3B  PB  
+  ANGLE O3B  PB   O2B 
+  ANGLE O3B  PB   O1B 
+  ANGLE O3B  PB   O3A 
+  ANGLE O2B  PB   O1B 
+  ANGLE O2B  PB   O3A 
+  ANGLE O1B  PB   O3A 
+  ANGLE PB   O3A  PA  
+  ANGLE O3A  PA   O2A 
+  ANGLE O3A  PA   O1A 
+  ANGLE O3A  PA   O5' 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5' 
+  ANGLE O1A  PA   O5' 
+  ANGLE PA   O5'  C5' 
+  ANGLE O5'  C5'  C4' 
+  ANGLE C5'  C4'  O4' 
+  ANGLE C5'  C4'  C3' 
+  ANGLE O4'  C4'  C3' 
+  ANGLE C4'  O4'  C1' 
+  ANGLE C4'  C3'  O3' 
+  ANGLE C4'  C3'  C2' 
+  ANGLE O3'  C3'  C2' 
+  ANGLE C3'  O3'  HAA 
+  ANGLE C3'  C2'  O2' 
+  ANGLE C3'  C2'  C1' 
+  ANGLE O2'  C2'  C1' 
+  ANGLE C2'  O2'  HO2' 
+  ANGLE O4'  C1'  C2' 
+  ANGLE O4'  C1'  N9  
+  ANGLE C2'  C1'  N9  
+  ANGLE C1'  N9   C8  
+  ANGLE C1'  N9   C4  
+  ANGLE C8   N9   C4  
+  ANGLE N9   C8   N7  
+  ANGLE C8   N7   C5  
+  ANGLE N7   C5   C4  
+  ANGLE N7   C5   C6  
+  ANGLE C4   C5   C6  
+  ANGLE N9   C4   C5  
+  ANGLE N9   C4   N3  
+  ANGLE C5   C4   N3  
+  ANGLE C4   N3   C2  
+  ANGLE N3   C2   N1  
+  ANGLE C2   N1   C6  
+  ANGLE C5   C6   N1  
+  ANGLE C5   C6   N6  
+  ANGLE N1   C6   N6  
+  ANGLE C6   N6   HN61 
+  ANGLE C6   N6   HN62 
+  ANGLE HN61  N6   HN62 
+
+  IMPROPER N9   C1'  C8   C4  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C6   C5   N1   N6  
+  IMPROPER N6   C6   HN61  HN62 
+  IMPROPER PG   O2G  O3G  O1G 
+  IMPROPER PB   O3B  O2B  O1B 
+  IMPROPER PA   O3A  O1A  O2A 
+  IMPROPER C4'  C5'  C3'  O4' 
+  IMPROPER C3'  C4'  C2'  O3' 
+  IMPROPER C2'  C3'  C1'  O2' 
+  IMPROPER C1'  O4'  C2'  N9  
+  IMPROPER N9   C8   N7   C5  
+  IMPROPER C8   N7   C5   C4  
+  IMPROPER N7   C5   C4   N9  
+  IMPROPER C5   C4   N9   C8  
+  IMPROPER C4   N9   C8   N7  
+  IMPROPER C5   C4   N3   C2  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C6  
+  IMPROPER C2   N1   C6   C5  
+  IMPROPER N1   C6   C5   C4  
+  IMPROPER C6   C5   C4   N3  
+
+  DIHEDRAL PB   O3B  PG   O2G 
+  DIHEDRAL PB   O3B  PG   O2G 
+  DIHEDRAL PG   O3B  PB   O3A 
+  DIHEDRAL PG   O3B  PB   O3A 
+  DIHEDRAL PA   O3A  PB   O3B 
+  DIHEDRAL PA   O3A  PB   O3B 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL PA   O5'  C5'  C4' 
+  DIHEDRAL C3'  C4'  C5'  O5' 
+  DIHEDRAL C5'  C4'  O4'  C1' 
+  DIHEDRAL C5'  C4'  C3'  C2' 
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL C4'  C3'  O3'  HAA 
+  DIHEDRAL C1'  C2'  C3'  C4' 
+  DIHEDRAL C3'  C2'  O2'  HO2' 
+  DIHEDRAL C3'  C2'  C1'  N9  
+  DIHEDRAL O4'  C1'  N9   C4  
+  DIHEDRAL C5   C6   N6   HN62 
+END
+
+
+! Adding topology definition for residue CIT
+
+MASS  OCIM  15.9994   ! equivalent to    OM
+MASS  CCIV  12.0110   ! equivalent to     C
+MASS  OCIX  15.9994   ! equivalent to    OM
+MASS  CCII  14.0270   ! equivalent to   CH2
+MASS  CCIU  12.0110   ! equivalent to   CH0
+MASS  CCIY  12.0110   ! equivalent to     C
+MASS  OCIC  15.9994   ! equivalent to    OM
+MASS  OCIT  15.9994   ! equivalent to    OM
+MASS  OCIG  15.9994   ! equivalent to    OA
+MASS  HCIT   1.0080   ! equivalent to    HO
+MASS  CCIE  14.0270   ! equivalent to   CH2
+MASS  CCIB  12.0110   ! equivalent to     C
+MASS  OCI9  15.9994   ! equivalent to    OM
+MASS  OCID  15.9994   ! equivalent to    OM
+
+RESIdue CIT  
+GROUP
+  ATOM O1   TYPE= OCIM CHARGE=-0.734 END
+  ATOM C1   TYPE= CCIV CHARGE= 0.384 END
+  ATOM O2   TYPE= OCIX CHARGE=-0.733 END
+  ATOM C2   TYPE= CCII CHARGE= 0.084 END
+  ATOM C3   TYPE= CCIU CHARGE= 0.182 END
+  ATOM C6   TYPE= CCIY CHARGE= 0.384 END
+  ATOM O6   TYPE= OCIC CHARGE=-0.733 END
+  ATOM O5   TYPE= OCIT CHARGE=-0.734 END
+  ATOM O7   TYPE= OCIG CHARGE=-0.169 END
+  ATOM HO7  TYPE= HCIT CHARGE= 0.067 END
+  ATOM C4   TYPE= CCIE CHARGE= 0.084 END
+  ATOM C5   TYPE= CCIB CHARGE= 0.384 END
+  ATOM O4   TYPE= OCI9 CHARGE=-0.733 END
+  ATOM O3   TYPE= OCID CHARGE=-0.733 END
+
+  BOND O1   C1  
+  BOND C1   O2  
+  BOND C1   C2  
+  BOND C2   C3  
+  BOND C3   C6  
+  BOND C3   O7  
+  BOND C3   C4  
+  BOND C6   O6  
+  BOND C6   O5  
+  BOND O7   HO7 
+  BOND C4   C5  
+  BOND C5   O4  
+  BOND C5   O3  
+
+  ANGLE O1   C1   O2  
+  ANGLE O1   C1   C2  
+  ANGLE O2   C1   C2  
+  ANGLE C1   C2   C3  
+  ANGLE C2   C3   C6  
+  ANGLE C2   C3   O7  
+  ANGLE C2   C3   C4  
+  ANGLE C6   C3   O7  
+  ANGLE C6   C3   C4  
+  ANGLE O7   C3   C4  
+  ANGLE C3   C6   O6  
+  ANGLE C3   C6   O5  
+  ANGLE O6   C6   O5  
+  ANGLE C3   O7   HO7 
+  ANGLE C3   C4   C5  
+  ANGLE C4   C5   O4  
+  ANGLE C4   C5   O3  
+  ANGLE O4   C5   O3  
+
+  IMPROPER C1   C2   O2   O1  
+  IMPROPER C6   C3   O5   O6  
+  IMPROPER C5   C4   O3   O4  
+  IMPROPER C3   C2   O7   C6  
+
+  DIHEDRAL C3   C2   C1   O1  
+  DIHEDRAL C1   C2   C3   C4  
+  DIHEDRAL C2   C3   C6   O5  
+  DIHEDRAL C2   C3   O7   HO7 
+  DIHEDRAL C5   C4   C3   C2  
+  DIHEDRAL C3   C4   C5   O3  
+END
+
+
+! Adding topology definition for residue FAD
+
+MASS  OF2N  15.9994   ! equivalent to     O
+MASS  CF2T  12.0110   ! equivalent to    CB
+MASS  NF2Y  14.0067   ! equivalent to  NR6*
+MASS  HF2U   1.0080   ! equivalent to     H
+MASS  CF24  12.0110   ! equivalent to    CB
+MASS  OF2G  15.9994   ! equivalent to     O
+MASS  NF2W  14.0067   ! equivalent to  NR6*
+MASS  HF2N   1.0080   ! equivalent to     H
+MASS  CF2V  12.0110   ! equivalent to    CB
+MASS  CF2L  12.0110   ! equivalent to    CB
+MASS  NF2R  14.0067   ! equivalent to  NR6*
+MASS  HF25   1.0080   ! equivalent to     H
+MASS  CF2E  12.0110   ! equivalent to    CB
+MASS  CF23  13.0190   ! equivalent to  CR61
+MASS  CF2M  12.0110   ! equivalent to    CB
+MASS  CF29  15.0350   ! equivalent to   CH3
+MASS  CF27  12.0110   ! equivalent to    CB
+MASS  CF2D  15.0350   ! equivalent to   CH3
+MASS  CF21  13.0190   ! equivalent to  CR61
+MASS  CF2G  12.0110   ! equivalent to    CB
+MASS  NF2G  14.0067   ! equivalent to  NR6*
+MASS  CF2W  14.0270   ! equivalent to   CH2
+MASS  CF2N  13.0190   ! equivalent to   CH1
+MASS  OF2M  15.9994   ! equivalent to    OA
+MASS  HF2I   1.0080   ! equivalent to    HO
+MASS  CF22  13.0190   ! equivalent to   CH1
+MASS  OF22  15.9994   ! equivalent to    OA
+MASS  HF2V   1.0080   ! equivalent to    HO
+MASS  CF2Y  13.0190   ! equivalent to   CH1
+MASS  OF25  15.9994   ! equivalent to    OA
+MASS  HF27   1.0080   ! equivalent to    HO
+MASS  CF26  14.0270   ! equivalent to   CH2
+MASS  OF2X  15.9994   ! equivalent to    OS
+MASS  PF2N  30.9738   ! equivalent to     P
+MASS  OF20  15.9994   ! equivalent to    OA
+MASS  OF21  15.9994   ! equivalent to    OM
+MASS  OF2A  15.9994   ! equivalent to    OS
+MASS  PF2S  30.9738   ! equivalent to     P
+MASS  OF2Y  15.9994   ! equivalent to    OA
+MASS  OF2Q  15.9994   ! equivalent to    OM
+MASS  OF2W  15.9994   ! equivalent to    OS
+MASS  CF2U  14.0270   ! equivalent to   CH2
+MASS  CF2K  13.0190   ! equivalent to   CS1
+MASS  OF2V  15.9994   ! equivalent to    OS
+MASS  CF2Q  13.0190   ! equivalent to   CH1
+MASS  OF2E  15.9994   ! equivalent to    OA
+MASS  HF2X   1.0080   ! equivalent to    HO
+MASS  CF2R  13.0190   ! equivalent to   CH1
+MASS  OF2C  15.9994   ! equivalent to    OA
+MASS  HF2F   1.0080   ! equivalent to    HO
+MASS  CF20  13.0190   ! equivalent to   CS1
+MASS  NF2O  14.0067   ! equivalent to  NR5*
+MASS  CF2B  13.0190   ! equivalent to  CR51
+MASS  NF2X  14.0067   ! equivalent to   NR5
+MASS  CF2S  12.0110   ! equivalent to    CB
+MASS  CF25  12.0110   ! equivalent to    CB
+MASS  NF2Z  14.0067   ! equivalent to   NR6
+MASS  CF2F  13.0190   ! equivalent to  CR61
+MASS  NF21  14.0067   ! equivalent to   NR6
+MASS  CF2A  12.0110   ! equivalent to    CB
+MASS  NF29  14.0067   ! equivalent to    NT
+MASS  HF2C   1.0080   ! equivalent to     H
+MASS  HF2K   1.0080   ! equivalent to     H
+
+RESIdue FAD  
+GROUP
+  ATOM O4   TYPE= OF2N CHARGE=-0.712 END
+  ATOM C4   TYPE= CF2T CHARGE= 0.260 END
+  ATOM N3   TYPE= NF2Y CHARGE= 0.026 END
+  ATOM HN3  TYPE= HF2U CHARGE=-0.008 END
+  ATOM C2   TYPE= CF24 CHARGE= 0.362 END
+  ATOM O2   TYPE= OF2G CHARGE=-0.712 END
+  ATOM N1   TYPE= NF2W CHARGE= 0.026 END
+  ATOM HAF  TYPE= HF2N CHARGE=-0.008 END
+  ATOM C10  TYPE= CF2V CHARGE= 0.260 END
+  ATOM C4X  TYPE= CF2L CHARGE= 0.124 END
+  ATOM N5   TYPE= NF2R CHARGE= 0.026 END
+  ATOM HAH  TYPE= HF25 CHARGE=-0.008 END
+  ATOM C5X  TYPE= CF2E CHARGE= 0.124 END
+  ATOM C6   TYPE= CF23 CHARGE=-0.051 END
+  ATOM C7   TYPE= CF2M CHARGE=-0.030 END
+  ATOM C7M  TYPE= CF29 CHARGE= 0.016 END
+  ATOM C8   TYPE= CF27 CHARGE=-0.030 END
+  ATOM C8M  TYPE= CF2D CHARGE= 0.016 END
+  ATOM C9   TYPE= CF21 CHARGE=-0.051 END
+  ATOM C9A  TYPE= CF2G CHARGE= 0.124 END
+  ATOM N10  TYPE= NF2G CHARGE= 0.026 END
+  ATOM C1'  TYPE= CF2W CHARGE= 0.053 END
+  ATOM C2'  TYPE= CF2N CHARGE= 0.116 END
+  ATOM O2'  TYPE= OF2M CHARGE=-0.199 END
+  ATOM HAC  TYPE= HF2I CHARGE= 0.038 END
+  ATOM C3'  TYPE= CF22 CHARGE= 0.116 END
+  ATOM O3'  TYPE= OF22 CHARGE=-0.199 END
+  ATOM HAD  TYPE= HF2V CHARGE= 0.038 END
+  ATOM C4'  TYPE= CF2Y CHARGE= 0.116 END
+  ATOM O4'  TYPE= OF25 CHARGE=-0.199 END
+  ATOM HAE  TYPE= HF27 CHARGE= 0.038 END
+  ATOM C5'  TYPE= CF26 CHARGE= 0.053 END
+  ATOM O5'  TYPE= OF2X CHARGE=-0.190 END
+  ATOM P    TYPE= PF2N CHARGE= 1.207 END
+  ATOM O2P  TYPE= OF20 CHARGE=-0.896 END
+  ATOM O1P  TYPE= OF21 CHARGE=-0.602 END
+  ATOM O3P  TYPE= OF2A CHARGE=-0.190 END
+  ATOM PA   TYPE= PF2S CHARGE= 1.207 END
+  ATOM O2A  TYPE= OF2Y CHARGE=-0.896 END
+  ATOM O1A  TYPE= OF2Q CHARGE=-0.602 END
+  ATOM O5B  TYPE= OF2W CHARGE=-0.190 END
+  ATOM C5B  TYPE= CF2U CHARGE= 0.053 END
+  ATOM C4B  TYPE= CF2K CHARGE= 0.203 END
+  ATOM O4B  TYPE= OF2V CHARGE=-0.189 END
+  ATOM C3B  TYPE= CF2Q CHARGE= 0.116 END
+  ATOM O3B  TYPE= OF2E CHARGE=-0.199 END
+  ATOM HAA  TYPE= HF2X CHARGE= 0.038 END
+  ATOM C2B  TYPE= CF2R CHARGE= 0.116 END
+  ATOM O2B  TYPE= OF2C CHARGE=-0.199 END
+  ATOM HO2A  TYPE= HF2F CHARGE= 0.038 END
+  ATOM C1B  TYPE= CF20 CHARGE= 0.203 END
+  ATOM N9A  TYPE= NF2O CHARGE= 0.224 END
+  ATOM C8A  TYPE= CF2B CHARGE=-0.051 END
+  ATOM N7A  TYPE= NF2X CHARGE=-0.516 END
+  ATOM C5A  TYPE= CF2S CHARGE= 0.124 END
+  ATOM C4A  TYPE= CF25 CHARGE= 0.260 END
+  ATOM N3A  TYPE= NF2Z CHARGE=-0.530 END
+  ATOM C2A  TYPE= CF2F CHARGE=-0.051 END
+  ATOM N1A  TYPE= NF21 CHARGE=-0.530 END
+  ATOM C6A  TYPE= CF2A CHARGE= 0.260 END
+  ATOM N6A  TYPE= NF29 CHARGE= 0.047 END
+  ATOM H61A  TYPE= HF2C CHARGE=-0.008 END
+  ATOM H62A  TYPE= HF2K CHARGE=-0.008 END
+
+  BOND O4   C4  
+  BOND C4   N3  
+  BOND C4   C4X 
+  BOND N3   HN3 
+  BOND N3   C2  
+  BOND C2   O2  
+  BOND C2   N1  
+  BOND N1   HAF 
+  BOND N1   C10 
+  BOND C10  C4X 
+  BOND C10  N10 
+  BOND C4X  N5  
+  BOND N5   HAH 
+  BOND N5   C5X 
+  BOND C5X  C6  
+  BOND C5X  C9A 
+  BOND C6   C7  
+  BOND C7   C7M 
+  BOND C7   C8  
+  BOND C8   C8M 
+  BOND C8   C9  
+  BOND C9   C9A 
+  BOND C9A  N10 
+  BOND N10  C1' 
+  BOND C1'  C2' 
+  BOND C2'  O2' 
+  BOND C2'  C3' 
+  BOND O2'  HAC 
+  BOND C3'  O3' 
+  BOND C3'  C4' 
+  BOND O3'  HAD 
+  BOND C4'  O4' 
+  BOND C4'  C5' 
+  BOND O4'  HAE 
+  BOND C5'  O5' 
+  BOND O5'  P   
+  BOND P    O2P 
+  BOND P    O1P 
+  BOND P    O3P 
+  BOND O3P  PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5B 
+  BOND O5B  C5B 
+  BOND C5B  C4B 
+  BOND C4B  O4B 
+  BOND C4B  C3B 
+  BOND O4B  C1B 
+  BOND C3B  O3B 
+  BOND C3B  C2B 
+  BOND O3B  HAA 
+  BOND C2B  O2B 
+  BOND C2B  C1B 
+  BOND O2B  HO2A 
+  BOND C1B  N9A 
+  BOND N9A  C8A 
+  BOND N9A  C4A 
+  BOND C8A  N7A 
+  BOND N7A  C5A 
+  BOND C5A  C4A 
+  BOND C5A  C6A 
+  BOND C4A  N3A 
+  BOND N3A  C2A 
+  BOND C2A  N1A 
+  BOND N1A  C6A 
+  BOND C6A  N6A 
+  BOND N6A  H61A 
+  BOND N6A  H62A 
+
+  ANGLE O4   C4   N3  
+  ANGLE O4   C4   C4X 
+  ANGLE N3   C4   C4X 
+  ANGLE C4   N3   HN3 
+  ANGLE C4   N3   C2  
+  ANGLE HN3  N3   C2  
+  ANGLE N3   C2   O2  
+  ANGLE N3   C2   N1  
+  ANGLE O2   C2   N1  
+  ANGLE C2   N1   HAF 
+  ANGLE C2   N1   C10 
+  ANGLE HAF  N1   C10 
+  ANGLE N1   C10  C4X 
+  ANGLE N1   C10  N10 
+  ANGLE C4X  C10  N10 
+  ANGLE C4   C4X  C10 
+  ANGLE C4   C4X  N5  
+  ANGLE C10  C4X  N5  
+  ANGLE C4X  N5   HAH 
+  ANGLE C4X  N5   C5X 
+  ANGLE HAH  N5   C5X 
+  ANGLE N5   C5X  C6  
+  ANGLE N5   C5X  C9A 
+  ANGLE C6   C5X  C9A 
+  ANGLE C5X  C6   C7  
+  ANGLE C6   C7   C7M 
+  ANGLE C6   C7   C8  
+  ANGLE C7M  C7   C8  
+  ANGLE C7   C8   C8M 
+  ANGLE C7   C8   C9  
+  ANGLE C8M  C8   C9  
+  ANGLE C8   C9   C9A 
+  ANGLE C5X  C9A  C9  
+  ANGLE C5X  C9A  N10 
+  ANGLE C9   C9A  N10 
+  ANGLE C10  N10  C9A 
+  ANGLE C10  N10  C1' 
+  ANGLE C9A  N10  C1' 
+  ANGLE N10  C1'  C2' 
+  ANGLE C1'  C2'  O2' 
+  ANGLE C1'  C2'  C3' 
+  ANGLE O2'  C2'  C3' 
+  ANGLE C2'  O2'  HAC 
+  ANGLE C2'  C3'  O3' 
+  ANGLE C2'  C3'  C4' 
+  ANGLE O3'  C3'  C4' 
+  ANGLE C3'  O3'  HAD 
+  ANGLE C3'  C4'  O4' 
+  ANGLE C3'  C4'  C5' 
+  ANGLE O4'  C4'  C5' 
+  ANGLE C4'  O4'  HAE 
+  ANGLE C4'  C5'  O5' 
+  ANGLE C5'  O5'  P   
+  ANGLE O5'  P    O2P 
+  ANGLE O5'  P    O1P 
+  ANGLE O5'  P    O3P 
+  ANGLE O2P  P    O1P 
+  ANGLE O2P  P    O3P 
+  ANGLE O1P  P    O3P 
+  ANGLE P    O3P  PA  
+  ANGLE O3P  PA   O2A 
+  ANGLE O3P  PA   O1A 
+  ANGLE O3P  PA   O5B 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5B 
+  ANGLE O1A  PA   O5B 
+  ANGLE PA   O5B  C5B 
+  ANGLE O5B  C5B  C4B 
+  ANGLE C5B  C4B  O4B 
+  ANGLE C5B  C4B  C3B 
+  ANGLE O4B  C4B  C3B 
+  ANGLE C4B  O4B  C1B 
+  ANGLE C4B  C3B  O3B 
+  ANGLE C4B  C3B  C2B 
+  ANGLE O3B  C3B  C2B 
+  ANGLE C3B  O3B  HAA 
+  ANGLE C3B  C2B  O2B 
+  ANGLE C3B  C2B  C1B 
+  ANGLE O2B  C2B  C1B 
+  ANGLE C2B  O2B  HO2A 
+  ANGLE O4B  C1B  C2B 
+  ANGLE O4B  C1B  N9A 
+  ANGLE C2B  C1B  N9A 
+  ANGLE C1B  N9A  C8A 
+  ANGLE C1B  N9A  C4A 
+  ANGLE C8A  N9A  C4A 
+  ANGLE N9A  C8A  N7A 
+  ANGLE C8A  N7A  C5A 
+  ANGLE N7A  C5A  C4A 
+  ANGLE N7A  C5A  C6A 
+  ANGLE C4A  C5A  C6A 
+  ANGLE N9A  C4A  C5A 
+  ANGLE N9A  C4A  N3A 
+  ANGLE C5A  C4A  N3A 
+  ANGLE C4A  N3A  C2A 
+  ANGLE N3A  C2A  N1A 
+  ANGLE C2A  N1A  C6A 
+  ANGLE C5A  C6A  N1A 
+  ANGLE C5A  C6A  N6A 
+  ANGLE N1A  C6A  N6A 
+  ANGLE C6A  N6A  H61A 
+  ANGLE C6A  N6A  H62A 
+  ANGLE H61A  N6A  H62A 
+
+  IMPROPER C4   C4X  N3   O4  
+  IMPROPER N3   C2   HN3  C4  
+  IMPROPER C2   N3   N1   O2  
+  IMPROPER N1   C10  HAF  C2  
+  IMPROPER C10  N1   N10  C4X 
+  IMPROPER C4X  N5   C10  C4  
+  IMPROPER N5   C5X  HAH  C4X 
+  IMPROPER C5X  N5   C9A  C6  
+  IMPROPER C7   C6   C8   C7M 
+  IMPROPER C8   C7   C9   C8M 
+  IMPROPER C9A  C5X  N10  C9  
+  IMPROPER N10  C10  C9A  C1' 
+  IMPROPER N9A  C1B  C8A  C4A 
+  IMPROPER C5A  C6A  C4A  N7A 
+  IMPROPER C4A  N3A  C5A  N9A 
+  IMPROPER C6A  C5A  N1A  N6A 
+  IMPROPER N6A  C6A  H61A  H62A 
+  IMPROPER C2'  C1'  O2'  C3' 
+  IMPROPER C3'  C2'  O3'  C4' 
+  IMPROPER C4'  C3'  O4'  C5' 
+  IMPROPER P    O5'  O2P  O1P 
+  IMPROPER PA   O3P  O1A  O2A 
+  IMPROPER C4B  C5B  C3B  O4B 
+  IMPROPER C3B  C4B  C2B  O3B 
+  IMPROPER C2B  C3B  C1B  O2B 
+  IMPROPER C1B  O4B  C2B  N9A 
+  IMPROPER N9A  C8A  N7A  C5A 
+  IMPROPER C8A  N7A  C5A  C4A 
+  IMPROPER N7A  C5A  C4A  N9A 
+  IMPROPER C5A  C4A  N9A  C8A 
+  IMPROPER C4A  N9A  C8A  N7A 
+  IMPROPER C5X  C6   C7   C8  
+  IMPROPER C6   C7   C8   C9  
+  IMPROPER C7   C8   C9   C9A 
+  IMPROPER C8   C9   C9A  C5X 
+  IMPROPER C9   C9A  C5X  C6  
+  IMPROPER C9A  C5X  C6   C7  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C10 
+  IMPROPER C2   N1   C10  C4X 
+  IMPROPER N1   C10  C4X  C4  
+  IMPROPER C10  C4X  C4   N3  
+  IMPROPER C4X  C4   N3   C2  
+  IMPROPER C5A  C4A  N3A  C2A 
+  IMPROPER C4A  N3A  C2A  N1A 
+  IMPROPER N3A  C2A  N1A  C6A 
+  IMPROPER C2A  N1A  C6A  C5A 
+  IMPROPER N1A  C6A  C5A  C4A 
+  IMPROPER C6A  C5A  C4A  N3A 
+
+  DIHEDRAL C1'  N10  C10  N1  
+  DIHEDRAL C5X  N5   C4X  C4  
+  DIHEDRAL C4X  N5   C5X  C9A 
+  DIHEDRAL C1'  N10  C9A  C5X 
+  DIHEDRAL C10  N10  C1'  C2' 
+  DIHEDRAL N10  C1'  C2'  C3' 
+  DIHEDRAL C1'  C2'  O2'  HAC 
+  DIHEDRAL C4'  C3'  C2'  C1' 
+  DIHEDRAL C2'  C3'  O3'  HAD 
+  DIHEDRAL C5'  C4'  C3'  C2' 
+  DIHEDRAL C3'  C4'  O4'  HAE 
+  DIHEDRAL O5'  C5'  C4'  C3' 
+  DIHEDRAL P    O5'  C5'  C4' 
+  DIHEDRAL C5'  O5'  P    O3P 
+  DIHEDRAL C5'  O5'  P    O3P 
+  DIHEDRAL PA   O3P  P    O5' 
+  DIHEDRAL PA   O3P  P    O5' 
+  DIHEDRAL P    O3P  PA   O5B 
+  DIHEDRAL P    O3P  PA   O5B 
+  DIHEDRAL C5B  O5B  PA   O3P 
+  DIHEDRAL C5B  O5B  PA   O3P 
+  DIHEDRAL PA   O5B  C5B  C4B 
+  DIHEDRAL C3B  C4B  C5B  O5B 
+  DIHEDRAL C5B  C4B  O4B  C1B 
+  DIHEDRAL C5B  C4B  C3B  C2B 
+  DIHEDRAL N9A  C1B  O4B  C4B 
+  DIHEDRAL C4B  C3B  O3B  HAA 
+  DIHEDRAL C1B  C2B  C3B  C4B 
+  DIHEDRAL C3B  C2B  O2B  HO2A 
+  DIHEDRAL C3B  C2B  C1B  N9A 
+  DIHEDRAL O4B  C1B  N9A  C4A 
+  DIHEDRAL C5A  C6A  N6A  H62A 
+END
+
+
+! Adding topology definition for residue FLC
+
+MASS  OCTT  15.9994   ! equivalent to    OM
+MASS  CCT5  12.0110   ! equivalent to     C
+MASS  OCT7  15.9994   ! equivalent to    OM
+MASS  CCTK  14.0270   ! equivalent to   CH2
+MASS  CCT2  12.0110   ! equivalent to   CH0
+MASS  CCTO  12.0110   ! equivalent to     C
+MASS  OCTX  15.9994   ! equivalent to    OM
+MASS  OCT9  15.9994   ! equivalent to    OM
+MASS  OCT6  15.9994   ! equivalent to    OA
+MASS  HCTU   1.0080   ! equivalent to    HO
+MASS  CCTA  14.0270   ! equivalent to   CH2
+MASS  CCTH  12.0110   ! equivalent to     C
+MASS  OCTR  15.9994   ! equivalent to    OM
+MASS  OCT8  15.9994   ! equivalent to    OM
+
+RESIdue FLC  
+GROUP
+  ATOM OA1  TYPE= OCTT CHARGE=-0.734 END
+  ATOM CAC  TYPE= CCT5 CHARGE= 0.384 END
+  ATOM OA2  TYPE= OCT7 CHARGE=-0.733 END
+  ATOM CA   TYPE= CCTK CHARGE= 0.084 END
+  ATOM CB   TYPE= CCT2 CHARGE= 0.182 END
+  ATOM CBC  TYPE= CCTO CHARGE= 0.384 END
+  ATOM OB2  TYPE= OCTX CHARGE=-0.733 END
+  ATOM OB1  TYPE= OCT9 CHARGE=-0.734 END
+  ATOM OHB  TYPE= OCT6 CHARGE=-0.169 END
+  ATOM HAA  TYPE= HCTU CHARGE= 0.067 END
+  ATOM CG   TYPE= CCTA CHARGE= 0.084 END
+  ATOM CGC  TYPE= CCTH CHARGE= 0.384 END
+  ATOM OG2  TYPE= OCTR CHARGE=-0.733 END
+  ATOM OG1  TYPE= OCT8 CHARGE=-0.733 END
+
+  BOND OA1  CAC 
+  BOND CAC  OA2 
+  BOND CAC  CA  
+  BOND CA   CB  
+  BOND CB   CBC 
+  BOND CB   OHB 
+  BOND CB   CG  
+  BOND CBC  OB2 
+  BOND CBC  OB1 
+  BOND OHB  HAA 
+  BOND CG   CGC 
+  BOND CGC  OG2 
+  BOND CGC  OG1 
+
+  ANGLE OA1  CAC  OA2 
+  ANGLE OA1  CAC  CA  
+  ANGLE OA2  CAC  CA  
+  ANGLE CAC  CA   CB  
+  ANGLE CA   CB   CBC 
+  ANGLE CA   CB   OHB 
+  ANGLE CA   CB   CG  
+  ANGLE CBC  CB   OHB 
+  ANGLE CBC  CB   CG  
+  ANGLE OHB  CB   CG  
+  ANGLE CB   CBC  OB2 
+  ANGLE CB   CBC  OB1 
+  ANGLE OB2  CBC  OB1 
+  ANGLE CB   OHB  HAA 
+  ANGLE CB   CG   CGC 
+  ANGLE CG   CGC  OG2 
+  ANGLE CG   CGC  OG1 
+  ANGLE OG2  CGC  OG1 
+
+  IMPROPER CAC  CA   OA2  OA1 
+  IMPROPER CBC  CB   OB1  OB2 
+  IMPROPER CGC  CG   OG1  OG2 
+  IMPROPER CB   CA   CBC  OHB 
+
+  DIHEDRAL CB   CA   CAC  OA1 
+  DIHEDRAL CAC  CA   CB   CG  
+  DIHEDRAL CA   CB   CBC  OB1 
+  DIHEDRAL CA   CB   OHB  HAA 
+  DIHEDRAL CGC  CG   CB   CA  
+  DIHEDRAL CB   CG   CGC  OG1 
+END
+
+
+! Adding topology definition for residue GDP
+
+MASS  OG29  15.9994   ! equivalent to    OA
+MASS  PG23  30.9738   ! equivalent to     P
+MASS  OG2Y  15.9994   ! equivalent to    OA
+MASS  OG26  15.9994   ! equivalent to    OM
+MASS  OG2J  15.9994   ! equivalent to    OS
+MASS  PG2T  30.9738   ! equivalent to     P
+MASS  OG2O  15.9994   ! equivalent to    OA
+MASS  OG2V  15.9994   ! equivalent to    OM
+MASS  OG25  15.9994   ! equivalent to    OS
+MASS  CG26  14.0270   ! equivalent to   CH2
+MASS  CG2B  13.0190   ! equivalent to   CS1
+MASS  OG2C  15.9994   ! equivalent to    OS
+MASS  CG2G  13.0190   ! equivalent to   CH1
+MASS  OG2H  15.9994   ! equivalent to    OA
+MASS  HG2V   1.0080   ! equivalent to    HO
+MASS  CG2R  13.0190   ! equivalent to   CH1
+MASS  OG2F  15.9994   ! equivalent to    OA
+MASS  HG25   1.0080   ! equivalent to    HO
+MASS  CG21  13.0190   ! equivalent to   CS1
+MASS  NG2W  14.0067   ! equivalent to  NR5*
+MASS  CG2P  13.0190   ! equivalent to  CR51
+MASS  NG2Q  14.0067   ! equivalent to   NR5
+MASS  CG2Z  12.0110   ! equivalent to    CB
+MASS  CG2V  12.0110   ! equivalent to    CB
+MASS  NG2G  14.0067   ! equivalent to   NR6
+MASS  CG2O  12.0110   ! equivalent to    CB
+MASS  NG2J  14.0067   ! equivalent to    NT
+MASS  HG2P   1.0080   ! equivalent to     H
+MASS  HG2U   1.0080   ! equivalent to     H
+MASS  NG2K  14.0067   ! equivalent to  NR6*
+MASS  HG2B   1.0080   ! equivalent to     H
+MASS  CG27  12.0110   ! equivalent to    CB
+MASS  OG2E  15.9994   ! equivalent to     O
+
+RESIdue GDP  
+GROUP
+  ATOM O2B  TYPE= OG29 CHARGE=-1.071 END
+  ATOM PB   TYPE= PG23 CHARGE= 1.198 END
+  ATOM O3B  TYPE= OG2Y CHARGE=-1.071 END
+  ATOM O1B  TYPE= OG26 CHARGE=-0.778 END
+  ATOM O3A  TYPE= OG2J CHARGE=-0.199 END
+  ATOM PA   TYPE= PG2T CHARGE= 1.198 END
+  ATOM O2A  TYPE= OG2O CHARGE=-0.904 END
+  ATOM O1A  TYPE= OG2V CHARGE=-0.611 END
+  ATOM O5'  TYPE= OG25 CHARGE=-0.199 END
+  ATOM C5'  TYPE= CG26 CHARGE= 0.044 END
+  ATOM C4'  TYPE= CG2B CHARGE= 0.194 END
+  ATOM O4'  TYPE= OG2C CHARGE=-0.199 END
+  ATOM C3'  TYPE= CG2G CHARGE= 0.107 END
+  ATOM O3'  TYPE= OG2H CHARGE=-0.208 END
+  ATOM HAA  TYPE= HG2V CHARGE= 0.029 END
+  ATOM C2'  TYPE= CG2R CHARGE= 0.107 END
+  ATOM O2'  TYPE= OG2F CHARGE=-0.208 END
+  ATOM HO2'  TYPE= HG25 CHARGE= 0.029 END
+  ATOM C1'  TYPE= CG21 CHARGE= 0.194 END
+  ATOM N9   TYPE= NG2W CHARGE= 0.215 END
+  ATOM C8   TYPE= CG2P CHARGE=-0.060 END
+  ATOM N7   TYPE= NG2Q CHARGE=-0.524 END
+  ATOM C5   TYPE= CG2Z CHARGE= 0.115 END
+  ATOM C4   TYPE= CG2V CHARGE= 0.250 END
+  ATOM N3   TYPE= NG2G CHARGE=-0.538 END
+  ATOM C2   TYPE= CG2O CHARGE= 0.353 END
+  ATOM N2   TYPE= NG2J CHARGE= 0.038 END
+  ATOM HN22  TYPE= HG2P CHARGE=-0.016 END
+  ATOM HN21  TYPE= HG2U CHARGE=-0.016 END
+  ATOM N1   TYPE= NG2K CHARGE= 0.017 END
+  ATOM HN1  TYPE= HG2B CHARGE=-0.016 END
+  ATOM C6   TYPE= CG27 CHARGE= 0.251 END
+  ATOM O6   TYPE= OG2E CHARGE=-0.721 END
+
+  BOND O2B  PB  
+  BOND PB   O3B 
+  BOND PB   O1B 
+  BOND PB   O3A 
+  BOND O3A  PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5' 
+  BOND O5'  C5' 
+  BOND C5'  C4' 
+  BOND C4'  O4' 
+  BOND C4'  C3' 
+  BOND O4'  C1' 
+  BOND C3'  O3' 
+  BOND C3'  C2' 
+  BOND O3'  HAA 
+  BOND C2'  O2' 
+  BOND C2'  C1' 
+  BOND O2'  HO2' 
+  BOND C1'  N9  
+  BOND N9   C8  
+  BOND N9   C4  
+  BOND C8   N7  
+  BOND N7   C5  
+  BOND C5   C4  
+  BOND C5   C6  
+  BOND C4   N3  
+  BOND N3   C2  
+  BOND C2   N2  
+  BOND C2   N1  
+  BOND N2   HN22 
+  BOND N2   HN21 
+  BOND N1   HN1 
+  BOND N1   C6  
+  BOND C6   O6  
+
+  ANGLE O2B  PB   O3B 
+  ANGLE O2B  PB   O1B 
+  ANGLE O2B  PB   O3A 
+  ANGLE O3B  PB   O1B 
+  ANGLE O3B  PB   O3A 
+  ANGLE O1B  PB   O3A 
+  ANGLE PB   O3A  PA  
+  ANGLE O3A  PA   O2A 
+  ANGLE O3A  PA   O1A 
+  ANGLE O3A  PA   O5' 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5' 
+  ANGLE O1A  PA   O5' 
+  ANGLE PA   O5'  C5' 
+  ANGLE O5'  C5'  C4' 
+  ANGLE C5'  C4'  O4' 
+  ANGLE C5'  C4'  C3' 
+  ANGLE O4'  C4'  C3' 
+  ANGLE C4'  O4'  C1' 
+  ANGLE C4'  C3'  O3' 
+  ANGLE C4'  C3'  C2' 
+  ANGLE O3'  C3'  C2' 
+  ANGLE C3'  O3'  HAA 
+  ANGLE C3'  C2'  O2' 
+  ANGLE C3'  C2'  C1' 
+  ANGLE O2'  C2'  C1' 
+  ANGLE C2'  O2'  HO2' 
+  ANGLE O4'  C1'  C2' 
+  ANGLE O4'  C1'  N9  
+  ANGLE C2'  C1'  N9  
+  ANGLE C1'  N9   C8  
+  ANGLE C1'  N9   C4  
+  ANGLE C8   N9   C4  
+  ANGLE N9   C8   N7  
+  ANGLE C8   N7   C5  
+  ANGLE N7   C5   C4  
+  ANGLE N7   C5   C6  
+  ANGLE C4   C5   C6  
+  ANGLE N9   C4   C5  
+  ANGLE N9   C4   N3  
+  ANGLE C5   C4   N3  
+  ANGLE C4   N3   C2  
+  ANGLE N3   C2   N2  
+  ANGLE N3   C2   N1  
+  ANGLE N2   C2   N1  
+  ANGLE C2   N2   HN22 
+  ANGLE C2   N2   HN21 
+  ANGLE HN22  N2   HN21 
+  ANGLE C2   N1   HN1 
+  ANGLE C2   N1   C6  
+  ANGLE HN1  N1   C6  
+  ANGLE C5   C6   N1  
+  ANGLE C5   C6   O6  
+  ANGLE N1   C6   O6  
+
+  IMPROPER N9   C1'  C8   C4  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C2   N3   N1   N2  
+  IMPROPER N2   C2   HN22  HN21 
+  IMPROPER N1   C6   HN1  C2  
+  IMPROPER C6   C5   N1   O6  
+  IMPROPER PB   O2B  O1B  O3B 
+  IMPROPER PA   O3A  O2A  O1A 
+  IMPROPER C4'  C5'  C3'  O4' 
+  IMPROPER C3'  C4'  C2'  O3' 
+  IMPROPER C2'  C3'  C1'  O2' 
+  IMPROPER C1'  O4'  C2'  N9  
+  IMPROPER N9   C8   N7   C5  
+  IMPROPER C8   N7   C5   C4  
+  IMPROPER N7   C5   C4   N9  
+  IMPROPER C5   C4   N9   C8  
+  IMPROPER C4   N9   C8   N7  
+  IMPROPER C5   C4   N3   C2  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C6  
+  IMPROPER C2   N1   C6   C5  
+  IMPROPER N1   C6   C5   C4  
+  IMPROPER C6   C5   C4   N3  
+
+  DIHEDRAL PA   O3A  PB   O2B 
+  DIHEDRAL PA   O3A  PB   O2B 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL PA   O5'  C5'  C4' 
+  DIHEDRAL C3'  C4'  C5'  O5' 
+  DIHEDRAL C5'  C4'  O4'  C1' 
+  DIHEDRAL C5'  C4'  C3'  C2' 
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL C4'  C3'  O3'  HAA 
+  DIHEDRAL C1'  C2'  C3'  C4' 
+  DIHEDRAL C3'  C2'  O2'  HO2' 
+  DIHEDRAL C3'  C2'  C1'  N9  
+  DIHEDRAL O4'  C1'  N9   C4  
+  DIHEDRAL N3   C2   N2   HN21 
+END
+
+
+! Adding topology definition for residue GMP
+
+MASS  OG1N  15.9994   ! equivalent to     O
+MASS  CG17  12.0110   ! equivalent to    CB
+MASS  NG1T  14.0067   ! equivalent to  NR6*
+MASS  HG16   1.0080   ! equivalent to     H
+MASS  CG1O  12.0110   ! equivalent to    CB
+MASS  NG14  14.0067   ! equivalent to    NT
+MASS  HG12   1.0080   ! equivalent to     H
+MASS  HG18   1.0080   ! equivalent to     H
+MASS  NG1K  14.0067   ! equivalent to   NR6
+MASS  CG14  12.0110   ! equivalent to    CB
+MASS  CG1S  12.0110   ! equivalent to    CB
+MASS  NG19  14.0067   ! equivalent to   NR5
+MASS  CG1V  13.0190   ! equivalent to  CR51
+MASS  NG15  14.0067   ! equivalent to  NR5*
+MASS  CG1J  13.0190   ! equivalent to   CS1
+MASS  OG1V  15.9994   ! equivalent to    OS
+MASS  CG1A  13.0190   ! equivalent to   CS1
+MASS  CG1R  14.0270   ! equivalent to   CH2
+MASS  OG1P  15.9994   ! equivalent to    OA
+MASS  HG1N   1.0080   ! equivalent to    HO
+MASS  CG16  13.0190   ! equivalent to   CH1
+MASS  OG1R  15.9994   ! equivalent to    OA
+MASS  HG1M   1.0080   ! equivalent to    HO
+MASS  CG1Q  13.0190   ! equivalent to   CH1
+MASS  OG1O  15.9994   ! equivalent to    OA
+MASS  HG1Z   1.0080   ! equivalent to    HO
+
+RESIdue GMP  
+GROUP
+  ATOM O6   TYPE= OG1N CHARGE=-0.692 END
+  ATOM C6   TYPE= CG17 CHARGE= 0.279 END
+  ATOM N1   TYPE= NG1T CHARGE= 0.046 END
+  ATOM HN1  TYPE= HG16 CHARGE= 0.012 END
+  ATOM C2   TYPE= CG1O CHARGE= 0.382 END
+  ATOM N2   TYPE= NG14 CHARGE= 0.067 END
+  ATOM HN22  TYPE= HG12 CHARGE= 0.012 END
+  ATOM HN21  TYPE= HG18 CHARGE= 0.012 END
+  ATOM N3   TYPE= NG1K CHARGE=-0.510 END
+  ATOM C4   TYPE= CG14 CHARGE= 0.279 END
+  ATOM C5   TYPE= CG1S CHARGE= 0.143 END
+  ATOM N7   TYPE= NG19 CHARGE=-0.496 END
+  ATOM C8   TYPE= CG1V CHARGE=-0.031 END
+  ATOM N9   TYPE= NG15 CHARGE= 0.243 END
+  ATOM C1'  TYPE= CG1J CHARGE= 0.223 END
+  ATOM O4'  TYPE= OG1V CHARGE=-0.171 END
+  ATOM C4'  TYPE= CG1A CHARGE= 0.223 END
+  ATOM C5'  TYPE= CG1R CHARGE= 0.073 END
+  ATOM O5'  TYPE= OG1P CHARGE=-0.180 END
+  ATOM HO5'  TYPE= HG1N CHARGE= 0.058 END
+  ATOM C3'  TYPE= CG16 CHARGE= 0.136 END
+  ATOM O3'  TYPE= OG1R CHARGE=-0.180 END
+  ATOM HO3'  TYPE= HG1M CHARGE= 0.058 END
+  ATOM C2'  TYPE= CG1Q CHARGE= 0.136 END
+  ATOM O2'  TYPE= OG1O CHARGE=-0.180 END
+  ATOM HO2'  TYPE= HG1Z CHARGE= 0.058 END
+
+  BOND O6   C6  
+  BOND C6   N1  
+  BOND C6   C5  
+  BOND N1   HN1 
+  BOND N1   C2  
+  BOND C2   N2  
+  BOND C2   N3  
+  BOND N2   HN22 
+  BOND N2   HN21 
+  BOND N3   C4  
+  BOND C4   C5  
+  BOND C4   N9  
+  BOND C5   N7  
+  BOND N7   C8  
+  BOND C8   N9  
+  BOND N9   C1' 
+  BOND C1'  O4' 
+  BOND C1'  C2' 
+  BOND O4'  C4' 
+  BOND C4'  C5' 
+  BOND C4'  C3' 
+  BOND C5'  O5' 
+  BOND O5'  HO5' 
+  BOND C3'  O3' 
+  BOND C3'  C2' 
+  BOND O3'  HO3' 
+  BOND C2'  O2' 
+  BOND O2'  HO2' 
+
+  ANGLE O6   C6   N1  
+  ANGLE O6   C6   C5  
+  ANGLE N1   C6   C5  
+  ANGLE C6   N1   HN1 
+  ANGLE C6   N1   C2  
+  ANGLE HN1  N1   C2  
+  ANGLE N1   C2   N2  
+  ANGLE N1   C2   N3  
+  ANGLE N2   C2   N3  
+  ANGLE C2   N2   HN22 
+  ANGLE C2   N2   HN21 
+  ANGLE HN22  N2   HN21 
+  ANGLE C2   N3   C4  
+  ANGLE N3   C4   C5  
+  ANGLE N3   C4   N9  
+  ANGLE C5   C4   N9  
+  ANGLE C6   C5   C4  
+  ANGLE C6   C5   N7  
+  ANGLE C4   C5   N7  
+  ANGLE C5   N7   C8  
+  ANGLE N7   C8   N9  
+  ANGLE C4   N9   C8  
+  ANGLE C4   N9   C1' 
+  ANGLE C8   N9   C1' 
+  ANGLE N9   C1'  O4' 
+  ANGLE N9   C1'  C2' 
+  ANGLE O4'  C1'  C2' 
+  ANGLE C1'  O4'  C4' 
+  ANGLE O4'  C4'  C5' 
+  ANGLE O4'  C4'  C3' 
+  ANGLE C5'  C4'  C3' 
+  ANGLE C4'  C5'  O5' 
+  ANGLE C5'  O5'  HO5' 
+  ANGLE C4'  C3'  O3' 
+  ANGLE C4'  C3'  C2' 
+  ANGLE O3'  C3'  C2' 
+  ANGLE C3'  O3'  HO3' 
+  ANGLE C1'  C2'  C3' 
+  ANGLE C1'  C2'  O2' 
+  ANGLE C3'  C2'  O2' 
+  ANGLE C2'  O2'  HO2' 
+
+  IMPROPER C6   C5   N1   O6  
+  IMPROPER N1   C2   HN1  C6  
+  IMPROPER C2   N1   N3   N2  
+  IMPROPER N2   C2   HN22  HN21 
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER N9   C4   C8   C1' 
+  IMPROPER C1'  N9   O4'  C2' 
+  IMPROPER C4'  O4'  C5'  C3' 
+  IMPROPER C3'  C4'  C2'  O3' 
+  IMPROPER C2'  C1'  O2'  C3' 
+  IMPROPER C4   C5   N7   C8  
+  IMPROPER C5   N7   C8   N9  
+  IMPROPER N7   C8   N9   C4  
+  IMPROPER C8   N9   C4   C5  
+  IMPROPER N9   C4   C5   N7  
+  IMPROPER C6   N1   C2   N3  
+  IMPROPER N1   C2   N3   C4  
+  IMPROPER C2   N3   C4   C5  
+  IMPROPER N3   C4   C5   C6  
+  IMPROPER C4   C5   C6   N1  
+  IMPROPER C5   C6   N1   C2  
+
+  DIHEDRAL N1   C2   N2   HN21 
+  DIHEDRAL C2'  C1'  N9   C4  
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL N9   C1'  C2'  O2' 
+  DIHEDRAL C3'  C4'  O4'  C1' 
+  DIHEDRAL O4'  C4'  C5'  O5' 
+  DIHEDRAL O4'  C4'  C3'  C2' 
+  DIHEDRAL C4'  C5'  O5'  HO5' 
+  DIHEDRAL C4'  C3'  O3'  HO3' 
+  DIHEDRAL O2'  C2'  C3'  C4' 
+  DIHEDRAL C1'  C2'  O2'  HO2' 
+END
+
+
+! Adding topology definition for residue GTP
+
+MASS  OG31  15.9994   ! equivalent to    OA
+MASS  PG3E  30.9738   ! equivalent to     P
+MASS  OG3D  15.9994   ! equivalent to    OA
+MASS  OG38  15.9994   ! equivalent to    OM
+MASS  OG33  15.9994   ! equivalent to    OS
+MASS  PG3T  30.9738   ! equivalent to     P
+MASS  OG3O  15.9994   ! equivalent to    OA
+MASS  OG3S  15.9994   ! equivalent to    OM
+MASS  OG3E  15.9994   ! equivalent to    OS
+MASS  PG3C  30.9738   ! equivalent to     P
+MASS  OG3V  15.9994   ! equivalent to    OA
+MASS  OG3W  15.9994   ! equivalent to    OM
+MASS  OG3M  15.9994   ! equivalent to    OS
+MASS  CG34  14.0270   ! equivalent to   CH2
+MASS  CG37  13.0190   ! equivalent to   CS1
+MASS  OG3J  15.9994   ! equivalent to    OS
+MASS  CG3H  13.0190   ! equivalent to   CH1
+MASS  OG3X  15.9994   ! equivalent to    OA
+MASS  HG3F   1.0080   ! equivalent to    HO
+MASS  CG31  13.0190   ! equivalent to   CH1
+MASS  OG3Y  15.9994   ! equivalent to    OA
+MASS  HG3L   1.0080   ! equivalent to    HO
+MASS  CG3J  13.0190   ! equivalent to   CS1
+MASS  NG31  14.0067   ! equivalent to  NR5*
+MASS  CG3U  13.0190   ! equivalent to  CR51
+MASS  NG3W  14.0067   ! equivalent to   NR5
+MASS  CG3V  12.0110   ! equivalent to    CB
+MASS  CG3E  12.0110   ! equivalent to    CB
+MASS  NG3C  14.0067   ! equivalent to   NR6
+MASS  CG3W  12.0110   ! equivalent to    CB
+MASS  NG3J  14.0067   ! equivalent to    NT
+MASS  HG35   1.0080   ! equivalent to     H
+MASS  HG3H   1.0080   ! equivalent to     H
+MASS  NG3D  14.0067   ! equivalent to  NR6*
+MASS  HG3Q   1.0080   ! equivalent to     H
+MASS  CG3R  12.0110   ! equivalent to    CB
+MASS  OG3F  15.9994   ! equivalent to     O
+
+RESIdue GTP  
+GROUP
+  ATOM O2G  TYPE= OG31 CHARGE=-1.084 END
+  ATOM PG   TYPE= PG3E CHARGE= 1.185 END
+  ATOM O3G  TYPE= OG3D CHARGE=-1.084 END
+  ATOM O1G  TYPE= OG38 CHARGE=-0.791 END
+  ATOM O3B  TYPE= OG33 CHARGE=-0.212 END
+  ATOM PB   TYPE= PG3T CHARGE= 1.185 END
+  ATOM O2B  TYPE= OG3O CHARGE=-0.918 END
+  ATOM O1B  TYPE= OG3S CHARGE=-0.624 END
+  ATOM O3A  TYPE= OG3E CHARGE=-0.212 END
+  ATOM PA   TYPE= PG3C CHARGE= 1.185 END
+  ATOM O2A  TYPE= OG3V CHARGE=-0.918 END
+  ATOM O1A  TYPE= OG3W CHARGE=-0.624 END
+  ATOM O5'  TYPE= OG3M CHARGE=-0.212 END
+  ATOM C5'  TYPE= CG34 CHARGE= 0.031 END
+  ATOM C4'  TYPE= CG37 CHARGE= 0.181 END
+  ATOM O4'  TYPE= OG3J CHARGE=-0.212 END
+  ATOM C3'  TYPE= CG3H CHARGE= 0.094 END
+  ATOM O3'  TYPE= OG3X CHARGE=-0.221 END
+  ATOM HAA  TYPE= HG3F CHARGE= 0.016 END
+  ATOM C2'  TYPE= CG31 CHARGE= 0.094 END
+  ATOM O2'  TYPE= OG3Y CHARGE=-0.221 END
+  ATOM HO2'  TYPE= HG3L CHARGE= 0.016 END
+  ATOM C1'  TYPE= CG3J CHARGE= 0.181 END
+  ATOM N9   TYPE= NG31 CHARGE= 0.202 END
+  ATOM C8   TYPE= CG3U CHARGE=-0.073 END
+  ATOM N7   TYPE= NG3W CHARGE=-0.538 END
+  ATOM C5   TYPE= CG3V CHARGE= 0.102 END
+  ATOM C4   TYPE= CG3E CHARGE= 0.238 END
+  ATOM N3   TYPE= NG3C CHARGE=-0.552 END
+  ATOM C2   TYPE= CG3W CHARGE= 0.340 END
+  ATOM N2   TYPE= NG3J CHARGE= 0.025 END
+  ATOM HN22  TYPE= HG35 CHARGE=-0.029 END
+  ATOM HN21  TYPE= HG3H CHARGE=-0.029 END
+  ATOM N1   TYPE= NG3D CHARGE= 0.004 END
+  ATOM HN1  TYPE= HG3Q CHARGE=-0.029 END
+  ATOM C6   TYPE= CG3R CHARGE= 0.238 END
+  ATOM O6   TYPE= OG3F CHARGE=-0.734 END
+
+  BOND O2G  PG  
+  BOND PG   O3G 
+  BOND PG   O1G 
+  BOND PG   O3B 
+  BOND O3B  PB  
+  BOND PB   O2B 
+  BOND PB   O1B 
+  BOND PB   O3A 
+  BOND O3A  PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5' 
+  BOND O5'  C5' 
+  BOND C5'  C4' 
+  BOND C4'  O4' 
+  BOND C4'  C3' 
+  BOND O4'  C1' 
+  BOND C3'  O3' 
+  BOND C3'  C2' 
+  BOND O3'  HAA 
+  BOND C2'  O2' 
+  BOND C2'  C1' 
+  BOND O2'  HO2' 
+  BOND C1'  N9  
+  BOND N9   C8  
+  BOND N9   C4  
+  BOND C8   N7  
+  BOND N7   C5  
+  BOND C5   C4  
+  BOND C5   C6  
+  BOND C4   N3  
+  BOND N3   C2  
+  BOND C2   N2  
+  BOND C2   N1  
+  BOND N2   HN22 
+  BOND N2   HN21 
+  BOND N1   HN1 
+  BOND N1   C6  
+  BOND C6   O6  
+
+  ANGLE O2G  PG   O3G 
+  ANGLE O2G  PG   O1G 
+  ANGLE O2G  PG   O3B 
+  ANGLE O3G  PG   O1G 
+  ANGLE O3G  PG   O3B 
+  ANGLE O1G  PG   O3B 
+  ANGLE PG   O3B  PB  
+  ANGLE O3B  PB   O2B 
+  ANGLE O3B  PB   O1B 
+  ANGLE O3B  PB   O3A 
+  ANGLE O2B  PB   O1B 
+  ANGLE O2B  PB   O3A 
+  ANGLE O1B  PB   O3A 
+  ANGLE PB   O3A  PA  
+  ANGLE O3A  PA   O2A 
+  ANGLE O3A  PA   O1A 
+  ANGLE O3A  PA   O5' 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5' 
+  ANGLE O1A  PA   O5' 
+  ANGLE PA   O5'  C5' 
+  ANGLE O5'  C5'  C4' 
+  ANGLE C5'  C4'  O4' 
+  ANGLE C5'  C4'  C3' 
+  ANGLE O4'  C4'  C3' 
+  ANGLE C4'  O4'  C1' 
+  ANGLE C4'  C3'  O3' 
+  ANGLE C4'  C3'  C2' 
+  ANGLE O3'  C3'  C2' 
+  ANGLE C3'  O3'  HAA 
+  ANGLE C3'  C2'  O2' 
+  ANGLE C3'  C2'  C1' 
+  ANGLE O2'  C2'  C1' 
+  ANGLE C2'  O2'  HO2' 
+  ANGLE O4'  C1'  C2' 
+  ANGLE O4'  C1'  N9  
+  ANGLE C2'  C1'  N9  
+  ANGLE C1'  N9   C8  
+  ANGLE C1'  N9   C4  
+  ANGLE C8   N9   C4  
+  ANGLE N9   C8   N7  
+  ANGLE C8   N7   C5  
+  ANGLE N7   C5   C4  
+  ANGLE N7   C5   C6  
+  ANGLE C4   C5   C6  
+  ANGLE N9   C4   C5  
+  ANGLE N9   C4   N3  
+  ANGLE C5   C4   N3  
+  ANGLE C4   N3   C2  
+  ANGLE N3   C2   N2  
+  ANGLE N3   C2   N1  
+  ANGLE N2   C2   N1  
+  ANGLE C2   N2   HN22 
+  ANGLE C2   N2   HN21 
+  ANGLE HN22  N2   HN21 
+  ANGLE C2   N1   HN1 
+  ANGLE C2   N1   C6  
+  ANGLE HN1  N1   C6  
+  ANGLE C5   C6   N1  
+  ANGLE C5   C6   O6  
+  ANGLE N1   C6   O6  
+
+  IMPROPER N9   C1'  C8   C4  
+  IMPROPER C5   C6   C4   N7  
+  IMPROPER C4   N3   C5   N9  
+  IMPROPER C2   N3   N1   N2  
+  IMPROPER N2   C2   HN22  HN21 
+  IMPROPER N1   C6   HN1  C2  
+  IMPROPER C6   C5   N1   O6  
+  IMPROPER PG   O2G  O1G  O3G 
+  IMPROPER PB   O3B  O2B  O1B 
+  IMPROPER PA   O3A  O2A  O1A 
+  IMPROPER C4'  C5'  C3'  O4' 
+  IMPROPER C3'  C4'  C2'  O3' 
+  IMPROPER C2'  C3'  C1'  O2' 
+  IMPROPER C1'  O4'  C2'  N9  
+  IMPROPER N9   C8   N7   C5  
+  IMPROPER C8   N7   C5   C4  
+  IMPROPER N7   C5   C4   N9  
+  IMPROPER C5   C4   N9   C8  
+  IMPROPER C4   N9   C8   N7  
+  IMPROPER C5   C4   N3   C2  
+  IMPROPER C4   N3   C2   N1  
+  IMPROPER N3   C2   N1   C6  
+  IMPROPER C2   N1   C6   C5  
+  IMPROPER N1   C6   C5   C4  
+  IMPROPER C6   C5   C4   N3  
+
+  DIHEDRAL PB   O3B  PG   O2G 
+  DIHEDRAL PB   O3B  PG   O2G 
+  DIHEDRAL PG   O3B  PB   O3A 
+  DIHEDRAL PG   O3B  PB   O3A 
+  DIHEDRAL PA   O3A  PB   O3B 
+  DIHEDRAL PA   O3A  PB   O3B 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL PB   O3A  PA   O5' 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL C5'  O5'  PA   O3A 
+  DIHEDRAL PA   O5'  C5'  C4' 
+  DIHEDRAL C3'  C4'  C5'  O5' 
+  DIHEDRAL C5'  C4'  O4'  C1' 
+  DIHEDRAL C5'  C4'  C3'  C2' 
+  DIHEDRAL N9   C1'  O4'  C4' 
+  DIHEDRAL C4'  C3'  O3'  HAA 
+  DIHEDRAL C1'  C2'  C3'  C4' 
+  DIHEDRAL C3'  C2'  O2'  HO2' 
+  DIHEDRAL C3'  C2'  C1'  N9  
+  DIHEDRAL O4'  C1'  N9   C4  
+  DIHEDRAL N3   C2   N2   HN21 
+END
+
+
+! Adding topology definition for residue NAD
+
+MASS  NN2Q  14.0067   ! equivalent to    NT
+MASS  HN27   1.0080   ! equivalent to     H
+MASS  HN24   1.0080   ! equivalent to     H
+MASS  CN28  12.0110   ! equivalent to     C
+MASS  ON2B  15.9994   ! equivalent to     O
+MASS  CN2N  12.0110   ! equivalent to    CB
+MASS  CN24  13.0190   ! equivalent to  CR61
+MASS  CN29  13.0190   ! equivalent to  CR61
+MASS  CN2P  13.0190   ! equivalent to  CR61
+MASS  CN2G  13.0190   ! equivalent to  CR61
+MASS  NN20  14.0067   ! equivalent to  NR6*
+MASS  CN2I  13.0190   ! equivalent to   CS1
+MASS  ON2D  15.9994   ! equivalent to    OS
+MASS  CN22  13.0190   ! equivalent to   CH1
+MASS  ON27  15.9994   ! equivalent to    OA
+MASS  HN2M   1.0080   ! equivalent to    HO
+MASS  CN2A  13.0190   ! equivalent to   CH1
+MASS  ON2N  15.9994   ! equivalent to    OA
+MASS  HN2Q   1.0080   ! equivalent to    HO
+MASS  CN2O  13.0190   ! equivalent to   CS1
+MASS  CN27  14.0270   ! equivalent to   CH2
+MASS  ON2L  15.9994   ! equivalent to    OS
+MASS  PN2D  30.9738   ! equivalent to     P
+MASS  ON2U  15.9994   ! equivalent to    OM
+MASS  ON2F  15.9994   ! equivalent to    OM
+MASS  ON2R  15.9994   ! equivalent to    OS
+MASS  PN21  30.9738   ! equivalent to     P
+MASS  ON26  15.9994   ! equivalent to    OA
+MASS  ON2V  15.9994   ! equivalent to    OM
+MASS  ON24  15.9994   ! equivalent to    OS
+MASS  CN25  14.0270   ! equivalent to   CH2
+MASS  CN2L  13.0190   ! equivalent to   CS1
+MASS  ON2H  15.9994   ! equivalent to    OS
+MASS  CN2U  13.0190   ! equivalent to   CH1
+MASS  ON29  15.9994   ! equivalent to    OA
+MASS  HN2B   1.0080   ! equivalent to    HO
+MASS  CN2C  13.0190   ! equivalent to   CH1
+MASS  ON22  15.9994   ! equivalent to    OA
+MASS  HN2I   1.0080   ! equivalent to    HO
+MASS  CN2E  13.0190   ! equivalent to   CS1
+MASS  NN2T  14.0067   ! equivalent to  NR5*
+MASS  CN2W  13.0190   ! equivalent to  CR51
+MASS  NN25  14.0067   ! equivalent to   NR5
+MASS  CN2S  12.0110   ! equivalent to    CB
+MASS  CN2Q  12.0110   ! equivalent to    CB
+MASS  NN2H  14.0067   ! equivalent to   NR6
+MASS  CN2F  13.0190   ! equivalent to  CR61
+MASS  NN2I  14.0067   ! equivalent to   NR6
+MASS  CN2R  12.0110   ! equivalent to    CB
+MASS  NN24  14.0067   ! equivalent to    NT
+MASS  HN2K   1.0080   ! equivalent to     H
+MASS  HN26   1.0080   ! equivalent to     H
+
+RESIdue NAD  
+GROUP
+  ATOM N7N  TYPE= NN2Q CHARGE= 0.058 END
+  ATOM H72N  TYPE= HN27 CHARGE= 0.003 END
+  ATOM H71N  TYPE= HN24 CHARGE= 0.003 END
+  ATOM C7N  TYPE= CN28 CHARGE= 0.365 END
+  ATOM O7N  TYPE= ON2B CHARGE=-0.701 END
+  ATOM C3N  TYPE= CN2N CHARGE=-0.019 END
+  ATOM C2N  TYPE= CN24 CHARGE=-0.040 END
+  ATOM C4N  TYPE= CN29 CHARGE=-0.040 END
+  ATOM C5N  TYPE= CN2P CHARGE=-0.040 END
+  ATOM C6N  TYPE= CN2G CHARGE=-0.040 END
+  ATOM N1N  TYPE= NN20 CHARGE= 0.288 END
+  ATOM C1D  TYPE= CN2I CHARGE= 0.214 END
+  ATOM O4D  TYPE= ON2D CHARGE=-0.180 END
+  ATOM C2D  TYPE= CN22 CHARGE= 0.127 END
+  ATOM O2D  TYPE= ON27 CHARGE=-0.188 END
+  ATOM HO2N  TYPE= HN2M CHARGE= 0.049 END
+  ATOM C3D  TYPE= CN2A CHARGE= 0.127 END
+  ATOM O3D  TYPE= ON2N CHARGE=-0.188 END
+  ATOM HAC  TYPE= HN2Q CHARGE= 0.049 END
+  ATOM C4D  TYPE= CN2O CHARGE= 0.214 END
+  ATOM C5D  TYPE= CN27 CHARGE= 0.064 END
+  ATOM O5D  TYPE= ON2L CHARGE=-0.180 END
+  ATOM PN   TYPE= PN2D CHARGE= 1.218 END
+  ATOM O1N  TYPE= ON2U CHARGE=-0.592 END
+  ATOM O2N  TYPE= ON2F CHARGE=-0.592 END
+  ATOM O3   TYPE= ON2R CHARGE=-0.180 END
+  ATOM PA   TYPE= PN21 CHARGE= 1.218 END
+  ATOM O2A  TYPE= ON26 CHARGE=-0.884 END
+  ATOM O1A  TYPE= ON2V CHARGE=-0.592 END
+  ATOM O5B  TYPE= ON24 CHARGE=-0.180 END
+  ATOM C5B  TYPE= CN25 CHARGE= 0.064 END
+  ATOM C4B  TYPE= CN2L CHARGE= 0.214 END
+  ATOM O4B  TYPE= ON2H CHARGE=-0.180 END
+  ATOM C3B  TYPE= CN2U CHARGE= 0.127 END
+  ATOM O3B  TYPE= ON29 CHARGE=-0.188 END
+  ATOM HAA  TYPE= HN2B CHARGE= 0.049 END
+  ATOM C2B  TYPE= CN2C CHARGE= 0.128 END
+  ATOM O2B  TYPE= ON22 CHARGE=-0.188 END
+  ATOM HO2A  TYPE= HN2I CHARGE= 0.049 END
+  ATOM C1B  TYPE= CN2E CHARGE= 0.214 END
+  ATOM N9A  TYPE= NN2T CHARGE= 0.235 END
+  ATOM C8A  TYPE= CN2W CHARGE=-0.040 END
+  ATOM N7A  TYPE= NN25 CHARGE=-0.505 END
+  ATOM C5A  TYPE= CN2S CHARGE= 0.134 END
+  ATOM C4A  TYPE= CN2Q CHARGE= 0.270 END
+  ATOM N3A  TYPE= NN2H CHARGE=-0.519 END
+  ATOM C2A  TYPE= CN2F CHARGE=-0.040 END
+  ATOM N1A  TYPE= NN2I CHARGE=-0.519 END
+  ATOM C6A  TYPE= CN2R CHARGE= 0.270 END
+  ATOM N6A  TYPE= NN24 CHARGE= 0.058 END
+  ATOM H62A  TYPE= HN2K CHARGE= 0.003 END
+  ATOM H61A  TYPE= HN26 CHARGE= 0.003 END
+
+  BOND N7N  H72N 
+  BOND N7N  H71N 
+  BOND N7N  C7N 
+  BOND C7N  O7N 
+  BOND C7N  C3N 
+  BOND C3N  C2N 
+  BOND C3N  C4N 
+  BOND C2N  N1N 
+  BOND C4N  C5N 
+  BOND C5N  C6N 
+  BOND C6N  N1N 
+  BOND N1N  C1D 
+  BOND C1D  O4D 
+  BOND C1D  C2D 
+  BOND O4D  C4D 
+  BOND C2D  O2D 
+  BOND C2D  C3D 
+  BOND O2D  HO2N 
+  BOND C3D  O3D 
+  BOND C3D  C4D 
+  BOND O3D  HAC 
+  BOND C4D  C5D 
+  BOND C5D  O5D 
+  BOND O5D  PN  
+  BOND PN   O1N 
+  BOND PN   O2N 
+  BOND PN   O3  
+  BOND O3   PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5B 
+  BOND O5B  C5B 
+  BOND C5B  C4B 
+  BOND C4B  O4B 
+  BOND C4B  C3B 
+  BOND O4B  C1B 
+  BOND C3B  O3B 
+  BOND C3B  C2B 
+  BOND O3B  HAA 
+  BOND C2B  O2B 
+  BOND C2B  C1B 
+  BOND O2B  HO2A 
+  BOND C1B  N9A 
+  BOND N9A  C8A 
+  BOND N9A  C4A 
+  BOND C8A  N7A 
+  BOND N7A  C5A 
+  BOND C5A  C4A 
+  BOND C5A  C6A 
+  BOND C4A  N3A 
+  BOND N3A  C2A 
+  BOND C2A  N1A 
+  BOND N1A  C6A 
+  BOND C6A  N6A 
+  BOND N6A  H62A 
+  BOND N6A  H61A 
+
+  ANGLE H72N  N7N  H71N 
+  ANGLE H72N  N7N  C7N 
+  ANGLE H71N  N7N  C7N 
+  ANGLE N7N  C7N  O7N 
+  ANGLE N7N  C7N  C3N 
+  ANGLE O7N  C7N  C3N 
+  ANGLE C7N  C3N  C2N 
+  ANGLE C7N  C3N  C4N 
+  ANGLE C2N  C3N  C4N 
+  ANGLE C3N  C2N  N1N 
+  ANGLE C3N  C4N  C5N 
+  ANGLE C4N  C5N  C6N 
+  ANGLE C5N  C6N  N1N 
+  ANGLE C2N  N1N  C6N 
+  ANGLE C2N  N1N  C1D 
+  ANGLE C6N  N1N  C1D 
+  ANGLE N1N  C1D  O4D 
+  ANGLE N1N  C1D  C2D 
+  ANGLE O4D  C1D  C2D 
+  ANGLE C1D  O4D  C4D 
+  ANGLE C1D  C2D  O2D 
+  ANGLE C1D  C2D  C3D 
+  ANGLE O2D  C2D  C3D 
+  ANGLE C2D  O2D  HO2N 
+  ANGLE C2D  C3D  O3D 
+  ANGLE C2D  C3D  C4D 
+  ANGLE O3D  C3D  C4D 
+  ANGLE C3D  O3D  HAC 
+  ANGLE O4D  C4D  C3D 
+  ANGLE O4D  C4D  C5D 
+  ANGLE C3D  C4D  C5D 
+  ANGLE C4D  C5D  O5D 
+  ANGLE C5D  O5D  PN  
+  ANGLE O5D  PN   O1N 
+  ANGLE O5D  PN   O2N 
+  ANGLE O5D  PN   O3  
+  ANGLE O1N  PN   O2N 
+  ANGLE O1N  PN   O3  
+  ANGLE O2N  PN   O3  
+  ANGLE PN   O3   PA  
+  ANGLE O3   PA   O2A 
+  ANGLE O3   PA   O1A 
+  ANGLE O3   PA   O5B 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5B 
+  ANGLE O1A  PA   O5B 
+  ANGLE PA   O5B  C5B 
+  ANGLE O5B  C5B  C4B 
+  ANGLE C5B  C4B  O4B 
+  ANGLE C5B  C4B  C3B 
+  ANGLE O4B  C4B  C3B 
+  ANGLE C4B  O4B  C1B 
+  ANGLE C4B  C3B  O3B 
+  ANGLE C4B  C3B  C2B 
+  ANGLE O3B  C3B  C2B 
+  ANGLE C3B  O3B  HAA 
+  ANGLE C3B  C2B  O2B 
+  ANGLE C3B  C2B  C1B 
+  ANGLE O2B  C2B  C1B 
+  ANGLE C2B  O2B  HO2A 
+  ANGLE O4B  C1B  C2B 
+  ANGLE O4B  C1B  N9A 
+  ANGLE C2B  C1B  N9A 
+  ANGLE C1B  N9A  C8A 
+  ANGLE C1B  N9A  C4A 
+  ANGLE C8A  N9A  C4A 
+  ANGLE N9A  C8A  N7A 
+  ANGLE C8A  N7A  C5A 
+  ANGLE N7A  C5A  C4A 
+  ANGLE N7A  C5A  C6A 
+  ANGLE C4A  C5A  C6A 
+  ANGLE N9A  C4A  C5A 
+  ANGLE N9A  C4A  N3A 
+  ANGLE C5A  C4A  N3A 
+  ANGLE C4A  N3A  C2A 
+  ANGLE N3A  C2A  N1A 
+  ANGLE C2A  N1A  C6A 
+  ANGLE C5A  C6A  N1A 
+  ANGLE C5A  C6A  N6A 
+  ANGLE N1A  C6A  N6A 
+  ANGLE C6A  N6A  H62A 
+  ANGLE C6A  N6A  H61A 
+  ANGLE H62A  N6A  H61A 
+
+  IMPROPER N7N  H72N  H71N  C7N 
+  IMPROPER C7N  N7N  C3N  O7N 
+  IMPROPER C3N  C4N  C2N  C7N 
+  IMPROPER N1N  C1D  C6N  C2N 
+  IMPROPER N9A  C1B  C8A  C4A 
+  IMPROPER C5A  C6A  C4A  N7A 
+  IMPROPER C4A  N3A  C5A  N9A 
+  IMPROPER C6A  C5A  N1A  N6A 
+  IMPROPER N6A  C6A  H62A  H61A 
+  IMPROPER C1D  N1N  O4D  C2D 
+  IMPROPER C2D  C1D  O2D  C3D 
+  IMPROPER C3D  C2D  O3D  C4D 
+  IMPROPER C4D  O4D  C5D  C3D 
+  IMPROPER PN   O5D  O2N  O1N 
+  IMPROPER PA   O3   O2A  O1A 
+  IMPROPER C4B  C5B  C3B  O4B 
+  IMPROPER C3B  C4B  C2B  O3B 
+  IMPROPER C2B  C3B  C1B  O2B 
+  IMPROPER C1B  O4B  C2B  N9A 
+  IMPROPER N9A  C8A  N7A  C5A 
+  IMPROPER C8A  N7A  C5A  C4A 
+  IMPROPER N7A  C5A  C4A  N9A 
+  IMPROPER C5A  C4A  N9A  C8A 
+  IMPROPER C4A  N9A  C8A  N7A 
+  IMPROPER C3N  C2N  N1N  C6N 
+  IMPROPER C2N  N1N  C6N  C5N 
+  IMPROPER N1N  C6N  C5N  C4N 
+  IMPROPER C6N  C5N  C4N  C3N 
+  IMPROPER C5N  C4N  C3N  C2N 
+  IMPROPER C4N  C3N  C2N  N1N 
+  IMPROPER C5A  C4A  N3A  C2A 
+  IMPROPER C4A  N3A  C2A  N1A 
+  IMPROPER N3A  C2A  N1A  C6A 
+  IMPROPER C2A  N1A  C6A  C5A 
+  IMPROPER N1A  C6A  C5A  C4A 
+  IMPROPER C6A  C5A  C4A  N3A 
+
+  DIHEDRAL C3N  C7N  N7N  H72N 
+  DIHEDRAL C4N  C3N  C7N  N7N 
+  DIHEDRAL C2N  N1N  C1D  C2D 
+  DIHEDRAL N1N  C1D  O4D  C4D 
+  DIHEDRAL N1N  C1D  C2D  C3D 
+  DIHEDRAL C5D  C4D  O4D  C1D 
+  DIHEDRAL C1D  C2D  O2D  HO2N 
+  DIHEDRAL C4D  C3D  C2D  C1D 
+  DIHEDRAL C2D  C3D  O3D  HAC 
+  DIHEDRAL C2D  C3D  C4D  C5D 
+  DIHEDRAL O4D  C4D  C5D  O5D 
+  DIHEDRAL PN   O5D  C5D  C4D 
+  DIHEDRAL C5D  O5D  PN   O3  
+  DIHEDRAL C5D  O5D  PN   O3  
+  DIHEDRAL PA   O3   PN   O5D 
+  DIHEDRAL PA   O3   PN   O5D 
+  DIHEDRAL PN   O3   PA   O5B 
+  DIHEDRAL PN   O3   PA   O5B 
+  DIHEDRAL C5B  O5B  PA   O3  
+  DIHEDRAL C5B  O5B  PA   O3  
+  DIHEDRAL PA   O5B  C5B  C4B 
+  DIHEDRAL C3B  C4B  C5B  O5B 
+  DIHEDRAL C5B  C4B  O4B  C1B 
+  DIHEDRAL C5B  C4B  C3B  C2B 
+  DIHEDRAL N9A  C1B  O4B  C4B 
+  DIHEDRAL C4B  C3B  O3B  HAA 
+  DIHEDRAL C1B  C2B  C3B  C4B 
+  DIHEDRAL C3B  C2B  O2B  HO2A 
+  DIHEDRAL C3B  C2B  C1B  N9A 
+  DIHEDRAL O4B  C1B  N9A  C4A 
+  DIHEDRAL C5A  C6A  N6A  H61A 
+END
+
+
+! Adding topology definition for residue NAP
+
+MASS  NN36  14.0067   ! equivalent to    NT
+MASS  HN3X   1.0080   ! equivalent to     H
+MASS  HN3C   1.0080   ! equivalent to     H
+MASS  CN37  12.0110   ! equivalent to     C
+MASS  ON34  15.9994   ! equivalent to     O
+MASS  CN3Y  12.0110   ! equivalent to    CB
+MASS  CN35  13.0190   ! equivalent to  CR61
+MASS  CN3X  13.0190   ! equivalent to  CR61
+MASS  CN3S  13.0190   ! equivalent to  CR61
+MASS  CN3M  13.0190   ! equivalent to  CR61
+MASS  NN3L  14.0067   ! equivalent to  NR6*
+MASS  CN39  13.0190   ! equivalent to   CS1
+MASS  ON3U  15.9994   ! equivalent to    OS
+MASS  CN34  13.0190   ! equivalent to   CH1
+MASS  ON3N  15.9994   ! equivalent to    OA
+MASS  HN3S   1.0080   ! equivalent to    HO
+MASS  CN3W  13.0190   ! equivalent to   CH1
+MASS  ON3C  15.9994   ! equivalent to    OA
+MASS  HN34   1.0080   ! equivalent to    HO
+MASS  CN3T  13.0190   ! equivalent to   CS1
+MASS  CN3G  14.0270   ! equivalent to   CH2
+MASS  ON30  15.9994   ! equivalent to    OS
+MASS  PN3X  30.9738   ! equivalent to     P
+MASS  ON35  15.9994   ! equivalent to    OM
+MASS  ON3B  15.9994   ! equivalent to    OM
+MASS  ON33  15.9994   ! equivalent to    OS
+MASS  PN3P  30.9738   ! equivalent to     P
+MASS  ON3O  15.9994   ! equivalent to    OA
+MASS  ON3K  15.9994   ! equivalent to    OM
+MASS  ON3Y  15.9994   ! equivalent to    OS
+MASS  CN3R  14.0270   ! equivalent to   CH2
+MASS  CN3L  13.0190   ! equivalent to   CS1
+MASS  ON3Z  15.9994   ! equivalent to    OS
+MASS  CN3Z  13.0190   ! equivalent to   CH1
+MASS  ON38  15.9994   ! equivalent to    OA
+MASS  HN3F   1.0080   ! equivalent to    HO
+MASS  CN32  13.0190   ! equivalent to   CH1
+MASS  ON3A  15.9994   ! equivalent to    OS
+MASS  PN3Q  30.9738   ! equivalent to     P
+MASS  ON3M  15.9994   ! equivalent to    OA
+MASS  ON39  15.9994   ! equivalent to    OA
+MASS  ON3W  15.9994   ! equivalent to    OM
+MASS  CN3U  13.0190   ! equivalent to   CS1
+MASS  NN3H  14.0067   ! equivalent to  NR5*
+MASS  CN31  13.0190   ! equivalent to  CR51
+MASS  NN3G  14.0067   ! equivalent to   NR5
+MASS  CN3V  12.0110   ! equivalent to    CB
+MASS  CN3P  12.0110   ! equivalent to    CB
+MASS  NN3M  14.0067   ! equivalent to   NR6
+MASS  CN3D  13.0190   ! equivalent to  CR61
+MASS  NN34  14.0067   ! equivalent to   NR6
+MASS  CN3B  12.0110   ! equivalent to    CB
+MASS  NN3I  14.0067   ! equivalent to    NT
+MASS  HN31   1.0080   ! equivalent to     H
+MASS  HN3W   1.0080   ! equivalent to     H
+
+RESIdue NAP  
+GROUP
+  ATOM N7N  TYPE= NN36 CHARGE= 0.052 END
+  ATOM H72N  TYPE= HN3X CHARGE=-0.002 END
+  ATOM H71N  TYPE= HN3C CHARGE=-0.002 END
+  ATOM C7N  TYPE= CN37 CHARGE= 0.358 END
+  ATOM O7N  TYPE= ON34 CHARGE=-0.707 END
+  ATOM C3N  TYPE= CN3Y CHARGE=-0.025 END
+  ATOM C2N  TYPE= CN35 CHARGE=-0.046 END
+  ATOM C4N  TYPE= CN3X CHARGE=-0.046 END
+  ATOM C5N  TYPE= CN3S CHARGE=-0.046 END
+  ATOM C6N  TYPE= CN3M CHARGE=-0.046 END
+  ATOM N1N  TYPE= NN3L CHARGE= 0.282 END
+  ATOM C1D  TYPE= CN39 CHARGE= 0.208 END
+  ATOM O4D  TYPE= ON3U CHARGE=-0.185 END
+  ATOM C2D  TYPE= CN34 CHARGE= 0.121 END
+  ATOM O2D  TYPE= ON3N CHARGE=-0.194 END
+  ATOM HO2N  TYPE= HN3S CHARGE= 0.043 END
+  ATOM C3D  TYPE= CN3W CHARGE= 0.121 END
+  ATOM O3D  TYPE= ON3C CHARGE=-0.194 END
+  ATOM HAB  TYPE= HN34 CHARGE= 0.043 END
+  ATOM C4D  TYPE= CN3T CHARGE= 0.208 END
+  ATOM C5D  TYPE= CN3G CHARGE= 0.058 END
+  ATOM O5D  TYPE= ON30 CHARGE=-0.185 END
+  ATOM PN   TYPE= PN3X CHARGE= 1.212 END
+  ATOM O1N  TYPE= ON35 CHARGE=-0.597 END
+  ATOM O2N  TYPE= ON3B CHARGE=-0.597 END
+  ATOM O3   TYPE= ON33 CHARGE=-0.185 END
+  ATOM PA   TYPE= PN3P CHARGE= 1.212 END
+  ATOM O2A  TYPE= ON3O CHARGE=-0.891 END
+  ATOM O1A  TYPE= ON3K CHARGE=-0.597 END
+  ATOM O5B  TYPE= ON3Y CHARGE=-0.185 END
+  ATOM C5B  TYPE= CN3R CHARGE= 0.058 END
+  ATOM C4B  TYPE= CN3L CHARGE= 0.208 END
+  ATOM O4B  TYPE= ON3Z CHARGE=-0.185 END
+  ATOM C3B  TYPE= CN3Z CHARGE= 0.121 END
+  ATOM O3B  TYPE= ON38 CHARGE=-0.194 END
+  ATOM HO3A  TYPE= HN3F CHARGE= 0.043 END
+  ATOM C2B  TYPE= CN32 CHARGE= 0.121 END
+  ATOM O2B  TYPE= ON3A CHARGE=-0.185 END
+  ATOM P2B  TYPE= PN3Q CHARGE= 1.211 END
+  ATOM O2X  TYPE= ON3M CHARGE=-1.057 END
+  ATOM O3X  TYPE= ON39 CHARGE=-1.057 END
+  ATOM O1X  TYPE= ON3W CHARGE=-0.764 END
+  ATOM C1B  TYPE= CN3U CHARGE= 0.208 END
+  ATOM N9A  TYPE= NN3H CHARGE= 0.229 END
+  ATOM C8A  TYPE= CN31 CHARGE=-0.046 END
+  ATOM N7A  TYPE= NN3G CHARGE=-0.510 END
+  ATOM C5A  TYPE= CN3V CHARGE= 0.129 END
+  ATOM C4A  TYPE= CN3P CHARGE= 0.265 END
+  ATOM N3A  TYPE= NN3M CHARGE=-0.525 END
+  ATOM C2A  TYPE= CN3D CHARGE=-0.046 END
+  ATOM N1A  TYPE= NN34 CHARGE=-0.525 END
+  ATOM C6A  TYPE= CN3B CHARGE= 0.265 END
+  ATOM N6A  TYPE= NN3I CHARGE= 0.052 END
+  ATOM H62A  TYPE= HN31 CHARGE=-0.002 END
+  ATOM H61A  TYPE= HN3W CHARGE=-0.002 END
+
+  BOND N7N  H72N 
+  BOND N7N  H71N 
+  BOND N7N  C7N 
+  BOND C7N  O7N 
+  BOND C7N  C3N 
+  BOND C3N  C2N 
+  BOND C3N  C4N 
+  BOND C2N  N1N 
+  BOND C4N  C5N 
+  BOND C5N  C6N 
+  BOND C6N  N1N 
+  BOND N1N  C1D 
+  BOND C1D  O4D 
+  BOND C1D  C2D 
+  BOND O4D  C4D 
+  BOND C2D  O2D 
+  BOND C2D  C3D 
+  BOND O2D  HO2N 
+  BOND C3D  O3D 
+  BOND C3D  C4D 
+  BOND O3D  HAB 
+  BOND C4D  C5D 
+  BOND C5D  O5D 
+  BOND O5D  PN  
+  BOND PN   O1N 
+  BOND PN   O2N 
+  BOND PN   O3  
+  BOND O3   PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5B 
+  BOND O5B  C5B 
+  BOND C5B  C4B 
+  BOND C4B  O4B 
+  BOND C4B  C3B 
+  BOND O4B  C1B 
+  BOND C3B  O3B 
+  BOND C3B  C2B 
+  BOND O3B  HO3A 
+  BOND C2B  O2B 
+  BOND C2B  C1B 
+  BOND O2B  P2B 
+  BOND P2B  O2X 
+  BOND P2B  O3X 
+  BOND P2B  O1X 
+  BOND C1B  N9A 
+  BOND N9A  C8A 
+  BOND N9A  C4A 
+  BOND C8A  N7A 
+  BOND N7A  C5A 
+  BOND C5A  C4A 
+  BOND C5A  C6A 
+  BOND C4A  N3A 
+  BOND N3A  C2A 
+  BOND C2A  N1A 
+  BOND N1A  C6A 
+  BOND C6A  N6A 
+  BOND N6A  H62A 
+  BOND N6A  H61A 
+
+  ANGLE H72N  N7N  H71N 
+  ANGLE H72N  N7N  C7N 
+  ANGLE H71N  N7N  C7N 
+  ANGLE N7N  C7N  O7N 
+  ANGLE N7N  C7N  C3N 
+  ANGLE O7N  C7N  C3N 
+  ANGLE C7N  C3N  C2N 
+  ANGLE C7N  C3N  C4N 
+  ANGLE C2N  C3N  C4N 
+  ANGLE C3N  C2N  N1N 
+  ANGLE C3N  C4N  C5N 
+  ANGLE C4N  C5N  C6N 
+  ANGLE C5N  C6N  N1N 
+  ANGLE C2N  N1N  C6N 
+  ANGLE C2N  N1N  C1D 
+  ANGLE C6N  N1N  C1D 
+  ANGLE N1N  C1D  O4D 
+  ANGLE N1N  C1D  C2D 
+  ANGLE O4D  C1D  C2D 
+  ANGLE C1D  O4D  C4D 
+  ANGLE C1D  C2D  O2D 
+  ANGLE C1D  C2D  C3D 
+  ANGLE O2D  C2D  C3D 
+  ANGLE C2D  O2D  HO2N 
+  ANGLE C2D  C3D  O3D 
+  ANGLE C2D  C3D  C4D 
+  ANGLE O3D  C3D  C4D 
+  ANGLE C3D  O3D  HAB 
+  ANGLE O4D  C4D  C3D 
+  ANGLE O4D  C4D  C5D 
+  ANGLE C3D  C4D  C5D 
+  ANGLE C4D  C5D  O5D 
+  ANGLE C5D  O5D  PN  
+  ANGLE O5D  PN   O1N 
+  ANGLE O5D  PN   O2N 
+  ANGLE O5D  PN   O3  
+  ANGLE O1N  PN   O2N 
+  ANGLE O1N  PN   O3  
+  ANGLE O2N  PN   O3  
+  ANGLE PN   O3   PA  
+  ANGLE O3   PA   O2A 
+  ANGLE O3   PA   O1A 
+  ANGLE O3   PA   O5B 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5B 
+  ANGLE O1A  PA   O5B 
+  ANGLE PA   O5B  C5B 
+  ANGLE O5B  C5B  C4B 
+  ANGLE C5B  C4B  O4B 
+  ANGLE C5B  C4B  C3B 
+  ANGLE O4B  C4B  C3B 
+  ANGLE C4B  O4B  C1B 
+  ANGLE C4B  C3B  O3B 
+  ANGLE C4B  C3B  C2B 
+  ANGLE O3B  C3B  C2B 
+  ANGLE C3B  O3B  HO3A 
+  ANGLE C3B  C2B  O2B 
+  ANGLE C3B  C2B  C1B 
+  ANGLE O2B  C2B  C1B 
+  ANGLE C2B  O2B  P2B 
+  ANGLE O2B  P2B  O2X 
+  ANGLE O2B  P2B  O3X 
+  ANGLE O2B  P2B  O1X 
+  ANGLE O2X  P2B  O3X 
+  ANGLE O2X  P2B  O1X 
+  ANGLE O3X  P2B  O1X 
+  ANGLE O4B  C1B  C2B 
+  ANGLE O4B  C1B  N9A 
+  ANGLE C2B  C1B  N9A 
+  ANGLE C1B  N9A  C8A 
+  ANGLE C1B  N9A  C4A 
+  ANGLE C8A  N9A  C4A 
+  ANGLE N9A  C8A  N7A 
+  ANGLE C8A  N7A  C5A 
+  ANGLE N7A  C5A  C4A 
+  ANGLE N7A  C5A  C6A 
+  ANGLE C4A  C5A  C6A 
+  ANGLE N9A  C4A  C5A 
+  ANGLE N9A  C4A  N3A 
+  ANGLE C5A  C4A  N3A 
+  ANGLE C4A  N3A  C2A 
+  ANGLE N3A  C2A  N1A 
+  ANGLE C2A  N1A  C6A 
+  ANGLE C5A  C6A  N1A 
+  ANGLE C5A  C6A  N6A 
+  ANGLE N1A  C6A  N6A 
+  ANGLE C6A  N6A  H62A 
+  ANGLE C6A  N6A  H61A 
+  ANGLE H62A  N6A  H61A 
+
+  IMPROPER N7N  H72N  H71N  C7N 
+  IMPROPER C7N  N7N  C3N  O7N 
+  IMPROPER C3N  C4N  C2N  C7N 
+  IMPROPER N1N  C1D  C6N  C2N 
+  IMPROPER N9A  C1B  C8A  C4A 
+  IMPROPER C5A  C6A  C4A  N7A 
+  IMPROPER C4A  N3A  C5A  N9A 
+  IMPROPER C6A  C5A  N1A  N6A 
+  IMPROPER N6A  C6A  H62A  H61A 
+  IMPROPER C1D  N1N  O4D  C2D 
+  IMPROPER C2D  C1D  O2D  C3D 
+  IMPROPER C3D  C2D  O3D  C4D 
+  IMPROPER C4D  O4D  C5D  C3D 
+  IMPROPER PN   O5D  O2N  O1N 
+  IMPROPER PA   O3   O1A  O2A 
+  IMPROPER C4B  C5B  C3B  O4B 
+  IMPROPER C3B  C4B  C2B  O3B 
+  IMPROPER C2B  C3B  C1B  O2B 
+  IMPROPER P2B  O2B  O3X  O2X 
+  IMPROPER C1B  O4B  C2B  N9A 
+  IMPROPER N9A  C8A  N7A  C5A 
+  IMPROPER C8A  N7A  C5A  C4A 
+  IMPROPER N7A  C5A  C4A  N9A 
+  IMPROPER C5A  C4A  N9A  C8A 
+  IMPROPER C4A  N9A  C8A  N7A 
+  IMPROPER C3N  C2N  N1N  C6N 
+  IMPROPER C2N  N1N  C6N  C5N 
+  IMPROPER N1N  C6N  C5N  C4N 
+  IMPROPER C6N  C5N  C4N  C3N 
+  IMPROPER C5N  C4N  C3N  C2N 
+  IMPROPER C4N  C3N  C2N  N1N 
+  IMPROPER C5A  C4A  N3A  C2A 
+  IMPROPER C4A  N3A  C2A  N1A 
+  IMPROPER N3A  C2A  N1A  C6A 
+  IMPROPER C2A  N1A  C6A  C5A 
+  IMPROPER N1A  C6A  C5A  C4A 
+  IMPROPER C6A  C5A  C4A  N3A 
+
+  DIHEDRAL C3N  C7N  N7N  H72N 
+  DIHEDRAL C4N  C3N  C7N  N7N 
+  DIHEDRAL C2N  N1N  C1D  C2D 
+  DIHEDRAL N1N  C1D  O4D  C4D 
+  DIHEDRAL N1N  C1D  C2D  C3D 
+  DIHEDRAL C5D  C4D  O4D  C1D 
+  DIHEDRAL C1D  C2D  O2D  HO2N 
+  DIHEDRAL C4D  C3D  C2D  C1D 
+  DIHEDRAL C2D  C3D  O3D  HAB 
+  DIHEDRAL C2D  C3D  C4D  C5D 
+  DIHEDRAL O4D  C4D  C5D  O5D 
+  DIHEDRAL PN   O5D  C5D  C4D 
+  DIHEDRAL C5D  O5D  PN   O3  
+  DIHEDRAL C5D  O5D  PN   O3  
+  DIHEDRAL PA   O3   PN   O5D 
+  DIHEDRAL PA   O3   PN   O5D 
+  DIHEDRAL PN   O3   PA   O5B 
+  DIHEDRAL PN   O3   PA   O5B 
+  DIHEDRAL C5B  O5B  PA   O3  
+  DIHEDRAL C5B  O5B  PA   O3  
+  DIHEDRAL PA   O5B  C5B  C4B 
+  DIHEDRAL C3B  C4B  C5B  O5B 
+  DIHEDRAL C5B  C4B  O4B  C1B 
+  DIHEDRAL C5B  C4B  C3B  C2B 
+  DIHEDRAL N9A  C1B  O4B  C4B 
+  DIHEDRAL C4B  C3B  O3B  HO3A 
+  DIHEDRAL C1B  C2B  C3B  C4B 
+  DIHEDRAL C3B  C2B  O2B  P2B 
+  DIHEDRAL C3B  C2B  C1B  N9A 
+  DIHEDRAL C2B  O2B  P2B  O1X 
+  DIHEDRAL C2B  O2B  P2B  O1X 
+  DIHEDRAL O4B  C1B  N9A  C4A 
+  DIHEDRAL C5A  C6A  N6A  H61A 
+END
+
+
+! Adding topology definition for residue NDP
+
+MASS  NNPN  14.0067   ! equivalent to    NT
+MASS  HNPG   1.0080   ! equivalent to     H
+MASS  HNPM   1.0080   ! equivalent to     H
+MASS  CNP1  12.0110   ! equivalent to     C
+MASS  ONPY  15.9994   ! equivalent to     O
+MASS  CNP6  12.0110   ! equivalent to    CB
+MASS  CNP2  13.0190   ! equivalent to  CR61
+MASS  CNPL  14.0270   ! equivalent to   CH2
+MASS  CNP9  13.0190   ! equivalent to  CR61
+MASS  CNP7  13.0190   ! equivalent to  CR61
+MASS  NNP7  14.0067   ! equivalent to  NR6*
+MASS  CNPI  13.0190   ! equivalent to   CS1
+MASS  ONPA  15.9994   ! equivalent to    OS
+MASS  CNPC  13.0190   ! equivalent to   CH1
+MASS  ONPN  15.9994   ! equivalent to    OA
+MASS  HNP5   1.0080   ! equivalent to    HO
+MASS  CNPE  13.0190   ! equivalent to   CH1
+MASS  ONP2  15.9994   ! equivalent to    OA
+MASS  HNPA   1.0080   ! equivalent to    HO
+MASS  CNPO  13.0190   ! equivalent to   CS1
+MASS  CNPP  14.0270   ! equivalent to   CH2
+MASS  ONPZ  15.9994   ! equivalent to    OS
+MASS  PNP4  30.9738   ! equivalent to     P
+MASS  ONPG  15.9994   ! equivalent to    OA
+MASS  ONPM  15.9994   ! equivalent to    OM
+MASS  ONPF  15.9994   ! equivalent to    OS
+MASS  PNPT  30.9738   ! equivalent to     P
+MASS  ONP5  15.9994   ! equivalent to    OA
+MASS  ONPB  15.9994   ! equivalent to    OM
+MASS  ONP6  15.9994   ! equivalent to    OS
+MASS  CNPU  14.0270   ! equivalent to   CH2
+MASS  CNPG  13.0190   ! equivalent to   CS1
+MASS  ONPU  15.9994   ! equivalent to    OS
+MASS  CNPY  13.0190   ! equivalent to   CH1
+MASS  ONPW  15.9994   ! equivalent to    OA
+MASS  HNPH   1.0080   ! equivalent to    HO
+MASS  CNPF  13.0190   ! equivalent to   CH1
+MASS  ONP8  15.9994   ! equivalent to    OS
+MASS  PNPL  30.9738   ! equivalent to     P
+MASS  ONPO  15.9994   ! equivalent to    OA
+MASS  ONPV  15.9994   ! equivalent to    OA
+MASS  ONPX  15.9994   ! equivalent to    OM
+MASS  CNP0  13.0190   ! equivalent to   CS1
+MASS  NNPK  14.0067   ! equivalent to  NR5*
+MASS  CNPN  13.0190   ! equivalent to  CR51
+MASS  NNPR  14.0067   ! equivalent to   NR5
+MASS  CNPK  12.0110   ! equivalent to    CB
+MASS  CNP4  12.0110   ! equivalent to    CB
+MASS  NNPG  14.0067   ! equivalent to   NR6
+MASS  CNPT  13.0190   ! equivalent to  CR61
+MASS  NNPF  14.0067   ! equivalent to   NR6
+MASS  CNP8  12.0110   ! equivalent to    CB
+MASS  NNPW  14.0067   ! equivalent to    NT
+MASS  HNPX   1.0080   ! equivalent to     H
+MASS  HNPS   1.0080   ! equivalent to     H
+
+RESIdue NDP  
+GROUP
+  ATOM N7N  TYPE= NNPN CHARGE= 0.054 END
+  ATOM H72N  TYPE= HNPG CHARGE=-0.001 END
+  ATOM H71N  TYPE= HNPM CHARGE=-0.001 END
+  ATOM C7N  TYPE= CNP1 CHARGE= 0.360 END
+  ATOM O7N  TYPE= ONPY CHARGE=-0.706 END
+  ATOM C3N  TYPE= CNP6 CHARGE=-0.023 END
+  ATOM C2N  TYPE= CNP2 CHARGE=-0.010 END
+  ATOM C4N  TYPE= CNPL CHARGE= 0.060 END
+  ATOM C5N  TYPE= CNP9 CHARGE=-0.010 END
+  ATOM C6N  TYPE= CNP7 CHARGE=-0.010 END
+  ATOM N1N  TYPE= NNP7 CHARGE= 0.284 END
+  ATOM C1D  TYPE= CNPI CHARGE= 0.210 END
+  ATOM O4D  TYPE= ONPA CHARGE=-0.184 END
+  ATOM C2D  TYPE= CNPC CHARGE= 0.123 END
+  ATOM O2D  TYPE= ONPN CHARGE=-0.193 END
+  ATOM HO2N  TYPE= HNP5 CHARGE= 0.045 END
+  ATOM C3D  TYPE= CNPE CHARGE= 0.123 END
+  ATOM O3D  TYPE= ONP2 CHARGE=-0.193 END
+  ATOM HAB  TYPE= HNPA CHARGE= 0.045 END
+  ATOM C4D  TYPE= CNPO CHARGE= 0.210 END
+  ATOM C5D  TYPE= CNPP CHARGE= 0.060 END
+  ATOM O5D  TYPE= ONPZ CHARGE=-0.184 END
+  ATOM PN   TYPE= PNP4 CHARGE= 1.214 END
+  ATOM O2N  TYPE= ONPG CHARGE=-0.889 END
+  ATOM O1N  TYPE= ONPM CHARGE=-0.596 END
+  ATOM O3   TYPE= ONPF CHARGE=-0.184 END
+  ATOM PA   TYPE= PNPT CHARGE= 1.214 END
+  ATOM O2A  TYPE= ONP5 CHARGE=-0.889 END
+  ATOM O1A  TYPE= ONPB CHARGE=-0.596 END
+  ATOM O5B  TYPE= ONP6 CHARGE=-0.184 END
+  ATOM C5B  TYPE= CNPU CHARGE= 0.060 END
+  ATOM C4B  TYPE= CNPG CHARGE= 0.210 END
+  ATOM O4B  TYPE= ONPU CHARGE=-0.184 END
+  ATOM C3B  TYPE= CNPY CHARGE= 0.123 END
+  ATOM O3B  TYPE= ONPW CHARGE=-0.193 END
+  ATOM HO3A  TYPE= HNPH CHARGE= 0.045 END
+  ATOM C2B  TYPE= CNPF CHARGE= 0.123 END
+  ATOM O2B  TYPE= ONP8 CHARGE=-0.184 END
+  ATOM P2B  TYPE= PNPL CHARGE= 1.214 END
+  ATOM O2X  TYPE= ONPO CHARGE=-1.056 END
+  ATOM O3X  TYPE= ONPV CHARGE=-1.056 END
+  ATOM O1X  TYPE= ONPX CHARGE=-0.762 END
+  ATOM C1B  TYPE= CNP0 CHARGE= 0.210 END
+  ATOM N9A  TYPE= NNPK CHARGE= 0.230 END
+  ATOM C8A  TYPE= CNPN CHARGE=-0.044 END
+  ATOM N7A  TYPE= NNPR CHARGE=-0.509 END
+  ATOM C5A  TYPE= CNPK CHARGE= 0.130 END
+  ATOM C4A  TYPE= CNP4 CHARGE= 0.266 END
+  ATOM N3A  TYPE= NNPG CHARGE=-0.523 END
+  ATOM C2A  TYPE= CNPT CHARGE=-0.044 END
+  ATOM N1A  TYPE= NNPF CHARGE=-0.523 END
+  ATOM C6A  TYPE= CNP8 CHARGE= 0.266 END
+  ATOM N6A  TYPE= NNPW CHARGE= 0.054 END
+  ATOM H61A  TYPE= HNPX CHARGE=-0.001 END
+  ATOM H62A  TYPE= HNPS CHARGE=-0.001 END
+
+  BOND N7N  H72N 
+  BOND N7N  H71N 
+  BOND N7N  C7N 
+  BOND C7N  O7N 
+  BOND C7N  C3N 
+  BOND C3N  C2N 
+  BOND C3N  C4N 
+  BOND C2N  N1N 
+  BOND C4N  C5N 
+  BOND C5N  C6N 
+  BOND C6N  N1N 
+  BOND N1N  C1D 
+  BOND C1D  O4D 
+  BOND C1D  C2D 
+  BOND O4D  C4D 
+  BOND C2D  O2D 
+  BOND C2D  C3D 
+  BOND O2D  HO2N 
+  BOND C3D  O3D 
+  BOND C3D  C4D 
+  BOND O3D  HAB 
+  BOND C4D  C5D 
+  BOND C5D  O5D 
+  BOND O5D  PN  
+  BOND PN   O2N 
+  BOND PN   O1N 
+  BOND PN   O3  
+  BOND O3   PA  
+  BOND PA   O2A 
+  BOND PA   O1A 
+  BOND PA   O5B 
+  BOND O5B  C5B 
+  BOND C5B  C4B 
+  BOND C4B  O4B 
+  BOND C4B  C3B 
+  BOND O4B  C1B 
+  BOND C3B  O3B 
+  BOND C3B  C2B 
+  BOND O3B  HO3A 
+  BOND C2B  O2B 
+  BOND C2B  C1B 
+  BOND O2B  P2B 
+  BOND P2B  O2X 
+  BOND P2B  O3X 
+  BOND P2B  O1X 
+  BOND C1B  N9A 
+  BOND N9A  C8A 
+  BOND N9A  C4A 
+  BOND C8A  N7A 
+  BOND N7A  C5A 
+  BOND C5A  C4A 
+  BOND C5A  C6A 
+  BOND C4A  N3A 
+  BOND N3A  C2A 
+  BOND C2A  N1A 
+  BOND N1A  C6A 
+  BOND C6A  N6A 
+  BOND N6A  H61A 
+  BOND N6A  H62A 
+
+  ANGLE H72N  N7N  H71N 
+  ANGLE H72N  N7N  C7N 
+  ANGLE H71N  N7N  C7N 
+  ANGLE N7N  C7N  O7N 
+  ANGLE N7N  C7N  C3N 
+  ANGLE O7N  C7N  C3N 
+  ANGLE C7N  C3N  C2N 
+  ANGLE C7N  C3N  C4N 
+  ANGLE C2N  C3N  C4N 
+  ANGLE C3N  C2N  N1N 
+  ANGLE C3N  C4N  C5N 
+  ANGLE C4N  C5N  C6N 
+  ANGLE C5N  C6N  N1N 
+  ANGLE C2N  N1N  C6N 
+  ANGLE C2N  N1N  C1D 
+  ANGLE C6N  N1N  C1D 
+  ANGLE N1N  C1D  O4D 
+  ANGLE N1N  C1D  C2D 
+  ANGLE O4D  C1D  C2D 
+  ANGLE C1D  O4D  C4D 
+  ANGLE C1D  C2D  O2D 
+  ANGLE C1D  C2D  C3D 
+  ANGLE O2D  C2D  C3D 
+  ANGLE C2D  O2D  HO2N 
+  ANGLE C2D  C3D  O3D 
+  ANGLE C2D  C3D  C4D 
+  ANGLE O3D  C3D  C4D 
+  ANGLE C3D  O3D  HAB 
+  ANGLE O4D  C4D  C3D 
+  ANGLE O4D  C4D  C5D 
+  ANGLE C3D  C4D  C5D 
+  ANGLE C4D  C5D  O5D 
+  ANGLE C5D  O5D  PN  
+  ANGLE O5D  PN   O2N 
+  ANGLE O5D  PN   O1N 
+  ANGLE O5D  PN   O3  
+  ANGLE O2N  PN   O1N 
+  ANGLE O2N  PN   O3  
+  ANGLE O1N  PN   O3  
+  ANGLE PN   O3   PA  
+  ANGLE O3   PA   O2A 
+  ANGLE O3   PA   O1A 
+  ANGLE O3   PA   O5B 
+  ANGLE O2A  PA   O1A 
+  ANGLE O2A  PA   O5B 
+  ANGLE O1A  PA   O5B 
+  ANGLE PA   O5B  C5B 
+  ANGLE O5B  C5B  C4B 
+  ANGLE C5B  C4B  O4B 
+  ANGLE C5B  C4B  C3B 
+  ANGLE O4B  C4B  C3B 
+  ANGLE C4B  O4B  C1B 
+  ANGLE C4B  C3B  O3B 
+  ANGLE C4B  C3B  C2B 
+  ANGLE O3B  C3B  C2B 
+  ANGLE C3B  O3B  HO3A 
+  ANGLE C3B  C2B  O2B 
+  ANGLE C3B  C2B  C1B 
+  ANGLE O2B  C2B  C1B 
+  ANGLE C2B  O2B  P2B 
+  ANGLE O2B  P2B  O2X 
+  ANGLE O2B  P2B  O3X 
+  ANGLE O2B  P2B  O1X 
+  ANGLE O2X  P2B  O3X 
+  ANGLE O2X  P2B  O1X 
+  ANGLE O3X  P2B  O1X 
+  ANGLE O4B  C1B  C2B 
+  ANGLE O4B  C1B  N9A 
+  ANGLE C2B  C1B  N9A 
+  ANGLE C1B  N9A  C8A 
+  ANGLE C1B  N9A  C4A 
+  ANGLE C8A  N9A  C4A 
+  ANGLE N9A  C8A  N7A 
+  ANGLE C8A  N7A  C5A 
+  ANGLE N7A  C5A  C4A 
+  ANGLE N7A  C5A  C6A 
+  ANGLE C4A  C5A  C6A 
+  ANGLE N9A  C4A  C5A 
+  ANGLE N9A  C4A  N3A 
+  ANGLE C5A  C4A  N3A 
+  ANGLE C4A  N3A  C2A 
+  ANGLE N3A  C2A  N1A 
+  ANGLE C2A  N1A  C6A 
+  ANGLE C5A  C6A  N1A 
+  ANGLE C5A  C6A  N6A 
+  ANGLE N1A  C6A  N6A 
+  ANGLE C6A  N6A  H61A 
+  ANGLE C6A  N6A  H62A 
+  ANGLE H61A  N6A  H62A 
+
+  IMPROPER N7N  H72N  H71N  C7N 
+  IMPROPER C7N  N7N  C3N  O7N 
+  IMPROPER C3N  C4N  C2N  C7N 
+  IMPROPER N1N  C1D  C6N  C2N 
+  IMPROPER N9A  C1B  C8A  C4A 
+  IMPROPER C5A  C6A  C4A  N7A 
+  IMPROPER C4A  N3A  C5A  N9A 
+  IMPROPER C6A  C5A  N1A  N6A 
+  IMPROPER N6A  C6A  H61A  H62A 
+  IMPROPER C1D  N1N  O4D  C2D 
+  IMPROPER C2D  C1D  O2D  C3D 
+  IMPROPER C3D  C2D  O3D  C4D 
+  IMPROPER C4D  O4D  C5D  C3D 
+  IMPROPER PN   O5D  O1N  O2N 
+  IMPROPER PA   O3   O2A  O1A 
+  IMPROPER C4B  C5B  C3B  O4B 
+  IMPROPER C3B  C4B  C2B  O3B 
+  IMPROPER C2B  C3B  C1B  O2B 
+  IMPROPER P2B  O2B  O3X  O2X 
+  IMPROPER C1B  O4B  C2B  N9A 
+  IMPROPER N9A  C8A  N7A  C5A 
+  IMPROPER C8A  N7A  C5A  C4A 
+  IMPROPER N7A  C5A  C4A  N9A 
+  IMPROPER C5A  C4A  N9A  C8A 
+  IMPROPER C4A  N9A  C8A  N7A 
+  IMPROPER C5A  C4A  N3A  C2A 
+  IMPROPER C4A  N3A  C2A  N1A 
+  IMPROPER N3A  C2A  N1A  C6A 
+  IMPROPER C2A  N1A  C6A  C5A 
+  IMPROPER N1A  C6A  C5A  C4A 
+  IMPROPER C6A  C5A  C4A  N3A 
+
+  DIHEDRAL C3N  C7N  N7N  H72N 
+  DIHEDRAL C4N  C3N  C7N  N7N 
+  DIHEDRAL C7N  C3N  C2N  N1N 
+  DIHEDRAL C7N  C3N  C4N  C5N 
+  DIHEDRAL C3N  C2N  N1N  C1D 
+  DIHEDRAL C3N  C4N  C5N  C6N 
+  DIHEDRAL C4N  C5N  C6N  N1N 
+  DIHEDRAL C5N  C6N  N1N  C1D 
+  DIHEDRAL C2N  N1N  C1D  C2D 
+  DIHEDRAL N1N  C1D  O4D  C4D 
+  DIHEDRAL N1N  C1D  C2D  C3D 
+  DIHEDRAL C5D  C4D  O4D  C1D 
+  DIHEDRAL C1D  C2D  O2D  HO2N 
+  DIHEDRAL C4D  C3D  C2D  C1D 
+  DIHEDRAL C2D  C3D  O3D  HAB 
+  DIHEDRAL C2D  C3D  C4D  C5D 
+  DIHEDRAL O4D  C4D  C5D  O5D 
+  DIHEDRAL PN   O5D  C5D  C4D 
+  DIHEDRAL C5D  O5D  PN   O3  
+  DIHEDRAL C5D  O5D  PN   O3  
+  DIHEDRAL PA   O3   PN   O5D 
+  DIHEDRAL PA   O3   PN   O5D 
+  DIHEDRAL PN   O3   PA   O5B 
+  DIHEDRAL PN   O3   PA   O5B 
+  DIHEDRAL C5B  O5B  PA   O3  
+  DIHEDRAL C5B  O5B  PA   O3  
+  DIHEDRAL PA   O5B  C5B  C4B 
+  DIHEDRAL C3B  C4B  C5B  O5B 
+  DIHEDRAL C5B  C4B  O4B  C1B 
+  DIHEDRAL C5B  C4B  C3B  C2B 
+  DIHEDRAL N9A  C1B  O4B  C4B 
+  DIHEDRAL C4B  C3B  O3B  HO3A 
+  DIHEDRAL C1B  C2B  C3B  C4B 
+  DIHEDRAL C3B  C2B  O2B  P2B 
+  DIHEDRAL C3B  C2B  C1B  N9A 
+  DIHEDRAL C2B  O2B  P2B  O1X 
+  DIHEDRAL C2B  O2B  P2B  O1X 
+  DIHEDRAL O4B  C1B  N9A  C4A 
+  DIHEDRAL C5A  C6A  N6A  H62A 
+END
+
+set message=$old_message echo=$old_echo end

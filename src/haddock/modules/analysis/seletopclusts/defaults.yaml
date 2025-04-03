@@ -1,4 +1,4 @@
-top_cluster:
+top_clusters:
   type: integer
   default: 1000
   min : 1

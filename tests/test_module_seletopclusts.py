@@ -161,7 +161,7 @@ def test_seletopclust_neg_nb_mdls(seletopclust, mocker, clustered_models):
 def test_seletopclust_wrong_clust_param_type(seletopclust, mocker, clustered_models):
     """Test finish_with_error due to wrong cluster parameter type."""
     # Change parameter
-    seletopclust.params["top_cluster"] = "1"
+    seletopclust.params["top_clusters"] = "1"
     # Mock some functions
     seletopclust.previous_io = MockPreviousIO(clustered_models)
     mocker.patch(

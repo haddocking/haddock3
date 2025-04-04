@@ -43,7 +43,7 @@ dependencies = [
   'scipy>=1.10.0',
   'toml>=0.10.2',
   'pandas==2.*',
-  'plotly==6.0.0',
+  'plotly==6.0.1',
   'freesasa>=2.2.1',
 ]
 
@@ -54,7 +54,7 @@ dev = [
   "pytest-cov==6.0.0",
   "hypothesis==6.127.4",
   "pytest-mock==3.14.0",
-  "fastapi==0.115.11",
+  "fastapi==0.115.12",
   "httpx==0.28.1",
   "mpi4py==4.0.3",
   "kaleido==0.2.1",

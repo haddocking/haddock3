@@ -14,7 +14,7 @@
 
 ## Related Issue
 <!-- If this PR is related to an issue, please link it here -->
-<!-- If this PR is has implication on the haddock3 user manual, please link the PR here -->
+<!-- If this PR is related to the haddock3 user manual, please link the PR here -->
 
 ## Additional Info
 <!-- Any additional information that might be helpful, if applicable -->

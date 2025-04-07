@@ -68,12 +68,21 @@ class HaddockModule(ScoringModule):
         self.log("Prodigy jobs have finished")
 
         # Loop over results and set computed scores are attributes to models
+        successes: int = 0
         for model_score in engine.results:
             # point score stored in engine
             prodigy_score = model_score.score
             model_index = model_score.index
             # Point corresponding model
             self.output_models[model_index].score = prodigy_score
+            if prodigy_score:
+                successes += 1
+        
+        # Printing number of successful predictions
+        self.log(
+            f"Number of successful prodigy-ligand predictions: {successes:d} "
+            f"({successes * 100 / len(models_to_score):.2f} %)"
+            )
 
         # Generate a tsv file containing the computed scores
         output_fname = "prodigyligand.tsv"

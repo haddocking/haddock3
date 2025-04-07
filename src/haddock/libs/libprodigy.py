@@ -1,5 +1,6 @@
 """Set of functionalities to run prodigy."""
 
+import logging
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -59,6 +60,9 @@ class ProdigyWorker(ABC):
 
     def _run(self) -> None:
         """Evaluate complex and compute score."""
+        # Patching the logging to not print everything on screen
+        logging.getLogger("Prodigy").setLevel(logging.CRITICAL)
+        # Running the predictions
         self.score = self.pkd_converter(self.evaluate_complex())
 
     def run(self) -> None:

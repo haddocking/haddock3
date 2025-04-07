@@ -28,4 +28,4 @@ def test_WorkflowManager(caplog):
         first_log_line = str(caplog.records[0].message)
         second_log_line = str(caplog.records[1].message)
         assert first_log_line == "Reading instructions step 0_topoaa"
-        assert second_log_line == "Running haddock3-analyse on ./, modules [], with top_cluster = 10"  # noqa : E501
+        assert second_log_line == "Running haddock3-analyse on ./, modules [], with top_clusters = 10"  # noqa : E501

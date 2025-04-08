@@ -1,0 +1,25 @@
+by:
+  default: "score"
+  type: string
+  minchars: 1
+  maxchars: 20
+  choices:
+    - score
+    - sasascore
+  title: Name of the scoring function to be used.
+  short: Name of the scoring function to be used to filter complexes.
+  long: Name of the scoring function to be used to filter complexes. The score must be present and computed before hand.
+  group: analysis
+  explevel: easy
+
+cutoff:
+  default: 0.00
+  type: float
+  min: -99999.99
+  max: 99999.99
+  precision: 2
+  title: Cutoff value to filter complexes.
+  short: Cutoff value to filter complexes.
+  long: Cutoff value to filter complexes. Complexes having higher score than the cutoff value will be filtered out.
+  group: analysis
+  explevel: easy

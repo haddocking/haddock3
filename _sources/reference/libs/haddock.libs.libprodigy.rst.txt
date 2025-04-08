@@ -1,0 +1,7 @@
+libprodigy: classes and functions related to the use of prodigy
+==============================
+
+.. automodule:: haddock.libs.libprodigy
+   :members:
+   :undoc-members:
+   :show-inheritance:

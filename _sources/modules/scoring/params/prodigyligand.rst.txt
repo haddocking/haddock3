@@ -1,0 +1,90 @@
+
+
+Easy
+````
+
+ligand_chain
+~~~~~~~~~~~~
+
+| *default*: 'B'
+| *type*: string
+| *title*: Chain ID of the ligand.
+| *short description*: Chain ID of the ligand.
+| *long description*: Chain of the ligand to score. Used to know in which chain the ligand is found.
+| *group*: scoring
+| *explevel*: easy
+
+ligand_resname
+~~~~~~~~~~~~~~
+
+| *default*: 'UNK'
+| *type*: string
+| *title*: Residue name of the ligand.
+| *short description*: Residue name of the ligand.
+| *long description*: Residue name of the ligand to score. Must be present in the ligand chain.
+| *group*: scoring
+| *explevel*: easy
+
+receptor_chain
+~~~~~~~~~~~~~~
+
+| *default*: 'A'
+| *type*: string
+| *title*: Chain ID of the receptor.
+| *short description*: Chain ID of the receptor.
+| *long description*: Chain ID of the receptor. Used to know what chain should be considered as receptor interacting with the ligand.
+| *group*: scoring
+| *explevel*: easy
+
+temperature
+~~~~~~~~~~~
+
+| *default*: 25.0
+| *type*: float
+| *title*: Temperature (°C) at which to perform the conversion to pKd.
+| *min*: -273.15
+| *max*: 95.0
+| *short description*: Temperature (°C) at which to perform the conversion from deltaG (kcal.mol-1) to pKd.
+| *long description*: Temperature (°C) at which to perform the conversion from deltaG (kcal.mol-1) to pKd.
+| *group*: conversion
+| *explevel*: easy
+
+to_pkd
+~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Converts binding affinity values to pKd.
+| *short description*: Converts binding affinity values to pKd.
+| *long description*: By default, prodigy-lig results in deltaG (kcal.mol-1), but this parameter allows to convert results to pKd.
+| *group*: conversion
+| *explevel*: easy
+
+
+Expert
+``````
+
+distance_cutoff
+~~~~~~~~~~~~~~~
+
+| *default*: 10.5
+| *type*: float
+| *title*: Distance cutoff (Å) to extract amino-acids from the receptor.
+| *min*: 1.0
+| *max*: 100.0
+| *short description*: Distance cutoff (Å) to extract amino-acids from the receptor.
+| *long description*: Distance cutoff (Å) to extract amino-acids from the receptor in contact with the ligand.
+| *group*: scoring
+| *explevel*: expert
+
+electrostatics
+~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Use the electrostatic component.
+| *short description*: Use the electrostatic component from the input model to make the prediction.
+| *long description*: Use the electrostatic component from the input model to make the prediction, if available. The electroststics must have been computed by HADDOCK and written in the REMARK of the model.
+| *group*: scoring
+| *explevel*: expert
+

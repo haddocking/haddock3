@@ -1,0 +1,23 @@
+Ligand binding affinity prediction with PRODIGY-lig
+=============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.scoring.prodigyligand.prodigylig
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.scoring.prodigyligand
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/prodigyligand.rst
+

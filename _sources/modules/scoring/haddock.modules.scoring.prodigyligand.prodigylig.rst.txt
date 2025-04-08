@@ -1,0 +1,7 @@
+haddock.modules.scoring.prodigyligand.prodigylig module
+=======================================================
+
+.. automodule:: haddock.modules.scoring.prodigyligand.prodigylig
+   :members:
+   :undoc-members:
+   :show-inheritance:

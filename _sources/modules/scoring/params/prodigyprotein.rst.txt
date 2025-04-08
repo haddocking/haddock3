@@ -1,0 +1,70 @@
+
+
+Easy
+````
+
+chains
+~~~~~~
+
+| *default*: []
+| *type*: list
+| *title*: Chains to be scored.
+| *short description*: List of chains to be scored. If empty/unspecified, all inter-chains contacts will be considered for the final prediction.
+| *long description*: List of chains to be scored. If empty/unspecified, all inter-chains contacts will be considered for the final prediction. In specific cases, for example antibody-antigen complexes, some chains should be considered as a single molecule. Use the chains parameter to provide a list of chains that should be considered for the calculation. Use commas to include multiple chains as part of a single group. ["A", "B"]      => Contacts calculated (only) between chains A and B. ["A,B", "C"]    => Contacts calculated (only) between chains A and C; and B and C. ["A", "B", "C"] => Contacts calculated (only) between chains A and B; B and C; and A and C.
+| *group*: scoring
+| *explevel*: easy
+
+temperature
+~~~~~~~~~~~
+
+| *default*: 25.0
+| *type*: float
+| *title*: Temperature (°C) at which to perform the conversion to pKd.
+| *min*: -273.15
+| *max*: 95.0
+| *short description*: Temperature (°C) at which to perform the conversion from deltaG (kcal.mol-1) to pKd.
+| *long description*: Temperature (°C) at which to perform the conversion  from deltaG (kcal.mol-1) to pKd.
+| *group*: conversion
+| *explevel*: easy
+
+to_pkd
+~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Converts binding affinity values to pKd.
+| *short description*: Converts binding affinity values to pKd.
+| *long description*: By default, prodigy-lig results in deltaG (kcal.mol-1), but this parameter allows to convert results to pKd.
+| *group*: conversion
+| *explevel*: easy
+
+
+Expert
+``````
+
+accessibility_cutoff
+~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 0.05
+| *type*: float
+| *title*: Accessibility threshold for BSA analysis.
+| *min*: 0.0
+| *max*: 1.0
+| *short description*: Accessibility threshold for BSA analysis.
+| *long description*: Accessibility threshold for BSA analysis.
+| *group*: scoring
+| *explevel*: expert
+
+distance_cutoff
+~~~~~~~~~~~~~~~
+
+| *default*: 5.5
+| *type*: float
+| *title*: Distance cutoff (Å) to extract amino-acids in contact between the two chains.
+| *min*: 1.0
+| *max*: 100.0
+| *short description*: Distance cutoff (Å) to extract amino-acids in contact between the two chains.
+| *long description*: Distance cutoff (Å) to extract amino-acids in contact between the two chains.
+| *group*: scoring
+| *explevel*: expert
+

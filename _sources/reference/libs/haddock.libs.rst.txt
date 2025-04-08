@@ -31,6 +31,7 @@ Submodules
    haddock.libs.libparallel
    haddock.libs.libpdb
    haddock.libs.libplots
+   haddock.libs.libprodigy
    haddock.libs.librestraints
    haddock.libs.libstructure
    haddock.libs.libsubprocess

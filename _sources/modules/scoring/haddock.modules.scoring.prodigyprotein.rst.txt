@@ -1,0 +1,23 @@
+Binding affinity prediction with PRODIGY
+==============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   haddock.modules.scoring.prodigyprotein.prodigy
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.scoring.prodigyprotein
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/prodigyprotein.rst
+

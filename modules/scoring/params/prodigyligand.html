@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easy &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Easy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modules/scoring/params/prodigyligand.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="easy">
+<h1>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h1>
+<section id="ligand-chain">
+<h2>ligand_chain<a class="headerlink" href="#ligand-chain" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘B’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Chain ID of the ligand.</div>
+<div class="line"><em>short description</em>: Chain ID of the ligand.</div>
+<div class="line"><em>long description</em>: Chain of the ligand to score. Used to know in which chain the ligand is found.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-resname">
+<h2>ligand_resname<a class="headerlink" href="#ligand-resname" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘UNK’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Residue name of the ligand.</div>
+<div class="line"><em>short description</em>: Residue name of the ligand.</div>
+<div class="line"><em>long description</em>: Residue name of the ligand to score. Must be present in the ligand chain.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="receptor-chain">
+<h2>receptor_chain<a class="headerlink" href="#receptor-chain" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘A’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Chain ID of the receptor.</div>
+<div class="line"><em>short description</em>: Chain ID of the receptor.</div>
+<div class="line"><em>long description</em>: Chain ID of the receptor. Used to know what chain should be considered as receptor interacting with the ligand.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="temperature">
+<h2>temperature<a class="headerlink" href="#temperature" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 25.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Temperature (°C) at which to perform the conversion to pKd.</div>
+<div class="line"><em>min</em>: -273.15</div>
+<div class="line"><em>max</em>: 95.0</div>
+<div class="line"><em>short description</em>: Temperature (°C) at which to perform the conversion from deltaG (kcal.mol-1) to pKd.</div>
+<div class="line"><em>long description</em>: Temperature (°C) at which to perform the conversion from deltaG (kcal.mol-1) to pKd.</div>
+<div class="line"><em>group</em>: conversion</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="to-pkd">
+<h2>to_pkd<a class="headerlink" href="#to-pkd" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Converts binding affinity values to pKd.</div>
+<div class="line"><em>short description</em>: Converts binding affinity values to pKd.</div>
+<div class="line"><em>long description</em>: By default, prodigy-lig results in deltaG (kcal.mol-1), but this parameter allows to convert results to pKd.</div>
+<div class="line"><em>group</em>: conversion</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+<section id="expert">
+<h1>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h1>
+<section id="distance-cutoff">
+<h2>distance_cutoff<a class="headerlink" href="#distance-cutoff" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.5</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Distance cutoff (Å) to extract amino-acids from the receptor.</div>
+<div class="line"><em>min</em>: 1.0</div>
+<div class="line"><em>max</em>: 100.0</div>
+<div class="line"><em>short description</em>: Distance cutoff (Å) to extract amino-acids from the receptor.</div>
+<div class="line"><em>long description</em>: Distance cutoff (Å) to extract amino-acids from the receptor in contact with the ligand.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="electrostatics">
+<h2>electrostatics<a class="headerlink" href="#electrostatics" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Use the electrostatic component.</div>
+<div class="line"><em>short description</em>: Use the electrostatic component from the input model to make the prediction.</div>
+<div class="line"><em>long description</em>: Use the electrostatic component from the input model to make the prediction, if available. The electroststics must have been computed by HADDOCK and written in the REMARK of the model.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Apr 08, 2025.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

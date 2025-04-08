@@ -9,6 +9,8 @@ Subpackages
 
    haddock.modules.scoring.emscoring
    haddock.modules.scoring.mdscoring
+   haddock.modules.scoring.prodigyligand
+   haddock.modules.scoring.prodigyprotein
    haddock.modules.scoring.sasascore
 
 Module contents

@@ -51,7 +51,7 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(_msg)
 
         if not isinstance(self.params["top_clusters"], int):
-            _msg = "top_cluster must be an integer."
+            _msg = "top_clusters must be an integer."
             self.finish_with_error(_msg)
 
         # Retrieve list of previous models

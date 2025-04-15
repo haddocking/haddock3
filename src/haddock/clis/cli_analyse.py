@@ -68,7 +68,7 @@ INTER_STR = INTERACTIVE_RE_SUFFIX  # suffix of interactive analysis folders
 
 def get_cluster_ranking(
         capri_clt_filename: FilePath,
-        top_cluster: int,
+        top_clusters: int,
         ) -> ClRank:
     """
     Get capri cluster ranking.
@@ -77,7 +77,7 @@ def get_cluster_ranking(
     ----------
     capri_clt_filename : str or Path
         capri cluster filename
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered
 
     Returns
@@ -87,7 +87,7 @@ def get_cluster_ranking(
     """
     cl_ranking: ClRank = {}
     dfcl = read_capri_table(capri_clt_filename)
-    for n in range(min(top_cluster, dfcl.shape[0])):
+    for n in range(min(top_clusters, dfcl.shape[0])):
         cl_ranking[dfcl["cluster_id"].iloc[n]] = dfcl["caprieval_rank"].iloc[n]
     return cl_ranking
 
@@ -144,7 +144,7 @@ ap.add_argument(
 
 ap.add_argument(
     "-t",
-    "--top_cluster",
+    "--top_clusters",
     help="The number of clusters to show.",
     required=False,
     type=int,
@@ -424,7 +424,7 @@ def analyse_step(
     run_dir: FilePath,
     capri_dict: ParamDict,
     target_path: Path,
-    top_cluster: int,
+    top_clusters: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
     is_cleaned: Optional[bool],
@@ -448,7 +448,7 @@ def analyse_step(
         capri dictionary of parameters
     target_path : Path
         path to the output folder
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered
     format : str
         Produce images in the selected format.
@@ -487,7 +487,7 @@ def analyse_step(
     ss_file = Path("capri_ss.tsv")
     clt_file = Path("capri_clt.tsv")
     if clt_file.exists():
-        cluster_ranking = get_cluster_ranking(clt_file, top_cluster)
+        cluster_ranking = get_cluster_ranking(clt_file, top_clusters)
     else:
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
@@ -562,7 +562,7 @@ def validate_format(_format: Optional[ImgFormat]) -> Optional[ImgFormat]:
 def main(
     run_dir: FilePath,
     modules: list[int],
-    top_cluster: int,
+    top_clusters: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
     inter: Optional[bool],
@@ -583,7 +583,7 @@ def main(
     modules : list of ints
         List of the integer prefix of the modules to copy.
 
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered.
 
     format : str
@@ -610,7 +610,7 @@ def main(
     log.level = 20
     log.info(
         f"Running haddock3-analyse on {run_dir}, modules {modules}, "
-        f"with top_cluster = {top_cluster}"
+        f"with top_clusters = {top_clusters}"
     )
     # Validate output format
     format = validate_format(format)
@@ -669,7 +669,7 @@ def main(
                 Path("./"),
                 capri_dict,
                 target_path,
-                top_cluster,
+                top_clusters,
                 format,
                 scale,
                 is_cleaned,

@@ -75,7 +75,7 @@ class WorkflowManager:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)  # type: ignore
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
-        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None,
+        cli_analyse("./", capri_steps, top_clusters=10, format=None, scale=None,
                 inter=False, is_cleaned=is_cleaned, offline=offline, mode=mode, ncores=ncores)
         # call cli_traceback. If it fails, it's not a big deal
         try:

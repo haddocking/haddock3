@@ -48,7 +48,7 @@ def select_top_clusts_models(
         cluster_rankins_str = ",".join(map(str, cluster_rankings))
         notes.append(f"Selecting all clusters: {cluster_rankins_str}")
     else:
-        # select top_cluster clusters
+        # select top_clusters clusters
         cluster_rankings = cluster_rankings[:top_clusters]
         cluster_rankins_str = ",".join(map(str, cluster_rankings))
         notes.append(

@@ -371,6 +371,24 @@ def get_top_ranked_mapping(
         clustered_topX: int = 4,
         unclustered_topX: int = 10,
         ) -> dict[Path, Path]:
+    """Obtain mapping of top ranked files to their future paths.
+
+    Parameters
+    ----------
+    capri_filename : FilePath
+        capri_ss.tsv filepath
+    cluster_ranking : ClRank
+        Cluster ranking, if the form of {cluster_id: cluster_rank} dictionary
+    clustered_topX : int, optional
+        Number of models to access per cluster. Default is 4.
+    unclustered_topX : int, optional
+        Number of unclustered models to access. Default is 10.
+
+    Returns
+    -------
+    top_ranked_mapping : dict[Path, Path]
+        Mapping between original filepath and new (future) one
+    """
     # Set mapping of generated files
     top_ranked_mapping: dict[Path, Path] = {}
 

@@ -927,9 +927,25 @@ def clt_table_handler(
                 path: str,
                 top_ranked_mapping: Optional[dict[Path, Path]],
                 ) -> str:
+            """Prepend model paths in capri_ss files get their relative paths.
+
+            Parameters
+            ----------
+            path : str
+                Original path to a model file.
+            top_ranked_mapping : Optional[dict[Path, Path]]
+                Optional filepath mapping of top ranked models.
+
+            Returns
+            -------
+            new_path : str
+                New path to the file
+            """
             try:
+                # If top ranked is provided, use that information
                 new_path = top_ranked_mapping[path]
             except (KeyError, TypeError, ):
+                # Otherwise just prepend by `../`
                 new_path = f"../{path}"
             return new_path
         

@@ -6,6 +6,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch: ~
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
 
 jobs:
   ci:

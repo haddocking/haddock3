@@ -160,8 +160,8 @@ class HaddockModule(BaseCNSModule):
         lines = text.split(os.linesep)
         REMARK_lines = (line for line in lines if line.startswith("REMARK"))
         re_origin = re.compile(
-            "REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
-        )  # noqa : E501
+            r"REMARK\s+MODEL\s+(\d+)\s+(FROM|from|From)\s+(([\w_-]+\.?)+)"
+        )
         for line in REMARK_lines:
             if match := re_origin.search(line):
                 model_num = int(match.group(1).strip())

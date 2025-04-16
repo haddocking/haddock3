@@ -433,6 +433,7 @@ class OPENMM:
                 f"{pdb_filepath}:\n{strerr}.{os.linesep}"
                 "Continuing from unequilibrated solvent frame."
                 )
+            return pdb_filepath
 
     def _stabilize_temperature(
             self,

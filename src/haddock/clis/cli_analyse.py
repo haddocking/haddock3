@@ -200,7 +200,7 @@ def maincli() -> None:
 
 def get_cluster_ranking(
         capri_clt_filename: FilePath,
-        top_cluster: int,
+        top_clusters: int,
         ) -> ClRank:
     """
     Get capri cluster ranking.
@@ -209,7 +209,7 @@ def get_cluster_ranking(
     ----------
     capri_clt_filename : str or Path
         capri cluster filename
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered
 
     Returns
@@ -219,7 +219,7 @@ def get_cluster_ranking(
     """
     cl_ranking: ClRank = {}
     dfcl = read_capri_table(capri_clt_filename)
-    for n in range(min(top_cluster, dfcl.shape[0])):
+    for n in range(min(top_clusters, dfcl.shape[0])):
         cl_ranking[dfcl["cluster_id"].iloc[n]] = dfcl["caprieval_rank"].iloc[n]
     return cl_ranking
 
@@ -632,7 +632,7 @@ def analyse_step(
             clt_filename,
             ss_filename,
             is_cleaned,
-            topX_clusters=top_cluster,
+            topX_clusters=top_clusters,
             clustered_topX=clustered_topX,
             unclustered_topX=unclustered_topX,
             top_ranked_mapping=top_ranked_mapping if self_contained else None,

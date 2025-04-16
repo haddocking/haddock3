@@ -142,16 +142,25 @@
     <span class="c1"># `unpack_compressed_and_archived_files` so that the</span>
     <span class="c1"># uncompressing routines when restarting the run work.</span>
 
+    <span class="c1"># Files to delete (all)</span>
+    <span class="n">file_to_delete_all</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;mpi.pkl&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="n">file_to_delete_all</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">glob_folder</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">extension</span><span class="p">):</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
     <span class="c1"># Files to delete</span>
     <span class="c1"># deletes all except the first one</span>
-    <span class="n">files_to_delete</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># (keeping one for debugging purposes)</span>
+    <span class="n">files_to_delete</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;.inp&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.inp.gz&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.out&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.out.gz&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.job&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.err&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="n">files_to_delete</span><span class="p">:</span>
         <span class="n">flist</span> <span class="o">=</span> <span class="n">glob_folder</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">extension</span><span class="p">)</span>
@@ -159,11 +168,11 @@
             <span class="n">Path</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
 
     <span class="c1"># files to archive (all files in single .gz)</span>
-    <span class="n">files_to_archive</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">files_to_archive</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;.seed&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.seed.gz&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.con&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="n">archive_ready</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_archive_and_remove_files</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
     <span class="n">_ncores</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ncores</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">files_to_archive</span><span class="p">))</span>
@@ -173,13 +182,13 @@
             <span class="k">pass</span>
 
     <span class="c1"># files to compress in .gz</span>
-    <span class="n">files_to_compress</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">files_to_compress</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">&quot;.inp&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.out&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.pdb&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.psf&quot;</span><span class="p">,</span>
         <span class="s2">&quot;.cnserr&quot;</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">ftc</span> <span class="ow">in</span> <span class="n">files_to_compress</span><span class="p">:</span>
         <span class="n">found</span> <span class="o">=</span> <span class="n">compress_files_ext</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ftc</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span><span class="p">)</span>
@@ -197,9 +206,11 @@
 <span class="c1"># eventually this function can be moved to `libs.libio` in case of future need.</span>
 <div class="viewcode-block" id="unpack_compressed_and_archived_files">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.clean_steps.html#haddock.gear.clean_steps.unpack_compressed_and_archived_files">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">unpack_compressed_and_archived_files</span><span class="p">(</span><span class="n">folders</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FilePathT</span><span class="p">],</span>
-                                         <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                                         <span class="n">dec_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpack_compressed_and_archived_files</span><span class="p">(</span>
+        <span class="n">folders</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FilePathT</span><span class="p">],</span>
+        <span class="n">ncores</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">dec_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Unpack compressed and archived files in a folders.</span>
 

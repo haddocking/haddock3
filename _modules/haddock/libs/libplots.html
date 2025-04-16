@@ -1000,7 +1000,15 @@
 
 <div class="viewcode-block" id="clt_table_handler">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libplots.html#haddock.libs.libplots.clt_table_handler">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">clt_table_handler</span><span class="p">(</span><span class="n">clt_file</span><span class="p">,</span> <span class="n">ss_file</span><span class="p">,</span> <span class="n">is_cleaned</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clt_table_handler</span><span class="p">(</span>
+        <span class="n">clt_file</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">ss_file</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+        <span class="n">is_cleaned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">topX_clusters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">clustered_topX</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">unclustered_topX</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">top_ranked_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a dataframe including data for tables.</span>
 
@@ -1030,22 +1038,50 @@
     <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># if the run will be cleaned, the structures are going to be gzipped</span>
-    <span class="k">if</span> <span class="n">is_cleaned</span><span class="p">:</span>
-        <span class="c1"># substitute the values in the df by adding .gz at the end</span>
-        <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-            <span class="n">to_replace</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;(\.pdb)$&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.pdb.gz&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">top_ranked_mapping</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_cleaned</span><span class="p">:</span>
+            <span class="c1"># substitute the values in the df by adding .gz at the end</span>
+            <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="n">to_replace</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;(\.pdb)$&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.pdb.gz&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ss_file is in NN_caprieval/ while report is in</span>
+        <span class="c1"># analysis/NN_caprieval_analysis/</span>
+        <span class="c1"># need to correct model paths by prepending ../</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">correct_relative_paths</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                <span class="n">top_ranked_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span>
+                <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Prepend model paths in capri_ss files get their relative paths.</span>
 
-    <span class="c1"># ss_file is in NN_caprieval/ while report is in</span>
-    <span class="c1"># analysis/NN_caprieval_analysis/</span>
-    <span class="c1"># need to correct model paths by prepending ../</span>
-    <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;../</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            path : str</span>
+<span class="sd">                Original path to a model file.</span>
+<span class="sd">            top_ranked_mapping : Optional[dict[Path, Path]]</span>
+<span class="sd">                Optional filepath mapping of top ranked models.</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            new_path : str</span>
+<span class="sd">                New path to the file</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># If top ranked is provided, use that information</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="n">top_ranked_mapping</span><span class="p">[</span><span class="n">path</span><span class="p">]</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="p">):</span>
+                <span class="c1"># Otherwise just prepend by `../`</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;../</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">new_path</span>
+        
+        <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">correct_relative_paths</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">top_ranked_mapping</span><span class="p">)</span>
+            <span class="p">)</span>
 
     <span class="n">is_unclustered</span> <span class="o">=</span> <span class="n">clusters_df</span><span class="p">[</span><span class="s2">&quot;cluster_rank&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;-&quot;</span><span class="p">]</span>
     <span class="c1"># If unclustered, we only want to show the top 10 structures in a table.</span>
     <span class="k">if</span> <span class="n">is_unclustered</span><span class="p">:</span>
-        <span class="n">max_unstructured_structures</span> <span class="o">=</span> <span class="mi">10</span>
-        <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[:</span><span class="n">max_unstructured_structures</span><span class="p">]</span>
+        <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[:</span><span class="n">unclustered_topX</span><span class="p">]</span>
         <span class="n">cols2keep</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;caprieval_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">AXIS_NAMES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">cols2keep</span><span class="p">]</span>
         <span class="c1"># model has ../../01_rigidbody/rigidbody_62.pdb.gz</span>
@@ -1056,11 +1092,11 @@
     <span class="n">clusters_df</span><span class="p">,</span> <span class="n">structs_df</span> <span class="o">=</span> <span class="n">create_other_cluster</span><span class="p">(</span>
         <span class="n">clusters_df</span><span class="p">,</span>
         <span class="n">structs_df</span><span class="p">,</span>
-        <span class="n">max_clusters</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">max_clusters</span><span class="o">=</span><span class="n">topX_clusters</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">clusters_df</span> <span class="o">=</span> <span class="n">clean_capri_table</span><span class="p">(</span><span class="n">clusters_df</span><span class="p">)</span>
-    <span class="n">structs_df</span> <span class="o">=</span> <span class="n">find_best_struct</span><span class="p">(</span><span class="n">structs_df</span><span class="p">,</span> <span class="n">max_best_structs</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">structs_df</span> <span class="o">=</span> <span class="n">find_best_struct</span><span class="p">(</span><span class="n">structs_df</span><span class="p">,</span> <span class="n">max_best_structs</span><span class="o">=</span><span class="n">clustered_topX</span><span class="p">)</span>
     <span class="n">df_merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">clusters_df</span><span class="p">,</span> <span class="n">structs_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;cluster_id&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">df_merged</span></div>
 

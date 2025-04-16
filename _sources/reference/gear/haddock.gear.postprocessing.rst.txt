@@ -1,0 +1,7 @@
+haddock.gear.postprocessing module
+==================================
+
+.. automodule:: haddock.gear.postprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:

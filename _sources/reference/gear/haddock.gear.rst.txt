@@ -15,6 +15,7 @@ Submodules
    haddock.gear.haddockmodel
    haddock.gear.known_cns_errors
    haddock.gear.parameters
+   haddock.gear.postprocessing
    haddock.gear.prepare_run
    haddock.gear.preprocessing
    haddock.gear.restart_run

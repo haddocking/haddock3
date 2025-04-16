@@ -43,7 +43,7 @@ dependencies = [
   'scipy>=1.10.0',
   'toml>=0.10.2',
   'pandas==2.*',
-  'prodigy-prot>=2',
+  'prodigy-prot==2.3.0',
   'prodigy-lig>=1.1',
   'plotly==6.0.1',
   'freesasa>=2.2.1',

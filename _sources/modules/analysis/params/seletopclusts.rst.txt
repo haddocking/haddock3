@@ -14,8 +14,8 @@ sortby
 | *group*: analysis
 | *explevel*: easy
 
-top_cluster
-~~~~~~~~~~~
+top_clusters
+~~~~~~~~~~~~
 
 | *default*: 1000
 | *type*: integer

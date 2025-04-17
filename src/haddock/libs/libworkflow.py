@@ -78,7 +78,7 @@ class WorkflowManager:
         cli_analyse(
             "./",
             capri_steps,
-            top_cluster=10,
+            top_clusters=10,
             format=None,
             scale=None,
             inter=False,

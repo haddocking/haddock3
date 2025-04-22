@@ -39,9 +39,9 @@ class CheckInstall:
 
     @staticmethod
     def import_prodigy_libs() -> None:
-        """Run prodigy CLI with help."""
-        import prodigy_prot.predict_IC  # noqa : F401
-        import prodigy_lig.prodigy_lig  # noqa : F401
+        """Import prodigy prot and lig libraries."""
+        import prodigy_prot  # noqa : F401
+        import prodigy_lig  # noqa : F401
         return None
 
 

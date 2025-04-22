@@ -32,7 +32,7 @@ def fixture_scored_models() -> list[PDBFile]:
     """Set of PDBfiles to be filtered."""
     models: list[PDBFile] = []
     # Create 5 models with 5 different scores
-    for i in range(-10, -15, -1):  # -10, -11, -12, -13, -14
+    for i in range(5, -5, -1):  # 5, 4, 3, 2, 1, 0, -1, -2, -3, -4
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as temp_f:
             dst = temp_f.name
             src = Path(golden_data, "protprot_complex_1.pdb")
@@ -76,12 +76,11 @@ def test_init(filter):
     assert len(filter.params.keys()) != 0
 
 
-def test_filter_expected_behavior(filter, mocker, scored_models):
+def test_filter_default_parameters(filter, mocker, scored_models):
     """Test normal behavior of the filtering module."""
     # Change parameter
-    cutoff = -12
-    filter.params["by"] = "score"
-    filter.params["cutoff"] = cutoff
+    threshold = 0.0
+    filter.params["threshold"] = threshold
     # Mock some functions
     filter.previous_io = MockPreviousIO(scored_models)
     mocker.patch(
@@ -89,25 +88,11 @@ def test_filter_expected_behavior(filter, mocker, scored_models):
         return_value=None,
     )
     filter.run()
-    assert len(filter.output_models) == 3
+    # Check that models with positive values were filtered out
+    assert len(filter.output_models) == 4
+    # Check that their values is under the threshold
     for m in filter.output_models:
-        assert m.score <= cutoff
-
-
-def test_filter_wrong_by(filter, mocker, scored_models):
-    """Test expected error when filtering score not present."""
-    # Change parameter
-    filter.params["by"] = "HopeItsNotThereAndWillNeverBe"
-    # Mock some functions
-    filter.previous_io = MockPreviousIO(scored_models)
-    mocker.patch(
-        "haddock.modules.BaseHaddockModule.finish_with_error",
-        side_effect=Exception("mocked error"),
-    )
-    with pytest.raises(Exception) as moked_finish_with_error:
-        # run main module _run() function
-        filter.run()
-    assert moked_finish_with_error.value.__str__() == "mocked error"
+        assert m.score < threshold
 
 
 def test_filter_cutoff_too_strigent(filter, mocker, scored_models):
@@ -117,8 +102,7 @@ def test_filter_cutoff_too_strigent(filter, mocker, scored_models):
     we must terminate the run as nothing can be performed afterwards.
     """
     # Change parameter
-    filter.params["by"] = "score"
-    filter.params["cutoff"] = -1000
+    filter.params["threshold"] = -1000
     # Mock some functions
     filter.previous_io = MockPreviousIO(scored_models)
     mocker.patch(

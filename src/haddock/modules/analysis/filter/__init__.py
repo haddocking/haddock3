@@ -54,13 +54,12 @@ class HaddockModule(BaseHaddockModule):
         
         # Get the filter by parameter
         filter_by = "score"
-        threshold = self.params["cutoff"]
+        threshold = self.params["threshold"]
 
         # Make sure we can access this attribute on models
-        without_score_values = {"FAKE", None}
         models_with_attributes: list[PDBFile] = [
             m for m in models
-            if getattr(m, filter_by, "FAKE") not in without_score_values
+            if getattr(m, filter_by, None) != None
             ]
         
         # Check how many of them are available
@@ -78,19 +77,19 @@ class HaddockModule(BaseHaddockModule):
         # Process to the actual filtering step
         filtered_models: list[PDBFile] = [
             m for m in models_with_attributes
-            if getattr(m, filter_by) <= threshold
+            if getattr(m, filter_by) < threshold
             ]
 
         # Final evaluation of the outcome of the filtering
         percent_filtered = (1 - (len(filtered_models) / len(models))) * 100
         if len(filtered_models) == 0:
             self.finish_with_error(
-                f"With the currently set 'cutoff' value of {threshold}, "
+                f"With the currently set 'threshold' value of {threshold}, "
                 "ALL models were filtered out."
                 )
         else:
             self.log(
-                f"With currently set 'cutoff' value of {threshold}, "
+                f"With currently set 'threshold' value of {threshold}, "
                 f"{percent_filtered:6.2f}% of the models were filtered out."
                 )
 

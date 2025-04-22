@@ -8,6 +8,7 @@ from pdbtools.pdb_splitchain import run as split_chain
 from pdbtools.pdb_splitmodel import run as split_model
 from pdbtools.pdb_tidy import run as tidy_pdbfile
 
+from haddock.core.exceptions import SetupError
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.typing import (
     Callable,
@@ -108,6 +109,7 @@ _to_rename = {
     " 0.00969": " 0.00   ",
     }
 
+# Get list of supported residues to keep when pre-processing
 _to_keep = list(supported_residues)
 
 
@@ -183,8 +185,15 @@ def sanitize(
                 res = line[17:20].strip()
                 if res and res in _to_keep:
                     good_lines.append(line)
+        # Terminate file with an END statement
         if len(good_lines) > 0 and good_lines[-1] != "END":
             good_lines.append("END")
+
+    # Check if anything has been kept from this file
+    if len(good_lines) == 0:
+        raise SetupError(
+            f"No coordinates kept after sanitzing {pdb_file_path.name}."
+        )
 
     if overwrite:
         with open(pdb_file_path, "w") as output_handler:

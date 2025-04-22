@@ -23,6 +23,7 @@ not done automatically on purpose.
 * ``protein-allhdg5-4.top``
 * ``solvent-allhdg5-4.top``
 * ``shape.top``
+* ``cofactors.top``
 
 DNA-related files are all concatenated into a single DNA-supported
 residues datastructure. The same occurs for protein residues (natural or
@@ -42,6 +43,7 @@ supported residue names:
 * :py:data:`supported_nucleic_resnames`
 * :py:data:`supported_solvents_resnames`
 * :py:data:`supported_shape`
+* :py:data:`supported_cofactors_resnames`
 
 * :py:data:`supported_ATOM` (contains residues and nucleic acids)
 * :py:data:`supported_HETATM` (everything not contained in ATOM)
@@ -199,7 +201,7 @@ def _read_residues_from_top_file(
     atoms: list[str] = []
     charges: list[str] = []
     residues: list[CNSTopologyResidue] = []
-    in_residue = False
+    in_residue: bool = False
 
     # all lines are striped before looping
     for line in map(str.strip, lines):  # it is important to strip spaces
@@ -285,6 +287,7 @@ def read_supported_residues(
     * ``protein-allhdg5-4.top``
     * ``solvent-allhdg5-4.top``
     * ``shape.top``
+    * ``cofactors.top``
 
     You need to edit this function to account for any additional
     ``.top`` file that is added to the ``source_path`` on top of the
@@ -309,6 +312,7 @@ def read_supported_residues(
     protein_martini_top = Path(source_path, "protein-CG-Martini.top")
     solvent_top = Path(source_path, "solvent-allhdg5-4.top")
     shape_top = Path(source_path, "shape.top")
+    cofactors_top = Path(source_path, "cofactors.top")
 
     # supported Residues (tuple of namedtuples)
     supported_carbohydrates = read_residues_from_top_file(carbo_top)
@@ -347,6 +351,7 @@ def read_supported_residues(
 
     supported_solvents = read_residues_from_top_file(solvent_top)
     supported_shape = read_residues_from_top_file(shape_top)
+    supported_cofactors = read_residues_from_top_file(cofactors_top)
 
     # supported resnames
     supported_carbo_resnames = get_resnames(supported_carbohydrates)
@@ -358,6 +363,7 @@ def read_supported_residues(
     supported_aminoacids_resnames = get_resnames(supported_aminoacids)
     supported_solvents_resnames = get_resnames(supported_solvents)
     supported_shape_resnames = get_resnames(supported_shape)
+    supported_cofactors_resnames = get_resnames(supported_cofactors)
 
     # other attributes
     for ion in supported_single_ions:
@@ -380,6 +386,7 @@ def read_supported_residues(
         supported_aminoacids_resnames,
         supported_solvents_resnames,
         supported_shape_resnames,
+        supported_cofactors_resnames,
         )
 
 
@@ -394,7 +401,8 @@ _supported_carbo_resnames, \
     _supported_multiatom_ions_resnames, \
     _supported_aminoacids_resnames, \
     _supported_solvents_resnames, \
-    _supported_shape_resnames = read_supported_residues(toppar_path)
+    _supported_shape_resnames, \
+    _supported_cofactors_resnames = read_supported_residues(toppar_path)
 
 # render docstrings
 supported_carbo_resnames = set(_supported_carbo_resnames)
@@ -439,6 +447,9 @@ supported_solvents_resnames = set(_supported_solvents_resnames)
 supported_shape_resnames = set(_supported_shape_resnames)
 """Supported shape."""
 
+supported_cofactors_resnames = set(_supported_cofactors_resnames)
+"""Supported cofactors."""
+
 #
 # Residues that must be set as ATOM
 supported_ATOM = set(it.chain(
@@ -461,6 +472,7 @@ supported_non_ions = set(it.chain(
     supported_hemes_resnames,
     supported_solvents_resnames,
     supported_shape_resnames,
+    supported_cofactors_resnames,
     ))
 
 # Residues that must be set as HETATM
@@ -471,6 +483,7 @@ supported_HETATM = set(it.chain(
     supported_single_ions_resnames,
     supported_multiatom_ions_resnames,
     supported_solvents_resnames,
+    supported_cofactors_resnames,
     ))
 """
 Supported ``HETATM`` residues.
@@ -481,3 +494,4 @@ in PDB files for HADDOCK3.
 
 supported_residues = supported_ATOM.union(supported_HETATM)
 """All HADDOCK3 supported residues."""
+

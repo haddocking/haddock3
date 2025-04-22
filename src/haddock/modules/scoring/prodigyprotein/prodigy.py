@@ -48,7 +48,8 @@ class ProdigyProtein(ProdigyWorker):
         deltaG : float
             The computed DeltaG of the input complex.
         """
-        from prodigy_prot.predict_IC import parse_structure, Prodigy
+        from prodigy_prot.modules.prodigy import Prodigy
+        from prodigy_prot.modules.parsers import parse_structure
         structure, _n_chains, _n_res = parse_structure(self.model)
         prodigy = Prodigy(structure, self.chains, self.temperature)
         prodigy.predict(

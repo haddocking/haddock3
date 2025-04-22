@@ -2,8 +2,13 @@ import tempfile
 from pathlib import Path
 import os
 import shutil
-from haddock.libs.libworkflow import WorkflowManager
+
+from haddock.clis.cli import main as cli_main
+from haddock.clis.cli_analyse import main as cli_analyse
+from haddock.clis.cli_re import maincli
 from haddock.core.typing import Any
+from haddock.libs.libworkflow import WorkflowManager
+
 from integration_tests import GOLDEN_DATA
 
 
@@ -66,7 +71,7 @@ def test_interactive_analysis_on_workflow(monkeypatch):
 
         monkeypatch.chdir(tmpdir)
 
-        from haddock.clis.cli import main as cli_main
+        
         cli_main(
             Path("workflow.cfg"),
         )
@@ -85,7 +90,7 @@ def test_interactive_analysis_on_workflow(monkeypatch):
 
         # now running interactive re-clustering
         clustfcc_dir = f"{run_dir}/2_clustfcc"
-        from haddock.clis.cli_re import maincli
+        
         # faking sys.argv in input to haddock3-re
         monkeypatch.setattr("sys.argv",
                             ["haddock3-re", "clustfcc", clustfcc_dir, "-f", "0.7"]
@@ -106,14 +111,15 @@ def test_interactive_analysis_on_workflow(monkeypatch):
         assert Path(run_dir, "3_caprieval_interactive/capri_ss.tsv").exists() is True
 
         # now analyse the interactive folders
-        from haddock.clis.cli_analyse import main as cli_analyse
-        cli_analyse(run_dir,
-                    [2,3],
-                    10,
-                    format=None,
-                    scale=None,
-                    is_cleaned=True,
-                    inter=True)
+        cli_analyse(
+            run_dir,
+            [2, 3],
+            10,
+            format=None,
+            scale=None,
+            is_cleaned=True,
+            inter=True,
+            )
         exp_clustfcc_dir = Path(run_dir, "analysis", "2_clustfcc_interactive_analysis")
         exp_caprieval_dir = Path(run_dir, "analysis", "3_caprieval_interactive_analysis")
         assert os.path.isdir(exp_clustfcc_dir) is True

@@ -43,7 +43,9 @@ class MockPreviousIO():
         # set models cluster ids
         models[0].clt_id = None
         models[1].clt_id = 1
+        models[1].clt_rank = 2
         models[2].clt_id = 1
+        models[2].clt_rank = 2
         return models
 
 
@@ -61,8 +63,8 @@ def test_contactmap_example(contactmap, mocker):
     # check outputs
     output_bp = contactmap.path
     # clt_id == None
-    clustNone_tsv_fpath = f'{output_bp}/Unclustered_contmap_contactmap_rigidbody_3_cltid_None_contacts.tsv'  # noqa : E501
-    clustNone_html_fpath = f'{output_bp}/Unclustered_contmap_contactmap_rigidbody_3_cltid_None_heatmap.html'  # noqa : E501
+    clustNone_tsv_fpath = f'{output_bp}/Unclustered_contactmap_rigidbody_3_cltid_None_contacts.tsv'  # noqa : E501
+    clustNone_html_fpath = f'{output_bp}/Unclustered_contactmap_rigidbody_3_cltid_None_heatmap.html'  # noqa : E501
     assert os.path.exists(clustNone_tsv_fpath)
     assert Path(clustNone_tsv_fpath).stat().st_size != 0
     assert os.path.exists(clustNone_html_fpath)
@@ -71,8 +73,8 @@ def test_contactmap_example(contactmap, mocker):
     Path(clustNone_html_fpath).unlink(missing_ok=False)
 
     # clt_id == 1
-    clust1_tsv_fpath = f'{output_bp}/cluster1_contmap_contacts.tsv'
-    clust1_html_fpath = f'{output_bp}/cluster1_contmap_heatmap.html'
+    clust1_tsv_fpath = f'{output_bp}/cluster1_rank2_contacts.tsv'
+    clust1_html_fpath = f'{output_bp}/cluster1_rank2_heatmap.html'
     assert os.path.exists(clust1_tsv_fpath)
     assert Path(clust1_tsv_fpath).stat().st_size != 0
     assert os.path.exists(clust1_html_fpath)

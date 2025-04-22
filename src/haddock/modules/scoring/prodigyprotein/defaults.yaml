@@ -1,0 +1,64 @@
+chains:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 20
+  title: Chains to be scored.
+  short: List of chains to be scored. If empty/unspecified, all inter-chains
+   contacts will be considered for the final prediction.
+  long: List of chains to be scored. If empty/unspecified, all inter-chains
+   contacts will be considered for the final prediction. In specific cases,
+   for example antibody-antigen complexes, some chains should be considered
+   as a single molecule. Use the chains parameter to provide a list of chains
+   that should be considered for the calculation. Use commas to include
+   multiple chains as part of a single group.
+   ["A", "B"]      => Contacts calculated (only) between chains A and B.
+   ["A,B", "C"]    => Contacts calculated (only) between chains A and C; and B and C.
+   ["A", "B", "C"] => Contacts calculated (only) between chains A and B; B and C; and A and C.
+  group: scoring
+  explevel: easy
+
+distance_cutoff:
+  default: 5.5
+  type: float
+  min: 1.00
+  max: 100.00
+  precision: 2
+  title: Distance cutoff (Å) to extract amino-acids in contact between the two chains.
+  short: Distance cutoff (Å) to extract amino-acids in contact between the two chains.
+  long: Distance cutoff (Å) to extract amino-acids in contact between the two chains.
+  group: scoring
+  explevel: expert
+
+accessibility_cutoff:
+  default: 0.05
+  type: float
+  min: 0.00
+  max: 1.00
+  precision: 2
+  title: Accessibility threshold for BSA analysis.
+  short: Accessibility threshold for BSA analysis.
+  long: Accessibility threshold for BSA analysis.
+  group: scoring
+  explevel: expert
+
+temperature:
+  default: 25.00
+  type: float
+  min: -273.15
+  max: 95.00
+  precision: 2
+  title: Temperature (°C) at which to perform the conversion to pKd.
+  short: Temperature (°C) at which to perform the conversion from deltaG (kcal.mol-1) to pKd.
+  long: Temperature (°C) at which to perform the conversion  from deltaG (kcal.mol-1) to pKd.
+  group: conversion
+  explevel: easy
+
+to_pkd:
+  default: true
+  type: boolean
+  title: Converts binding affinity values to pKd.
+  short: Converts binding affinity values to pKd.
+  long: By default, prodigy-lig results in deltaG (kcal.mol-1), but this parameter allows to convert results to pKd.
+  group: conversion
+  explevel: easy

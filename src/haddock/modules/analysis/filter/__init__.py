@@ -77,7 +77,7 @@ class HaddockModule(BaseHaddockModule):
         # Process to the actual filtering step
         filtered_models: list[PDBFile] = [
             m for m in models_with_attributes
-            if getattr(m, filter_by) < threshold
+            if getattr(m, filter_by) <= threshold
             ]
 
         # Final evaluation of the outcome of the filtering

@@ -89,10 +89,10 @@ def test_filter_default_parameters(filter, mocker, scored_models):
     )
     filter.run()
     # Check that models with positive values were filtered out
-    assert len(filter.output_models) == 4
+    assert len(filter.output_models) == 5
     # Check that their values is under the threshold
     for m in filter.output_models:
-        assert m.score < threshold
+        assert m.score <= threshold
 
 
 def test_filter_cutoff_too_strigent(filter, mocker, scored_models):

@@ -14,7 +14,7 @@ from . import golden_data
 
 
 class MockPreviousIO:
-    """A mocking class holding specific methods."""
+    """Mocking class to retrieve models."""
 
     def __init__(self, models):
         self.models = models
@@ -29,7 +29,7 @@ class MockPreviousIO:
 
 @pytest.fixture(name="scored_models")
 def fixture_scored_models() -> list[PDBFile]:
-    """Set of clustered PDBfiles."""
+    """Set of PDBfiles to be filtered."""
     models: list[PDBFile] = []
     # Create 5 models with 5 different scores
     for i in range(-10, -15, -1):  # -10, -11, -12, -13, -14
@@ -77,7 +77,7 @@ def test_init(filter):
 
 
 def test_filter_expected_behavior(filter, mocker, scored_models):
-    """Test finish_with_error due to wrong cluster parameter type."""
+    """Test normal behavior of the filtering module."""
     # Change parameter
     cutoff = -12
     filter.params["by"] = "score"
@@ -95,7 +95,7 @@ def test_filter_expected_behavior(filter, mocker, scored_models):
 
 
 def test_filter_wrong_by(filter, mocker, scored_models):
-    """Test finish_with_error due to wrong nb models parameter value."""
+    """Test expected error when filtering score not present."""
     # Change parameter
     filter.params["by"] = "HopeItsNotThereAndWillNeverBe"
     # Mock some functions
@@ -111,7 +111,11 @@ def test_filter_wrong_by(filter, mocker, scored_models):
 
 
 def test_filter_cutoff_too_strigent(filter, mocker, scored_models):
-    """Test finish_with_error due to wrong cluster parameter type."""
+    """Test expected error when filtering cutoff is too strigent.
+    
+    Here we expect that if not models are passed to the next module,
+    we must terminate the run as nothing can be performed afterwards.
+    """
     # Change parameter
     filter.params["by"] = "score"
     filter.params["cutoff"] = -1000

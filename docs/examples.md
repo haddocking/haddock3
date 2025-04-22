@@ -3,7 +3,8 @@
 The HADDOCK3 `examples/` directory contains various subdirectories and config files
 corresponding to different types of complexes, scenarios and data.
 
-1. [docking-antibody-antigen](#docking-antibogy-antigen)
+1. [docking-antibody-antigen](#docking-antibody-antigen)
+1. [docking-nanobody-antigen](#docking-nanobody-antigen)
 1. [docking-protein-DNA](#docking-protein-dna)
 1. [docking-protein-glycan](#docking-protein-glycan)
 1. [docking-protein-homotrimer](#docking-protein-homotrimer)
@@ -24,7 +25,7 @@ Each directory contains both:
 The following examples are currently provided:
 
 
-## docking-antibogy-antigen
+## docking-antibody-antigen
 
 An antibody-antigen docking example making use only of the knowledge of the hypervariables (HV) loops on the antibody to guide the docking. This is the same complex used in our [HADDOCK2.4 webserver tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/); refer to it for more details. Three different ways of using the knowledge of the HV loop residues are illustrated:
 
@@ -41,6 +42,15 @@ Three different protocols/workflows are illustrated:
 3) 1000 rigidbody docking models, selection of top200 and flexible refinement + EM of those (default sampling in the case in which the epitope has been determined by NMR: [docking-antibody-antigen-CDR-NMR-CSP-full.cfg](../examples/docking-antibody-antigen/docking-antibody-antigen-CDR-NMR-CSP-full.cfg))
 
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
+## docking-nanobody-antigen
+
+A nanobody-antigen docking example making use of different levels of knowledge about the antigen epitope.
+
+The standard HADDOCK workflow is used for all the cases, with 1000 `rigidbody` docking models, selection of top200 for flexible refinement (`flexref`) + energy minimisation (`emref`).
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
 
 ## docking-protein-dna
 

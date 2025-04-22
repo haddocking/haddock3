@@ -92,7 +92,7 @@ ap.add_argument(
 
 ap.add_argument(
     "-t",
-    "--top_cluster",
+    "--top_clusters",
     help="The number of clusters to show.",
     required=False,
     type=int,
@@ -200,7 +200,7 @@ def maincli() -> None:
 
 def get_cluster_ranking(
         capri_clt_filename: FilePath,
-        top_cluster: int,
+        top_clusters: int,
         ) -> ClRank:
     """
     Get capri cluster ranking.
@@ -209,7 +209,7 @@ def get_cluster_ranking(
     ----------
     capri_clt_filename : str or Path
         capri cluster filename
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered
 
     Returns
@@ -219,7 +219,7 @@ def get_cluster_ranking(
     """
     cl_ranking: ClRank = {}
     dfcl = read_capri_table(capri_clt_filename)
-    for n in range(min(top_cluster, dfcl.shape[0])):
+    for n in range(min(top_clusters, dfcl.shape[0])):
         cl_ranking[dfcl["cluster_id"].iloc[n]] = dfcl["caprieval_rank"].iloc[n]
     return cl_ranking
 
@@ -512,7 +512,7 @@ def analyse_step(
     run_dir: FilePath,
     capri_dict: ParamDict,
     target_path: Path,
-    top_cluster: int,
+    top_clusters: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
     is_cleaned: Optional[bool],
@@ -539,7 +539,7 @@ def analyse_step(
         capri dictionary of parameters
     target_path : Path
         path to the output folder
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered
     format : str
         Produce images in the selected format.
@@ -594,8 +594,9 @@ def analyse_step(
 
     log.info("CAPRI files identified")
     # plotting
+
     if clt_filename.exists():
-        cluster_ranking = get_cluster_ranking(clt_filename, top_cluster)
+        cluster_ranking = get_cluster_ranking(clt_filename, top_clusters)
     else:
         raise Exception(f"clustering file {clt_filename} does not exist")
     if ss_filename.exists():
@@ -631,7 +632,7 @@ def analyse_step(
             clt_filename,
             ss_filename,
             is_cleaned,
-            topX_clusters=top_cluster,
+            topX_clusters=top_clusters,
             clustered_topX=clustered_topX,
             unclustered_topX=unclustered_topX,
             top_ranked_mapping=top_ranked_mapping if self_contained else None,
@@ -689,7 +690,7 @@ def validate_format(_format: Optional[ImgFormat]) -> Optional[ImgFormat]:
 def main(
     run_dir: FilePath,
     modules: list[int],
-    top_cluster: int,
+    top_clusters: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
     inter: Optional[bool],
@@ -709,7 +710,7 @@ def main(
         Path to the original run directory.
     modules : list of ints
         List of the integer prefix of the modules to copy.
-    top_cluster : int
+    top_clusters : int
         Number of clusters to be considered.
     format : str
         Produce images in the selected format.
@@ -731,7 +732,7 @@ def main(
     log.level = 20
     log.info(
         f"Running haddock3-analyse on {run_dir}, modules {modules}, "
-        f"with top_cluster = {top_cluster}"
+        f"with top_clusters = {top_clusters}"
     )
     # Validate output format
     format = validate_format(format)
@@ -789,7 +790,7 @@ def main(
                 Path("./"),
                 capri_dict,
                 target_path,
-                top_cluster,
+                top_clusters,
                 format,
                 scale,
                 is_cleaned,

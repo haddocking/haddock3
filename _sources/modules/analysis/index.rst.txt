@@ -12,6 +12,7 @@ Subpackages
    haddock.modules.analysis.clustfcc
    haddock.modules.analysis.clustrmsd
    haddock.modules.analysis.contactmap
+   haddock.modules.analysis.filter
    haddock.modules.analysis.ilrmsdmatrix
    haddock.modules.analysis.rmsdmatrix
    haddock.modules.analysis.seletop

@@ -1,0 +1,15 @@
+Filtering of models based on their score
+=======================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.analysis.filter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/filter.rst
+

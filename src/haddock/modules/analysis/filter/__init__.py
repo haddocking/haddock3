@@ -1,12 +1,18 @@
-"""Filter models based on cutoff value.
+"""Filter models based on their score.
 
-This module filters models from the input models based on a cutoff value.
-By default, the selection is based on the HADDOCK score of the models.
+This module filters the input models based on their score using a threshold
+value. Models having higher score than the threshold value are filtered out.
 
-The number of models to be selected is unknown and by the parameter `select`.
-In the standard HADDOCK protocol, this number is 200, which can be increased
-if more models should be refined.
+The number of models to be selected is unknown, and is the set of models that
+have a score below the defined threshold.
+For this module to be functional, a score must be first computed. This can be
+performed by running a CNS module or a scoring module. If scores are not
+accessible, the workflow will terminate with an error message.
+
+If the threshold value is too stringent, resulting in no models passed to the
+next module, the workflow will stop with an error message.
 """
+
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML

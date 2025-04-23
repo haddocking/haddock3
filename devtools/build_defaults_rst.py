@@ -43,6 +43,7 @@ MODULE_TITLE_DICT = {
     "sasascore": "Surface Accessibility Scoring module",
     "prodigyprotein": "Binding affinity prediction with PRODIGY",
     "prodigyligand": "Ligand binding affinity prediction with PRODIGY-lig",
+    "filter": "Filtering of models based on their score",
 }
 
 CATEGORY_TITLE_DICT = {

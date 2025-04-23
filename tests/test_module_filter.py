@@ -98,7 +98,7 @@ def test_filter_default_parameters(filter, mocker, scored_models):
 def test_filter_cutoff_too_strigent(filter, mocker, scored_models):
     """Test expected error when filtering cutoff is too strigent.
     
-    Here we expect that if not models are passed to the next module,
+    Here we expect that if no models are passed to the next module,
     we must terminate the run as nothing can be performed afterwards.
     """
     # Change parameter

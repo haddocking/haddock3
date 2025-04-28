@@ -150,6 +150,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">active1</span><span class="p">,</span> <span class="n">passive1</span> <span class="o">=</span> <span class="n">parse_actpass_file</span><span class="p">(</span><span class="n">actpass_one</span><span class="p">)</span>
     <span class="n">active2</span><span class="p">,</span> <span class="n">passive2</span> <span class="o">=</span> <span class="n">parse_actpass_file</span><span class="p">(</span><span class="n">actpass_two</span><span class="p">)</span>
+    <span class="c1"># Check if there are active residues in at least one of the two files</span>
+    <span class="k">if</span> <span class="n">active1</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">and</span> <span class="n">active2</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No active residues found in </span><span class="si">{</span><span class="n">actpass_one</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">actpass_two</span><span class="si">}</span><span class="s2">. &quot;</span>
+             <span class="s2">&quot;No restraints will be generated.&quot;</span>
+            <span class="p">)</span>
     <span class="n">active_passive_to_ambig</span><span class="p">(</span><span class="n">active1</span><span class="p">,</span> <span class="n">passive1</span><span class="p">,</span> <span class="n">active2</span><span class="p">,</span> <span class="n">passive2</span><span class="p">,</span> <span class="n">segid_one</span><span class="p">,</span> <span class="n">segid_two</span><span class="p">)</span>
     
     <span class="k">return</span></div>
@@ -164,7 +170,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 24, 2025.
+      <span class="lastupdated">Last updated on Apr 28, 2025.
       </span></p>
   </div>
 

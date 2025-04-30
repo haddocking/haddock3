@@ -67,17 +67,18 @@ def fixture_params_all():
 
 
 @pytest.fixture(name="protdna_caprimodule")
-def fixture_protdna_caprimodule(protdna_input_list, params):
+def fixture_protdna_caprimodule(protdna_input_list_cg, params):
     """Protein-DNA CAPRI module."""
-    reference = protdna_input_list[0]
-    model = protdna_input_list[1]
-    _path = protdna_input_list[0].path
+    reference = protdna_input_list_cg[0]
+    model = protdna_input_list_cg[1]
+    _path = protdna_input_list_cg[0].path
     capri = CAPRI(
         identificator=42,
         reference=reference,
         model=model,
         path=_path,
         params=params,
+        cg="martini2",
     )
 
     yield capri
@@ -401,25 +402,25 @@ def test_protlig_allatoms(protlig_caprimodule):
 def test_protdna_irmsd(protdna_caprimodule):
     """Test protein-dna i-rmsd calculation."""
     protdna_caprimodule.calc_irmsd()
-    assert np.isclose(protdna_caprimodule.irmsd, 2.05, atol=0.01)
+    assert np.isclose(protdna_caprimodule.irmsd, 2.09, atol=0.01)
 
 
 def test_protdna_lrmsd(protdna_caprimodule):
     """Test protein-dna l-rmsd calculation."""
     protdna_caprimodule.calc_lrmsd()
-    assert np.isclose(protdna_caprimodule.lrmsd, 6.13, atol=0.01)
+    assert np.isclose(protdna_caprimodule.lrmsd, 6.32, atol=0.01)
 
 
 def test_protdna_ilrmsd(protdna_caprimodule):
     """Test protein-dna i-l-rmsd calculation."""
     protdna_caprimodule.calc_ilrmsd()
-    assert np.isclose(protdna_caprimodule.ilrmsd, 5.97, atol=0.01)
+    assert np.isclose(protdna_caprimodule.ilrmsd, 6.05, atol=0.01)
 
 
 def test_protdna_fnat(protdna_caprimodule):
     """Test protein-dna fnat calculation."""
-    protdna_caprimodule.calc_fnat()
-    assert np.isclose(protdna_caprimodule.fnat, 0.49, atol=0.01)
+    protdna_caprimodule.calc_fnat(cutoff=7.0)
+    assert np.isclose(protdna_caprimodule.fnat, 0.58, atol=0.01)
 
 
 def test_protdna_allatoms(protdna_caprimodule):
@@ -430,9 +431,10 @@ def test_protdna_allatoms(protdna_caprimodule):
         protdna_caprimodule.model,
         protdna_caprimodule.reference,
         full=protdna_caprimodule.allatoms,
+        cg="martini2",
     )
     # Compute values with all atoms calculations
-    protdna_caprimodule.calc_fnat()
+    protdna_caprimodule.calc_fnat(cutoff=7.0)
     protdna_caprimodule.calc_lrmsd()
     protdna_caprimodule.calc_irmsd()
     protdna_caprimodule.calc_ilrmsd()
@@ -440,9 +442,9 @@ def test_protdna_allatoms(protdna_caprimodule):
     # align protdna_complex_1 and chain A and not hydrogen, protdna_complex_2 and chain A and not hydrogen, cycles=0
     # rms_cur protdna_complex_1 and chain B and not hydrogen, protdna_complex_2 and chain B and not hydrogen
     assert np.isclose(protdna_caprimodule.lrmsd, 6.194, atol=0.01)
-    assert np.isclose(protdna_caprimodule.irmsd, 2.321, atol=0.01)
-    assert np.isclose(protdna_caprimodule.ilrmsd, 5.955, atol=0.01)
-    assert np.isclose(protdna_caprimodule.fnat, 0.4878, atol=0.01)
+    assert np.isclose(protdna_caprimodule.irmsd, 2.176, atol=0.01)
+    assert np.isclose(protdna_caprimodule.ilrmsd, 5.87, atol=0.01)
+    assert np.isclose(protdna_caprimodule.fnat, 0.583, atol=0.01)
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list_cg):
@@ -452,7 +454,6 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list_cg
     observed_interface = protprot_caprimodule.identify_interface(
         protprot_complex, cutoff=7.0, cg='martini2'
     )
-    print(observed_interface)
     expected_interface = {
         'A': [96, 39, 37, 94, 38, 45, 40, 132, 71, 43],
         'B': [17, 54, 51, 48, 16, 12, 53, 11, 52, 56, 47]
@@ -462,16 +463,17 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list_cg
         assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
-def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
+def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list_cg):
     """Test the interface identification."""
-    protdna_complex = protdna_input_list[0]
+    protdna_complex = protdna_input_list_cg[0]
 
     observed_interface = protdna_caprimodule.identify_interface(
-        protdna_complex, cutoff=5.0
+        protdna_complex, cutoff=7.0, cg="martini2"
     )
+    print(observed_interface)
     expected_interface = {
-        "A": [10, 16, 17, 18, 27, 28, 29, 30, 32, 33, 38, 39, 41, 42, 43, 44],
-        "B": [4, 3, 2, 33, 32, 5, 6, 34, 35, 31, 7, 30],
+        'A': [29, 44, 30, 39, 32, 28, 43, 10, 40, 26, 16, 41, 27, 33, 42, 18, 17, 38],
+        'B': [4, 31, 32, 30, 34, 3, 6, 33, 7, 5, 2, 35],
     }
 
     for ch in expected_interface.keys():
@@ -789,9 +791,9 @@ def test_protdna_swapped_chains(protdna_caprimodule):
     protdna_caprimodule.r_chain = "B"
     protdna_caprimodule.l_chain = "A"
     protdna_caprimodule.calc_lrmsd()
-    assert np.isclose(protdna_caprimodule.lrmsd, 4.81, atol=0.01)
+    assert np.isclose(protdna_caprimodule.lrmsd, 4.84, atol=0.01)
     protdna_caprimodule.calc_ilrmsd()
-    assert np.isclose(protdna_caprimodule.ilrmsd, 4.91, atol=0.01)
+    assert np.isclose(protdna_caprimodule.ilrmsd, 4.90, atol=0.01)
 
 
 def test_capri_run(mocker, monkeypatch):

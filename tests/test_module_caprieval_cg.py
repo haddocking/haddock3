@@ -145,17 +145,18 @@ def fixture_protprot_allatm_caprimodule(protprot_input_list_cg, params_all):
 
 
 @pytest.fixture(name="protprot_1bkd_caprimodule")
-def fixture_protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
+def fixture_protprot_1bkd_caprimodule(protprot_1bkd_input_list_cg, params):
     """Protein-Protein CAPRI module for target 1BKD."""
-    reference = protprot_1bkd_input_list[0]
-    model = protprot_1bkd_input_list[1]
-    _path = protprot_1bkd_input_list[0].path
+    reference = protprot_1bkd_input_list_cg[0]
+    model = protprot_1bkd_input_list_cg[1]
+    _path = protprot_1bkd_input_list_cg[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
         path=_path,
         params=params,
+        cg='martini2',
     )
 
     yield capri
@@ -255,10 +256,10 @@ def test_protprot_fnat(protprot_caprimodule):
 def test_protprot_dockq(protprot_caprimodule):
     """Test protein-protein dockq calculation."""
     protprot_caprimodule.irmsd = 7.38
-    protprot_caprimodule.fnat = 0.05
+    protprot_caprimodule.fnat = 0.095
     protprot_caprimodule.lrmsd = 15.9
     protprot_caprimodule.calc_dockq()
-    assert np.isclose(protprot_caprimodule.dockq, 0.10, atol=0.01)
+    assert np.isclose(protprot_caprimodule.dockq, 0.11, atol=0.01)
 
 
 def test_protprot_global_rmsd(protprot_caprimodule):
@@ -299,34 +300,34 @@ def test_protprot_allatoms(protprot_allatm_caprimodule):
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_irmsd(cutoff=10.0)
-    assert np.isclose(protprot_1bkd_caprimodule.irmsd, 8.16, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.irmsd, 7.89, atol=0.01)
 
 
 def test_protprot_1bkd_lrmsd(protprot_1bkd_caprimodule):
     """Test protein-protein l-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_lrmsd()
-    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 28.47, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 28.45, atol=0.01)
 
 
 def test_protprot_1bkd_ilrmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_ilrmsd()
-    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 21.71, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 20.82, atol=0.01)
 
 
 def test_protprot_1bkd_fnat(protprot_1bkd_caprimodule):
     """Test protein-protein fnat calculation."""
-    protprot_1bkd_caprimodule.calc_fnat()
-    assert np.isclose(protprot_1bkd_caprimodule.fnat, 0.07, atol=0.01)
+    protprot_1bkd_caprimodule.calc_fnat(cutoff=7.0)
+    assert np.isclose(protprot_1bkd_caprimodule.fnat, 0.05, atol=0.01)
 
 
 def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
     """Test protein-protein dockq calculation."""
     protprot_1bkd_caprimodule.irmsd = 8.16
-    protprot_1bkd_caprimodule.fnat = 0.07
+    protprot_1bkd_caprimodule.fnat = 0.05
     protprot_1bkd_caprimodule.lrmsd = 28.47
     protprot_1bkd_caprimodule.calc_dockq()
-    assert np.isclose(protprot_1bkd_caprimodule.dockq, 0.06, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.dockq, 0.05, atol=0.01)
 
 
 def test_protprot_1bkd_allatoms(protprot_1bkd_caprimodule):
@@ -337,19 +338,20 @@ def test_protprot_1bkd_allatoms(protprot_1bkd_caprimodule):
         protprot_1bkd_caprimodule.model,
         protprot_1bkd_caprimodule.reference,
         full=protprot_1bkd_caprimodule.allatoms,
+        cg="martini2"
     )
     # Compute values with all atoms calculations
-    protprot_1bkd_caprimodule.calc_fnat()
+    protprot_1bkd_caprimodule.calc_fnat(cutoff=7.0)
     protprot_1bkd_caprimodule.calc_lrmsd()
     protprot_1bkd_caprimodule.calc_irmsd()
     protprot_1bkd_caprimodule.calc_ilrmsd()
     # Check l-rmsd with Pymol cmd
     # align protprot_1bkd_1 and chain A and not hydrogen, protprot_1bkd_2 and chain A and not hydrogen, cycles=0
     # rms_cur protprot_1bkd_1 and chain R and not hydrogen, protprot_1bkd_2 and chain R and not hydrogen
-    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 28.530, atol=0.01)
-    assert np.isclose(protprot_1bkd_caprimodule.irmsd, 8.181, atol=0.01)
-    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 21.5878, atol=0.01)
-    assert np.isclose(protprot_1bkd_caprimodule.fnat, 0.07, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 28.366, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.irmsd, 7.96, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 20.5376, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.fnat, 0.05, atol=0.01)
 
 
 def test_protlig_irmsd(protlig_caprimodule):
@@ -776,9 +778,9 @@ def test_protprot_1bkd_swapped_chains(protprot_1bkd_caprimodule):
     protprot_1bkd_caprimodule.r_chain = "S"
     protprot_1bkd_caprimodule.l_chain = "R"
     protprot_1bkd_caprimodule.calc_lrmsd()
-    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 19.21, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.lrmsd, 19.17, atol=0.01)
     protprot_1bkd_caprimodule.calc_ilrmsd()
-    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 16.33, atol=0.01)
+    assert np.isclose(protprot_1bkd_caprimodule.ilrmsd, 15.15, atol=0.01)
 
 
 # TODO: Move to integration tests

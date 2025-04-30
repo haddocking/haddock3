@@ -105,17 +105,18 @@ def fixture_protlig_caprimodule(protlig_input_list, params):
 
 
 @pytest.fixture(name="protprot_caprimodule")
-def fixture_protprot_caprimodule(protprot_input_list, params):
+def fixture_protprot_caprimodule(protprot_input_list_cg, params):
     """Protein-Protein CAPRI module."""
-    reference = protprot_input_list[0]
-    model = protprot_input_list[1]
-    _path = protprot_input_list[0].path
+    reference = protprot_input_list_cg[0]
+    model = protprot_input_list_cg[1]
+    _path = protprot_input_list_cg[0].path
     capri = CAPRI(
         identificator=str(42),
         reference=reference,
         model=model,
         path=_path,
         params=params,
+        cg='martini2',
     )
 
     yield capri
@@ -124,17 +125,18 @@ def fixture_protprot_caprimodule(protprot_input_list, params):
 
 
 @pytest.fixture(name="protprot_allatm_caprimodule")
-def fixture_protprot_allatm_caprimodule(protprot_input_list, params_all):
+def fixture_protprot_allatm_caprimodule(protprot_input_list_cg, params_all):
     """Protein-Protein CAPRI module."""
-    reference = protprot_input_list[0]
-    model = protprot_input_list[1]
-    _path = protprot_input_list[0].path
+    reference = protprot_input_list_cg[0]
+    model = protprot_input_list_cg[1]
+    _path = protprot_input_list_cg[0].path
     capri = CAPRI(
         identificator=42,
         reference=reference,
         model=model,
         path=_path,
         params=params_all,
+        cg='martini2',
     )
 
     yield capri
@@ -226,28 +228,28 @@ def test_protprot_irmsd(protprot_caprimodule):
     """Test protein-protein i-rmsd calculation."""
     # using standard cutoff
     protprot_caprimodule.calc_irmsd(cutoff=10.0)
-    assert np.isclose(protprot_caprimodule.irmsd, 8.33, atol=0.01)
+    assert np.isclose(protprot_caprimodule.irmsd, 8.26, atol=0.01)
     # using default cutoff = 5.0
     protprot_caprimodule.calc_irmsd()
-    assert np.isclose(protprot_caprimodule.irmsd, 7.38, atol=0.01)
+    assert np.isclose(protprot_caprimodule.irmsd, 7.37, atol=0.01)
 
 
 def test_protprot_lrmsd(protprot_caprimodule):
     """Test protein-protein l-rmsd calculation."""
     protprot_caprimodule.calc_lrmsd()
-    assert np.isclose(protprot_caprimodule.lrmsd, 20.94, atol=0.01)
+    assert np.isclose(protprot_caprimodule.lrmsd, 20.83, atol=0.01)
 
 
 def test_protprot_ilrmsd(protprot_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
     protprot_caprimodule.calc_ilrmsd()
-    assert np.isclose(protprot_caprimodule.ilrmsd, 18.25, atol=0.01)
+    assert np.isclose(protprot_caprimodule.ilrmsd, 17.57, atol=0.01)
 
 
 def test_protprot_fnat(protprot_caprimodule):
     """Test protein-protein fnat calculation."""
-    protprot_caprimodule.calc_fnat()
-    assert np.isclose(protprot_caprimodule.fnat, 0.05, atol=0.01)
+    protprot_caprimodule.calc_fnat(cutoff=7.0)
+    assert np.isclose(protprot_caprimodule.fnat, 0.095, atol=0.01)
 
 
 def test_protprot_dockq(protprot_caprimodule):
@@ -262,7 +264,7 @@ def test_protprot_dockq(protprot_caprimodule):
 def test_protprot_global_rmsd(protprot_caprimodule):
     """Test protein-protein l-rmsd calculation."""
     protprot_caprimodule.calc_global_rmsd()
-    assert np.isclose(protprot_caprimodule.rmsd, 8.62, atol=0.01)
+    assert np.isclose(protprot_caprimodule.rmsd, 8.59, atol=0.01)
 
 
 def test_protprot_bb_vs_all_atoms(
@@ -291,7 +293,7 @@ def test_protprot_allatoms(protprot_allatm_caprimodule):
     protprot_allatm_caprimodule.calc_irmsd()
     protprot_allatm_caprimodule.calc_ilrmsd()
     # process checks
-    assert np.isclose(protprot_allatm_caprimodule.lrmsd, 21.10, atol=0.01)
+    assert np.isclose(protprot_allatm_caprimodule.lrmsd, 21.34, atol=0.01)
 
 
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
@@ -441,18 +443,17 @@ def test_protdna_allatoms(protdna_caprimodule):
     assert np.isclose(protdna_caprimodule.fnat, 0.4878, atol=0.01)
 
 
-
-
-def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
+def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list_cg):
     """Test the interface identification."""
-    protprot_complex = protprot_input_list[0]
+    protprot_complex = protprot_input_list_cg[0]
 
     observed_interface = protprot_caprimodule.identify_interface(
-        protprot_complex, cutoff=5.0
+        protprot_complex, cutoff=7.0, cg='martini2'
     )
+    print(observed_interface)
     expected_interface = {
-        "A": [37, 38, 39, 43, 45, 71, 75, 90, 94, 96, 132],
-        "B": [52, 51, 16, 54, 53, 56, 11, 12, 17, 48],
+        'A': [96, 39, 37, 94, 38, 45, 40, 132, 71, 43],
+        'B': [17, 54, 51, 48, 16, 12, 53, 11, 52, 56, 47]
     }
 
     for ch in expected_interface.keys():
@@ -509,31 +510,34 @@ def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
         assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
-def test_load_contacts(protprot_input_list):
+def test_load_contacts(protprot_input_list_cg):
     """Test loading contacts."""
-    protprot_complex = protprot_input_list[0]
-    observed_con_set = load_contacts(protprot_complex, cutoff=5.0)
+    protprot_complex = protprot_input_list_cg[0]
+    observed_con_set = load_contacts(
+        protprot_complex, cutoff=7.0, cg="martini2"
+        )
     expected_con_set = {
-        ("A", 39, "B", 52),
-        ("A", 43, "B", 54),
-        ("A", 45, "B", 56),
-        ("A", 38, "B", 16),
-        ("A", 75, "B", 17),
-        ("A", 94, "B", 16),
-        ("A", 39, "B", 51),
-        ("A", 39, "B", 54),
-        ("A", 90, "B", 17),
-        ("A", 96, "B", 17),
-        ("A", 45, "B", 12),
-        ("A", 39, "B", 53),
-        ("A", 38, "B", 51),
-        ("A", 132, "B", 48),
-        ("A", 71, "B", 17),
-        ("A", 132, "B", 51),
-        ("A", 90, "B", 16),
-        ("A", 94, "B", 51),
-        ("A", 37, "B", 52),
-        ("A", 45, "B", 11),
+        ('A', 37, 'B', 52),
+        ('A', 45, 'B', 56),
+        ('A', 39, 'B', 53),
+        ('A', 38, 'B', 51),
+        ('A', 132, 'B', 47),
+        ('A', 37, 'B', 48),
+        ('A', 94, 'B', 16),
+        ('A', 39, 'B', 52),
+        ('A', 45, 'B', 12),
+        ('A', 43, 'B', 54),
+        ('A', 38, 'B', 16),
+        ('A', 71, 'B', 17),
+        ('A', 96, 'B', 17),
+        ('A', 39, 'B', 51),
+        ('A', 40, 'B', 16),
+        ('A', 39, 'B', 54),
+        ('A', 132, 'B', 51),
+        ('A', 38, 'B', 52),
+        ('A', 45, 'B', 11),
+        ('A', 132, 'B', 48),
+        ('A', 94, 'B', 51),
     }
 
     assert observed_con_set == expected_con_set
@@ -560,9 +564,9 @@ def test_calc_stats():
     assert np.isclose(observed_std, 1.3, atol=0.01)
 
 
-def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list, monkeypatch):
+def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list_cg, monkeypatch):
     """Test the cluster analysis."""
-    model1, model2 = protprot_input_list[0], protprot_input_list[1]
+    model1, model2 = protprot_input_list_cg[0], protprot_input_list_cg[1]
     model1.clt_rank, model2.clt_rank = 1, 2
     model1.clt_id, model2.clt_id = 1, 2
     model1.score, model2.score = 42.0, 50.0

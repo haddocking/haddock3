@@ -75,7 +75,7 @@ def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
 
 def maincli() -> None:
     """Execute main client."""
-    cli(ap, main)
+    cli(_ap(), main)
 
 
 def main(
@@ -117,6 +117,7 @@ def main(
         get_initial_greeting,
         gen_feedback_messages,
         )
+    from haddock.gear.postprocessing import archive_run
     from haddock.gear.prepare_run import setup_run
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
@@ -181,10 +182,7 @@ def main(
         restart_step = restart
         WorkflowManager_ = WorkflowManager
 
-    with (
-        working_directory(_run_dir),
-        log_error_and_exit(),
-    ):
+    with (working_directory(_run_dir), log_error_and_exit()):
         workflow = WorkflowManager_(
             workflow_params=params,
             start=restart_step,
@@ -193,9 +191,19 @@ def main(
 
         # Main loop of execution
         workflow.run()
+
+        # Run post-processing steps
         if other_params["postprocess"]:
-            workflow.postprocess()
+            workflow.postprocess(self_contained=other_params["gen_archive"])
+        # Clean outputs
         workflow.clean()
+
+    # Generate archive of the run
+    if other_params["gen_archive"]:
+        _run_archive, _analysis_archive = archive_run(_run_dir)
+        log.info(f"Run archive created: {_run_archive}!")
+        if _analysis_archive:
+            log.info(f"Run analysis archive created: {_analysis_archive}")
 
     # Finish
     end = time()

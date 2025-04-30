@@ -64,6 +64,12 @@ def actpass_to_ambig(actpass_one, actpass_two, segid_one, segid_two):
     """
     active1, passive1 = parse_actpass_file(actpass_one)
     active2, passive2 = parse_actpass_file(actpass_two)
+    # Check if there are active residues in at least one of the two files
+    if active1 == [] and active2 == []:
+        raise ValueError(
+            f"No active residues found in {actpass_one} and {actpass_two}. "
+             "No restraints will be generated."
+            )
     active_passive_to_ambig(active1, passive1, active2, passive2, segid_one, segid_two)
     
     return

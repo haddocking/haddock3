@@ -87,6 +87,16 @@ def test_actpass_to_ambig(capsys):
         assert out_lines[7] == "assign (resi 1 and segid B)"
 
 
+def test_actpass_to_ambig_no_active(capsys):
+    """Test actpass_to_ambig function with no active residues."""
+    with tempfile.NamedTemporaryFile() as tmp:
+        tmp.write(b"\n2")
+        tmp.flush()
+        # running actpass to ambig should raise a ValueError
+        with pytest.raises(ValueError, match=r"No active residues found"):
+            actpass_to_ambig(tmp.name, tmp.name, "A", "B")
+
+
 def test_validate_tbl(example_tbl_file, capsys):
     """Test validate_tbl function."""
     validate_tbl(example_tbl_file, pcs=False, quick=True, silent=True)

@@ -92,8 +92,8 @@ contribute to that folder and respective files. Summarizing here:
 * Any general hard definitions, or physical constants, should go in the
   `core/` folder.
 * If you want to implement a new HADDOCK3 module, navigate to the
-  `modules/` folder and follow the instructions in the `README` file
-  there. You will see that all folders and files follow a pattern.
+  `src/haddock/modules/_template_cat` folder and follow the instructions in the `README.md`
+  file there. You will see that all folders and files follow a pattern.
 * Talk with us before developing any CNS related part.
 
 ### 1.2 Contributing with tests (additional details)

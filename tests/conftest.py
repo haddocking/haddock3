@@ -81,6 +81,32 @@ def fixture_protprot_1bkd_input_list():
         yield [pdb_obj_1, pdb_obj_2]
 
 
+@pytest.fixture(name="protprot_1bkd_input_list_cg")
+def fixture_protprot_1bkd_input_list_cg():
+    """
+    Prot-prot input for target 1bkd.
+
+    Heterogeneous ensemble and big protein.
+    """
+    with (
+        tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_1,
+        tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_2,
+    ):
+        dst_prot_1 = tmp_1.name
+        dst_prot_2 = tmp_2.name
+
+        src_prot_1 = Path(golden_data, "protprot_1bkd_1_cg.pdb")
+        src_prot_2 = Path(golden_data, "protprot_1bkd_2_cg.pdb")
+
+        shutil.copy(src_prot_1, dst_prot_1)
+        shutil.copy(src_prot_2, dst_prot_2)
+
+        pdb_obj_1 = PDBFile(file_name=dst_prot_1, path=Path(dst_prot_1).parent)
+        pdb_obj_2 = PDBFile(file_name=dst_prot_2, path=Path(dst_prot_2).parent)
+
+        yield [pdb_obj_1, pdb_obj_2]
+
+
 @pytest.fixture(name="protdna_input_list")
 def fixture_protdna_input_list():
     """Prot-DNA input."""

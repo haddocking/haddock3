@@ -130,7 +130,7 @@ def fixture_protdna_input_list():
 
 
 @pytest.fixture(name="protdna_input_list_cg")
-def fixture_protdna_input_list():
+def fixture_protdna_input_list_cg():
     """Prot-DNA input."""
     with (
         tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_1,

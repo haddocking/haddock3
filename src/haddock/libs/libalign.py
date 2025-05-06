@@ -153,6 +153,7 @@ PROT_SIDE_CHAINS_DICT_MARTINI2 = {
     "LSN": ['BB', 'SC1', 'SC2'],
     "ARG": ['BB', 'SC1', 'SC2'],
     "ARG0": ['BB', 'SC1', 'SC2'],
+    "HIS": ['BB', 'SC1', 'SC2', 'SC3'],
     "HSE": ['BB', 'SC1', 'SC2', 'SC3'],
     "HSD": ['BB', 'SC1', 'SC2', 'SC3'],
     "HSP": ['BB', 'SC1', 'SC2', 'SC3'],

@@ -52,10 +52,6 @@ def fixture_protein():
 @pytest.fixture(name="topocg")
 def fixture_topocg(monkeypatch):
     """topocg module fixture"""
-    #tempdir = tempfile.mkdtemp()  # does NOT auto-delete
-    #monkeypatch.chdir(tempdir)
-    #print(f"Temp dir: {tempdir}")  # helpful for debugging
-    #yield Topocg(order=1, path=Path("."), initial_params=topocg_params)
     with tempfile.TemporaryDirectory() as tempdir:
         monkeypatch.chdir(tempdir)
         yield Topocg(order=1, path=Path("."), initial_params=topocg_params)

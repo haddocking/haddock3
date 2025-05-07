@@ -624,7 +624,7 @@ def test_identify_protprotinterface_cg(protprot_caprimodule_cg, protprot_input_l
     protprot_complex = protprot_input_list_cg[0]
 
     observed_interface = protprot_caprimodule_cg.identify_interface(
-        protprot_complex, cutoff=7.0, ff='martini2'
+        protprot_complex, cutoff=7.0, ff="martini2"
     )
     print(observed_interface)
     expected_interface = {

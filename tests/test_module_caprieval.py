@@ -234,7 +234,7 @@ def fixture_protprot_caprimodule_cg(protprot_input_list_cg, params):
         model=model,
         path=_path,
         params=params,
-        ff='martini2',
+        ff="martini2",
     )
 
     yield capri

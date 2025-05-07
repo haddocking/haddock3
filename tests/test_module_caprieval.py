@@ -254,7 +254,7 @@ def fixture_protprot_allatm_caprimodule_cg(protprot_input_list_cg, params_all):
         model=model,
         path=_path,
         params=params_all,
-        ff='martini2',
+        ff="martini2",
     )
 
     yield capri

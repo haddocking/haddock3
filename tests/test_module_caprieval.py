@@ -370,14 +370,12 @@ def test_protprot_all_cg(protprot_caprimodule_cg):
     assert np.isclose(protprot_caprimodule_cg.ilrmsd, 17.57, atol=0.01)
     # fnat
     protprot_caprimodule_cg.calc_fnat(cutoff=7.0)
-    print(protprot_caprimodule_cg.fnat)
     assert np.isclose(protprot_caprimodule_cg.fnat, 0.083, atol=0.01)
 
 
 def test_protprot_global_rmsd_cg(protprot_caprimodule_cg):
     """Test protein-protein global rmsd calculation."""
     protprot_caprimodule_cg.calc_global_rmsd()
-    print(protprot_caprimodule_cg.rmsd)
     assert np.isclose(protprot_caprimodule_cg.rmsd, 8.59, atol=0.01)
 
 
@@ -407,7 +405,6 @@ def test_protprot_allatoms_cg(protprot_allatm_caprimodule_cg):
     protprot_allatm_caprimodule_cg.calc_irmsd()
     protprot_allatm_caprimodule_cg.calc_ilrmsd()
     # process checks
-    print(protprot_allatm_caprimodule_cg.lrmsd)
     assert np.isclose(protprot_allatm_caprimodule_cg.lrmsd, 21.00, atol=0.01)
 
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
@@ -626,7 +623,6 @@ def test_identify_protprotinterface_cg(protprot_caprimodule_cg, protprot_input_l
     observed_interface = protprot_caprimodule_cg.identify_interface(
         protprot_complex, cutoff=7.0, ff="martini2"
     )
-    print(observed_interface)
     expected_interface = {
         'A': [37, 38, 39, 40, 43, 45, 71, 75, 90, 94, 96, 132],
         'B': [11, 12, 15, 16, 17, 47, 48, 51, 52, 53, 54, 56]

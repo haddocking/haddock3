@@ -163,11 +163,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Loop over first `top_models` models</span>
             <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">clt_mdls</span><span class="p">[:</span><span class="n">top_models</span><span class="p">]:</span>
-                <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;&gt; cluster_</span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">clt_rank</span><span class="si">}</span><span class="s2">_&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">clt_model_rank</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
-                    <span class="p">)</span>
                 <span class="n">models_to_export</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">models_to_export</span><span class="p">,</span> <span class="n">notes</span></div>
 
@@ -351,7 +346,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on May 02, 2025.
+      <span class="lastupdated">Last updated on May 07, 2025.
       </span></p>
   </div>
 

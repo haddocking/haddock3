@@ -112,7 +112,7 @@ def load_contacts(
     cutoff: float = 5.0,
     numbering_dic: Optional[dict[str, dict[int, int]]] = None,
     model2ref_chain_dict: Optional[dict[str, str]] = None,
-    cg: str = "aa"
+    ff: str = "aa"
 ) -> set[tuple]:
     """Load residue-based contacts.
 
@@ -122,6 +122,8 @@ def load_contacts(
         PDB file of the model to have its atoms identified
     cutoff : float, optional
         Cutoff distance for the interface identification.
+    ff : string
+        Force-field information : all-atom, martini2 or martini3
 
     Returns
     -------
@@ -131,7 +133,7 @@ def load_contacts(
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
-    atoms = get_atoms(pdb_f, full=True, cg=cg)
+    atoms = get_atoms(pdb_f, full=True, ff=ff)
     ref_coord_dic, _ = load_coords(
         pdb_f,
         atoms,
@@ -180,7 +182,7 @@ class CAPRI:
         reference: PDBPath,
         params: ParamMap,
         ref_id: int = 1,
-        cg: str = "aa"
+        ff: str = "aa"
     ) -> None:
         """
         Initialize the class.
@@ -197,6 +199,8 @@ class CAPRI:
             The reference structure.
         params : dict
             The parameters for the CAPRI evaluation.
+        ff : string
+            Force-field information : all-atom, martini2 or martini3
         """
         self.reference = reference
         if not isinstance(model, PDBFile):
@@ -216,8 +220,8 @@ class CAPRI:
         self.dockq = float("nan")
         self.rmsd = float("nan")
         self.allatoms = params["allatoms"]
-        self.cg = cg
-        self.atoms = self._load_atoms(model, reference, full=self.allatoms, cg=self.cg)
+        self.ff = ff
+        self.atoms = self._load_atoms(model, reference, full=self.allatoms, ff=self.ff)
         self.r_chain = params["receptor_chain"]
         self.l_chains = params["ligand_chains"]
         self.model2ref_numbering = None
@@ -238,7 +242,7 @@ class CAPRI:
             The cutoff distance for the intermolecular contacts.
         """
         # Identify reference interface
-        ref_interface_resdic = self.identify_interface(self.reference, cutoff, self.cg)
+        ref_interface_resdic = self.identify_interface(self.reference, cutoff, self.ff)
 
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
@@ -393,7 +397,7 @@ class CAPRI:
             The cutoff distance for the intermolecular contacts.
         """
         # Identify interface
-        ref_interface_resdic = self.identify_interface(self.reference, cutoff, self.cg)
+        ref_interface_resdic = self.identify_interface(self.reference, cutoff, self.ff)
         # Load interface coordinates
 
         ref_int_coord_dic, _ = load_coords(
@@ -494,7 +498,7 @@ class CAPRI:
         cutoff : float
             The cutoff distance for the intermolecular contacts.
         """
-        ref_contacts = load_contacts(self.reference, cutoff, cg=self.cg)
+        ref_contacts = load_contacts(self.reference, cutoff, ff=self.ff)
         if len(ref_contacts) != 0:
             try:
                 model_contacts = load_contacts(
@@ -502,7 +506,7 @@ class CAPRI:
                     cutoff,
                     numbering_dic=self.model2ref_numbering,  # type: ignore
                     model2ref_chain_dict=self.model2ref_chain_dict,  # type: ignore
-                    cg=self.cg
+                    ff=self.ff
                 )
             except ALIGNError as alignerror:
                 log.warning(alignerror)
@@ -663,7 +667,7 @@ class CAPRI:
         model: PDBPath,
         reference: PDBPath,
         full: bool = False,
-        cg: str = "aa",
+        ff: str = "aa",
     ) -> AtomsDict:
         """
         Load atoms from a model and reference.
@@ -676,14 +680,16 @@ class CAPRI:
             PDB file of the model to have its atoms identified
         full : bool
             If False, only backbone atoms will be retrieved, otherwise all atoms
+        ff : string
+            Force-field information : all-atom, martini2 or martini3
 
         Returns
         -------
         atom_dic : dict
             Dictionary containing atoms observed in model and reference
         """
-        model_atoms = get_atoms(model, full=full, cg=cg)
-        reference_atoms = get_atoms(reference, full=full, cg=cg)
+        model_atoms = get_atoms(model, full=full, ff=ff)
+        reference_atoms = get_atoms(reference, full=full, ff=ff)
         atoms_dict: AtomsDict = {}
         atoms_dict.update(model_atoms)
         atoms_dict.update(reference_atoms)
@@ -693,7 +699,7 @@ class CAPRI:
     def identify_interface(
         pdb_f: PDBPath,
         cutoff: float = 5.0,
-        cg: str = "aa",
+        ff: str = "aa",
     ) -> dict[str, list[int]]:
         """Identify the interface.
 
@@ -703,6 +709,8 @@ class CAPRI:
             PDB file of the model to have its atoms identified
         cutoff : float, optional
             Cutoff distance for the interface identification.
+        ff : string
+            Force-field information : all-atom, martini2 or martini3
 
         Returns
         -------
@@ -713,7 +721,7 @@ class CAPRI:
             pdb_f = pdb_f.rel_path
 
         interface_resdic: dict[str, list[int]] = {}
-        contacts = load_contacts(pdb_f, cutoff, cg=cg)
+        contacts = load_contacts(pdb_f, cutoff, ff=ff)
 
         for contact in contacts:
             first_chain, first_resid, sec_chain, sec_resid = contact

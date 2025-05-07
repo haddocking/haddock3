@@ -693,7 +693,7 @@ def load_coords(
 
 def get_atoms(pdb: PDBPath, 
               full: bool = False,
-              cg: str = "aa") -> AtomsDict:
+              ff: str = "aa") -> AtomsDict:
     """Identify what is the molecule type of each PDB.
 
     Parameters
@@ -704,6 +704,8 @@ def get_atoms(pdb: PDBPath,
         Weather or not to take `full` atoms into consideration.
         If False, only main-chain atoms retrieved.
         If True, all heavy atoms retrieved.
+    ff : string
+        Force-field information : all-atom, martini2 or martini3
 
     Returns
     -------
@@ -711,13 +713,13 @@ def get_atoms(pdb: PDBPath,
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    atom_dic.update((r, PROT_ATOMS_all[cg]) for r in PROT_RES)
-    atom_dic.update((r, DNA_ATOMS_all[cg]) for r in DNA_RES)
-    atom_dic.update((r, RNA_ATOMS_all[cg]) for r in RNA_RES)
+    atom_dic.update((r, PROT_ATOMS_all[ff]) for r in PROT_RES)
+    atom_dic.update((r, DNA_ATOMS_all[ff]) for r in DNA_RES)
+    atom_dic.update((r, RNA_ATOMS_all[ff]) for r in RNA_RES)
     if full:
-        atom_dic.update(PROT_SIDE_CHAINS_DICT_all[cg])
-        atom_dic.update(DNA_FULL_DICT_all[cg])
-        atom_dic.update(RNA_FULL_DICT_all[cg])
+        atom_dic.update(PROT_SIDE_CHAINS_DICT_all[ff])
+        atom_dic.update(DNA_FULL_DICT_all[ff])
+        atom_dic.update(RNA_FULL_DICT_all[ff])
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

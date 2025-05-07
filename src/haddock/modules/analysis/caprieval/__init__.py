@@ -197,10 +197,10 @@ class HaddockModule(BaseHaddockModule):
                 Path(martinize(ref_aa, self.path, False))
                 for ref_aa in self.get_reference(models)
                 ]
-            cg = cgffversion
+            ff = cgffversion
         else:
             references = self.get_reference(models)
-            cg = "aa"
+            ff = "aa"
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -226,7 +226,7 @@ class HaddockModule(BaseHaddockModule):
                         reference=reference,
                         params=self.params,
                         ref_id=ref_id,
-                        cg=cg
+                        ff=ff
                     )
                 )
 

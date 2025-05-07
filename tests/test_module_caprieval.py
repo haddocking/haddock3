@@ -214,7 +214,7 @@ def fixture_protdna_caprimodule_cg(protdna_input_list_cg, params):
         model=model,
         path=_path,
         params=params,
-        cg="martini2",
+        ff="martini2",
     )
 
     yield capri
@@ -234,7 +234,7 @@ def fixture_protprot_caprimodule_cg(protprot_input_list_cg, params):
         model=model,
         path=_path,
         params=params,
-        cg='martini2',
+        ff='martini2',
     )
 
     yield capri
@@ -254,7 +254,7 @@ def fixture_protprot_allatm_caprimodule_cg(protprot_input_list_cg, params_all):
         model=model,
         path=_path,
         params=params_all,
-        cg='martini2',
+        ff='martini2',
     )
 
     yield capri
@@ -588,7 +588,7 @@ def test_protdna_allatoms_cg(protdna_caprimodule_cg):
         protdna_caprimodule_cg.model,
         protdna_caprimodule_cg.reference,
         full=protdna_caprimodule_cg.allatoms,
-        cg="martini2",
+        ff="martini2",
     )
     # Compute values with all atoms calculations
     protdna_caprimodule_cg.calc_fnat(cutoff=7.0)
@@ -624,7 +624,7 @@ def test_identify_protprotinterface_cg(protprot_caprimodule_cg, protprot_input_l
     protprot_complex = protprot_input_list_cg[0]
 
     observed_interface = protprot_caprimodule_cg.identify_interface(
-        protprot_complex, cutoff=7.0, cg='martini2'
+        protprot_complex, cutoff=7.0, ff='martini2'
     )
     print(observed_interface)
     expected_interface = {
@@ -655,7 +655,7 @@ def test_identify_protdnainterface_cg(protdna_caprimodule_cg, protdna_input_list
     protdna_complex = protdna_input_list_cg[0]
 
     observed_interface = protdna_caprimodule_cg.identify_interface(
-        protdna_complex, cutoff=7.0, cg="martini2"
+        protdna_complex, cutoff=7.0, ff="martini2"
     )
     expected_interface = {
         'A': [29, 44, 30, 39, 32, 28, 43, 10, 40, 26, 16, 41, 27, 33, 42, 18, 17, 38],

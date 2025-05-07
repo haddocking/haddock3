@@ -189,14 +189,14 @@ class HaddockModule(BaseHaddockModule):
             try:
                 cgffversion = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
             except AttributeError:
-                cgffversion = False
+                cgffversion = "aa"
 
         if cgffversion == "martini2":
-            references_aa = self.get_reference(models)
             references = []
-            for ref_aa in references_aa:
-                ref_cg = martinize(ref_aa, self.path, False)
-                references.append(Path(ref_cg))
+            references = [
+                Path(martinize(ref_aa, self.path, False))
+                for ref_aa in self.get_reference(models)
+                ]
             cg = cgffversion
         else:
             references = self.get_reference(models)

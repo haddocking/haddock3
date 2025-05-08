@@ -1,0 +1,12 @@
+threshold:
+  default: 0.00
+  type: float
+  min: -99999.99
+  max: 99999.99
+  precision: 2
+  title: Threshold value to filter models.
+  short: Threshold value to filter models based on their score.
+  long: Threshold value to filter models based on their score.
+    Models having higher score than the threshold value will be filtered out.
+  group: analysis
+  explevel: easy

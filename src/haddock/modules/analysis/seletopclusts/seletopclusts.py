@@ -77,11 +77,6 @@ def select_top_clusts_models(
         else:
             # Loop over first `top_models` models
             for pdb in clt_mdls[:top_models]:
-                notes.append(
-                    f" {pdb.file_name} "
-                    f"> cluster_{pdb.clt_rank}_"
-                    f"model_{pdb.clt_model_rank}.pdb"
-                    )
                 models_to_export.append(pdb)
     return models_to_export, notes
 

@@ -155,8 +155,6 @@ on your machine.
 Please refer to the [official page](http://docs.openmm.org/latest/userguide/)
 of the project for a full description of the installation procedure.
 
-
-
 ## `voroscoring`
 
 The use of the `[voroscoring]` module requires:
@@ -175,3 +173,4 @@ conda_env_name = "ftdmp"
 # This parameter defines where FTDMP scripts / executables can be found
 ftdmp_install_dir = "/absolute/path/to/FTDMP/"
 ```
+

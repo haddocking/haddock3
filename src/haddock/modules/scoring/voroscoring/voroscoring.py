@@ -17,17 +17,28 @@ from random import randint
 
 from haddock import log
 from haddock.core.typing import Any, Generator, Path, Union
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import NaN, PDBFile
 
 
 # Defines the SLURM job template
 # Notes: Please feel free to modify the #SBATCH entries to fit your needs/setup
-VOROMQA_CFG_TEMPLATE = """#!/bin/bash
-#SBATCH --nodes=1
+SLURM_HEADER_GPU = """#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
+"""
+
+SLURM_HEADER_CPU = """#SBATCH -J hd3-voroscoring-cpu
+#SBATCH --partition haddock
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node=1
+"""
+
+# Job template
+VOROMQA_CFG_TEMPLATE = """#!/bin/bash
+{HEADER}
 #SBATCH -J {JOBNAME}
 
 # Where to do the work
@@ -48,9 +59,9 @@ PDB_LIST_PATH="{PDB_LIST_PATH}"
 OUT_MSG="Output file is here: $OUTPUT_FPATH"
 
 # 1. Setup enviroments
-# Load the gnu12 module...
+# Load the gnu13 module...
 # NOTE: specific to haddock-team users...
-# module load gnu12
+# module load gnu13
 # Activate conda env
 source "$CONDA_INSTALL_DIR/bin/activate"
 conda activate $CONDA_ENV_NAME
@@ -114,11 +125,7 @@ class VoroMQA():
         # Loop over batches
         for bi, batch in enumerate(self.batched(all_pdbs, size=300)):
             # Run slurm
-            self.run_voro_batch(
-                batch,
-                batch_index=bi + 1,
-                gpuid=bi % self.params['nb_gpus'],
-                )
+            self.run_voro_batch(batch, batch_index=bi + 1)
         # Recombine all batches output files
         scores_fpath = self.recombine_batches()
         log.info(f"Generated output file: {scores_fpath}")
@@ -127,7 +134,6 @@ class VoroMQA():
             self,
             pdb_filepaths: list[str],
             batch_index: int = 1,
-            gpuid: int = -1,
             ) -> None:
         """Preset and launch predictions on subset of pdb files.
 
@@ -137,8 +143,6 @@ class VoroMQA():
             List of absolute path to the PDBs to score
         batch_index : int, optional
             Index of the batch, by default 1
-        gpuid : int, optional
-            Index of the GPU to use, by default -1
         """
         # Create workdir
         batch_workdir = Path(self.workdir, f"batch_{batch_index}")
@@ -148,17 +152,13 @@ class VoroMQA():
         pdb_files_list_path = Path(batch_workdir, "pdbs.list")
         pdb_files_list_path.write_text(os.linesep.join(pdb_filepaths))
 
-        # Get GPU id
-        if gpuid < 0:
-            gpuid = randint(0, self.params["nb_gpus"] - 1)
-
         # Format config file
         batch_cfg = VOROMQA_CFG_TEMPLATE.format(
+            HEADER=SLURM_HEADER_CPU,
             CONDA_INSTALL_DIR=self.params["conda_install_dir"],
             CONDA_ENV_NAME=self.params["conda_env_name"],
             FTDMP_INSTALL_DIR=self.params["ftdmp_install_dir"],
-            JOBNAME=f'hd3_voro_b{batch_index}',
-            GPUID=gpuid,
+            JOBNAME=f"hd3_voro_b{batch_index}",
             WORKDIR=batch_workdir,
             PDB_LIST_PATH=pdb_files_list_path,
             )
@@ -167,13 +167,30 @@ class VoroMQA():
         batch_cfg_fpath = Path(batch_workdir, "vorobatchcfg.job")
         batch_cfg_fpath.write_text(batch_cfg)
 
-        # Launch slurm
-        initdir = os.getcwd()
-        os.chdir(batch_workdir)
-        log.info(f"sbatch {batch_cfg_fpath}")
-        subprocess.run(f"sbatch {batch_cfg_fpath}", shell=True)
-        os.chdir(initdir)
-    
+        # Launch script
+        self._launch_computation(batch_workdir, batch_cfg_fpath)
+        #initdir = os.getcwd()
+        #os.chdir(batch_workdir)
+        #log.info(f"sbatch {batch_cfg_fpath}")
+        #subprocess.run(f"sbatch {batch_cfg_fpath}", shell=True)
+        #os.chdir(initdir)
+
+    def _launch_computation(self, batch_workdir: str, batch_cfg_fpath: str) -> None:
+        """Execute a given script from working directory.
+
+        Parameters
+        ----------
+        batch_workdir : str
+            Path to working directory
+        batch_cfg_fpath : str
+            Script to execute
+        """
+        exec_tool = "sbatch" if self.params["mode"] == "batch" else "bash"
+        cmd_ = f"{exec_tool} {batch_cfg_fpath}"
+        with working_directory(batch_workdir):
+            log.info(cmd_)
+            subprocess.run(cmd_, shell=True)
+
     def recombine_batches(self) -> str:
         """Recombine batches output file in a single one.
 

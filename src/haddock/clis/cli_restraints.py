@@ -60,7 +60,9 @@ ap = argparse.ArgumentParser(
 )
 
 subparsers = ap.add_subparsers(
-    title="subcommands", description="valid subcommands", help="additional help"
+    title="subcommands",
+    description="valid subcommands",
+    help="additional help",
 )
 
 # restrain_bodies subcommand

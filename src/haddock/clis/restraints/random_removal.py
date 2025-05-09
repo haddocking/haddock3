@@ -42,7 +42,7 @@ def add_rand_removal_arguments(rand_removal_subcommand):
     rand_removal_subcommand.add_argument(
         "-r",
         "--ratio",
-        help="Ratio of restraints to be randomly removed.",
+        help="Ratio of restraints to be randomly removed. (default: %(default)s)",
         required=False,
         default=0.5,
         type=float,
@@ -51,7 +51,7 @@ def add_rand_removal_arguments(rand_removal_subcommand):
     rand_removal_subcommand.add_argument(
         "-s",
         "--seed",
-        help="Pseudo-random seed.",
+        help="Pseudo-random seed. (default: %(default)s)",
         required=False,
         default=917,  # Same as the one in various modules (iniseed)
         )
@@ -59,7 +59,7 @@ def add_rand_removal_arguments(rand_removal_subcommand):
     rand_removal_subcommand.add_argument(
         "-n",
         "--nb-tbl",
-        help="Number of ambiguous files to generate in the archive.",
+        help="Number of ambiguous files to generate in the archive. (default: %(default)s)",
         required=False,
         type=int,
         default=10,

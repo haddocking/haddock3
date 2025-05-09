@@ -5,6 +5,7 @@ import re
 import random
 import sys
 import os
+from typing import Generator
 
 from Bio.PDB import PDBParser, NeighborSearch
 from freesasa import Classifier, structureFromBioPDB, calc
@@ -753,8 +754,31 @@ def passive_from_active_raw(structure, active, chain_id=None, surface=None, radi
 def get_restraint_subset(
         tblfile: str,
         rd_removed_ratio: float,
-        seed: int = 420,
-        ):
+        seed: int = 917,
+        ) -> Generator[list[str], None, None]:
+    """Generator of restraints subsets.
+
+    Parameters
+    ----------
+    tblfile : str
+        Path to a AIR.tbl file containing restraints.
+    rd_removed_ratio : float
+        Ratio of the number of restraints to remove.
+    seed : int, optional
+        Pseudo-random seed, by default 917
+
+    Yields
+    ------
+    subset_restraints: list[str]
+        A subset of the input restraints.
+
+    Raises
+    ------
+    ValueError
+        When random removal ratio is too high and no restraints a kept.
+    ValueError
+        When random removal ratio is too low and all restraints a kept.
+    """
     # Extract all restraints
     input_restraints = extract_restraint_entries(tblfile)
     # Compute number of restraints to be placed in each file
@@ -791,19 +815,41 @@ def get_restraint_subset(
 
 
 def extract_restraint_entries(tbl_filepath: str) -> list[str]:
+    """Read and extract restraints in a AIR.tbl file.
+
+    Parameters
+    ----------
+    tbl_filepath : str
+        Path to a AIR.tbl file containing restraints.
+
+    Returns
+    -------
+    restraints: list[str]
+        Loaded restraints as a list.
+    """
     restraints: list[str] = []
     assi: str = ""
+    # Open the file
     with open(tbl_filepath, "r") as fin:
+        # Loop over lines
         for _ in fin:
+            # Chekf if the line is starting with `assi` == new restraint def
             if _.strip().lower().startswith("assi"):
+                # See if previous assign statement is not empty 
                 if assi != "":
+                    # Hold this one
                     restraints.append(assi)
+                # Reset the assign statement with current line
                 assi = _
+            # Skip lines with comments
             elif _.strip().startswith("!"):
                 continue
             else:
+                # Add line to current assign statement
                 if assi != "":
                     assi += _
+    # Hold last assign statement
     if assi != "":
         restraints.append(assi)
+    # Return loaded restraints as a list of string
     return restraints

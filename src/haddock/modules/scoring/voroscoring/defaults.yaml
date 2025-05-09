@@ -52,14 +52,3 @@ ftdmp_install_dir:
   group: execution
   explevel: easy
 
-nb_gpus:
-  default: 1
-  type: integer
-  min: 1
-  max: 420
-  title: Number of accessible gpu on the device.
-  short: Number of accessible gpu on the device.
-  long: Number of accessible gpu on the device.
-  group: execution
-  explevel: easy
-

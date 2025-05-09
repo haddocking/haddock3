@@ -37,6 +37,7 @@ from haddock.libs.libpdb import (
     slc_y,
     slc_z,
     )
+from haddock.libs.librestraints import extract_restraint_entries
 
 from . import golden_data
 
@@ -286,6 +287,12 @@ def test_get_z_coords_1_select():
     assert list(z_coords.values()) == [0]
 
 
+def test_extract_restraint_entries(example_tbl_file):
+    """Test read and extract restraints from tbl file."""
+    list_of_restraints = extract_restraint_entries(example_tbl_file)
+    assert len(list_of_restraints) == 4
+
+
 def test_random_removal_nbfiles(example_tbl_file):
     """Test random removal number of files."""
     output_filepath = random_removal(example_tbl_file, 0.5, nb_tbl=5)
@@ -305,6 +312,7 @@ def test_random_removal_ratio(example_tbl_file):
         assert len(members) == 5
         # get an example
         ex_0_5 = tar.extractfile(members[0]).read().decode("utf-8")
+        assert ex_0_5.lower().count("assi") == 2
     output_filepath.unlink()
     output_filepath2 = random_removal(example_tbl_file, 0.2, nb_tbl=3)
     assert output_filepath2.exists()

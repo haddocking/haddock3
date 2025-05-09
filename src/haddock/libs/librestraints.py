@@ -804,4 +804,6 @@ def extract_restraint_entries(tbl_filepath: str) -> list[str]:
             else:
                 if assi != "":
                     assi += _
+    if assi != "":
+        restraints.append(assi)
     return restraints

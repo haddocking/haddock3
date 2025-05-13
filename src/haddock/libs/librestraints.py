@@ -782,7 +782,8 @@ def get_restraint_subset(
     # Extract all restraints
     input_restraints = extract_restraint_entries(tblfile)
     # Compute number of restraints to be placed in each file
-    nb_rest_per_file = int((1 - rd_removed_ratio) * len(input_restraints))
+    _nb_rest_per_file = (1 - rd_removed_ratio) * len(input_restraints)
+    nb_rest_per_file = int(round(_nb_rest_per_file, 0))
     # Indicies
     rest_indices = list(range(len(input_restraints)))
     # Validate that it should result in something OK

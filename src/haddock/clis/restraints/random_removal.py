@@ -23,6 +23,7 @@ options:
 """
 
 import os
+import sys
 import tarfile
 from io import BytesIO
 from pathlib import Path
@@ -72,7 +73,7 @@ def random_removal(
         tblfile: Union[str, Path],
         ratio: float,
         nb_tbl: int = 10,
-        seed: int = 420,
+        seed: int = 917,
         ) -> Path:
     """Generate an archive containing the randomly removed restraints.
 
@@ -85,25 +86,35 @@ def random_removal(
     nb_tbl : int, optional
         Number of ambig files to generate in the archive, by default 10
     seed : int, optional
-        Initial random seed, by default 420
+        Initial random seed, by default 917
 
     Returns
     -------
     Union[str, Path]
         Path to the generated archive containing `nb_tbl` restraints in it.
     """
+    if nb_tbl < 1:
+        sys.exit(
+            "Number of restraints files to generate must be "
+            f">= 1 (now set to {nb_tbl})"
+        )
     # Initiate the tbl archive holding all the restraints
     tbl_archive_fpath = Path(
         Path(tblfile).parent.resolve(),
         Path(tblfile).name + ".tgz",
         )
     tbl_archive = tarfile.open(tbl_archive_fpath, "w:gz")
+
     # Initiate restraints subset generator
-    subsets_restraints = get_restraint_subset(
-        tblfile,
-        ratio,
-        seed=seed,
-        )
+    try:
+        subsets_restraints = get_restraint_subset(
+            tblfile,
+            ratio,
+            seed=seed,
+            )
+    except ValueError as e:
+        sys.exit(e)
+
     # Loop over number of tbl file to generate
     for i in range(1, nb_tbl + 1):
         # Obtain a subset of restraints
@@ -114,7 +125,10 @@ def random_removal(
         tarinfo = tarfile.TarInfo(f"{Path(tblfile).stem}_rr{i}.tbl")
         tarinfo.size = len(subset_restraints_str)
         # Add this file to the archive
-        tbl_archive.addfile(tarinfo, BytesIO(subset_restraints_str.encode("utf-8")))
+        tbl_archive.addfile(
+            tarinfo,
+            BytesIO(subset_restraints_str.encode("utf-8")),
+            )
     # Closing things
     tbl_archive.close()
     subsets_restraints.close()
@@ -126,7 +140,7 @@ def main(
         tblfile: Union[str, Path],
         ratio: float,
         nb_tbl: int = 10,
-        seed: int = 420,
+        seed: int = 917,
         ) -> None:
     """Simple wrapper of the random_removal function.
 
@@ -139,7 +153,7 @@ def main(
     nb_tbl : int, optional
         Number of ambig files to generate in the archive, by default 10
     seed : int, optional
-        Initial random seed, by default 420
+        Initial random seed, by default 917
 
     Returns
     -------
@@ -149,6 +163,7 @@ def main(
     archive_fpath = random_removal(tblfile, ratio, nb_tbl=nb_tbl, seed=seed)
     print(
         f"Generated archive path: {archive_fpath}!{os.linesep}"
+        f"Note that resulting restraints might be redundant{os.linesep}"
         f"By using this file, we suggest to:{os.linesep}"
         f"- turn off random removal (random_removal = false){os.linesep}"
         "- turn on the previous ambig in later stages (previous_ambig = true)"

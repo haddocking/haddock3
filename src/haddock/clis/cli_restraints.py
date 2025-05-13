@@ -121,7 +121,10 @@ def maincli():
     """Execute main client."""
     args = ap.parse_args()
     cmd = vars(load_args(ap))
-    cmd.pop("func")
+    try:
+        cmd.pop("func")
+    except KeyError:
+        sys.exit(ap.print_help())
     args.func(**cmd)
 
 

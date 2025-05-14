@@ -3,7 +3,7 @@
 import logging
 import tempfile
 from pathlib import Path
-
+import tarfile
 import pytest
 
 from haddock.clis.restraints.active_passive_to_ambig import (
@@ -17,6 +17,7 @@ from haddock.clis.restraints.calc_accessibility import (
 from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.clis.restraints.restrain_bodies import restrain_bodies
 from haddock.clis.restraints.validate_tbl import validate_tbl
+from haddock.clis.restraints.random_removal import random_removal
 from haddock.clis.restraints.z_surface_restraints import (
     compute_barycenter,
     get_z_coords,
@@ -36,6 +37,7 @@ from haddock.libs.libpdb import (
     slc_y,
     slc_z,
     )
+from haddock.libs.librestraints import extract_restraint_entries
 
 from . import golden_data
 
@@ -46,8 +48,8 @@ def example_actpass_file():
     return Path(golden_data, "example.act-pass")
 
 
-@pytest.fixture
-def example_tbl_file():
+@pytest.fixture(name="example_tbl_file")
+def fixture_example_tbl_file():
     """Provide example tbl filename."""
     return Path(golden_data, "example_ambig_1.tbl")
 
@@ -283,3 +285,81 @@ def test_get_z_coords_1_select():
     """Test return of position 0 if only one selection."""
     z_coords = get_z_coords({"select_1": [(1, 2, 3)]})
     assert list(z_coords.values()) == [0]
+
+
+def test_extract_restraint_entries(example_tbl_file):
+    """Test read and extract restraints from tbl file."""
+    list_of_restraints = extract_restraint_entries(example_tbl_file)
+    assert len(list_of_restraints) == 4
+
+
+def test_random_removal_nbfiles(example_tbl_file):
+    """Test random removal number of files."""
+    output_filepath = random_removal(example_tbl_file, 0.5, nb_tbl=5)
+    assert output_filepath.exists()
+    with tarfile.open(output_filepath, "r:gz") as tar:
+        members = tar.getmembers()
+        assert len(members) == 5
+    output_filepath.unlink()
+
+
+def test_random_removal_ratio(example_tbl_file):
+    """Test random removal ratio."""
+    output_filepath = random_removal(example_tbl_file, 0.5, nb_tbl=5)
+    assert output_filepath.exists()
+    with tarfile.open(output_filepath, "r:gz") as tar:
+        members = tar.getmembers()
+        assert len(members) == 5
+        # get an example
+        ex_0_5 = tar.extractfile(members[0]).read().decode("utf-8")
+        assert ex_0_5.lower().count("assi") == 2
+    output_filepath.unlink()
+    output_filepath2 = random_removal(example_tbl_file, 0.2, nb_tbl=3)
+    assert output_filepath2.exists()
+    with tarfile.open(output_filepath2, "r:gz") as tar:
+        members2 = tar.getmembers()
+        assert len(members2) == 3
+        # get an example
+        ex_0_2 = tar.extractfile(members2[0]).read().decode("utf-8")
+    # Checking that removing 50 % leads to lower number of assign statements than 20%
+    assert ex_0_5.lower().count("assi") < ex_0_2.lower().count("assi")
+    output_filepath2.unlink()
+
+    # Check for errors in ratio selection
+    # Ratio removed == 0
+    with pytest.raises(ValueError):
+        output_error = random_removal(example_tbl_file, 0, nb_tbl=1)
+        assert output_error is None
+    # Ratio removed == 1
+    with pytest.raises(ValueError):
+        output_error2 = random_removal(example_tbl_file, 1, nb_tbl=1)
+        assert output_error2 is None
+
+
+def test_random_removal_seed(example_tbl_file):
+    """Test random removal seed."""
+    output_filepath = random_removal(example_tbl_file, 0.2, nb_tbl=1, seed=1)
+    assert output_filepath.exists()
+    with tarfile.open(output_filepath, "r:gz") as tar:
+        members = tar.getmembers()
+        # get an example
+        rd_rm_tbl1 = tar.extractfile(members[0]).read().decode("utf-8")
+    output_filepath.unlink()
+    output_filepath2 = random_removal(example_tbl_file, 0.2, nb_tbl=1, seed=1)
+    with tarfile.open(output_filepath2, "r:gz") as tar2:
+        members2 = tar2.getmembers()
+        # get an example
+        rd_rm_tbl2 = tar2.extractfile(members2[0]).read().decode("utf-8")
+    output_filepath2.unlink()
+    output_filepath3 = random_removal(example_tbl_file, 0.2, nb_tbl=1, seed=5)
+    with tarfile.open(output_filepath2, "r:gz") as tar3:
+        members3 = tar3.getmembers()
+        # get an example
+        rd_rm_tbl3 = tar3.extractfile(members3[0]).read().decode("utf-8")
+    output_filepath3.unlink()
+
+    # Check that 1 and 2 are equal !
+    assert rd_rm_tbl1 == rd_rm_tbl2
+    # Check that 2 and 3 are different !
+    assert rd_rm_tbl2 != rd_rm_tbl3
+    assert rd_rm_tbl1 != rd_rm_tbl3

@@ -4,13 +4,14 @@ import itertools
 import re
 import random
 import sys
+import os
+from typing import Generator
 
 from Bio.PDB import PDBParser, NeighborSearch
 from freesasa import Classifier, structureFromBioPDB, calc
 
 # Scaling factors for relative ASA
 # Calculated using extended ALA-X-ALA peptides
-# Taken from NACCESS
 # Taken from NACCESS
 REL_ASA = {
     'total':
@@ -748,3 +749,108 @@ def passive_from_active_raw(structure, active, chain_id=None, surface=None, radi
     tmp = passive_list & set(surface)
     passive_list = tmp - set(active)
     return sorted(passive_list)
+
+
+def get_restraint_subset(
+        tblfile: str,
+        rd_removed_ratio: float,
+        seed: int = 917,
+        ) -> Generator[list[str], None, None]:
+    """Generator of restraints subsets.
+
+    Parameters
+    ----------
+    tblfile : str
+        Path to a AIR.tbl file containing restraints.
+    rd_removed_ratio : float
+        Ratio of the number of restraints to remove.
+    seed : int, optional
+        Pseudo-random seed, by default 917
+
+    Yields
+    ------
+    subset_restraints: list[str]
+        A subset of the input restraints.
+
+    Raises
+    ------
+    ValueError
+        When random removal ratio is too high and no restraints a kept.
+    ValueError
+        When random removal ratio is too low and all restraints a kept.
+    """
+    # Extract all restraints
+    input_restraints = extract_restraint_entries(tblfile)
+    # Compute number of restraints to be placed in each file
+    _nb_rest_per_file = (1 - rd_removed_ratio) * len(input_restraints)
+    nb_rest_per_file = int(round(_nb_rest_per_file, 0))
+    # Indicies
+    rest_indices = list(range(len(input_restraints)))
+    # Validate that it should result in something OK
+    if nb_rest_per_file == len(input_restraints):
+        raise ValueError(f"Error: Subset of restraints equal to number of restraints")
+    elif nb_rest_per_file == 0:
+        raise ValueError(f"Error: Subset of restraints equal to 0")
+
+    try:
+        # Forever loop
+        while True:
+            # Reset seed
+            random.seed(seed)
+            # Obtain a subset of restraints indices
+            subset_restraints_ids = random.sample(
+                rest_indices,
+                nb_rest_per_file,
+                )
+            # Get subset of restraints
+            subset_restraints = [
+                f"! restraint id {i + 1}{os.linesep}{input_restraints[i]}"
+                for i in subset_restraints_ids
+            ]
+            # Return / Yield them
+            yield subset_restraints
+            # Increase seed
+            seed += 1
+    finally:
+        pass
+
+
+def extract_restraint_entries(tbl_filepath: str) -> list[str]:
+    """Read and extract restraints in a AIR.tbl file.
+
+    Parameters
+    ----------
+    tbl_filepath : str
+        Path to a AIR.tbl file containing restraints.
+
+    Returns
+    -------
+    restraints: list[str]
+        Loaded restraints as a list.
+    """
+    restraints: list[str] = []
+    assi: str = ""
+    # Open the file
+    with open(tbl_filepath, "r") as fin:
+        # Loop over lines
+        for _ in fin:
+            # Chekf if the line is starting with `assi` == new restraint def
+            if _.strip().lower().startswith("assi"):
+                # See if previous assign statement is not empty 
+                if assi != "":
+                    # Hold this one
+                    restraints.append(assi)
+                # Reset the assign statement with current line
+                assi = _
+            # Skip lines with comments
+            elif _.strip().startswith("!"):
+                continue
+            else:
+                # Add line to current assign statement
+                if assi != "":
+                    assi += _
+    # Hold last assign statement
+    if assi != "":
+        restraints.append(assi)
+    # Return loaded restraints as a list of string
+    return restraints

@@ -192,7 +192,6 @@ class HaddockModule(BaseHaddockModule):
                 cgffversion = "aa"
 
         if cgffversion == "martini2":
-            references = []
             references = [
                 Path(martinize(ref_aa, self.path, False))
                 for ref_aa in self.get_reference(models)

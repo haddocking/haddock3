@@ -1,0 +1,7 @@
+haddock.clis.restraints.random\_removal module
+==============================================
+
+.. automodule:: haddock.clis.restraints.random_removal
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -159,6 +159,20 @@ and using their exact euclidean distance as target distance.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.librestraints.extract_restraint_entries">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.librestraints.</span></span><span class="sig-name descname"><span class="pre">extract_restraint_entries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tbl_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/librestraints.html#extract_restraint_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.librestraints.extract_restraint_entries" title="Link to this definition"></a></dt>
+<dd><p>Read and extract restraints in a AIR.tbl file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tbl_filepath</strong> (<em>str</em>) – Path to a AIR.tbl file containing restraints.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>restraints</strong> (<em>list[str]</em>) – Loaded restraints as a list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.librestraints.generate_tbl">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.librestraints.</span></span><span class="sig-name descname"><span class="pre">generate_tbl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restraints</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/librestraints.html#generate_tbl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.librestraints.generate_tbl" title="Link to this definition"></a></dt>
 <dd><blockquote>
@@ -179,6 +193,30 @@ and using their exact euclidean distance as target distance.</p>
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.librestraints.</span></span><span class="sig-name descname"><span class="pre">get_bodies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prot_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dna_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/librestraints.html#get_bodies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.librestraints.get_bodies" title="Link to this definition"></a></dt>
 <dd><p>Determines gaps in an atom list following simple distance based criteria.
 Returns continuous fragments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.librestraints.get_restraint_subset">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.librestraints.</span></span><span class="sig-name descname"><span class="pre">get_restraint_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tblfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rd_removed_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">917</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/librestraints.html#get_restraint_subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.librestraints.get_restraint_subset" title="Link to this definition"></a></dt>
+<dd><p>Generator of restraints subsets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tblfile</strong> (<em>str</em>) – Path to a AIR.tbl file containing restraints.</p></li>
+<li><p><strong>rd_removed_ratio</strong> (<em>float</em>) – Ratio of the number of restraints to remove.</p></li>
+<li><p><strong>seed</strong> (<em>int, optional</em>) – Pseudo-random seed, by default 917</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>subset_restraints</strong> (<em>list[str]</em>) – A subset of the input restraints.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – When random removal ratio is too high and no restraints a kept.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – When random removal ratio is too low and all restraints a kept.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -248,7 +286,7 @@ per-residue accessibilities.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on May 07, 2025.
+      <span class="lastupdated">Last updated on May 14, 2025.
       </span></p>
   </div>
 

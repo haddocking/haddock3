@@ -123,7 +123,7 @@ def load_contacts(
     cutoff : float, optional
         Cutoff distance for the interface identification.
     ff : string
-        Force-field information : all-atom, martini2 or martini3
+        Force-field information : aa (all-atom), martini2 or martini3
 
     Returns
     -------
@@ -200,7 +200,7 @@ class CAPRI:
         params : dict
             The parameters for the CAPRI evaluation.
         ff : string
-            Force-field information : all-atom, martini2 or martini3
+            Force-field information : aa (all-atom), martini2 or martini3
         """
         self.reference = reference
         if not isinstance(model, PDBFile):
@@ -681,7 +681,7 @@ class CAPRI:
         full : bool
             If False, only backbone atoms will be retrieved, otherwise all atoms
         ff : string
-            Force-field information : all-atom, martini2 or martini3
+            Force-field information : aa (all-atom), martini2 or martini3
 
         Returns
         -------
@@ -710,7 +710,7 @@ class CAPRI:
         cutoff : float, optional
             Cutoff distance for the interface identification.
         ff : string
-            Force-field information : all-atom, martini2 or martini3
+            Force-field information : aa (all-atom), martini2 or martini3
 
         Returns
         -------

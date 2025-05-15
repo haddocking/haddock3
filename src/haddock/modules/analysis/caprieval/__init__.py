@@ -184,19 +184,19 @@ class HaddockModule(BaseHaddockModule):
 
         # Get reference file
         try:
-            cgffversion = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
+            ff = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
         except TypeError:
             try:
-                cgffversion = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
+                ff = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
             except AttributeError:
-                cgffversion = "aa"
+                ff = "aa"
 
-        if cgffversion == "martini2":
+        if ff == "martini2":
             references = [
                 Path(martinize(ref_aa, self.path, False))
                 for ref_aa in self.get_reference(models)
                 ]
-            ff = cgffversion
+            #ff = cgffversion
         else:
             references = self.get_reference(models)
             ff = "aa"

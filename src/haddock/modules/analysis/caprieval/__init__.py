@@ -73,6 +73,17 @@ class HaddockModule(BaseHaddockModule):
             if isinstance(model, list):
                 return True
         return False
+    
+    @staticmethod
+    def find_ff(models: PDBFile) -> str:
+        try:
+            ff = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
+        except TypeError:
+            try:
+                ff = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
+            except AttributeError:
+                ff = "aa"
+        return ff
 
     def handle_input_reference(self, reference: Path) -> list[Path]:
         """Validate the reference file by returning only one model.
@@ -183,20 +194,13 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Get reference file
-        try:
-            ff = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
-        except TypeError:
-            try:
-                ff = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
-            except AttributeError:
-                ff = "aa"
+        ff = self.find_ff(models)
 
         if ff == "martini2":
             references = [
                 Path(martinize(ref_aa, self.path, False))
                 for ref_aa in self.get_reference(models)
                 ]
-            #ff = cgffversion
         else:
             references = self.get_reference(models)
             ff = "aa"

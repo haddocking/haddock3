@@ -40,6 +40,7 @@ from haddock.modules.analysis.caprieval.capri import (
     extract_data_from_capri_class,
     extract_models_best_references,
     )
+from haddock.libs.libaa2cg import martinize 
 from pdbtools.pdb_wc import run as pdb_wc
 from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
@@ -72,6 +73,36 @@ class HaddockModule(BaseHaddockModule):
             if isinstance(model, list):
                 return True
         return False
+    
+    @staticmethod
+    def find_ff(models: list[PDBFile]) -> str:
+        """Finds the force-field information (all-atom or martini) from the topology 
+        associated to the first model.
+
+        The assumption is that the force-fields will be identical between models.
+        
+        Parameters
+        -----------
+        models : list[PDBFile]
+            List of models where to find the topology
+        
+        Return
+        -------
+        ff : str
+            The force-field used in those models.
+        """
+        try:
+            ff = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
+        except TypeError:
+            try:
+                ff = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
+            except AttributeError:
+                ff = "aa"
+        
+        if "martini" not in ff:
+            ff = "aa"
+
+        return ff
 
     def handle_input_reference(self, reference: Path) -> list[Path]:
         """Validate the reference file by returning only one model.
@@ -182,7 +213,15 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Get reference file
-        references = self.get_reference(models)
+        ff = self.find_ff(models)
+
+        if ff == "martini2":
+            references = [
+                Path(martinize(ref_aa, self.path, False))
+                for ref_aa in self.get_reference(models)
+                ]
+        else:
+            references = self.get_reference(models)
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
@@ -208,6 +247,7 @@ class HaddockModule(BaseHaddockModule):
                         reference=reference,
                         params=self.params,
                         ref_id=ref_id,
+                        ff=ff
                     )
                 )
 

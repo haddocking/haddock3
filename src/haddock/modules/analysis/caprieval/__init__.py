@@ -76,6 +76,8 @@ class HaddockModule(BaseHaddockModule):
     
     @staticmethod
     def find_ff(models: list[PDBFile]) -> str:
+        """Finds the force-field information (all-atom or martini) from the topology 
+        associated to the first model (the force-fields will be identical between models)"""
         try:
             ff = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
         except TypeError:

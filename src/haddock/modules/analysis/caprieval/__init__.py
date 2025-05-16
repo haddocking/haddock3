@@ -83,6 +83,10 @@ class HaddockModule(BaseHaddockModule):
                 ff = models[0].topology.rel_path.as_posix().split("_")[-1].split(".")[0]
             except AttributeError:
                 ff = "aa"
+        
+        if "martini" not in ff:
+            ff = "aa"
+
         return ff
 
     def handle_input_reference(self, reference: Path) -> list[Path]:
@@ -203,7 +207,6 @@ class HaddockModule(BaseHaddockModule):
                 ]
         else:
             references = self.get_reference(models)
-            ff = "aa"
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job

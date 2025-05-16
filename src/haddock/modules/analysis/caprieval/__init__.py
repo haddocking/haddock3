@@ -75,7 +75,7 @@ class HaddockModule(BaseHaddockModule):
         return False
     
     @staticmethod
-    def find_ff(models: PDBFile) -> str:
+    def find_ff(models: list[PDBFile]) -> str:
         try:
             ff = models[0].topology[0].rel_path.as_posix().split("_")[-1].split(".")[0]
         except TypeError:

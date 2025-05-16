@@ -82,7 +82,7 @@ C  CNBVR  vdW radii for hard sphere repel potential
 C  CBVR14 same for 1-4 terms
 C  NLJAT  Number of atoms with atom-based Lennard-Jones parameters
       INTEGER MAXCN
-      PARAMETER (MAXCN=1000)
+      PARAMETER (MAXCN=1500)
       INTEGER NCN, NLJAT
       CHARACTER*4 CNAC(MAXCN)
       DOUBLE PRECISION CNBA(MAXCN,MAXCN), CNBB(MAXCN,MAXCN)

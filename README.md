@@ -11,9 +11,9 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/haddock3)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/haddock3)
 
-[![unit tests](https://github.com/haddocking/haddock3/workflows/tests/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=tests)
-[![build](https://github.com/haddocking/haddock3/workflows/build/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=build)
-[![docs](https://github.com/haddocking/haddock3/workflows/pages/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=pages)
+[![ci](https://github.com/haddocking/haddock3/actions/workflows/ci.yml/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/ci.yml)
+[![pages](https://github.com/haddocking/haddock3/actions/workflows/pages.yml/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/pages.yml)
+[![CodeQL](https://github.com/haddocking/haddock3/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/github-code-scanning/codeql)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/e11e7f45400f4e8589cdf5941f95233a)](https://app.codacy.com/gh/haddocking/haddock3/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
@@ -23,7 +23,7 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3. 
+Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.12 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) . 
 
 ```bash
 pip install haddock3
@@ -86,7 +86,8 @@ If you clone this repository and use `haddock3` for your research, please suppor
 
 If you used `haddock3` for your research, please cite us:
 
-- **Research article**: (_coming soon!_)
+- **Research article**: M. Giulini, V. Reys, J.M.C. Teixeira, B. Jiménez-García, R.V. Honorato, A. Kravchenko, X. Xu, R. Versini, A. Engel, S. Verhoeven, A.M.J.J. Bonvin, *HADDOCK3: A modular and versatile platform for integrative modelling of biomolecular complexes* biorxiv (2025). [https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1](https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1)
+ 
 - **Cite this repository**: M.C. Teixeira, J., Vargas Honorato, R., Giulini, M., Bonvin, A., SarahAlidoost, Reys, V., Jimenez, B., Schulte, D., van Noort, C., Verhoeven, S., Vreede, B., SSchott, & Tsai, R. (2024). haddocking/haddock3: v3.0.0-beta.5 (Version 3.0.0-beta.5) [Computer software]. [https://doi.org/10.5281/zenodo.10527751](https://doi.org/10.5281/zenodo.10527751)
 
 ## Useful resources

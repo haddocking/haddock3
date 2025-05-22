@@ -328,13 +328,17 @@ segment
         if ( &separate = true ) then
             separate=true
         end if
-        !if ( &BLANK%prot_link_infile = false ) then
+        if ( &BLANK%prot_link_infile = false ) then
+            @@$prot_link_infile
+        else
             @@&prot_link_infile
-        !end if
+        end if
         if ( &BLANK%ion_link_infile = false ) then
             @@&ion_link_infile
         end if
         if ( &BLANK%nucl_link_infile = false ) then
+            @@$nucl_link_infile
+        else
             @@&nucl_link_infile
         end if
         if ( &BLANK%carbo_link_infile = false ) then

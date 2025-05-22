@@ -1,4 +1,5 @@
 import tempfile
+import copy
 from pathlib import Path
 
 import pytest
@@ -26,8 +27,10 @@ def test_topoaa_module_protein(topoaa_module):
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
         Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
     ]
-    topoaa_module.params["mol1"] = {"prot_segid": "A"}
-    topoaa_module.params["mol2"] = {"prot_segid": "B"}
+    topoaa_module.params["mol1"]["prot_segid"] = "A"
+    # Create mol2 parameters by copying the ones found for mol1
+    topoaa_module.params["mol2"] = copy.deepcopy(topoaa_module.params["mol1"])
+    topoaa_module.params["mol2"]["prot_segid"] = "B"
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
 
@@ -94,7 +97,7 @@ def test_topoaa_cyclic(topoaa_module):
     ]
     topoaa_module.params["cyclicpept_dist"] = 3.5
     topoaa_module.params["disulphide_dist"] = 4.0
-    topoaa_module.params["mol1"] = {"cyclicpept": True}
+    topoaa_module.params["mol1"]["cyclicpept"] = True
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
 

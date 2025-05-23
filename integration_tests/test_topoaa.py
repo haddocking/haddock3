@@ -21,6 +21,28 @@ def topoaa_module():
         yield topoaa
 
 
+def extract_nter_cter(fpath) -> tuple[str, str]:
+    """Helper function to extract nter and cter residues."""
+    nter, cter = "", ""
+    nter_resi, cter_resi = None, None
+    with open(fpath, "r") as fin:
+        for _ in fin:
+            if _.startswith(("ATOM", "HETATM")):
+                resid = _[22:26].strip()
+                if nter_resi is None:
+                    nter_resi = resid 
+                if cter_resi is None:
+                    cter_resi = resid
+                else:
+                    if cter_resi != resid:
+                        cter = ""
+                        cter_resi = resid
+                if resid == nter_resi:
+                    nter += _
+                cter += _
+    return nter, cter
+
+
 def test_topoaa_module_protein(topoaa_module):
     """Topoaa module with protein-protein input"""
     topoaa_module.params["molecules"] = [
@@ -33,7 +55,6 @@ def test_topoaa_module_protein(topoaa_module):
     topoaa_module.params["mol2"]["prot_segid"] = "B"
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
-
     topoaa_module.run()
 
     expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
@@ -118,3 +139,102 @@ def test_topoaa_cyclic(topoaa_module):
 
     assert "detected" in file_content
     assert "disulphide" in file_content
+
+
+def test_topoaa_module_protein_noCter(topoaa_module):
+    """Topoaa module with protein-protein input"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+    ]
+    topoaa_module.params["mol1"]["charged_nter"] = True
+    topoaa_module.params["mol1"]["charged_cter"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
+    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+    nter, cter = extract_nter_cter(expected_pdb)
+    assert "OXT" not in cter
+    assert all([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+
+
+def test_topoaa_module_protein_noNter(topoaa_module):
+    """Topoaa module with protein-protein input"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+    ]
+    topoaa_module.params["mol1"]["charged_nter"] = False
+    topoaa_module.params["mol1"]["charged_cter"] = True
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
+    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+    nter, cter = extract_nter_cter(expected_pdb)
+    assert "OXT" in cter
+    assert not any([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+
+def test_topoaa_module_protein_noter(topoaa_module):
+    """Topoaa module with protein-protein input"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+    ]
+    topoaa_module.params["mol1"]["charged_nter"] = False
+    topoaa_module.params["mol1"]["charged_cter"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
+    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+    nter, cter = extract_nter_cter(expected_pdb)
+    assert "OXT" not in cter
+    assert not any([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+
+
+def test_topoaa_module_protein_charged_ters(topoaa_module):
+    """Topoaa module with protein-protein input"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+    ]
+    topoaa_module.params["mol1"]["charged_nter"] = True
+    topoaa_module.params["mol1"]["charged_cter"] = True
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
+    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+    nter, cter = extract_nter_cter(expected_pdb)
+    assert "OXT" in cter
+    assert all([nh in nter for nh in ("HT1", "HT2", "HT3",)])

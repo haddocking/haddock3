@@ -33,6 +33,7 @@ from haddock.core.defaults import MODULE_DEFAULT_YAML, cns_exec
 from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
+    find_desired_linkfiles,
     generate_default_header,
     load_workflow_params,
     prepare_output,
@@ -74,12 +75,12 @@ def generate_topology(
     )
 
     input_str = prepare_single_input(str(input_pdb))
-
+    # Order CNS statements
     inp_parts = (
         general_param,
         input_str,
         output,
-        link,
+        #link,
         trans_vec,
         tensor,
         scatter,
@@ -87,7 +88,7 @@ def generate_topology(
         water_box,
         recipe_str,
     )
-
+    # Combine all CNS statments as a single string
     inp = "".join(inp_parts)
 
     if write_to_disk:
@@ -231,7 +232,18 @@ class HaddockModule(BaseCNSModule):
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
-            for task_id, model in enumerate(splited_models):
+            # Find appropriate link files for this molecule
+            link_files = find_desired_linkfiles(
+                charged_nter=parameters_for_this_molecule.pop("charged_nter"),
+                charged_cter=parameters_for_this_molecule.pop("charged_cter"),
+                phosphate_5=False,
+                path=self.toppar_path,
+            )
+            # Update molecule parameters with full path to link files
+            parameters_for_this_molecule.update(link_files)
+
+            # Loop over molecules conformations
+            for _task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 

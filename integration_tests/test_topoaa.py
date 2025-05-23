@@ -22,23 +22,35 @@ def topoaa_module():
 
 
 def extract_nter_cter(fpath) -> tuple[str, str]:
-    """Helper function to extract nter and cter residues."""
+    """Helper function to extract nter and cter residues as strings."""
     nter, cter = "", ""
     nter_resi, cter_resi = None, None
+    # Read file
     with open(fpath, "r") as fin:
+        # Loop over lines
         for _ in fin:
+            # Make sure we are looking at coordinates
             if _.startswith(("ATOM", "HETATM")):
+                # Extract residue id
                 resid = _[22:26].strip()
+                # First residue should be Nter one
                 if nter_resi is None:
                     nter_resi = resid 
+                # Last residue should be Cter one
                 if cter_resi is None:
                     cter_resi = resid
                 else:
+                    # Reset last residue to current residue
+                    # until we cannot do this anymore
+                    # should result in extracting last residue
                     if cter_resi != resid:
+                        # Reset cter residue to empty string
                         cter = ""
                         cter_resi = resid
+                # Increment first residue
                 if resid == nter_resi:
                     nter += _
+                # Increment last residue
                 cter += _
     return nter, cter
 
@@ -142,7 +154,7 @@ def test_topoaa_cyclic(topoaa_module):
 
 
 def test_topoaa_module_protein_noCter(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with uncharged Cter and charged Nter."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
     ]
@@ -167,7 +179,7 @@ def test_topoaa_module_protein_noCter(topoaa_module):
 
 
 def test_topoaa_module_protein_noNter(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with charged Cter and uncharged Nter."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
     ]
@@ -191,7 +203,7 @@ def test_topoaa_module_protein_noNter(topoaa_module):
     assert not any([nh in nter for nh in ("HT1", "HT2", "HT3",)])
 
 def test_topoaa_module_protein_noter(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module without charged termini."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
     ]
@@ -216,7 +228,7 @@ def test_topoaa_module_protein_noter(topoaa_module):
 
 
 def test_topoaa_module_protein_charged_ters(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with charged termini."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
     ]

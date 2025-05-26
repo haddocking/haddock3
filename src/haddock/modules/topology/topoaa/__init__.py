@@ -235,7 +235,7 @@ class HaddockModule(BaseCNSModule):
             link_files = find_desired_linkfiles(
                 charged_nter=parameters_for_this_molecule.pop("charged_nter"),
                 charged_cter=parameters_for_this_molecule.pop("charged_cter"),
-                phosphate_5=False,  # FIXME: get it from molecule parameters
+                phosphate_5=parameters_for_this_molecule.pop("5_phosphate"),
                 path=self.toppar_path,
             )
             # Update molecule parameters with full path to link files

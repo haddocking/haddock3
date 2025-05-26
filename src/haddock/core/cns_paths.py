@@ -34,7 +34,7 @@ PROTEIN_LINK_FILES = {
 }
 NUCL_LINK_FILES = {
     "5'Phosphate": "dna-rna-pho-1.3.link",
-    "5'Sugar": "dna-rna-1.3.link",
+    "5'OH": "dna-rna-1.3.link",
 }
 
 # default prepared paths

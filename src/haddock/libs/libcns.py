@@ -94,7 +94,7 @@ def find_desired_linkfiles(
     linkfiles["prot_link_infile"] = cns_paths.PROTEIN_LINK_FILES[prot_link_key]
 
     # Logic to find linkfile for dna
-    nucl_link_key = "5'Phosphate" if phosphate_5 else "5'Sugar"
+    nucl_link_key = "5'Phosphate" if phosphate_5 else "5'OH"
     # Point to corresponding file
     linkfiles["nucl_link_infile"] = cns_paths.NUCL_LINK_FILES[nucl_link_key]
     # Converts to real paths

@@ -197,6 +197,15 @@ mol1:
           as it would be in a peptide bond. If true, C-ter will be a charged COO-.
     group: molecule
     explevel: easy
+  5_phosphate:
+    default: false
+    type: boolean
+    title: Nucleic Acids 5' topology
+    short: Defines how nucleic acid 5' residue should be
+    long: This option defines how nucleic acid 5' residue should be. If false (default),
+          5' end will be an OH. If true, 5' end will be a phosphate.
+    group: molecule
+    explevel: easy
 molecules:
   default: false
   type: boolean

@@ -142,7 +142,8 @@ define(
 
 {* nucleic acid linkage file *}
 {* use TOPPAR:toppar/dna-rna-pho.link for 5'-phosphate *}
-{===>} nucl_link_infile="TOPPAR:dna-rna-1.3.link";
+{* Commented out because provided by input parameter $nucl_link_infile *}
+!{===>} nucl_link_infile="TOPPAR:dna-rna-1.3.link";
 
 {* nucleic acid parameter file *}
 {===>} nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param";
@@ -288,12 +289,8 @@ segment
         if ( &separate = true ) then
             separate=true
         end if
-        if ( &BLANK%prot_link_infile = false ) then
-            @@$prot_link_infile
-        end if
-        if ( &BLANK%nucl_link_infile = false ) then
-            @@&nucl_link_infile
-        end if
+        @@$prot_link_infile
+        @@$nucl_link_infile
         if ( &BLANK%carbo_link_infile = false ) then
             @@&carbo_link_infile
         end if

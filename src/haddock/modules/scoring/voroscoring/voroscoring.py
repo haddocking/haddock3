@@ -38,8 +38,8 @@ SLURM_HEADER_CPU = """#SBATCH -J hd3-voroscoring-cpu
 
 # Job template
 VOROMQA_CFG_TEMPLATE = """#!/bin/bash
-{HEADER}
 #SBATCH -J {JOBNAME}
+{HEADER}
 
 # Where to do the work
 WORKDIR="{WORKDIR}"
@@ -61,7 +61,8 @@ OUT_MSG="Output file is here: $OUTPUT_FPATH"
 # 1. Setup enviroments
 # Load the gnu13 module...
 # NOTE: specific to haddock-team users...
-# module load gnu13
+# This is made to get good gcc compiler
+module load gnu13
 # Activate conda env
 source "$CONDA_INSTALL_DIR/bin/activate"
 conda activate $CONDA_ENV_NAME

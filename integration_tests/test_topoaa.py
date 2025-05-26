@@ -250,3 +250,50 @@ def test_topoaa_module_protein_charged_ters(topoaa_module):
     nter, cter = extract_nter_cter(expected_pdb)
     assert "OXT" in cter
     assert all([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+
+
+def test_topoaa_module_dna_5_phosphate(topoaa_module):
+    """Topoaa module with charged termini."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "mini_dna.pdb"),
+    ]
+    topoaa_module.params["mol1"]["5_phosphate"] = True
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "mini_dna.inp")
+    expected_psf = Path(topoaa_module.path, "mini_dna_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "mini_dna_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "mini_dna.out.gz")
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+    five_prime, _three_prime = extract_nter_cter(expected_pdb)
+    assert all([fp in five_prime for fp in ("H5T", "O5T", "OP2", "OP1", "P",)])
+
+
+def test_topoaa_module_dna_5_oh(topoaa_module):
+    """Topoaa module with charged termini."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "mini_dna.pdb"),
+    ]
+    topoaa_module.params["mol1"]["5_phosphate"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "mini_dna.inp")
+    expected_psf = Path(topoaa_module.path, "mini_dna_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "mini_dna_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "mini_dna.out.gz")
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+    five_prime, _three_prime = extract_nter_cter(expected_pdb)
+    assert not any([fp in five_prime for fp in ("O5T", "OP2", "OP1", "P",)])
+    assert "H5T" in five_prime

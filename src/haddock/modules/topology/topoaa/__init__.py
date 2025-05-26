@@ -65,7 +65,7 @@ def generate_topology(
     general_param = general_param + input_mols_params
 
     # generate default headers
-    link, trans_vec, tensor, scatter, axis, water_box = generate_default_header(
+    _link, trans_vec, tensor, scatter, axis, water_box = generate_default_header(
         path=default_params_path
     )
 
@@ -80,7 +80,6 @@ def generate_topology(
         general_param,
         input_str,
         output,
-        #link,
         trans_vec,
         tensor,
         scatter,
@@ -236,7 +235,7 @@ class HaddockModule(BaseCNSModule):
             link_files = find_desired_linkfiles(
                 charged_nter=parameters_for_this_molecule.pop("charged_nter"),
                 charged_cter=parameters_for_this_molecule.pop("charged_cter"),
-                phosphate_5=False,
+                phosphate_5=False,  # FIXME: get it from molecule parameters
                 path=self.toppar_path,
             )
             # Update molecule parameters with full path to link files

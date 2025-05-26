@@ -59,6 +59,26 @@ def find_desired_linkfiles(
         phosphate_5: bool = False,
         path: Optional[FilePath] = None,
         ) -> dict[str, Path]:
+    """Find appropriate link files to use depending on terminis states.
+
+    Parameters
+    ----------
+    charged_nter : bool, optional
+        Must the Nter be charged ?, by default False
+    charged_cter : bool, optional
+        Must the Cter be charged ?, by default False
+    phosphate_5 : bool, optional
+        Must 5' be a phosphate ?, by default False
+    path : Optional[FilePath], optional
+        Path to where CNS topology/parameters are, by default None
+
+    Returns
+    -------
+    linkfiles : dict[str, Path]
+        Dict of CNS parameters/arguments/variable as keys
+        and Path to link files to be used during topology
+        generation.
+    """
     # Set output variable
     linkfiles = {}
     # Logic to find appropriate link for proteins

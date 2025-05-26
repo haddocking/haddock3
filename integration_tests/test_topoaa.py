@@ -156,7 +156,7 @@ def test_topoaa_cyclic(topoaa_module):
 def test_topoaa_module_protein_noCter(topoaa_module):
     """Topoaa module with uncharged Cter and charged Nter."""
     topoaa_module.params["molecules"] = [
-        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+        Path(GOLDEN_DATA, "2oob_A.pdb"),
     ]
     topoaa_module.params["mol1"]["charged_nter"] = True
     topoaa_module.params["mol1"]["charged_cter"] = False
@@ -164,10 +164,10 @@ def test_topoaa_module_protein_noCter(topoaa_module):
     topoaa_module.params["debug"] = True
     topoaa_module.run()
 
-    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
-    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
-    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
-    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    expected_inp = Path(topoaa_module.path, "2oob_A.inp")
+    expected_psf = Path(topoaa_module.path, "2oob_A_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "2oob_A_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "2oob_A.out.gz")
     assert expected_inp.exists()
     assert expected_psf.exists()
     assert expected_pdb.exists()
@@ -181,7 +181,7 @@ def test_topoaa_module_protein_noCter(topoaa_module):
 def test_topoaa_module_protein_noNter(topoaa_module):
     """Topoaa module with charged Cter and uncharged Nter."""
     topoaa_module.params["molecules"] = [
-        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+        Path(GOLDEN_DATA, "2oob_A.pdb"),
     ]
     topoaa_module.params["mol1"]["charged_nter"] = False
     topoaa_module.params["mol1"]["charged_cter"] = True
@@ -189,10 +189,10 @@ def test_topoaa_module_protein_noNter(topoaa_module):
     topoaa_module.params["debug"] = True
     topoaa_module.run()
 
-    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
-    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
-    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
-    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    expected_inp = Path(topoaa_module.path, "2oob_A.inp")
+    expected_psf = Path(topoaa_module.path, "2oob_A_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "2oob_A_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "2oob_A.out.gz")
     assert expected_inp.exists()
     assert expected_psf.exists()
     assert expected_pdb.exists()
@@ -205,7 +205,7 @@ def test_topoaa_module_protein_noNter(topoaa_module):
 def test_topoaa_module_protein_noter(topoaa_module):
     """Topoaa module without charged termini."""
     topoaa_module.params["molecules"] = [
-        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+        Path(GOLDEN_DATA, "2oob_A.pdb"),
     ]
     topoaa_module.params["mol1"]["charged_nter"] = False
     topoaa_module.params["mol1"]["charged_cter"] = False
@@ -213,10 +213,10 @@ def test_topoaa_module_protein_noter(topoaa_module):
     topoaa_module.params["debug"] = True
     topoaa_module.run()
 
-    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
-    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
-    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
-    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    expected_inp = Path(topoaa_module.path, "2oob_A.inp")
+    expected_psf = Path(topoaa_module.path, "2oob_A_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "2oob_A_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "2oob_A.out.gz")
     assert expected_inp.exists()
     assert expected_psf.exists()
     assert expected_pdb.exists()
@@ -230,7 +230,7 @@ def test_topoaa_module_protein_noter(topoaa_module):
 def test_topoaa_module_protein_charged_ters(topoaa_module):
     """Topoaa module with charged termini."""
     topoaa_module.params["molecules"] = [
-        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+        Path(GOLDEN_DATA, "2oob_A.pdb"),
     ]
     topoaa_module.params["mol1"]["charged_nter"] = True
     topoaa_module.params["mol1"]["charged_cter"] = True
@@ -238,10 +238,10 @@ def test_topoaa_module_protein_charged_ters(topoaa_module):
     topoaa_module.params["debug"] = True
     topoaa_module.run()
 
-    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
-    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
-    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
-    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
+    expected_inp = Path(topoaa_module.path, "2oob_A.inp")
+    expected_psf = Path(topoaa_module.path, "2oob_A_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "2oob_A_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "2oob_A.out.gz")
     assert expected_inp.exists()
     assert expected_psf.exists()
     assert expected_pdb.exists()

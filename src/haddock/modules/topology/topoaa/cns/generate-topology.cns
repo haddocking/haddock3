@@ -140,11 +140,6 @@ define(
 {* nucleic acid topology file *}
 {===>} nucl_topology_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.top";
 
-{* nucleic acid linkage file *}
-{* use TOPPAR:toppar/dna-rna-pho.link for 5'-phosphate *}
-{* Commented out because provided by input parameter $nucl_link_infile *}
-!{===>} nucl_link_infile="TOPPAR:dna-rna-1.3.link";
-
 {* nucleic acid parameter file *}
 {===>} nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param";
 

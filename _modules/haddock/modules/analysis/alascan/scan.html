@@ -246,9 +246,10 @@
     <span class="k">return</span> <span class="n">pdb_f</span></div>
 
 
+
 <div class="viewcode-block" id="get_score_string">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.get_score_string">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_score_string</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_score_string</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">outputpdb</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get score output from cli_score.main.</span>
 
 <span class="sd">    Parameters</span>
@@ -259,6 +260,10 @@
 <span class="sd">    run_dir : str</span>
 <span class="sd">        Path to the run directory.</span>
 <span class="sd">    </span>
+<span class="sd">    outputpdb : bool, optional</span>
+<span class="sd">        If True, the output, energy-minimized pdb file will be written.</span>
+<span class="sd">        Default is False.</span>
+<span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    out : list</span>
@@ -266,7 +271,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-        <span class="n">cli_score</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">cli_score</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">outputpdb</span><span class="o">=</span><span class="n">outputpdb</span><span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span></div>
 
@@ -274,7 +279,7 @@
 
 <div class="viewcode-block" id="calc_score">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.calc_score">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calc_score</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_score</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">outputpdb</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the score of a model.</span>
 
 <span class="sd">    Parameters</span>
@@ -283,6 +288,9 @@
 <span class="sd">        Path to the pdb file.</span>
 <span class="sd">    run_dir : str</span>
 <span class="sd">        Path to the run directory.</span>
+<span class="sd">    outputpdb : bool, optional</span>
+<span class="sd">        If True, the output, energy-minimized pdb file will be written.</span>
+<span class="sd">        Default is False.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -297,7 +305,7 @@
 <span class="sd">    bsa : float</span>
 <span class="sd">        Buried surface area.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">out_string</span> <span class="o">=</span> <span class="n">get_score_string</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">)</span>
+    <span class="n">out_string</span> <span class="o">=</span> <span class="n">get_score_string</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">run_dir</span><span class="p">,</span> <span class="n">outputpdb</span><span class="o">=</span><span class="n">outputpdb</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="n">out_string</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">ln</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt; HADDOCK-score (emscoring)&quot;</span><span class="p">):</span>
@@ -307,6 +315,11 @@
             <span class="n">elec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;elec=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">desolv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;desolv=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">bsa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;bsa=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">ln</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&gt; writing&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">outputpdb</span><span class="p">:</span>
+            <span class="n">outpdb</span> <span class="o">=</span> <span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># check if the output pdb file exists</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpdb</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find output pdb file </span><span class="si">{</span><span class="n">outpdb</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">score</span><span class="p">,</span> <span class="n">vdw</span><span class="p">,</span> <span class="n">elec</span><span class="p">,</span> <span class="n">desolv</span><span class="p">,</span> <span class="n">bsa</span></div>
 
 
@@ -568,7 +581,9 @@
             <span class="c1"># attribute could come from any module in principle</span>
             <span class="n">sc_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;haddock3-score-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">core</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">n_score</span><span class="p">,</span> <span class="n">n_vdw</span><span class="p">,</span> <span class="n">n_elec</span><span class="p">,</span> <span class="n">n_des</span><span class="p">,</span> <span class="n">n_bsa</span> <span class="o">=</span> <span class="n">calc_score</span><span class="p">(</span><span class="n">native</span><span class="o">.</span><span class="n">rel_path</span><span class="p">,</span>
-                                                              <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">)</span>
+                                                              <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">,</span>
+                                                              <span class="n">outputpdb</span><span class="o">=</span><span class="kc">False</span>
+                                                              <span class="p">)</span>
             <span class="n">scan_data</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="c1"># load the coordinates</span>
@@ -634,7 +649,9 @@
                         <span class="c1"># now we score the mutated model</span>
                         <span class="n">c_score</span><span class="p">,</span> <span class="n">c_vdw</span><span class="p">,</span> <span class="n">c_elec</span><span class="p">,</span> <span class="n">c_des</span><span class="p">,</span> <span class="n">c_bsa</span> <span class="o">=</span> <span class="n">calc_score</span><span class="p">(</span>
                             <span class="n">mut_pdb_name</span><span class="p">,</span>
-                            <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">)</span>
+                            <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">,</span>
+                            <span class="n">outputpdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mutants</span>
+                            <span class="p">)</span>
                         <span class="c1"># now the deltas (wildtype - mutant)</span>
                         <span class="n">delta_score</span> <span class="o">=</span> <span class="n">n_score</span> <span class="o">-</span> <span class="n">c_score</span>
                         <span class="n">delta_vdw</span> <span class="o">=</span> <span class="n">n_vdw</span> <span class="o">-</span> <span class="n">c_vdw</span>
@@ -647,10 +664,14 @@
                                           <span class="n">c_bsa</span><span class="p">,</span> <span class="n">delta_score</span><span class="p">,</span>
                                           <span class="n">delta_vdw</span><span class="p">,</span> <span class="n">delta_elec</span><span class="p">,</span> <span class="n">delta_desolv</span><span class="p">,</span>
                                           <span class="n">delta_bsa</span><span class="p">])</span>
-                        <span class="c1"># if self.output_mutants is false, remove the </span>
-                        <span class="c1"># mutated pdb file</span>
+                        <span class="c1"># if self.output_mutants is false, remove the mutated</span>
+                        <span class="c1"># pdb file. Otherwise, move the EM haddock model to the</span>
+                        <span class="c1"># original mut_pdb_name</span>
+                        <span class="n">em_mut_pdb</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">mut_pdb_name</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s1">&#39;_hs.pdb&#39;</span><span class="p">)</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mutants</span><span class="p">:</span>
                             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">mut_pdb_name</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">em_mut_pdb</span><span class="p">,</span> <span class="n">mut_pdb_name</span><span class="p">)</span>
             <span class="c1"># write output</span>
             <span class="n">df_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;res&#39;</span><span class="p">,</span> <span class="s1">&#39;ori_resname&#39;</span><span class="p">,</span> <span class="s1">&#39;end_resname&#39;</span><span class="p">,</span>
                           <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;vdw&#39;</span><span class="p">,</span> <span class="s1">&#39;elec&#39;</span><span class="p">,</span> <span class="s1">&#39;desolv&#39;</span><span class="p">,</span> <span class="s1">&#39;bsa&#39;</span><span class="p">,</span>
@@ -691,7 +712,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on May 14, 2025.
+      <span class="lastupdated">Last updated on May 27, 2025.
       </span></p>
   </div>
 

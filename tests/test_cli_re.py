@@ -126,6 +126,7 @@ def test_cli_reclustrmsd():
         # rmsdmatrix.json
         rmsdmatrix_json = Path(golden_data, "example_rmsd_matrix.json")
         tmp_rmsdmatrix_json = Path(nested_tmpdir_previousstep, "rmsd_matrix.json")
+        # Modify hard written path to tmp one
         with open(rmsdmatrix_json, "r") as fin, open(tmp_rmsdmatrix_json, "w") as fout:
             for _ in fin:
                 fout.write(
@@ -133,10 +134,7 @@ def test_cli_reclustrmsd():
                         "tests/golden_data",
                         str(nested_tmpdir_previousstep))
                     )
-        #shutil.copy(
-        #    rmsdmatrix_json,
-        #    Path(nested_tmpdir_previousstep, "rmsd_matrix.json"),
-        #    )
+        # example ilrmsd matrix 
         ilrmsd_matrix = Path(golden_data, "example_ilrmsd.matrix")
         shutil.copy(
             ilrmsd_matrix,

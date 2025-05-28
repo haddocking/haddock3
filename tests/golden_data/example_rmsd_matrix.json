@@ -18,7 +18,7 @@
             "full_name": "example_ilrmsd.matrix",
             "md5": null,
             "npairs": 45,
-            "path": "./tests/golden_data",
+            "path": "tests/golden_data",
             "py/object": "haddock.libs.libontology.RMSDFile",
             "rel_path": {
                 "py/reduce": [

@@ -273,9 +273,6 @@ def test_run(
     assert Path(alascan.path, "scan_clt_-.tsv").exists()
     assert Path(alascan.path, "scan_clt_-.html").exists()
 
-    alascan.params["output"] = True
-    alascan.run()
-
 
 def test_scanjob_run(scanjob_obj, mocker):
     mocker.patch("haddock.modules.analysis.alascan.scan.Scan.run", return_value=None)

@@ -92,8 +92,8 @@ If you used `haddock3` for your research, please cite us:
 
 ## Useful resources
 
-- [User manual]() (_coming soon!_)
-- [Best practice guide](https://www.bonvinlab.org/software/bpg/)
+- [User manual](https://www.bonvinlab.org/haddock3-user-manual): The online HADDOCK3 guide describing every aspects of the tool.
+- [Best practice guide](https://www.bonvinlab.org/software/bpg/) (HADDOCK2.X series)
 - [The HADDOCK2.4 web server: A leap forward in integrative modelling of biomolecular complexes. Nature Prot. 2024](https://www.nature.com/articles/s41596-024-01011-0)
 
 ## Development

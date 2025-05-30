@@ -53,6 +53,56 @@ def generate_default_header(
     )
 
 
+def find_desired_linkfiles(
+        charged_nter: bool = False,
+        charged_cter: bool = False,
+        phosphate_5: bool = False,
+        path: Optional[FilePath] = None,
+        ) -> dict[str, Path]:
+    """Find appropriate link files to use depending on terminis states.
+
+    Parameters
+    ----------
+    charged_nter : bool, optional
+        Must the Nter be charged ?, by default False
+    charged_cter : bool, optional
+        Must the Cter be charged ?, by default False
+    phosphate_5 : bool, optional
+        Must 5' be a phosphate ?, by default False
+    path : Optional[FilePath], optional
+        Path to where CNS topology/parameters are, by default None
+
+    Returns
+    -------
+    linkfiles : dict[str, Path]
+        Dict of CNS parameters/arguments/variable as keys
+        and Path to link files to be used during topology
+        generation.
+    """
+    # Set output variable
+    linkfiles = {}
+    # Logic to find appropriate link for proteins
+    if charged_nter and charged_cter:
+        prot_link_key = "NH3+,COO-"
+    elif not charged_nter and charged_cter:
+        prot_link_key = "NH,COO-"
+    elif charged_nter and not charged_cter:
+        prot_link_key= "NH3+,CO"
+    elif not charged_nter and not charged_cter:
+        prot_link_key = "NH,CO"
+    # Point to corresponding file
+    linkfiles["prot_link_infile"] = cns_paths.PROTEIN_LINK_FILES[prot_link_key]
+
+    # Logic to find linkfile for dna
+    nucl_link_key = "5'Phosphate" if phosphate_5 else "5'OH"
+    # Point to corresponding file
+    linkfiles["nucl_link_infile"] = cns_paths.NUCL_LINK_FILES[nucl_link_key]
+    # Converts to real paths
+    if path is not None:
+        linkfiles = {key: Path(path, p) for key, p in linkfiles.items()}
+    return linkfiles
+
+
 def _is_nan(x: Any) -> bool:
     """Inspect if is nan."""
     try:
@@ -116,10 +166,13 @@ def load_workflow_params(
 
     Returns
     -------
-    str
+    param_header: str
         The string with the CNS parameters defined.
     """
-    non_empty_parameters = ((k, v) for k, v in params.items() if filter_empty_vars(v))
+    non_empty_parameters = (
+        (k, v) for k, v in params.items()
+        if filter_empty_vars(v)
+        )
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
@@ -160,7 +213,8 @@ def write_eval_line(param: Any, value: Any, eval_line: str = "eval (${}={})") ->
 def load_link(mol_link: Path) -> str:
     """Add the link header."""
     return load_workflow_params(
-        param_header=f"{linesep}! Link file{linesep}", link_file=mol_link
+        param_header=f"{linesep}! Link file{linesep}",
+        prot_link_infile=mol_link,
     )
 
 

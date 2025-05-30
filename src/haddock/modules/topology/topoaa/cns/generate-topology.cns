@@ -95,16 +95,6 @@ define(
 {* to define cis peptides*}
 {===>} atom_select=(known and not hydrogen);
 
-{========================= RNA to DNA conversion  ==========================}
-
-{* All nucleic acid residues initially have ribose sugars (rather than
-   deoxyribose). A patch must be applied to convert the ribose to deoxyribose
-   for DNA residues. Select those residues which need to have the patch
-   applied to make them DNA. *}
-{* Make sure that the atom selection is specific for the nucleic acid
-   residues *}
-{===>} dna_sele=(none);
-            
 {========================= generate parameters =============================}
 
 {* hydrogen flag - determines whether hydrogens will be output *}
@@ -142,9 +132,6 @@ define(
 {* protein topology file *}
 {===>} prot_topology_infile="TOPPAR:protein-allhdg5-4.top";
 
-{* protein linkage file *}
-{===>} prot_link_infile="TOPPAR:protein-allhdg5-4-noter.link";
-
 {* protein parameter file *}
 {===>} prot_parameter_infile="TOPPAR:protein-allhdg5-4.param";
 
@@ -152,10 +139,6 @@ define(
 
 {* nucleic acid topology file *}
 {===>} nucl_topology_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.top";
-
-{* nucleic acid linkage file *}
-{* use TOPPAR:toppar/dna-rna-pho.link for 5'-phosphate *}
-{===>} nucl_link_infile="TOPPAR:dna-rna-1.3.link";
 
 {* nucleic acid parameter file *}
 {===>} nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param";
@@ -179,22 +162,7 @@ define(
 {================= cofactor topology and parameter files ===================}
 
 {* co-factor topology file *}
-{===>} cofac_topology_infile="TOPPAR:ligand.top";
-
-{* co-factor linkage file *}
-{===>} cofac_link_infile="TOPPAR:ligand.pep";
-
-{* co-factor parameter file *}
-{===>} cofac_parameter_infile="TOPPAR:ligand.param";
-
-
-{================= cofactor topology and parameter files ===================}
-
-{* co-factor topology file *}
 {===>} cofactors_topology_infile="TOPPAR:cofactors.top";
-
-{* co-factor linkage file *}
-{===>} cofactors_link_infile="TOPPAR:cofactors.pep";
 
 {* co-factor parameter file *}
 {===>} cofactors_parameter_infile="TOPPAR:cofactors.param";
@@ -258,12 +226,6 @@ topology
     if ( &BLANK%solv_topology_infile = false ) then
         @@&solv_topology_infile
     end if
-    if ( &BLANK%ligands_topology_infile = false ) then
-        @@&ligands_topology_infile
-    end if
-    if ( &BLANK%cofac_topology_infile = false ) then
-        @@&cofac_topology_infile
-    end if
     if ( &BLANK%heme_topology_infile = false ) then
         @@&heme_topology_infile
     end if
@@ -300,12 +262,6 @@ parameter
     if ( &BLANK%solv_parameter_infile = false ) then
         @@&solv_parameter_infile
     end if
-    if ( &BLANK%ligands_parameter_infile = false ) then
-        @@&ligands_parameter_infile
-    end if
-    if ( &BLANK%cofac_parameter_infile = false ) then
-        @@&cofac_parameter_infile
-    end if
     if ( &BLANK%heme_parameter_infile = false ) then
         @@&heme_parameter_infile
     end if
@@ -328,32 +284,10 @@ segment
         if ( &separate = true ) then
             separate=true
         end if
-        !if ( &BLANK%prot_link_infile = false ) then
-            @@&prot_link_infile
-        !end if
-        if ( &BLANK%ion_link_infile = false ) then
-            @@&ion_link_infile
-        end if
-        if ( &BLANK%nucl_link_infile = false ) then
-            @@&nucl_link_infile
-        end if
+        @@$prot_link_infile
+        @@$nucl_link_infile
         if ( &BLANK%carbo_link_infile = false ) then
             @@&carbo_link_infile
-        end if
-        if ( &BLANK%solv_link_infile = false ) then
-            @@&solv_link_infile
-        end if
-        if ( &BLANK%ligands_link_infile = false ) then
-            @@&ligands_link_infile
-        end if
-        if ( &BLANK%cofac_link_infile = false ) then
-            @@&cofac_link_infile
-        end if
-        if ( &BLANK%cofactors_link_infile = false ) then
-            @@&cofactors_link_infile
-        end if
-        if ( &BLANK%heme_link_infile = false ) then
-            @@&heme_link_infile
         end if
         coordinates @@$coor_infile
     end

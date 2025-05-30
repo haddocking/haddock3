@@ -26,6 +26,17 @@ LINK_FILE = "protein-allhdg5-4-noter.link"
 SCATTER_LIB = "scatter.lib"
 INITIAL_POSITIONS_DIR = "initial_positions"
 
+PROTEIN_LINK_FILES = {
+    "NH3+,COO-": "protein-allhdg5-4.link",
+    "NH,COO-": "protein-allhdg5-4-noNter.link",
+    "NH3+,CO": "protein-allhdg5-4-noCter.link",
+    "NH,CO": LINK_FILE,
+}
+NUCL_LINK_FILES = {
+    "5'Phosphate": "dna-rna-pho-1.3.link",
+    "5'OH": "dna-rna-1.3.link",
+}
+
 # default prepared paths
 link_file = Path(toppar_path, LINK_FILE)
 scatter_lib = Path(toppar_path, SCATTER_LIB)

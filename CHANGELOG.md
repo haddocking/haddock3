@@ -1,3 +1,3 @@
 # Changelog
 
-Will be edited as of the first main release
+2025-06-05: Added support for pyroglutamic acid (PCA)

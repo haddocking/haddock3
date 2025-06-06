@@ -58,7 +58,6 @@ dev = [
   "pytest-mock==3.14.1",
   "fastapi==0.115.12",
   "httpx==0.28.1",
-  "mpi4py==4.0.3",
   "kaleido==0.2.1",
   "pytest-random-order==1.1.1",
 ]
@@ -69,6 +68,9 @@ docs = [
   "CommonMark>=0.9.1",
   "mock>=5.1.0",
   "myst-parser>=3.0.1",
+]
+mpi = [
+  "mpi4py==4.0.3",
 ]
 
 [project.urls]

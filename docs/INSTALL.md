@@ -1,6 +1,6 @@
 # Installation
 
-Create a virtual environment with Python 3.9:
+Create a virtual environment with a Python version 3.9 or up to 3.13
 
 You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
@@ -30,9 +30,7 @@ pip install .
 To use the mpi implementation of haddock3 you must have mpi4py installed in the `(haddock3)` python environment, and OpenMPI in the host system.
 
 ```bash
-$ pip install mpi4py
-# or
-$ conda install -c conda-forge mpi4py
+pip install '.[mpi]'
 ```
 
 Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html) instructions on how to run HADDOCK3 with MPI.

@@ -115,6 +115,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">,</span> <span class="n">ParamMap</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs</span><span class="w"> </span><span class="kn">import</span> <span class="n">libpdb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcns</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">find_desired_linkfiles</span><span class="p">,</span>
     <span class="n">generate_default_header</span><span class="p">,</span>
     <span class="n">load_workflow_params</span><span class="p">,</span>
     <span class="n">prepare_output</span><span class="p">,</span>
@@ -148,7 +149,7 @@
     <span class="n">general_param</span> <span class="o">=</span> <span class="n">general_param</span> <span class="o">+</span> <span class="n">input_mols_params</span>
 
     <span class="c1"># generate default headers</span>
-    <span class="n">link</span><span class="p">,</span> <span class="n">trans_vec</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">scatter</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">water_box</span> <span class="o">=</span> <span class="n">generate_default_header</span><span class="p">(</span>
+    <span class="n">_link</span><span class="p">,</span> <span class="n">trans_vec</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">scatter</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">water_box</span> <span class="o">=</span> <span class="n">generate_default_header</span><span class="p">(</span>
         <span class="n">path</span><span class="o">=</span><span class="n">default_params_path</span>
     <span class="p">)</span>
 
@@ -158,12 +159,11 @@
     <span class="p">)</span>
 
     <span class="n">input_str</span> <span class="o">=</span> <span class="n">prepare_single_input</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_pdb</span><span class="p">))</span>
-
+    <span class="c1"># Order CNS statements</span>
     <span class="n">inp_parts</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">general_param</span><span class="p">,</span>
         <span class="n">input_str</span><span class="p">,</span>
         <span class="n">output</span><span class="p">,</span>
-        <span class="n">link</span><span class="p">,</span>
         <span class="n">trans_vec</span><span class="p">,</span>
         <span class="n">tensor</span><span class="p">,</span>
         <span class="n">scatter</span><span class="p">,</span>
@@ -171,7 +171,7 @@
         <span class="n">water_box</span><span class="p">,</span>
         <span class="n">recipe_str</span><span class="p">,</span>
     <span class="p">)</span>
-
+    <span class="c1"># Combine all CNS statments as a single string</span>
     <span class="n">inp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp_parts</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">write_to_disk</span><span class="p">:</span>
@@ -327,7 +327,28 @@
             <span class="c1"># molecule parameters are shared among models of the same molecule</span>
             <span class="n">parameters_for_this_molecule</span> <span class="o">=</span> <span class="n">mol_params</span><span class="p">[</span><span class="n">mol_params_get</span><span class="p">()]</span>
 
-            <span class="k">for</span> <span class="n">task_id</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">splited_models</span><span class="p">):</span>
+            <span class="c1"># Extract termini parameters</span>
+            <span class="n">charged_nter</span> <span class="o">=</span> <span class="n">parameters_for_this_molecule</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;charged_nter&quot;</span><span class="p">)</span>
+            <span class="n">charged_cter</span> <span class="o">=</span> <span class="n">parameters_for_this_molecule</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;charged_cter&quot;</span><span class="p">)</span>
+            <span class="n">phosphate_5</span> <span class="o">=</span> <span class="n">parameters_for_this_molecule</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;5_phosphate&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Termini of molecule </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; N-ter: </span><span class="si">{</span><span class="s1">&#39;un&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">charged_nter</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">charged&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; C-ter: </span><span class="si">{</span><span class="s1">&#39;un&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">charged_cter</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">charged&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; 5&#39;phosphate: </span><span class="si">{</span><span class="s1">&#39;yes&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">phosphate_5</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;no&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="c1"># Find appropriate link files for this molecule</span>
+            <span class="n">link_files</span> <span class="o">=</span> <span class="n">find_desired_linkfiles</span><span class="p">(</span>
+                <span class="n">charged_nter</span><span class="o">=</span><span class="n">charged_nter</span><span class="p">,</span>
+                <span class="n">charged_cter</span><span class="o">=</span><span class="n">charged_cter</span><span class="p">,</span>
+                <span class="n">phosphate_5</span><span class="o">=</span><span class="n">phosphate_5</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Update molecule parameters with full path to link files</span>
+            <span class="n">parameters_for_this_molecule</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">link_files</span><span class="p">)</span>
+
+            <span class="c1"># Loop over molecules conformations</span>
+            <span class="k">for</span> <span class="n">_task_id</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">splited_models</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sanitizing molecule </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">models_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
@@ -439,7 +460,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 04, 2025.
+      <span class="lastupdated">Last updated on Jun 06, 2025.
       </span></p>
   </div>
 

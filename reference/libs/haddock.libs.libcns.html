@@ -138,6 +138,27 @@ that should not be written in CNS.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libcns.find_desired_linkfiles">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libcns.</span></span><span class="sig-name descname"><span class="pre">find_desired_linkfiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">charged_nter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charged_cter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phosphate_5</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libcns.html#find_desired_linkfiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libcns.find_desired_linkfiles" title="Link to this definition"></a></dt>
+<dd><p>Find appropriate link files to use depending on terminis states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>charged_nter</strong> (<em>bool, optional</em>) – Must the Nter be charged ?, by default False</p></li>
+<li><p><strong>charged_cter</strong> (<em>bool, optional</em>) – Must the Cter be charged ?, by default False</p></li>
+<li><p><strong>phosphate_5</strong> (<em>bool, optional</em>) – Must 5’ be a phosphate ?, by default False</p></li>
+<li><p><strong>path</strong> (<em>Optional[FilePath], optional</em>) – Path to where CNS topology/parameters are, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>linkfiles</strong> (<em>dict[str, Path]</em>) – Dict of CNS parameters/arguments/variable as keys
+and Path to link files to be used during topology
+generation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libcns.generate_default_header">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libcns.</span></span><span class="sig-name descname"><span class="pre">generate_default_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libcns.html#generate_default_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libcns.generate_default_header" title="Link to this definition"></a></dt>
 <dd><p>Generate CNS default header.</p>
@@ -161,7 +182,7 @@ that should not be written in CNS.</p>
 be written to CNS. Values cannot be of dictionary type.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – The string with the CNS parameters defined.</p>
+<dd class="field-even"><p><strong>param_header</strong> (<em>str</em>) – The string with the CNS parameters defined.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -208,7 +229,7 @@ be written to CNS. Values cannot be of dictionary type.</p>
 be written to CNS. Values cannot be of dictionary type.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – The string with the CNS parameters defined.</p>
+<dd class="field-even"><p><strong>param_header</strong> (<em>str</em>) – The string with the CNS parameters defined.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -231,7 +252,7 @@ be written to CNS. Values cannot be of dictionary type.</p>
 be written to CNS. Values cannot be of dictionary type.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – The string with the CNS parameters defined.</p>
+<dd class="field-even"><p><strong>param_header</strong> (<em>str</em>) – The string with the CNS parameters defined.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -254,7 +275,7 @@ be written to CNS. Values cannot be of dictionary type.</p>
 be written to CNS. Values cannot be of dictionary type.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – The string with the CNS parameters defined.</p>
+<dd class="field-even"><p><strong>param_header</strong> (<em>str</em>) – The string with the CNS parameters defined.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -297,7 +318,7 @@ be written to CNS. Values cannot be of dictionary type.</p>
 be written to CNS. Values cannot be of dictionary type.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – The string with the CNS parameters defined.</p>
+<dd class="field-even"><p><strong>param_header</strong> (<em>str</em>) – The string with the CNS parameters defined.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -330,7 +351,7 @@ are not used, it should not be an issue.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 04, 2025.
+      <span class="lastupdated">Last updated on Jun 06, 2025.
       </span></p>
   </div>
 

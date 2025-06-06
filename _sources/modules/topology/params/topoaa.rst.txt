@@ -45,6 +45,39 @@ mol1
 | *group*: input molecules
 | *explevel*: easy
 
+mol1.5_phosphate
+****************
+
+| *default*: False
+| *type*: boolean
+| *title*: Nucleic Acids 5' topology
+| *short description*: Define if 5' end should be phosphate or not.
+| *long description*: This option defines how nucleic acid 5' residue should be. If false (default), 5' end will be an OH. If true, 5' end will be a phosphate.
+| *group*: molecule
+| *explevel*: easy
+
+mol1.charged_cter
+*****************
+
+| *default*: False
+| *type*: boolean
+| *title*: C-ter topology
+| *short description*: Define if C-terminus should be charged or uncharged
+| *long description*: This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO, as it would be in a peptide bond. If true, C-ter will be a charged COO-.
+| *group*: molecule
+| *explevel*: easy
+
+mol1.charged_nter
+*****************
+
+| *default*: False
+| *type*: boolean
+| *title*: N-ter topology
+| *short description*: Define if N-terminus should be charged or uncharged
+| *long description*: This option defines how N-terminus residue should be. If false (default), N-ter will be an uncharged NH, as it would be in a peptide bond. If true, N-ter will be a charged NH3+.
+| *group*: molecule
+| *explevel*: easy
+
 mol1.cyclicpept
 ***************
 

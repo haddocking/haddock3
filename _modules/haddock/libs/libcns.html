@@ -137,6 +137,59 @@
 
 
 
+<div class="viewcode-block" id="find_desired_linkfiles">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.find_desired_linkfiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_desired_linkfiles</span><span class="p">(</span>
+        <span class="n">charged_nter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">charged_cter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">phosphate_5</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find appropriate link files to use depending on terminis states.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    charged_nter : bool, optional</span>
+<span class="sd">        Must the Nter be charged ?, by default False</span>
+<span class="sd">    charged_cter : bool, optional</span>
+<span class="sd">        Must the Cter be charged ?, by default False</span>
+<span class="sd">    phosphate_5 : bool, optional</span>
+<span class="sd">        Must 5&#39; be a phosphate ?, by default False</span>
+<span class="sd">    path : Optional[FilePath], optional</span>
+<span class="sd">        Path to where CNS topology/parameters are, by default None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    linkfiles : dict[str, Path]</span>
+<span class="sd">        Dict of CNS parameters/arguments/variable as keys</span>
+<span class="sd">        and Path to link files to be used during topology</span>
+<span class="sd">        generation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set output variable</span>
+    <span class="n">linkfiles</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Logic to find appropriate link for proteins</span>
+    <span class="k">if</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="n">charged_cter</span><span class="p">:</span>
+        <span class="n">prot_link_key</span> <span class="o">=</span> <span class="s2">&quot;NH3+,COO-&quot;</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="n">charged_cter</span><span class="p">:</span>
+        <span class="n">prot_link_key</span> <span class="o">=</span> <span class="s2">&quot;NH,COO-&quot;</span>
+    <span class="k">elif</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">charged_cter</span><span class="p">:</span>
+        <span class="n">prot_link_key</span><span class="o">=</span> <span class="s2">&quot;NH3+,CO&quot;</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">charged_cter</span><span class="p">:</span>
+        <span class="n">prot_link_key</span> <span class="o">=</span> <span class="s2">&quot;NH,CO&quot;</span>
+    <span class="c1"># Point to corresponding file</span>
+    <span class="n">linkfiles</span><span class="p">[</span><span class="s2">&quot;prot_link_infile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cns_paths</span><span class="o">.</span><span class="n">PROTEIN_LINK_FILES</span><span class="p">[</span><span class="n">prot_link_key</span><span class="p">]</span>
+
+    <span class="c1"># Logic to find linkfile for dna</span>
+    <span class="n">nucl_link_key</span> <span class="o">=</span> <span class="s2">&quot;5&#39;Phosphate&quot;</span> <span class="k">if</span> <span class="n">phosphate_5</span> <span class="k">else</span> <span class="s2">&quot;5&#39;OH&quot;</span>
+    <span class="c1"># Point to corresponding file</span>
+    <span class="n">linkfiles</span><span class="p">[</span><span class="s2">&quot;nucl_link_infile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cns_paths</span><span class="o">.</span><span class="n">NUCL_LINK_FILES</span><span class="p">[</span><span class="n">nucl_link_key</span><span class="p">]</span>
+    <span class="c1"># Converts to real paths</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">linkfiles</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">linkfiles</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">linkfiles</span></div>
+
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_nan</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inspect if is nan.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -205,10 +258,13 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    str</span>
+<span class="sd">    param_header: str</span>
 <span class="sd">        The string with the CNS parameters defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">non_empty_parameters</span> <span class="o">=</span> <span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+    <span class="n">non_empty_parameters</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="c1"># types besides the ones in the if-statements should not enter this loop</span>
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">non_empty_parameters</span><span class="p">:</span>
@@ -255,7 +311,8 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">load_link</span><span class="p">(</span><span class="n">mol_link</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add the link header.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
-        <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Link file</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">link_file</span><span class="o">=</span><span class="n">mol_link</span>
+        <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Link file</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">prot_link_infile</span><span class="o">=</span><span class="n">mol_link</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -509,7 +566,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 04, 2025.
+      <span class="lastupdated">Last updated on Jun 06, 2025.
       </span></p>
   </div>
 

@@ -231,11 +231,21 @@ class HaddockModule(BaseCNSModule):
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
+            # Extract termini parameters
+            charged_nter = parameters_for_this_molecule.pop("charged_nter")
+            charged_cter = parameters_for_this_molecule.pop("charged_cter")
+            phosphate_5 = parameters_for_this_molecule.pop("5_phosphate")
+            self.log(
+                f"Termini of molecule {i}:{os.linesep}"
+                f" N-ter: {'un' if not charged_nter else ''}charged"
+                f" C-ter: {'un' if not charged_cter else ''}charged"
+                f" 5'phosphate: {'yes' if phosphate_5 else 'no'}"
+                )
             # Find appropriate link files for this molecule
             link_files = find_desired_linkfiles(
-                charged_nter=parameters_for_this_molecule.pop("charged_nter"),
-                charged_cter=parameters_for_this_molecule.pop("charged_cter"),
-                phosphate_5=parameters_for_this_molecule.pop("5_phosphate"),
+                charged_nter=charged_nter,
+                charged_cter=charged_cter,
+                phosphate_5=phosphate_5,
                 path=self.toppar_path,
             )
             # Update molecule parameters with full path to link files

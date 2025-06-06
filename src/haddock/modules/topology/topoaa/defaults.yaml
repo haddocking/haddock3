@@ -183,8 +183,8 @@ mol1:
     default: false
     type: boolean
     title: N-ter topology
-    short: Defines how N-terminus residue should be
-    long: This option defines how N-terminus residue should be. If false (default), N-ter will be an uncharged NH.
+    short: Define if N-terminus should be charged or uncharged
+    long: This option defines how N-terminus residue should be. If false (default), N-ter will be an uncharged NH,
           as it would be in a peptide bond. If true, N-ter will be a charged NH3+.
     group: molecule
     explevel: easy
@@ -192,7 +192,7 @@ mol1:
     default: false
     type: boolean
     title: C-ter topology
-    short: Defines how C-terminus residue should be
+    short: Define if C-terminus should be charged or uncharged
     long: This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO,
           as it would be in a peptide bond. If true, C-ter will be a charged COO-.
     group: molecule
@@ -201,7 +201,7 @@ mol1:
     default: false
     type: boolean
     title: Nucleic Acids 5' topology
-    short: Defines how nucleic acid 5' residue should be
+    short: Define if 5' end should be phosphate or not.
     long: This option defines how nucleic acid 5' residue should be. If false (default),
           5' end will be an OH. If true, 5' end will be a phosphate.
     group: molecule

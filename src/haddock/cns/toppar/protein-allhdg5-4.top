@@ -80,6 +80,7 @@ MASS CH2G  12.011
 MASS CH1P  12.011
 MASS CH2P  12.011
 MASS C5W  12.011
+MASS CP  12.011
 MASS CW  12.011
 
 MASS CR1E  12.011
@@ -278,7 +279,6 @@ GROUP
 
   DONO HN   N
   DONO HG  SG
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 
 END
@@ -600,7 +600,6 @@ residue CFE
   DIHEdral SG  CB  CA  N
 
   DONO HN   N
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -632,7 +631,6 @@ residue CYC  ! special for covalent docking - vdw of Sulphur reduced
   DIHEdral SG  CB  CA  N
 
   DONO HN   N
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -664,7 +662,6 @@ residue CYF
   DIHEdral SG  CB  CA  N
 
   DONO HN   N
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -698,7 +695,6 @@ residue CYS
 
   DONO HN   N
   DONO HG  SG
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -1521,6 +1517,49 @@ residue MSE ! SeMET ! added 8-19-2011, ATB
   DIHEdral HE1 CE  SE  CG ! UCL methyl stagger 12-MAR-00
 
   DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue PCA
+  group
+    ATOM N    TYPE=NH1     CHARge=-0.570 end
+    ATOM HN   TYPE=H       CHARge= 0.370 end
+    ATOM CA   TYPE=CH1E    CHARge= 0.200 end
+    ATOM HA   TYPE=HA      CHARge= 0.000 end
+    ATOM CB   TYPE=CH2E    CHARge= 0.000 end
+    ATOM HB1  TYPE=HA      CHARge= 0.000 end
+    ATOM HB2  TYPE=HA      CHARge= 0.000 end
+    ATOM CG   TYPE=CH2P    CHARge= 0.000 end
+    ATOM HG1  TYPE=HA      CHARge= 0.000 end
+    ATOM HG2  TYPE=HA      CHARge= 0.000 end
+    ATOM CD   TYPE=CP      CHARge= 0.500 end
+    ATOM OE   TYPE=O       CHARge=-0.500 end
+    ATOM C    TYPE=C       CHARge= 0.500 end
+    ATOM O    TYPE=O       CHARge=-0.500 end
+
+  BOND N  HN
+  BOND N  CA     BOND CA  HA
+  BOND CA CB     BOND CB  HB1     BOND CB  HB2
+  BOND CB CG     BOND CG  HG1     BOND CG  HG2
+  BOND CG CD
+  BOND CD OE
+  BOND CD N
+  BOND CA C
+  BOND C  O
+
+  IMPRoper HA  N   C    CB  !chirality CA
+  IMPRoper OE  CD  N    HN  !planar ring carbonyl
+  IMPRoper CD  CG  N    OE  !planar ring carbonyl
+  IMPRoper CG  CD  N    CA  !cyclic peptide bond
+  IMPRoper N   CD  CA   HN  !planar +N
+
+  IMPRoper HB1 HB2 CA CG  !stereo CB
+  IMPRoper HG1 HG2 CB CD  !stereo CG
+
+  DONO HN   N
+  ACCE OE   CD
   ACCE O    C
 end
 

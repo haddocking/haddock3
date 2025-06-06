@@ -1,6 +1,0 @@
-set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message=off echo=off end
-
-link CON head - SHA tail + SHA end 
-
-set message=$old_message echo=$old_echo end

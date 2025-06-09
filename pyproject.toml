@@ -58,9 +58,11 @@ dev = [
   "pytest-mock==3.14.1",
   "fastapi==0.115.12",
   "httpx==0.28.1",
-  "mpi4py==4.0.3",
   "kaleido==0.2.1",
   "pytest-random-order==1.1.1",
+]
+mpi = [
+  "mpi4py==4.0.3",
 ]
 docs = [
   "sphinx>=7",

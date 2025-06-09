@@ -26,6 +26,7 @@ them on the fly.
 import operator
 import os
 import re
+from copy import deepcopy
 from functools import partial
 from pathlib import Path
 
@@ -229,7 +230,7 @@ class HaddockModule(BaseCNSModule):
             origi_ens_dic[i] = self.get_ensemble_origin(molecule.with_parent)
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
-            parameters_for_this_molecule = mol_params[mol_params_get()]
+            parameters_for_this_molecule = deepcopy(mol_params[mol_params_get()])
 
             # Extract termini parameters
             charged_nter = parameters_for_this_molecule.pop("charged_nter")

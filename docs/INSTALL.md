@@ -30,6 +30,9 @@ pip install .
 To use the mpi implementation of haddock3 you must have mpi4py installed in the `(haddock3)` python environment, and OpenMPI in the host system.
 
 ```bash
+# Install the mpi optional set of library when installing haddock3
+$ pip install ".[mpi]"
+# or
 $ pip install mpi4py
 # or
 $ conda install -c conda-forge mpi4py

@@ -21,9 +21,6 @@ eval ($carbo_parameter_infile="TOPPAR:carbohydrate.param")
 {* solvent parameter file *}
 eval ($solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param")
 
-{* ligand parameter file *}
-eval ($cofac_parameter_infile="TOPPAR:ligand.param")
-
 {* fragment probes parameter file *}
 eval ($ligands_parameter_infile="TOPPAR:fragment_probes.param")
 
@@ -46,7 +43,6 @@ parameter
     @@$carbo_parameter_infile
     @@$solv_parameter_infile
     @@$ligands_parameter_infile
-    @@$cofac_parameter_infile
     @@$heme_parameter_infile
     @@$shape_parameter_infile
     @@$cofactors_parameter_infile

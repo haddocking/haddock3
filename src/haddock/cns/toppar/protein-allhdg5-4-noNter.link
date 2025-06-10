@@ -26,6 +26,7 @@ link ppg1 head - ASP tail + GLY end
 link ppg1 head - ASH tail + GLY end
 link ppg1 head - GLU tail + GLY end
 link ppg1 head - GLH tail + GLY end
+link ppg1 head - PCA tail + GLY end
 link ppg1 head - PHE tail + GLY end
 link ppg1 head - HIS tail + GLY end
 link ppg1 head - NEP tail + GLY end
@@ -123,6 +124,7 @@ link pepp head - ASP tail + PRO end
 link pepp head - ASH tail + PRO end
 link pepp head - GLU tail + PRO end
 link pepp head - GLH tail + PRO end
+link pepp head - PCA tail + PRO end
 link pepp head - PHE tail + PRO end
 link pepp head - HIS tail + PRO end
 link pepp head - NEP tail + PRO end
@@ -169,6 +171,7 @@ link pepp head - ASP tail + HYP end
 link pepp head - ASH tail + HYP end
 link pepp head - GLU tail + HYP end
 link pepp head - GLH tail + HYP end
+link pepp head - PCA tail + HYP end
 link pepp head - PHE tail + HYP end
 link pepp head - HIS tail + HYP end
 link pepp head - NEP tail + HYP end
@@ -217,6 +220,7 @@ link pepp head - ASP tail + HY3 end
 link pepp head - ASH tail + HY3 end
 link pepp head - GLU tail + HY3 end
 link pepp head - GLH tail + HY3 end
+link pepp head - PCA tail + HY3 end
 link pepp head - PHE tail + HY3 end
 link pepp head - HIS tail + HY3 end
 link pepp head - NEP tail + HY3 end

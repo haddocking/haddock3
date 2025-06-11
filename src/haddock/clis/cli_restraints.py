@@ -50,7 +50,10 @@ from haddock.clis.restraints.random_removal import (
     add_rand_removal_arguments,
     main as random_removal,
     )
-
+from haddock.clis.restraints.restrain_ligand import (
+    add_restrain_ligand_arguments,
+    main as restrain_ligand,
+    )
 
 # Command line interface parser
 ap = argparse.ArgumentParser(
@@ -107,6 +110,14 @@ restraints_random_removal_subcommand.set_defaults(func=random_removal)
 restraints_random_removal_subcommand = add_rand_removal_arguments(
     restraints_random_removal_subcommand
 )
+
+# restrain_ligand subcommand
+restraints_restrain_ligand_subcommand = subparsers.add_parser("restrain_ligand")
+restraints_restrain_ligand_subcommand.set_defaults(func=restrain_ligand)
+restraints_restrain_ligand_subcommand = add_restrain_ligand_arguments(
+    restraints_restrain_ligand_subcommand
+)
+
 
 def _ap():
     return ap

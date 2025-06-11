@@ -50,7 +50,7 @@ def add_restrain_ligand_arguments(restrain_ligand_subcommand):
         "-r",
         "--radius",
         help=(
-            "Radius used for neighbors search around "
+            "Radius, in Angstrom, used for neighbors search around "
             "center of mass of ligand. (default: %(default)s)"
             ),
         required=False,
@@ -60,7 +60,10 @@ def add_restrain_ligand_arguments(restrain_ligand_subcommand):
     restrain_ligand_subcommand.add_argument(
         "-d",
         "--deviation",
-        help="Allowed deviation from actual distance. (default: %(default)s)",
+        help=(
+            "Allowed deviation from actual distance, in Angstrom. "
+            "(default: %(default)s)"
+            ),
         required=False,
         default=1.0,
         type=float,
@@ -71,6 +74,7 @@ def add_restrain_ligand_arguments(restrain_ligand_subcommand):
         help="Maximum number of restraints to return. (default: %(default)s)",
         required=False,
         default=200,
+        type=int,
         )
     return restrain_ligand_subcommand
 
@@ -107,9 +111,8 @@ def restrain_ligand(
     structure = pdb_parser.get_structure("", pdbfile)
 
     # Remove hydrogens
-    atom_lst = list(structure.get_atoms())
-    for atom in atom_lst:
-        if atom.element == 'H':
+    for atom in structure.get_atoms():
+        if atom.element == "H":
             res = atom.parent
             res.detach_child(atom.name)
 
@@ -119,7 +122,7 @@ def restrain_ligand(
         if residue.resname.strip() == ligand_name.strip():
             ligand = residue
             break
-
+    # Case where the ligand is not found in the structure
     if not ligand:
         print(f"[!!] Ligand residue '{ligand_name}' not found in structure")
         sys.exit(1)
@@ -128,29 +131,36 @@ def restrain_ligand(
     ligand_com = list(map(lambda x: sum(x)/len(x), zip(*[at.coord for at in ligand])))
     ligand_com = np.asarray(ligand_com, dtype=np.float32)
 
-    # Calculate neighbors considering only aminoacid/nucleotide atoms (excl. waters, other ligands, etc)
+    # Create a selection of aminoacid/nucleotide atoms
+    # (excl. waters, other ligands, etc)
+    # also filters atoms that are from the queried ligand
     sel_atoms = [
         at for at in structure.get_atoms()
         if at.parent.id[0] == ' ' and at.parent != ligand
         ]
+    # Perfom neighbor search on this selection
     ns = NeighborSearch(sel_atoms)
     neighbors = ns.search(ligand_com, radius, level="R")  # 10A radius, return residues
 
     # Calculate residue closer to each ligand atom and the respective distance
     ligand_atoms = ligand.child_list
     min_dist_list, _seen = [], set()
+
+    # Loop over ligand atoms
     for l_atm in ligand_atoms:
         distances = []
+        # Loop over neighbors residues and atoms
         for residue_atoms in neighbors:
             for r_atm in residue_atoms:
+                # Compute distance and hold it
                 distances.append((r_atm, l_atm, r_atm - l_atm))
         # Sort list by distances
         distances.sort(key=lambda x: x[-1])
-        # Point first entry (shortest distance)
-        for ind in range(len(distances)):
-            closest_candidate = distances[ind]
+        # Loop over sorted distances
+        for closest_candidate in distances:
             candidate_residue = closest_candidate[0].parent
             # One restraint per residue to keep the number of restraints small
+            # If a residue is already used, take next one
             if candidate_residue not in _seen:
                 min_dist_list.append(closest_candidate)
                 _seen.add(candidate_residue)
@@ -191,7 +201,7 @@ def restrain_ligand(
         unambig_str_list = random.sample(_unambig_str_list, max_restraints)
     else:
         unambig_str_list = _unambig_str_list
-
+    # Concatenate into a single string
     unambig_str = "".join(unambig_str_list)
     return unambig_str
 

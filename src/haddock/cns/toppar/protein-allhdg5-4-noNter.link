@@ -26,6 +26,7 @@ link ppg1 head - ASP tail + GLY end
 link ppg1 head - ASH tail + GLY end
 link ppg1 head - GLU tail + GLY end
 link ppg1 head - GLH tail + GLY end
+link ppg1 head - PCA tail + GLY end
 link ppg1 head - PHE tail + GLY end
 link ppg1 head - HIS tail + GLY end
 link ppg1 head - NEP tail + GLY end
@@ -123,6 +124,7 @@ link pepp head - ASP tail + PRO end
 link pepp head - ASH tail + PRO end
 link pepp head - GLU tail + PRO end
 link pepp head - GLH tail + PRO end
+link pepp head - PCA tail + PRO end
 link pepp head - PHE tail + PRO end
 link pepp head - HIS tail + PRO end
 link pepp head - NEP tail + PRO end
@@ -169,6 +171,7 @@ link pepp head - ASP tail + HYP end
 link pepp head - ASH tail + HYP end
 link pepp head - GLU tail + HYP end
 link pepp head - GLH tail + HYP end
+link pepp head - PCA tail + HYP end
 link pepp head - PHE tail + HYP end
 link pepp head - HIS tail + HYP end
 link pepp head - NEP tail + HYP end
@@ -217,6 +220,7 @@ link pepp head - ASP tail + HY3 end
 link pepp head - ASH tail + HY3 end
 link pepp head - GLU tail + HY3 end
 link pepp head - GLH tail + HY3 end
+link pepp head - PCA tail + HY3 end
 link pepp head - PHE tail + HY3 end
 link pepp head - HIS tail + HY3 end
 link pepp head - NEP tail + HY3 end
@@ -1525,6 +1529,55 @@ link pept head - ASN tail + QSR end
 link pctn head - ASN tail + CTN end
 link pept head - ASN tail + NME end
  
+{ peptide linkages for PCA}
+link pept head - PCA tail + ALA end
+link pept head - PCA tail + CYS end
+link pept head - PCA tail + CFE end
+link pept head - PCA tail + CYM end
+link pept head - PCA tail + CYF end
+link pept head - PCA tail + CYC end
+link pept head - PCA tail + CSP end
+link pept head - PCA tail + ASP end
+link pept head - PCA tail + ASH end
+link pept head - PCA tail + GLU end
+link pept head - PCA tail + GLH end
+link pept head - PCA tail + PHE end
+link pept head - PCA tail + HIS end
+link pept head - PCA tail + NEP end
+link pept head - PCA tail + ILE end
+link pept head - PCA tail + LYS end
+link pept head - PCA tail + ALY end
+link pept head - PCA tail + HLY end
+link pept head - PCA tail + MLY end
+link pept head - PCA tail + MLZ end
+link pept head - PCA tail + M3L end
+link pept head - PCA tail + LEU end
+link pept head - PCA tail + MET end
+link pept head - PCA tail + MSE end
+link pept head - PCA tail + ASN end
+link pept head - PCA tail + PRO end
+link pept head - PCA tail + GLN end
+link pept head - PCA tail + ARG end
+link pept head - PCA tail + SER end
+link pept head - PCA tail + SEC end
+link pept head - PCA tail + SEP end
+link pept head - PCA tail + THR end
+link pept head - PCA tail + THP end
+link pept head - PCA tail + TOP end
+link pept head - PCA tail + VAL end
+link pept head - PCA tail + TRP end
+link pept head - PCA tail + TYR end
+link pept head - PCA tail + TYP end
+link pept head - PCA tail + PTR end
+link pept head - PCA tail + TYS end
+link pept head - PCA tail + HYP end
+link pept head - PCA tail + HY3 end
+link pept head - PCA tail + DDZ end
+link pept head - PCA tail + PNS end
+link pept head - PCA tail + QSR end
+link pctn head - PCA tail + CTN end
+link pept head - PCA tail + NME end
+ 
 { peptide linkages for PRO }
 link pept head - PRO tail + ALA end
 link pept head - PRO tail + CYS end
@@ -2528,6 +2581,7 @@ last CTER head - LEU end
 last CTER head - MET end
 last CTER head - MSE end
 last CTER head - ASN end
+last CTER head - PCA end
 last CTER head - PRO end
 last CTER head - GLN end
 last CTER head - ARG end

@@ -72,7 +72,7 @@ optional arguments:
   -v, --version         show version
 ```
 
-Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
+Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [User manual](https://www.bonvinlab.org/haddock3-user-manual) for a more detailed explanation of the configuration file.
 
 ## Support
 

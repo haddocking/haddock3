@@ -131,7 +131,10 @@
     <span class="n">add_rand_removal_arguments</span><span class="p">,</span>
     <span class="n">main</span> <span class="k">as</span> <span class="n">random_removal</span><span class="p">,</span>
     <span class="p">)</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.clis.restraints.restrain_ligand</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_restrain_ligand_arguments</span><span class="p">,</span>
+    <span class="n">main</span> <span class="k">as</span> <span class="n">restrain_ligand</span><span class="p">,</span>
+    <span class="p">)</span>
 
 <span class="c1"># Command line interface parser</span>
 <span class="n">ap</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
@@ -189,6 +192,14 @@
     <span class="n">restraints_random_removal_subcommand</span>
 <span class="p">)</span>
 
+<span class="c1"># restrain_ligand subcommand</span>
+<span class="n">restraints_restrain_ligand_subcommand</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;restrain_ligand&quot;</span><span class="p">)</span>
+<span class="n">restraints_restrain_ligand_subcommand</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">restrain_ligand</span><span class="p">)</span>
+<span class="n">restraints_restrain_ligand_subcommand</span> <span class="o">=</span> <span class="n">add_restrain_ligand_arguments</span><span class="p">(</span>
+    <span class="n">restraints_restrain_ligand_subcommand</span>
+<span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_ap</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">ap</span>
 
@@ -227,7 +238,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 16, 2025.
+      <span class="lastupdated">Last updated on Jun 17, 2025.
       </span></p>
   </div>
 

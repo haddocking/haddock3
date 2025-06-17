@@ -12,6 +12,7 @@ Submodules
    haddock.clis.restraints.passive_from_active
    haddock.clis.restraints.random_removal
    haddock.clis.restraints.restrain_bodies
+   haddock.clis.restraints.restrain_ligand
    haddock.clis.restraints.validate_tbl
    haddock.clis.restraints.webservice
    haddock.clis.restraints.z_surface_restraints

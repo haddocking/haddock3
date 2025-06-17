@@ -1,0 +1,7 @@
+haddock.clis.restraints.restrain\_ligand module
+===============================================
+
+.. automodule:: haddock.clis.restraints.restrain_ligand
+   :members:
+   :undoc-members:
+   :show-inheritance:

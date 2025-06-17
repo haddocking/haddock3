@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.clis.restraints.restrain_ligand module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="haddock.clis.restraints.validate_tbl module" href="haddock.clis.restraints.validate_tbl.html" />
+    <link rel="prev" title="haddock.clis.restraints.restrain_bodies module" href="haddock.clis.restraints.restrain_bodies.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="haddock.clis.html">Command-line interfaces</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="haddock.clis.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="haddock.clis.re.html">Interactive sucommands</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="haddock.clis.restraints.html">Restraints-related subcommands</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="haddock.clis.restraints.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.clis.restraints.html#module-haddock.clis.restraints">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="haddock.clis.html#module-haddock.clis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="haddock.clis.html">Command-line interfaces</a></li>
+          <li class="breadcrumb-item"><a href="haddock.clis.restraints.html">Restraints-related subcommands</a></li>
+      <li class="breadcrumb-item active">haddock.clis.restraints.restrain_ligand module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/clients/haddock.clis.restraints.restrain_ligand.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.clis.restraints.restrain_ligand">
+<span id="haddock-clis-restraints-restrain-ligand-module"></span><h1>haddock.clis.restraints.restrain_ligand module<a class="headerlink" href="#module-haddock.clis.restraints.restrain_ligand" title="Link to this heading"></a></h1>
+<p>haddock3-restraints restrain_ligand subcommand.</p>
+<p>Given an input PDB file and a residue name (ligands), the tool will create
+unambiguous restraints to keep this ligand in place during the refinements.</p>
+<dl>
+<dt>Usage:</dt><dd><p>haddock3-restraints restrain_ligand &lt;pdb_file&gt; &lt;ligand_name&gt; -r &lt;radius&gt; -d &lt;deviation&gt; -n &lt;max_nb_restraints&gt;</p>
+</dd>
+<dt>positional arguments:</dt><dd><p>pdb_file              Input PDB file.
+ligand_name           Residue name.</p>
+</dd>
+<dt>options:</dt><dd><dl class="option-list">
+<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
+<dd><p>show this help message and exit</p>
+</dd>
+<dt><kbd><span class="option">-r <var>RADIUS</var></span>, <span class="option">--radius <var>RADIUS</var></span></kbd></dt>
+<dd><p>Radius used for neighbors search around center of mass of ligand.
+(default: 10.0)</p>
+</dd>
+<dt><kbd><span class="option">-n <var>MAX_RESTRAINTS</var></span>, <span class="option">--max-restraints <var>MAX_RESTRAINTS</var></span></kbd></dt>
+<dd><p>Maximum number of restraints to return. (default: 200)</p>
+</dd>
+<dt><kbd><span class="option">-d <var>DEVIATION</var></span>, <span class="option">--deviation <var>DEVIATION</var></span></kbd></dt>
+<dd><p>Allowed deviation from actual distance. (default: 1.0)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.restrain_ligand.add_restrain_ligand_arguments">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.restrain_ligand.</span></span><span class="sig-name descname"><span class="pre">add_restrain_ligand_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">restrain_ligand_subcommand</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/clis/restraints/restrain_ligand.html#add_restrain_ligand_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.restrain_ligand.add_restrain_ligand_arguments" title="Link to this definition"></a></dt>
+<dd><p>Add arguments to the random removal subcommand.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.restrain_ligand.main">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.restrain_ligand.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ligand_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_restraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/restraints/restrain_ligand.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.restrain_ligand.main" title="Link to this definition"></a></dt>
+<dd><p>Simple wrapper of the restrain_ligand function.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.clis.restraints.restrain_ligand.restrain_ligand">
+<span class="sig-prename descclassname"><span class="pre">haddock.clis.restraints.restrain_ligand.</span></span><span class="sig-name descname"><span class="pre">restrain_ligand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdbfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ligand_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deviation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_restraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/haddock/clis/restraints/restrain_ligand.html#restrain_ligand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.clis.restraints.restrain_ligand.restrain_ligand" title="Link to this definition"></a></dt>
+<dd><p>Generate unambiguous restraints to keep a ligand in place.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pdbfile</strong> (<em>Union[str, Path]</em>) – Path to a PDB file containing a ligand</p></li>
+<li><p><strong>ligand_name</strong> (<em>str</em>) – Residue name of the ligand to work with</p></li>
+<li><p><strong>radius</strong> (<em>float, optional</em>) – Radius used for neighbors search around center of mass of ligand, by default 10.0</p></li>
+<li><p><strong>deviation</strong> (<em>float, optional</em>) – Allowed deviation from actual distance, by default 1.0</p></li>
+<li><p><strong>max_restraints</strong> (<em>int, optional</em>) – Maximum number of restraints to return, by default 20</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>unambig_str</strong> (<em>str</em>) – The actual unambiguous restraints as a string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.clis.restraints.restrain_bodies.html" class="btn btn-neutral float-left" title="haddock.clis.restraints.restrain_bodies module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.clis.restraints.validate_tbl.html" class="btn btn-neutral float-right" title="haddock.clis.restraints.validate_tbl module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Jun 17, 2025.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

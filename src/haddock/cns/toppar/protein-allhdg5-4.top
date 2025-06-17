@@ -1565,6 +1565,68 @@ end
 
 !----------------------------------------------------------------------
 
+residue CIR
+  group
+    ATOM N    TYPE=NH1    CHARge=-0.570 end
+    ATOM HN   TYPE=H      CHARge= 0.370 end
+    ATOM CA   TYPE=CH1E   CHARge= 0.200 end
+    ATOM HA   TYPE=HA     CHARge= 0.000 end
+    ATOM C3   TYPE=CH2E   CHARge= 0.000 end
+    ATOM H31  TYPE=HA     CHARge= 0.000 end
+    ATOM H32  TYPE=HA     CHARge= 0.000 end
+    ATOM C4   TYPE=CH2E   CHARge= 0.070 end
+    ATOM H41  TYPE=HA     CHARge= 0.000 end
+    ATOM H42  TYPE=HA     CHARge= 0.000 end
+    ATOM C5   TYPE=CH2E   CHARge= 0.310 end
+    ATOM H51  TYPE=HA     CHARge= 0.000 end
+    ATOM H52  TYPE=HA     CHARge= 0.000 end
+    ATOM N6   TYPE=NH1    CHARge=-0.700 end
+    ATOM H6   TYPE=H      CHARge= 0.440 end
+    ATOM C7   TYPE=C      CHARge= 0.420 end
+    ATOM O7   TYPE=O      CHARge=-0.660 end
+    ATOM N8   TYPE=NC2    CHARge=-0.800 end
+    ATOM H81  TYPE=HC     CHARge= 0.460 end
+    ATOM H82  TYPE=HC     CHARge= 0.460 end
+    ATOM C     TYPE=C     CHARge= 0.500 end
+    ATOM O     TYPE=O     CHARge=-0.500 end
+ 
+  BOND N  HN
+  BOND N  CA     BOND CA  HA
+  BOND CA C3     BOND C3  H31     BOND C3  H32
+  BOND C3 C4     BOND C4  H41     BOND C4  H42
+  BOND C4 C5     BOND C5  H51     BOND C5  H52
+  BOND C5 N6     
+  BOND N6 C7     BOND N6  H6
+  BOND C7 O7     BOND C7  N8
+  BOND N8 H81    BOND N8  H82
+  BOND CA C
+  BOND C  O
+
+  IMPRoper HA  N   C  C3  !chirality CA
+  IMPRoper H31 H32 CA C4  !stereo C3
+  IMPRoper H41 H42 C3 C5  !stereo C4
+  IMPRoper H51 H52 C4 N6  !stereo C5
+
+  IMPRoper C5  N6  C7   O7  
+  IMPRoper H5  N6  C7   O7  
+  IMPRoper N6  C7  N8   H81
+  IMPRoper O7  C7  N8   H82 
+
+  DIHEdral C4  C3  CA  N
+  DIHEdral C5  C4  C3  CA
+  DIHEdral N6  C5  C4  C3
+  DIHEdral C7  N6  C5  C4
+  
+  DONO HN   N
+  DONO H6   N6
+  DONO H81  N8
+  DONO H82  N8
+  ACCE O7   C7
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
 residue PHE
   group
     ATOM N   TYPE=NH1     CHARge=-0.570 end

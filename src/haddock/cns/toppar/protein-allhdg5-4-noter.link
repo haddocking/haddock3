@@ -61,6 +61,7 @@ link ppg1 head - HY3 tail + GLY end
 link ppg1 head - DDZ tail + GLY end
 link ppg1 head - QSR tail + GLY end
 link ppg1 head - PNS tail + GLY end
+link ppg1 head - CIR tail + GLY end
  
 { special link from GLY}
 link ppg2 head - GLY tail + ALA end
@@ -108,6 +109,7 @@ link ppg2 head - GLY tail + HY3 end
 link ppg2 head - GLY tail + DDZ end
 link ppg2 head - GLY tail + PNS end
 link ppg2 head - GLY tail + QSR end
+link ppg2 head - CIR tail + GLY end
 link pctn head - GLY tail + CTN end
 link pept head - GLY tail + NME end
  
@@ -157,6 +159,7 @@ link pepp head - TYS tail + PRO end
 link pepp head - HYP tail + PRO end
 link pepp head - HY3 tail + PRO end
 link pepp head - QSR tail + PRO end
+link pepp head - CIR tail + PRO end
  
 { special link to HYP}
 link pepp head - ACE tail + HYP end
@@ -206,6 +209,7 @@ link pepp head - HY3 tail + HYP end
 link pepp head - DDZ tail + HYP end
 link pepp head - PNS tail + HYP end
 link pepp head - QSR tail + HYP end
+link pepp head - CIR tail + HYP end
  
 { special link to HYP}
 link pepp head - ACE tail + HY3 end
@@ -255,6 +259,7 @@ link pepp head - HY3 tail + HY3 end
 link pepp head - DDZ tail + HY3 end
 link pepp head - PNS tail + HY3 end
 link pepp head - QSR tail + HY3 end
+link pepp head - CIR tail + HY3 end
 
 { peptide linkages for ACE }
 link pept head - ACE tail + ALA end
@@ -304,7 +309,8 @@ link pept head - ACE tail + PNS end
 link pept head - ACE tail + QSR end
 link pctn head - ACE tail + CTN end
 link pept head - ACE tail + NME end
- 
+link pept head - ACE tail + CIR end
+
 { peptide linkages for ALA }
 link pept head - ALA tail + ALA end
 link pept head - ALA tail + CYS end
@@ -353,7 +359,8 @@ link pept head - ALA tail + PNS end
 link pept head - ALA tail + QSR end
 link pctn head - ALA tail + CTN end
 link pept head - ALA tail + NME end
- 
+link pept head - ALA tail + CIR end
+
 { peptide linkages for CYS }
 link pept head - CYS tail + ALA end
 link pept head - CYS tail + CYS end
@@ -402,7 +409,8 @@ link pept head - CYS tail + PNS end
 link pept head - CYS tail + QSR end
 link pctn head - CYS tail + CTN end
 link pept head - CYS tail + NME end
- 
+link pept head - CYS tail + CIR end
+
 { peptide linkages for CFE }
 link pept head - CFE tail + ALA end
 link pept head - CFE tail + CYS end
@@ -451,7 +459,8 @@ link pept head - CFE tail + PNS end
 link pept head - CFE tail + QSR end
 link pctn head - CFE tail + CTN end
 link pept head - CFE tail + NME end
- 
+link pept head - CFE tail + CIR end
+
 { peptide linkages for CYM }
 link pept head - CYM tail + ALA end
 link pept head - CYM tail + CYS end
@@ -500,7 +509,8 @@ link pept head - CYM tail + PNS end
 link pept head - CYM tail + QSR end
 link pctn head - CYM tail + CTN end
 link pept head - CYM tail + NME end
- 
+link pept head - CYM tail + CIR end
+
 { peptide linkages for CYF }
 link pept head - CYF tail + ALA end
 link pept head - CYF tail + CYS end
@@ -549,7 +559,8 @@ link pept head - CYF tail + PNS end
 link pept head - CYF tail + QSR end
 link pctn head - CYF tail + CTN end
 link pept head - CYF tail + NME end
- 
+link pept head - CYF tail + CIR end
+
 { peptide linkages for CYC }
 link pept head - CYC tail + ALA end
 link pept head - CYC tail + CYS end
@@ -598,7 +609,8 @@ link pept head - CYC tail + PNS end
 link pept head - CYC tail + QSR end
 link pctn head - CYC tail + CTN end
 link pept head - CYC tail + NME end
- 
+link pept head - CYC tail + CIR end
+
 { peptide linkages for CSP }
 link pept head - CSP tail + ALA end
 link pept head - CSP tail + CYS end
@@ -647,7 +659,8 @@ link pept head - CSP tail + PNS end
 link pept head - CSP tail + QSR end
 link pctn head - CSP tail + CTN end
 link pept head - CSP tail + NME end
- 
+link pept head - CSP tail + CIR end
+
 { peptide linkages for ASP }
 link pept head - ASP tail + ALA end
 link pept head - ASP tail + CYS end
@@ -696,7 +709,8 @@ link pept head - ASP tail + PNS end
 link pept head - ASP tail + QSR end
 link pctn head - ASP tail + CTN end
 link pept head - ASP tail + NME end
- 
+link pept head - ASP tail + CIR end
+
 { peptide linkages for ASH }
 link pept head - ASH tail + ALA end
 link pept head - ASH tail + CYS end
@@ -745,7 +759,8 @@ link pept head - ASH tail + PNS end
 link pept head - ASH tail + QSR end
 link pctn head - ASH tail + CTN end
 link pept head - ASH tail + NME end
- 
+link pept head - ASH tail + CIR end
+
 { peptide linkages for GLU }
 link pept head - GLU tail + ALA end
 link pept head - GLU tail + CYS end
@@ -794,7 +809,8 @@ link pept head - GLU tail + PNS end
 link pept head - GLU tail + QSR end
 link pctn head - GLU tail + CTN end
 link pept head - GLU tail + NME end
- 
+link pept head - GLU tail + CIR end
+
 { peptide linkages for GLH }
 link pept head - GLH tail + ALA end
 link pept head - GLH tail + CYS end
@@ -843,7 +859,8 @@ link pept head - GLH tail + PNS end
 link pept head - GLH tail + QSR end
 link pctn head - GLH tail + CTN end
 link pept head - GLH tail + NME end
- 
+link pept head - GLH tail + CIR end
+
 { peptide linkages for PHE }
 link pept head - PHE tail + ALA end
 link pept head - PHE tail + CYS end
@@ -892,7 +909,8 @@ link pept head - PHE tail + PNS end
 link pept head - PHE tail + QSR end
 link pctn head - PHE tail + CTN end
 link pept head - PHE tail + NME end
- 
+link pept head - PHE tail + CIR end
+
 { peptide linkages for HIS }
 link pept head - HIS tail + ALA end
 link pept head - HIS tail + CYS end
@@ -941,7 +959,8 @@ link pept head - HIS tail + PNS end
 link pept head - HIS tail + QSR end
 link pctn head - HIS tail + CTN end
 link pept head - HIS tail + NME end
- 
+link pept head - HIS tail + CIR end
+
 { peptide linkages for NEP }
 link pept head - NEP tail + ALA end
 link pept head - NEP tail + CYS end
@@ -990,7 +1009,8 @@ link pept head - NEP tail + PNS end
 link pept head - NEP tail + QSR end
 link pctn head - NEP tail + CTN end
 link pept head - NEP tail + NME end
- 
+link pept head - NEP tail + CIR end
+
 { peptide linkages for ILE }
 link pept head - ILE tail + ALA end
 link pept head - ILE tail + CYS end
@@ -1039,7 +1059,8 @@ link pept head - ILE tail + PNS end
 link pept head - ILE tail + QSR end
 link pctn head - ILE tail + CTN end
 link pept head - ILE tail + NME end
- 
+link pept head - ILE tail + CIR end
+
 { peptide linkages for LYS }
 link pept head - LYS tail + ALA end
 link pept head - LYS tail + CYS end
@@ -1088,7 +1109,8 @@ link pept head - LYS tail + PNS end
 link pept head - LYS tail + QSR end
 link pctn head - LYS tail + CTN end
 link pept head - LYS tail + NME end
- 
+link pept head - LYS tail + CIR end
+
 { peptide linkages for ALY }
 link pept head - ALY tail + ALA end
 link pept head - ALY tail + CYS end
@@ -1137,6 +1159,7 @@ link pept head - ALY tail + PNS end
 link pept head - ALY tail + QSR end
 link pctn head - ALY tail + CTN end
 link pept head - ALY tail + NME end
+link pept head - ALY tail + CIR end
  
 { peptide linkages for HLY }
 link pept head - HLY tail + ALA end
@@ -1186,7 +1209,8 @@ link pept head - HLY tail + PNS end
 link pept head - HLY tail + QSR end
 link pctn head - HLY tail + CTN end
 link pept head - HLY tail + NME end
- 
+link pept head - HYL tail + CIR end
+
 { peptide linkages for MLY }
 link pept head - MLY tail + ALA end
 link pept head - MLY tail + CYS end
@@ -1235,6 +1259,7 @@ link pept head - MLY tail + PNS end
 link pept head - MLY tail + QSR end
 link pctn head - MLY tail + CTN end
 link pept head - MLY tail + NME end
+link pept head - MLY tail + CIR end
  
 { peptide linkages for MLZ }
 link pept head - MLZ tail + ALA end
@@ -1284,7 +1309,8 @@ link pept head - MLZ tail + PNS end
 link pept head - MLZ tail + QSR end
 link pctn head - MLZ tail + CTN end
 link pept head - MLZ tail + NME end
- 
+link pept head - MLZ tail + CIR end
+
 { peptide linkages for M3L }
 link pept head - M3L tail + ALA end
 link pept head - M3L tail + CYS end
@@ -1333,6 +1359,7 @@ link pept head - M3L tail + PNS end
 link pept head - M3L tail + QSR end
 link pctn head - M3L tail + CTN end
 link pept head - M3L tail + NME end
+link pept head - M3L tail + CIR end
  
 { peptide linkages for LEU }
 link pept head - LEU tail + ALA end
@@ -1382,6 +1409,7 @@ link pept head - LEU tail + PNS end
 link pept head - LEU tail + QSR end
 link pctn head - LEU tail + CTN end
 link pept head - LEU tail + NME end
+link pept head - LEU tail + CIR end
  
 { peptide linkages for MET }
 link pept head - MET tail + ALA end
@@ -1430,6 +1458,7 @@ link pept head - MET tail + PNS end
 link pept head - MET tail + QSR end
 link pctn head - MET tail + CTN end
 link pept head - MET tail + NME end
+link pept head - MET tail + CIR end
 
 { peptide linkages for MSE }
 link pept head - MSE tail + ALA end
@@ -1479,6 +1508,7 @@ link pept head - MSE tail + PNS end
 link pept head - MSE tail + QSR end
 link pctn head - MSE tail + CTN end
 link pept head - MSE tail + NME end
+link pept head - MSE tail + CIR end
 
 { peptide linkages for ASN }
 link pept head - ASN tail + ALA end
@@ -1528,6 +1558,7 @@ link pept head - ASN tail + PNS end
 link pept head - ASN tail + QSR end
 link pctn head - ASN tail + CTN end
 link pept head - ASN tail + NME end
+link pept head - ASN tail + CIR end
  
 { peptide linkages for PCA}
 link pept head - PCA tail + ALA end
@@ -1577,6 +1608,7 @@ link pept head - PCA tail + PNS end
 link pept head - PCA tail + QSR end
 link pctn head - PCA tail + CTN end
 link pept head - PCA tail + NME end
+link pept head - PCA tail + CIR end
  
 { peptide linkages for PRO }
 link pept head - PRO tail + ALA end
@@ -1626,6 +1658,7 @@ link pept head - PRO tail + PNS end
 link pept head - PRO tail + QSR end
 link pctn head - PRO tail + CTN end
 link pept head - PRO tail + NME end
+link pept head - PRO tail + CIR end
  
 { peptide linkages for GLN }
 link pept head - GLN tail + ALA end
@@ -1675,6 +1708,7 @@ link pept head - GLN tail + PNS end
 link pept head - GLN tail + QSR end
 link pctn head - GLN tail + CTN end
 link pept head - GLN tail + NME end
+link pept head - GLN tail + CIR end
  
 { peptide linkages for ARG }
 link pept head - ARG tail + ALA end
@@ -1724,6 +1758,7 @@ link pept head - ARG tail + PNS end
 link pept head - ARG tail + QSR end
 link pctn head - ARG tail + CTN end
 link pept head - ARG tail + NME end
+link pept head - ARG tail + CIR end
  
 { peptide linkages for SER }
 link pept head - SER tail + ALA end
@@ -1772,6 +1807,7 @@ link pept head - SER tail + PNS end
 link pept head - SER tail + QSR end
 link pctn head - SER tail + CTN end
 link pept head - SER tail + NME end
+link pept head - SER tail + CIR end
  
 { peptide linkages for SEC }
 link pept head - SEC tail + ALA end
@@ -1821,6 +1857,7 @@ link pept head - SEC tail + PNS end
 link pept head - SEC tail + QSR end
 link pctn head - SEC tail + CTN end
 link pept head - SEC tail + NME end
+link pept head - SEC tail + CIR end
  
 { peptide linkages for SEP }
 link pept head - SEP tail + ALA end
@@ -1870,6 +1907,7 @@ link pept head - SEP tail + PNS end
 link pept head - SEP tail + QSR end
 link pctn head - SEP tail + CTN end
 link pept head - SEP tail + NME end
+link pept head - SEP tail + CIR end
  
 { peptide linkages for THR }
 link pept head - THR tail + ALA end
@@ -1919,6 +1957,7 @@ link pept head - THR tail + PNS end
 link pept head - THR tail + QSR end
 link pctn head - THR tail + CTN end
 link pept head - THR tail + NME end
+link pept head - THR tail + CIR end
  
 { peptide linkages for THP }
 link pept head - THP tail + ALA end
@@ -1968,6 +2007,7 @@ link pept head - THP tail + PNS end
 link pept head - THP tail + QSR end
 link pctn head - THP tail + CTN end
 link pept head - THP tail + NME end
+link pept head - THP tail + CIR end
  
 { peptide linkages for TOP }
 link pept head - TOP tail + ALA end
@@ -2017,6 +2057,7 @@ link pept head - TOP tail + PNS end
 link pept head - TOP tail + QSR end
 link pctn head - TOP tail + CTN end
 link pept head - TOP tail + NME end
+link pept head - TOP tail + CIR end
  
 { peptide linkages for VAL }
 link pept head - VAL tail + ALA end
@@ -2066,6 +2107,7 @@ link pept head - VAL tail + PNS end
 link pept head - VAL tail + QSR end
 link pctn head - VAL tail + CTN end
 link pept head - VAL tail + NME end
+link pept head - VAL tail + CIR end
  
 { peptide linkages for TRP }
 link pept head - TRP tail + ALA end
@@ -2115,6 +2157,7 @@ link pept head - TRP tail + PNS end
 link pept head - TRP tail + QSR end
 link pctn head - TRP tail + CTN end
 link pept head - TRP tail + NME end
+link pept head - TRP tail + CIR end
  
 { peptide linkages for TYR }
 link pept head - TYR tail + ALA end
@@ -2164,6 +2207,7 @@ link pept head - TYR tail + PNS end
 link pept head - TYR tail + QSR end
 link pctn head - TYR tail + CTN end
 link pept head - TYR tail + NME end
+link pept head - TYR tail + CIR end
  
 { peptide linkages for TYP }
 link pept head - TYP tail + ALA end
@@ -2213,6 +2257,7 @@ link pept head - TYP tail + PNS end
 link pept head - TYP tail + QSR end
 link pctn head - TYP tail + CTN end
 link pept head - TYP tail + NME end
+link pept head - TYP tail + CIR end
  
 { peptide linkages for PTR - same as TYP }
 link pept head - PTR tail + ALA end
@@ -2262,6 +2307,7 @@ link pept head - PTR tail + PNS end
 link pept head - PTR tail + QSR end
 link pctn head - PTR tail + CTN end
 link pept head - PTR tail + NME end
+link pept head - PTR tail + CIR end
  
 { peptide linkages for TYS }
 link pept head - TYS tail + ALA end
@@ -2311,6 +2357,7 @@ link pept head - TYS tail + PNS end
 link pept head - TYS tail + QSR end
 link pctn head - TYS tail + CTN end
 link pept head - TYS tail + NME end
+link pept head - TYS tail + CIR end
  
 { peptide linkages for HYP }
 link pept head - HYP tail + ALA end
@@ -2358,6 +2405,7 @@ link pept head - HYP tail + HY3 end
 link pept head - HYP tail + DDZ end
 link pept head - HYP tail + QSR end
 link pept head - HYP tail + PNS end
+link pept head - HYP tail + CIR end
 
 { peptide linkages for HY3 }
 link pept head - HY3 tail + ALA end
@@ -2405,6 +2453,7 @@ link pept head - HY3 tail + HY3 end
 link pept head - HY3 tail + DDZ end
 link pept head - HY3 tail + QSR end
 link pept head - HY3 tail + PNS end
+link pept head - HY3 tail + CIR end
 
 { peptide linkages for DDZ }
 link pept head - DDZ tail + ALA end
@@ -2453,7 +2502,7 @@ link pept head - DDZ tail + PNS end
 link pept head - DDZ tail + QSR end
 link pctn head - DDZ tail + CTN end
 link pept head - DDZ tail + NME end
- 
+link pept head - DDZ tail + CIR end
 
 { peptide linkages for PNS }
 link pept head - PNS tail + ALA end
@@ -2503,8 +2552,9 @@ link pept head - PNS tail + PNS end
 link pept head - PNS tail + QSR end
 link pctn head - PNS tail + CTN end
 link pept head - PNS tail + NME end
+link pept head - PNS tail + CIR end
  
- { peptide linkages for QSR }
+{ peptide linkages for QSR }
 link pept head - QSR tail + ALA end
 link pept head - QSR tail + CYS end
 link pept head - QSR tail + CFE end
@@ -2552,8 +2602,58 @@ link pept head - QSR tail + PNS end
 link pept head - QSR tail + QSR end
 link pctn head - QSR tail + CTN end
 link pept head - QSR tail + NME end
+link pept head - QSR tail + CIR end
+
+{ peptide linkages for CIR }
+link pept head - CIR tail + ALA end
+link pept head - CIR tail + CYS end
+link pept head - CIR tail + CFE end
+link pept head - CIR tail + CYM end
+link pept head - CIR tail + CYF end
+link pept head - CIR tail + CYC end
+link pept head - CIR tail + CSP end
+link pept head - CIR tail + ASP end
+link pept head - CIR tail + ASH end
+link pept head - CIR tail + GLU end
+link pept head - CIR tail + GLH end
+link pept head - CIR tail + PHE end
+link pept head - CIR tail + HIS end
+link pept head - CIR tail + NEP end
+link pept head - CIR tail + ILE end
+link pept head - CIR tail + LYS end
+link pept head - CIR tail + ALY end
+link pept head - CIR tail + HLY end
+link pept head - CIR tail + MLY end
+link pept head - CIR tail + MLZ end
+link pept head - CIR tail + M3L end
+link pept head - CIR tail + LEU end
+link pept head - CIR tail + MET end
+link pept head - CIR tail + MSE end
+link pept head - CIR tail + ASN end
+link pept head - CIR tail + PRO end
+link pept head - CIR tail + GLN end
+link pept head - CIR tail + ARG end
+link pept head - CIR tail + SER end
+link pept head - CIR tail + SEC end
+link pept head - CIR tail + SEP end
+link pept head - CIR tail + THR end
+link pept head - CIR tail + THP end
+link pept head - CIR tail + TOP end
+link pept head - CIR tail + VAL end
+link pept head - CIR tail + TRP end
+link pept head - CIR tail + TYR end
+link pept head - CIR tail + TYP end
+link pept head - CIR tail + PTR end
+link pept head - CIR tail + TYS end
+link pept head - CIR tail + HYP end
+link pept head - CIR tail + HY3 end
+link pept head - CIR tail + DDZ end
+link pept head - CIR tail + PNS end
+link pept head - CIR tail + QSR end
+link pctn head - CIR tail + CTN end
+link pept head - CIR tail + NME end
+link pept head - CIR tail + CIR end
 
 first ACET tail + ACE end
 
 set message=$old_message echo=$old_echo end
-

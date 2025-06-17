@@ -662,6 +662,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  NH1  CCIS  O        500.00 {sd=     0.031}    122.9907
  ANGLe  NH2  CCIS  O        500.00 {sd=     0.031}    122.6277
  ANGLe  OC   CCIS  OC       500.00 {sd=     0.031}    123.3548
+ ANGLe  O    C     NC2      500.00 {sd=     0.031}    119.2000 ! for CIR - VR
 
  ANGLE  OR3  PP    OP1      500.00  109.600
  ANGLE  OP1  PP    OP1      500.00  120.000
@@ -864,6 +865,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CH2E C    NH1  H         500.00 {sd=     0.031}    0      0.0000 !c
  IMPRoper  CH2P CP   NH1  H         500.00 {sd=     0.031}    0      0.0000 ! for PCA - AB
  IMPRoper  CH2E N    C    HA        500.00 {sd=     0.031}    0     67.7957 ! d-amino acid
+ IMPRoper  CH2E NH1  C    O         500.00 {sd=     0.031}    0      0.0000 ! for CIR - VR
  IMPRoper  CH2E CCIS N    HA        500.00 {sd=     0.031}    0     67.7957 ! cis pept
  IMPRoper  CH2E N    CCIS HA        500.00 {sd=     0.031}    0     67.7957 ! cis pept
  IMPRoper  CH2E C    NH1  HA        500.00 {sd=     0.031}    0     66.1640 ! d-amino acid
@@ -1011,6 +1013,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  HA   HA   CH2P N         500.00 {sd=     0.031}    0    -72.1561
  IMPRoper  HA   HA   CH1P N         500.00 {sd=     0.031}    0    -72.1561
  IMPRoper  CY   CR1E CR1E HA        500.00 {sd=     0.031}    0   -179.9841
+ IMPRoper  O    C    NC2  HC        500.00 {sd=     0.031}    0    180.0000 ! for CIR - VR
  IMPRoper  O    C    NH1  H         500.00 {sd=     0.031}    0   -179.9841
  IMPRoper  O    CP   NH1  H         500.00 {sd=     0.031}    0      0.0000 ! for PCA
  IMPRoper  OH1  HA   CH1P N         500.00 {sd=     0.031}    0    -66.1521

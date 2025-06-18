@@ -112,7 +112,7 @@ def load_contacts(
     cutoff: float = 5.0,
     numbering_dic: Optional[dict[str, dict[int, int]]] = None,
     model2ref_chain_dict: Optional[dict[str, str]] = None,
-    extract_hetatm: bool = False,
+    keep_hetatm: bool = False,
 ) -> set[tuple]:
     """Load residue-based contacts.
 
@@ -122,7 +122,7 @@ def load_contacts(
         PDB file of the model to have its atoms identified
     cutoff : float, optional
         Cutoff distance for the interface identification.
-    extract_hetatm : bool
+    keep_hetatm : bool
         Should HETATM coordinates be extracts ? (default False)
 
     Returns
@@ -139,7 +139,7 @@ def load_contacts(
         atoms,
         numbering_dic=numbering_dic,
         model2ref_chain_dict=model2ref_chain_dict,
-        extract_hetatm=extract_hetatm,
+        keep_hetatm=keep_hetatm,
     )
     # create coordinate arrays
     coord_arrays: dict[str, NDFloat] = {}
@@ -254,7 +254,7 @@ class CAPRI:
                 self.reference,
                 self.atoms,
                 ref_interface_resdic,
-                extract_hetatm=self.keep_hetatm,
+                keep_hetatm=self.keep_hetatm,
             )
             try:
                 mod_coord_dic, _ = load_coords(
@@ -263,7 +263,7 @@ class CAPRI:
                     ref_interface_resdic,
                     numbering_dic=self.model2ref_numbering,
                     model2ref_chain_dict=self.model2ref_chain_dict,
-                    extract_hetatm=self.keep_hetatm,
+                    keep_hetatm=self.keep_hetatm,
                 )
             except ALIGNError as alignerror:
                 log.warning(alignerror)
@@ -301,7 +301,7 @@ class CAPRI:
         ref_coord_dic, _ = load_coords(
             self.reference,
             self.atoms,
-            extract_hetatm=self.keep_hetatm,
+            keep_hetatm=self.keep_hetatm,
             )
         try:
             mod_coord_dic, _ = load_coords(
@@ -309,7 +309,7 @@ class CAPRI:
                 self.atoms,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
-                extract_hetatm=self.keep_hetatm,
+                keep_hetatm=self.keep_hetatm,
             )
         except ALIGNError as alignerror:
             log.warning(alignerror)
@@ -419,7 +419,7 @@ class CAPRI:
             self.reference,
             self.atoms,
             ref_interface_resdic,
-            extract_hetatm=self.keep_hetatm,
+            keep_hetatm=self.keep_hetatm,
         )
         try:
             mod_int_coord_dic, _ = load_coords(
@@ -428,7 +428,7 @@ class CAPRI:
                 ref_interface_resdic,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
-                extract_hetatm=self.keep_hetatm,
+                keep_hetatm=self.keep_hetatm,
             )
         except ALIGNError as alignerror:
             log.warning(alignerror)
@@ -520,7 +520,7 @@ class CAPRI:
         ref_contacts = load_contacts(
             self.reference,
             cutoff,
-            extract_hetatm=self.keep_hetatm,
+            keep_hetatm=self.keep_hetatm,
             )
         if len(ref_contacts) != 0:
             try:
@@ -529,7 +529,7 @@ class CAPRI:
                     cutoff,
                     numbering_dic=self.model2ref_numbering,  # type: ignore
                     model2ref_chain_dict=self.model2ref_chain_dict,  # type: ignore
-                    extract_hetatm=self.keep_hetatm,
+                    keep_hetatm=self.keep_hetatm,
                 )
             except ALIGNError as alignerror:
                 log.warning(alignerror)
@@ -545,7 +545,7 @@ class CAPRI:
         ref_coord_dic, _ = load_coords(
             self.reference,
             self.atoms,
-            extract_hetatm=self.keep_hetatm,
+            keep_hetatm=self.keep_hetatm,
             )
         # Load model atomic coordinates
         try:
@@ -554,7 +554,7 @@ class CAPRI:
                 self.atoms,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
-                extract_hetatm=self.keep_hetatm,
+                keep_hetatm=self.keep_hetatm,
             )
         except ALIGNError as alignerror:
             log.warning(alignerror)
@@ -746,7 +746,7 @@ class CAPRI:
             pdb_f = pdb_f.rel_path
 
         interface_resdic: dict[str, list[int]] = {}
-        contacts = load_contacts(pdb_f, cutoff, extract_hetatm=keep_hetatm)
+        contacts = load_contacts(pdb_f, cutoff, keep_hetatm=keep_hetatm)
 
         for contact in contacts:
             first_chain, first_resid, sec_chain, sec_resid = contact

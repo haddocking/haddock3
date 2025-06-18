@@ -445,7 +445,7 @@ def load_coords(
     numbering_dic=None,
     model2ref_chain_dict=None,
     add_resname=None,
-    extract_hetatm: bool = False,
+    keep_hetatm: bool = False,
 ):
     """Load coordinates from PDB.
 
@@ -465,7 +465,7 @@ def load_coords(
     add_resname : bool
         use the residue name in the identifier
     
-    extract_hetatm : bool
+    keep_hetatm : bool
         Should HETATM lines be extracted ?
 
     Returns
@@ -480,7 +480,7 @@ def load_coords(
     chain_dic: ResDict = {}
     idx: int = 0
     # Set types of coordinates lines to extract
-    if extract_hetatm:
+    if keep_hetatm:
         coordinates_line_to_extract = ("ATOM", "HETATM")
     else:
         coordinates_line_to_extract = ("ATOM", )

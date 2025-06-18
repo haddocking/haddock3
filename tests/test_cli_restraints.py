@@ -18,6 +18,7 @@ from haddock.clis.restraints.passive_from_active import passive_from_active
 from haddock.clis.restraints.restrain_bodies import restrain_bodies
 from haddock.clis.restraints.validate_tbl import validate_tbl
 from haddock.clis.restraints.random_removal import random_removal
+from haddock.clis.restraints.restrain_ligand import restrain_ligand
 from haddock.clis.restraints.z_surface_restraints import (
     compute_barycenter,
     get_z_coords,
@@ -58,6 +59,12 @@ def fixture_example_tbl_file():
 def example_pdb_file():
     """Provide example pdb filename."""
     return Path(golden_data, "protein.pdb")
+
+
+@pytest.fixture
+def example_liganded_pdbfile():
+    """Provide example pdb file containing a ligand."""
+    return Path(golden_data, "protlig_complex_1.pdb")
 
 
 def test_parse_actpass_file(example_actpass_file):
@@ -363,3 +370,40 @@ def test_random_removal_seed(example_tbl_file):
     # Check that 2 and 3 are different !
     assert rd_rm_tbl2 != rd_rm_tbl3
     assert rd_rm_tbl1 != rd_rm_tbl3
+
+
+def test_restrain_ligand(example_liganded_pdbfile):
+    """Tests related to the restrain_ligand subcommand."""
+    ligand_restraints_default = restrain_ligand(example_liganded_pdbfile, "G39")
+    assert ligand_restraints_default is not None
+    assert ligand_restraints_default != ""
+
+    # Reducing the distance deviation
+    ligand_restraints_small_devi = restrain_ligand(
+        example_liganded_pdbfile, "G39",
+        deviation=0.5,
+        )
+    assert ligand_restraints_small_devi is not None
+    assert ligand_restraints_small_devi != ""
+    assert ligand_restraints_default != ligand_restraints_small_devi
+
+    # Reducing the radius
+    ligand_restraints_small_radius = restrain_ligand(
+        example_liganded_pdbfile, "G39",
+        radius=2.0,
+        )
+    assert ligand_restraints_small_radius is not None
+    assert ligand_restraints_small_radius != ""
+    assert ligand_restraints_default != ligand_restraints_small_radius
+    assert ligand_restraints_small_radius.count("assi") <= ligand_restraints_default.count("assi")
+
+    # Reducing the number of restaints
+    ligand_restraints_low_nb_restraints = restrain_ligand(
+        example_liganded_pdbfile, "G39",
+        max_restraints=2,
+        )
+    assert ligand_restraints_low_nb_restraints is not None
+    assert ligand_restraints_low_nb_restraints != ""
+    assert ligand_restraints_default != ligand_restraints_low_nb_restraints
+    assert ligand_restraints_low_nb_restraints.count("assi") <= ligand_restraints_default.count("assi")
+    assert ligand_restraints_low_nb_restraints.count("assi") == 2

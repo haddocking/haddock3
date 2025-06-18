@@ -125,9 +125,20 @@ def test_cli_reclustrmsd():
         os.mkdir(nested_tmpdir_previousstep)
         # rmsdmatrix.json
         rmsdmatrix_json = Path(golden_data, "example_rmsd_matrix.json")
+        tmp_rmsdmatrix_json = Path(nested_tmpdir_previousstep, "rmsd_matrix.json")
+        # Modify hard written path to tmp one
+        with open(rmsdmatrix_json, "r") as fin, open(tmp_rmsdmatrix_json, "w") as fout:
+            for _ in fin:
+                fout.write(
+                    _.replace(
+                        "tests/golden_data",
+                        str(nested_tmpdir_previousstep))
+                    )
+        # example ilrmsd matrix 
+        ilrmsd_matrix = Path(golden_data, "example_ilrmsd.matrix")
         shutil.copy(
-            rmsdmatrix_json,
-            Path(nested_tmpdir_previousstep, "rmsd_matrix.json"),
+            ilrmsd_matrix,
+            Path(nested_tmpdir_previousstep, "example_ilrmsd.matrix"),
             )
 
         # Fake clustrmsd module files
@@ -142,10 +153,11 @@ def test_cli_reclustrmsd():
         # dendrogram
         dendrogram = Path(golden_data, "example_dendrogram.txt")
         shutil.copy(dendrogram, Path(nested_tmpdir, "dendrogram.txt"))
+        # Run re-clustrmsd
         subprocess.run([
             "haddock3-re", "clustrmsd", nested_tmpdir,
-            "-n", "2",
-            '-p'  # shortcut to --plot_matrix
+            "-n", "2",  # set desired number of clusters
+            "-p"  # shortcut to --plot_matrix
             ])
         # check if the interactive folders is created
         interactive_folder = [

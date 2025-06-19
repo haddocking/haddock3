@@ -60,6 +60,7 @@ RES_CODES = dict([
     ("TOP", "T"),
     ("TYP", "Y"),
     ("TYS", "Y"),
+    ("CIR", "R"),
     ])
 
 

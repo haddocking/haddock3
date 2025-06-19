@@ -345,11 +345,11 @@ def alascan_cluster_analysis(models):
         # add comment
         fl_content = open(scan_clt_filename, 'r').read()
         with open(scan_clt_filename, 'w') as f:
-                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
                 f.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
                 f.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
-                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
                 f.write(fl_content)
     return clt_scan
 

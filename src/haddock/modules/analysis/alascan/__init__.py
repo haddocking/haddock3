@@ -103,7 +103,6 @@ class HaddockModule(BaseHaddockModule):
 
         alascan_jobs = []
         for core in range(ncores):
-            output_name = "alascan_" + str(core) + ".scan"
             scan_obj = Scan(
                 model_list=models[index_list[core]:index_list[core + 1]],
                 core=core,

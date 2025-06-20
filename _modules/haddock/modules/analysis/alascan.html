@@ -191,7 +191,6 @@
 
         <span class="n">alascan_jobs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
-            <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;alascan_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.scan&quot;</span>
             <span class="n">scan_obj</span> <span class="o">=</span> <span class="n">Scan</span><span class="p">(</span>
                 <span class="n">model_list</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span><span class="p">]:</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span>
                 <span class="n">core</span><span class="o">=</span><span class="n">core</span><span class="p">,</span>
@@ -241,7 +240,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 19, 2025.
+      <span class="lastupdated">Last updated on Jun 20, 2025.
       </span></p>
   </div>
 

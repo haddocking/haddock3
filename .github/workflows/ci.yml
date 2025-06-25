@@ -4,6 +4,13 @@ name: ci
 on:
   push:
     branches: [main]
+    paths:
+      - src/*
+      - tests/*
+      - integration_tests/*
+      - docs/*
+      - pyproject.toml
+      - setup.py
   pull_request:
   workflow_dispatch: ~
   schedule:

@@ -80,6 +80,7 @@ MASS CH2G  12.011
 MASS CH1P  12.011
 MASS CH2P  12.011
 MASS C5W  12.011
+MASS CP  12.011
 MASS CW  12.011
 
 MASS CR1E  12.011
@@ -278,7 +279,6 @@ GROUP
 
   DONO HN   N
   DONO HG  SG
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 
 END
@@ -600,7 +600,6 @@ residue CFE
   DIHEdral SG  CB  CA  N
 
   DONO HN   N
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -632,7 +631,6 @@ residue CYC  ! special for covalent docking - vdw of Sulphur reduced
   DIHEdral SG  CB  CA  N
 
   DONO HN   N
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -664,7 +662,6 @@ residue CYF
   DIHEdral SG  CB  CA  N
 
   DONO HN   N
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -698,7 +695,6 @@ residue CYS
 
   DONO HN   N
   DONO HG  SG
-  !!! ACCE SG    !REMOVED, ATB
   ACCE O    C
 end
 
@@ -1521,6 +1517,111 @@ residue MSE ! SeMET ! added 8-19-2011, ATB
   DIHEdral HE1 CE  SE  CG ! UCL methyl stagger 12-MAR-00
 
   DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue PCA
+  group
+    ATOM N    TYPE=NH1     CHARge=-0.570 end
+    ATOM HN   TYPE=H       CHARge= 0.370 end
+    ATOM CA   TYPE=CH1E    CHARge= 0.200 end
+    ATOM HA   TYPE=HA      CHARge= 0.000 end
+    ATOM CB   TYPE=CH2E    CHARge= 0.000 end
+    ATOM HB1  TYPE=HA      CHARge= 0.000 end
+    ATOM HB2  TYPE=HA      CHARge= 0.000 end
+    ATOM CG   TYPE=CH2P    CHARge= 0.000 end
+    ATOM HG1  TYPE=HA      CHARge= 0.000 end
+    ATOM HG2  TYPE=HA      CHARge= 0.000 end
+    ATOM CD   TYPE=CP      CHARge= 0.500 end
+    ATOM OE   TYPE=O       CHARge=-0.500 end
+    ATOM C    TYPE=C       CHARge= 0.500 end
+    ATOM O    TYPE=O       CHARge=-0.500 end
+
+  BOND N  HN
+  BOND N  CA     BOND CA  HA
+  BOND CA CB     BOND CB  HB1     BOND CB  HB2
+  BOND CB CG     BOND CG  HG1     BOND CG  HG2
+  BOND CG CD
+  BOND CD OE
+  BOND CD N
+  BOND CA C
+  BOND C  O
+
+  IMPRoper HA  N   C    CB  !chirality CA
+  IMPRoper OE  CD  N    HN  !planar ring carbonyl
+  IMPRoper CD  CG  N    OE  !planar ring carbonyl
+  IMPRoper CG  CD  N    CA  !cyclic peptide bond
+  IMPRoper N   CD  CA   HN  !planar +N
+
+  IMPRoper HB1 HB2 CA CG  !stereo CB
+  IMPRoper HG1 HG2 CB CD  !stereo CG
+
+  DONO HN   N
+  ACCE OE   CD
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue CIR
+  group
+    ATOM N    TYPE=NH1    CHARge=-0.570 end
+    ATOM HN   TYPE=H      CHARge= 0.370 end
+    ATOM CA   TYPE=CH1E   CHARge= 0.200 end
+    ATOM HA   TYPE=HA     CHARge= 0.000 end
+    ATOM C3   TYPE=CH2E   CHARge= 0.000 end
+    ATOM H31  TYPE=HA     CHARge= 0.000 end
+    ATOM H32  TYPE=HA     CHARge= 0.000 end
+    ATOM C4   TYPE=CH2E   CHARge= 0.070 end
+    ATOM H41  TYPE=HA     CHARge= 0.000 end
+    ATOM H42  TYPE=HA     CHARge= 0.000 end
+    ATOM C5   TYPE=CH2E   CHARge= 0.310 end
+    ATOM H51  TYPE=HA     CHARge= 0.000 end
+    ATOM H52  TYPE=HA     CHARge= 0.000 end
+    ATOM N6   TYPE=NH1    CHARge=-0.700 end
+    ATOM H6   TYPE=H      CHARge= 0.440 end
+    ATOM C7   TYPE=C      CHARge= 0.420 end
+    ATOM O7   TYPE=O      CHARge=-0.660 end
+    ATOM N8   TYPE=NC2    CHARge=-0.800 end
+    ATOM H81  TYPE=HC     CHARge= 0.460 end
+    ATOM H82  TYPE=HC     CHARge= 0.460 end
+    ATOM C     TYPE=C     CHARge= 0.500 end
+    ATOM O     TYPE=O     CHARge=-0.500 end
+ 
+  BOND N  HN
+  BOND N  CA     BOND CA  HA
+  BOND CA C3     BOND C3  H31     BOND C3  H32
+  BOND C3 C4     BOND C4  H41     BOND C4  H42
+  BOND C4 C5     BOND C5  H51     BOND C5  H52
+  BOND C5 N6     
+  BOND N6 C7     BOND N6  H6
+  BOND C7 O7     BOND C7  N8
+  BOND N8 H81    BOND N8  H82
+  BOND CA C
+  BOND C  O
+
+  IMPRoper HA  N   C  C3  !chirality CA
+  IMPRoper H31 H32 CA C4  !stereo C3
+  IMPRoper H41 H42 C3 C5  !stereo C4
+  IMPRoper H51 H52 C4 N6  !stereo C5
+
+  IMPRoper C5  N6  C7   O7  
+  IMPRoper H5  N6  C7   O7  
+  IMPRoper N6  C7  N8   H81
+  IMPRoper O7  C7  N8   H82 
+
+  DIHEdral C4  C3  CA  N
+  DIHEdral C5  C4  C3  CA
+  DIHEdral N6  C5  C4  C3
+  DIHEdral C7  N6  C5  C4
+  
+  DONO HN   N
+  DONO H6   N6
+  DONO H81  N8
+  DONO H82  N8
+  ACCE O7   C7
   ACCE O    C
 end
 

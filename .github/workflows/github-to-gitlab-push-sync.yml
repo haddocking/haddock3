@@ -3,12 +3,14 @@ name: build
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     name: sync to codehub
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4

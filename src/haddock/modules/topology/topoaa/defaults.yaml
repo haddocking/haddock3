@@ -118,6 +118,14 @@ disulphide_dist:
   group: molecule
   explevel: guru
 mol1:
+  type: dict
+  group: input molecules
+  explevel: easy
+  title: Input molecule configuration
+  short: Specific molecule configuration
+  long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
+        if you input three molecules, you can define mol1, mol2, and mol3
+        subparameters. Those not defined will be populated with the defaults.
   cyclicpept:
     default: false
     type: boolean
@@ -171,14 +179,33 @@ mol1:
     long: Residue number of the Histidine to be defined as HISE
     group: molecule
     explevel: expert
-  type: dict
-  group: input molecules
-  explevel: easy
-  title: Input molecule configuration
-  short: Specific molecule configuration
-  long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
-        if you input three molecules, you can define mol1, mol2, and mol3
-        subparameters. Those not defined will be populated with the defaults.
+  charged_nter:
+    default: false
+    type: boolean
+    title: N-ter topology
+    short: Define if N-terminus should be charged or uncharged
+    long: This option defines how N-terminus residue should be. If false (default), N-ter will be an uncharged NH,
+          as it would be in a peptide bond. If true, N-ter will be a charged NH3+.
+    group: molecule
+    explevel: easy
+  charged_cter:
+    default: false
+    type: boolean
+    title: C-ter topology
+    short: Define if C-terminus should be charged or uncharged
+    long: This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO,
+          as it would be in a peptide bond. If true, C-ter will be a charged COO-.
+    group: molecule
+    explevel: easy
+  5_phosphate:
+    default: false
+    type: boolean
+    title: Nucleic Acids 5' topology
+    short: Define if 5' end should be phosphate or not.
+    long: This option defines how nucleic acid 5' residue should be. If false (default),
+          5' end will be an OH. If true, 5' end will be a phosphate.
+    group: molecule
+    explevel: easy
 molecules:
   default: false
   type: boolean

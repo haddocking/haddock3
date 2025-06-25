@@ -9,6 +9,11 @@ on:
 jobs:
   pages:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -27,9 +32,9 @@ jobs:
 
       - name: Generate docs
         run: |
-         sphinx-apidoc -f -e -o docs/ src/haddock -d 1
-         sphinx-build -b html docs haddock3-docs
-         touch haddock3-docs/.nojekyll
+          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+          sphinx-build -b html docs haddock3-docs
+          touch haddock3-docs/.nojekyll
 
       - name: deploy
         uses: s0/git-publish-subdir-action@develop

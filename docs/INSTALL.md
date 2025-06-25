@@ -1,6 +1,6 @@
 # Installation
 
-Create a virtual environment with a Python3.9+
+Create a virtual environment with Python3.9+
 
 You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:

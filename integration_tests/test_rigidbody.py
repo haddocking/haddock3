@@ -5,10 +5,12 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.modules.sampling.rigidbody import \
-    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG
+from haddock.modules.sampling.rigidbody import (
+    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG,
+)
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 from tests import golden_data
+from . import has_mpi
 
 
 @pytest.fixture
@@ -98,6 +100,7 @@ def test_rigidbody_local(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
 
 
+@has_mpi
 def test_rigidbody_mpi(rigidbody_module):
 
     sampling = 2

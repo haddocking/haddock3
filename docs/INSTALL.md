@@ -1,18 +1,18 @@
 # Installation
 
-Create a virtual environment with a Python version 3.9 or up to 3.13
+Create a virtual environment with a Python3.9+
 
 You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
 
-### with `venv`
+## with `venv`
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-### with `conda`
+## with `conda`
 
 ```bash
 conda create -n haddock3 python=3.9
@@ -20,20 +20,16 @@ conda activate haddock3
 ```
 
 ```bash
-git clone https://github.com/haddocking/haddock3.git
-cd haddock3
-pip install .
+pip install haddock3
 ```
 
-## (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI
-
-To use the mpi implementation of haddock3 you must have mpi4py installed in the `(haddock3)` python environment, and OpenMPI in the host system.
+## (Optional) Install MPI dependencies
 
 ```bash
-pip install '.[mpi]'
+pip install 'haddock3[mpi]'
 ```
 
-Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html) instructions on how to run HADDOCK3 with MPI.
+> Instruction on how to use MPI with haddock3 are found in the [tutorials](https://www.bonvinlab.org/haddock3/tutorials/mpi.html)
 
 ## Troubleshooting the CNS executable
 

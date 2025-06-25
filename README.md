@@ -23,10 +23,17 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.13 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) . 
+Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.13 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) .
 
 ```bash
 pip install haddock3
+```
+
+To install haddock3 with MPI support (required an OpenMPI installation - refer
+to the instructions in [INSTALL.md](docs/INSTALL.md) use:
+
+```bash
+pip install 'haddock3[mpi]'
 ```
 
 In case you rather install the latest unreleased version use instead:
@@ -37,16 +44,7 @@ cd haddock3
 pip install .
 ```
 
-To install haddock3 with MPI support (required an OpenMPI installation - refer to the instructions in [INSTALL.md](docs/INSTALL.md) use:
-
-```bash
-git clone https://github.com/haddocking/haddock3.git
-cd haddock3
-pip install -e '.[mpi]'
-```
-
-
-For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md) 
+For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md)
 
 You might also want to check the following utilities:
 
@@ -95,8 +93,8 @@ If you clone this repository and use `haddock3` for your research, please suppor
 
 If you used `haddock3` for your research, please cite us:
 
-- **Research article**: M. Giulini, V. Reys, J.M.C. Teixeira, B. Jiménez-García, R.V. Honorato, A. Kravchenko, X. Xu, R. Versini, A. Engel, S. Verhoeven, A.M.J.J. Bonvin, *HADDOCK3: A modular and versatile platform for integrative modelling of biomolecular complexes* biorxiv (2025). [https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1](https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1)
- 
+- **Research article**: M. Giulini, V. Reys, J.M.C. Teixeira, B. Jiménez-García, R.V. Honorato, A. Kravchenko, X. Xu, R. Versini, A. Engel, S. Verhoeven, A.M.J.J. Bonvin, _HADDOCK3: A modular and versatile platform for integrative modelling of biomolecular complexes_ biorxiv (2025). [https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1](https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1)
+
 - **Cite this repository**: M.C. Teixeira, J., Vargas Honorato, R., Giulini, M., Bonvin, A., SarahAlidoost, Reys, V., Jimenez, B., Schulte, D., van Noort, C., Verhoeven, S., Vreede, B., SSchott, & Tsai, R. (2024). haddocking/haddock3: v3.0.0-beta.5 (Version 3.0.0-beta.5) [Computer software]. [https://doi.org/10.5281/zenodo.10527751](https://doi.org/10.5281/zenodo.10527751)
 
 ## Useful resources

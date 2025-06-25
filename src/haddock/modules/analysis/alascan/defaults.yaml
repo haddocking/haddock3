@@ -36,7 +36,7 @@ scan_residue:
   type: string
   minchars: 3
   maxchars: 3
-  choices: [ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE, LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL, ALY, ASH, CFE, CSP, CYC, CYF, CYM, DDZ, GLH, HLY, HY3, HYP, M3L, MLY, MLZ, MSE, NEP, PNS, PTR, SEP, TOP, TYP, TYS]
+  choices: [ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE, LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL, ALY, ASH, CFE, CSP, CYC, CYF, CYM, DDZ, GLH, HLY, HY3, HYP, M3L, MLY, MLZ, MSE, NEP, PNS, PTR, SEP, TOP, TYP, TYS, CIR]
   title: Residue to be used for the scanning
   short: Residue to be used for the scanning. The default is alanine.
   long: Residue to be used for the scanning. The default is alanine. Use bigger residues at your own risk.

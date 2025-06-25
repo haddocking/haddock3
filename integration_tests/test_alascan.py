@@ -5,9 +5,12 @@ import pytest
 import shutil
 import pandas as pd
 
-from haddock.modules.analysis.alascan import DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG
-from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
+from haddock.modules.analysis.alascan import (
+    DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG,
+    HaddockModule as AlascanModule,
+    )
 from haddock.modules.analysis.alascan.scan import RES_CODES
+from haddock.libs.libio import read_from_yaml
 from haddock.libs.libontology import PDBFile
 from . import GOLDEN_DATA
 
@@ -137,4 +140,11 @@ def test_alascan_single_model(alascan_module, mocker):
         ), (
             f"Heavy atoms for {mut_file_identifier} are not correct: {heavy_atoms}"
         )
-            
+
+
+def test_alascan_mutation_resiudes():
+    """Test making sure list of residues in defaults and script are same."""
+    default_config = read_from_yaml(DEFAULT_ALASCAN_CONFIG)
+    config_allowed_resiudes = set(default_config["scan_residue"]["choices"])
+    script_allowed_resiudes = set(list(RES_CODES.keys()))
+    assert config_allowed_resiudes == script_allowed_resiudes

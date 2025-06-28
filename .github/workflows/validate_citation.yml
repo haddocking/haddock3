@@ -7,10 +7,11 @@ on:
 jobs:
   validate-citation:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: dieghernan/cff-validator@v3

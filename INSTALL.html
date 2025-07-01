@@ -47,7 +47,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#with-venv">with <code class="docutils literal notranslate"><span class="pre">venv</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#with-conda">with <code class="docutils literal notranslate"><span class="pre">conda</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">(Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-install-mpi-dependencies">(Optional) Install MPI dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting-the-cns-executable">Troubleshooting the CNS executable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">(Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
@@ -99,7 +99,7 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
-<p>Create a virtual environment with Python 3.9:</p>
+<p>Create a virtual environment with Python3.9+</p>
 <p>You can use Python’s <code class="docutils literal notranslate"><span class="pre">venv</span></code> or <code class="docutils literal notranslate"><span class="pre">conda</span></code> depending on your choice.
 Commands are provided below:</p>
 <section id="with-venv">
@@ -115,21 +115,18 @@ Commands are provided below:</p>
 conda<span class="w"> </span>activate<span class="w"> </span>haddock3
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/haddocking/haddock3.git
-<span class="nb">cd</span><span class="w"> </span>haddock3
-pip<span class="w"> </span>install<span class="w"> </span>.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>haddock3
 </pre></div>
 </div>
 </section>
-<section id="optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">
-<h2>(Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI<a class="headerlink" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi" title="Link to this heading"></a></h2>
-<p>To use the mpi implementation of haddock3 you must have mpi4py installed in the <code class="docutils literal notranslate"><span class="pre">(haddock3)</span></code> python environment, and OpenMPI in the host system.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mpi4py
-<span class="c1"># or</span>
-$<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>mpi4py
+<section id="optional-install-mpi-dependencies">
+<h2>(Optional) Install MPI dependencies<a class="headerlink" href="#optional-install-mpi-dependencies" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;haddock3[mpi]&#39;</span>
 </pre></div>
 </div>
-<p>Later, you can find <a class="reference external" href="https://www.bonvinlab.org/haddock3/tutorials/mpi.html">here</a> instructions on how to run HADDOCK3 with MPI.</p>
+<blockquote>
+<div><p>Instruction on how to use MPI with haddock3 are found in the <a class="reference external" href="https://www.bonvinlab.org/haddock3/tutorials/mpi.html">tutorials</a></p>
+</div></blockquote>
 </section>
 <section id="troubleshooting-the-cns-executable">
 <h2>Troubleshooting the CNS executable<a class="headerlink" href="#troubleshooting-the-cns-executable" title="Link to this heading"></a></h2>
@@ -257,7 +254,7 @@ of the project for a full description of the installation procedure.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 25, 2025.
+      <span class="lastupdated">Last updated on Jul 01, 2025.
       </span></p>
   </div>
 

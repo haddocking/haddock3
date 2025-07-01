@@ -23,10 +23,17 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.12 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) . 
+Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.13 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) .
 
 ```bash
 pip install haddock3
+```
+
+To install haddock3 with MPI support (required an OpenMPI installation - refer
+to the instructions in [INSTALL.md](docs/INSTALL.md) use:
+
+```bash
+pip install 'haddock3[mpi]'
 ```
 
 In case you rather install the latest unreleased version use instead:
@@ -37,7 +44,7 @@ cd haddock3
 pip install .
 ```
 
-For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md) 
+For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md)
 
 You might also want to check the following utilities:
 

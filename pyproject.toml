@@ -70,7 +70,7 @@ docs = [
   "myst-parser>=3.0.1",
 ]
 mpi = [
-  "mpi4py==4.0.3",
+  "mpi4py==4.1.0",
 ]
 
 [project.urls]

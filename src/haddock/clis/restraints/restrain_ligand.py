@@ -195,6 +195,7 @@ def restrain_ligand(
     
     # Limit the number of restraints
     if max_restraints < len(_unambig_str_list):
+        random.seed(420)
         unambig_str_list = random.sample(_unambig_str_list, max_restraints)
     else:
         unambig_str_list = _unambig_str_list

@@ -261,10 +261,7 @@
         <span class="s2">&quot;</span><span class="si">{distance:6.3f}</span><span class="s2"> </span><span class="si">{deviation:.2f}</span><span class="s2"> </span><span class="si">{deviation:.2f}{linesep:s}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">_unambig_str_list</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;! Restraints to fix </span><span class="si">{</span><span class="n">ligand_name</span><span class="si">}</span><span class="s2"> in its initial position</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">]</span>
-
+    <span class="n">_unambig_str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c1"># Loop over all min distances</span>
     <span class="k">for</span> <span class="n">dist</span> <span class="ow">in</span> <span class="n">min_dist_list</span><span class="p">:</span>
         <span class="n">r_at</span><span class="p">,</span> <span class="n">l_at</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dist</span>
@@ -284,11 +281,14 @@
     
     <span class="c1"># Limit the number of restraints</span>
     <span class="k">if</span> <span class="n">max_restraints</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">_unambig_str_list</span><span class="p">):</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">420</span><span class="p">)</span>
         <span class="n">unambig_str_list</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">_unambig_str_list</span><span class="p">,</span> <span class="n">max_restraints</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">unambig_str_list</span> <span class="o">=</span> <span class="n">_unambig_str_list</span>
+    
     <span class="c1"># Concatenate into a single string</span>
-    <span class="n">unambig_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unambig_str_list</span><span class="p">)</span>
+    <span class="n">unambig_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;! Restraints to fix </span><span class="si">{</span><span class="n">ligand_name</span><span class="si">}</span><span class="s2"> in its initial position</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">unambig_str</span> <span class="o">+=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unambig_str_list</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">unambig_str</span></div>
 
 
@@ -321,7 +321,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 01, 2025.
+      <span class="lastupdated">Last updated on Jul 02, 2025.
       </span></p>
   </div>
 

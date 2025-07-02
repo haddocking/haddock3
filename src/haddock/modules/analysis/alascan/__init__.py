@@ -1,21 +1,21 @@
 """
 HADDOCK3 module for alanine scan.
 
-This module is responsible for the alanine (or any other residue) scan analysi
-of the models generated in the previous step of the workflow.
-For each model, the module will mutate the interface residues and calculate
-the energy differences between the wild type and the mutant, thus providing a
-measure of the impact of such mutation. Such difference (delta_score) is always
+This module is responsible for the alanine (or any other residue) scan analysis
+of the model(s) generated in the previous step of the workflow.
+For each model, this module will mutate the interface residues and calculate
+the haddock score differences between the wild type and the mutant, thus providing
+a measure of the impact of such mutation. Such difference (delta_score) is always
 calculated as:
 
     delta_score = score_wildtype - score_mutant
 
-Therefore, a positive delta_score indicates that the mutation is destabilizing
-while a negative delta_score indicates that the mutation is stabilizing.
+Therefore, a _positive_ delta_score indicates that the mutation is destabilizing
+while a _negative_ delta_score indicates that the mutation is stabilizing.
 
 If cluster information is available, the module will also calculate the
-average energy difference for each cluster of models. For each amino acid, a Z
-score is calculated as:
+average haddock score difference for each cluster of models. For each amino acid,
+a Z score is calculated as:
 
     Z = (delta_score - mean) / std
 
@@ -84,14 +84,14 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
-        # Parallelisation : optimal dispatching of models
+        # Parallelization : optimal dispatching of models
         nmodels = len(models)
-        # output mutants is only possible if there is only one model
+        # Outputting mutants is possible if there is just one model
         if self.params["output_mutants"]:
             if nmodels != 1:
                 log.warning(
-                    "output_mutants is set to True but more than one model "
-                    "was found. Setting output mutants to False."
+                    "output_mutants is set to True, but more than one model "
+                    "was found. Setting output_mutants to False."
                     )
                 self.params["output_mutants"] = False
 
@@ -139,6 +139,6 @@ class HaddockModule(BaseHaddockModule):
             self.output_models = models_to_export
         else:
             # Send models to the next step,
-            #  no operation is done on them
+            # no operation is done on them
             self.output_models = models
         self.export_io_models()

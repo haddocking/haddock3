@@ -10,7 +10,7 @@ from haddock.libs.libsubprocess import CNSJob
 import subprocess
 import os
 
-from . import CNS_EXEC
+from . import CNS_EXEC, has_mpi
 
 
 class Task:
@@ -47,6 +47,7 @@ def task() -> Generator[Task, None, None]:
         yield Task(output_fname=Path(out_f.name))
 
 
+@has_mpi
 def test_run_cli_mpi_main_cnsjob(cnsjob):
     """Test the cli_mpi_main function with a CNSJob."""
     with tempfile.TemporaryDirectory() as tempdir:
@@ -63,6 +64,7 @@ def test_run_cli_mpi_main_cnsjob(cnsjob):
         scheduler.tasks[0].output_file.exists()
 
 
+@has_mpi
 def test_run_cli_mpi_main_task(task):
     """Test the cli_mpi_main function with a Task."""
     with tempfile.TemporaryDirectory() as tempdir:

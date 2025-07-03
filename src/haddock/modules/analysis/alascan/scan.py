@@ -1,20 +1,31 @@
 """alascan module."""
 import os
-from pathlib import Path
+import io
 import shutil
+from pathlib import Path
+from contextlib import redirect_stdout
 
+import multiprocessing
 import numpy as np
 import pandas as pd
-import io
-from contextlib import redirect_stdout
 
 from haddock import log
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
 from haddock.clis import cli_score
+from haddock.libs.libparallel import Scheduler, GenericTask
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
+
+def calculate_core_allocation(nmodels, total_cores):
+    """Calculate optimal core allocation."""
+    if nmodels >= total_cores:
+        return total_cores, 1
+    else:
+        model_cores = nmodels
+        residue_cores_per_model = max(1, total_cores // nmodels)
+        return model_cores, residue_cores_per_model
 
 RES_CODES = dict([
     ("CYS", "C"),
@@ -410,6 +421,68 @@ def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     return
 
 
+def process_residue_task(args):
+    """
+    Processing a single residue - mutate, score, calculate delta_score.
+    For parallelization purposes, this function must be picklable.
+    Thus it must be module-level. 
+    """
+    (chain, res, resname_dict, native_path, end_resname, 
+     n_score, n_vdw, n_elec, n_des, n_bsa, sc_dir_base, output_mutants) = args
+    
+    try:
+        # Create unique scoring directory per process using its id
+        process_id = multiprocessing.current_process().pid
+        sc_dir = f"{sc_dir_base}-{process_id}"
+        os.makedirs(sc_dir, exist_ok=True)
+
+        # Get original (to be mutated) resname  
+        key = f"{chain}-{res}"
+        if key not in resname_dict:
+            return None    
+        ori = resname_dict[key]
+        
+        # Keep wildtype valuesif same residue type
+        if ori == end_resname:
+            return [chain, res, ori, end_resname,
+                    n_score, n_vdw, n_elec, n_des, n_bsa,
+                    0.0, 0.0, 0.0, 0.0, 0.0]
+        
+        # Perform mutation
+        mut_pdb = mutate(native_path, chain, res, end_resname)
+        
+        # Calculate scores
+        c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
+            mut_pdb, run_dir=sc_dir, outputpdb=output_mutants
+        )
+        
+        # Calculate deltas
+        delta_score = n_score - c_score
+        delta_vdw = n_vdw - c_vdw
+        delta_elec = n_elec - c_elec
+        delta_desolv = n_des - c_des
+        delta_bsa = n_bsa - c_bsa
+        
+        # Clean up files based on output_mutants parameter
+        em_mut_pdb = Path(mut_pdb.stem + '_hs.pdb')
+        if not output_mutants:
+            if os.path.exists(mut_pdb):
+                os.remove(mut_pdb)
+            if os.path.exists(em_mut_pdb):
+                os.remove(em_mut_pdb)
+        else:
+            if os.path.exists(em_mut_pdb):
+                shutil.move(em_mut_pdb, mut_pdb)
+        
+        return [chain, res, ori, end_resname,
+                c_score, c_vdw, c_elec, c_des, c_bsa,
+                delta_score, delta_vdw, delta_elec, delta_desolv, delta_bsa]
+                
+    except Exception as e:
+        log.warning(f"Error processing {chain}-{res}: {e}")
+        return None
+    
+
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""
 
@@ -430,18 +503,20 @@ class ScanJob:
 
 
 class Scan:
-    """Scan class."""
+    """Scan class, with sequential and parallel per-residue processing options"""
 
     def __init__(
             self,
             model_list,
             core,
+            residue_ncores,
             path,
             **params,
             ):
         """Initialise Scan class."""
         self.model_list = model_list
         self.core = core
+        self.residue_ncores = residue_ncores
         self.path = path
         self.scan_res = params['params']['scan_residue']
         self.int_cutoff = params["params"]["int_cutoff"]
@@ -455,25 +530,44 @@ class Scan:
                 if key.startswith("resdic")
                 }
 
+    def _run_parallel_residues(self, tasks):
+        """Run residue processing in parallel."""
+        generic_tasks = [GenericTask(process_residue_task, task) for task in tasks]
+        scheduler = Scheduler(generic_tasks, ncores=self.residue_ncores)
+        
+        try:
+            scheduler.run()
+            return [r for r in scheduler.results if r is not None]
+        except Exception as e:
+            log.warning(f"Parallel execution failed: {e}. Falling back to sequential.")
+            return self._run_sequential_residues(tasks)
+
+    def _run_sequential_residues(self, tasks):
+        """Run residue processing sequentially."""
+        results = []
+        for task in tasks:
+            result = process_residue_task(task)
+            if result is not None:
+                results.append(result)
+        return results
 
     def run(self):
         """Run alascan calculations."""
         for native in self.model_list:
             # here we rescore the native model for consistency, as the score
             # attribute could come from any module in principle
-            sc_dir = f"haddock3-score-{self.core}"
+            sc_dir_base = f"haddock3-score-{self.core}"
             n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
-                                                              run_dir=sc_dir,
-                                                              outputpdb=False
-                                                              )
+                                                                        run_dir=sc_dir_base,
+                                                                        outputpdb=False)
+            
             scan_data = []
 
             # load the coordinates
             atoms = get_atoms(native.rel_path)
             coords, chain_ranges = load_coords(native.rel_path,
                                                atoms,
-                                               add_resname=True
-                                               )
+                                               add_resname=True)
             
             # check if the user wants to mutate only some residues
             if self.filter_resdic != {'_': []}:
@@ -483,7 +577,7 @@ class Scan:
                         chain_aas = [aa[1] for aa in coords if aa[0] == chain]
                         unique_aas = list(set(chain_aas))
                         # the interface here is the intersection of the
-                        # residues in filter_resdic and the residues actually 
+                        # residues in filter_resdic and the residues actually
                         # present in the model
                         interface[chain] = [
                             res for res in self.filter_resdic[chain]
@@ -507,54 +601,29 @@ class Scan:
                 key = f"{chain}-{resid}"
                 if key not in resname_dict:
                     resname_dict[key] = resname
-            
-            # loop over the interface
+
+            # Create tasks for all residue mutations (per single model)
+            tasks = []
             for chain in interface:
                 for res in interface[chain]:
-                    ori_resname = resname_dict[f"{chain}-{res}"]
-                    end_resname = self.scan_res
-                    if ori_resname == self.scan_res:
-                        # we do not re-score equal residues (e.g. ALA = ALA)
-                        c_score = n_score
-                        c_vdw = n_vdw
-                        c_elec = n_elec
-                        c_des = n_des
-                        c_bsa = n_bsa
-                    else:
-                        try:
-                            mut_pdb_name = mutate(native.rel_path,
-                                                  chain,
-                                                  res,
-                                                  end_resname)
-                        except KeyError:
-                            continue
-                        # now we score the mutated model
-                        c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
-                            mut_pdb_name,
-                            run_dir=sc_dir,
-                            outputpdb=self.output_mutants
-                            )
-                        # now the deltas (wildtype - mutant)
-                        delta_score = n_score - c_score
-                        delta_vdw = n_vdw - c_vdw
-                        delta_elec = n_elec - c_elec
-                        delta_desolv = n_des - c_des
-                        delta_bsa = n_bsa - c_bsa
- 
-                        scan_data.append([chain, res, ori_resname, end_resname,
-                                          c_score, c_vdw, c_elec, c_des,
-                                          c_bsa, delta_score,
-                                          delta_vdw, delta_elec, delta_desolv,
-                                          delta_bsa])
-                        # if self.output_mutants is false, remove the mutated
-                        # pdb file. Otherwise, move the EM haddock model to the
-                        # original mut_pdb_name
-                        em_mut_pdb = Path(mut_pdb_name.stem + '_hs.pdb')
-                        if not self.output_mutants:
-                            os.remove(mut_pdb_name)
-                        else:
-                            shutil.move(em_mut_pdb, mut_pdb_name)
-            # write output
+                    tasks.append((chain, res, resname_dict, native.rel_path,
+                                self.scan_res, n_score, n_vdw, n_elec, n_des, n_bsa,
+                                sc_dir_base, self.output_mutants))
+            
+            # Do we parallelize?
+            # If more than 1 core avaliable after per-model parallelization,
+            # and if more than X residues to mutate - then yes.
+            # Otherwise use sequential processing.
+            if self.residue_ncores > 1 and len(tasks) > 1:
+                # Use per-residue parallelization
+                #print('_run_parallel_residues')
+                scan_data = self._run_parallel_residues(tasks)
+            else:
+                # Use sequential processing
+                #print('_run_sequential_residues')
+                scan_data = self._run_sequential_residues(tasks)
+
+            # Write output
             df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
                           'score', 'vdw', 'elec', 'desolv', 'bsa',
                           'delta_score', 'delta_vdw', 'delta_elec',

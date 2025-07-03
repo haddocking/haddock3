@@ -41,6 +41,7 @@ You can use the parameters below to customize the behavior of the module:
     >>> resdic_A = [1,2,3,4]
     >>> resdic_B = [2,3,4]
 """
+import os
 from pathlib import Path
 
 from haddock import log
@@ -56,6 +57,7 @@ from haddock.modules.analysis.alascan.scan import (
     alascan_cluster_analysis,
     create_alascan_plots,
     generate_alascan_output,
+    calculate_core_allocation,
     )
 
 
@@ -95,28 +97,33 @@ class HaddockModule(BaseHaddockModule):
                     )
                 self.params["output_mutants"] = False
 
+        # Calculate core allocation - per models vs per residues vs available  
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
+        model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
+        index_list = get_index_list(nmodels, model_cores)
 
-        log.info(f"Running on {ncores} cores")
-
-        index_list = get_index_list(nmodels, ncores)
-
+        log.info(f"Using {model_cores} cores for models")
+        log.info(f"Using {residue_cores_per_model} cores per model for residues")
+    
         alascan_jobs = []
-        for core in range(ncores):
-            output_name = "alascan_" + str(core) + ".scan"
+        for core in range(model_cores):
+            models_for_core = models[index_list[core]:index_list[core + 1]]            
             scan_obj = Scan(
-                model_list=models[index_list[core]:index_list[core + 1]],
+                model_list=models_for_core,
                 core=core,
+                residue_ncores=residue_cores_per_model,
                 path=Path("."),
                 params=self.params,
-                )
+            )
             # running now the ScanJob
             # init ScanJob
             job = ScanJob(
                 self.params,
                 scan_obj,
-                )
+            )
             alascan_jobs.append(job)
+
+        print(f"Created {len(alascan_jobs)} scan jobs")
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
 
@@ -132,13 +139,12 @@ class HaddockModule(BaseHaddockModule):
                 clt_alascan,
                 self.params["scan_residue"],
                 offline=self.params["offline"],
-                )
+            )
         # if output_bfactor is true, write the models and export them
         if self.params["output_bfactor"] is True:
             models_to_export = generate_alascan_output(models, self.path)
             self.output_models = models_to_export
         else:
-            # Send models to the next step,
-            # no operation is done on them
+            # Send models to the next step, no operation is done on them
             self.output_models = models
         self.export_io_models()

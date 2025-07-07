@@ -97,17 +97,19 @@ class HaddockModule(BaseHaddockModule):
                     )
                 self.params["output_mutants"] = False
 
-        # Calculate core allocation - per models vs per residues vs available  
-        ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
+        # Core maths
+        ncores = parse_ncores(n=self.params['ncores'])
         model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
         index_list = get_index_list(nmodels, model_cores)
-
-        log.info(f"Using {model_cores} cores for models")
-        log.info(f"Using {residue_cores_per_model} cores per model for residues")
-    
+        
+        if residue_cores_per_model == 1:
+            log.info(f"Using {model_cores} core(s) to process {nmodels} model(s)")
+        else:
+            log.info(f"Processing {model_cores} model(s), using {residue_cores_per_model} cores per model")
+        
         alascan_jobs = []
         for core in range(model_cores):
-            models_for_core = models[index_list[core]:index_list[core + 1]]            
+            models_for_core = models[index_list[core]:index_list[core + 1]]
             scan_obj = Scan(
                 model_list=models_for_core,
                 core=core,
@@ -123,7 +125,11 @@ class HaddockModule(BaseHaddockModule):
             )
             alascan_jobs.append(job)
 
-        print(f"Created {len(alascan_jobs)} scan jobs")
+        log.info(f"Created {len(alascan_jobs)} scan jobs")
+        # next libutil and libparallel will log info about per-model cores/tasks.
+        # This is misleading, if per-residue parallelization is present.
+        # This log makes log look more coherent, in a way.
+        log.info(f"Model-level parallelization:")
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
 

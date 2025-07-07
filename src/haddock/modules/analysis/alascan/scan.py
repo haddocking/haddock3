@@ -9,6 +9,9 @@ import multiprocessing
 import numpy as np
 import pandas as pd
 
+import signal
+import time
+
 from haddock import log
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libplots import make_alascan_plot
@@ -17,15 +20,6 @@ from haddock.clis import cli_score
 from haddock.libs.libparallel import Scheduler, GenericTask
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
-
-def calculate_core_allocation(nmodels, total_cores):
-    """Calculate optimal core allocation."""
-    if nmodels >= total_cores:
-        return total_cores, 1
-    else:
-        model_cores = nmodels
-        residue_cores_per_model = max(1, total_cores // nmodels)
-        return model_cores, residue_cores_per_model
 
 RES_CODES = dict([
     ("CYS", "C"),
@@ -73,6 +67,43 @@ RES_CODES = dict([
     ("TYS", "Y"),
     ("CIR", "R"),
     ])
+
+# to handle KeyboardInterrupt
+_SHUTDOWN_REQUESTED = False
+
+def _handle_shutdown_signal(signum, frame):
+    """Handle shutdown."""
+    global _SHUTDOWN_REQUESTED
+    _SHUTDOWN_REQUESTED = True
+
+
+def calculate_core_allocation(nmodels, total_cores):
+    """Calculate optimal core allocation.    
+
+    Parameters
+    ----------
+    nmodels : int
+        Number of models to be processed.
+    
+    total_cores : int
+        Number of available cores (user-given, or 
+        determined by os).
+    
+    Returns
+    -------
+    model_cores : int
+        Number of cores per model.
+        
+    residue_cores_per_model : int
+        Number of cores per residue.
+        
+    """
+    if nmodels >= total_cores:
+        return total_cores, 1
+    else:
+        model_cores = nmodels
+        residue_cores_per_model = max(1, total_cores // nmodels)
+        return model_cores, residue_cores_per_model
 
 
 def mutate(pdb_f, target_chain, target_resnum, mut_resname):
@@ -133,6 +164,7 @@ def add_delta_to_bfactor(pdb_f, df_scan):
     ----------
     pdb_f : str
         Path to the pdb file.
+
     df_scan : pandas.DataFrame
         Dataframe with the scan results for the model
     
@@ -425,33 +457,41 @@ def create_alascan_plots(clt_alascan, scan_residue, offline = False):
 def process_residue_task(args):
     """
     Processing a single residue - mutate, score, calculate delta_score.
-    For parallelization purposes, this function must be picklable.
-    Thus it must be module-level. 
+    Can handle KeyboardInterrupt.
     """
-    (chain, res, resname_dict, native_path, end_resname, 
+    global _SHUTDOWN_REQUESTED
+    
+    signal.signal(signal.SIGINT, _handle_shutdown_signal)
+    signal.signal(signal.SIGTERM, _handle_shutdown_signal)
+    
+    (chain, res, resname_dict, native_path, end_resname,
      n_score, n_vdw, n_elec, n_des, n_bsa, sc_dir_base, output_mutants) = args
     
     try:
-        # Create unique scoring directory per process using its id
+        if _SHUTDOWN_REQUESTED:
+            return None
+            
+        # Create unique scoring directory per process
         process_id = multiprocessing.current_process().pid
         sc_dir = f"{sc_dir_base}-{process_id}"
         os.makedirs(sc_dir, exist_ok=True)
 
-        # Get original (to be mutated) resname  
+        # Get original (to be mutated) resname
         key = f"{chain}-{res}"
         if key not in resname_dict:
-            return None    
+            return None
         ori = resname_dict[key]
         
-        # Keep wildtype valuesif same residue type
-        if ori == end_resname:
-            return [chain, res, ori, end_resname,
-                    n_score, n_vdw, n_elec, n_des, n_bsa,
-                    0.0, 0.0, 0.0, 0.0, 0.0]
-        
-        # Perform mutation
+        if _SHUTDOWN_REQUESTED:
+            return None
+            
+        # Perform mutation (no special file cleanup - let user handle)
         mut_pdb = mutate(native_path, chain, res, end_resname)
         
+        # Check shutdown before scoring
+        if _SHUTDOWN_REQUESTED:
+            return None
+            
         # Calculate scores
         c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
             mut_pdb, run_dir=sc_dir, outputpdb=output_mutants
@@ -479,10 +519,13 @@ def process_residue_task(args):
                 c_score, c_vdw, c_elec, c_des, c_bsa,
                 delta_score, delta_vdw, delta_elec, delta_desolv, delta_bsa]
                 
+    except (KeyboardInterrupt, SystemExit):
+        return None
     except Exception as e:
+        if _SHUTDOWN_REQUESTED:
+            return None
         log.warning(f"Error processing {chain}-{res}: {e}")
         return None
-    
 
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""
@@ -492,7 +535,7 @@ class ScanJob:
             params,
             scan_obj):
 
-        log.info(f"core {scan_obj.core}, initialising Scan...")
+        log.info(f"core {scan_obj.core}, initialising Scan")
         self.params = params
         self.scan_obj = scan_obj
 
@@ -533,15 +576,60 @@ class Scan:
 
     def _run_parallel_residues(self, tasks):
         """Run residue processing in parallel."""
-        generic_tasks = [GenericTask(process_residue_task, task) for task in tasks]
-        scheduler = Scheduler(generic_tasks, ncores=self.residue_ncores)
-        
+        scheduler = None
         try:
+            generic_tasks = [GenericTask(process_residue_task, task) for task in tasks]
+            scheduler = Scheduler(generic_tasks, ncores=self.residue_ncores)
+            
             scheduler.run()
             return [r for r in scheduler.results if r is not None]
+            
+        except KeyboardInterrupt:
+            log.info("Parallel execution interrupted. Cleaning up...")
+            return self._handle_interrupt_cleanup(scheduler, tasks)
         except Exception as e:
             log.warning(f"Parallel execution failed: {e}. Falling back to sequential.")
             return self._run_sequential_residues(tasks)
+        finally:
+            if scheduler:
+                self._cleanup_scheduler_resources(scheduler)
+
+    def _cleanup_scheduler_resources(self, scheduler):
+        """Clean up shared memory and IPC resources from scheduler."""
+        try:
+            # Terminate workers
+            for worker in scheduler.worker_list:
+                if worker.is_alive():
+                    worker.join(timeout=0.5)
+                    if worker.is_alive():
+                        worker.terminate()
+                        worker.join(timeout=0.5)
+            
+            # Clean up the queue 
+            if hasattr(scheduler, 'queue') and scheduler.queue:
+                try:
+                    # Clear any remaining items in queue
+                    while not scheduler.queue.empty():
+                        try:
+                            scheduler.queue.get_nowait()
+                        except:
+                            break
+                    
+                    # Close queue
+                    scheduler.queue.close()
+                    scheduler.queue.join_thread()
+                except:
+                    pass
+                    
+        except Exception as e:
+            log.debug(f"Cleanup warning: {e}")
+
+    def _handle_interrupt_cleanup(self, scheduler, tasks):
+        """Handle interrupted parallel processing."""
+        if scheduler:
+            print('Hold tight, interrupting run...')
+            time.sleep(0.5)
+            self._cleanup_scheduler_resources(scheduler)
 
     def _run_sequential_residues(self, tasks):
         """Run residue processing sequentially."""
@@ -607,21 +695,23 @@ class Scan:
             tasks = []
             for chain in interface:
                 for res in interface[chain]:
-                    tasks.append((chain, res, resname_dict, native.rel_path,
+                    ori_resname = resname_dict[f"{chain}-{res}"]
+                    end_resname = self.scan_res
+                    # skip if target is that same as original (e.g. skip ALA115ALA)
+                    if ori_resname != end_resname:  
+                        tasks.append((chain, res, resname_dict, native.rel_path,
                                 self.scan_res, n_score, n_vdw, n_elec, n_des, n_bsa,
                                 sc_dir_base, self.output_mutants))
-            
+
             # Do we parallelize?
-            # If more than 1 core avaliable after per-model parallelization,
-            # and if more than X residues to mutate - then yes.
-            # Otherwise use sequential processing.
-            if self.residue_ncores > 1 and len(tasks) > 1:
-                # Use per-residue parallelization
-                #print('_run_parallel_residues')
+            # Yes, if more than 1 core per model is available AND
+            # if few available per-residue cores: 2 or more residues to mutate per core 
+            # if many available per-residue cores: 1 or more residues to mutate per core
+            if self.residue_ncores > 1 and len(tasks) >= max(4, self.residue_ncores + 1):
+                print('Parallel per-residue processing')
                 scan_data = self._run_parallel_residues(tasks)
             else:
-                # Use sequential processing
-                #print('_run_sequential_residues')
+                print('Sequential per-residue processing')
                 scan_data = self._run_sequential_residues(tasks)
 
             # Write output
@@ -643,12 +733,12 @@ class Scan:
 
             fl_content = open(alascan_fname, 'r').read()
             with open(alascan_fname, 'w') as f:
-                f.write(f"##########################################################{os.linesep}")  # noqa E501
+                f.write(f"#######################################################################{os.linesep}")  # noqa E501
                 f.write(f"# `alascan` results for {native.file_name}{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
                 f.write(f"# native score = {n_score}{os.linesep}")
                 f.write(f"#{os.linesep}")
                 f.write(f"# z_score is calculated with respect to the other residues")  # noqa E501
                 f.write(f"{os.linesep}")
-                f.write(f"##########################################################{os.linesep}")  # noqa E501
+                f.write(f"#######################################################################{os.linesep}")  # noqa E501
                 f.write(fl_content)

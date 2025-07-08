@@ -73,6 +73,7 @@ def fixture_scan_obj(protprot_model_list, params, monkeypatch):
             output_name="alascan",
             path=Path("."),
             core=0,
+            residue_ncores=1,
             params=params,
         )
 

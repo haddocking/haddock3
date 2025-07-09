@@ -81,6 +81,11 @@ optional arguments:
 
 Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [User manual](https://www.bonvinlab.org/haddock3-user-manual) for a more detailed explanation of the configuration file.
 
+## Container Usage Examples
+
+- [Container Usage Guide](usage-container/docs/usage.md)  
+  (see detailed docs on running, builidng container, Slurm snippets, etc.)
+
 ## Support
 
 If you encounter any code-related issues, [please open an issue](https://github.com/haddocking/haddock3/issues/new/choose).

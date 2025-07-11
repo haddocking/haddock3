@@ -97,7 +97,8 @@ class HaddockModule(BaseHaddockModule):
                     )
                 self.params["output_mutants"] = False
 
-        # Core maths
+        # Core maths: Is there enough cores to parallelize per-residue after 
+        # giving enough cores per model ?
         ncores = parse_ncores(n=self.params['ncores'])
         model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
         index_list = get_index_list(nmodels, model_cores)

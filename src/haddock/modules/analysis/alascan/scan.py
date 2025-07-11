@@ -520,6 +520,7 @@ def process_residue_task(args):
                 delta_score, delta_vdw, delta_elec, delta_desolv, delta_bsa]
                 
     except (KeyboardInterrupt, SystemExit):
+        # if shutdown signal comes during blocking operations, e.g. I/O
         return None
     except Exception as e:
         if _SHUTDOWN_REQUESTED:
@@ -604,8 +605,7 @@ class Scan:
                     if worker.is_alive():
                         worker.terminate()
                         worker.join(timeout=0.5)
-            
-            # Clean up the queue 
+            # Clean up the queue
             if hasattr(scheduler, 'queue') and scheduler.queue:
                 try:
                     # Clear any remaining items in queue
@@ -614,13 +614,11 @@ class Scan:
                             scheduler.queue.get_nowait()
                         except:
                             break
-                    
                     # Close queue
                     scheduler.queue.close()
                     scheduler.queue.join_thread()
                 except:
                     pass
-                    
         except Exception as e:
             log.debug(f"Cleanup warning: {e}")
 

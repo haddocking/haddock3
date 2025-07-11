@@ -496,8 +496,8 @@ def test_process_residue_task_shutdown(mocker):
     assert result is None
 
 
-def test_process_residue_task_exception(mocker, caplog):
-    """Test process_residue_task handles exceptions."""
+def test_process_residue_task_exception(mocker):
+    mock_log = mocker.patch("haddock.modules.analysis.alascan.scan.log")
     mocker.patch(
         "haddock.modules.analysis.alascan.scan.mutate",
         side_effect=Exception("Test exception"))
@@ -507,7 +507,8 @@ def test_process_residue_task_exception(mocker, caplog):
         "score_dir", False)
     result = process_residue_task(args)
     assert result is None
-    assert "Error processing A-19" in caplog.text
+    mock_log.warning.assert_called_with(mocker.ANY)
+    assert "Error processing A-19" in str(mock_log.warning.call_args)
 
 
 def test_process_residue_task_keyboard_interrupt(mocker):

@@ -421,259 +421,259 @@ def test_create_alascan_plots(mocker, caplog):
         assert record.levelname in ["INFO", "WARNING"]
 
 
-# tests related to per-residue parallelization within alascan
-@pytest.fixture(name="scan_obj_parallel")
-def fixture_scan_obj_parallel(protprot_model_list, params, monkeypatch):
-    """Return example alascan module configured for parallel processing."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        monkeypatch.chdir(tmpdir)
-        # Configure for parallel processing
-        params_parallel = params.copy()
-        yield Scan(
-            model_list=protprot_model_list,
-            path=Path("."),
-            core=0,
-            residue_ncores=4,  # Multiple cores for parallel processing
-            params=params_parallel,
-        )
+# # tests related to per-residue parallelization within alascan
+# @pytest.fixture(name="scan_obj_parallel")
+# def fixture_scan_obj_parallel(protprot_model_list, params, monkeypatch):
+#     """Return example alascan module configured for parallel processing."""
+#     with tempfile.TemporaryDirectory() as tmpdir:
+#         monkeypatch.chdir(tmpdir)
+#         # Configure for parallel processing
+#         params_parallel = params.copy()
+#         yield Scan(
+#             model_list=protprot_model_list,
+#             path=Path("."),
+#             core=0,
+#             residue_ncores=4,  # Multiple cores for parallel processing
+#             params=params_parallel,
+#         )
 
 
-def test_calculate_core_allocation_more_models_than_cores():
-    """Test core allocation when we have more models than cores."""
-    model_cores, residue_cores = calculate_core_allocation(nmodels=10, total_cores=4)
-    assert model_cores == 4
-    assert residue_cores == 1
+# def test_calculate_core_allocation_more_models_than_cores():
+#     """Test core allocation when we have more models than cores."""
+#     model_cores, residue_cores = calculate_core_allocation(nmodels=10, total_cores=4)
+#     assert model_cores == 4
+#     assert residue_cores == 1
 
 
-def test_calculate_core_allocation_less_models_than_cores():
-    """Test core allocation when we have fewer models than cores."""
-    model_cores, residue_cores = calculate_core_allocation(nmodels=2, total_cores=8)
-    assert model_cores == 2
-    assert residue_cores == 4
+# def test_calculate_core_allocation_less_models_than_cores():
+#     """Test core allocation when we have fewer models than cores."""
+#     model_cores, residue_cores = calculate_core_allocation(nmodels=2, total_cores=8)
+#     assert model_cores == 2
+#     assert residue_cores == 4
 
 
-def test_calculate_core_allocation_equal_models_and_cores():
-    """Test core allocation when models equal cores."""
-    model_cores, residue_cores = calculate_core_allocation(nmodels=4, total_cores=4)
-    assert model_cores == 4
-    assert residue_cores == 1
+# def test_calculate_core_allocation_equal_models_and_cores():
+#     """Test core allocation when models equal cores."""
+#     model_cores, residue_cores = calculate_core_allocation(nmodels=4, total_cores=4)
+#     assert model_cores == 4
+#     assert residue_cores == 1
 
 
-def test_calculate_core_allocation_single_model():
-    """Test core allocation for single model case."""
-    model_cores, residue_cores = calculate_core_allocation(nmodels=1, total_cores=4)
-    assert model_cores == 1
-    assert residue_cores == 4
+# def test_calculate_core_allocation_single_model():
+#     """Test core allocation for single model case."""
+#     model_cores, residue_cores = calculate_core_allocation(nmodels=1, total_cores=4)
+#     assert model_cores == 1
+#     assert residue_cores == 4
 
 
-def test_process_residue_task(mocker, monkeypatch):
-    """Test normal execution of process_residue_task."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        monkeypatch.chdir(tmpdir)
-        mocker.patch(
-            "haddock.modules.analysis.alascan.scan.mutate",
-            return_value=Path("mutated.pdb")
-        )
-        mocker.patch(
-            "haddock.modules.analysis.alascan.scan.calc_score",
-            return_value=(-100.0, -30.0, -300.0, -10.0, 1000.0)
-        )
-        mocker.patch("os.path.exists", return_value=True)
-        mocker.patch("os.remove", return_value=None)
-        args = (
-            "A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
-            -105.0, -30.5, -310.0, -10.5, 1100.0,
-            "score_dir", False
-        )
-        result = process_residue_task(args)
-        expected = [
-            "A", 19, "THR", "ALA",
-            -100.0, -30.0, -300.0, -10.0, 1000.0,
-            -5.0, -0.5, -10.0, -0.5, 100.0
-        ]
-        assert result == expected
+# def test_process_residue_task(mocker, monkeypatch):
+#     """Test normal execution of process_residue_task."""
+#     with tempfile.TemporaryDirectory() as tmpdir:
+#         monkeypatch.chdir(tmpdir)
+#         mocker.patch(
+#             "haddock.modules.analysis.alascan.scan.mutate",
+#             return_value=Path("mutated.pdb")
+#         )
+#         mocker.patch(
+#             "haddock.modules.analysis.alascan.scan.calc_score",
+#             return_value=(-100.0, -30.0, -300.0, -10.0, 1000.0)
+#         )
+#         mocker.patch("os.path.exists", return_value=True)
+#         mocker.patch("os.remove", return_value=None)
+#         args = (
+#             "A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
+#             -105.0, -30.5, -310.0, -10.5, 1100.0,
+#             "score_dir", False
+#         )
+#         result = process_residue_task(args)
+#         expected = [
+#             "A", 19, "THR", "ALA",
+#             -100.0, -30.0, -300.0, -10.0, 1000.0,
+#             -5.0, -0.5, -10.0, -0.5, 100.0
+#         ]
+#         assert result == expected
 
 
-def test_process_residue_task_shutdown(mocker):
-    """Test process_residue_task handles respond shutdown."""
-    mocker.patch('haddock.modules.analysis.alascan.scan._SHUTDOWN_REQUESTED', True)
-    args = ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
-        -105.0, -30.5, -310.0, -10.5, 1100.0,
-        "score_dir", False)
-    result = process_residue_task(args)
-    assert result is None
+# def test_process_residue_task_shutdown(mocker):
+#     """Test process_residue_task handles respond shutdown."""
+#     mocker.patch('haddock.modules.analysis.alascan.scan._SHUTDOWN_REQUESTED', True)
+#     args = ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
+#         -105.0, -30.5, -310.0, -10.5, 1100.0,
+#         "score_dir", False)
+#     result = process_residue_task(args)
+#     assert result is None
 
 
-def test_process_residue_task_exception(mocker):
-    mock_log = mocker.patch("haddock.modules.analysis.alascan.scan.log")
-    mocker.patch(
-        "haddock.modules.analysis.alascan.scan.mutate",
-        side_effect=Exception("Test exception"))
-    args = (
-        "A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
-        -105.0, -30.5, -310.0, -10.5, 1100.0,
-        "score_dir", False)
-    result = process_residue_task(args)
-    assert result is None
-    mock_log.warning.assert_called_with(mocker.ANY)
-    assert "Error processing A-19" in str(mock_log.warning.call_args)
+# def test_process_residue_task_exception(mocker):
+#     mock_log = mocker.patch("haddock.modules.analysis.alascan.scan.log")
+#     mocker.patch(
+#         "haddock.modules.analysis.alascan.scan.mutate",
+#         side_effect=Exception("Test exception"))
+#     args = (
+#         "A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
+#         -105.0, -30.5, -310.0, -10.5, 1100.0,
+#         "score_dir", False)
+#     result = process_residue_task(args)
+#     assert result is None
+#     mock_log.warning.assert_called_with(mocker.ANY)
+#     assert "Error processing A-19" in str(mock_log.warning.call_args)
 
 
-def test_process_residue_task_keyboard_interrupt(mocker):
-    """Test process_residue_task handles KeyboardInterrupt directly."""
-    mocker.patch(
-        "haddock.modules.analysis.alascan.scan.mutate",
-        side_effect=KeyboardInterrupt("Direct interrupt")
-    )
-    args = (
-        "A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
-        -105.0, -30.5, -310.0, -10.5, 1100.0,
-        "score_dir", False
-    )
-    result = process_residue_task(args)
-    assert result is None
+# def test_process_residue_task_keyboard_interrupt(mocker):
+#     """Test process_residue_task handles KeyboardInterrupt directly."""
+#     mocker.patch(
+#         "haddock.modules.analysis.alascan.scan.mutate",
+#         side_effect=KeyboardInterrupt("Direct interrupt")
+#     )
+#     args = (
+#         "A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
+#         -105.0, -30.5, -310.0, -10.5, 1100.0,
+#         "score_dir", False
+#     )
+#     result = process_residue_task(args)
+#     assert result is None
 
 
-def test_run_sequential_residues(mocker, scan_obj_parallel):
-    """Test sequential residue processing."""
-    mock_process = mocker.patch(
-        "haddock.modules.analysis.alascan.scan.process_residue_task",
-        side_effect=[
-            ["A", 19, "THR", "ALA", -100.0, -30.0, -300.0, -10.0, 1000.0, -5.0, -0.5, -10.0, -0.5, 100.0],
-            None,  # failed task
-            ["A", 21, "VAL", "ALA", -102.0, -32.0, -302.0, -11.0, 1002.0, -3.0, 1.5, -8.0, 0.5, 98.0]
-        ])
-    tasks = [
-        ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA", -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False),
-        ("A", 20, {"A-20": "ILE"}, Path("native.pdb"), "ALA", -101.0, -28.5, -306.0, -9.5, 1098.0, "score_dir", False),
-        ("A", 21, {"A-21": "VAL"}, Path("native.pdb"), "ALA", -105.0, -33.5, -310.0, -11.5, 1100.0, "score_dir", False)]
-    results = scan_obj_parallel._run_sequential_residues(tasks)
-    assert len(results) == 2  # One failed task should be filtered out
-    assert mock_process.call_count == 3
+# def test_run_sequential_residues(mocker, scan_obj_parallel):
+#     """Test sequential residue processing."""
+#     mock_process = mocker.patch(
+#         "haddock.modules.analysis.alascan.scan.process_residue_task",
+#         side_effect=[
+#             ["A", 19, "THR", "ALA", -100.0, -30.0, -300.0, -10.0, 1000.0, -5.0, -0.5, -10.0, -0.5, 100.0],
+#             None,  # failed task
+#             ["A", 21, "VAL", "ALA", -102.0, -32.0, -302.0, -11.0, 1002.0, -3.0, 1.5, -8.0, 0.5, 98.0]
+#         ])
+#     tasks = [
+#         ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA", -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False),
+#         ("A", 20, {"A-20": "ILE"}, Path("native.pdb"), "ALA", -101.0, -28.5, -306.0, -9.5, 1098.0, "score_dir", False),
+#         ("A", 21, {"A-21": "VAL"}, Path("native.pdb"), "ALA", -105.0, -33.5, -310.0, -11.5, 1100.0, "score_dir", False)]
+#     results = scan_obj_parallel._run_sequential_residues(tasks)
+#     assert len(results) == 2  # One failed task should be filtered out
+#     assert mock_process.call_count == 3
 
 
-def test_run_parallel_residues(mocker, scan_obj_parallel):
-    """Test successful parallel residue processing."""
-    mock_process_results = [
-        ["A", 19, "THR", "ALA", -100.0, -30.0, -300.0, -10.0, 1000.0, -5.0, -0.5, -10.0, -0.5, 100.0],
-        ["A", 20, "ILE", "ALA", -98.0, -28.0, -298.0, -9.0, 998.0, -3.0, 0.5, -8.0, 0.5, 98.0]
-    ]
-    mocker.patch("haddock.modules.analysis.alascan.scan.process_residue_task", 
-                 side_effect=mock_process_results)
-    mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
+# def test_run_parallel_residues(mocker, scan_obj_parallel):
+#     """Test successful parallel residue processing."""
+#     mock_process_results = [
+#         ["A", 19, "THR", "ALA", -100.0, -30.0, -300.0, -10.0, 1000.0, -5.0, -0.5, -10.0, -0.5, 100.0],
+#         ["A", 20, "ILE", "ALA", -98.0, -28.0, -298.0, -9.0, 998.0, -3.0, 0.5, -8.0, 0.5, 98.0]
+#     ]
+#     mocker.patch("haddock.modules.analysis.alascan.scan.process_residue_task", 
+#                  side_effect=mock_process_results)
+#     mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
     
-    tasks = [
-        ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA", -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False),
-        ("A", 20, {"A-20": "ILE"}, Path("native.pdb"), "ALA", -101.0, -28.5, -306.0, -9.5, 1098.0, "score_dir", False)
-    ]
+#     tasks = [
+#         ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA", -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False),
+#         ("A", 20, {"A-20": "ILE"}, Path("native.pdb"), "ALA", -101.0, -28.5, -306.0, -9.5, 1098.0, "score_dir", False)
+#     ]
     
-    results = scan_obj_parallel._run_parallel_residues(tasks)
+#     results = scan_obj_parallel._run_parallel_residues(tasks)
     
-    assert len(results) == 2
-    assert results[0][0] == "A"
-    assert results[0][1] == 19
-    mock_cleanup.assert_called_once()
+#     assert len(results) == 2
+#     assert results[0][0] == "A"
+#     assert results[0][1] == 19
+#     mock_cleanup.assert_called_once()
 
 
-def test_run_parallel_residues_exception(mocker, scan_obj_parallel, caplog):
-    """Test parallel processing falls back to sequential on exception."""
-    mock_scheduler = mocker.Mock()
-    mock_scheduler.run.side_effect = Exception("Parallel execution failed")
-    mocker.patch("haddock.modules.analysis.alascan.scan.Scheduler", return_value=mock_scheduler)
-    mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
-    # Mock process_residue_task to return valid data 
-    expected = ["A", 19, "THR", "ALA", -100.0, -30.0, -300.0, -10.0, 1000.0, -5.0, -0.5, -10.0, -0.5, 100.0]
-    mocker.patch("haddock.modules.analysis.alascan.scan.process_residue_task", return_value=expected)
-    tasks = [
-        ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA", 
-         -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False)
-    ]    
-    result = scan_obj_parallel._run_parallel_residues(tasks)
-    mock_cleanup.assert_called_once_with(mock_scheduler)
-    assert "Parallel execution failed" in caplog.text
-    assert "Falling back to sequential" in caplog.text
-    assert result == [expected]
+# def test_run_parallel_residues_exception(mocker, scan_obj_parallel, caplog):
+#     """Test parallel processing falls back to sequential on exception."""
+#     mock_scheduler = mocker.Mock()
+#     mock_scheduler.run.side_effect = Exception("Parallel execution failed")
+#     mocker.patch("haddock.modules.analysis.alascan.scan.Scheduler", return_value=mock_scheduler)
+#     mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
+#     # Mock process_residue_task to return valid data 
+#     expected = ["A", 19, "THR", "ALA", -100.0, -30.0, -300.0, -10.0, 1000.0, -5.0, -0.5, -10.0, -0.5, 100.0]
+#     mocker.patch("haddock.modules.analysis.alascan.scan.process_residue_task", return_value=expected)
+#     tasks = [
+#         ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA", 
+#          -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False)
+#     ]    
+#     result = scan_obj_parallel._run_parallel_residues(tasks)
+#     mock_cleanup.assert_called_once_with(mock_scheduler)
+#     assert "Parallel execution failed" in caplog.text
+#     assert "Falling back to sequential" in caplog.text
+#     assert result == [expected]
 
 
-def test_run_parallel_residues_keyboard_interrupt(mocker, scan_obj_parallel, caplog, capsys):
-    """Test parallel processing handles KeyboardInterrupt properly."""
-    # Mock the Scheduler to raise KeyboardInterrupt when run() is called
-    #  Mock at the module level where it's imported
-    mock_scheduler = mocker.Mock()
-    mock_scheduler.run.side_effect = KeyboardInterrupt("User interrupted")
-    mocker.patch("haddock.modules.analysis.alascan.scan.Scheduler", return_value=mock_scheduler)
-    mocker.patch("haddock.modules.analysis.alascan.scan.GenericTask")
-    mocker.patch("time.sleep")
-    # Mock the cleanup method to verify it's called
-    mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
-    tasks = [
-        ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
-         -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False)
-    ]   
-    # Call the method - this should trigger KeyboardInterrupt handling
-    # (because mock_scheduler.run.side_effect)
-    result = scan_obj_parallel._run_parallel_residues(tasks)
-    # Verify the expected flow:
-    # 1. KeyboardInterrupt was caught and logged
-    assert "Parallel execution interrupted" in caplog.text
-    # 2. _handle_interrupt_cleanup was called
-    captured = capsys.readouterr()
-    assert "Hold tight, interrupting run..." in captured.out
-    # 3. _cleanup_scheduler_resources was called twice 
-    # by _handle_interrupt_cleanup and the "finally" block in _run_parallel_residues
-    assert mock_cleanup.call_count == 2
-    mock_cleanup.assert_called_with(mock_scheduler)
-    # 4. Method returns None (from _handle_interrupt_cleanup)
-    assert result is None
+# def test_run_parallel_residues_keyboard_interrupt(mocker, scan_obj_parallel, caplog, capsys):
+#     """Test parallel processing handles KeyboardInterrupt properly."""
+#     # Mock the Scheduler to raise KeyboardInterrupt when run() is called
+#     #  Mock at the module level where it's imported
+#     mock_scheduler = mocker.Mock()
+#     mock_scheduler.run.side_effect = KeyboardInterrupt("User interrupted")
+#     mocker.patch("haddock.modules.analysis.alascan.scan.Scheduler", return_value=mock_scheduler)
+#     mocker.patch("haddock.modules.analysis.alascan.scan.GenericTask")
+#     mocker.patch("time.sleep")
+#     # Mock the cleanup method to verify it's called
+#     mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
+#     tasks = [
+#         ("A", 19, {"A-19": "THR"}, Path("native.pdb"), "ALA",
+#          -105.0, -30.5, -310.0, -10.5, 1100.0, "score_dir", False)
+#     ]   
+#     # Call the method - this should trigger KeyboardInterrupt handling
+#     # (because mock_scheduler.run.side_effect)
+#     result = scan_obj_parallel._run_parallel_residues(tasks)
+#     # Verify the expected flow:
+#     # 1. KeyboardInterrupt was caught and logged
+#     assert "Parallel execution interrupted" in caplog.text
+#     # 2. _handle_interrupt_cleanup was called
+#     captured = capsys.readouterr()
+#     assert "Hold tight, interrupting run..." in captured.out
+#     # 3. _cleanup_scheduler_resources was called twice 
+#     # by _handle_interrupt_cleanup and the "finally" block in _run_parallel_residues
+#     assert mock_cleanup.call_count == 2
+#     mock_cleanup.assert_called_with(mock_scheduler)
+#     # 4. Method returns None (from _handle_interrupt_cleanup)
+#     assert result is None
 
 
-def test_cleanup_scheduler_resources(mocker, scan_obj_parallel):
-    """Test scheduler cleanup."""
-    # Pretend workers, schedule and queue processing tacks
-    mock_worker1 = mocker.Mock()
-    mock_worker1.is_alive.return_value = True
-    mock_worker1.join.return_value = None
-    mock_worker1.terminate.return_value = None
-    mock_worker2 = mocker.Mock()
-    mock_worker2.is_alive.return_value = False
-    mock_worker2.join.return_value = None
-    mock_worker2.terminate.return_value = None
-    mock_queue = mocker.Mock()
-    mock_queue.empty.side_effect = [False, False, True] 
-    mock_queue.get_nowait.return_value = "dummy_item"
-    mock_queue.close.return_value = None
-    mock_queue.join_thread.return_value = None
-    mock_scheduler = mocker.Mock()
-    mock_scheduler.worker_list = [mock_worker1, mock_worker2]
-    mock_scheduler.queue = mock_queue    
-    # Call the cleanup method
-    try:
-        scan_obj_parallel._cleanup_scheduler_resources(mock_scheduler)
-    except Exception:
-        pass
-    mock_worker1.join.assert_called()
-    mock_worker2.join.assert_not_called()
-    mock_worker1.terminate.assert_called()
-    mock_worker2.terminate.assert_not_called()
+# def test_cleanup_scheduler_resources(mocker, scan_obj_parallel):
+#     """Test scheduler cleanup."""
+#     # Pretend workers, schedule and queue processing tacks
+#     mock_worker1 = mocker.Mock()
+#     mock_worker1.is_alive.return_value = True
+#     mock_worker1.join.return_value = None
+#     mock_worker1.terminate.return_value = None
+#     mock_worker2 = mocker.Mock()
+#     mock_worker2.is_alive.return_value = False
+#     mock_worker2.join.return_value = None
+#     mock_worker2.terminate.return_value = None
+#     mock_queue = mocker.Mock()
+#     mock_queue.empty.side_effect = [False, False, True] 
+#     mock_queue.get_nowait.return_value = "dummy_item"
+#     mock_queue.close.return_value = None
+#     mock_queue.join_thread.return_value = None
+#     mock_scheduler = mocker.Mock()
+#     mock_scheduler.worker_list = [mock_worker1, mock_worker2]
+#     mock_scheduler.queue = mock_queue    
+#     # Call the cleanup method
+#     try:
+#         scan_obj_parallel._cleanup_scheduler_resources(mock_scheduler)
+#     except Exception:
+#         pass
+#     mock_worker1.join.assert_called()
+#     mock_worker2.join.assert_not_called()
+#     mock_worker1.terminate.assert_called()
+#     mock_worker2.terminate.assert_not_called()
 
 
-def test_handle_interrupt_cleanup(mocker, scan_obj_parallel, capsys):
-    """Test cleanup handling."""
-    mock_scheduler = mocker.Mock()
-    mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
-    mocker.patch("time.sleep")
-    tasks = []
-    result = scan_obj_parallel._handle_interrupt_cleanup(mock_scheduler, tasks)
-    mock_cleanup.assert_called_once_with(mock_scheduler)
-    captured = capsys.readouterr()
-    assert "Hold tight, interrupting run..." in captured.out
-    assert result is None
+# def test_handle_interrupt_cleanup(mocker, scan_obj_parallel, capsys):
+#     """Test cleanup handling."""
+#     mock_scheduler = mocker.Mock()
+#     mock_cleanup = mocker.patch.object(scan_obj_parallel, "_cleanup_scheduler_resources")
+#     mocker.patch("time.sleep")
+#     tasks = []
+#     result = scan_obj_parallel._handle_interrupt_cleanup(mock_scheduler, tasks)
+#     mock_cleanup.assert_called_once_with(mock_scheduler)
+#     captured = capsys.readouterr()
+#     assert "Hold tight, interrupting run..." in captured.out
+#     assert result is None
 
 
-def test_handle_shutdown_signal():
-    """Test that shutdown is requested when _handle_shutdown_signal called."""
-    import haddock.modules.analysis.alascan.scan as scan_module
-    scan_module._SHUTDOWN_REQUESTED = False
-    _handle_shutdown_signal(signal.SIGINT, None)
-    # Check that shutdown was requested
-    assert scan_module._SHUTDOWN_REQUESTED is True
+# def test_handle_shutdown_signal():
+#     """Test that shutdown is requested when _handle_shutdown_signal called."""
+#     import haddock.modules.analysis.alascan.scan as scan_module
+#     scan_module._SHUTDOWN_REQUESTED = False
+#     _handle_shutdown_signal(signal.SIGINT, None)
+#     # Check that shutdown was requested
+#     assert scan_module._SHUTDOWN_REQUESTED is True

@@ -26,10 +26,10 @@ from haddock.modules.analysis.alascan.scan import (
     create_alascan_plots,
     generate_alascan_output,
     mutate,
-    _SHUTDOWN_REQUESTED, 
-    _handle_shutdown_signal,
-    calculate_core_allocation,
-    process_residue_task,
+#    _SHUTDOWN_REQUESTED, 
+#    _handle_shutdown_signal,
+#    calculate_core_allocation,
+#    process_residue_task,
     )
 
 from . import golden_data

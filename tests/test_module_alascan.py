@@ -200,7 +200,7 @@ def reset_shutdown_requested():
     global _SHUTDOWN_REQUESTED
     _SHUTDOWN_REQUESTED = False
     yield
-    _SHUTDOWN_REQUESTED = False
+    
 
 
 @pytest.fixture(name="scan_file")

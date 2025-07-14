@@ -47,10 +47,11 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libparallel import get_index_list
+from haddock.libs.libparallel import AlascanScheduler
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
-from haddock.modules import get_engine
-from haddock.modules.analysis import get_analysis_exec_mode
+#from haddock.modules import get_engine
+#from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
@@ -130,14 +131,25 @@ class HaddockModule(BaseHaddockModule):
         # next libutil and libparallel will log info about per-model cores/tasks.
         # This is misleading, if per-residue parallelization is present.
         # This log makes log look more coherent, in a way.
-        log.info(f"Model-level parallelization:")
+       
+        ## Actually. This can cause semaphore leaks
+        # log.info(f"Model-level parallelization:")
 
-        exec_mode = get_analysis_exec_mode(self.params["mode"])
+        # exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        Engine = get_engine(exec_mode, self.params)
-        engine = Engine(alascan_jobs)
-        engine.run()
-        
+        # Engine = get_engine(exec_mode, self.params)
+        # engine = Engine(alascan_jobs)
+        # engine.run()
+        ## So replacing it with AlascanScheduler
+
+        log.info("Using AlascanScheduler for model-level parallelization")
+        #try:
+        with AlascanScheduler(alascan_jobs, ncores=model_cores) as scheduler:
+            scheduler.run()
+
+        #except Exception as e:
+        #    self.finish_with_error(f"Alascan model-level parallelization failed: {e}")
+
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data

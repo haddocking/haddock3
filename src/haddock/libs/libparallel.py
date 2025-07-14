@@ -3,6 +3,8 @@
 import time
 import signal
 import math
+import subprocess
+import os
 from multiprocessing import Process, Queue
 
 from haddock import log
@@ -209,8 +211,9 @@ class Scheduler:
 
         log.info("The workers terminated in a controlled way")
 
+
 class AlascanWorker(Worker):
-    """Worker with signal handling for graceful shutdown during alascan."""
+    """Worker with signal handling and subprocess cleanup for graceful shutdown during alascan."""
     
     def __init__(self, tasks, results):
         super().__init__(tasks, results)
@@ -219,27 +222,62 @@ class AlascanWorker(Worker):
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals gracefully."""
         self._should_stop = True
+        # Also clean up any child processes
+        self._cleanup_child_processes()
+    
+    def _cleanup_child_processes(self):
+        """Clean up any child processes that may have been spawned."""
+        try:
+            # Kill all child processes of this worker
+            pid = os.getpid()
+            
+            # Use pkill to kill all processes in the same process group
+            try:
+                subprocess.run(['pkill', '-P', str(pid)], 
+                             stdout=subprocess.DEVNULL, 
+                             stderr=subprocess.DEVNULL, 
+                             timeout=2,
+                             check=False)  # Don't raise exception on non-zero exit
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                # pkill might not be available or might timeout
+                pass
+                
+        except Exception as e:
+            log.debug(f"Error during child process cleanup: {e}")
     
     def run(self):
-        """Execute tasks with signal handling."""
-        # Set up signal handling in worker process
+        """Execute tasks with signal handling and subprocess cleanup."""
         signal.signal(signal.SIGINT, self._signal_handler)
         signal.signal(signal.SIGTERM, self._signal_handler)
         
         results = []
-        for task in self.tasks:
-            # Check if we should stop before starting each task
-            if self._should_stop:
-                log.debug(f"{self.name} stopping early due to signal")
-                break
-                
-            r = None
-            try:
-                r = task.run()
-            except Exception as e:
-                log.warning(f"Exception in task execution: {e}")
+        try:
+            for task in self.tasks:
+                # Check if we should stop before starting each task
+                if self._should_stop:
+                    log.debug(f"{self.name} stopping early due to signal")
+                    break
+                    
+                r = None
+                try:
+                    r = task.run()
+                except Exception as e:
+                    log.warning(f"Exception in task execution: {e}")
 
-            results.append(r)
+                results.append(r)
+                
+                # Check again after each task in case we got interrupted
+                if self._should_stop:
+                    log.debug(f"{self.name} stopping after task completion")
+                    break
+        
+        except (KeyboardInterrupt, SystemExit):
+            log.debug(f"{self.name} interrupted during task execution")
+            self._cleanup_child_processes()
+        
+        finally:
+            # Always clean up child processes on exit
+            self._cleanup_child_processes()
 
         # Put results into the queue (even if partial)
         try:
@@ -258,11 +296,26 @@ class AlascanScheduler(Scheduler):
     """
     
     def __init__(self, tasks, ncores=None, max_cpus=False):
+        # Handle empty tasks case BEFORE calling parent init
+        if not tasks:
+            # Set up minimal state for empty tasks
+            self.max_cpus = max_cpus
+            self.num_tasks = 0
+            self._ncores = 0  # Set directly to avoid property setter
+            self.queue = Queue()
+            self.results = []
+            self.worker_list = []
+            log.info("Using 0 cores")
+            log.debug("0 tasks ready.")
+            return
+        
         # Initialize parent class normally
         super().__init__(tasks, ncores, max_cpus)
-        # Replace workers with AlascanWorkers
-        job_list = self._get_job_list(tasks)
-        self.worker_list = [AlascanWorker(jobs, self.queue) for jobs in job_list]
+        
+        # Replace workers with AlascanWorkers (only if we have workers)
+        if self.num_processes > 0:
+            job_list = self._get_job_list(tasks)
+            self.worker_list = [AlascanWorker(jobs, self.queue) for jobs in job_list]
     
     def _get_job_list(self, tasks):
         """Get the same job distribution as parent class."""

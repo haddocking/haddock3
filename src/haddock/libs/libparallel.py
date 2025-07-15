@@ -211,7 +211,9 @@ class Scheduler:
 
         log.info("The workers terminated in a controlled way")
 
-
+# Using normal Scheduler and Worker inside alascan causes semaphore leak if keyboard interrupt comes at a wrong moment.
+# These new AlascanWorker/Scehduler classes prevents multiprocessing-level semaphore leaks.
+# TODO: look into CNSJob.run() in libsubprocess to address subprocess-level semaphore leaks.
 class AlascanWorker(Worker):
     """Worker with signal handling and subprocess cleanup for graceful shutdown during alascan."""
     
@@ -230,7 +232,6 @@ class AlascanWorker(Worker):
         try:
             # Kill all child processes of this worker
             pid = os.getpid()
-            
             # Use pkill to kill all processes in the same process group
             try:
                 subprocess.run(['pkill', '-P', str(pid)], 
@@ -239,9 +240,8 @@ class AlascanWorker(Worker):
                              timeout=2,
                              check=False)  # Don't raise exception on non-zero exit
             except (subprocess.TimeoutExpired, FileNotFoundError):
-                # pkill might not be available or might timeout
+                # if pkill not available or timeout
                 pass
-                
         except Exception as e:
             log.debug(f"Error during child process cleanup: {e}")
     
@@ -249,7 +249,6 @@ class AlascanWorker(Worker):
         """Execute tasks with signal handling and subprocess cleanup."""
         signal.signal(signal.SIGINT, self._signal_handler)
         signal.signal(signal.SIGTERM, self._signal_handler)
-        
         results = []
         try:
             for task in self.tasks:
@@ -257,15 +256,14 @@ class AlascanWorker(Worker):
                 if self._should_stop:
                     log.debug(f"{self.name} stopping early due to signal")
                     break
-                    
                 r = None
+
                 try:
                     r = task.run()
                 except Exception as e:
                     log.warning(f"Exception in task execution: {e}")
-
                 results.append(r)
-                
+
                 # Check again after each task in case we got interrupted
                 if self._should_stop:
                     log.debug(f"{self.name} stopping after task completion")
@@ -285,14 +283,14 @@ class AlascanWorker(Worker):
             # Signal completion
             self.result_queue.put(f"{self.name}_done")
         except:
-            # If queue is closed, just exit quietly
+            # If queue is closed, just exit
             pass
 
-# way to make scan.py in alascan cleaner:
+
 class AlascanScheduler(Scheduler):
     """
-    Specialized scheduler for alascan that prevents semaphore leaks
     without breaking the existing Scheduler interface.
+    Specialized scheduler for alascan that prevents semaphore leaks
     """
     
     def __init__(self, tasks, ncores=None, max_cpus=False):

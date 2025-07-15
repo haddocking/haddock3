@@ -316,7 +316,7 @@ def test_generic_task_run_with_complex_args():
 def test_scheduler_terminate(scheduler_files):
     pass
 
-# new ones 
+# new ones
 class SlowTask:
     """Task that takes some time to complete - useful for testing interrupts."""
     
@@ -404,20 +404,17 @@ def test_alascan_worker_signal_handling():
 def test_alascan_worker_cleanup_child_processes():
     """Test that AlascanWorker can clean up child processes."""
     worker = AlascanWorker(tasks=[Task(1)], results=Queue())
-    
     # Test cleanup method doesn't raise errors
-    worker._cleanup_child_processes()  # Should not raise any errors
+    worker._cleanup_child_processes()
 
 
 def test_alascan_worker_enhanced_run():
     """Test that AlascanWorker properly handles signal setup and cleanup."""
     worker = AlascanWorker(tasks=[Task(1), Task(2)], results=Queue())
-    
     # Test that worker has enhanced attributes
     assert hasattr(worker, '_should_stop')
     assert hasattr(worker, '_signal_handler')
     assert hasattr(worker, '_cleanup_child_processes')
-    
     # Test initial state
     assert worker._should_stop is False
 
@@ -425,20 +422,15 @@ def test_alascan_worker_enhanced_run():
 def test_alascan_worker_early_termination():
     """Test that AlascanWorker stops early when signal is received."""
     worker = AlascanWorker(tasks=[Task(1), Task(2), Task(3)], results=Queue())
-    
     # Simulate signal received after first task
     worker._should_stop = True
-    
-    # This would normally be tested by actually running the worker,
-    # but we can't easily test the multiprocessing aspect in unit tests
-    # So we just verify the flag is respected
+    # Verify the flag is respected
     assert worker._should_stop is True
 
 
 def test_alascan_scheduler_basic_functionality(alascan_scheduler):
-    """Test that AlascanScheduler runs tasks correctly like regular Scheduler."""
+    """Test that AlascanScheduler runs tasks correctly."""
     _ = alascan_scheduler.run()
-
     assert alascan_scheduler.results[0] == 2
     assert alascan_scheduler.results[1] == 3
     assert alascan_scheduler.results[2] == 4
@@ -447,7 +439,6 @@ def test_alascan_scheduler_basic_functionality(alascan_scheduler):
 def test_alascan_scheduler_files(alascan_scheduler_files):
     """Test that AlascanScheduler works with file tasks."""
     _ = alascan_scheduler_files.run()
-
     assert Path(alascan_scheduler_files.worker_list[0].tasks[0].input_file).exists()
     assert Path(alascan_scheduler_files.worker_list[0].tasks[1].input_file).exists()
     assert Path(alascan_scheduler_files.worker_list[0].tasks[2].input_file).exists()
@@ -463,9 +454,7 @@ def test_alascan_scheduler_with_exception():
             Task(3),
         ],
     )
-
     _ = scheduler.run()
-
     assert scheduler.results[0] == 2
     assert scheduler.results[1] is None
     assert scheduler.results[2] == 4
@@ -474,7 +463,6 @@ def test_alascan_scheduler_with_exception():
 def test_alascan_scheduler_context_manager():
     """Test that AlascanScheduler works as a context manager."""
     tasks = [Task(1), Task(2), Task(3)]
-    
     with AlascanScheduler(ncores=1, tasks=tasks) as scheduler:
         scheduler.run()
         assert scheduler.results[0] == 2
@@ -485,7 +473,6 @@ def test_alascan_scheduler_context_manager():
 def test_alascan_scheduler_context_manager_with_exception():
     """Test that AlascanScheduler context manager handles exceptions."""
     tasks = [Task(1), TaskWithException(), Task(3)]
-    
     with AlascanScheduler(ncores=1, tasks=tasks) as scheduler:
         scheduler.run()
         assert scheduler.results[0] == 2
@@ -496,13 +483,11 @@ def test_alascan_scheduler_context_manager_with_exception():
 def test_alascan_scheduler_inheritance():
     """Test that AlascanScheduler properly inherits from Scheduler."""
     scheduler = AlascanScheduler(ncores=2, tasks=[Task(1), Task(2)])
-    
     # Should have same attributes as regular Scheduler
     assert hasattr(scheduler, 'num_processes')
     assert hasattr(scheduler, 'queue')
     assert hasattr(scheduler, 'results')
     assert hasattr(scheduler, 'worker_list')
-    
     # Should use AlascanWorker instead of regular Worker
     assert len(scheduler.worker_list) > 0
     assert isinstance(scheduler.worker_list[0], AlascanWorker)
@@ -511,7 +496,6 @@ def test_alascan_scheduler_inheritance():
 def test_alascan_scheduler_safe_terminate():
     """Test that safe_terminate method works correctly."""
     scheduler = AlascanScheduler(ncores=1, tasks=[SlowTask(0.1)])
-    
     # Start the scheduler in a way that we can test termination
     scheduler.safe_terminate()  # Should not raise any errors even if no workers started
 
@@ -519,7 +503,6 @@ def test_alascan_scheduler_safe_terminate():
 def test_alascan_scheduler_enhanced_cleanup():
     """Test that enhanced cleanup method works correctly."""
     scheduler = AlascanScheduler(ncores=1, tasks=[Task(1)])
-    
     # Test cleanup doesn't raise errors
     scheduler._enhanced_cleanup()  # Should not raise any errors
 
@@ -528,15 +511,12 @@ def test_alascan_worker_vs_regular_worker():
     """Test that AlascanWorker behaves like regular Worker for normal operations."""
     regular_tasks = [Task(1), Task(2), Task(3)]
     alascan_tasks = [Task(1), Task(2), Task(3)]
-    
     regular_worker = Worker(regular_tasks, Queue())
     alascan_worker = AlascanWorker(alascan_tasks, Queue())
-    
     # Both should be Process instances
     assert isinstance(regular_worker, Worker)
     assert isinstance(alascan_worker, Worker)
     assert isinstance(alascan_worker, AlascanWorker)
-    
     # Both should have the same basic attributes
     assert len(regular_worker.tasks) == len(alascan_worker.tasks)
     assert hasattr(regular_worker, 'result_queue')
@@ -548,10 +528,8 @@ def test_alascan_scheduler_job_distribution():
     # Test with more tasks than cores
     tasks = [Task(i) for i in range(10)]
     scheduler = AlascanScheduler(ncores=3, tasks=tasks)
-    
     # Should create 3 workers
     assert len(scheduler.worker_list) == 3
-    
     # All tasks should be distributed among workers
     total_tasks = sum(len(worker.tasks) for worker in scheduler.worker_list)
     assert total_tasks == 10
@@ -560,14 +538,11 @@ def test_alascan_scheduler_job_distribution():
 def test_alascan_scheduler_with_file_sorting():
     """Test that AlascanScheduler handles file sorting like regular Scheduler."""
     # Create tasks with input_file attributes (like the original Scheduler test)
-    file_list = [f"file_{i}.pdb" for i in [3, 1, 2]]  # Out of order
+    file_list = [f"file_{i}.pdb" for i in [3, 1, 2]]  # Not sorted 
     tasks = [FileTask(f) for f in file_list]
-    
     scheduler = AlascanScheduler(ncores=1, tasks=tasks)
-    
     # Should have created workers with sorted tasks
     assert len(scheduler.worker_list) > 0
-    
     # Clean up files
     for f in file_list:
         try:
@@ -581,12 +556,10 @@ def test_alascan_scheduler_different_core_counts(ncores):
     """Test AlascanScheduler with different core counts."""
     tasks = [Task(i) for i in range(8)]
     scheduler = AlascanScheduler(ncores=ncores, tasks=tasks)
-    
     scheduler.run()
-    
     # Should complete all tasks regardless of core count
     assert len(scheduler.results) == 8
-    expected_results = list(range(1, 9))  # Task(i) returns i+1
+    expected_results = list(range(1, 9))
     assert sorted(scheduler.results) == expected_results
 
 
@@ -594,7 +567,6 @@ def test_alascan_scheduler_empty_tasks():
     """Test AlascanScheduler with empty task list."""
     # This test will pass once we add the empty tasks guard to AlascanScheduler
     scheduler = AlascanScheduler(ncores=2, tasks=[])
-    
     # Should handle empty tasks gracefully
     scheduler.run()
     assert scheduler.results == []

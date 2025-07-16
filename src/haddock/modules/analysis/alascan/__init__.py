@@ -1,21 +1,21 @@
 """
 HADDOCK3 module for alanine scan.
 
-This module is responsible for the alanine (or any other residue) scan analysi
-of the models generated in the previous step of the workflow.
-For each model, the module will mutate the interface residues and calculate
-the energy differences between the wild type and the mutant, thus providing a
-measure of the impact of such mutation. Such difference (delta_score) is always
+This module is responsible for the alanine (or any other residue) scan analysis
+of the model(s) generated in the previous step of the workflow.
+For each model, this module will mutate the interface residues and calculate
+the haddock score differences between the wild type and the mutant, thus providing
+a measure of the impact of such mutation. Such difference (delta_score) is always
 calculated as:
 
     delta_score = score_wildtype - score_mutant
 
-Therefore, a positive delta_score indicates that the mutation is destabilizing
-while a negative delta_score indicates that the mutation is stabilizing.
+Therefore, a _positive_ delta_score indicates that the mutation is destabilizing
+while a _negative_ delta_score indicates that the mutation is stabilizing.
 
 If cluster information is available, the module will also calculate the
-average energy difference for each cluster of models. For each amino acid, a Z
-score is calculated as:
+average haddock score difference for each cluster of models. For each amino acid,
+a Z score is calculated as:
 
     Z = (delta_score - mean) / std
 
@@ -41,6 +41,7 @@ You can use the parameters below to customize the behavior of the module:
     >>> resdic_A = [1,2,3,4]
     >>> resdic_B = [2,3,4]
 """
+import os
 from pathlib import Path
 
 from haddock import log
@@ -56,6 +57,7 @@ from haddock.modules.analysis.alascan.scan import (
     alascan_cluster_analysis,
     create_alascan_plots,
     generate_alascan_output,
+    calculate_core_allocation,
     )
 
 
@@ -84,45 +86,59 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
-        # Parallelisation : optimal dispatching of models
+        # Parallelization : optimal dispatching of models
         nmodels = len(models)
-        # output mutants is only possible if there is only one model
+        # Outputting mutants is possible if there is just one model
         if self.params["output_mutants"]:
             if nmodels != 1:
                 log.warning(
-                    "output_mutants is set to True but more than one model "
-                    "was found. Setting output mutants to False."
+                    "output_mutants is set to True, but more than one model "
+                    "was found. Setting output_mutants to False."
                     )
                 self.params["output_mutants"] = False
 
-        ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
-
-        log.info(f"Running on {ncores} cores")
-
-        index_list = get_index_list(nmodels, ncores)
-
+        # Core maths: Is there enough cores to parallelize per-residue after
+        # giving enough cores per model ?
+        ncores = parse_ncores(n=self.params['ncores'])
+        model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
+        index_list = get_index_list(nmodels, model_cores)
+        
+        if residue_cores_per_model == 1:
+            log.info(f"Using {model_cores} core(s) to process {nmodels} model(s)")
+        else:
+            log.info(f"Processing {model_cores} model(s), using {residue_cores_per_model} cores per model")
+        
         alascan_jobs = []
-        for core in range(ncores):
+        for core in range(model_cores):
+            models_for_core = models[index_list[core]:index_list[core + 1]]
             scan_obj = Scan(
-                model_list=models[index_list[core]:index_list[core + 1]],
+                model_list=models_for_core,
                 core=core,
+                residue_ncores=residue_cores_per_model,
                 path=Path("."),
                 params=self.params,
-                )
+            )
             # running now the ScanJob
             # init ScanJob
             job = ScanJob(
                 self.params,
                 scan_obj,
-                )
+            )
             alascan_jobs.append(job)
+
+        log.info(f"Created {len(alascan_jobs)} scan jobs")
+        # here libutil and libparallel will log info about per-model cores/tasks.
+        # This is misleading, if per-residue parallelization is present.
+        # This log makes log look more coherent, in a way.
+
+        log.info(f"Model-level parallelization:")
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
 
         Engine = get_engine(exec_mode, self.params)
         engine = Engine(alascan_jobs)
         engine.run()
-        
+
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data
@@ -131,13 +147,12 @@ class HaddockModule(BaseHaddockModule):
                 clt_alascan,
                 self.params["scan_residue"],
                 offline=self.params["offline"],
-                )
+            )
         # if output_bfactor is true, write the models and export them
         if self.params["output_bfactor"] is True:
             models_to_export = generate_alascan_output(models, self.path)
             self.output_models = models_to_export
         else:
-            # Send models to the next step,
-            #  no operation is done on them
+            # Send models to the next step, no operation is done on them
             self.output_models = models
         self.export_io_models()

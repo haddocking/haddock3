@@ -9,15 +9,12 @@ import multiprocessing
 import numpy as np
 import pandas as pd
 
-import signal
-import time
-
 from haddock import log
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
 from haddock.clis import cli_score
-from haddock.libs.libparallel import Scheduler, GenericTask
+from haddock.libs.libparallel import GenericTask, Scheduler
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
 
@@ -67,14 +64,6 @@ RES_CODES = dict([
     ("TYS", "Y"),
     ("CIR", "R"),
     ])
-
-# to handle KeyboardInterrupt
-_SHUTDOWN_REQUESTED = False
-
-def _handle_shutdown_signal(signum, frame):
-    """Handle shutdown."""
-    global _SHUTDOWN_REQUESTED
-    _SHUTDOWN_REQUESTED = True
 
 
 def calculate_core_allocation(nmodels, total_cores):
@@ -457,76 +446,70 @@ def create_alascan_plots(clt_alascan, scan_residue, offline = False):
 def process_residue_task(args):
     """
     Processing a single residue - mutate, score, calculate delta_score.
-    Can handle KeyboardInterrupt.
     """
-    global _SHUTDOWN_REQUESTED
-    
-    signal.signal(signal.SIGINT, _handle_shutdown_signal)
-    signal.signal(signal.SIGTERM, _handle_shutdown_signal)
-    
     (chain, res, resname_dict, native_path, end_resname,
      n_score, n_vdw, n_elec, n_des, n_bsa, sc_dir_base, output_mutants) = args
     
+    cleanup_files = []
+    cleanup_dirs = []
+    
     try:
-        if _SHUTDOWN_REQUESTED:
-            return None
-            
-        # Create unique scoring directory per process
         process_id = multiprocessing.current_process().pid
         sc_dir = f"{sc_dir_base}-{process_id}"
         os.makedirs(sc_dir, exist_ok=True)
+        cleanup_dirs.append(sc_dir)
 
-        # Get original (to be mutated) resname
         key = f"{chain}-{res}"
         if key not in resname_dict:
             return None
         ori = resname_dict[key]
-        
-        if _SHUTDOWN_REQUESTED:
-            return None
-            
-        # Perform mutation (no special file cleanup - let user handle)
+        # mutaute 
         mut_pdb = mutate(native_path, chain, res, end_resname)
-        
-        # Check shutdown before scoring
-        if _SHUTDOWN_REQUESTED:
-            return None
-            
-        # Calculate scores
+        cleanup_files.append(mut_pdb)
+        # calculate scores
         c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
             mut_pdb, run_dir=sc_dir, outputpdb=output_mutants
         )
-        
-        # Calculate deltas
+        # calculate deltas
         delta_score = n_score - c_score
         delta_vdw = n_vdw - c_vdw
         delta_elec = n_elec - c_elec
         delta_desolv = n_des - c_des
         delta_bsa = n_bsa - c_bsa
-        
-        # Clean up files based on output_mutants parameter
+        # handle output files
         em_mut_pdb = Path(mut_pdb.stem + '_hs.pdb')
         if not output_mutants:
-            if os.path.exists(mut_pdb):
-                os.remove(mut_pdb)
-            if os.path.exists(em_mut_pdb):
-                os.remove(em_mut_pdb)
+            cleanup_files.extend([mut_pdb, em_mut_pdb])
         else:
             if os.path.exists(em_mut_pdb):
                 shutil.move(em_mut_pdb, mut_pdb)
+            if mut_pdb in cleanup_files:
+                cleanup_files.remove(mut_pdb)
         
         return [chain, res, ori, end_resname,
                 c_score, c_vdw, c_elec, c_des, c_bsa,
                 delta_score, delta_vdw, delta_elec, delta_desolv, delta_bsa]
                 
-    except (KeyboardInterrupt, SystemExit):
-        # if shutdown signal comes during blocking operations, e.g. I/O
-        return None
     except Exception as e:
-        if _SHUTDOWN_REQUESTED:
-            return None
         log.warning(f"Error processing {chain}-{res}: {e}")
         return None
+    finally:
+        for file_path in cleanup_files:
+            try:
+                if os.path.exists(file_path):
+                    log.debug(f"Cleaning up file: {file_path}")
+                    os.remove(file_path)
+            except:
+                pass
+        
+        for dir_path in cleanup_dirs:
+            try:
+                if os.path.exists(dir_path):
+                    log.debug(f"Cleaning up directory: {dir_path}")
+                    shutil.rmtree(dir_path)
+            except:
+                pass
+
 
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""
@@ -577,57 +560,15 @@ class Scan:
 
     def _run_parallel_residues(self, tasks):
         """Run residue processing in parallel."""
-        scheduler = None
+        generic_tasks = [GenericTask(process_residue_task, task) for task in tasks]
+        scheduler = Scheduler(generic_tasks, ncores=self.residue_ncores)
+
         try:
-            generic_tasks = [GenericTask(process_residue_task, task) for task in tasks]
-            scheduler = Scheduler(generic_tasks, ncores=self.residue_ncores)
-            
             scheduler.run()
             return [r for r in scheduler.results if r is not None]
-            
-        except KeyboardInterrupt:
-            log.info("Parallel execution interrupted. Cleaning up...")
-            return self._handle_interrupt_cleanup(scheduler, tasks)
         except Exception as e:
             log.warning(f"Parallel execution failed: {e}. Falling back to sequential.")
             return self._run_sequential_residues(tasks)
-        finally:
-            if scheduler:
-                self._cleanup_scheduler_resources(scheduler)
-
-    def _cleanup_scheduler_resources(self, scheduler):
-        """Clean up shared memory and IPC resources from scheduler."""
-        try:
-            # Terminate workers
-            for worker in scheduler.worker_list:
-                if worker.is_alive():
-                    worker.join(timeout=0.5)
-                    if worker.is_alive():
-                        worker.terminate()
-                        worker.join(timeout=0.5)
-            # Clean up the queue
-            if hasattr(scheduler, 'queue') and scheduler.queue:
-                try:
-                    # Clear any remaining items in queue
-                    while not scheduler.queue.empty():
-                        try:
-                            scheduler.queue.get_nowait()
-                        except:
-                            break
-                    # Close queue
-                    scheduler.queue.close()
-                    scheduler.queue.join_thread()
-                except:
-                    pass
-        except Exception as e:
-            log.debug(f"Cleanup warning: {e}")
-
-    def _handle_interrupt_cleanup(self, scheduler, tasks):
-        """Handle interrupted parallel processing."""
-        if scheduler:
-            print('Hold tight, interrupting run...')
-            time.sleep(0.5)
-            self._cleanup_scheduler_resources(scheduler)
 
     def _run_sequential_residues(self, tasks):
         """Run residue processing sequentially."""
@@ -701,15 +642,22 @@ class Scan:
                                 self.scan_res, n_score, n_vdw, n_elec, n_des, n_bsa,
                                 sc_dir_base, self.output_mutants))
 
+            print(f"[DEBUG] residue_ncores: {self.residue_ncores}")
+            print(f"[DEBUG] Number of mutation tasks: {len(tasks)}")
+            print(f"[DEBUG] Threshold to run in parallel: {max(4, self.residue_ncores + 1)}")
+
+
             # Do we parallelize?
             # Yes, if more than 1 core per model is available AND
             # if few available per-residue cores: 2 or more residues to mutate per core 
             # if many available per-residue cores: 1 or more residues to mutate per core
             if self.residue_ncores > 1 and len(tasks) >= max(4, self.residue_ncores + 1):
                 print('Parallel per-residue processing')
+                print("[DEBUG] Using PARALLEL execution.")
                 scan_data = self._run_parallel_residues(tasks)
             else:
                 print('Sequential per-residue processing')
+                print("[DEBUG] Using SEQ execution.")
                 scan_data = self._run_sequential_residues(tasks)
 
             # Write output

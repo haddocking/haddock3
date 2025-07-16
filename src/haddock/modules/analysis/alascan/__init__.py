@@ -97,7 +97,7 @@ class HaddockModule(BaseHaddockModule):
                     )
                 self.params["output_mutants"] = False
 
-        # Core maths: Is there enough cores to parallelize per-residue after 
+        # Core maths: Is there enough cores to parallelize per-residue after
         # giving enough cores per model ?
         ncores = parse_ncores(n=self.params['ncores'])
         model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
@@ -127,9 +127,10 @@ class HaddockModule(BaseHaddockModule):
             alascan_jobs.append(job)
 
         log.info(f"Created {len(alascan_jobs)} scan jobs")
-        # next libutil and libparallel will log info about per-model cores/tasks.
+        # here libutil and libparallel will log info about per-model cores/tasks.
         # This is misleading, if per-residue parallelization is present.
         # This log makes log look more coherent, in a way.
+
         log.info(f"Model-level parallelization:")
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
@@ -137,7 +138,7 @@ class HaddockModule(BaseHaddockModule):
         Engine = get_engine(exec_mode, self.params)
         engine = Engine(alascan_jobs)
         engine.run()
-        
+
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data

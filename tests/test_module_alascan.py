@@ -204,13 +204,6 @@ def example_df_scan_clt():
     yield example_df_scan_clt
 
 
-@pytest.fixture(autouse=True)
-def reset_shutdown_requested():
-    global _SHUTDOWN_REQUESTED
-    _SHUTDOWN_REQUESTED = False
-    yield
-    
-
 @pytest.fixture(name="scan_file")
 def fixture_scan_file():
     """Return example alascan file."""

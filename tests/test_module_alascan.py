@@ -12,7 +12,6 @@ import pandas as pd
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libparallel import Scheduler
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
@@ -520,12 +519,8 @@ def test_process_residue_task_cleanup(mocker, protprot_model_list, monkeypatch, 
         with caplog.at_level(logging.DEBUG):
             result = process_residue_task(task_args)
             assert result is not None
-            # check cleanup reached
-            # Debug info
-            print(f"Python version: {sys.version}")
-            print(f"caplog.text: '{caplog.text}'")
-            print(f"caplog.records: {[r.message for r in caplog.records]}")
-            print(f"mock_exists.call_count: {mock_exists.call_count}")
+            # this particular assert fails on git hub with 
+            # "assert ('Cleaning up file' in '' or 'Cleaning up directory' in '')", #TODO figure why
             # assert "Cleaning up file" in caplog.text or "Cleaning up directory" in caplog.text
             # check cleanup functions were called x times
             assert mock_exists.call_count >= 3

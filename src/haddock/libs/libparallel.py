@@ -1,10 +1,6 @@
 """Module in charge of parallelizing the execution of tasks."""
 
-import time
-import signal
 import math
-import subprocess
-import os
 from multiprocessing import Process, Queue
 
 from haddock import log

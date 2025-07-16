@@ -642,9 +642,9 @@ class Scan:
                                 self.scan_res, n_score, n_vdw, n_elec, n_des, n_bsa,
                                 sc_dir_base, self.output_mutants))
 
-            # print(f"[DEBUG] residue_ncores: {self.residue_ncores}")
-            # print(f"[DEBUG] Number of mutation tasks: {len(tasks)}")
-            # print(f"[DEBUG] Threshold to run in parallel: {max(4, self.residue_ncores + 1)}")
+            print(f"[DEBUG] residue_ncores: {self.residue_ncores}")
+            print(f"[DEBUG] Number of mutation tasks: {len(tasks)}")
+            print(f"[DEBUG] Threshold to run in parallel: {max(4, self.residue_ncores + 1)}")
 
 
             # Do we parallelize?
@@ -653,9 +653,11 @@ class Scan:
             # if many available per-residue cores: 1 or more residues to mutate per core
             if self.residue_ncores > 1 and len(tasks) >= max(4, self.residue_ncores + 1):
                 print('Parallel per-residue processing')
+                print("[DEBUG] Using PARALLEL execution.")
                 scan_data = self._run_parallel_residues(tasks)
             else:
                 print('Sequential per-residue processing')
+                print("[DEBUG] Using SEQ execution.")
                 scan_data = self._run_sequential_residues(tasks)
 
             # Write output

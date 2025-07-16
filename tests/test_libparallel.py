@@ -1,7 +1,6 @@
 import uuid
 from multiprocessing import Queue
 from pathlib import Path
-from unittest.mock import patch, Mock
 
 import pytest
 

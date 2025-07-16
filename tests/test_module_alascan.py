@@ -1,7 +1,6 @@
 """Test the Alascan module."""
 
 import os
-import sys
 import logging
 import shutil
 import tempfile
@@ -520,7 +519,8 @@ def test_process_residue_task_cleanup(mocker, protprot_model_list, monkeypatch, 
             result = process_residue_task(task_args)
             assert result is not None
             # this particular assert fails on git hub with 
-            # "assert ('Cleaning up file' in '' or 'Cleaning up directory' in '')", #TODO figure why
+            # "assert ('Cleaning up file' in '' or 'Cleaning up directory' in '')", 
+            # TODO figure why
             # assert "Cleaning up file" in caplog.text or "Cleaning up directory" in caplog.text
             # check cleanup functions were called x times
             assert mock_exists.call_count >= 3

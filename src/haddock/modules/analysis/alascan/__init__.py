@@ -47,11 +47,10 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.libs.libparallel import get_index_list
-from haddock.libs.libparallel import AlascanScheduler
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
-#from haddock.modules import get_engine
-#from haddock.modules.analysis import get_analysis_exec_mode
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
@@ -98,7 +97,7 @@ class HaddockModule(BaseHaddockModule):
                     )
                 self.params["output_mutants"] = False
 
-        # Core maths: Is there enough cores to parallelize per-residue after 
+        # Core maths: Is there enough cores to parallelize per-residue after
         # giving enough cores per model ?
         ncores = parse_ncores(n=self.params['ncores'])
         model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
@@ -128,27 +127,17 @@ class HaddockModule(BaseHaddockModule):
             alascan_jobs.append(job)
 
         log.info(f"Created {len(alascan_jobs)} scan jobs")
-        # next libutil and libparallel will log info about per-model cores/tasks.
+        # here libutil and libparallel will log info about per-model cores/tasks.
         # This is misleading, if per-residue parallelization is present.
         # This log makes log look more coherent, in a way.
-       
-        ## Actually. This can cause semaphore leaks
-        # log.info(f"Model-level parallelization:")
 
-        # exec_mode = get_analysis_exec_mode(self.params["mode"])
+        log.info(f"Model-level parallelization:")
 
-        # Engine = get_engine(exec_mode, self.params)
-        # engine = Engine(alascan_jobs)
-        # engine.run()
-        ## So replacing it with AlascanScheduler
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        log.info("Using AlascanScheduler for model-level parallelization")
-        #try:
-        with AlascanScheduler(alascan_jobs, ncores=model_cores) as scheduler:
-            scheduler.run()
-
-        #except Exception as e:
-        #    self.finish_with_error(f"Alascan model-level parallelization failed: {e}")
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(alascan_jobs)
+        engine.run()
 
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)

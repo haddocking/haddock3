@@ -1,6 +1,7 @@
 """Test the Alascan module."""
 
 import os
+import sys
 import logging
 import shutil
 import tempfile

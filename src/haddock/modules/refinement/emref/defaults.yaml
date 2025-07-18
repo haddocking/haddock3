@@ -1365,7 +1365,7 @@ max_nmodels:
 nemsteps:
   default: 200
   type: integer
-  min: 1
+  min: 0
   max: 10000
   title: Number of EM steps
   short: Number of energy minimisation steps to perform.

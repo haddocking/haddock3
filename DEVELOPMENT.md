@@ -11,8 +11,8 @@ This file provides information on how to setup a development environment for HAD
 
 ## System requirements
 
-- Python 3.9
-- OpenMPI
+- Python 3.9, 3.10, 3.11, 3.12 or 3.13
+- OpenMPI in case MPI support is enabled
 
 ### Installing system dependencies
 
@@ -78,6 +78,12 @@ Install both project dependencies and test dependencies using pip.
 
 ```bash
 pip install -e '.[dev,docs]'
+```
+
+In case you wish to enable the MPI running mode of HADDOCK3 you will need to add the mpi option to the pip command:
+
+```bash
+pip install -e '.[dev,docs,mpi]'
 ```
 
 > If you are using a Mac, if the installation of mpi4py fails, run first `brew install mpi4py`

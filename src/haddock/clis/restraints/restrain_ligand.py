@@ -175,10 +175,7 @@ def restrain_ligand(
         "{distance:6.3f} {deviation:.2f} {deviation:.2f}{linesep:s}"
         )
 
-    _unambig_str_list = [
-        f"! Restraints to fix {ligand_name} in its initial position{os.linesep}"
-        ]
-
+    _unambig_str_list: list[str] = []
     # Loop over all min distances
     for dist in min_dist_list:
         r_at, l_at, d = dist
@@ -198,11 +195,14 @@ def restrain_ligand(
     
     # Limit the number of restraints
     if max_restraints < len(_unambig_str_list):
+        random.seed(420)
         unambig_str_list = random.sample(_unambig_str_list, max_restraints)
     else:
         unambig_str_list = _unambig_str_list
+    
     # Concatenate into a single string
-    unambig_str = "".join(unambig_str_list)
+    unambig_str = f"! Restraints to fix {ligand_name} in its initial position{os.linesep}"
+    unambig_str += "".join(unambig_str_list)
     return unambig_str
 
 

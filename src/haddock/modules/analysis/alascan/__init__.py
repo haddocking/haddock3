@@ -3,10 +3,10 @@ HADDOCK3 module for alanine scan.
 
 This module is responsible for the alanine (or any other residue) scan analysis
 of the model(s) generated in the previous step of the workflow.
-For each model, this module will mutate the interface residues and calculate
-the haddock score differences between the wild type and the mutant, thus providing
-a measure of the impact of such mutation. Such difference (delta_score) is always
-calculated as:
+For each model, this module will mutate the interface residues and calculate 
+the differences in the haddock score and its individual components between the
+wild type and the mutant, thus providing a measure of the impact of such mutation.
+Such difference (delta_score) is always calculated as:
 
     delta_score = score_wildtype - score_mutant
 
@@ -93,7 +93,7 @@ class HaddockModule(BaseHaddockModule):
             if nmodels != 1:
                 log.warning(
                     "output_mutants is set to True, but more than one model "
-                    "was found. Setting output_mutants to False."
+                    "was found. Setting 'output_mutant' parameter to False."
                     )
                 self.params["output_mutants"] = False
 

@@ -679,12 +679,12 @@ class Scan:
 
             fl_content = open(alascan_fname, 'r').read()
             with open(alascan_fname, 'w') as f:
-                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"{'#' * 70}{os.linesep}")
                 f.write(f"# `alascan` results for {native.file_name}{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
                 f.write(f"# native score = {n_score}{os.linesep}")
                 f.write(f"#{os.linesep}")
                 f.write(f"# z_score is calculated with respect to the other residues")  # noqa E501
                 f.write(f"{os.linesep}")
-                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"{'#' * 70}{os.linesep}")
                 f.write(fl_content)

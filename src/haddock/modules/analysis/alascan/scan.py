@@ -60,6 +60,7 @@ RES_CODES = dict([
     ("TOP", "T"),
     ("TYP", "Y"),
     ("TYS", "Y"),
+    ("CIR", "R"),
     ])
 
 
@@ -156,7 +157,8 @@ def add_delta_to_bfactor(pdb_f, df_scan):
     os.rename(tmp_pdb_f, pdb_f)
     return pdb_f
 
-def get_score_string(pdb_f, run_dir):
+
+def get_score_string(pdb_f, run_dir, outputpdb=False):
     """Get score output from cli_score.main.
 
     Parameters
@@ -167,6 +169,10 @@ def get_score_string(pdb_f, run_dir):
     run_dir : str
         Path to the run directory.
     
+    outputpdb : bool, optional
+        If True, the output, energy-minimized pdb file will be written.
+        Default is False.
+    
     Returns
     -------
     out : list
@@ -174,12 +180,12 @@ def get_score_string(pdb_f, run_dir):
     """
     f = io.StringIO()
     with redirect_stdout(f):
-        cli_score.main(pdb_f, run_dir, full=True)
+        cli_score.main(pdb_f, run_dir, full=True, outputpdb=outputpdb)
     out = f.getvalue().split(os.linesep)
     return out
 
 
-def calc_score(pdb_f, run_dir):
+def calc_score(pdb_f, run_dir, outputpdb=False):
     """Calculate the score of a model.
 
     Parameters
@@ -188,6 +194,9 @@ def calc_score(pdb_f, run_dir):
         Path to the pdb file.
     run_dir : str
         Path to the run directory.
+    outputpdb : bool, optional
+        If True, the output, energy-minimized pdb file will be written.
+        Default is False.
     
     Returns
     -------
@@ -202,7 +211,7 @@ def calc_score(pdb_f, run_dir):
     bsa : float
         Buried surface area.
     """
-    out_string = get_score_string(pdb_f, run_dir)
+    out_string = get_score_string(pdb_f, run_dir, outputpdb=outputpdb)
 
     for ln in out_string:
         if ln.startswith("> HADDOCK-score (emscoring)"):
@@ -212,6 +221,11 @@ def calc_score(pdb_f, run_dir):
             elec = float(ln.split("elec=")[1].split(",")[0])
             desolv = float(ln.split("desolv=")[1].split(",")[0])
             bsa = float(ln.split("bsa=")[1].split(",")[0])
+        if ln.startswith("> writing") and outputpdb:
+            outpdb = ln.split()[-1]
+            # check if the output pdb file exists
+            if not os.path.exists(outpdb):
+                raise FileNotFoundError(f"Could not find output pdb file {outpdb}")
     return score, vdw, elec, desolv, bsa
 
 
@@ -331,11 +345,11 @@ def alascan_cluster_analysis(models):
         # add comment
         fl_content = open(scan_clt_filename, 'r').read()
         with open(scan_clt_filename, 'w') as f:
-                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
                 f.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
                 f.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
-                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
                 f.write(fl_content)
     return clt_scan
 
@@ -450,7 +464,9 @@ class Scan:
             # attribute could come from any module in principle
             sc_dir = f"haddock3-score-{self.core}"
             n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
-                                                              run_dir=sc_dir)
+                                                              run_dir=sc_dir,
+                                                              outputpdb=False
+                                                              )
             scan_data = []
 
             # load the coordinates
@@ -516,7 +532,9 @@ class Scan:
                         # now we score the mutated model
                         c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
                             mut_pdb_name,
-                            run_dir=sc_dir)
+                            run_dir=sc_dir,
+                            outputpdb=self.output_mutants
+                            )
                         # now the deltas (wildtype - mutant)
                         delta_score = n_score - c_score
                         delta_vdw = n_vdw - c_vdw
@@ -529,10 +547,14 @@ class Scan:
                                           c_bsa, delta_score,
                                           delta_vdw, delta_elec, delta_desolv,
                                           delta_bsa])
-                        # if self.output_mutants is false, remove the 
-                        # mutated pdb file
+                        # if self.output_mutants is false, remove the mutated
+                        # pdb file. Otherwise, move the EM haddock model to the
+                        # original mut_pdb_name
+                        em_mut_pdb = Path(mut_pdb_name.stem + '_hs.pdb')
                         if not self.output_mutants:
                             os.remove(mut_pdb_name)
+                        else:
+                            shutil.move(em_mut_pdb, mut_pdb_name)
             # write output
             df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
                           'score', 'vdw', 'elec', 'desolv', 'bsa',

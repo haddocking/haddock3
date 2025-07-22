@@ -23,10 +23,17 @@ HADDOCK, standing for **H**igh **A**mbiguity **D**riven protein-protein **DOCK**
 
 ## Installation
 
-Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.12 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) . 
+Simple installation of the [latest release](https://pypi.org/project/haddock3/) of HADDOCK3 (assuming you have a Python version 3.9 to 3.13 installed and the rights to install the software - if not refer to the instructions in [INSTALL.md](docs/INSTALL.md) for using either `venv` or `conda`) .
 
 ```bash
 pip install haddock3
+```
+
+To install haddock3 with MPI support (required an OpenMPI installation - refer
+to the instructions in [INSTALL.md](docs/INSTALL.md) use:
+
+```bash
+pip install 'haddock3[mpi]'
 ```
 
 In case you rather install the latest unreleased version use instead:
@@ -37,7 +44,7 @@ cd haddock3
 pip install .
 ```
 
-For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md) 
+For detailed instructions and installation of third-party software, please check [INSTALL.md](docs/INSTALL.md)
 
 You might also want to check the following utilities:
 
@@ -72,7 +79,7 @@ optional arguments:
   -v, --version         show version
 ```
 
-Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [MANUAL]() (_coming soon!_) for a more detailed explanation of the configuration file.
+Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/README.md) page for more some usage examples and the [User manual](https://www.bonvinlab.org/haddock3-user-manual) for a more detailed explanation of the configuration file.
 
 ## Support
 
@@ -86,14 +93,14 @@ If you clone this repository and use `haddock3` for your research, please suppor
 
 If you used `haddock3` for your research, please cite us:
 
-- **Research article**: M. Giulini, V. Reys, J.M.C. Teixeira, B. Jiménez-García, R.V. Honorato, A. Kravchenko, X. Xu, R. Versini, A. Engel, S. Verhoeven, A.M.J.J. Bonvin, *HADDOCK3: A modular and versatile platform for integrative modelling of biomolecular complexes* biorxiv (2025). [https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1](https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1)
+- **Research article**: M. Giulini, V. Reys, J.M.C. Teixeira, B. Jiménez-García, R.V. Honorato, A. Kravchenko, X. Xu, R. Versini, A. Engel, S. Verhoeven, A.M.J.J. Bonvin, [*HADDOCK3: A modular and versatile platform for integrative modelling of biomolecular complexes*](https://pubs.acs.org/doi/10.1021/acs.jcim.5c00969) Journal of Chemical Information and Modeling (2025). doi: 10.1021/acs.jcim.5c00969 [[BioRxiv]](https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1)
  
 - **Cite this repository**: M.C. Teixeira, J., Vargas Honorato, R., Giulini, M., Bonvin, A., SarahAlidoost, Reys, V., Jimenez, B., Schulte, D., van Noort, C., Verhoeven, S., Vreede, B., SSchott, & Tsai, R. (2024). haddocking/haddock3: v3.0.0-beta.5 (Version 3.0.0-beta.5) [Computer software]. [https://doi.org/10.5281/zenodo.10527751](https://doi.org/10.5281/zenodo.10527751)
 
 ## Useful resources
 
-- [User manual]() (_coming soon!_)
-- [Best practice guide](https://www.bonvinlab.org/software/bpg/)
+- [User manual](https://www.bonvinlab.org/haddock3-user-manual): The online HADDOCK3 guide describing every aspects of the tool.
+- [Best practice guide](https://www.bonvinlab.org/software/bpg/) (HADDOCK2.X series)
 - [The HADDOCK2.4 web server: A leap forward in integrative modelling of biomolecular complexes. Nature Prot. 2024](https://www.nature.com/articles/s41596-024-01011-0)
 
 ## Development

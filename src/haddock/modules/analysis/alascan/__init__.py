@@ -139,23 +139,27 @@ class HaddockModule(BaseHaddockModule):
             for model_id, results in results_by_model.items():
                 write_scan_out(results, model_id)
 
-        # Cluster-based analysis
-        clt_alascan = alascan_cluster_analysis(models)
-        
-        # Generate plots if requested
-        if self.params["plot"]:
-            create_alascan_plots(
-                clt_alascan,
-                self.params["scan_residue"],
-                offline=self.params["offline"],
-            )
-        
-        # Generate output with bfactors if requested
-        if self.params["output_bfactor"]:
-            models_to_export = generate_alascan_output(models, self.path)
-            self.output_models = models_to_export
+            # Cluster-based analysis
+            clt_alascan = alascan_cluster_analysis(models)
+            
+            # Generate plots if requested
+            if self.params["plot"]:
+                create_alascan_plots(
+                    clt_alascan,
+                    self.params["scan_residue"],
+                    offline=self.params["offline"],
+                )
+
+            # Generate output models with bfactors if requested  
+            if self.params["output_bfactor"]:
+                models_to_export = generate_alascan_output(models, self.path)
+                self.output_models = models_to_export
+            else:
+                # # Send models to the next step, no operation is done on them 
+                self.output_models = models
         else:
+            log.info("No interface residues found - skipping mutation analysis")
             # Send models to the next step, no operation is done on them
             self.output_models = models
-        
+
         self.export_io_models()

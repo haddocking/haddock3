@@ -16,7 +16,6 @@ from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
 from haddock.clis import cli_score
-from haddock.libs.libparallel import GenericTask, Scheduler
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
 
@@ -548,6 +547,10 @@ class InterfaceScanner:
         self.library_mode = library_mode
         self.params = params or {}
         self.point_mutations_jobs = []
+        self.filter_resdic = {
+            key[-1]: value for key, value
+            in self.params.items()
+            if key.startswith("resdic")}
         try:
             self.model_path = model.rel_path
             self.model_id = model.file_name.removesuffix('.pdb')
@@ -574,30 +577,32 @@ class InterfaceScanner:
             atoms = get_atoms(self.model_path)
             coords, chain_ranges = load_coords(self.model_path, atoms, add_resname=True)
             
-            # Determine target residues - user-give or all interface
-            if self.params.get("filter_resdic", {'_': []}) != {'_': []}:
+            # Determine target residues - user-given or all interface (same logic as original Scan)
+            if self.filter_resdic != {'_': []}:
                 # User-specified residues
-                filter_resdic = self.params["filter_resdic"]
                 interface = {}
-                for chain in filter_resdic:
+                for chain in self.filter_resdic:
                     if chain in chain_ranges:
                         chain_aas = [aa[1] for aa in coords if aa[0] == chain]
                         unique_aas = list(set(chain_aas))
+                        # the interface here is the intersection of the
+                        # residues in filter_resdic and the residues actually 
+                        # present in the model
                         interface[chain] = [
-                            res for res in filter_resdic[chain]
-                            if res in unique_aas
-                        ]
+                            res for res in self.filter_resdic[chain]
+                            if res in unique_aas]
+
             else:
                 # all interface
                 cutoff = self.params.get("int_cutoff", 5.0)
                 interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
-                # Filter by chains if user-specified
+                # in case the user wants to scan only some chains (this is
+                # superseded by filter_resdic)
                 chains = self.params.get("chains", [])
-                if chains:
+                if chains != []:
                     interface = {
                         chain: interface[chain] for chain in chains
-                        if chain in interface
-                    }
+                        if chain in interface}
             
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():

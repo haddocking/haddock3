@@ -155,6 +155,23 @@ evaluate ($eintcplx = 0.0)
 energy end
 
 evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+evaluate ($ebond = $bond)
+evaluate ($eangl= $angl)
+evaluate ($eimpr= $impr)
+evaluate ($edihe= $dihe)
+
+evaluate ($result=0)
+print thres=0.05 bonds
+evaluate ($rms_bonds=$result)
+evaluate ($result=0)
+print thres=5. angles
+evaluate ($rms_angles=$result)
+evaluate ($result=0)
+print thres=5. impropers
+evaluate ($rms_impropers=$result)
+evaluate ($result=0)
+print thres=30. dihedrals
+evaluate ($rms_dihedrals=$result)
 
 
 {* ===================== calculate final energies and write structure *}

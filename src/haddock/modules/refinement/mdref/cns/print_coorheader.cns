@@ -10,7 +10,6 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-
 if ($Data.flags.dihed eq false) then evaluate ($dihe = 0) end if
 if ($Data.flags.sani  eq false) then evaluate ($sani = 0) end if
 if ($Data.flags.xrdc  eq false) then evaluate ($xrdc = 0) end if
@@ -24,10 +23,10 @@ if ($Data.flags.zres  eq false) then evaluate ($zhar = 0) end if
 if ($Data.flags.em    eq false) then evaluate ($lcc  = 0) end if
 
 evaluate($enerall=$etot)
-evaluate($bondall=$bond)
-evaluate($anglall=$angl)
-evaluate($imprall=$impr)
-evaluate($diheall=$dihe)
+evaluate($bondall=$ebond)
+evaluate($anglall=$eangl)
+evaluate($imprall=$eimpr)
+evaluate($diheall=$edihe)
 evaluate($vdwall=$vdw)
 evaluate($elecall=$elec)
 evaluate($noeall=$noe)
@@ -59,18 +58,6 @@ evaluate ($violations=0)
 print threshold=5. cdih
 evaluate ($rms_cdih=$result)
 evaluate ($violations_cdih=$violations)
-evaluate ($result=0)
-print thres=0.05 bonds
-evaluate ($rms_bonds=$result)
-evaluate ($result=0)
-print thres=5. angles
-evaluate ($rms_angles=$result)
-evaluate ($result=0)
-print thres=5. impropers
-evaluate ($rms_impropers=$result)
-evaluate ($result=0)
-print thres=30. dihedrals
-evaluate ($rms_dihedrals=$result)
 evaluate ($result=0)
 evaluate ($violations=0)
 evaluate ($rms_coup = 0)

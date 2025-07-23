@@ -4,6 +4,8 @@ import io
 import shutil
 from pathlib import Path
 from contextlib import redirect_stdout
+from dataclasses import dataclass
+from typing import List, Dict, Tuple, Optional, Any
 
 import multiprocessing
 import numpy as np
@@ -64,35 +66,6 @@ RES_CODES = dict([
     ("TYS", "Y"),
     ("CIR", "R"),
     ])
-
-
-def calculate_core_allocation(nmodels, total_cores):
-    """Calculate optimal core allocation.    
-
-    Parameters
-    ----------
-    nmodels : int
-        Number of models to be processed.
-    
-    total_cores : int
-        Number of available cores (user-given, or 
-        determined by os).
-    
-    Returns
-    -------
-    model_cores : int
-        Number of cores per model.
-        
-    residue_cores_per_model : int
-        Number of cores per residue.
-        
-    """
-    if nmodels >= total_cores:
-        return total_cores, 1
-    else:
-        model_cores = nmodels
-        residue_cores_per_model = max(1, total_cores // nmodels)
-        return model_cores, residue_cores_per_model
 
 
 def mutate(pdb_f, target_chain, target_resnum, mut_resname):
@@ -443,248 +416,323 @@ def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     return
 
 
-def process_residue_task(args):
-    """
-    Processing a single residue - mutate, score, calculate delta_score.
-    """
-    (chain, res, resname_dict, native_path, end_resname,
-     n_score, n_vdw, n_elec, n_des, n_bsa, sc_dir_base, output_mutants) = args
-    
-    cleanup_files = []
-    cleanup_dirs = []
-    
-    try:
-        process_id = multiprocessing.current_process().pid
-        sc_dir = f"{sc_dir_base}-{process_id}"
-        os.makedirs(sc_dir, exist_ok=True)
-        cleanup_dirs.append(sc_dir)
-
-        key = f"{chain}-{res}"
-        if key not in resname_dict:
-            return None
-        ori = resname_dict[key]
-        # mutaute 
-        mut_pdb = mutate(native_path, chain, res, end_resname)
-        cleanup_files.append(mut_pdb)
-        # calculate scores
-        c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
-            mut_pdb, run_dir=sc_dir, outputpdb=output_mutants
-        )
-        # calculate deltas
-        delta_score = n_score - c_score
-        delta_vdw = n_vdw - c_vdw
-        delta_elec = n_elec - c_elec
-        delta_desolv = n_des - c_des
-        delta_bsa = n_bsa - c_bsa
-        # handle output files
-        em_mut_pdb = Path(mut_pdb.stem + '_hs.pdb')
-        if not output_mutants:
-            cleanup_files.extend([mut_pdb, em_mut_pdb])
-        else:
-            if os.path.exists(em_mut_pdb):
-                shutil.move(em_mut_pdb, mut_pdb)
-            if mut_pdb in cleanup_files:
-                cleanup_files.remove(mut_pdb)
-        
-        return [chain, res, ori, end_resname,
-                c_score, c_vdw, c_elec, c_des, c_bsa,
-                delta_score, delta_vdw, delta_elec, delta_desolv, delta_bsa]
-                
-    except Exception as e:
-        log.warning(f"Error processing {chain}-{res}: {e}")
-        return None
-    finally:
-        for file_path in cleanup_files:
-            try:
-                if os.path.exists(file_path):
-                    log.debug(f"Cleaning up file: {file_path}")
-                    os.remove(file_path)
-            except:
-                pass
-        
-        for dir_path in cleanup_dirs:
-            try:
-                if os.path.exists(dir_path):
-                    log.debug(f"Cleaning up directory: {dir_path}")
-                    shutil.rmtree(dir_path)
-            except:
-                pass
-
-
-class ScanJob:
-    """A Job dedicated to the parallel alanine scanning of models."""
-
-    def __init__(
-            self,
-            params,
-            scan_obj):
-
-        log.info(f"core {scan_obj.core}, initialising Scan")
-        self.params = params
-        self.scan_obj = scan_obj
-
-    def run(self):
-        """Run this ScanJob."""
-        log.info(f"core {self.scan_obj.core}, running Scan...")
-        self.scan_obj.run()
+def write_scan_out(results, model_id):
+    """Save mutation results to TSV file."""
+    if not results:
+        print(f'No scan results for model {model_id}')
         return
 
+    # Convert scan output to dataframe
+    scan_data = []
+    native_score = None
+    for result in results:
+        if result.success:
+            m_score, m_vdw, m_elec, m_des, m_bsa = result.mutant_scores
+            d_score, d_vdw, d_elec, d_des, d_bsa = result.delta_scores
+            
+            scan_data.append([
+                result.chain, result.res_num, result.ori_resname, 
+                result.target_resname, m_score, m_vdw, m_elec, m_des, m_bsa,
+                d_score, d_vdw, d_elec, d_des, d_bsa
+            ])
+            
+            # Get native score from first result (mutant + delta = native)
+            if native_score is None:
+                native_score = result.mutant_scores[0] + result.delta_scores[0]
+    
+    if scan_data:
+        df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
+                     'score', 'vdw', 'elec', 'desolv', 'bsa',
+                     'delta_score', 'delta_vdw', 'delta_elec',
+                     'delta_desolv', 'delta_bsa']
+        
+        df_scan = pd.DataFrame(scan_data, columns=df_columns)
+        df_scan = add_zscores(df_scan, 'delta_score')
+        
+        # Sort by chain id, then by residue id
+        df_scan.sort_values(by=['chain', 'res'], inplace=True)
 
-class Scan:
-    """Scan class, with sequential and parallel per-residue processing options"""
+        # Save to tsv (per model)
+        output_file = f"scan_{model_id}.tsv"
+        df_scan.to_csv(output_file, index=False, float_format='%.2f', sep="\t")
+        fl_content = open(output_file, 'r').read()
+        with open(output_file, 'w') as f:
+            f.write(f"{'#' * 70}{os.linesep}")
+            f.write(f"# `alascan` results for {model_id}\n")
+            f.write(f"#\n")
+            f.write(f"# native score = {native_score}\n")
+            f.write(f"#\n")
+            f.write(f"# z_score is calculated with respect to the other residues\n")
+            f.write(f"{'#' * 70}{os.linesep}")
+            f.write(fl_content)
 
-    def __init__(
-            self,
-            model_list,
-            core,
-            residue_ncores,
-            path,
-            **params,
-            ):
-        """Initialise Scan class."""
-        self.model_list = model_list
-        self.core = core
-        self.residue_ncores = residue_ncores
-        self.path = path
-        self.scan_res = params['params']['scan_residue']
-        self.int_cutoff = params["params"]["int_cutoff"]
-        self.chains = params["params"]["chains"]
-        self.output_mutants = params["params"]["output_mutants"]
-        # initialising resdic
-        if "params" in params.keys():
-            self.filter_resdic = {
-                key[-1]: value for key, value
-                in params["params"].items()
-                if key.startswith("resdic")
-                }
 
-    def _run_parallel_residues(self, tasks):
-        """Run residue processing in parallel."""
-        generic_tasks = [GenericTask(process_residue_task, task) for task in tasks]
-        scheduler = Scheduler(generic_tasks, ncores=self.residue_ncores)
+class InterfaceScannerJob:
+    """Job to scan interface for the target residues (using haddock Engine)."""
 
-        try:
-            scheduler.run()
-            return [r for r in scheduler.results if r is not None]
-        except Exception as e:
-            log.warning(f"Parallel execution failed: {e}. Falling back to sequential.")
-            return self._run_sequential_residues(tasks)
-
-    def _run_sequential_residues(self, tasks):
-        """Run residue processing sequentially."""
-        results = []
-        for task in tasks:
-            result = process_residue_task(task)
-            if result is not None:
-                results.append(result)
-        return results
-
+    def __init__(self, scan_obj):
+        """
+        Initialize InterfaceScannerJob.
+        
+        Parameters
+        ----------
+        scan_obj : InterfaceScanner
+            InterfaceScanner object to execute
+        """
+        self.scan_obj = scan_obj
+    
     def run(self):
-        """Run alascan calculations."""
-        for native in self.model_list:
-            # here we rescore the native model for consistency, as the score
-            # attribute could come from any module in principle
-            sc_dir_base = f"haddock3-score-{self.core}"
-            n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
-                                                                        run_dir=sc_dir_base,
-                                                                        outputpdb=False)
-            
-            scan_data = []
+        """Execute the scan job and return the mutation jobs."""
+        self.scan_obj.run()
+        return self.scan_obj.point_mutations_jobs
 
-            # load the coordinates
-            atoms = get_atoms(native.rel_path)
-            coords, chain_ranges = load_coords(native.rel_path,
-                                               atoms,
-                                               add_resname=True)
+
+class MutationJob:
+    """Job to perform a single point mutation (using haddock Engine)."""
+    
+    def __init__(self, mutation_obj):
+        """
+        Initialize MutationJob.
+        
+        Parameters
+        ----------
+        mutation_obj : ModelPointMutation
+            ModelPointMutation object to execute
+        """
+        self.mutation_obj = mutation_obj
+    
+    def run(self):
+        """Execute the mutation job."""
+        return self.mutation_obj.run()
+
+
+@dataclass
+class MutationResult:
+    """Result from a single mutation."""
+    model_id: str
+    chain: str
+    res_num: int
+    ori_resname: str
+    target_resname: str
+    # components of "mutant_scores": score, vdw, elec, desolv, bsa
+    mutant_scores: Tuple[float, float, float, float, float]  
+    delta_scores: Tuple[float, float, float, float, float]   
+    success: bool
+    error_msg: Optional[str] = None
+
+
+class InterfaceScanner:
+    """Scan interface of a model to get tartget residues and create corresponding mutation jobs."""
+    
+    def __init__(self, model, mutation_res="ALA", params=None, library_mode=True):
+        """
+        Initialize InterfaceScanner for a single model.
+        
+        Parameters
+        ----------
+        model : str, Path, or model object
+            HADDOCK model object (if library_mode = False) or 
+            Path to PDB file (if library mode = True)
+        mutation_res : str
+            Target residue for mutation (default: "ALA")
+        params : dict, optional
+            Additional parameters for interface detection 
+            (list on top of alascan/__inint__.py)
+        library_mode : bool
+            If True, execute mutations sequentially inside InterfaceScanner.run() 
+            If False, just prepare jobs - execution will be taken care of in init.py 
+            of alascan module by haddock Engine  
+        """
+        self.model = model
+        self.mutation_res = mutation_res
+        self.library_mode = library_mode
+        self.params = params or {}
+        self.point_mutations_jobs = []
+        try:
+            self.model_path = model.rel_path
+            self.model_id = model.file_name.removesuffix('.pdb')
+        except AttributeError:
+            # for library mode
+            self.model_path = Path(model)
+            self.model_id = self.model_path.stem
+      
+    def run(self):
+        """
+        Get interface residues and create mutation jobs.
+        If library_mode=True, also execute the mutations sequentially.
+        """
+        try:
+            # Calculate native scores
+            sc_dir = f"haddock3-score-{self.model_id}-{os.getpid()}"
+            try:
+                native_scores = calc_score(self.model_path, run_dir=sc_dir, outputpdb=False)
+            finally:
+                if os.path.exists(sc_dir):
+                    shutil.rmtree(sc_dir)
             
-            # check if the user wants to mutate only some residues
-            if self.filter_resdic != {'_': []}:
+            # Load coordinates
+            atoms = get_atoms(self.model_path)
+            coords, chain_ranges = load_coords(self.model_path, atoms, add_resname=True)
+            
+            # Determine target residues - user-give or all interface
+            if self.params.get("filter_resdic", {'_': []}) != {'_': []}:
+                # User-specified residues
+                filter_resdic = self.params["filter_resdic"]
                 interface = {}
-                for chain in self.filter_resdic:
+                for chain in filter_resdic:
                     if chain in chain_ranges:
                         chain_aas = [aa[1] for aa in coords if aa[0] == chain]
                         unique_aas = list(set(chain_aas))
-                        # the interface here is the intersection of the
-                        # residues in filter_resdic and the residues actually
-                        # present in the model
                         interface[chain] = [
-                            res for res in self.filter_resdic[chain]
+                            res for res in filter_resdic[chain]
                             if res in unique_aas
-                            ]
+                        ]
             else:
-                interface = CAPRI.identify_interface(
-                    native.rel_path,
-                    cutoff=self.int_cutoff
-                    )
-                # in case the user wants to scan only some chains (this is
-                # superseded by filter_resdic)
-                if self.chains != []:
+                # all interface
+                cutoff = self.params.get("int_cutoff", 5.0)
+                interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
+                # Filter by chains if user-specified
+                chains = self.params.get("chains", [])
+                if chains:
                     interface = {
-                        chain: interface[chain] for chain in self.chains
+                        chain: interface[chain] for chain in chains
                         if chain in interface
-                        }
+                    }
             
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():
                 key = f"{chain}-{resid}"
                 if key not in resname_dict:
                     resname_dict[key] = resname
-
-            # Create tasks for all residue mutations (per single model)
-            tasks = []
+            
+            # Create mutation 
+            output_mutants = self.params.get("output_mutants", False)
             for chain in interface:
                 for res in interface[chain]:
                     ori_resname = resname_dict[f"{chain}-{res}"]
-                    end_resname = self.scan_res
-                    # skip if target is that same as original (e.g. skip ALA115ALA)
-                    if ori_resname != end_resname:  
-                        tasks.append((chain, res, resname_dict, native.rel_path,
-                                self.scan_res, n_score, n_vdw, n_elec, n_des, n_bsa,
-                                sc_dir_base, self.output_mutants))
+                    end_resname = self.mutation_res
+                    # Skip if scan_residue is the same as original (e.g. skip ALA->ALA)
+                    if ori_resname != end_resname:
+                        job = ModelPointMutation(
+                            model_path=self.model_path,
+                            model_id=self.model_id,
+                            chain=chain,
+                            res_num=res,
+                            ori_resname=ori_resname,
+                            target_resname=end_resname,
+                            native_scores=native_scores,
+                            output_mutants=output_mutants
+                        )
+                        self.point_mutations_jobs.append(job)
+            
+            # Execute jobs if in library mode
+            if self.library_mode:
+                log.info(f"Executing {len(self.point_mutations_jobs)} mutations for {self.model_id}")
+                results = []
+                total = len(self.point_mutations_jobs)
+                
+                for i, job in enumerate(self.point_mutations_jobs, 1):
+                    log.info(f"Processing mutation {i}/{total}: {job.chain}:{job.res_num} {job.ori_resname}->{job.target_resname}")
+                    result = job.run()
+                    results.append(result)
+                    
+                    if result.success:
+                        log.info(f"Delta score: {result.delta_scores[0]:.2f}")
+                    else:
+                        log.warning(f"Failed: {result.error_msg}")
+                
+                write_scan_out(results, self.model_id)
 
-            print(f"[DEBUG] residue_ncores: {self.residue_ncores}")
-            print(f"[DEBUG] Number of mutation tasks: {len(tasks)}")
-            print(f"[DEBUG] Threshold to run in parallel: {max(4, self.residue_ncores + 1)}")
+                
+        except Exception as e:
+            log.error(f"Failed to scan model {self.model_id}: {e}")
+            raise
 
 
-            # Do we parallelize?
-            # Yes, if more than 1 core per model is available AND
-            # if few available per-residue cores: 2 or more residues to mutate per core 
-            # if many available per-residue cores: 1 or more residues to mutate per core
-            if self.residue_ncores > 1 and len(tasks) >= max(4, self.residue_ncores + 1):
-                print('Parallel per-residue processing')
-                print("[DEBUG] Using PARALLEL execution.")
-                scan_data = self._run_parallel_residues(tasks)
+class ModelPointMutation:
+    """Executes a single point mutation."""
+    
+    def __init__(self, model_path, model_id, chain, res_num, ori_resname, 
+                 target_resname, native_scores, output_mutants=False):
+        """
+        Initialize a single point mutation job.
+        
+        Parameters
+        ----------
+        model_path : Path
+            Path to the PDB file
+        model_id : str
+            Identifier for the model
+        chain : str
+            Chain identifier
+        res_num : int
+            Residue number
+        ori_resname : str
+            Original residue name
+        target_resname : str
+            Target residue name for mutation
+        native_scores : tuple
+            Native model scores (score, vdw, elec, desolv, bsa)
+        output_mutants : bool
+            Whether to keep mutant PDB files
+        """
+        self.model_path = Path(model_path)
+        self.model_id = model_id
+        self.chain = chain
+        self.res_num = res_num
+        self.ori_resname = ori_resname
+        self.target_resname = target_resname
+        self.native_scores = native_scores
+        self.output_mutants = output_mutants
+    
+    def run(self):
+        """Execute the point mutation."""
+        mutation_id = f"{self.model_id}_{self.chain}{self.res_num}{self.target_resname}"
+        
+        try:
+            # Setup working directory
+            process_id = multiprocessing.current_process().pid
+            sc_dir = f"haddock3-score-{mutation_id}-{process_id}"
+            os.makedirs(sc_dir, exist_ok=True)
+            
+            # Perform mutation
+            mut_pdb = mutate(self.model_path, self.chain, self.res_num, self.target_resname)
+            
+            # Calculate mutant scores
+            mutant_scores = calc_score(mut_pdb, run_dir=sc_dir, outputpdb=self.output_mutants)
+            
+            # Calculate deltas (native - mutant)
+            n_score, n_vdw, n_elec, n_des, n_bsa = self.native_scores
+            m_score, m_vdw, m_elec, m_des, m_bsa = mutant_scores
+            delta_scores = (n_score - m_score, n_vdw - m_vdw, n_elec - m_elec, 
+                          n_des - m_des, n_bsa - m_bsa)
+
+            # Handle output files
+            em_mut_pdb = Path(mut_pdb.stem + '_hs.pdb')
+            if not self.output_mutants:
+                # if output_mutants = False, then remove both files
+                if os.path.exists(mut_pdb):
+                    os.remove(mut_pdb)
+                if em_mut_pdb.exists():
+                    os.remove(em_mut_pdb)
             else:
-                print('Sequential per-residue processing')
-                print("[DEBUG] Using SEQ execution.")
-                scan_data = self._run_sequential_residues(tasks)
-
-            # Write output
-            df_columns = ['chain', 'res', 'ori_resname', 'end_resname',
-                          'score', 'vdw', 'elec', 'desolv', 'bsa',
-                          'delta_score', 'delta_vdw', 'delta_elec',
-                          'delta_desolv', 'delta_bsa']
-            self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
-            alascan_fname = Path(self.path, f"scan_{native.file_name.removesuffix('.pdb')}.tsv")
-            # add zscore
-            self.df_scan = add_zscores(self.df_scan, 'delta_score')
-
-            self.df_scan.to_csv(
-                alascan_fname,
-                index=False,
-                float_format='%.2f',
-                sep="\t"
-                )
-
-            fl_content = open(alascan_fname, 'r').read()
-            with open(alascan_fname, 'w') as f:
-                f.write(f"{'#' * 70}{os.linesep}")
-                f.write(f"# `alascan` results for {native.file_name}{os.linesep}")  # noqa E501
-                f.write(f"#{os.linesep}")
-                f.write(f"# native score = {n_score}{os.linesep}")
-                f.write(f"#{os.linesep}")
-                f.write(f"# z_score is calculated with respect to the other residues")  # noqa E501
-                f.write(f"{os.linesep}")
-                f.write(f"{'#' * 70}{os.linesep}")
-                f.write(fl_content)
+                # othervise keep energy-minimized pdb
+                if os.path.exists(em_mut_pdb):
+                    shutil.move(em_mut_pdb, mut_pdb)
+            # clean up scoring dir
+            if os.path.exists(sc_dir):
+                shutil.rmtree(sc_dir)
+            
+            return MutationResult(
+                model_id=self.model_id, chain=self.chain, res_num=self.res_num,
+                ori_resname=self.ori_resname, target_resname=self.target_resname,
+                mutant_scores=mutant_scores, delta_scores=delta_scores, success=True
+            )
+            
+        except Exception as e:
+            return MutationResult(
+                model_id=self.model_id, chain=self.chain, res_num=self.res_num,
+                ori_resname=self.ori_resname, target_resname=self.target_resname,
+                mutant_scores=(0, 0, 0, 0, 0), delta_scores=(0, 0, 0, 0, 0),
+                success=False, error_msg=str(e)
+            )

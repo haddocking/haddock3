@@ -46,19 +46,18 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
-from haddock.modules import BaseHaddockModule
-from haddock.modules import get_engine
+from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
-    Scan,
-    ScanJob,
+    InterfaceScanner,
+    InterfaceScannerJob,
+    MutationJob,
+    write_scan_out,
     alascan_cluster_analysis,
     create_alascan_plots,
     generate_alascan_output,
-    calculate_core_allocation,
-    )
+)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -86,73 +85,85 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
-        # Parallelization : optimal dispatching of models
+        
+        # output mutants is only possible if there is only one model
         nmodels = len(models)
-        # Outputting mutants is possible if there is just one model
         if self.params["output_mutants"]:
             if nmodels != 1:
                 log.warning(
-                    "output_mutants is set to True, but more than one model "
-                    "was found. Setting 'output_mutant' parameter to False."
-                    )
+                    "output_mutants is set to True but more than one model "
+                    "was found. Setting 'output_mutant' parameter to False.")
                 self.params["output_mutants"] = False
-
-        # Core maths: Is there enough cores to parallelize per-residue after
-        # giving enough cores per model ?
-        ncores = parse_ncores(n=self.params['ncores'])
-        model_cores, residue_cores_per_model = calculate_core_allocation(nmodels, ncores)
-        index_list = get_index_list(nmodels, model_cores)
         
-        if residue_cores_per_model == 1:
-            log.info(f"Using {model_cores} core(s) to process {nmodels} model(s)")
-        else:
-            log.info(f"Processing {model_cores} model(s), using {residue_cores_per_model} cores per model")
-        
-        alascan_jobs = []
-        for core in range(model_cores):
-            models_for_core = models[index_list[core]:index_list[core + 1]]
-            scan_obj = Scan(
-                model_list=models_for_core,
-                core=core,
-                residue_ncores=residue_cores_per_model,
-                path=Path("."),
+        # Step1: "get mutations" i.e. get target interface residues per input model  
+        scan_objects = []
+        scan_jobs = []
+        for model in models:
+            # 1 scan_obj per input model
+            scan_obj = InterfaceScanner(
+                mutation_res=self.params["scan_residue"],
+                model=model,
                 params=self.params,
+                library_mode = False   
             )
-            # running now the ScanJob
-            # init ScanJob
-            job = ScanJob(
-                self.params,
-                scan_obj,
-            )
-            alascan_jobs.append(job)
-
-        log.info(f"Created {len(alascan_jobs)} scan jobs")
-        # here libutil and libparallel will log info about per-model cores/tasks.
-        # This is misleading, if per-residue parallelization is present.
-        # This log makes log look more coherent, in a way.
-
-        log.info(f"Model-level parallelization:")
-
+            scan_objects.append(scan_obj)
+            # wrap in scan_jobs to give it to engine
+            scan_jobs.append(InterfaceScannerJob(scan_obj))
+        log.info(f"Scanning {nmodels} models for possible mutations")
         exec_mode = get_analysis_exec_mode(self.params["mode"])
-
         Engine = get_engine(exec_mode, self.params)
-        engine = Engine(alascan_jobs)
+        engine = Engine(scan_jobs)
         engine.run()
 
-        # cluster-based analysis
+        # Step2: perform mutations
+        # Collect mutations from the engine output 
+        for i, scan_obj in enumerate(scan_objects):
+            if i < len(engine.results) and engine.results[i]:
+                scan_obj.point_mutations_jobs = engine.results[i]
+    
+        # Merge mutations per-model "scan_obj.point_mutations_jobs" in a single mutation_objects 
+        mutation_objects = []
+        for scan_obj in scan_objects:
+            mutation_objects.extend(scan_obj.point_mutations_jobs)
+        total_mutations = len(mutation_objects)
+        log.info(f"Found {total_mutations} mutations")
+        # wrap all mutations in mutation_jobs 
+        if mutation_objects:
+            mutation_jobs = [MutationJob(mutation_obj) for mutation_obj in mutation_objects]
+            
+            # let engine take care of parallelization  
+            engine = Engine(mutation_jobs)
+            engine.run()
+
+            # Organize engine output by model
+            results_by_model = {}
+            for result in engine.results:
+                if result and result.success:
+                    if result.model_id not in results_by_model:
+                        results_by_model[result.model_id] = []
+                    results_by_model[result.model_id].append(result)
+
+            # Save to .tsv
+            for model_id, results in results_by_model.items():
+                write_scan_out(results, model_id)
+
+        # Cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)
-        # now plot the data
-        if self.params["plot"] is True:
+        
+        # Generate plots if requested
+        if self.params["plot"]:
             create_alascan_plots(
                 clt_alascan,
                 self.params["scan_residue"],
                 offline=self.params["offline"],
             )
-        # if output_bfactor is true, write the models and export them
-        if self.params["output_bfactor"] is True:
+        
+        # Generate output with bfactors if requested
+        if self.params["output_bfactor"]:
             models_to_export = generate_alascan_output(models, self.path)
             self.output_models = models_to_export
         else:
             # Send models to the next step, no operation is done on them
             self.output_models = models
+        
         self.export_io_models()

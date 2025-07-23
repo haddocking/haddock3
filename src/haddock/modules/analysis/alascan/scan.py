@@ -5,9 +5,9 @@ import shutil
 from pathlib import Path
 from contextlib import redirect_stdout
 from dataclasses import dataclass
-from typing import List, Dict, Tuple, Optional, Any
+from haddock.core.typing import Optional, Any
+from typing import List, Tuple
 
-import multiprocessing
 import numpy as np
 import pandas as pd
 
@@ -415,8 +415,26 @@ def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     return
 
 
-def write_scan_out(results, model_id):
-    """Save mutation results to TSV file."""
+def write_scan_out(results: List[Any], model_id: str) -> None:
+    """
+    Save mutation results per model to tsv file.
+    
+    Parameters
+    ----------
+    results : List[Any]
+        List of mutation results from scanning (comes from MutationResult)
+    model_id : str
+        Identifier for the model used in filename.
+        
+    Returns
+    -------
+    None
+        Function saves results to file `scan_{model_id}.tsv`.
+        
+    Notes
+    -----
+    If results list is empty, no file is created.
+    """
     if not results:
         print(f'No scan results for model {model_id}')
         return
@@ -464,45 +482,6 @@ def write_scan_out(results, model_id):
             f.write(f"# z_score is calculated with respect to the other residues\n")
             f.write(f"{'#' * 70}{os.linesep}")
             f.write(fl_content)
-
-
-class InterfaceScannerJob:
-    """Job to scan interface for the target residues (using haddock Engine)."""
-
-    def __init__(self, scan_obj):
-        """
-        Initialize InterfaceScannerJob.
-        
-        Parameters
-        ----------
-        scan_obj : InterfaceScanner
-            InterfaceScanner object to execute
-        """
-        self.scan_obj = scan_obj
-    
-    def run(self):
-        """Execute the scan job and return the mutation jobs."""
-        self.scan_obj.run()
-        return self.scan_obj.point_mutations_jobs
-
-
-class MutationJob:
-    """Job to perform a single point mutation (using haddock Engine)."""
-    
-    def __init__(self, mutation_obj):
-        """
-        Initialize MutationJob.
-        
-        Parameters
-        ----------
-        mutation_obj : ModelPointMutation
-            ModelPointMutation object to execute
-        """
-        self.mutation_obj = mutation_obj
-    
-    def run(self):
-        """Execute the mutation job."""
-        return self.mutation_obj.run()
 
 
 @dataclass
@@ -640,14 +619,15 @@ class InterfaceScanner:
                     log.info(f"Processing mutation {i}/{total}: {job.chain}:{job.res_num} {job.ori_resname}->{job.target_resname}")
                     result = job.run()
                     results.append(result)
-                    
                     if result.success:
                         log.info(f"Delta score: {result.delta_scores[0]:.2f}")
                     else:
                         log.warning(f"Failed: {result.error_msg}")
                 
                 write_scan_out(results, self.model_id)
-
+            else:
+                # return point_mutations_jobs back to alascan/__init__.py
+                return self.point_mutations_jobs
                 
         except Exception as e:
             log.error(f"Failed to scan model {self.model_id}: {e}")
@@ -656,9 +636,19 @@ class InterfaceScanner:
 
 class ModelPointMutation:
     """Executes a single point mutation."""
-    
-    def __init__(self, model_path, model_id, chain, res_num, ori_resname, 
-                 target_resname, native_scores, output_mutants=False):
+
+
+    def __init__(
+        self, 
+        model_path: Path, 
+        model_id: str, 
+        chain: str, 
+        res_num: int, 
+        ori_resname: str,
+        target_resname: str, 
+        native_scores: Tuple[float, float, float, float, float], 
+        output_mutants: bool = False
+    ) -> None:
         """
         Initialize a single point mutation job.
         
@@ -696,8 +686,7 @@ class ModelPointMutation:
         
         try:
             # Setup working directory
-            process_id = multiprocessing.current_process().pid
-            sc_dir = f"haddock3-score-{mutation_id}-{process_id}"
+            sc_dir = f"haddock3-score-{mutation_id}"
             os.makedirs(sc_dir, exist_ok=True)
             
             # Perform mutation

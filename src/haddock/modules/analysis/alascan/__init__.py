@@ -51,8 +51,6 @@ from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
     InterfaceScanner,
-    InterfaceScannerJob,
-    MutationJob,
     write_scan_out,
     alascan_cluster_analysis,
     create_alascan_plots,
@@ -97,42 +95,36 @@ class HaddockModule(BaseHaddockModule):
         
         # Step1: "get mutations" i.e. get target interface residues per input model  
         scan_objects = []
-        scan_jobs = []
         for model in models:
-            # 1 scan_obj per input model
+            # 1 scan_obj per input model, merged into scan_objects to give to Engine
             scan_obj = InterfaceScanner(
                 mutation_res=self.params["scan_residue"],
                 model=model,
                 params=self.params,
-                library_mode = False   
+                library_mode = False
             )
             scan_objects.append(scan_obj)
-            # wrap in scan_jobs to give it to engine
-            scan_jobs.append(InterfaceScannerJob(scan_obj))
+
         log.info(f"Scanning {nmodels} models for possible mutations")
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
-        engine = Engine(scan_jobs)
+        engine = Engine(scan_objects)
         engine.run()
 
         # Step2: perform mutations
         # Collect mutations from the engine output 
+        mutation_objects = []
         for i, scan_obj in enumerate(scan_objects):
             if i < len(engine.results) and engine.results[i]:
-                scan_obj.point_mutations_jobs = engine.results[i]
-    
-        # Merge mutations per-model "scan_obj.point_mutations_jobs" in a single mutation_objects 
-        mutation_objects = []
-        for scan_obj in scan_objects:
-            mutation_objects.extend(scan_obj.point_mutations_jobs)
+                #scan_obj.point_mutations_jobs = engine.results[i]
+                mutation_objects.extend(engine.results[i]) 
+
         total_mutations = len(mutation_objects)
         log.info(f"Found {total_mutations} mutations")
-        # wrap all mutations in mutation_jobs 
+
         if mutation_objects:
-            mutation_jobs = [MutationJob(mutation_obj) for mutation_obj in mutation_objects]
-            
             # let engine take care of parallelization  
-            engine = Engine(mutation_jobs)
+            engine = Engine(mutation_objects)
             engine.run()
 
             # Organize engine output by model

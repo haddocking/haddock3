@@ -271,12 +271,13 @@ def alascan_cluster_analysis(models):
         cl_id = native.clt_id
         # unclustered models have cl_id = None
         if cl_id is None:
-            cl_id = "-"
+            cl_id = "unclustered"
+        # Initiate key if this cluster id is encountered for the first time
         if cl_id not in clt_scan:
             clt_scan[cl_id] = {}
-            cl_pops[cl_id] = 1
-        else:
-            cl_pops[cl_id] += 1
+            cl_pops[cl_id] = 0
+        # Increase the popultation of that cluster
+        cl_pops[cl_id] += 1
         # read the scan file
         alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
@@ -293,44 +294,60 @@ def alascan_cluster_analysis(models):
             delta_bsa = row['delta_bsa']
             # add to the cluster data with the ident logic
             ident = f"{chain}-{res}-{ori_resname}"
-            if ident not in clt_scan[cl_id]:
+            # Create variable with appropriate key
+            if ident not in clt_scan[cl_id].keys():
                 clt_scan[cl_id][ident] = {
-                    'delta_score': delta_score,
-                    'delta_vdw': delta_vdw,
-                    'delta_elec': delta_elec,
-                    'delta_desolv': delta_desolv,
-                    'delta_bsa': delta_bsa,
-                    'frac_pr': 1
+                    'delta_score': [],
+                    'delta_vdw': [],
+                    'delta_elec': [],
+                    'delta_desolv': [],
+                    'delta_bsa': [],
+                    'frac_pr': 0,
                     }
-            else:
-                clt_scan[cl_id][ident]['delta_score'] += delta_score
-                clt_scan[cl_id][ident]['delta_vdw'] += delta_vdw
-                clt_scan[cl_id][ident]['delta_elec'] += delta_elec
-                clt_scan[cl_id][ident]['delta_desolv'] += delta_desolv
-                clt_scan[cl_id][ident]['delta_bsa'] += delta_bsa
-                clt_scan[cl_id][ident]['frac_pr'] += 1
-    # now average the data
+            # Add data
+            clt_scan[cl_id][ident]['delta_score'].append(delta_score)
+            clt_scan[cl_id][ident]['delta_vdw'].append(delta_vdw)
+            clt_scan[cl_id][ident]['delta_elec'].append(delta_elec)
+            clt_scan[cl_id][ident]['delta_desolv'].append(delta_desolv)
+            clt_scan[cl_id][ident]['delta_bsa'].append(delta_bsa)
+            clt_scan[cl_id][ident]['frac_pr'] += 1
+    # now average the data for every cluster
     for cl_id in clt_scan:
         scan_clt_filename = f"scan_clt_{cl_id}.tsv"
         log.info(f"Writing {scan_clt_filename}")
         clt_data = []
+        # Loop over residues
         for ident in clt_scan[cl_id]:
+            # Split identifyer to retrieve residue data
             chain = ident.split("-")[0]
             resnum = int(ident.split("-")[1])
             resname = ident.split("-")[2]
-            frac_pr = clt_scan[cl_id][ident]["frac_pr"]
-            clt_data.append([chain, resnum, resname, ident,
-                             clt_scan[cl_id][ident]['delta_score'] / frac_pr,
-                             clt_scan[cl_id][ident]['delta_vdw'] / frac_pr,
-                             clt_scan[cl_id][ident]['delta_elec'] / frac_pr,
-                             clt_scan[cl_id][ident]['delta_desolv'] / frac_pr,
-                             clt_scan[cl_id][ident]['delta_bsa'] / frac_pr,
-                             clt_scan[cl_id][ident]['frac_pr'] / cl_pops[cl_id]
-                             ]
-                            )
-        df_cols = ['chain', 'resnum', 'resname', 'full_resname', 'delta_score',
-                   'delta_vdw', 'delta_elec', 'delta_desolv', 'delta_bsa',
-                   'frac_pres']
+            # Point data for this specific residue
+            clt_res_dt = clt_scan[cl_id][ident]
+            # Compute averages and stddev and hold data.
+            clt_data.append([
+                chain,
+                resnum,
+                resname,
+                ident,
+                np.mean(clt_res_dt['delta_score']),
+                np.std(clt_res_dt['delta_score']),
+                np.mean(clt_res_dt['delta_vdw']),
+                np.std(clt_res_dt['delta_vdw']),
+                np.mean(clt_res_dt['delta_elec']),
+                np.std(clt_res_dt['delta_elec']),
+                np.mean(clt_res_dt['delta_desolv']),
+                np.std(clt_res_dt['delta_desolv']),
+                np.mean(clt_res_dt['delta_bsa']),
+                np.std(clt_res_dt['delta_bsa']),
+                clt_res_dt['frac_pr'] / cl_pops[cl_id],
+                ])
+        df_cols = [
+            'chain', 'resnum', 'resname', 'full_resname',
+            'delta_score', 'delta_score_std', 'delta_vdw', 'delta_vdw_std',
+            'delta_elec', 'delta_elec_std', 'delta_desolv', 'delta_desolv_std',
+            'delta_bsa', 'delta_bsa_std', 'frac_pres',
+            ]
         df_scan_clt = pd.DataFrame(clt_data, columns=df_cols)
         # adding clt-based Z score
         df_scan_clt = add_zscores(df_scan_clt, 'delta_score')
@@ -347,6 +364,7 @@ def alascan_cluster_analysis(models):
         with open(scan_clt_filename, 'w') as f:
                 f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
                 f.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
+                f.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
                 f.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
                 f.write(f"{'#' * 80}{os.linesep}")  # noqa E501

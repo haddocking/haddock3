@@ -246,5 +246,7 @@ class HaddockModule(BaseCNSModule):
 
                 haddock_score = haddock_model.calc_haddock_score(**weights)
                 model.score = haddock_score
+                model.aa_topology = [model_topo.aa_topology for model_topo in models_to_dock[0]]
+                model.cgtoaa_tbl = [model_topo.cgtoaa_tbl for model_topo in models_to_dock[0]]
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

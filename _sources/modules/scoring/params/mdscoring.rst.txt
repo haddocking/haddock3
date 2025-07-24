@@ -165,7 +165,7 @@ nemsteps
 | *default*: 200
 | *type*: integer
 | *title*: Number of EM steps
-| *min*: 1
+| *min*: 0
 | *max*: 10000
 | *short description*: Number of energy minimisation steps to perform.
 | *long description*: Number of energy minimisation steps to perform in the various EM stages of this refinement protocol. Note that the effective number might be smaller if the minimisation converges earlier.

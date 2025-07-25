@@ -5,13 +5,14 @@ import shutil
 from pathlib import Path
 from contextlib import redirect_stdout
 from dataclasses import dataclass
-from haddock.core.typing import Optional, Any
-from typing import List, Tuple
+from typing import List, Tuple, Union, Dict
 
 import numpy as np
 import pandas as pd
 
+
 from haddock import log
+from haddock.core.typing import Optional, Any
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
@@ -519,8 +520,13 @@ class MutationResult:
 
 class InterfaceScanner:
     """Scan interface of a model to get tartget residues and create corresponding mutation jobs."""
-    
-    def __init__(self, model, mutation_res="ALA", params=None, library_mode=True):
+    def __init__(
+        self, 
+        model: Union[str, Path, Any], 
+        mutation_res: str = "ALA", 
+        params: Optional[Dict[str, Any]] = None, 
+        library_mode: bool = True
+    ) -> None:    
         """
         Initialize InterfaceScanner for a single model.
         
@@ -560,6 +566,11 @@ class InterfaceScanner:
         """
         Get interface residues and create mutation jobs.
         If library_mode=True, also execute the mutations sequentially.
+
+        Returns
+        -------
+        Optional[List[ModelPointMutation]]
+            List of mutation jobs if library_mode=False, None if library_mode=True
         """
         try:
             # Calculate native scores
@@ -574,39 +585,38 @@ class InterfaceScanner:
             atoms = get_atoms(self.model_path)
             coords, chain_ranges = load_coords(self.model_path, atoms, add_resname=True)
             
-            # Determine target residues - user-given or all interface (same logic as original Scan)
-            if self.filter_resdic != {'_': []}:
-                # User-specified residues
-                interface = {}
-                for chain in self.filter_resdic:
-                    if chain in chain_ranges:
-                        chain_aas = [aa[1] for aa in coords if aa[0] == chain]
-                        unique_aas = list(set(chain_aas))
-                        # the interface here is the intersection of the
-                        # residues in filter_resdic and the residues actually 
-                        # present in the model
-                        interface[chain] = [
-                            res for res in self.filter_resdic[chain]
-                            if res in unique_aas]
-
-            else:
-                # all interface
-                cutoff = self.params.get("int_cutoff", 5.0)
-                interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
-                # in case the user wants to scan only some chains (this is
-                # superseded by filter_resdic)
-                chains = self.params.get("chains", [])
-                if chains != []:
-                    interface = {
-                        chain: interface[chain] for chain in chains
-                        if chain in interface}
+            # Determine target residues: get interface, then apply user filers, if given 
+            # Get all interface residues        
+            cutoff = self.params.get("int_cutoff", 5.0)
+            interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
             
+            # get user_chains for the chek down the line
+            user_chains = self.params.get("chains", [])
+
+            # if user defined target residues, check they are in the interface
+            if self.filter_resdic != {'_': []}:
+                filtered_interface = {}
+                for chain in self.filter_resdic:
+                    if chain in interface:
+                        user_res_valid = []
+                        for res in self.filter_resdic[chain]:
+                            if res in interface[chain]:
+                                user_res_valid.append(res)
+                        if user_res_valid:
+                            user_res_valid_unique = list(set(user_res_valid))
+                            filtered_interface[chain] = user_res_valid_unique
+                interface = filtered_interface
+            # if (user defined targer chains) & (no user target residues) - do use user chains
+            elif user_chains:
+                interface = {chain: res for chain, res in interface.items() if chain in user_chains}
+
+            # get all atoms of the model to verifiy residue type down the line
             resname_dict = {}
             for chain, resid, _atom, resname in coords.keys():
                 key = f"{chain}-{resid}"
                 if key not in resname_dict:
                     resname_dict[key] = resname
-            
+
             # Create mutation 
             output_mutants = self.params.get("output_mutants", False)
             for chain in interface:
@@ -626,7 +636,7 @@ class InterfaceScanner:
                             output_mutants=output_mutants
                         )
                         self.point_mutations_jobs.append(job)
-            
+
             # Execute jobs if in library mode
             if self.library_mode:
                 log.info(f"Executing {len(self.point_mutations_jobs)} mutations for {self.model_id}")
@@ -654,8 +664,6 @@ class InterfaceScanner:
 
 class ModelPointMutation:
     """Executes a single point mutation."""
-
-
     def __init__(
         self, 
         model_path: Path, 

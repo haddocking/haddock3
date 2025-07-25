@@ -47,7 +47,7 @@ survival of the codebase. Suggestions are always welcomed.
 7.  Add a list of your new additions to the `CHANGELOG.md` file by
 adding a new sub-header as described bellow.
 Note this applies only after we have released the
-stable `haddock3 2025.5.0` version.
+stable `haddock3 2025.05.0` version.
 
 ```markdown
 # Changelog

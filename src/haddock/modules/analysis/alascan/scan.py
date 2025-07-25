@@ -276,7 +276,7 @@ def alascan_cluster_analysis(models):
         if cl_id not in clt_scan:
             clt_scan[cl_id] = {}
             cl_pops[cl_id] = 0
-        # Increase the popultation of that cluster
+        # Increase the population of that cluster
         cl_pops[cl_id] += 1
         # read the scan file
         alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"

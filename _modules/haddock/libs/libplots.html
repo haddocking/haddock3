@@ -1551,7 +1551,7 @@
         <span class="n">clt_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">scan_res</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ALA&quot;</span><span class="p">,</span>
         <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a plotly interactive plot.</span>
 
@@ -1566,6 +1566,11 @@
 <span class="sd">        Cluster ID.</span>
 <span class="sd">    scan_res : str, optional</span>
 <span class="sd">        Residue name used for the scan, by default &quot;ALA&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    html_output_filename : str</span>
+<span class="sd">        Name of the plot generated</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">plot_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating </span><span class="si">{</span><span class="n">scan_res</span><span class="si">}</span><span class="s2"> scanning plot </span><span class="si">{</span><span class="n">plot_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1574,18 +1579,21 @@
     <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">1000</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">})</span>
     <span class="c1"># add traces</span>
+    <span class="c1"># Delta HADDOCK score</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
             <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_score&quot;</span><span class="p">],</span>
+            <span class="n">error_y</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_score_std&quot;</span><span class="p">]},</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delta_score&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
-    
+    <span class="c1"># Delta VdW</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
             <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_vdw&quot;</span><span class="p">],</span>
+            <span class="n">error_y</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_vdw_std&quot;</span><span class="p">]},</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delta_vdw&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -1594,37 +1602,46 @@
         <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
             <span class="n">y</span><span class="o">=</span><span class="mf">0.2</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_elec&quot;</span><span class="p">],</span>
+            <span class="n">error_y</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_elec_std&quot;</span><span class="p">]},</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delta_elec&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
-
+    <span class="c1"># Delta desolvation score</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Bar</span><span class="p">(</span>
             <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
             <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_desolv&quot;</span><span class="p">],</span>
+            <span class="n">error_y</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;delta_desolv_std&quot;</span><span class="p">]},</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delta_desolv&quot;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">)</span>
     <span class="c1"># prettifying layout</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scan_res</span><span class="si">}</span><span class="s2"> scanning cluster </span><span class="si">{</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Residue Name&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">)),</span>
-            <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-            <span class="n">tick0</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
+        <span class="n">xaxis</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Residue Name&quot;</span><span class="p">,</span> <span class="s2">&quot;font&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">}},</span>
+            <span class="s2">&quot;tickfont_size&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+            <span class="s2">&quot;tick0&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;full_resname&quot;</span><span class="p">],</span>
             <span class="c1"># in case we want to show less residues</span>
-            <span class="c1"># dtick=10,</span>
-            <span class="p">),</span>
-        <span class="n">yaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Average Delta (WT - mutant)&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">16</span><span class="p">)),</span>
-            <span class="n">tickfont_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">),</span>
+            <span class="c1"># &quot;dtick&quot;: 10,</span>
+            <span class="p">},</span>
+        <span class="n">yaxis</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Average Delta (WT - mutant)&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;font&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">}</span>
+                <span class="p">},</span>
+            <span class="s2">&quot;tickfont_size&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="n">legend</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">1.01</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;font_family&quot;</span><span class="p">:</span> <span class="s2">&quot;Helvetica&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">16</span>
+            <span class="p">},</span>
         <span class="n">barmode</span><span class="o">=</span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
         <span class="n">bargap</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
         <span class="n">bargroupgap</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
         <span class="n">hovermode</span><span class="o">=</span><span class="s2">&quot;x unified&quot;</span><span class="p">,</span>
-        <span class="n">hoverlabel</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">font_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">font_family</span><span class="o">=</span><span class="s2">&quot;Helvetica&quot;</span><span class="p">),</span>
+        <span class="n">hoverlabel</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;font_family&quot;</span><span class="p">:</span> <span class="s2">&quot;Helvetica&quot;</span><span class="p">},</span>
         <span class="p">)</span>
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">add_vline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">n</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
@@ -1637,7 +1654,8 @@
         <span class="n">figure_height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
         <span class="n">figure_width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
         <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">html_output_filename</span></div>
 
 
 
@@ -1778,7 +1796,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 24, 2025.
+      <span class="lastupdated">Last updated on Jul 25, 2025.
       </span></p>
   </div>
 

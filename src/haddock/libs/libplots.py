@@ -1414,7 +1414,7 @@ def make_alascan_plot(
         clt_id: int,
         scan_res: str = "ALA",
         offline: bool = False,
-        ) -> None:
+        ) -> str:
     """
     Make a plotly interactive plot.
 
@@ -1429,6 +1429,11 @@ def make_alascan_plot(
         Cluster ID.
     scan_res : str, optional
         Residue name used for the scan, by default "ALA"
+    
+    Returns
+    -------
+    html_output_filename : str
+        Name of the plot generated
     """
     plot_name = f"scan_clt_{clt_id}"
     log.info(f"Generating {scan_res} scanning plot {plot_name}")
@@ -1437,18 +1442,21 @@ def make_alascan_plot(
     width, height = 2000, 1000
     fig = go.Figure(layout={"width": width, "height": height})
     # add traces
+    # Delta HADDOCK score
     fig.add_trace(
         go.Bar(
             x=df["full_resname"],
             y=df["delta_score"],
+            error_y={"type": "data", "array": df["delta_score_std"]},
             name="delta_score",
             )
         )
-    
+    # Delta VdW
     fig.add_trace(
         go.Bar(
             x=df["full_resname"],
             y=df["delta_vdw"],
+            error_y={"type": "data", "array": df["delta_vdw_std"]},
             name="delta_vdw",
             )
         )
@@ -1457,37 +1465,46 @@ def make_alascan_plot(
         go.Bar(
             x=df["full_resname"],
             y=0.2 * df["delta_elec"],
+            error_y={"type": "data", "array": df["delta_elec_std"]},
             name="delta_elec",
             )
         )
-
+    # Delta desolvation score
     fig.add_trace(
         go.Bar(
             x=df["full_resname"],
             y=df["delta_desolv"],
+            error_y={"type": "data", "array": df["delta_desolv_std"]},
             name="delta_desolv",
             )
         )
     # prettifying layout
     fig.update_layout(
         title=f"{scan_res} scanning cluster {clt_id}",
-        xaxis=dict(
-            title=dict(text="Residue Name", font=dict(size=16)),
-            tickfont_size=14,
-            tick0=df["full_resname"],
+        xaxis={
+            "title": {"text": "Residue Name", "font": {"size": 16}},
+            "tickfont_size": 14,
+            "tick0": df["full_resname"],
             # in case we want to show less residues
-            # dtick=10,
-            ),
-        yaxis=dict(
-            title=dict(text="Average Delta (WT - mutant)", font=dict(size=16)),
-            tickfont_size=14,
-            ),
-        legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
+            # "dtick": 10,
+            },
+        yaxis={
+            "title": {
+                "text": "Average Delta (WT - mutant)",
+                "font": {"size": 16}
+                },
+            "tickfont_size": 14,
+            },
+        legend={
+            "x": 1.01, "y": 1.0,
+            "font_family": "Helvetica",
+            "font_size": 16
+            },
         barmode="group",
         bargap=0.05,
         bargroupgap=0.05,
         hovermode="x unified",
-        hoverlabel=dict(font_size=16, font_family="Helvetica"),
+        hoverlabel={"font_size": 16, "font_family": "Helvetica"},
         )
     for n in range(df.shape[0] - 1):
         fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
@@ -1501,6 +1518,7 @@ def make_alascan_plot(
         figure_width=width,
         offline=offline,
         )
+    return html_output_filename
 
 
 def fig_to_html(

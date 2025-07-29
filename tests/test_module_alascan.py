@@ -270,8 +270,8 @@ def test_run(
     )
 
     alascan.run()
-    assert Path(alascan.path, "scan_clt_-.tsv").exists()
-    assert Path(alascan.path, "scan_clt_-.html").exists()
+    assert Path(alascan.path, "scan_clt_unclustered.tsv").exists()
+    assert Path(alascan.path, "scan_clt_unclustered.html").exists()
 
 
 def test_scanjob_run(scanjob_obj, mocker):
@@ -378,13 +378,13 @@ def test_alascan_cluster_analysis(protprot_input_list, scan_file, monkeypatch):
         shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
         alascan_cluster_analysis(protprot_input_list)
 
-        assert Path("scan_clt_-.tsv").exists()
+        assert Path("scan_clt_unclustered.tsv").exists()
 
         protprot_input_list[1].clt_id = 1
         alascan_cluster_analysis(protprot_input_list)
 
         assert Path("scan_clt_1.tsv").exists()
-        assert Path("scan_clt_-.tsv").exists()
+        assert Path("scan_clt_unclustered.tsv").exists()
 
 
 def test_create_alascan_plots(mocker, caplog):

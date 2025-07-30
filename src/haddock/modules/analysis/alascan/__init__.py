@@ -41,7 +41,7 @@ You can use the parameters below to customize the behavior of the module:
     >>> resdic_A = [1,2,3,4]
     >>> resdic_B = [2,3,4]
 """
-import os
+
 from pathlib import Path
 
 from haddock import log

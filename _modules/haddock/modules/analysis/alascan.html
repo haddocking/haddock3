@@ -84,21 +84,21 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">HADDOCK3 module for alanine scan.</span>
 
-<span class="sd">This module is responsible for the alanine (or any other residue) scan analysi</span>
-<span class="sd">of the models generated in the previous step of the workflow.</span>
-<span class="sd">For each model, the module will mutate the interface residues and calculate</span>
-<span class="sd">the energy differences between the wild type and the mutant, thus providing a</span>
-<span class="sd">measure of the impact of such mutation. Such difference (delta_score) is always</span>
-<span class="sd">calculated as:</span>
+<span class="sd">This module is responsible for the alanine (or any other residue) scan analysis</span>
+<span class="sd">of the model(s) generated in the previous step of the workflow.</span>
+<span class="sd">For each model, this module will mutate the interface residues and calculate </span>
+<span class="sd">the differences in the haddock score and its individual components between the</span>
+<span class="sd">wild type and the mutant, thus providing a measure of the impact of such mutation.</span>
+<span class="sd">Such difference (delta_score) is always calculated as:</span>
 
 <span class="sd">    delta_score = score_wildtype - score_mutant</span>
 
-<span class="sd">Therefore, a positive delta_score indicates that the mutation is destabilizing</span>
-<span class="sd">while a negative delta_score indicates that the mutation is stabilizing.</span>
+<span class="sd">Therefore, a _positive_ delta_score indicates that the mutation is destabilizing</span>
+<span class="sd">while a _negative_ delta_score indicates that the mutation is stabilizing.</span>
 
 <span class="sd">If cluster information is available, the module will also calculate the</span>
-<span class="sd">average energy difference for each cluster of models. For each amino acid, a Z</span>
-<span class="sd">score is calculated as:</span>
+<span class="sd">average haddock score difference for each cluster of models. For each amino acid,</span>
+<span class="sd">a Z score is calculated as:</span>
 
 <span class="sd">    Z = (delta_score - mean) / std</span>
 
@@ -124,22 +124,21 @@
 <span class="sd">    &gt;&gt;&gt; resdic_A = [1,2,3,4]</span>
 <span class="sd">    &gt;&gt;&gt; resdic_B = [2,3,4]</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libparallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_index_list</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_ncores</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_analysis_exec_mode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.alascan.scan</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Scan</span><span class="p">,</span>
-    <span class="n">ScanJob</span><span class="p">,</span>
+    <span class="n">InterfaceScanner</span><span class="p">,</span>
+    <span class="n">write_scan_out</span><span class="p">,</span>
     <span class="n">alascan_cluster_analysis</span><span class="p">,</span>
     <span class="n">create_alascan_plots</span><span class="p">,</span>
     <span class="n">generate_alascan_output</span><span class="p">,</span>
-    <span class="p">)</span>
+<span class="p">)</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -172,62 +171,85 @@
             <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span><span class="n">individualize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-        <span class="c1"># Parallelisation : optimal dispatching of models</span>
-        <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        
         <span class="c1"># output mutants is only possible if there is only one model</span>
+        <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_mutants&quot;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">nmodels</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;output_mutants is set to True but more than one model &quot;</span>
-                    <span class="s2">&quot;was found. Setting output mutants to False.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="s2">&quot;was found. Setting &#39;output_mutant&#39; parameter to False.&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_mutants&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="n">ncores</span> <span class="o">=</span> <span class="n">parse_ncores</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ncores&#39;</span><span class="p">],</span> <span class="n">njobs</span><span class="o">=</span><span class="n">nmodels</span><span class="p">)</span>
-
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running on </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> cores&quot;</span><span class="p">)</span>
-
-        <span class="n">index_list</span> <span class="o">=</span> <span class="n">get_index_list</span><span class="p">(</span><span class="n">nmodels</span><span class="p">,</span> <span class="n">ncores</span><span class="p">)</span>
-
-        <span class="n">alascan_jobs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
-            <span class="n">scan_obj</span> <span class="o">=</span> <span class="n">Scan</span><span class="p">(</span>
-                <span class="n">model_list</span><span class="o">=</span><span class="n">models</span><span class="p">[</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span><span class="p">]:</span><span class="n">index_list</span><span class="p">[</span><span class="n">core</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span>
-                <span class="n">core</span><span class="o">=</span><span class="n">core</span><span class="p">,</span>
-                <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
-                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="c1"># running now the ScanJob</span>
-            <span class="c1"># init ScanJob</span>
-            <span class="n">job</span> <span class="o">=</span> <span class="n">ScanJob</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                <span class="n">scan_obj</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="n">alascan_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
-
-        <span class="n">exec_mode</span> <span class="o">=</span> <span class="n">get_analysis_exec_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">])</span>
-
-        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">exec_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
-        <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">alascan_jobs</span><span class="p">)</span>
-        <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         
-        <span class="c1"># cluster-based analysis</span>
-        <span class="n">clt_alascan</span> <span class="o">=</span> <span class="n">alascan_cluster_analysis</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
-        <span class="c1"># now plot the data</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;plot&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">create_alascan_plots</span><span class="p">(</span>
-                <span class="n">clt_alascan</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scan_residue&quot;</span><span class="p">],</span>
-                <span class="n">offline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;offline&quot;</span><span class="p">],</span>
+        <span class="c1"># Step1: &quot;get mutations&quot; i.e. get target interface residues per input model  </span>
+        <span class="n">scan_objects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="c1"># 1 scan_obj per input model, merged into scan_objects to give to Engine</span>
+            <span class="n">scan_obj</span> <span class="o">=</span> <span class="n">InterfaceScanner</span><span class="p">(</span>
+                <span class="n">mutation_res</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scan_residue&quot;</span><span class="p">],</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">library_mode</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">scan_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scan_obj</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scanning </span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2"> models for possible mutations&quot;</span><span class="p">)</span>
+        <span class="n">exec_mode</span> <span class="o">=</span> <span class="n">get_analysis_exec_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">])</span>
+        <span class="n">Engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">exec_mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">scan_objects</span><span class="p">)</span>
+        <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># Step2: perform mutations</span>
+        <span class="c1"># Collect mutations from the engine output </span>
+        <span class="n">mutation_objects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scan_obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scan_objects</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">results</span><span class="p">)</span> <span class="ow">and</span> <span class="n">engine</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="c1">#scan_obj.point_mutations_jobs = engine.results[i]</span>
+                <span class="n">mutation_objects</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> 
+
+        <span class="n">total_mutations</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mutation_objects</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">total_mutations</span><span class="si">}</span><span class="s2"> mutations&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mutation_objects</span><span class="p">:</span>
+            <span class="c1"># let engine take care of parallelization  </span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">mutation_objects</span><span class="p">)</span>
+            <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+            <span class="c1"># Organize engine output by model</span>
+            <span class="n">results_by_model</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">engine</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">model_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">results_by_model</span><span class="p">:</span>
+                        <span class="n">results_by_model</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">model_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">results_by_model</span><span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">model_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="c1"># Save to .tsv</span>
+            <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">results</span> <span class="ow">in</span> <span class="n">results_by_model</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">write_scan_out</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
+
+            <span class="c1"># Cluster-based analysis</span>
+            <span class="n">clt_alascan</span> <span class="o">=</span> <span class="n">alascan_cluster_analysis</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+            
+            <span class="c1"># Generate plots if requested</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;plot&quot;</span><span class="p">]:</span>
+                <span class="n">create_alascan_plots</span><span class="p">(</span>
+                    <span class="n">clt_alascan</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scan_residue&quot;</span><span class="p">],</span>
+                    <span class="n">offline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;offline&quot;</span><span class="p">],</span>
                 <span class="p">)</span>
-        <span class="c1"># if output_bfactor is true, write the models and export them</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_bfactor&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">models_to_export</span> <span class="o">=</span> <span class="n">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_export</span>
+
+            <span class="c1"># Generate output models with bfactors if requested  </span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;output_bfactor&quot;</span><span class="p">]:</span>
+                <span class="n">models_to_export</span> <span class="o">=</span> <span class="n">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_export</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># # Send models to the next step, no operation is done on them </span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Send models to the next step,</span>
-            <span class="c1">#  no operation is done on them</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No interface residues found - skipping mutation analysis&quot;</span><span class="p">)</span>
+            <span class="c1"># Send models to the next step, no operation is done on them</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span></div>
 
 </pre></div>
@@ -240,7 +262,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 29, 2025.
+      <span class="lastupdated">Last updated on Jul 30, 2025.
       </span></p>
   </div>
 

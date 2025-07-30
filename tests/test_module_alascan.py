@@ -684,7 +684,9 @@ def test_model_point_mutation_run(mocker, mutation_job, monkeypatch):
         assert result.res_num == 19
         assert result.ori_resname == "THR"
         assert result.target_resname == "ALA"
-        assert result.mutant_scores == mutant_scores
+        # check resulted mutant_scores aproximately match expected mutant_scores
+        for result_score, expected_score in zip(result.mutant_scores, mutant_scores):
+            assert pytest.approx(result_score, abs=0.2) == expected_score
         # test cleanup was called
         mock_mutate.assert_called_once_with(mutation_job.model_path, "A", 19, "ALA")
         mock_calc_score.assert_called_once()

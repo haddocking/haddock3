@@ -590,7 +590,7 @@ class InterfaceScanner:
             cutoff = self.params.get("int_cutoff", 5.0)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
             
-            # get user_chains for the chek down the line
+            # get user_chains for the check down the line
             user_chains = self.params.get("chains", [])
 
             # if user defined target residues, check they are in the interface
@@ -598,15 +598,14 @@ class InterfaceScanner:
                 filtered_interface = {}
                 for chain in self.filter_resdic:
                     if chain in interface:
-                        user_res_valid = []
-                        for res in self.filter_resdic[chain]:
-                            if res in interface[chain]:
-                                user_res_valid.append(res)
+                        # Search for the intersection of user queried residues and interface residues
+                        user_res_valid = list(set(self.filter_resdic[chain]).intersection(set(interface[chain])))
+                        # If at least one residue must be analyzed, add it to residues to be scanned
                         if user_res_valid:
-                            user_res_valid_unique = list(set(user_res_valid))
-                            filtered_interface[chain] = user_res_valid_unique
+                            filtered_interface[chain] = user_res_valid
                 interface = filtered_interface
-            # if (user defined targer chains) & (no user target residues) - do use user chains
+
+            # if (user defined target chains) & (no user target residues) - do use user chains
             elif user_chains:
                 interface = {chain: res for chain, res in interface.items() if chain in user_chains}
 
@@ -636,7 +635,7 @@ class InterfaceScanner:
                             output_mutants=output_mutants
                         )
                         self.point_mutations_jobs.append(job)
-
+    
             # Execute jobs if in library mode
             if self.library_mode:
                 log.info(f"Executing {len(self.point_mutations_jobs)} mutations for {self.model_id}")

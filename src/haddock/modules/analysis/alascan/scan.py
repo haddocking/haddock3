@@ -216,6 +216,160 @@ def add_zscores(df_scan_clt, column='delta_score'):
     return df_scan_clt
 
 
+def group_scan_by_cluster(
+        models: List[PDBFile],
+        ) -> Tuple[
+            Dict[str, Dict[str, Dict[str, Union[float, int]]]],
+            Dict[str, int]
+            ]:
+
+    clt_scan: Dict[str, Dict[str, Dict[str, Union[float, int]]]] = {}
+    clt_pops: Dict[str, int] = {}
+    # Loop over models
+    for native in models:
+        # Point cluster id
+        cl_id = native.clt_id
+        # unclustered models have cl_id = None
+        if cl_id is None:
+            cl_id = "unclustered"
+        # Initiate key if this cluster id is encountered for the first time
+        if cl_id not in clt_scan:
+            clt_scan[cl_id] = {}
+            clt_pops[cl_id] = 0
+        # Increase the population of that cluster
+        clt_pops[cl_id] += 1
+        # read the scan file
+        alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
+        df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
+        # loop over the scan file rows
+        for row_idx in range(df_scan.shape[0]):
+            row = df_scan.iloc[row_idx]
+            # Extra data related to residue information
+            chain = row['chain']
+            res = row['res']
+            ori_resname = row['ori_resname']
+            # add to the cluster data with the ident logic
+            ident = f"{chain}-{res}-{ori_resname}"
+            # Create variable with appropriate key
+            if ident not in clt_scan[cl_id].keys():
+                clt_scan[cl_id][ident] = {
+                    'delta_score': [],
+                    'delta_vdw': [],
+                    'delta_elec': [],
+                    'delta_desolv': [],
+                    'delta_bsa': [],
+                    'frac_pr': 0,
+                    }
+            # Add data
+            for dt_key in ['delta_score', 'delta_vdw', 'delta_elec', 
+                           'delta_desolv', 'delta_bsa']:
+                clt_scan[cl_id][ident][dt_key].append(row[dt_key])
+            clt_scan[cl_id][ident]['frac_pr'] += 1
+    return clt_scan, clt_pops
+
+
+class ClusterOutputer():
+    def __init__(
+            self,
+            cluster_scan_data: Dict[str, Dict[str, Union[float, int]]],
+            clt_id: str,
+            clt_population: int,
+            scan_residue: str = "ALA",
+            plot: bool = False,
+            offline: bool = False,
+            ):
+        self.cluster_scan_data = cluster_scan_data
+        self.clt_id = clt_id
+        self.clt_population = clt_population
+        self.scanned_residue = scan_residue
+        self.generate_plot = plot
+        self.offline = offline
+
+    def run(self) -> str:
+        # Gather all data in a list
+        clt_data = []
+        # Loop over residues
+        for ident, clt_res_dt in self.cluster_scan_data.items():
+            # Split identifyer to retrieve residue data
+            chain = ident.split("-")[0]
+            resnum = int(ident.split("-")[1])
+            resname = ident.split("-")[2]
+            # Compute averages and stddev and hold data.
+            clt_data.append([
+                chain,
+                resnum,
+                resname,
+                ident,
+                np.mean(clt_res_dt['delta_score']),
+                np.std(clt_res_dt['delta_score']),
+                np.mean(clt_res_dt['delta_vdw']),
+                np.std(clt_res_dt['delta_vdw']),
+                np.mean(clt_res_dt['delta_elec']),
+                np.std(clt_res_dt['delta_elec']),
+                np.mean(clt_res_dt['delta_desolv']),
+                np.std(clt_res_dt['delta_desolv']),
+                np.mean(clt_res_dt['delta_bsa']),
+                np.std(clt_res_dt['delta_bsa']),
+                clt_res_dt['frac_pr'] / self.clt_population,
+                ])
+        df_cols = [
+            'chain', 'resnum', 'resname', 'full_resname',
+            'delta_score', 'delta_score_std', 'delta_vdw', 'delta_vdw_std',
+            'delta_elec', 'delta_elec_std', 'delta_desolv', 'delta_desolv_std',
+            'delta_bsa', 'delta_bsa_std', 'frac_pres',
+            ]
+        df_scan_clt = pd.DataFrame(clt_data, columns=df_cols)
+        # adding clt-based Z score
+        df_scan_clt = add_zscores(df_scan_clt, 'delta_score')
+        # Sort rows
+        df_scan_clt.sort_values(by=['chain', 'resnum'], inplace=True)
+        # Generate output CSV data
+        csv_data = io.StringIO()
+        df_scan_clt.to_csv(
+            csv_data,
+            index=False,
+            float_format='%.2f',
+            sep="\t")
+        csv_data.seek(0)
+        # Define output csv filepath
+        scan_clt_filename = f"scan_clt_{self.clt_id}.tsv"
+        log.info(f"Writing {scan_clt_filename}")
+        # Write the file
+        with open(scan_clt_filename, "w") as fout:
+            # add comment to the file
+            fout.write(f"{'#' * 80}{os.linesep}")
+            fout.write(f"# `alascan` cluster results for cluster {self.clt_id}{os.linesep}")  # noqa E501
+            fout.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
+            fout.write(f"{'#' * 80}{os.linesep}")
+            # Write csv data content
+            fout.write(csv_data.read())
+        
+        # Generate plot
+        self.gen_alascan_plot(df_scan_clt)
+
+        return scan_clt_filename
+
+    def gen_alascan_plot(self, df_scan_clt) -> None:
+        # Check if the plot must be generated
+        if not self.generate_plot:
+            return
+
+        # Try to plot the data
+        try:
+            make_alascan_plot(
+                df_scan_clt,
+                self.clt_id,
+                self.scanned_residue,
+                offline=self.offline,
+                )
+        except Exception as e:
+            log.warning(
+                "Could not create interactive plot. The following error"
+                f" occurred {e}"
+                )
+
 def alascan_cluster_analysis(models):
     """Perform cluster analysis on the alascan data.
     
@@ -407,6 +561,41 @@ class AddDeltaBFactor():
         return pdb_f
 
 
+class AlascanPlotGenerator():
+    def __init__(
+            self,
+            cluster_id,
+            scaned_residue: str,
+            offline: bool = False,
+            ):
+        self.cluster_id = cluster_id
+        self.scaned_residue = scaned_residue
+        self.offline_plot = offline
+
+    def run(self):
+        # Build expected cluster filepath
+        scan_clt_filename = f"scan_clt_{self.cluster_id}.tsv"
+        if not os.path.exists(scan_clt_filename):
+            log.warning(f"Could not find {scan_clt_filename}")
+
+        df_scan_clt = pd.read_csv(
+            scan_clt_filename,
+            sep="\t",
+            comment="#"
+            )
+        # plot the data
+        try:
+            make_alascan_plot(
+                df_scan_clt,
+                clt_id,
+                scan_residue,
+                offline=offline,
+                )
+        except Exception as e:
+            log.warning(
+                "Could not create interactive plot. The following error"
+                f" occurred {e}"
+                )
 def create_alascan_plots(clt_alascan, scan_residue, offline = False):
     """Create the alascan plots."""
     for clt_id in clt_alascan:            

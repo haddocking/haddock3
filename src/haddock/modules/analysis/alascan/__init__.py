@@ -50,10 +50,11 @@ from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
     AddDeltaBFactor,
+    ClusterOutputer,
+    group_scan_by_cluster,
     InterfaceScanner,
     write_scan_out,
     alascan_cluster_analysis,
-    create_alascan_plots,
 )
 
 
@@ -138,22 +139,28 @@ class HaddockModule(BaseHaddockModule):
                 write_scan_out(results, model_id)
 
             # Cluster-based analysis
-            clt_alascan = alascan_cluster_analysis(models)
-            
-            # Generate plots if requested
-            if self.params["plot"]:
-                create_alascan_plots(
-                    clt_alascan,
-                    self.params["scan_residue"],
+            clt_scan, clt_pops = group_scan_by_cluster(models)
+            alascan_cluster_jobs = [
+                ClusterOutputer(
+                    clt_data,
+                    clt_id,
+                    clt_pops[clt_id],
+                    scan_residue=self.params["scan_residue"],
+                    plot=self.params["plot"],
                     offline=self.params["offline"],
                 )
+                for clt_id, clt_data in clt_scan.items()
+            ]
+            engine = Engine(alascan_cluster_jobs)
+            engine.run()
+
 
             # Generate output models with bfactors if requested  
             if self.params["output_bfactor"]:
                 update_with_bfactor_jobs = [
                     AddDeltaBFactor(model, self.path)
                     for model in models
-                ]
+                    ]
                 engine = Engine(update_with_bfactor_jobs)
                 engine.run()
                 models_to_export = engine.results

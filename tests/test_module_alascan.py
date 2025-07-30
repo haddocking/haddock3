@@ -15,12 +15,10 @@ from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
     AddDeltaBFactor,
-    #add_delta_to_bfactor,
     add_zscores,
     alascan_cluster_analysis,
     calc_score,
     create_alascan_plots,
-    #generate_alascan_output,
     mutate,
     write_scan_out,
     MutationResult,

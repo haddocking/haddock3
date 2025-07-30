@@ -54,7 +54,6 @@ from haddock.modules.analysis.alascan.scan import (
     group_scan_by_cluster,
     InterfaceScanner,
     write_scan_out,
-    alascan_cluster_analysis,
 )
 
 

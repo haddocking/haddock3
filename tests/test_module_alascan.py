@@ -16,9 +16,9 @@ from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
     AddDeltaBFactor,
     add_zscores,
-    alascan_cluster_analysis,
     calc_score,
-    create_alascan_plots,
+    ClusterOutputer,
+    group_scan_by_cluster,
     mutate,
     write_scan_out,
     MutationResult,
@@ -261,23 +261,6 @@ class MockPreviousIO:
         return [
             PDBFile(file_name="protprot_complex_1.pdb", path=str(golden_data)),
         ]
-
-
-def mock_alascan_cluster_analysis():
-    """Mock alascan_cluster_analysis."""
-    # Return whatever is necessary for the `run` method to work
-    return {
-        0: {
-            "X-X-X": {
-                "delta_score": 0.0,
-                "delta_vdw": 0.0,
-                "delta_elec": 0.0,
-                "delta_desolv": 0.0,
-                "delta_bsa": 0.0,
-                "frac_pr": 0.0,
-            }
-        },
-    }
 
 
 # tests starts here
@@ -867,38 +850,65 @@ def test_generate_alascan_output(protprot_model_list, scan_file, monkeypatch):
         assert new_model_to_export.file_name == "protprot_complex_1_alascan.pdb"
 
 
-def test_alascan_cluster_analysis(protprot_input_list, scan_file, monkeypatch):
+def test_alascan_group_scan_by_cluster(protprot_input_list, scan_file, monkeypatch):
+    """Test grouping made by group_scan_by_cluster."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
+        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
+        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        assert "unclustered" in clt_scan.keys()
+        assert clt_pops["unclustered"] == 2
+
+        # Set the cluster id to 1 for second input
+        protprot_input_list[1].clt_id = 1
+        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        assert "unclustered" in clt_scan.keys()
+        assert 1 in clt_scan.keys()
+        assert clt_pops["unclustered"] == 1
+        assert clt_pops[1] == 1
+
+
+def test_alascan_cluster_full_outputs(protprot_input_list, scan_file, monkeypatch):
     """Test alascan_cluster_analysis."""
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
         shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
         shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
-        alascan_cluster_analysis(protprot_input_list)
+        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        cluster_analysis = ClusterOutputer(
+            clt_scan["unclustered"],
+            "unclustered",
+            clt_pops["unclustered"],
+            scan_residue="ALA",
+            plot=True,
+            offline=False,
+        )
+        cluster_analysis.run()
 
         assert Path("scan_clt_unclustered.tsv").exists()
+        assert Path("scan_clt_unclustered.html").exists()
 
-        protprot_input_list[1].clt_id = 1
-        alascan_cluster_analysis(protprot_input_list)
 
-        assert Path("scan_clt_1.tsv").exists()
+def test_alascan_cluster_no_plot(protprot_input_list, scan_file, monkeypatch):
+    """Test alascan_cluster_analysis."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
+        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
+        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        cluster_analysis = ClusterOutputer(
+            clt_scan["unclustered"],
+            "unclustered",
+            clt_pops["unclustered"],
+            scan_residue="ALA",
+            plot=False,
+            offline=False,
+        )
+        cluster_analysis.run()
+
         assert Path("scan_clt_unclustered.tsv").exists()
-
-
-def test_create_alascan_plots(mocker, caplog):
-    """Test create_alascan_plots."""
-    mocker.patch("pandas.read_csv", return_value=pd.DataFrame())
-    create_alascan_plots({"-": []}, scan_residue="ALA")
-
-    for record in caplog.records:
-        assert record.levelname == "WARNING"
-
-    # now assuming existing file but wrong plot creation
-    mocker.patch("pandas.read_csv", return_value=[])
-    mocker.patch("os.path.exists", return_value=True)
-
-    create_alascan_plots({"-": []}, scan_residue="ALA")
-    for record in caplog.records:
-        assert record.levelname in ["INFO", "WARNING"]
+        assert not Path("scan_clt_unclustered.html").exists()
 
 
 def test_write_scan_out_with_mutation_results(successful_mutation_result, successful_mutation_result_2, monkeypatch):

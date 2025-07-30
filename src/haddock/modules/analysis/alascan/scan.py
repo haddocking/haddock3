@@ -5,15 +5,16 @@ import shutil
 from pathlib import Path
 from contextlib import redirect_stdout
 from dataclasses import dataclass
-from typing import List, Tuple, Union, Dict
+from typing import List, Tuple, Dict
 
 import numpy as np
 import pandas as pd
 
 
 from haddock import log
-from haddock.core.typing import Optional, Any
+from haddock.core.typing import Any, Optional, Union
 from haddock.libs.libalign import get_atoms, load_coords
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
 from haddock.clis import cli_score
@@ -117,50 +118,6 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     with open(mut_pdb_fname, 'w') as fh:
         fh.write(''.join(mut_pdb_l))
     return mut_pdb_fname
-
-
-def add_delta_to_bfactor(pdb_f, df_scan):
-    """Add delta scores as b-factors.
-    
-    Parameters
-    ----------
-    pdb_f : str
-        Path to the pdb file.
-
-    df_scan : pandas.DataFrame
-        Dataframe with the scan results for the model
-    
-    Returns
-    -------
-    pdb_f : str
-        Path to the pdb file with the b-factors added.
-    """
-    tmp_pdb_f = pdb_f.replace('.pdb', '_bfactor.pdb')
-    max_b, min_b = df_scan["delta_score"].max(), df_scan["delta_score"].min()
-    out_pdb_l = []
-    with open(pdb_f, 'r') as fh:
-        for line in fh.readlines():
-            if line.startswith('ATOM'):
-                chain = line[21]
-                resnum = int(line[22:26])
-                norm_delta = 0.0
-                # extracting all the elements of df_scan such that
-                # chain = chain and res = resnum
-                df_scan_subset = df_scan.loc[
-                    (df_scan["chain"] == chain) & (df_scan["res"] == resnum)
-                    ]
-                if df_scan_subset.shape[0] > 0:
-                    delta = df_scan_subset["delta_score"].values[0]
-                    norm_delta = 100 * (delta - min_b) / (max_b - min_b)
-
-                delta_str = f"{norm_delta:.2f}".rjust(6, " ")
-                line = line[:60] + delta_str + line[66:]
-            out_pdb_l.append(line)
-    with open(tmp_pdb_f, 'w') as out_fh:
-        out_fh.write(''.join(out_pdb_l))
-    # move tmp_pdb_f to pdb_f
-    os.rename(tmp_pdb_f, pdb_f)
-    return pdb_f
 
 
 def get_score_string(pdb_f, run_dir, outputpdb=False):
@@ -365,45 +322,89 @@ def alascan_cluster_analysis(models):
             sep="\t")
 
         # add comment
-        fl_content = open(scan_clt_filename, 'r').read()
-        with open(scan_clt_filename, 'w') as f:
-                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
-                f.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
-                f.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
-                f.write(f"#{os.linesep}")
-                f.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
-                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
-                f.write(fl_content)
+        fl_content = open(scan_clt_filename, "r").read()
+        with open(scan_clt_filename, "w") as fout:
+            fout.write(f"{'#' * 80}{os.linesep}")
+            fout.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
+            fout.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
+            fout.write(f"{'#' * 80}{os.linesep}")
+            fout.write(fl_content)
     return clt_scan
 
 
-def generate_alascan_output(models, path):
-    """Generate the alascan output files.
-    
-    Parameters
-    ----------
-    models : list
-        List of models.
-    path : str
-        Path to the run directory.
-    """
-    models_to_export = []
-    for model in models:
-        name = f"{model.file_name.removesuffix('.pdb')}_alascan.pdb"
-        # changing attributes
+class AddDeltaBFactor():
+    """Add delta score in bfactor column of a PDB."""
+    def __init__(self, model: PDBFile, path: Path):
+        self.model = model
+        self.path = path
+
+    def run(self) -> PDBFile:
+        # Define new pdb filename
+        model_fname = self.model.file_name.removesuffix(".pdb")
+        name = f"{model_fname}_alascan.pdb"
         name_path = Path(name)
-        shutil.copy(Path(model.path, model.file_name), name_path) 
-        alascan_fname = f"scan_{model.file_name.removesuffix('.pdb')}.tsv"
-        # add delta_score as a bfactor to the model
+        # Copy original file
+        shutil.copy(Path(self.model.path, self.model.file_name), name_path)
+        # Find name of the alascan file where data is stored
+        alascan_fname = f"scan_{model_fname}.tsv"
+        # Read information
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
-        add_delta_to_bfactor(name, df_scan)
-        model.ori_name = model.file_name
-        model.file_name = name
-        model.full_name = name
-        model.rel_path = Path('..', Path(path).name, name)
-        model.path = str(Path(".").resolve())
-        models_to_export.append(model)
-    return models_to_export
+        # Add delta_score as a bfactor to the model
+        self.add_delta_to_bfactor(name, df_scan)
+        # Update attributes of the model
+        self.model.ori_name = self.model.file_name
+        self.model.file_name = name
+        self.model.full_name = name
+        self.model.rel_path = Path("..", Path(self.path).name, name)
+        self.model.path = str(Path(".").resolve())
+        return self.model
+    
+    @staticmethod
+    def add_delta_to_bfactor(pdb_f: Path, df_scan: pd.DataFrame) -> Path:
+        """Add delta scores as b-factors.
+        
+        Parameters
+        ----------
+        pdb_f : Path
+            Path to the pdb file.
+
+        df_scan : pandas.DataFrame
+            Dataframe with the scan results for the model
+        
+        Returns
+        -------
+        pdb_f : Path
+            Path to the pdb file with the b-factors added.
+        """
+        # Obtain min and max delta score to be able to normalize later
+        max_b, min_b = df_scan["delta_score"].max(), df_scan["delta_score"].min()
+        # Read file and store data
+        with open(pdb_f, "r") as fh:
+            pdb_lines = fh.readlines()
+        # Start overwritting the file
+        with open(pdb_f, "w") as out_fh:
+            for line in pdb_lines:
+                if line.startswith("ATOM"):
+                    chain = line[21]
+                    resnum = int(line[22:26])
+                    norm_delta = 0.0
+                    # extracting all the elements of df_scan such that
+                    # chain = chain and res = resnum
+                    df_scan_subset = df_scan.loc[
+                        (df_scan["chain"] == chain) & (df_scan["res"] == resnum)
+                        ]
+                    # Check if we have access to data
+                    if df_scan_subset.shape[0] > 0:
+                        delta = df_scan_subset["delta_score"].values[0]
+                        norm_delta = 100 * (delta - min_b) / (max_b - min_b)
+                    # Generate the bfactor string
+                    delta_str = f"{norm_delta:.2f}".rjust(6, " ")
+                    # Modify the PDB line
+                    line = line[:60] + delta_str + line[66:]
+                out_fh.write(line)
+        return pdb_f
 
 
 def create_alascan_plots(clt_alascan, scan_residue, offline = False):
@@ -519,7 +520,10 @@ class MutationResult:
 
 
 class InterfaceScanner:
-    """Scan interface of a model to get tartget residues and create corresponding mutation jobs."""
+    """Scan interface of a model to get tartget residues and create
+    corresponding mutation jobs.
+    """
+
     def __init__(
         self, 
         model: Union[str, Path, Any], 
@@ -583,7 +587,11 @@ class InterfaceScanner:
             
             # Load coordinates
             atoms = get_atoms(self.model_path)
-            coords, chain_ranges = load_coords(self.model_path, atoms, add_resname=True)
+            coords, _chain_ranges = load_coords(
+                self.model_path,
+                atoms,
+                add_resname=True,
+                )
             
             # Determine target residues: get interface, then apply user filers, if given 
             # Get all interface residues        

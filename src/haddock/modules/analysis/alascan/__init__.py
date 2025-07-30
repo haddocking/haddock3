@@ -46,15 +46,14 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
+    AddDeltaBFactor,
     InterfaceScanner,
     write_scan_out,
     alascan_cluster_analysis,
     create_alascan_plots,
-    generate_alascan_output,
 )
 
 
@@ -93,17 +92,17 @@ class HaddockModule(BaseHaddockModule):
                     "was found. Setting 'output_mutant' parameter to False.")
                 self.params["output_mutants"] = False
         
-        # Step1: "get mutations" i.e. get target interface residues per input model  
-        scan_objects = []
-        for model in models:
-            # 1 scan_obj per input model, merged into scan_objects to give to Engine
-            scan_obj = InterfaceScanner(
+        # Step1: "get mutations" i.e. get target interface residues per input model
+        # 1 scan_obj per input model, merged into scan_objects to give to Engine  
+        scan_objects = [
+            InterfaceScanner(
                 mutation_res=self.params["scan_residue"],
                 model=model,
                 params=self.params,
                 library_mode = False
-            )
-            scan_objects.append(scan_obj)
+                )
+            for model in models
+            ]
 
         log.info(f"Scanning {nmodels} models for possible mutations")
         exec_mode = get_analysis_exec_mode(self.params["mode"])
@@ -112,12 +111,11 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
 
         # Step2: perform mutations
-        # Collect mutations from the engine output 
+        # Collect all point mutations to be performed
         mutation_objects = []
-        for i, scan_obj in enumerate(scan_objects):
-            if i < len(engine.results) and engine.results[i]:
-                #scan_obj.point_mutations_jobs = engine.results[i]
-                mutation_objects.extend(engine.results[i]) 
+        for mutations_to_perform in engine.results:
+            if mutations_to_perform:
+                mutation_objects.extend(mutations_to_perform) 
 
         total_mutations = len(mutation_objects)
         log.info(f"Found {total_mutations} mutations")
@@ -152,10 +150,16 @@ class HaddockModule(BaseHaddockModule):
 
             # Generate output models with bfactors if requested  
             if self.params["output_bfactor"]:
-                models_to_export = generate_alascan_output(models, self.path)
+                update_with_bfactor_jobs = [
+                    AddDeltaBFactor(model, self.path)
+                    for model in models
+                ]
+                engine = Engine(update_with_bfactor_jobs)
+                engine.run()
+                models_to_export = engine.results
                 self.output_models = models_to_export
             else:
-                # # Send models to the next step, no operation is done on them 
+                # Send models to the next step, no operation is done on them 
                 self.output_models = models
         else:
             log.info("No interface residues found - skipping mutation analysis")

@@ -14,12 +14,13 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
-    add_delta_to_bfactor,
+    AddDeltaBFactor,
+    #add_delta_to_bfactor,
     add_zscores,
     alascan_cluster_analysis,
     calc_score,
     create_alascan_plots,
-    generate_alascan_output,
+    #generate_alascan_output,
     mutate,
     write_scan_out,
     MutationResult,
@@ -814,7 +815,8 @@ def test_add_delta_to_bfactor(protprot_model_list, example_df_scan, monkeypatch)
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         monkeypatch.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
-        add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
+        add_delta_to_bfactor_obj = AddDeltaBFactor(protprot_model_list[0], tmpdir)
+        add_delta_to_bfactor_obj.add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
         # ALA 19 should have beta = 100.0
         assert np.isclose(100.0, float(open(mut_pdb_fname).readline()[60:66]))
 
@@ -857,15 +859,14 @@ def test_calc_score_wrong(mocker):
         calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
 
 
-def test_generate_alascan_output(mocker, protprot_model_list, scan_file, monkeypatch):
+def test_generate_alascan_output(protprot_model_list, scan_file, monkeypatch):
     """Test the generate_alascan_output method."""
     with tempfile.TemporaryDirectory() as tmpdir:
         shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.tsv"))
         monkeypatch.chdir(tmpdir)
-        models_to_export = generate_alascan_output(protprot_model_list, path=tmpdir)
-        assert len(models_to_export) == 1
-        assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
-        assert models_to_export[0].file_name == "protprot_complex_1_alascan.pdb"
+        new_model_to_export = AddDeltaBFactor(protprot_model_list[0], tmpdir).run()
+        assert new_model_to_export.ori_name == "protprot_complex_1.pdb"
+        assert new_model_to_export.file_name == "protprot_complex_1_alascan.pdb"
 
 
 def test_alascan_cluster_analysis(protprot_input_list, scan_file, monkeypatch):

@@ -222,7 +222,22 @@ def group_scan_by_cluster(
             Dict[str, Dict[str, Dict[str, Union[float, int]]]],
             Dict[str, int]
             ]:
+    """Group models alascan data per cluster.
 
+    Parameters
+    ----------
+    models : List[PDBFile]
+        List of input models
+
+    Returns
+    -------
+    clt_scan : Dict[str, Dict[str, Dict[str, Union[float, int]]]]
+        Dictionary containing alascan data for each cluster, grouped by
+        residue identifyer.
+    clt_pops: Dict[str, int]
+        Dictionary containing number of entries for each cluster.
+    """
+    # Define holders
     clt_scan: Dict[str, Dict[str, Dict[str, Union[float, int]]]] = {}
     clt_pops: Dict[str, int] = {}
     # Loop over models
@@ -269,20 +284,38 @@ def group_scan_by_cluster(
 
 
 class ClusterOutputer():
+    """Manage the generation of alascan outputs for cluster-based analysis."""
     def __init__(
             self,
             cluster_scan_data: Dict[str, Dict[str, Union[float, int]]],
             clt_id: str,
             clt_population: int,
             scan_residue: str = "ALA",
-            plot: bool = False,
+            generate_plot: bool = False,
             offline: bool = False,
             ):
+        """Initialization function
+
+        Parameters
+        ----------
+        cluster_scan_data : Dict[str, Dict[str, Union[float, int]]]
+            Dictionary containing alascan data per residue identifyer.
+        clt_id : str
+            Cluster identifyer
+        clt_population : int
+            Number of entries in this cluster.
+        scan_residue : str, optional
+            Residue scanned, by default "ALA"
+        generate_plot : bool, optional
+            Defines if a plot must be generated, by default False
+        offline : bool, optional
+            Defines if the plot should be functional offline, by default False
+        """
         self.cluster_scan_data = cluster_scan_data
         self.clt_id = clt_id
         self.clt_population = clt_population
         self.scanned_residue = scan_residue
-        self.generate_plot = plot
+        self.generate_plot = generate_plot
         self.offline = offline
 
     def run(self) -> str:
@@ -351,7 +384,14 @@ class ClusterOutputer():
 
         return scan_clt_filename
 
-    def gen_alascan_plot(self, df_scan_clt) -> None:
+    def gen_alascan_plot(self, df_scan_clt: pd.DataFrame) -> None:
+        """Generate the alascan plot based on provided data.
+
+        Parameters
+        ----------
+        df_scan_clt : pd.DataFrame
+            The data frame containing the data to be plotted.
+        """
         # Check if the plot must be generated
         if not self.generate_plot:
             return
@@ -374,6 +414,15 @@ class ClusterOutputer():
 class AddDeltaBFactor():
     """Add delta score in bfactor column of a PDB."""
     def __init__(self, model: PDBFile, path: Path):
+        """Initialisation function
+
+        Parameters
+        ----------
+        model : PDBFile
+            PDBfile model to be modified
+        path : Path
+            Where to write the new file
+        """
         self.model = model
         self.path = path
 

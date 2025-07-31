@@ -881,7 +881,7 @@ def test_alascan_cluster_full_outputs(protprot_input_list, scan_file, monkeypatc
             "unclustered",
             clt_pops["unclustered"],
             scan_residue="ALA",
-            plot=True,
+            generate_plot=True,
             offline=False,
         )
         cluster_analysis.run()
@@ -902,7 +902,7 @@ def test_alascan_cluster_no_plot(protprot_input_list, scan_file, monkeypatch):
             "unclustered",
             clt_pops["unclustered"],
             scan_residue="ALA",
-            plot=False,
+            generate_plot=False,
             offline=False,
         )
         cluster_analysis.run()

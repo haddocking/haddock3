@@ -145,7 +145,7 @@ class HaddockModule(BaseHaddockModule):
                     clt_id,
                     clt_pops[clt_id],
                     scan_residue=self.params["scan_residue"],
-                    plot=self.params["plot"],
+                    generate_plot=self.params["plot"],
                     offline=self.params["offline"],
                 )
                 for clt_id, clt_data in clt_scan.items()

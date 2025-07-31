@@ -252,6 +252,14 @@ def fixture_failed_mutation_result():
         error_msg="Mutation failed"
     )
 
+
+@pytest.fixture(name="results_by_model")
+def fixture_results_by_model(successful_mutation_result):
+    return {
+        "protprot_complex_1": [successful_mutation_result],
+        "protprot_complex_2": [successful_mutation_result],
+    }
+
 # custom mocks 
 class MockPreviousIO:
     """Mock PreviousIO class."""
@@ -850,32 +858,45 @@ def test_generate_alascan_output(protprot_model_list, scan_file, monkeypatch):
         assert new_model_to_export.file_name == "protprot_complex_1_alascan.pdb"
 
 
-def test_alascan_group_scan_by_cluster(protprot_input_list, scan_file, monkeypatch):
+def test_alascan_group_scan_by_cluster(
+        protprot_input_list,
+        results_by_model,
+        monkeypatch,
+        ):
     """Test grouping made by group_scan_by_cluster."""
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
-        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
-        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
-        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
         assert "unclustered" in clt_scan.keys()
         assert clt_pops["unclustered"] == 2
 
         # Set the cluster id to 1 for second input
         protprot_input_list[1].clt_id = 1
-        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
         assert "unclustered" in clt_scan.keys()
         assert 1 in clt_scan.keys()
         assert clt_pops["unclustered"] == 1
         assert clt_pops[1] == 1
 
 
-def test_alascan_cluster_full_outputs(protprot_input_list, scan_file, monkeypatch):
+def test_alascan_cluster_full_outputs(
+        protprot_input_list,
+        results_by_model,
+        monkeypatch,
+        ):
     """Test alascan_cluster_analysis."""
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
-        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
-        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
-        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
         cluster_analysis = ClusterOutputer(
             clt_scan["unclustered"],
             "unclustered",
@@ -890,13 +911,14 @@ def test_alascan_cluster_full_outputs(protprot_input_list, scan_file, monkeypatc
         assert Path("scan_clt_unclustered.html").exists()
 
 
-def test_alascan_cluster_no_plot(protprot_input_list, scan_file, monkeypatch):
+def test_alascan_cluster_no_plot(protprot_input_list, results_by_model, monkeypatch):
     """Test alascan_cluster_analysis."""
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
-        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
-        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
-        clt_scan, clt_pops = group_scan_by_cluster(protprot_input_list)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
         cluster_analysis = ClusterOutputer(
             clt_scan["unclustered"],
             "unclustered",

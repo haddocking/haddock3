@@ -216,73 +216,6 @@ def add_zscores(df_scan_clt, column='delta_score'):
     return df_scan_clt
 
 
-def group_scan_by_cluster(
-        models: List[PDBFile],
-        ) -> Tuple[
-            Dict[str, Dict[str, Dict[str, Union[float, int]]]],
-            Dict[str, int]
-            ]:
-    """Group models alascan data per cluster.
-
-    Parameters
-    ----------
-    models : List[PDBFile]
-        List of input models
-
-    Returns
-    -------
-    clt_scan : Dict[str, Dict[str, Dict[str, Union[float, int]]]]
-        Dictionary containing alascan data for each cluster, grouped by
-        residue identifyer.
-    clt_pops: Dict[str, int]
-        Dictionary containing number of entries for each cluster.
-    """
-    # Define holders
-    clt_scan: Dict[str, Dict[str, Dict[str, Union[float, int]]]] = {}
-    clt_pops: Dict[str, int] = {}
-    # Loop over models
-    for native in models:
-        # Point cluster id
-        cl_id = native.clt_id
-        # unclustered models have cl_id = None
-        if cl_id is None:
-            cl_id = "unclustered"
-        # Initiate key if this cluster id is encountered for the first time
-        if cl_id not in clt_scan:
-            clt_scan[cl_id] = {}
-            clt_pops[cl_id] = 0
-        # Increase the population of that cluster
-        clt_pops[cl_id] += 1
-        # read the scan file
-        alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
-        df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
-        # loop over the scan file rows
-        for row_idx in range(df_scan.shape[0]):
-            row = df_scan.iloc[row_idx]
-            # Extract data related to residue information
-            chain = row['chain']
-            res = row['res']
-            ori_resname = row['ori_resname']
-            # add to the cluster data with the ident logic
-            ident = f"{chain}-{res}-{ori_resname}"
-            # Create variable with appropriate key
-            if ident not in clt_scan[cl_id].keys():
-                clt_scan[cl_id][ident] = {
-                    'delta_score': [],
-                    'delta_vdw': [],
-                    'delta_elec': [],
-                    'delta_desolv': [],
-                    'delta_bsa': [],
-                    'frac_pr': 0,
-                    }
-            # Add data
-            for dt_key in ['delta_score', 'delta_vdw', 'delta_elec', 
-                           'delta_desolv', 'delta_bsa']:
-                clt_scan[cl_id][ident][dt_key].append(row[dt_key])
-            clt_scan[cl_id][ident]['frac_pr'] += 1
-    return clt_scan, clt_pops
-
-
 class ClusterOutputer():
     """Manage the generation of alascan outputs for cluster-based analysis."""
     def __init__(
@@ -577,6 +510,76 @@ class MutationResult:
     error_msg: Optional[str] = None
 
 
+def group_scan_by_cluster(
+        models: List[PDBFile],
+        results_by_model: Dict[str, MutationResult]
+        ) -> Tuple[
+            Dict[str, Dict[str, Dict[str, Union[float, int]]]],
+            Dict[str, int]
+            ]:
+    """Group models alascan data per cluster.
+
+    Parameters
+    ----------
+    models : List[PDBFile]
+        List of input models
+
+    Returns
+    -------
+    clt_scan : Dict[str, Dict[str, Dict[str, Union[float, int]]]]
+        Dictionary containing alascan data for each cluster, grouped by
+        residue identifyer.
+    clt_pops: Dict[str, int]
+        Dictionary containing number of entries for each cluster.
+    """
+    # Define holders
+    clt_scan: Dict[str, Dict[str, Dict[str, Union[float, int]]]] = {}
+    clt_pops: Dict[str, int] = {}
+    # Loop over models
+    for model in models:
+        # Point cluster id
+        cl_id = model.clt_id
+        # unclustered models have cl_id = None
+        if cl_id is None:
+            cl_id = "unclustered"
+        # Initiate key if this cluster id is encountered for the first time
+        if cl_id not in clt_scan:
+            clt_scan[cl_id] = {}
+            clt_pops[cl_id] = 0
+        # Increase the population of that cluster
+        clt_pops[cl_id] += 1
+        # Point scan results for this model
+        model_id = model.file_name.removesuffix('.pdb')
+        model_scan_dt = results_by_model[model_id]
+        # loop over the scan file rows
+        for mut_result in model_scan_dt:
+            # Extract data related to residue information
+            chain = mut_result.chain
+            res = mut_result.res_num
+            ori_resname = mut_result.ori_resname
+            # Define unique string identifying this residue
+            ident = f"{chain}-{res}-{ori_resname}"
+            # Create variable with appropriate key
+            if ident not in clt_scan[cl_id].keys():
+                clt_scan[cl_id][ident] = {
+                    "delta_score": [],
+                    "delta_vdw": [],
+                    "delta_elec": [],
+                    "delta_desolv": [],
+                    "delta_bsa": [],
+                    "frac_pr": 0,
+                    }
+            # Add data
+            delta_scores = mut_result.delta_scores
+            clt_scan[cl_id][ident]["delta_score"].append(delta_scores[0])
+            clt_scan[cl_id][ident]["delta_vdw"].append(delta_scores[1])
+            clt_scan[cl_id][ident]["delta_elec"].append(delta_scores[2])
+            clt_scan[cl_id][ident]["delta_desolv"].append(delta_scores[3])
+            clt_scan[cl_id][ident]["delta_bsa"].append(delta_scores[4])
+            clt_scan[cl_id][ident]["frac_pr"] += 1
+    return clt_scan, clt_pops
+
+
 class InterfaceScanner:
     """Scan interface of a model to get tartget residues and create
     corresponding mutation jobs.
@@ -615,11 +618,12 @@ class InterfaceScanner:
         self.filter_resdic = {
             key[-1]: value for key, value
             in self.params.items()
-            if key.startswith("resdic")}
-        try:
+            if key.startswith("resdic")
+            }
+        if isinstance(model, PDBFile):
             self.model_path = model.rel_path
             self.model_id = model.file_name.removesuffix('.pdb')
-        except AttributeError:
+        else:
             # for library mode
             self.model_path = Path(model)
             self.model_id = self.model_path.stem

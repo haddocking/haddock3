@@ -143,7 +143,7 @@ class HaddockModule(BaseHaddockModule):
             engine.run()
 
             # Cluster-based analysis
-            clt_scan, clt_pops = group_scan_by_cluster(models)
+            clt_scan, clt_pops = group_scan_by_cluster(models, results_by_model)
             alascan_cluster_jobs = [
                 ClusterOutputer(
                     clt_data,

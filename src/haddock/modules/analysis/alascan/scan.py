@@ -259,7 +259,7 @@ def group_scan_by_cluster(
         # loop over the scan file rows
         for row_idx in range(df_scan.shape[0]):
             row = df_scan.iloc[row_idx]
-            # Extra data related to residue information
+            # Extract data related to residue information
             chain = row['chain']
             res = row['res']
             ori_resname = row['ori_resname']

@@ -46,6 +46,7 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
+from haddock.libs.libparallel import GenericTask
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
@@ -134,8 +135,12 @@ class HaddockModule(BaseHaddockModule):
                     results_by_model[result.model_id].append(result)
 
             # Save to .tsv
-            for model_id, results in results_by_model.items():
-                write_scan_out(results, model_id)
+            scan_writter_jobs = [
+                GenericTask(write_scan_out, results, model_id)
+                for model_id, results in results_by_model.items()
+            ]
+            engine = Engine(scan_writter_jobs)
+            engine.run()
 
             # Cluster-based analysis
             clt_scan, clt_pops = group_scan_by_cluster(models)

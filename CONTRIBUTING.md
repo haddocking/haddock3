@@ -47,7 +47,7 @@ survival of the codebase. Suggestions are always welcomed.
 7.  Add a list of your new additions to the `CHANGELOG.md` file by
 adding a new sub-header as described bellow.
 Note this applies only after we have released the
-stable `3.0.0` version.
+stable `haddock3 2025.05.0` version.
 
 ```markdown
 # Changelog
@@ -60,11 +60,13 @@ stable `3.0.0` version.
 (... the rest of the file ...)
 ```
 
-8.  If you have difficulties with the `tests`, let us know. These tests
+8. Increment the haddock3 `version` variable in the `pyproject.toml`
+
+9.  If you have difficulties with the `tests`, let us know. These tests
 are the same that run on the GitHub Actions once you send the PR. So,
 sending the PR is another way to ensure all tests pass.
 
-9.  Submit your PR if you haven't done so yet :wink:
+10.  Submit your PR if you haven't done so yet :wink:
 
     1.  GitHub allows submitting "Draft PRs". You can use this
     option to let us know you are working on some new good stuff so we

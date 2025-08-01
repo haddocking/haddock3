@@ -299,7 +299,6 @@ class ClusterOutputer():
         csv_data.seek(0)
         # Define output csv filepath
         scan_clt_filename = f"scan_clt_{self.clt_id}.tsv"
-        log.info(f"Writing {scan_clt_filename}")
         # Write the file
         with open(scan_clt_filename, "w") as fout:
             # add comment to the file
@@ -447,7 +446,7 @@ def write_scan_out(results: List[Any], model_id: str) -> None:
     If results list is empty, no file is created.
     """
     if not results:
-        print(f'No scan results for model {model_id}')
+        print(f"No scan results for model {model_id}")
         return
 
     # Convert scan output to dataframe
@@ -475,24 +474,29 @@ def write_scan_out(results: List[Any], model_id: str) -> None:
                      'delta_desolv', 'delta_bsa']
         
         df_scan = pd.DataFrame(scan_data, columns=df_columns)
+        # Compute z-scores
         df_scan = add_zscores(df_scan, 'delta_score')
         
         # Sort by chain id, then by residue id
         df_scan.sort_values(by=['chain', 'res'], inplace=True)
 
-        # Save to tsv (per model)
+        # Get csv data as string
+        csv_io = io.StringIO()
+        df_scan.to_csv(csv_io, index=False, float_format="%.2f", sep="\t")
+        csv_io.seek(0)
+        # Save to tsv
         output_file = f"scan_{model_id}.tsv"
-        df_scan.to_csv(output_file, index=False, float_format='%.2f', sep="\t")
-        fl_content = open(output_file, 'r').read()
-        with open(output_file, 'w') as f:
-            f.write(f"{'#' * 70}{os.linesep}")
-            f.write(f"# `alascan` results for {model_id}\n")
-            f.write(f"#\n")
-            f.write(f"# native score = {native_score}\n")
-            f.write(f"#\n")
-            f.write(f"# z_score is calculated with respect to the other residues\n")
-            f.write(f"{'#' * 70}{os.linesep}")
-            f.write(fl_content)
+        with open(output_file, "w") as fout:
+            # Write comments at start of the file
+            fout.write(f"{'#' * 80}{os.linesep}")
+            fout.write(f"# `alascan` results for {model_id}{os.linesep}")
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# native score = {native_score}{os.linesep}")
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# z_score is calculated with respect to the other residues{os.linesep}")
+            fout.write(f"{'#' * 80}{os.linesep}")
+            # Write csv content
+            fout.write(csv_io.read())
 
 
 @dataclass
@@ -549,8 +553,11 @@ def group_scan_by_cluster(
         # Increase the population of that cluster
         clt_pops[cl_id] += 1
         # Point scan results for this model
-        model_id = model.file_name.removesuffix('.pdb')
-        model_scan_dt = results_by_model[model_id]
+        model_id = model.file_name.removesuffix(".pdb")
+        try:
+            model_scan_dt = results_by_model[model_id]
+        except KeyError:
+            log.
         # loop over the scan file rows
         for mut_result in model_scan_dt:
             # Extract data related to residue information
@@ -659,7 +666,7 @@ class InterfaceScanner:
             # Get all interface residues        
             cutoff = self.params.get("int_cutoff", 5.0)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
-            
+
             # get user_chains for the check down the line
             user_chains = self.params.get("chains", [])
 

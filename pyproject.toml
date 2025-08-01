@@ -58,8 +58,8 @@ dev = [
   "pytest-mock==3.14.1",
   "fastapi==0.115.12",
   "httpx==0.28.1",
-  "kaleido==0.2.1",
-  "pytest-random-order==1.1.1",
+  "kaleido==1.0.0",
+  "pytest-random-order==1.2.0",
 ]
 docs = [
   "sphinx>=7",

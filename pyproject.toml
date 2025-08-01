@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2025.07.1"
+version = "2025.07.2"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -51,7 +51,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "coverage==7.9.1",
   "coverage==7.10.1",
   "pytest==8.3.5",
   "pytest-cov==6.2.1",

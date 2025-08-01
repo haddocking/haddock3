@@ -377,10 +377,11 @@ class AddDeltaBFactor():
         """
         self.model = model
         self.path = path
-        self.reorder_results(model_results)
+        self.input_results = model_results
 
     def run(self) -> PDBFile:
         """Performs the addition of delta scores as bfactor in pdb file."""
+        self.reorder_results(self.input_results)
         # Define new pdb filename
         model_fname = self.model.file_name.removesuffix(".pdb")
         output_fname = f"{model_fname}_alascan.pdb"

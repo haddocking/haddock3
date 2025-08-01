@@ -7,4 +7,5 @@
 - 2025-07-23: Added printing of covalent energies to the PDB headers - Issue #1323
 - 2025-07-24: Added computation of standard deviation in alascan cluster analyses - Issue #1332
 - 2025-07-30: Added per-residue parallelization in alascan module - Issue #1307
-- 2025-07-31: Increasing parallelism in alascan module - Issue #1333
+- 2025-08-01: Increasing parallelism in alascan module - Issue #1333
+- 2025-08-01: Fix alascan bug when no contact found - Issue #1343

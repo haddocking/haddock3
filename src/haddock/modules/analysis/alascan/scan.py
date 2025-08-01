@@ -409,7 +409,7 @@ class AddDeltaBFactor():
         """
         # Input pdb file path
         input_pdbfile = Path(self.model.path, self.model.file_name)
-        # Start overwritting the file
+        # Start writting file containing bfactor
         with open(input_pdbfile, "r") as fin, open(output_path, "w") as fout:
             for line in fin:
                 if line.startswith("ATOM"):

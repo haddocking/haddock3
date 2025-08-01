@@ -254,10 +254,10 @@ def fixture_failed_mutation_result():
 
 
 @pytest.fixture(name="results_by_model")
-def fixture_results_by_model(successful_mutation_result):
+def fixture_results_by_model(successful_mutation_result, successful_mutation_result_2):
     return {
-        "protprot_complex_1": [successful_mutation_result],
-        "protprot_complex_2": [successful_mutation_result],
+        "protprot_complex_1": [successful_mutation_result, successful_mutation_result_2],
+        "protprot_complex_2": [successful_mutation_result, successful_mutation_result_2],
     }
 
 # custom mocks 
@@ -798,16 +798,23 @@ def test_mutate(protprot_model_list, monkeypatch):
             mutate(mut_fname, "A", 19, "HOH")
 
 
-def test_add_delta_to_bfactor(protprot_model_list, example_df_scan, monkeypatch):
+def test_add_delta_to_bfactor(protprot_model_list, results_by_model, monkeypatch):
     """Test the add_delta_to_bfactor function."""
     with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         monkeypatch.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
-        add_delta_to_bfactor_obj = AddDeltaBFactor(protprot_model_list[0], tmpdir)
-        add_delta_to_bfactor_obj.add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
+        # Update attributes
+        protprot_model_list[0].file_name = mut_pdb_fname
+        protprot_model_list[0].path = tmpdir
+        add_delta_to_bfactor_obj = AddDeltaBFactor(
+            protprot_model_list[0],
+            tmpdir,
+            results_by_model["protprot_complex_1"],
+            )
+        add_delta_to_bfactor_obj.add_delta_to_bfactor("bfactor_pdb.pdb")
         # ALA 19 should have beta = 100.0
-        assert np.isclose(100.0, float(open(mut_pdb_fname).readline()[60:66]))
+        assert np.isclose(100.0, float(open("bfactor_pdb.pdb").readline()[60:66]))
 
 
 def test_add_zscores(example_df_scan_clt):
@@ -848,12 +855,15 @@ def test_calc_score_wrong(mocker):
         calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
 
 
-def test_generate_alascan_output(protprot_model_list, scan_file, monkeypatch):
+def test_generate_alascan_output(protprot_model_list, results_by_model, monkeypatch):
     """Test the generate_alascan_output method."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.tsv"))
         monkeypatch.chdir(tmpdir)
-        new_model_to_export = AddDeltaBFactor(protprot_model_list[0], tmpdir).run()
+        new_model_to_export = AddDeltaBFactor(
+            protprot_model_list[0],
+            tmpdir,
+            results_by_model["protprot_complex_1"],
+            ).run()
         assert new_model_to_export.ori_name == "protprot_complex_1.pdb"
         assert new_model_to_export.file_name == "protprot_complex_1_alascan.pdb"
 

@@ -59,7 +59,7 @@ dev = [
   "fastapi==0.115.12",
   "httpx==0.28.1",
   "kaleido==0.2.1",
-  "pytest-random-order==1.1.1",
+  "pytest-random-order==1.2.0",
 ]
 docs = [
   "sphinx>=7",

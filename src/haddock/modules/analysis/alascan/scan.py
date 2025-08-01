@@ -380,6 +380,7 @@ class AddDeltaBFactor():
         self.reorder_results(model_results)
 
     def run(self) -> PDBFile:
+        """Performs the addition of delta scores as bfactor in pdb file."""
         # Define new pdb filename
         model_fname = self.model.file_name.removesuffix(".pdb")
         output_fname = f"{model_fname}_alascan.pdb"
@@ -451,13 +452,27 @@ class AddDeltaBFactor():
             self.max_score = 1
     
     def normalize_score(self, score: float) -> float:
-        diff = score - self.min_score
+        """Normalise the input score based on observed scores for this model
+
+        In case normalisation cannot be performed, returns 50.0
+
+        Parameters
+        ----------
+        score : float
+            Input score to be normalized
+
+        Returns
+        -------
+        norm100 : float
+            Normalized score between 0 and 100
+        """
         try:
-            norm = diff / (self.max_score - self.min_score)
+            norm = (score - self.min_score) / (self.max_score - self.min_score)
         except ZeroDivisionError:
             norm = 0.5
         norm100 = 100 * norm
         return norm100
+
 
 def write_scan_out(results: List[MutationResult], model_id: str) -> None:
     """

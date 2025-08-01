@@ -52,7 +52,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "coverage==7.9.1",
-  "pytest==8.3.5",
+  "pytest==8.4.1",
   "pytest-cov==6.2.1",
   "hypothesis==6.135.20",
   "pytest-mock==3.14.1",

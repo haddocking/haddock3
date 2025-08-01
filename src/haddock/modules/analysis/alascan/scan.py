@@ -69,6 +69,21 @@ RES_CODES = dict([
     ])
 
 
+@dataclass
+class MutationResult:
+    """Result from a single mutation."""
+    model_id: str
+    chain: str
+    res_num: int
+    ori_resname: str
+    target_resname: str
+    # components of "mutant_scores": score, vdw, elec, desolv, bsa
+    mutant_scores: Tuple[float, float, float, float, float]  
+    delta_scores: Tuple[float, float, float, float, float]   
+    success: bool
+    error_msg: Optional[str] = None
+
+
 def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     """
     Mutate a residue in a PDB file into a different residue.
@@ -345,7 +360,12 @@ class ClusterOutputer():
 
 class AddDeltaBFactor():
     """Add delta score in bfactor column of a PDB."""
-    def __init__(self, model: PDBFile, path: Path):
+    def __init__(
+            self,
+            model: PDBFile,
+            path: Path,
+            model_results: List[MutationResult],
+            ):
         """Initialisation function
 
         Parameters
@@ -357,81 +377,95 @@ class AddDeltaBFactor():
         """
         self.model = model
         self.path = path
+        self.reorder_results(model_results)
 
     def run(self) -> PDBFile:
         # Define new pdb filename
         model_fname = self.model.file_name.removesuffix(".pdb")
-        name = f"{model_fname}_alascan.pdb"
-        name_path = Path(name)
-        # Copy original file
-        shutil.copy(Path(self.model.path, self.model.file_name), name_path)
-        # Find name of the alascan file where data is stored
-        alascan_fname = f"scan_{model_fname}.tsv"
-        # Read information
-        df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
+        output_fname = f"{model_fname}_alascan.pdb"
         # Add delta_score as a bfactor to the model
-        self.add_delta_to_bfactor(name, df_scan)
+        self.add_delta_to_bfactor(output_fname)
         # Update attributes of the model
         self.model.ori_name = self.model.file_name
-        self.model.file_name = name
-        self.model.full_name = name
-        self.model.rel_path = Path("..", Path(self.path).name, name)
+        self.model.file_name = output_fname
+        self.model.full_name = output_fname
+        self.model.rel_path = Path("..", Path(self.path).name, output_fname)
         self.model.path = str(Path(".").resolve())
         return self.model
     
-    @staticmethod
-    def add_delta_to_bfactor(pdb_f: Path, df_scan: pd.DataFrame) -> Path:
+    def add_delta_to_bfactor(self, output_path: Path) -> Path:
         """Add delta scores as b-factors.
         
         Parameters
         ----------
-        pdb_f : Path
+        output_path : Path
             Path to the pdb file.
-
-        df_scan : pandas.DataFrame
-            Dataframe with the scan results for the model
         
         Returns
         -------
-        pdb_f : Path
+        output_path : Path
             Path to the pdb file with the b-factors added.
         """
-        # Obtain min and max delta score to be able to normalize later
-        max_b, min_b = df_scan["delta_score"].max(), df_scan["delta_score"].min()
-        # Read file and store data
-        with open(pdb_f, "r") as fh:
-            pdb_lines = fh.readlines()
+        # Input pdb file path
+        input_pdbfile = Path(self.model.path, self.model.file_name)
         # Start overwritting the file
-        with open(pdb_f, "w") as out_fh:
-            for line in pdb_lines:
+        with open(input_pdbfile, "r") as fin, open(output_path, "w") as fout:
+            for line in fin:
                 if line.startswith("ATOM"):
                     chain = line[21]
                     resnum = int(line[22:26])
-                    norm_delta = 0.0
-                    # extracting all the elements of df_scan such that
-                    # chain = chain and res = resnum
-                    df_scan_subset = df_scan.loc[
-                        (df_scan["chain"] == chain) & (df_scan["res"] == resnum)
-                        ]
-                    # Check if we have access to data
-                    if df_scan_subset.shape[0] > 0:
-                        delta = df_scan_subset["delta_score"].values[0]
-                        norm_delta = 100 * (delta - min_b) / (max_b - min_b)
+                    chain_res_key = f"{chain}-{resnum}"
+                    try:
+                        delta_score = self.model_results[chain_res_key]
+                        norm_delta = self.normalize_score(delta_score)
+                    except KeyError:
+                        norm_delta = 0.0
                     # Generate the bfactor string
                     delta_str = f"{norm_delta:.2f}".rjust(6, " ")
                     # Modify the PDB line
                     line = line[:60] + delta_str + line[66:]
-                out_fh.write(line)
-        return pdb_f
+                fout.write(line)
+        return output_path
 
+    def reorder_results(self, results: List[MutationResult]) -> None:
+        """Perform some initial data manuputation to simply downstream access.
 
-def write_scan_out(results: List[Any], model_id: str) -> None:
+        Parameters
+        ----------
+        results : List[MutationResult]
+            List of point mutation results for the given model
+        """
+        self.model_results: Dict[str, float] = {}
+        all_delta_scores: List[float] = []
+        for mut_result in results:
+            chain_res_key = f"{mut_result.chain}-{mut_result.res_num}"
+            delta_score = mut_result.delta_scores[0]
+            self.model_results[chain_res_key] = delta_score
+            all_delta_scores.append(delta_score)
+        # Obtain min and max delta score to be able to normalize later
+        if len(all_delta_scores) >= 1:
+            self.min_score = min(all_delta_scores)
+            self.max_score = max(all_delta_scores)
+        else:
+            self.min_score = -1
+            self.max_score = 1
+    
+    def normalize_score(self, score: float) -> float:
+        diff = score - self.min_score
+        try:
+            norm = diff / (self.max_score - self.min_score)
+        except ZeroDivisionError:
+            norm = 0.5
+        norm100 = 100 * norm
+        return norm100
+
+def write_scan_out(results: List[MutationResult], model_id: str) -> None:
     """
     Save mutation results per model to tsv file.
     
     Parameters
     ----------
-    results : List[Any]
+    results : List[MutationResult]
         List of mutation results from scanning (comes from MutationResult)
     model_id : str
         Identifier for the model used in filename.
@@ -499,21 +533,6 @@ def write_scan_out(results: List[Any], model_id: str) -> None:
             fout.write(csv_io.read())
 
 
-@dataclass
-class MutationResult:
-    """Result from a single mutation."""
-    model_id: str
-    chain: str
-    res_num: int
-    ori_resname: str
-    target_resname: str
-    # components of "mutant_scores": score, vdw, elec, desolv, bsa
-    mutant_scores: Tuple[float, float, float, float, float]  
-    delta_scores: Tuple[float, float, float, float, float]   
-    success: bool
-    error_msg: Optional[str] = None
-
-
 def group_scan_by_cluster(
         models: List[PDBFile],
         results_by_model: Dict[str, MutationResult]
@@ -557,8 +576,8 @@ def group_scan_by_cluster(
         try:
             model_scan_dt = results_by_model[model_id]
         except KeyError:
-            log.
-        # loop over the scan file rows
+            pass
+        # Loop over the mutation results
         for mut_result in model_scan_dt:
             # Extract data related to residue information
             chain = mut_result.chain
@@ -629,7 +648,7 @@ class InterfaceScanner:
             }
         if isinstance(model, PDBFile):
             self.model_path = model.rel_path
-            self.model_id = model.file_name.removesuffix('.pdb')
+            self.model_id = model.file_name.removesuffix(".pdb")
         else:
             # for library mode
             self.model_path = Path(model)
@@ -699,7 +718,8 @@ class InterfaceScanner:
                 for res in interface[chain]:
                     ori_resname = resname_dict[f"{chain}-{res}"]
                     end_resname = self.mutation_res
-                    # Skip if scan_residue is the same as original (e.g. skip ALA->ALA)
+                    # Skip if scan_residue is the same as original
+                    # (e.g. skip ALA->ALA)
                     if ori_resname != end_resname:
                         job = ModelPointMutation(
                             model_path=self.model_path,
@@ -715,12 +735,19 @@ class InterfaceScanner:
     
             # Execute jobs if in library mode
             if self.library_mode:
-                log.info(f"Executing {len(self.point_mutations_jobs)} mutations for {self.model_id}")
+                log.info(
+                    f"Executing {len(self.point_mutations_jobs)} "
+                    f"mutations for {self.model_id}"
+                    )
                 results = []
                 total = len(self.point_mutations_jobs)
                 
                 for i, job in enumerate(self.point_mutations_jobs, 1):
-                    log.info(f"Processing mutation {i}/{total}: {job.chain}:{job.res_num} {job.ori_resname}->{job.target_resname}")
+                    log.info(
+                        f"Processing mutation {i}/{total}: "
+                        f"{job.chain}:{job.res_num} {job.ori_resname}"
+                        f"->{job.target_resname}"
+                        )
                     result = job.run()
                     results.append(result)
                     if result.success:
@@ -804,7 +831,7 @@ class ModelPointMutation:
                           n_des - m_des, n_bsa - m_bsa)
 
             # Handle output files
-            em_mut_pdb = Path(mut_pdb.stem + '_hs.pdb')
+            em_mut_pdb = Path(f"{mut_pdb.stem}_hs.pdb")
             if not self.output_mutants:
                 # if output_mutants = False, then remove both files
                 if os.path.exists(mut_pdb):

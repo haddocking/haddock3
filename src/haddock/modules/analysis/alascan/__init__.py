@@ -142,6 +142,26 @@ class HaddockModule(BaseHaddockModule):
             engine = Engine(scan_writter_jobs)
             engine.run()
 
+            # Generate output models with bfactors if requested  
+            if self.params["output_bfactor"]:
+                update_with_bfactor_jobs = []
+                for model in models:
+                    model_id = model.file_name.removesuffix(".pdb")
+                    try:
+                        model_results = results_by_model[model_id]
+                    except KeyError:
+                        model_results = []
+                    update_with_bfactor_jobs.append(
+                        AddDeltaBFactor(model, self.path, model_results)
+                        )
+                engine = Engine(update_with_bfactor_jobs)
+                engine.run()
+                models_to_export = engine.results
+                self.output_models = models_to_export
+            else:
+                # Send models to the next step, no operation is done on them 
+                self.output_models = models
+
             # Cluster-based analysis
             clt_scan, clt_pops = group_scan_by_cluster(models, results_by_model)
             alascan_cluster_jobs = [
@@ -158,20 +178,6 @@ class HaddockModule(BaseHaddockModule):
             engine = Engine(alascan_cluster_jobs)
             engine.run()
 
-
-            # Generate output models with bfactors if requested  
-            if self.params["output_bfactor"]:
-                update_with_bfactor_jobs = [
-                    AddDeltaBFactor(model, self.path)
-                    for model in models
-                    ]
-                engine = Engine(update_with_bfactor_jobs)
-                engine.run()
-                models_to_export = engine.results
-                self.output_models = models_to_export
-            else:
-                # Send models to the next step, no operation is done on them 
-                self.output_models = models
         else:
             log.info("No interface residues found - skipping mutation analysis")
             # Send models to the next step, no operation is done on them

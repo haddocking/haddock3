@@ -1,0 +1,3582 @@
+#
+# Group molecule
+#
+mol_fix_origin_1:
+  default: false
+  type: boolean
+  title: Fix molecule
+  short: Fixes the molecule in its original position.
+  long: Fixes the molecule in its original position. 
+  group: 'molecule'
+  explevel: expert
+mol_shape_1:
+  default: false
+  type: boolean
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
+  explevel: easy
+#
+# Group scoring
+#
+w_air:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the distance restraint energy
+  short: Weight of the distance restraints energy in the scoring function
+  long: Weight of the distance restraints energy in the scoring function.
+    Note that this is different from the force constants used during the calculations.
+  group: 'scoring'
+  explevel: expert
+w_bsa:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the buried surface area term
+  short: Weight of the buried surface area term in the scoring function
+  long: Weight of the buried surface area (BSA) term in the scoring function.
+    Note that the BSA is only used for scoring.
+  group: 'scoring'
+  explevel: expert
+w_cdih:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the dihedral angle restraint energy
+  short: Weight of the dihedral angle restraints energy in the scoring function
+  long: Weight of the dihedral angle restraints energy in the scoring function.
+    Note that this is different from the force constant used during the calculations.
+  group: 'scoring'
+  explevel: expert
+w_dani:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the relaxation anisotropy (DANI) restraint energy
+  short: Weight of the relaxation anisotropy (DANI) restraint energy
+  long: Weight of the relaxation anisotropy (DANI) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_deint:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the interaction energy term
+  short: Weight of the interaction energy term
+  long: Weight of the interaction energy term calculated as the difference in total energy of the complex and of the separate components
+  group: 'scoring'
+  explevel: hidden
+w_desolv:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the desolvation energy term
+  short: Weight of the desolvation energy term in the scoring function
+  long: Weight of the desolvation energy term in the scoring function.
+    Note that the desolvation energy is only used for scoring.
+  group: 'scoring'
+  explevel: expert
+w_elec:
+  default: 0.2
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the intermolecular electrostatic energy
+  short: Weight of the intermolecular electrostatic energy in the scoring function
+  long: Weight of the intermolecular electrostatic energy in the scoring function.
+    Note that this does not affect the electostatic energy during the EM minimization.
+  group: 'scoring'
+  explevel: expert
+w_lcc:
+  default: -10000.0
+  type: float
+  min: -10000.0
+  max: 0
+  precision: 3
+  title: Weight of the EM local correlation coefficient
+  short: Weight of the EM local correlation coefficient
+  long: Weight of the EM local correlation coefficient
+  group: 'scoring'
+  explevel: hidden
+w_rg:
+  default: 1.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the radius of gyration restraint energy
+  short: Weight of the radius of gyration restraint energy
+  long: Weight of the radius of gyration restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_sani:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (SANI) restraint energy
+  short: Weight of the residual dipolar coupling (SANI) restraint energy
+  long: Weight of the residual dipolar coupling (SANI) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_sym:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the symmetry restraint energy
+  short: Weight of the symmetry restraints energy in the scoring function
+  long: Weight of the symmetry restraints energy in the scoring function.
+    Note that this is different from the force constant used during the calculations.
+  group: 'scoring'
+  explevel: expert
+w_vdw:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the intermolecular van der Waals energy
+  short: Weight of the intermolecular van der Waals energy in the scoring function
+  long: Weight of the intermolecular van der Waals energy in the scoring function.
+    Note that this does not affect the van der Waals energy during the EM minimization.
+  group: 'scoring'
+  explevel: expert
+w_vean:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (VEAN) restraint energy
+  short: Weight of the residual dipolar coupling (VEAN) restraint energy
+  long: Weight of the residual dipolar coupling (VEAN) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_xpcs:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the pseudo contact shifts (XPCS) restraint energy
+  short: Weight of the pseudo contact shifts (XPCS) restraint energy
+  long: Weight of the pseudo contact shifts (XPCS) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_xrdc:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (XRDC) restraint energy
+  short: Weight of the residual dipolar coupling (XRDC) restraint energy
+  long: Weight of the residual dipolar coupling (XRDC) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_zres:
+  default: 0.1
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the Z-restraining potential energy
+  short: Weight of the Z-restraining potential energy
+  long: Weight of the Z-restraining potential energy
+  group: 'scoring'
+  explevel: hidden
+#
+# Group force field
+#
+ligand_param_fname:
+  default: ''
+  type: file
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format containing all force field parameters 
+    (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: easy
+ligand_top_fname:
+  default: ''
+  type: file
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies 
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: easy
+elecflag:
+  default: true
+  type: boolean
+  title: Include electrostatics energy
+  short: Include electrostatics energy during the calculations.
+  long: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.
+  group: 'force field'
+  explevel: easy
+dielec:
+  default: cdie
+  type: string
+  minchars: 0
+  maxchars: 4
+  choices:
+    - cdie
+    - rdie
+  title: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+  short: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+  long: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+    A distance dependent dielectric constant will effectively scale down the electrostatic energy 
+    by having a 1/r**2 dependency instead of 1/r
+  group: 'force field'
+  explevel: expert
+epsilon:
+  default: 1.0
+  type: float
+  min: 1
+  max: 78
+  precision: 1
+  title: Dielectric constant
+  short: Dielectric constant for the electrostatic Coulomb energy term.
+  long: Dielectric constant for the electrostatic Coulomb energy term.
+  group: 'force field'
+  explevel: expert
+epsilon_cg:
+  default: 10.0
+  type: float
+  min: 1
+  max: 78
+  precision: 1
+  title: Dielectric constant for coarse-grained mode
+  short: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+  long: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+  group: 'force field'
+  explevel: expert
+dihedflag:
+  default: true
+  type: boolean
+  title: Use torsion angle dihedral energy term
+  short: Turns on the torsion angle dihedral energy terms of the force field.
+  long: Turns on the torsion angle dihedral energy terms of the force field.
+  group: 'force field'
+  explevel: expert
+#
+# Group sampling
+#
+sampling_factor:
+  default: 1
+  type: integer
+  min: 1
+  max: 500
+  title: Sampling factor for each starting model
+  short: This parameter control how many times a model will be refined.
+  long: This parameter control how many times a model will be refined. For EM refinement only it does not make sense to increase it unless random removal of restraints is turned on. If not then the energy minimisation will lead to the same final conformation. 
+  group: 'sampling'
+  explevel: expert
+max_nmodels:
+  default: 50000
+  type: integer
+  min: 1
+  max: 100000
+  title: Maximum number of models to refine
+  short: This parameter controls the maximum number of models to refine.
+  long: This parameter controls the maximum number of models to refine.
+  group: 'sampling'
+  explevel: expert
+nemsteps:
+  default: 10
+  type: integer
+  min: 1
+  max: 10000
+  title: Number of EM steps
+  short: Number of energy minimisation steps to perform.
+  long: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.
+  group: 'sampling'
+  explevel: expert
+iniseed:
+  default: 917
+  type: integer
+  min: 0
+  max: 9999999999999999
+  title: Random seed
+  short: Random seed used in CNS to initialize the random seed function
+  long: Random seed used in CNS to initialize the random seed function
+  group: 'sampling'
+  explevel: guru
+tolerance:
+  default: 5
+  type: integer
+  min: 0
+  max: 99
+  precision: 3
+  title: Failure tolerance percentage
+  short: Percentage of allowed failures for a module to successfully complete
+  long: Percentage of allowed failures for a module to successfully complete
+  group: 'module'
+  explevel: expert
+log_level:
+  default: quiet
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - verbose
+    - normal
+    - quiet
+  title: Log level verbosity for CNS
+  short: Set the log level verbosity for CNS
+  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+    messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
+  group: module
+  explevel: guru
+#
+# Group flexibility
+#
+#
+# Semi-flexible segments
+#
+nseg1:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg2:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg3:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg4:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg5:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg6:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_6_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_6_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg7:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_7_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_7_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg8:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_8_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_8_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg9:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_9_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_9_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg10:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_10_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_10_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg11:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_11_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_11_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg12:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_12_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_12_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg13:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_13_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_13_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg14:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_14_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_14_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg15:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_15_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_15_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg16:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_16_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_16_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg17:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_17_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_17_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg18:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_18_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_18_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg19:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_19_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_19_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+nseg20:
+  default: -1
+  type: integer
+  min: -1
+  max: 1000
+  title: Number of semi-flexible segments
+  short: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition). 
+  long: This parameter defines the number of semi-flexible segments for the specified molecule.
+    If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1).
+    In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions
+    will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
+  group: 'flexibility'
+  explevel: expert
+seg_sta_20_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the semi-flexible segment.
+  long: Residue number defining the start of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+seg_end_20_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Residue number defining the end of the semi-flexible segment.
+  long: Residue number defining the end of the semi-flexible segment.
+  group: 'flexibility'
+  explevel: expert
+#
+# Fully flexible segments
+#
+nfle:
+  default: 0
+  type: integer
+  min: 0
+  max: 1000
+  title: Number of fully flexible segments
+  short: This defines the number of fully flexible segments. 
+  long: This parameter defines the number of fully flexible segments for all molecules.
+    If >=1 then those must be defined manually with segment ID (segid) in the fle_seg_* variable, 
+     followed by the starting and ending residue numbers in the fle_sta_* and fle_end_* variables.
+  group: 'flexibility'
+  explevel: hidden
+fle_sta_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Residue number defining the start of the fully flexible segment.
+  long: Residue number defining the start of this (1st) fully flexible segment.
+  group: 'flexibility'
+  explevel: expert
+fle_end_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: End residue number
+  short: Residue number defining the end of the fully flexible segment.
+  long: Residue number defining the end of this (1st) fully flexible segment.
+  group: 'flexibility'
+  explevel: expert
+fle_seg_1:
+  default: none
+  type: string 
+  minchars: 1
+  maxchars: 4
+  title: Segment ID (segid)
+  short: Segment ID of the molecule for which this flexible segment is defined.
+  long: Segment ID of the molecule for which this (1st) flexible segment is defined.
+  group: 'flexibility'
+  explevel: expert
+#
+# Group interaction matrix
+#
+int_1_1:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_2:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_3:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_4:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_5:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_6:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_1_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_2:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_3:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_4:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_5:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_6:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_2_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_3:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_4:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_5:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_6:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_3_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_4:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_5:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_6:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_4_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_5:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_6:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_5_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_6:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_6_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_7:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_8:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_7_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_8_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_9:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_9_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_10:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_10_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_11:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_11_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_12:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_12_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_13:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_13_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_14:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_14_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_15_15:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_15_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_15_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_15_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_15_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_15_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_16_16:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_16_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_16_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_16_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_16_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_17_17:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_17_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_17_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_17_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_18_18:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_18_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_18_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_19_19:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_19_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden
+int_20_20:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1
+  precision: 3
+  title: Scaling factor for intermolecular energies
+  short: Scaling factor for intermolecular energies
+  long: Scaling factor for intermolecular energies between the two molecules. 
+    This can be used for example in ensemble docking to have two molecules binding to the same site without seeing eachother.
+  group: 'interaction matrix'
+  explevel: hidden

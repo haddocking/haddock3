@@ -73,6 +73,13 @@ PROT_RES = [
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
 PROT_ATOMS = ["C", "N", "CA", "O"]
+PROT_ATOMS_MARTINI2 = ["BB"]
+PROT_ATOMS_all = {
+    "aa" : PROT_ATOMS,
+    "martini2" : PROT_ATOMS_MARTINI2,
+    "martini3" : PROT_ATOMS_MARTINI2 # The backbone particle is identical between MARTINI 2 and 3
+}
+
 # Side chains
 PROT_SIDE_CHAINS_DICT = {
     "ALA": ["C", "N", "CA", "O", "CB"],
@@ -125,6 +132,78 @@ PROT_SIDE_CHAINS_DICT = {
     "VAL": ["C", "N", "CA", "O", "CB", "CG1", "CG2"],
 }
 
+PROT_SIDE_CHAINS_DICT_MARTINI2 = {
+    "GLY": ['BB'],
+    "ALA": ['BB'],
+    "CYS": ['BB', 'SC1'],
+    "VAL": ['BB', 'SC1'],
+    "LEU": ['BB', 'SC1'],
+    "ILE": ['BB', 'SC1'],
+    "MET": ['BB', 'SC1'],
+    "PRO": ['BB', 'SC1'],
+    "ASN": ['BB', 'SC1'],
+    "GLN": ['BB', 'SC1'],
+    "ASP": ['BB', 'SC1'],
+    "ASP0": ['BB', 'SC1'],
+    "GLU": ['BB', 'SC1'],
+    "GLU0": ['BB', 'SC1'],
+    "THR": ['BB', 'SC1'],
+    "SER": ['BB', 'SC1'],
+    "LYS": ['BB', 'SC1', 'SC2'],
+    "LSN": ['BB', 'SC1', 'SC2'],
+    "ARG": ['BB', 'SC1', 'SC2'],
+    "ARG0": ['BB', 'SC1', 'SC2'],
+    "HIS": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HSE": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HSD": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HSP": ['BB', 'SC1', 'SC2', 'SC3'],
+    "PHE": ['BB', 'SC1', 'SC2', 'SC3'],
+    "TYR": ['BB', 'SC1', 'SC2', 'SC3'],
+    "TRP": ['BB', 'SC1', 'SC2', 'SC3', 'SC4'],
+}
+
+PROT_SIDE_CHAINS_DICT_MARTINI3 = {
+    "GLY": ['BB'],
+    "ALA": ['BB', 'SC1'],
+    "CYS": ['BB', 'SC1'],
+    "VAL": ['BB', 'SC1'],
+    "LEU": ['BB', 'SC1'],
+    "ILE": ['BB', 'SC1'],
+    "MET": ['BB', 'SC1'],
+    "PRO": ['BB', 'SC1'],
+    "HYP": ['BB', 'SC1'],
+    "ASN": ['BB', 'SC1'],
+    "GLN": ['BB', 'SC1'],
+    "ASP": ['BB', 'SC1'],
+    "ASPP": ['BB', 'SC1'],
+    "ASH": ['BB', 'SC1'],
+    "GLU": ['BB', 'SC1'],
+    "GLUP": ['BB', 'SC1'],
+    "GLH": ['BB', 'SC1'],
+    "LYS": ['BB', 'SC1', 'SC2'],
+    "LSN": ['BB', 'SC1', 'SC2'],
+    "LYN": ['BB', 'SC1', 'SC2'],
+    "THR": ['BB', 'SC1'],
+    "SER": ['BB', 'SC1'],
+    "ARG": ['BB', 'SC1', 'SC2'],
+    "HIS": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HIE": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HSE": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HSD": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HID": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HSP": ['BB', 'SC1', 'SC2', 'SC3'],
+    "HIP": ['BB', 'SC1', 'SC2', 'SC3'],
+    "PHE": ['BB', 'SC1', 'SC2', 'SC3'],
+    "TYR": ['BB', 'SC1', 'SC2', 'SC3', 'SC4'],
+    "TRP": ['BB', 'SC1', 'SC2', 'SC3', 'SC4', 'SC5'],    
+}
+
+PROT_SIDE_CHAINS_DICT_all = {
+    "aa" : PROT_SIDE_CHAINS_DICT,
+    "martini2" : PROT_SIDE_CHAINS_DICT_MARTINI2,
+    "martini3" : PROT_SIDE_CHAINS_DICT_MARTINI3
+}
+
 # Bases
 DNA_ATOMS = [
     "C5",
@@ -144,6 +223,13 @@ DNA_ATOMS = [
     "C4",
     "O6",
 ]
+DNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
+
+DNA_ATOMS_all = {
+    "aa" : DNA_ATOMS,
+    "martini2" : DNA_ATOMS_MARTINI2,
+    "martini3" : DNA_ATOMS_MARTINI2
+}
 
 DNA_FULL_DICT = {
     "DA": [
@@ -264,8 +350,28 @@ DNA_FULL_DICT = {
     ],
 }
 
+DNA_FULL_DICT_MARTINI2 = {
+    "DA" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "DC" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+    "DG" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "DT" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
+}
+
+DNA_FULL_DICT_all = {
+    "aa" : DNA_FULL_DICT,
+    "martini2" : DNA_FULL_DICT_MARTINI2,
+    "martini3" : DNA_FULL_DICT_MARTINI2
+}
+
 RNA_RES = ["A", "G", "C", "U"]
 RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+RNA_ATOMS_MARTINI2 = ["BB1", "BB2", "BB3"]
+
+RNA_ATOMS_all = {
+    "aa" : RNA_ATOMS,
+    "martini2" : RNA_ATOMS_MARTINI2,
+    "martini3" : RNA_ATOMS_MARTINI2
+}
 
 RNA_FULL_DICT = {
     "A": [
@@ -363,6 +469,19 @@ RNA_FULL_DICT = {
         "C5",
         "C6",
     ],
+}
+
+RNA_FULL_DICT_MARTINI2 = {
+    "A" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "C" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"],
+    "G" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3", "SC4"],
+    "U" : ["BB1", "BB2", "BB3", "SC1", "SC2", "SC3"]
+}
+
+RNA_FULL_DICT_all = {
+    "aa" : RNA_FULL_DICT,
+    "martini2" : RNA_FULL_DICT_MARTINI2,
+    "martini3" : RNA_FULL_DICT_MARTINI2
 }
 
 
@@ -572,7 +691,9 @@ def load_coords(
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
+def get_atoms(pdb: PDBPath, 
+              full: bool = False,
+              ff: str = "aa") -> AtomsDict:
     """Identify what is the molecule type of each PDB.
 
     Parameters
@@ -583,6 +704,8 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
         Weather or not to take `full` atoms into consideration.
         If False, only main-chain atoms retrieved.
         If True, all heavy atoms retrieved.
+    ff : string
+        Force-field information : all-atom, martini2 or martini3
 
     Returns
     -------
@@ -590,13 +713,13 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
-    atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
-    atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
+    atom_dic.update((r, PROT_ATOMS_all[ff]) for r in PROT_RES)
+    atom_dic.update((r, DNA_ATOMS_all[ff]) for r in DNA_RES)
+    atom_dic.update((r, RNA_ATOMS_all[ff]) for r in RNA_RES)
     if full:
-        atom_dic.update(PROT_SIDE_CHAINS_DICT)
-        atom_dic.update(DNA_FULL_DICT)
-        atom_dic.update(RNA_FULL_DICT)
+        atom_dic.update(PROT_SIDE_CHAINS_DICT_all[ff])
+        atom_dic.update(DNA_FULL_DICT_all[ff])
+        atom_dic.update(RNA_FULL_DICT_all[ff])
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

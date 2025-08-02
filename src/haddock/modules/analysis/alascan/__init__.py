@@ -150,6 +150,7 @@ class HaddockModule(BaseHaddockModule):
                     try:
                         model_results = results_by_model[model_id]
                     except KeyError:
+                        # Case when no data computed for this model
                         model_results = []
                     update_with_bfactor_jobs.append(
                         AddDeltaBFactor(model, self.path, model_results)

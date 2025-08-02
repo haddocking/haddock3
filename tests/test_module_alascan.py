@@ -812,6 +812,7 @@ def test_add_delta_to_bfactor(protprot_model_list, results_by_model, monkeypatch
             tmpdir,
             results_by_model["protprot_complex_1"],
             )
+        add_delta_to_bfactor_obj.reorder_results()
         add_delta_to_bfactor_obj.add_delta_to_bfactor("bfactor_pdb.pdb")
         # ALA 19 should have beta = 100.0
         assert np.isclose(100.0, float(open("bfactor_pdb.pdb").readline()[60:66]))

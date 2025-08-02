@@ -381,7 +381,7 @@ class AddDeltaBFactor():
 
     def run(self) -> PDBFile:
         """Performs the addition of delta scores as bfactor in pdb file."""
-        self.reorder_results(self.input_results)
+        self.reorder_results()
         # Define new pdb filename
         model_fname = self.model.file_name.removesuffix(".pdb")
         output_fname = f"{model_fname}_alascan.pdb"
@@ -429,18 +429,15 @@ class AddDeltaBFactor():
                 fout.write(line)
         return output_path
 
-    def reorder_results(self, results: List[MutationResult]) -> None:
-        """Perform some initial data manuputation to simply downstream access.
-
-        Parameters
-        ----------
-        results : List[MutationResult]
-            List of point mutation results for the given model
-        """
+    def reorder_results(self) -> None:
+        """Perform initial data manuputation to simply downstream access."""
         self.model_results: Dict[str, float] = {}
         all_delta_scores: List[float] = []
-        for mut_result in results:
+        # Loop over mutation results
+        for mut_result in self.input_results:
+            # Create key
             chain_res_key = f"{mut_result.chain}-{mut_result.res_num}"
+            # Point delta score value
             delta_score = mut_result.delta_scores[0]
             self.model_results[chain_res_key] = delta_score
             all_delta_scores.append(delta_score)

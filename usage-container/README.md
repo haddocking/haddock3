@@ -1,6 +1,6 @@
 # Container workflow for HADDOCK3
 
-This repository provides everything you need to build, run, and extend an **Apptainer/Singularity** container for HADDOCK3. [**HADDOCK3**](https://www.biorxiv.org/content/10.1101/2025.04.30.651432v1)(High Ambiguity Driven protein–protein Docking) is a flexible, information-driven software suite for modeling biomolecular complexes using experimental and theoretical restraints. **Docker**, **Singularity**, and **Apptainer** are containerization platforms that package applications and all their dependencies into lightweight, portable images, ensuring reproducible execution across different environments.
+This repository provides everything you need to build, run, and extend an **Apptainer/Singularity** container for HADDOCK3. [**HADDOCK3**](https://doi.org/10.1021/acs.jcim.5c00969)(High Ambiguity Driven protein–protein Docking) is a flexible, information-driven software suite for modeling biomolecular complexes using experimental and theoretical restraints. **Docker**, **Singularity**, and **Apptainer** are containerization platforms that package applications and all their dependencies into lightweight, portable images, ensuring reproducible execution across different environments.
 
 A ready-to-use Docker image for HADDOCK3 is published on the GitHub container registry, simply pull:
 ```bash
@@ -40,9 +40,8 @@ Containerization techniques enable highly reproducible, customizable, and scalab
     │   ├── usage.md                  # Usage guide
     ├── scripts/                      # Scripts
     │   ├── slurm_run.sh              # Multi-node MPI run script
-    ├── LICENSE                       # MIT License
     ├── README.md                     # Overview
-    └── CONTRIBUTING.md              # Contribution guidelines
+    
     ```
 
 2. **Build** 

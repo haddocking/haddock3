@@ -247,9 +247,9 @@ class ClusterOutputer():
         Parameters
         ----------
         cluster_scan_data : Dict[str, Dict[str, Union[float, int]]]
-            Dictionary containing alascan data per residue identifyer.
+            Dictionary containing alascan data per residue identifier.
         clt_id : str
-            Cluster identifyer
+            Cluster identifier
         clt_population : int
             Number of entries in this cluster.
         scan_residue : str, optional
@@ -267,11 +267,18 @@ class ClusterOutputer():
         self.offline = offline
 
     def run(self) -> str:
+        """Main function generating files related to alascan cluster analysis.
+        
+        Return
+        ------
+        scan_clt_filename : str
+            Name of the tsv file written
+        """
         # Gather all data in a list
         clt_data = []
         # Loop over residues
         for ident, clt_res_dt in self.cluster_scan_data.items():
-            # Split identifyer to retrieve residue data
+            # Split identifier to retrieve residue data
             chain = ident.split("-")[0]
             resnum = int(ident.split("-")[1])
             resname = ident.split("-")[2]

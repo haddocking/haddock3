@@ -123,7 +123,7 @@ def load_contacts(
     cutoff : float, optional
         Cutoff distance for the interface identification.
     keep_hetatm : bool
-        Should HETATM coordinates be extracts ? (default False)
+        Should HETATM coordinates be considered ? (default False)
 
     Returns
     -------
@@ -735,7 +735,7 @@ class CAPRI:
         cutoff : float, optional
             Cutoff distance for the interface identification.
         keep_hetatm : bool
-            Should HETATM coordinates be extracts ? (default False)
+            Should HETATM coordinates be considered ? (default False)
 
         Returns
         -------

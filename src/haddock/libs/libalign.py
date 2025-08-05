@@ -466,7 +466,7 @@ def load_coords(
         use the residue name in the identifier
     
     keep_hetatm : bool
-        Should HETATM lines be extracted ?
+        Should HETATM lines be considered ?
 
     Returns
     -------

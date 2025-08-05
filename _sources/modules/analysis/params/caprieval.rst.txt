@@ -120,6 +120,17 @@ irmsd_cutoff
 | *group*: analysis
 | *explevel*: easy
 
+keep_hetatm
+~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: HETATM to be considered during the analysis.
+| *short description*: HETATM to be considered during the analysis.
+| *long description*: HETATM to be considered during the analysis. If false (default), only ATOM coordinates lines will be used, otherwise the HETATM from reference will also be used.
+| *group*: analysis
+| *explevel*: easy
+
 ligand_chains
 ~~~~~~~~~~~~~
 

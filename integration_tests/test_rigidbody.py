@@ -83,16 +83,17 @@ def test_rigidbody_norestraints_guardrail(rigidbody_module):
     rigidbody_module.params["sampling"] = 2
     rigidbody_module.params["mode"] = "local"
     rigidbody_module.params["debug"] = False
-    # Case 1
+    # Set all restraints parameters to false
+    rigidbody_module.params["cmrest"] = False
+    rigidbody_module.params["ranair"] = False
+    rigidbody_module.params["surfrest"] = False
+    rigidbody_module.params["ambig_fname"] = False
+    rigidbody_module.params["unambig_fname"] = False
+    rigidbody_module.params["hbond_fname"] = False
+    # Expect an error when module starts
     with pytest.raises(RuntimeError) as error:
-        # Set all restraints parameters to false
-        rigidbody_module.params["cmrest"] = False
-        rigidbody_module.params["ranair"] = False
-        rigidbody_module.params["ambig_fname"] = False
-        rigidbody_module.params["unambig_fname"] = False
-        rigidbody_module.params["hbond_fname"] = False
         rigidbody_module.run()
-    assert "No restraints found in the configuration file." in str(error)
+    assert "No restraints found" in str(error)
 
 
 

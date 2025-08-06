@@ -179,16 +179,18 @@ class HaddockModule(BaseCNSModule):
             self.params["hbond_fname"],
             self.params["cmrest"],
             self.params["ranair"],
+            self.params["surfrest"],
         )
         # If not any restraints provided
         if not any(all_restraints):
             # Terminate docking
             self.finish_with_error(
-                "No restraints found in the configuration file. "
-                "For ab-initio docking, turn on `cmrest` or `ranair` "
-                "parameters. For targetted docking, please provide "
-                "CNS valid restraints file(s) using `ambig_fname`,"
-                "and/or `unambig_fname` and/or `hbond_fname`."
+                "No restraints found for [rigidbody] module. "
+                "For targeted docking, supply CNS-valid restraints file(s) "
+                "using `ambig_fname` and/or `unambig_fname` and/or "
+                "`hbond_fname` parameter(s). "
+                "For ab-initio docking, set `cmrest` or `ranair` "
+                "parameters to true."
                 )
 
     def _run(self) -> None:

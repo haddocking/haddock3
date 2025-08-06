@@ -74,7 +74,7 @@ class MutationResult:
     """Result from a single mutation."""
     model_id: str
     chain: str
-    res_num: int
+    resid: int
     ori_resname: str
     target_resname: str
     # components of "mutant_scores": score, vdw, elec, desolv, bsa
@@ -84,7 +84,7 @@ class MutationResult:
     error_msg: Optional[str] = None
 
 
-def mutate(pdb_f, target_chain, target_resnum, mut_resname):
+def mutate(pdb_f, target_chain, target_resid, mut_resname):
     """
     Mutate a residue in a PDB file into a different residue.
     
@@ -96,7 +96,7 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     target_chain : str
         Chain of the residue to be mutated.
     
-    target_resnum : int
+    target_resid : int
         Residue number of the residue to be mutated.
     
     mut_resname : str
@@ -113,9 +113,9 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
         for line in fh.readlines():
             if line.startswith('ATOM'):
                 chain = line[21]
-                resnum = int(line[22:26])
+                resid = int(line[22:26])
                 atom_name = line[12:16].strip()
-                if target_chain == chain and target_resnum == resnum:
+                if target_chain == chain and target_resid == resid:
                     if not resname:
                         resname = line[17:20].strip()
                     if atom_name in ATOMS_TO_BE_MUTATED:
@@ -125,7 +125,7 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
                 else:
                     mut_pdb_l.append(line)
     try:
-        mut_id = f'{RES_CODES[resname]}{target_resnum}{RES_CODES[mut_resname]}'
+        mut_id = f'{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}'
     except KeyError:
         raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
     mut_pdb_fname = Path(
@@ -282,12 +282,12 @@ class ClusterOutputer():
         for ident, clt_res_dt in self.cluster_scan_data.items():
             # Split identifier to retrieve residue data
             chain = ident.split("-")[0]
-            resnum = int(ident.split("-")[1])
+            resid = int(ident.split("-")[1])
             resname = ident.split("-")[2]
             # Compute averages and stddev and hold data.
             clt_data.append([
                 chain,
-                resnum,
+                resid,
                 resname,
                 ident,
                 np.mean(clt_res_dt['delta_score']),
@@ -303,7 +303,7 @@ class ClusterOutputer():
                 clt_res_dt['frac_pr'] / self.clt_population,
                 ])
         df_cols = [
-            'chain', 'resnum', 'resname', 'full_resname',
+            'chain', 'resid', 'resname', 'full_resname',
             'delta_score', 'delta_score_std', 'delta_vdw', 'delta_vdw_std',
             'delta_elec', 'delta_elec_std', 'delta_desolv', 'delta_desolv_std',
             'delta_bsa', 'delta_bsa_std', 'frac_pres',
@@ -312,7 +312,7 @@ class ClusterOutputer():
         # adding clt-based Z score
         df_scan_clt = add_zscores(df_scan_clt, 'delta_score')
         # Sort rows
-        df_scan_clt.sort_values(by=['chain', 'resnum'], inplace=True)
+        df_scan_clt.sort_values(by=['chain', 'resid'], inplace=True)
         # Generate output CSV data
         csv_data = io.StringIO()
         df_scan_clt.to_csv(
@@ -424,8 +424,8 @@ class AddDeltaBFactor():
             for line in fin:
                 if line.startswith("ATOM"):
                     chain = line[21]
-                    resnum = int(line[22:26])
-                    chain_res_key = f"{chain}-{resnum}"
+                    resid = int(line[22:26])
+                    chain_res_key = f"{chain}-{resid}"
                     try:
                         delta_score = self.model_results[chain_res_key]
                         norm_delta = self.normalize_score(delta_score)
@@ -450,7 +450,7 @@ class AddDeltaBFactor():
         # Loop over mutation results
         for mut_result in self.input_results:
             # Create key
-            chain_res_key = f"{mut_result.chain}-{mut_result.res_num}"
+            chain_res_key = f"{mut_result.chain}-{mut_result.resid}"
             # Point delta score value
             delta_score = mut_result.delta_scores[0]
             # Hold data
@@ -520,7 +520,7 @@ def write_scan_out(results: List[MutationResult], model_id: str) -> None:
             d_score, d_vdw, d_elec, d_des, d_bsa = result.delta_scores
             
             scan_data.append([
-                result.chain, result.res_num, result.ori_resname, 
+                result.chain, result.resid, result.ori_resname, 
                 result.target_resname, m_score, m_vdw, m_elec, m_des, m_bsa,
                 d_score, d_vdw, d_elec, d_des, d_bsa
             ])
@@ -609,7 +609,7 @@ def group_scan_by_cluster(
         for mut_result in model_scan_dt:
             # Extract data related to residue information
             chain = mut_result.chain
-            res = mut_result.res_num
+            res = mut_result.resid
             ori_resname = mut_result.ori_resname
             # Define unique string identifying this residue
             ident = f"{chain}-{res}-{ori_resname}"
@@ -662,7 +662,7 @@ class InterfaceScanner:
         library_mode : bool
             If True, execute mutations sequentially inside InterfaceScanner.run() 
             If False, just prepare jobs - execution will be taken care of in init.py 
-            of alascan module by haddock Engine  
+            of alascan module by haddock Engine
         """
         self.model = model
         self.mutation_res = mutation_res
@@ -753,7 +753,7 @@ class InterfaceScanner:
                             model_path=self.model_path,
                             model_id=self.model_id,
                             chain=chain,
-                            res_num=res,
+                            resid=res,
                             ori_resname=ori_resname,
                             target_resname=end_resname,
                             native_scores=native_scores,
@@ -773,7 +773,7 @@ class InterfaceScanner:
                 for i, job in enumerate(self.point_mutations_jobs, 1):
                     log.info(
                         f"Processing mutation {i}/{total}: "
-                        f"{job.chain}:{job.res_num} {job.ori_resname}"
+                        f"{job.chain}:{job.resid} {job.ori_resname}"
                         f"->{job.target_resname}"
                         )
                     result = job.run()
@@ -800,7 +800,7 @@ class ModelPointMutation:
         model_path: Path, 
         model_id: str, 
         chain: str, 
-        res_num: int, 
+        resid: int, 
         ori_resname: str,
         target_resname: str, 
         native_scores: Tuple[float, float, float, float, float], 
@@ -817,7 +817,7 @@ class ModelPointMutation:
             Identifier for the model
         chain : str
             Chain identifier
-        res_num : int
+        resid : int
             Residue number
         ori_resname : str
             Original residue name
@@ -831,7 +831,7 @@ class ModelPointMutation:
         self.model_path = Path(model_path)
         self.model_id = model_id
         self.chain = chain
-        self.res_num = res_num
+        self.resid = resid
         self.ori_resname = ori_resname
         self.target_resname = target_resname
         self.native_scores = native_scores
@@ -839,7 +839,7 @@ class ModelPointMutation:
     
     def run(self):
         """Execute the point mutation."""
-        mutation_id = f"{self.model_id}_{self.chain}{self.res_num}{self.target_resname}"
+        mutation_id = f"{self.model_id}_{self.chain}{self.resid}{self.target_resname}"
         
         try:
             # Setup working directory
@@ -847,7 +847,7 @@ class ModelPointMutation:
             os.makedirs(sc_dir, exist_ok=True)
             
             # Perform mutation
-            mut_pdb = mutate(self.model_path, self.chain, self.res_num, self.target_resname)
+            mut_pdb = mutate(self.model_path, self.chain, self.resid, self.target_resname)
             
             # Calculate mutant scores
             mutant_scores = calc_score(mut_pdb, run_dir=sc_dir, outputpdb=self.output_mutants)
@@ -875,14 +875,14 @@ class ModelPointMutation:
                 shutil.rmtree(sc_dir)
             
             return MutationResult(
-                model_id=self.model_id, chain=self.chain, res_num=self.res_num,
+                model_id=self.model_id, chain=self.chain, resid=self.resid,
                 ori_resname=self.ori_resname, target_resname=self.target_resname,
                 mutant_scores=mutant_scores, delta_scores=delta_scores, success=True
             )
             
         except Exception as e:
             return MutationResult(
-                model_id=self.model_id, chain=self.chain, res_num=self.res_num,
+                model_id=self.model_id, chain=self.chain, resid=self.resid,
                 ori_resname=self.ori_resname, target_resname=self.target_resname,
                 mutant_scores=(0, 0, 0, 0, 0), delta_scores=(0, 0, 0, 0, 0),
                 success=False, error_msg=str(e)

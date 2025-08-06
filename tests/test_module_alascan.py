@@ -147,7 +147,7 @@ def example_df_scan_clt():
     ]
     columns = [
         "chain",
-        "resnum",
+        "resid",
         "resname",
         "full_resname",
         "score",
@@ -199,7 +199,7 @@ def fixture_mutation_job(complex_pdb):
         model_path=complex_pdb,
         model_id="test_model",
         chain="A", 
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         native_scores=native_scores,
@@ -213,7 +213,7 @@ def fixture_successful_mutation_result():
     return MutationResult(
         model_id="protprot_complex_1",
         chain="A",
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         mutant_scores=(-108.540, -43.234, -275.271, -10.252, 1589.260),
@@ -228,7 +228,7 @@ def fixture_successful_mutation_result_2():
     return MutationResult(
         model_id="protprot_complex_1",
         chain="A",
-        res_num=20,
+        resid=20,
         ori_resname="ILE",
         target_resname="ALA",
         mutant_scores=(-18.540, -41.234, -270.271, -11.252, 589.260),
@@ -243,7 +243,7 @@ def fixture_failed_mutation_result():
     return MutationResult(
         model_id="protprot_complex_1",
         chain="A",
-        res_num=20,
+        resid=20,
         ori_resname="ILE",
         target_resname="ALA",
         mutant_scores=(0, 0, 0, 0, 0),
@@ -293,7 +293,7 @@ def test_mutation_result_creation():
     result = MutationResult(
         model_id="test.pdb",
         chain="A",
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         mutant_scores=(-108.5, -43.2, -275.3, -10.3, 1589.3),
@@ -303,7 +303,7 @@ def test_mutation_result_creation():
     # Test all attributes
     assert result.model_id == "test.pdb"
     assert result.chain == "A"
-    assert result.res_num == 19
+    assert result.resid == 19
     assert result.ori_resname == "THR"
     assert result.target_resname == "ALA"
     assert result.mutant_scores == (-108.5, -43.2, -275.3, -10.3, 1589.3)
@@ -318,7 +318,7 @@ def test_mutation_result_success_failure_states():
     success_result = MutationResult(
         model_id="success_model",
         chain="A",
-        res_num=10,
+        resid=10,
         ori_resname="VAL",
         target_resname="ALA",
         mutant_scores=(-95.2, -28.1, -290.5, -12.0, 1450.8),
@@ -336,7 +336,7 @@ def test_mutation_result_success_failure_states():
     failure_result = MutationResult(
         model_id="failure_model",
         chain="B",
-        res_num=25,
+        resid=25,
         ori_resname="PHE",
         target_resname="ALA",
         mutant_scores=(0, 0, 0, 0, 0),
@@ -578,7 +578,7 @@ def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
         library_mode=False
     )
     mutation_jobs = scanner.run()
-    expected_residues = {(job.chain, job.res_num) for job in mutation_jobs}
+    expected_residues = {(job.chain, job.resid) for job in mutation_jobs}
     # only residues in resdic_*,  not entire inteface
     assert expected_residues == {("A", 19), ("B", 30)}
 
@@ -633,7 +633,7 @@ def test_model_point_mutation_init(complex_pdb):
         model_path=complex_pdb,
         model_id="protprot_complex_1",
         chain="A",
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         native_scores=native_scores,
@@ -642,7 +642,7 @@ def test_model_point_mutation_init(complex_pdb):
     assert job.model_path == Path(complex_pdb)
     assert job.model_id == "protprot_complex_1"
     assert job.chain == "A"
-    assert job.res_num == 19
+    assert job.resid == 19
     assert job.ori_resname == "THR"
     assert job.target_resname == "ALA"
     assert job.native_scores == native_scores
@@ -671,7 +671,7 @@ def test_model_point_mutation_run(mocker, mutation_job, monkeypatch):
         assert result.success is True
         assert result.model_id == "test_model"
         assert result.chain == "A"
-        assert result.res_num == 19
+        assert result.resid == 19
         assert result.ori_resname == "THR"
         assert result.target_resname == "ALA"
         # check resulted mutant_scores aproximately match expected mutant_scores
@@ -715,7 +715,7 @@ def test_model_point_mutation_run_with_output_mutants_true(mocker, monkeypatch):
             model_path=Path("test.pdb"),
             model_id="test_model",
             chain="A",
-            res_num=19,
+            resid=19,
             ori_resname="THR",
             target_resname="ALA",
             native_scores=(-106.7, -29.6, -316.5, -13.8, 1494.7),
@@ -748,7 +748,7 @@ def test_model_point_mutation_fail():
         model_path=Path("non-pdb-here.pdb"),
         model_id="test",
         chain="A",
-        res_num=1,
+        resid=1,
         ori_resname="ALA", 
         target_resname="TRP",
         native_scores=(0, 0, 0, 0, 0),

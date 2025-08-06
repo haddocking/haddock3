@@ -111,15 +111,14 @@
 <span class="sd">sure to sample enough the possible interaction space.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.haddockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockModel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcns</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_cns_input</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libparallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericTask</span><span class="p">,</span> <span class="n">Scheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libparallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericTask</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libpdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_combination_chains</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNSJob</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_engine</span>
@@ -266,6 +265,33 @@
         <span class="k">return</span> <span class="n">l</span></div>
 
 
+<div class="viewcode-block" id="HaddockModule.restraints_guardrail">
+<a class="viewcode-back" href="../../../../modules/sampling/haddock.modules.sampling.rigidbody.html#haddock.modules.sampling.rigidbody.HaddockModule.restraints_guardrail">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">restraints_guardrail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ambig_fnames</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Makes sure any restraints are available for the docking.&quot;&quot;&quot;</span>
+        <span class="c1"># List all types of restraints</span>
+        <span class="n">all_restraints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ambig_fnames</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;unambig_fname&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;hbond_fname&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cmrest&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ranair&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;surfrest&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># If not any restraints provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">all_restraints</span><span class="p">):</span>
+            <span class="c1"># Terminate docking</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span>
+                <span class="s2">&quot;No restraints found for [rigidbody] module. &quot;</span>
+                <span class="s2">&quot;For targeted docking, supply CNS-valid restraints file(s) &quot;</span>
+                <span class="s2">&quot;using &#39;ambig_fname&#39; and/or &#39;unambig_fname&#39; and/or &quot;</span>
+                <span class="s2">&quot;&#39;hbond_fname&#39; parameter(s). &quot;</span>
+                <span class="s2">&quot;For ab-initio docking, set &#39;cmrest&#39; or &#39;ranair&#39; &quot;</span>
+                <span class="s2">&quot;parameters to true.&quot;</span>
+                <span class="p">)</span></div>
+
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Pool of jobs to be executed by the CNS engine</span>
@@ -304,7 +330,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ambig_fnames</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restraints_guardrail</span><span class="p">(</span><span class="n">ambig_fnames</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Preparing jobs...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
@@ -317,9 +344,6 @@
             <span class="n">cns_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_cns_input_parallel</span><span class="p">(</span>
                 <span class="n">models_to_dock</span><span class="p">,</span> <span class="n">sampling_factor</span><span class="p">,</span> <span class="n">ambig_fnames</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparation took </span><span class="si">{</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 
         <span class="n">jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_cns_jobs</span><span class="p">(</span><span class="n">cns_input</span><span class="p">)</span>
 

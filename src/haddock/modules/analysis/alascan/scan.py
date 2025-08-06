@@ -5,15 +5,16 @@ import shutil
 from pathlib import Path
 from contextlib import redirect_stdout
 from dataclasses import dataclass
-from typing import List, Tuple, Union, Dict
+from typing import List, Tuple, Dict
 
 import numpy as np
 import pandas as pd
 
 
 from haddock import log
-from haddock.core.typing import Optional, Any
+from haddock.core.typing import Any, Optional, Union
 from haddock.libs.libalign import get_atoms, load_coords
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
 from haddock.clis import cli_score
@@ -68,7 +69,22 @@ RES_CODES = dict([
     ])
 
 
-def mutate(pdb_f, target_chain, target_resnum, mut_resname):
+@dataclass
+class MutationResult:
+    """Result from a single mutation."""
+    model_id: str
+    chain: str
+    resid: int
+    ori_resname: str
+    target_resname: str
+    # components of "mutant_scores": score, vdw, elec, desolv, bsa
+    mutant_scores: Tuple[float, float, float, float, float]  
+    delta_scores: Tuple[float, float, float, float, float]   
+    success: bool
+    error_msg: Optional[str] = None
+
+
+def mutate(pdb_f, target_chain, target_resid, mut_resname):
     """
     Mutate a residue in a PDB file into a different residue.
     
@@ -80,7 +96,7 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     target_chain : str
         Chain of the residue to be mutated.
     
-    target_resnum : int
+    target_resid : int
         Residue number of the residue to be mutated.
     
     mut_resname : str
@@ -97,9 +113,9 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
         for line in fh.readlines():
             if line.startswith('ATOM'):
                 chain = line[21]
-                resnum = int(line[22:26])
+                resid = int(line[22:26])
                 atom_name = line[12:16].strip()
-                if target_chain == chain and target_resnum == resnum:
+                if target_chain == chain and target_resid == resid:
                     if not resname:
                         resname = line[17:20].strip()
                     if atom_name in ATOMS_TO_BE_MUTATED:
@@ -109,7 +125,7 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
                 else:
                     mut_pdb_l.append(line)
     try:
-        mut_id = f'{RES_CODES[resname]}{target_resnum}{RES_CODES[mut_resname]}'
+        mut_id = f'{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}'
     except KeyError:
         raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
     mut_pdb_fname = Path(
@@ -117,50 +133,6 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     with open(mut_pdb_fname, 'w') as fh:
         fh.write(''.join(mut_pdb_l))
     return mut_pdb_fname
-
-
-def add_delta_to_bfactor(pdb_f, df_scan):
-    """Add delta scores as b-factors.
-    
-    Parameters
-    ----------
-    pdb_f : str
-        Path to the pdb file.
-
-    df_scan : pandas.DataFrame
-        Dataframe with the scan results for the model
-    
-    Returns
-    -------
-    pdb_f : str
-        Path to the pdb file with the b-factors added.
-    """
-    tmp_pdb_f = pdb_f.replace('.pdb', '_bfactor.pdb')
-    max_b, min_b = df_scan["delta_score"].max(), df_scan["delta_score"].min()
-    out_pdb_l = []
-    with open(pdb_f, 'r') as fh:
-        for line in fh.readlines():
-            if line.startswith('ATOM'):
-                chain = line[21]
-                resnum = int(line[22:26])
-                norm_delta = 0.0
-                # extracting all the elements of df_scan such that
-                # chain = chain and res = resnum
-                df_scan_subset = df_scan.loc[
-                    (df_scan["chain"] == chain) & (df_scan["res"] == resnum)
-                    ]
-                if df_scan_subset.shape[0] > 0:
-                    delta = df_scan_subset["delta_score"].values[0]
-                    norm_delta = 100 * (delta - min_b) / (max_b - min_b)
-
-                delta_str = f"{norm_delta:.2f}".rjust(6, " ")
-                line = line[:60] + delta_str + line[66:]
-            out_pdb_l.append(line)
-    with open(tmp_pdb_f, 'w') as out_fh:
-        out_fh.write(''.join(out_pdb_l))
-    # move tmp_pdb_f to pdb_f
-    os.rename(tmp_pdb_f, pdb_f)
-    return pdb_f
 
 
 def get_score_string(pdb_f, run_dir, outputpdb=False):
@@ -259,80 +231,63 @@ def add_zscores(df_scan_clt, column='delta_score'):
     return df_scan_clt
 
 
-def alascan_cluster_analysis(models):
-    """Perform cluster analysis on the alascan data.
-    
-    Parameters
-    ----------
-    models : list
-        List of models.
-    
-    path : str
-        Path to the run directory.
-    """
-    clt_scan = {}
-    cl_pops = {}
-    for native in models:
-        cl_id = native.clt_id
-        # unclustered models have cl_id = None
-        if cl_id is None:
-            cl_id = "unclustered"
-        # Initiate key if this cluster id is encountered for the first time
-        if cl_id not in clt_scan:
-            clt_scan[cl_id] = {}
-            cl_pops[cl_id] = 0
-        # Increase the population of that cluster
-        cl_pops[cl_id] += 1
-        # read the scan file
-        alascan_fname = f"scan_{native.file_name.removesuffix('.pdb')}.tsv"
-        df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
-        # loop over the scan file
-        for row_idx in range(df_scan.shape[0]):
-            row = df_scan.iloc[row_idx]
-            chain = row['chain']
-            res = row['res']
-            ori_resname = row['ori_resname']
-            delta_score = row['delta_score']
-            delta_vdw = row['delta_vdw']
-            delta_elec = row['delta_elec']
-            delta_desolv = row['delta_desolv']
-            delta_bsa = row['delta_bsa']
-            # add to the cluster data with the ident logic
-            ident = f"{chain}-{res}-{ori_resname}"
-            # Create variable with appropriate key
-            if ident not in clt_scan[cl_id].keys():
-                clt_scan[cl_id][ident] = {
-                    'delta_score': [],
-                    'delta_vdw': [],
-                    'delta_elec': [],
-                    'delta_desolv': [],
-                    'delta_bsa': [],
-                    'frac_pr': 0,
-                    }
-            # Add data
-            clt_scan[cl_id][ident]['delta_score'].append(delta_score)
-            clt_scan[cl_id][ident]['delta_vdw'].append(delta_vdw)
-            clt_scan[cl_id][ident]['delta_elec'].append(delta_elec)
-            clt_scan[cl_id][ident]['delta_desolv'].append(delta_desolv)
-            clt_scan[cl_id][ident]['delta_bsa'].append(delta_bsa)
-            clt_scan[cl_id][ident]['frac_pr'] += 1
-    # now average the data for every cluster
-    for cl_id in clt_scan:
-        scan_clt_filename = f"scan_clt_{cl_id}.tsv"
-        log.info(f"Writing {scan_clt_filename}")
+class ClusterOutputer():
+    """Manage the generation of alascan outputs for cluster-based analysis."""
+    def __init__(
+            self,
+            cluster_scan_data: Dict[str, Dict[str, Union[float, int]]],
+            clt_id: str,
+            clt_population: int,
+            scan_residue: str = "ALA",
+            generate_plot: bool = False,
+            offline: bool = False,
+            ):
+        """Initialization function
+
+        Parameters
+        ----------
+        cluster_scan_data : Dict[str, Dict[str, Union[float, int]]]
+            Dictionary containing alascan data per residue identifier.
+        clt_id : str
+            Cluster identifier
+        clt_population : int
+            Number of entries in this cluster.
+        scan_residue : str, optional
+            Residue scanned, by default "ALA"
+        generate_plot : bool, optional
+            Defines if a plot must be generated, by default False
+        offline : bool, optional
+            Defines if the plot should be functional offline, by default False
+        """
+        self.cluster_scan_data = cluster_scan_data
+        self.clt_id = clt_id
+        self.clt_population = clt_population
+        self.scanned_residue = scan_residue
+        self.generate_plot = generate_plot
+        self.offline = offline
+
+    def run(self) -> str:
+        """Wrtie cluster alascan output to scan_clt_X.tsv file,
+        including average and stdard deviation data per residue
+        and optionally save cluster alascan plots (if generate_plot == True)
+        
+        Return
+        ------
+        scan_clt_filename : str
+            Name of the tsv file written
+        """
+        # Gather all data in a list
         clt_data = []
         # Loop over residues
-        for ident in clt_scan[cl_id]:
-            # Split identifyer to retrieve residue data
+        for ident, clt_res_dt in self.cluster_scan_data.items():
+            # Split identifier to retrieve residue data
             chain = ident.split("-")[0]
-            resnum = int(ident.split("-")[1])
+            resid = int(ident.split("-")[1])
             resname = ident.split("-")[2]
-            # Point data for this specific residue
-            clt_res_dt = clt_scan[cl_id][ident]
             # Compute averages and stddev and hold data.
             clt_data.append([
                 chain,
-                resnum,
+                resid,
                 resname,
                 ident,
                 np.mean(clt_res_dt['delta_score']),
@@ -345,10 +300,10 @@ def alascan_cluster_analysis(models):
                 np.std(clt_res_dt['delta_desolv']),
                 np.mean(clt_res_dt['delta_bsa']),
                 np.std(clt_res_dt['delta_bsa']),
-                clt_res_dt['frac_pr'] / cl_pops[cl_id],
+                clt_res_dt['frac_pr'] / self.clt_population,
                 ])
         df_cols = [
-            'chain', 'resnum', 'resname', 'full_resname',
+            'chain', 'resid', 'resname', 'full_resname',
             'delta_score', 'delta_score_std', 'delta_vdw', 'delta_vdw_std',
             'delta_elec', 'delta_elec_std', 'delta_desolv', 'delta_desolv_std',
             'delta_bsa', 'delta_bsa_std', 'frac_pres',
@@ -356,91 +311,189 @@ def alascan_cluster_analysis(models):
         df_scan_clt = pd.DataFrame(clt_data, columns=df_cols)
         # adding clt-based Z score
         df_scan_clt = add_zscores(df_scan_clt, 'delta_score')
-
-        df_scan_clt.sort_values(by=['chain', 'resnum'], inplace=True)
+        # Sort rows
+        df_scan_clt.sort_values(by=['chain', 'resid'], inplace=True)
+        # Generate output CSV data
+        csv_data = io.StringIO()
         df_scan_clt.to_csv(
-            scan_clt_filename,
+            csv_data,
             index=False,
             float_format='%.2f',
             sep="\t")
+        csv_data.seek(0)
+        # Define output csv filepath
+        scan_clt_filename = f"scan_clt_{self.clt_id}.tsv"
+        # Write the file
+        with open(scan_clt_filename, "w") as fout:
+            # add comment to the file
+            fout.write(f"{'#' * 80}{os.linesep}")
+            fout.write(f"# `alascan` cluster results for cluster {self.clt_id}{os.linesep}")  # noqa E501
+            fout.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
+            fout.write(f"{'#' * 80}{os.linesep}")
+            # Write csv data content
+            fout.write(csv_data.read())
+        
+        # Generate plot
+        self.gen_alascan_plot(df_scan_clt)
 
-        # add comment
-        fl_content = open(scan_clt_filename, 'r').read()
-        with open(scan_clt_filename, 'w') as f:
-                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
-                f.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
-                f.write(f"# reported values are the average for the cluster{os.linesep}")  # noqa E501
-                f.write(f"#{os.linesep}")
-                f.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
-                f.write(f"{'#' * 80}{os.linesep}")  # noqa E501
-                f.write(fl_content)
-    return clt_scan
+        return scan_clt_filename
 
+    def gen_alascan_plot(self, df_scan_clt: pd.DataFrame) -> None:
+        """Generate the alascan plot based on provided data.
 
-def generate_alascan_output(models, path):
-    """Generate the alascan output files.
-    
-    Parameters
-    ----------
-    models : list
-        List of models.
-    path : str
-        Path to the run directory.
-    """
-    models_to_export = []
-    for model in models:
-        name = f"{model.file_name.removesuffix('.pdb')}_alascan.pdb"
-        # changing attributes
-        name_path = Path(name)
-        shutil.copy(Path(model.path, model.file_name), name_path) 
-        alascan_fname = f"scan_{model.file_name.removesuffix('.pdb')}.tsv"
-        # add delta_score as a bfactor to the model
-        df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
-        add_delta_to_bfactor(name, df_scan)
-        model.ori_name = model.file_name
-        model.file_name = name
-        model.full_name = name
-        model.rel_path = Path('..', Path(path).name, name)
-        model.path = str(Path(".").resolve())
-        models_to_export.append(model)
-    return models_to_export
+        Parameters
+        ----------
+        df_scan_clt : pd.DataFrame
+            The data frame containing the data to be plotted.
+        """
+        # Check if the plot must be generated
+        if not self.generate_plot:
+            return
 
-
-def create_alascan_plots(clt_alascan, scan_residue, offline = False):
-    """Create the alascan plots."""
-    for clt_id in clt_alascan:            
-        scan_clt_filename = f"scan_clt_{clt_id}.tsv"
-        if not os.path.exists(scan_clt_filename):
-            log.warning(f"Could not find {scan_clt_filename}")
-            continue
-        df_scan_clt = pd.read_csv(
-            scan_clt_filename,
-            sep="\t",
-            comment="#"
-            )
-        # plot the data
+        # Try to plot the data
         try:
             make_alascan_plot(
                 df_scan_clt,
-                clt_id,
-                scan_residue,
-                offline=offline,
+                self.clt_id,
+                self.scanned_residue,
+                offline=self.offline,
                 )
         except Exception as e:
             log.warning(
                 "Could not create interactive plot. The following error"
                 f" occurred {e}"
                 )
-    return
 
 
-def write_scan_out(results: List[Any], model_id: str) -> None:
+class AddDeltaBFactor():
+    """Add delta score in bfactor column of a PDB."""
+    def __init__(
+            self,
+            model: PDBFile,
+            path: Path,
+            model_results: List[MutationResult],
+            ):
+        """Initialisation function
+
+        Parameters
+        ----------
+        model : PDBFile
+            PDBfile model to be modified
+        path : Path
+            Where to write the new file
+        """
+        self.model = model
+        self.path = path
+        self.input_results = model_results
+
+    def run(self) -> PDBFile:
+        """Perform the addition of delta scores as bfactor in pdb file."""
+        self.reorder_results()
+        # Define new pdb filename
+        model_fname = self.model.file_name.removesuffix(".pdb")
+        output_fname = f"{model_fname}_alascan.pdb"
+        # Add delta_score as a bfactor to the model
+        self.write_delta_score_to_pdb(output_fname)
+        # Update attributes of the model
+        self.model.ori_name = self.model.file_name
+        self.model.file_name = output_fname
+        self.model.full_name = output_fname
+        self.model.rel_path = Path("..", Path(self.path).name, output_fname)
+        self.model.path = str(Path(".").resolve())
+        return self.model
+    
+    def write_delta_score_to_pdb(self, output_path: Path) -> Path:
+        """Add delta scores as b-factors in PDB file.
+        
+        Parameters
+        ----------
+        output_path : Path
+            Path to the pdb file.
+        
+        Returns
+        -------
+        output_path : Path
+            Path to the pdb file with the b-factors added.
+        """
+        # Input pdb file path
+        input_pdbfile = Path(self.model.path, self.model.file_name)
+        # Start writting file containing bfactor
+        with open(input_pdbfile, "r") as fin, open(output_path, "w") as fout:
+            for line in fin:
+                if line.startswith("ATOM"):
+                    chain = line[21]
+                    resid = int(line[22:26])
+                    chain_res_key = f"{chain}-{resid}"
+                    try:
+                        delta_score = self.model_results[chain_res_key]
+                        norm_delta = self.normalize_score(delta_score)
+                    except KeyError:
+                        norm_delta = 0.0
+                    # Generate the bfactor string
+                    delta_str = f"{norm_delta:.2f}".rjust(6, " ")
+                    # Modify the PDB line
+                    line = line[:60] + delta_str + line[66:]
+                fout.write(line)
+        return output_path
+
+    def reorder_results(self) -> None:
+        """Perform initial data manuputation to simply downstream access.
+        
+        Organise mutation results into dictionary, with chain-resid keys 
+        and values delta score (e.g.: {"A-115": 5}),
+        and determine min and max score within the model to normalize data.
+        """
+        self.model_results: Dict[str, float] = {}
+        all_delta_scores: List[float] = []
+        # Loop over mutation results
+        for mut_result in self.input_results:
+            # Create key
+            chain_res_key = f"{mut_result.chain}-{mut_result.resid}"
+            # Point delta score value
+            delta_score = mut_result.delta_scores[0]
+            # Hold data
+            self.model_results[chain_res_key] = delta_score
+            all_delta_scores.append(delta_score)
+        # Obtain min and max delta score to be able to normalize later
+        if len(all_delta_scores) >= 1:
+            self.min_score = min(all_delta_scores)
+            self.max_score = max(all_delta_scores)
+        else:
+            self.min_score = -1
+            self.max_score = 1
+    
+    def normalize_score(self, score: float) -> float:
+        """Normalise the input score based on observed scores for this model
+
+        In case normalisation cannot be performed, returns 50.0
+
+        Parameters
+        ----------
+        score : float
+            Input score to be normalized
+
+        Returns
+        -------
+        norm100 : float
+            Normalized score between 0 and 100
+        """
+        try:
+            norm = (score - self.min_score) / (self.max_score - self.min_score)
+        except ZeroDivisionError:
+            norm = 0.5
+        norm100 = 100 * norm
+        return norm100
+
+
+def write_scan_out(results: List[MutationResult], model_id: str) -> None:
     """
     Save mutation results per model to tsv file.
     
     Parameters
     ----------
-    results : List[Any]
+    results : List[MutationResult]
         List of mutation results from scanning (comes from MutationResult)
     model_id : str
         Identifier for the model used in filename.
@@ -455,7 +508,7 @@ def write_scan_out(results: List[Any], model_id: str) -> None:
     If results list is empty, no file is created.
     """
     if not results:
-        print(f'No scan results for model {model_id}')
+        print(f"No scan results for model {model_id}")
         return
 
     # Convert scan output to dataframe
@@ -467,7 +520,7 @@ def write_scan_out(results: List[Any], model_id: str) -> None:
             d_score, d_vdw, d_elec, d_des, d_bsa = result.delta_scores
             
             scan_data.append([
-                result.chain, result.res_num, result.ori_resname, 
+                result.chain, result.resid, result.ori_resname, 
                 result.target_resname, m_score, m_vdw, m_elec, m_des, m_bsa,
                 d_score, d_vdw, d_elec, d_des, d_bsa
             ])
@@ -483,43 +536,109 @@ def write_scan_out(results: List[Any], model_id: str) -> None:
                      'delta_desolv', 'delta_bsa']
         
         df_scan = pd.DataFrame(scan_data, columns=df_columns)
+        # Compute z-scores
         df_scan = add_zscores(df_scan, 'delta_score')
         
         # Sort by chain id, then by residue id
         df_scan.sort_values(by=['chain', 'res'], inplace=True)
 
-        # Save to tsv (per model)
+        # Get csv data as string
+        csv_io = io.StringIO()
+        df_scan.to_csv(csv_io, index=False, float_format="%.2f", sep="\t")
+        csv_io.seek(0)
+        # Save to tsv
         output_file = f"scan_{model_id}.tsv"
-        df_scan.to_csv(output_file, index=False, float_format='%.2f', sep="\t")
-        fl_content = open(output_file, 'r').read()
-        with open(output_file, 'w') as f:
-            f.write(f"{'#' * 70}{os.linesep}")
-            f.write(f"# `alascan` results for {model_id}\n")
-            f.write(f"#\n")
-            f.write(f"# native score = {native_score}\n")
-            f.write(f"#\n")
-            f.write(f"# z_score is calculated with respect to the other residues\n")
-            f.write(f"{'#' * 70}{os.linesep}")
-            f.write(fl_content)
+        with open(output_file, "w") as fout:
+            # Write comments at start of the file
+            fout.write(f"{'#' * 80}{os.linesep}")
+            fout.write(f"# `alascan` results for {model_id}{os.linesep}")
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# native score = {native_score}{os.linesep}")
+            fout.write(f"#{os.linesep}")
+            fout.write(f"# z_score is calculated with respect to the other residues{os.linesep}")
+            fout.write(f"{'#' * 80}{os.linesep}")
+            # Write csv content
+            fout.write(csv_io.read())
 
 
-@dataclass
-class MutationResult:
-    """Result from a single mutation."""
-    model_id: str
-    chain: str
-    res_num: int
-    ori_resname: str
-    target_resname: str
-    # components of "mutant_scores": score, vdw, elec, desolv, bsa
-    mutant_scores: Tuple[float, float, float, float, float]  
-    delta_scores: Tuple[float, float, float, float, float]   
-    success: bool
-    error_msg: Optional[str] = None
+def group_scan_by_cluster(
+        models: List[PDBFile],
+        results_by_model: Dict[str, MutationResult]
+        ) -> Tuple[
+            Dict[str, Dict[str, Dict[str, Union[float, int]]]],
+            Dict[str, int]
+            ]:
+    """Group models alascan data per cluster.
+
+    Parameters
+    ----------
+    models : List[PDBFile]
+        List of input models
+
+    Returns
+    -------
+    clt_scan : Dict[str, Dict[str, Dict[str, Union[float, int]]]]
+        Dictionary containing alascan data for each cluster, grouped by
+        residue identifyer.
+    clt_pops: Dict[str, int]
+        Dictionary containing number of entries for each cluster.
+    """
+    # Define holders
+    clt_scan: Dict[str, Dict[str, Dict[str, Union[float, int]]]] = {}
+    clt_pops: Dict[str, int] = {}
+    # Loop over models
+    for model in models:
+        # Point cluster id
+        cl_id = model.clt_id
+        # unclustered models have cl_id = None
+        if cl_id is None:
+            cl_id = "unclustered"
+        # Initiate key if this cluster id is encountered for the first time
+        if cl_id not in clt_scan:
+            clt_scan[cl_id] = {}
+            clt_pops[cl_id] = 0
+        # Increase the population of that cluster
+        clt_pops[cl_id] += 1
+        # Point scan results for this model
+        model_id = model.file_name.removesuffix(".pdb")
+        try:
+            model_scan_dt = results_by_model[model_id]
+        except KeyError:
+            pass
+        # Loop over the mutation results
+        for mut_result in model_scan_dt:
+            # Extract data related to residue information
+            chain = mut_result.chain
+            res = mut_result.resid
+            ori_resname = mut_result.ori_resname
+            # Define unique string identifying this residue
+            ident = f"{chain}-{res}-{ori_resname}"
+            # Create variable with appropriate key
+            if ident not in clt_scan[cl_id].keys():
+                clt_scan[cl_id][ident] = {
+                    "delta_score": [],
+                    "delta_vdw": [],
+                    "delta_elec": [],
+                    "delta_desolv": [],
+                    "delta_bsa": [],
+                    "frac_pr": 0,
+                    }
+            # Add data
+            delta_scores = mut_result.delta_scores
+            clt_scan[cl_id][ident]["delta_score"].append(delta_scores[0])
+            clt_scan[cl_id][ident]["delta_vdw"].append(delta_scores[1])
+            clt_scan[cl_id][ident]["delta_elec"].append(delta_scores[2])
+            clt_scan[cl_id][ident]["delta_desolv"].append(delta_scores[3])
+            clt_scan[cl_id][ident]["delta_bsa"].append(delta_scores[4])
+            clt_scan[cl_id][ident]["frac_pr"] += 1
+    return clt_scan, clt_pops
 
 
 class InterfaceScanner:
-    """Scan interface of a model to get tartget residues and create corresponding mutation jobs."""
+    """Scan interface of a model to get tartget residues and create
+    corresponding mutation jobs.
+    """
+
     def __init__(
         self, 
         model: Union[str, Path, Any], 
@@ -543,7 +662,7 @@ class InterfaceScanner:
         library_mode : bool
             If True, execute mutations sequentially inside InterfaceScanner.run() 
             If False, just prepare jobs - execution will be taken care of in init.py 
-            of alascan module by haddock Engine  
+            of alascan module by haddock Engine
         """
         self.model = model
         self.mutation_res = mutation_res
@@ -553,11 +672,12 @@ class InterfaceScanner:
         self.filter_resdic = {
             key[-1]: value for key, value
             in self.params.items()
-            if key.startswith("resdic")}
-        try:
+            if key.startswith("resdic")
+            }
+        if isinstance(model, PDBFile):
             self.model_path = model.rel_path
-            self.model_id = model.file_name.removesuffix('.pdb')
-        except AttributeError:
+            self.model_id = model.file_name.removesuffix(".pdb")
+        else:
             # for library mode
             self.model_path = Path(model)
             self.model_id = self.model_path.stem
@@ -583,13 +703,17 @@ class InterfaceScanner:
             
             # Load coordinates
             atoms = get_atoms(self.model_path)
-            coords, chain_ranges = load_coords(self.model_path, atoms, add_resname=True)
+            coords, _chain_ranges = load_coords(
+                self.model_path,
+                atoms,
+                add_resname=True,
+                )
             
             # Determine target residues: get interface, then apply user filers, if given 
             # Get all interface residues        
             cutoff = self.params.get("int_cutoff", 5.0)
             interface = CAPRI.identify_interface(self.model_path, cutoff=cutoff)
-            
+
             # get user_chains for the check down the line
             user_chains = self.params.get("chains", [])
 
@@ -622,13 +746,14 @@ class InterfaceScanner:
                 for res in interface[chain]:
                     ori_resname = resname_dict[f"{chain}-{res}"]
                     end_resname = self.mutation_res
-                    # Skip if scan_residue is the same as original (e.g. skip ALA->ALA)
+                    # Skip if scan_residue is the same as original
+                    # (e.g. skip ALA->ALA)
                     if ori_resname != end_resname:
                         job = ModelPointMutation(
                             model_path=self.model_path,
                             model_id=self.model_id,
                             chain=chain,
-                            res_num=res,
+                            resid=res,
                             ori_resname=ori_resname,
                             target_resname=end_resname,
                             native_scores=native_scores,
@@ -638,12 +763,19 @@ class InterfaceScanner:
     
             # Execute jobs if in library mode
             if self.library_mode:
-                log.info(f"Executing {len(self.point_mutations_jobs)} mutations for {self.model_id}")
+                log.info(
+                    f"Executing {len(self.point_mutations_jobs)} "
+                    f"mutations for {self.model_id}"
+                    )
                 results = []
                 total = len(self.point_mutations_jobs)
                 
                 for i, job in enumerate(self.point_mutations_jobs, 1):
-                    log.info(f"Processing mutation {i}/{total}: {job.chain}:{job.res_num} {job.ori_resname}->{job.target_resname}")
+                    log.info(
+                        f"Processing mutation {i}/{total}: "
+                        f"{job.chain}:{job.resid} {job.ori_resname}"
+                        f"->{job.target_resname}"
+                        )
                     result = job.run()
                     results.append(result)
                     if result.success:
@@ -668,7 +800,7 @@ class ModelPointMutation:
         model_path: Path, 
         model_id: str, 
         chain: str, 
-        res_num: int, 
+        resid: int, 
         ori_resname: str,
         target_resname: str, 
         native_scores: Tuple[float, float, float, float, float], 
@@ -685,7 +817,7 @@ class ModelPointMutation:
             Identifier for the model
         chain : str
             Chain identifier
-        res_num : int
+        resid : int
             Residue number
         ori_resname : str
             Original residue name
@@ -699,7 +831,7 @@ class ModelPointMutation:
         self.model_path = Path(model_path)
         self.model_id = model_id
         self.chain = chain
-        self.res_num = res_num
+        self.resid = resid
         self.ori_resname = ori_resname
         self.target_resname = target_resname
         self.native_scores = native_scores
@@ -707,7 +839,7 @@ class ModelPointMutation:
     
     def run(self):
         """Execute the point mutation."""
-        mutation_id = f"{self.model_id}_{self.chain}{self.res_num}{self.target_resname}"
+        mutation_id = f"{self.model_id}_{self.chain}{self.resid}{self.target_resname}"
         
         try:
             # Setup working directory
@@ -715,7 +847,7 @@ class ModelPointMutation:
             os.makedirs(sc_dir, exist_ok=True)
             
             # Perform mutation
-            mut_pdb = mutate(self.model_path, self.chain, self.res_num, self.target_resname)
+            mut_pdb = mutate(self.model_path, self.chain, self.resid, self.target_resname)
             
             # Calculate mutant scores
             mutant_scores = calc_score(mut_pdb, run_dir=sc_dir, outputpdb=self.output_mutants)
@@ -727,7 +859,7 @@ class ModelPointMutation:
                           n_des - m_des, n_bsa - m_bsa)
 
             # Handle output files
-            em_mut_pdb = Path(mut_pdb.stem + '_hs.pdb')
+            em_mut_pdb = Path(f"{mut_pdb.stem}_hs.pdb")
             if not self.output_mutants:
                 # if output_mutants = False, then remove both files
                 if os.path.exists(mut_pdb):
@@ -743,14 +875,14 @@ class ModelPointMutation:
                 shutil.rmtree(sc_dir)
             
             return MutationResult(
-                model_id=self.model_id, chain=self.chain, res_num=self.res_num,
+                model_id=self.model_id, chain=self.chain, resid=self.resid,
                 ori_resname=self.ori_resname, target_resname=self.target_resname,
                 mutant_scores=mutant_scores, delta_scores=delta_scores, success=True
             )
             
         except Exception as e:
             return MutationResult(
-                model_id=self.model_id, chain=self.chain, res_num=self.res_num,
+                model_id=self.model_id, chain=self.chain, resid=self.resid,
                 ori_resname=self.ori_resname, target_resname=self.target_resname,
                 mutant_scores=(0, 0, 0, 0, 0), delta_scores=(0, 0, 0, 0, 0),
                 success=False, error_msg=str(e)

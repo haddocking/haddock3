@@ -1578,7 +1578,7 @@ def offline_js_manager(fpath: FilePath, offline: bool) -> str:
     plotly_js_import : str
         HTML solution for the importation of the plotly javascript content.
     """
-    # Case where offline isrequired
+    # Case when offline is true
     if offline:
         # Obtain directory where the figure should be written
         fig_dir = Path(fpath).parent

@@ -75,6 +75,27 @@ class HaddockModule(BaseHaddockModule):
     def confirm_installation(cls):
         """Confirm if module is installed."""
         return
+    
+    def validate_ouput_mutant_parameter(self, nmodels: int) -> None:
+        """Validate the output mutant parameter.
+        
+        This parameter can be set to True if only one input model is provided,
+        otherewise we risk to generate too many PDB files.
+
+        Parameters
+        ----------
+        nmodels: int
+            Number of input models.
+        """
+        if self.params["output_mutants"]:
+            # output mutants is only possible if there is only one model
+            if nmodels > 1:
+                log.warning(
+                    "'output_mutants' parameter is set to True, "
+                    "but more than one model was found. "
+                    "Setting 'output_mutant' parameter to False."
+                    )
+                self.params["output_mutants"] = False
 
     def _run(self):
         """Execute module."""
@@ -84,14 +105,11 @@ class HaddockModule(BaseHaddockModule):
         except Exception as e:
             self.finish_with_error(e)
         
-        # output mutants is only possible if there is only one model
+        # Compute number of input model
         nmodels = len(models)
-        if self.params["output_mutants"]:
-            if nmodels != 1:
-                log.warning(
-                    "output_mutants is set to True but more than one model "
-                    "was found. Setting 'output_mutant' parameter to False.")
-                self.params["output_mutants"] = False
+        
+        # Validate `output_mutant` parameter
+        self.validate_ouput_mutant_parameter(nmodels)
         
         # Step1: "get mutations" i.e. get target interface residues per input model
         # 1 scan_obj per input model, merged into scan_objects to give to Engine  

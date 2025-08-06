@@ -267,7 +267,9 @@ class ClusterOutputer():
         self.offline = offline
 
     def run(self) -> str:
-        """Main function generating files related to alascan cluster analysis.
+        """Wrtie cluster alascan output to scan_clt_X.tsv file,
+        including average and stdard deviation data per residue
+        and optionally save cluster alascan plots (if generate_plot == True)
         
         Return
         ------

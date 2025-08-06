@@ -41,20 +41,20 @@ You can use the parameters below to customize the behavior of the module:
     >>> resdic_A = [1,2,3,4]
     >>> resdic_B = [2,3,4]
 """
-import os
+
 from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.libs.libutil import parse_ncores
+from haddock.libs.libparallel import GenericTask
 from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
+    AddDeltaBFactor,
+    ClusterOutputer,
+    group_scan_by_cluster,
     InterfaceScanner,
     write_scan_out,
-    alascan_cluster_analysis,
-    create_alascan_plots,
-    generate_alascan_output,
 )
 
 
@@ -75,6 +75,27 @@ class HaddockModule(BaseHaddockModule):
     def confirm_installation(cls):
         """Confirm if module is installed."""
         return
+    
+    def validate_ouput_mutant_parameter(self, nmodels: int) -> None:
+        """Validate the output mutant parameter.
+        
+        This parameter can be set to True if only one input model is provided,
+        otherewise we risk to generate too many PDB files.
+
+        Parameters
+        ----------
+        nmodels: int
+            Number of input models.
+        """
+        if self.params["output_mutants"]:
+            # output mutants is only possible if there is only one model
+            if nmodels > 1:
+                log.warning(
+                    "'output_mutants' parameter is set to True, "
+                    "but more than one model was found. "
+                    "Setting 'output_mutant' parameter to False."
+                    )
+                self.params["output_mutants"] = False
 
     def _run(self):
         """Execute module."""
@@ -84,26 +105,23 @@ class HaddockModule(BaseHaddockModule):
         except Exception as e:
             self.finish_with_error(e)
         
-        # output mutants is only possible if there is only one model
+        # Compute number of input model
         nmodels = len(models)
-        if self.params["output_mutants"]:
-            if nmodels != 1:
-                log.warning(
-                    "output_mutants is set to True but more than one model "
-                    "was found. Setting 'output_mutant' parameter to False.")
-                self.params["output_mutants"] = False
         
-        # Step1: "get mutations" i.e. get target interface residues per input model  
-        scan_objects = []
-        for model in models:
-            # 1 scan_obj per input model, merged into scan_objects to give to Engine
-            scan_obj = InterfaceScanner(
+        # Validate `output_mutant` parameter
+        self.validate_ouput_mutant_parameter(nmodels)
+        
+        # Step1: "get mutations" i.e. get target interface residues per input model
+        # 1 scan_obj per input model, merged into scan_objects to give to Engine  
+        scan_objects = [
+            InterfaceScanner(
                 mutation_res=self.params["scan_residue"],
                 model=model,
                 params=self.params,
                 library_mode = False
-            )
-            scan_objects.append(scan_obj)
+                )
+            for model in models
+            ]
 
         log.info(f"Scanning {nmodels} models for possible mutations")
         exec_mode = get_analysis_exec_mode(self.params["mode"])
@@ -112,12 +130,11 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
 
         # Step2: perform mutations
-        # Collect mutations from the engine output 
+        # Collect all point mutations to be performed
         mutation_objects = []
-        for i, scan_obj in enumerate(scan_objects):
-            if i < len(engine.results) and engine.results[i]:
-                #scan_obj.point_mutations_jobs = engine.results[i]
-                mutation_objects.extend(engine.results[i]) 
+        for mutations_to_perform in engine.results:
+            if mutations_to_perform:
+                mutation_objects.extend(mutations_to_perform) 
 
         total_mutations = len(mutation_objects)
         log.info(f"Found {total_mutations} mutations")
@@ -136,27 +153,50 @@ class HaddockModule(BaseHaddockModule):
                     results_by_model[result.model_id].append(result)
 
             # Save to .tsv
-            for model_id, results in results_by_model.items():
-                write_scan_out(results, model_id)
-
-            # Cluster-based analysis
-            clt_alascan = alascan_cluster_analysis(models)
-            
-            # Generate plots if requested
-            if self.params["plot"]:
-                create_alascan_plots(
-                    clt_alascan,
-                    self.params["scan_residue"],
-                    offline=self.params["offline"],
-                )
+            scan_writter_jobs = [
+                GenericTask(write_scan_out, results, model_id)
+                for model_id, results in results_by_model.items()
+            ]
+            engine = Engine(scan_writter_jobs)
+            engine.run()
 
             # Generate output models with bfactors if requested  
             if self.params["output_bfactor"]:
-                models_to_export = generate_alascan_output(models, self.path)
+                update_with_bfactor_jobs = []
+                for model in models:
+                    model_id = model.file_name.removesuffix(".pdb")
+                    try:
+                        model_results = results_by_model[model_id]
+                    except KeyError:
+                        # Case when no data computed for this model
+                        model_results = []
+                    update_with_bfactor_jobs.append(
+                        AddDeltaBFactor(model, self.path, model_results)
+                        )
+                engine = Engine(update_with_bfactor_jobs)
+                engine.run()
+                models_to_export = engine.results
                 self.output_models = models_to_export
             else:
-                # # Send models to the next step, no operation is done on them 
+                # Send models to the next step, no operation is done on them 
                 self.output_models = models
+
+            # Cluster-based analysis
+            clt_scan, clt_pops = group_scan_by_cluster(models, results_by_model)
+            alascan_cluster_jobs = [
+                ClusterOutputer(
+                    clt_data,
+                    clt_id,
+                    clt_pops[clt_id],
+                    scan_residue=self.params["scan_residue"],
+                    generate_plot=self.params["plot"],
+                    offline=self.params["offline"],
+                )
+                for clt_id, clt_data in clt_scan.items()
+            ]
+            engine = Engine(alascan_cluster_jobs)
+            engine.run()
+
         else:
             log.info("No interface residues found - skipping mutation analysis")
             # Send models to the next step, no operation is done on them

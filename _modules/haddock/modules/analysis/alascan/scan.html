@@ -89,15 +89,16 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">redirect_stdout</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libalign</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_atoms</span><span class="p">,</span> <span class="n">load_coords</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libplots</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_alascan_plot</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.caprieval.capri</span><span class="w"> </span><span class="kn">import</span> <span class="n">CAPRI</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.clis</span><span class="w"> </span><span class="kn">import</span> <span class="n">cli_score</span>
@@ -152,9 +153,27 @@
     <span class="p">])</span>
 
 
+<div class="viewcode-block" id="MutationResult">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.MutationResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MutationResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Result from a single mutation.&quot;&quot;&quot;</span>
+    <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">chain</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">resid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">ori_resname</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">target_resname</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="c1"># components of &quot;mutant_scores&quot;: score, vdw, elec, desolv, bsa</span>
+    <span class="n">mutant_scores</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>  
+    <span class="n">delta_scores</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>   
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">error_msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
 <div class="viewcode-block" id="mutate">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.mutate">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">target_chain</span><span class="p">,</span> <span class="n">target_resnum</span><span class="p">,</span> <span class="n">mut_resname</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">target_chain</span><span class="p">,</span> <span class="n">target_resid</span><span class="p">,</span> <span class="n">mut_resname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mutate a residue in a PDB file into a different residue.</span>
 <span class="sd">    </span>
@@ -166,7 +185,7 @@
 <span class="sd">    target_chain : str</span>
 <span class="sd">        Chain of the residue to be mutated.</span>
 <span class="sd">    </span>
-<span class="sd">    target_resnum : int</span>
+<span class="sd">    target_resid : int</span>
 <span class="sd">        Residue number of the residue to be mutated.</span>
 <span class="sd">    </span>
 <span class="sd">    mut_resname : str</span>
@@ -183,9 +202,9 @@
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;ATOM&#39;</span><span class="p">):</span>
                 <span class="n">chain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>
-                <span class="n">resnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
+                <span class="n">resid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
                 <span class="n">atom_name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">target_chain</span> <span class="o">==</span> <span class="n">chain</span> <span class="ow">and</span> <span class="n">target_resnum</span> <span class="o">==</span> <span class="n">resnum</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">target_chain</span> <span class="o">==</span> <span class="n">chain</span> <span class="ow">and</span> <span class="n">target_resid</span> <span class="o">==</span> <span class="n">resid</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">resname</span><span class="p">:</span>
                         <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="k">if</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">ATOMS_TO_BE_MUTATED</span><span class="p">:</span>
@@ -195,7 +214,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">mut_pdb_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">mut_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">RES_CODES</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span><span class="si">}{</span><span class="n">target_resnum</span><span class="si">}{</span><span class="n">RES_CODES</span><span class="p">[</span><span class="n">mut_resname</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">mut_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">RES_CODES</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span><span class="si">}{</span><span class="n">target_resid</span><span class="si">}{</span><span class="n">RES_CODES</span><span class="p">[</span><span class="n">mut_resname</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not mutate </span><span class="si">{</span><span class="n">resname</span><span class="si">}</span><span class="s2"> into </span><span class="si">{</span><span class="n">mut_resname</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="n">mut_pdb_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
@@ -203,53 +222,6 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mut_pdb_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
         <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mut_pdb_l</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">mut_pdb_fname</span></div>
-
-
-
-<div class="viewcode-block" id="add_delta_to_bfactor">
-<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.add_delta_to_bfactor">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">add_delta_to_bfactor</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">df_scan</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add delta scores as b-factors.</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    pdb_f : str</span>
-<span class="sd">        Path to the pdb file.</span>
-
-<span class="sd">    df_scan : pandas.DataFrame</span>
-<span class="sd">        Dataframe with the scan results for the model</span>
-<span class="sd">    </span>
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    pdb_f : str</span>
-<span class="sd">        Path to the pdb file with the b-factors added.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tmp_pdb_f</span> <span class="o">=</span> <span class="n">pdb_f</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">,</span> <span class="s1">&#39;_bfactor.pdb&#39;</span><span class="p">)</span>
-    <span class="n">max_b</span><span class="p">,</span> <span class="n">min_b</span> <span class="o">=</span> <span class="n">df_scan</span><span class="p">[</span><span class="s2">&quot;delta_score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">df_scan</span><span class="p">[</span><span class="s2">&quot;delta_score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-    <span class="n">out_pdb_l</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;ATOM&#39;</span><span class="p">):</span>
-                <span class="n">chain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>
-                <span class="n">resnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
-                <span class="n">norm_delta</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="c1"># extracting all the elements of df_scan such that</span>
-                <span class="c1"># chain = chain and res = resnum</span>
-                <span class="n">df_scan_subset</span> <span class="o">=</span> <span class="n">df_scan</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                    <span class="p">(</span><span class="n">df_scan</span><span class="p">[</span><span class="s2">&quot;chain&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">chain</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_scan</span><span class="p">[</span><span class="s2">&quot;res&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">resnum</span><span class="p">)</span>
-                    <span class="p">]</span>
-                <span class="k">if</span> <span class="n">df_scan_subset</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">delta</span> <span class="o">=</span> <span class="n">df_scan_subset</span><span class="p">[</span><span class="s2">&quot;delta_score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">norm_delta</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="n">min_b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_b</span> <span class="o">-</span> <span class="n">min_b</span><span class="p">)</span>
-
-                <span class="n">delta_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">norm_delta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_str</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">66</span><span class="p">:]</span>
-            <span class="n">out_pdb_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_pdb_f</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_fh</span><span class="p">:</span>
-        <span class="n">out_fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_pdb_l</span><span class="p">))</span>
-    <span class="c1"># move tmp_pdb_f to pdb_f</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">tmp_pdb_f</span><span class="p">,</span> <span class="n">pdb_f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pdb_f</span></div>
 
 
 
@@ -358,82 +330,67 @@
 
 
 
-<div class="viewcode-block" id="alascan_cluster_analysis">
-<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.alascan_cluster_analysis">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">alascan_cluster_analysis</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform cluster analysis on the alascan data.</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    models : list</span>
-<span class="sd">        List of models.</span>
-<span class="sd">    </span>
-<span class="sd">    path : str</span>
-<span class="sd">        Path to the run directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">clt_scan</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">cl_pops</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">native</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
-        <span class="n">cl_id</span> <span class="o">=</span> <span class="n">native</span><span class="o">.</span><span class="n">clt_id</span>
-        <span class="c1"># unclustered models have cl_id = None</span>
-        <span class="k">if</span> <span class="n">cl_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cl_id</span> <span class="o">=</span> <span class="s2">&quot;unclustered&quot;</span>
-        <span class="c1"># Initiate key if this cluster id is encountered for the first time</span>
-        <span class="k">if</span> <span class="n">cl_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">:</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">cl_pops</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Increase the population of that cluster</span>
-        <span class="n">cl_pops</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="c1"># read the scan file</span>
-        <span class="n">alascan_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_</span><span class="si">{</span><span class="n">native</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
-        <span class="n">df_scan</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">alascan_fname</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
-        <span class="c1"># loop over the scan file</span>
-        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df_scan</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">df_scan</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">row_idx</span><span class="p">]</span>
-            <span class="n">chain</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;chain&#39;</span><span class="p">]</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;res&#39;</span><span class="p">]</span>
-            <span class="n">ori_resname</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ori_resname&#39;</span><span class="p">]</span>
-            <span class="n">delta_score</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;delta_score&#39;</span><span class="p">]</span>
-            <span class="n">delta_vdw</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;delta_vdw&#39;</span><span class="p">]</span>
-            <span class="n">delta_elec</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;delta_elec&#39;</span><span class="p">]</span>
-            <span class="n">delta_desolv</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;delta_desolv&#39;</span><span class="p">]</span>
-            <span class="n">delta_bsa</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;delta_bsa&#39;</span><span class="p">]</span>
-            <span class="c1"># add to the cluster data with the ident logic</span>
-            <span class="n">ident</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">ori_resname</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="c1"># Create variable with appropriate key</span>
-            <span class="k">if</span> <span class="n">ident</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s1">&#39;delta_score&#39;</span><span class="p">:</span> <span class="p">[],</span>
-                    <span class="s1">&#39;delta_vdw&#39;</span><span class="p">:</span> <span class="p">[],</span>
-                    <span class="s1">&#39;delta_elec&#39;</span><span class="p">:</span> <span class="p">[],</span>
-                    <span class="s1">&#39;delta_desolv&#39;</span><span class="p">:</span> <span class="p">[],</span>
-                    <span class="s1">&#39;delta_bsa&#39;</span><span class="p">:</span> <span class="p">[],</span>
-                    <span class="s1">&#39;frac_pr&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="p">}</span>
-            <span class="c1"># Add data</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s1">&#39;delta_score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_score</span><span class="p">)</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s1">&#39;delta_vdw&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_vdw</span><span class="p">)</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s1">&#39;delta_elec&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_elec</span><span class="p">)</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s1">&#39;delta_desolv&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_desolv</span><span class="p">)</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s1">&#39;delta_bsa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_bsa</span><span class="p">)</span>
-            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s1">&#39;frac_pr&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="c1"># now average the data for every cluster</span>
-    <span class="k">for</span> <span class="n">cl_id</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">:</span>
-        <span class="n">scan_clt_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="n">cl_id</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing </span><span class="si">{</span><span class="n">scan_clt_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="ClusterOutputer">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.ClusterOutputer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusterOutputer</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage the generation of alascan outputs for cluster-based analysis.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">cluster_scan_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]],</span>
+            <span class="n">clt_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">clt_population</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">scan_residue</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ALA&quot;</span><span class="p">,</span>
+            <span class="n">generate_plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialization function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cluster_scan_data : Dict[str, Dict[str, Union[float, int]]]</span>
+<span class="sd">            Dictionary containing alascan data per residue identifier.</span>
+<span class="sd">        clt_id : str</span>
+<span class="sd">            Cluster identifier</span>
+<span class="sd">        clt_population : int</span>
+<span class="sd">            Number of entries in this cluster.</span>
+<span class="sd">        scan_residue : str, optional</span>
+<span class="sd">            Residue scanned, by default &quot;ALA&quot;</span>
+<span class="sd">        generate_plot : bool, optional</span>
+<span class="sd">            Defines if a plot must be generated, by default False</span>
+<span class="sd">        offline : bool, optional</span>
+<span class="sd">            Defines if the plot should be functional offline, by default False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_scan_data</span> <span class="o">=</span> <span class="n">cluster_scan_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clt_id</span> <span class="o">=</span> <span class="n">clt_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clt_population</span> <span class="o">=</span> <span class="n">clt_population</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scanned_residue</span> <span class="o">=</span> <span class="n">scan_residue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_plot</span> <span class="o">=</span> <span class="n">generate_plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offline</span> <span class="o">=</span> <span class="n">offline</span>
+
+<div class="viewcode-block" id="ClusterOutputer.run">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.ClusterOutputer.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrtie cluster alascan output to scan_clt_X.tsv file,</span>
+<span class="sd">        including average and stdard deviation data per residue</span>
+<span class="sd">        and optionally save cluster alascan plots (if generate_plot == True)</span>
+<span class="sd">        </span>
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        scan_clt_filename : str</span>
+<span class="sd">            Name of the tsv file written</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Gather all data in a list</span>
         <span class="n">clt_data</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># Loop over residues</span>
-        <span class="k">for</span> <span class="n">ident</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]:</span>
-            <span class="c1"># Split identifyer to retrieve residue data</span>
+        <span class="k">for</span> <span class="n">ident</span><span class="p">,</span> <span class="n">clt_res_dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_scan_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Split identifier to retrieve residue data</span>
             <span class="n">chain</span> <span class="o">=</span> <span class="n">ident</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">resnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ident</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">resid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ident</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">resname</span> <span class="o">=</span> <span class="n">ident</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="c1"># Point data for this specific residue</span>
-            <span class="n">clt_res_dt</span> <span class="o">=</span> <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">]</span>
             <span class="c1"># Compute averages and stddev and hold data.</span>
             <span class="n">clt_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
                 <span class="n">chain</span><span class="p">,</span>
-                <span class="n">resnum</span><span class="p">,</span>
+                <span class="n">resid</span><span class="p">,</span>
                 <span class="n">resname</span><span class="p">,</span>
                 <span class="n">ident</span><span class="p">,</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">clt_res_dt</span><span class="p">[</span><span class="s1">&#39;delta_score&#39;</span><span class="p">]),</span>
@@ -446,10 +403,10 @@
                 <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">clt_res_dt</span><span class="p">[</span><span class="s1">&#39;delta_desolv&#39;</span><span class="p">]),</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">clt_res_dt</span><span class="p">[</span><span class="s1">&#39;delta_bsa&#39;</span><span class="p">]),</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">clt_res_dt</span><span class="p">[</span><span class="s1">&#39;delta_bsa&#39;</span><span class="p">]),</span>
-                <span class="n">clt_res_dt</span><span class="p">[</span><span class="s1">&#39;frac_pr&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">cl_pops</span><span class="p">[</span><span class="n">cl_id</span><span class="p">],</span>
+                <span class="n">clt_res_dt</span><span class="p">[</span><span class="s1">&#39;frac_pr&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">clt_population</span><span class="p">,</span>
                 <span class="p">])</span>
         <span class="n">df_cols</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;resnum&#39;</span><span class="p">,</span> <span class="s1">&#39;resname&#39;</span><span class="p">,</span> <span class="s1">&#39;full_resname&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;resid&#39;</span><span class="p">,</span> <span class="s1">&#39;resname&#39;</span><span class="p">,</span> <span class="s1">&#39;full_resname&#39;</span><span class="p">,</span>
             <span class="s1">&#39;delta_score&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_score_std&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_vdw&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_vdw_std&#39;</span><span class="p">,</span>
             <span class="s1">&#39;delta_elec&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_elec_std&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_desolv&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_desolv_std&#39;</span><span class="p">,</span>
             <span class="s1">&#39;delta_bsa&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_bsa_std&#39;</span><span class="p">,</span> <span class="s1">&#39;frac_pres&#39;</span><span class="p">,</span>
@@ -457,100 +414,211 @@
         <span class="n">df_scan_clt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">clt_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df_cols</span><span class="p">)</span>
         <span class="c1"># adding clt-based Z score</span>
         <span class="n">df_scan_clt</span> <span class="o">=</span> <span class="n">add_zscores</span><span class="p">(</span><span class="n">df_scan_clt</span><span class="p">,</span> <span class="s1">&#39;delta_score&#39;</span><span class="p">)</span>
-
-        <span class="n">df_scan_clt</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;resnum&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Sort rows</span>
+        <span class="n">df_scan_clt</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;resid&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Generate output CSV data</span>
+        <span class="n">csv_data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
         <span class="n">df_scan_clt</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-            <span class="n">scan_clt_filename</span><span class="p">,</span>
+            <span class="n">csv_data</span><span class="p">,</span>
             <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="p">,</span>
             <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">csv_data</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Define output csv filepath</span>
+        <span class="n">scan_clt_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
+        <span class="c1"># Write the file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scan_clt_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="c1"># add comment to the file</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# `alascan` cluster results for cluster </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">clt_id</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# reported values are the average for the cluster</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# z_score is calculated with respect to the mean values of all residues</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Write csv data content</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">csv_data</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        
+        <span class="c1"># Generate plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen_alascan_plot</span><span class="p">(</span><span class="n">df_scan_clt</span><span class="p">)</span>
 
-        <span class="c1"># add comment</span>
-        <span class="n">fl_content</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">scan_clt_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scan_clt_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# `alascan` cluster results for cluster </span><span class="si">{</span><span class="n">cl_id</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# reported values are the average for the cluster</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# z_score is calculated with respect to the mean values of all residues</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa E501</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fl_content</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">clt_scan</span></div>
-
-
-
-<div class="viewcode-block" id="generate_alascan_output">
-<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.generate_alascan_output">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">generate_alascan_output</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the alascan output files.</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    models : list</span>
-<span class="sd">        List of models.</span>
-<span class="sd">    path : str</span>
-<span class="sd">        Path to the run directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">models_to_export</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_alascan.pdb&quot;</span>
-        <span class="c1"># changing attributes</span>
-        <span class="n">name_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="p">),</span> <span class="n">name_path</span><span class="p">)</span> 
-        <span class="n">alascan_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
-        <span class="c1"># add delta_score as a bfactor to the model</span>
-        <span class="n">df_scan</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">alascan_fname</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
-        <span class="n">add_delta_to_bfactor</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">df_scan</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">full_name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
-        <span class="n">models_to_export</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">models_to_export</span></div>
+        <span class="k">return</span> <span class="n">scan_clt_filename</span></div>
 
 
+<div class="viewcode-block" id="ClusterOutputer.gen_alascan_plot">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.ClusterOutputer.gen_alascan_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gen_alascan_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_scan_clt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the alascan plot based on provided data.</span>
 
-<div class="viewcode-block" id="create_alascan_plots">
-<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.create_alascan_plots">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">create_alascan_plots</span><span class="p">(</span><span class="n">clt_alascan</span><span class="p">,</span> <span class="n">scan_residue</span><span class="p">,</span> <span class="n">offline</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create the alascan plots.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">clt_id</span> <span class="ow">in</span> <span class="n">clt_alascan</span><span class="p">:</span>            
-        <span class="n">scan_clt_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_clt_</span><span class="si">{</span><span class="n">clt_id</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">scan_clt_filename</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find </span><span class="si">{</span><span class="n">scan_clt_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">continue</span>
-        <span class="n">df_scan_clt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-            <span class="n">scan_clt_filename</span><span class="p">,</span>
-            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span>
-            <span class="p">)</span>
-        <span class="c1"># plot the data</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df_scan_clt : pd.DataFrame</span>
+<span class="sd">            The data frame containing the data to be plotted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if the plot must be generated</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_plot</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Try to plot the data</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">make_alascan_plot</span><span class="p">(</span>
                 <span class="n">df_scan_clt</span><span class="p">,</span>
-                <span class="n">clt_id</span><span class="p">,</span>
-                <span class="n">scan_residue</span><span class="p">,</span>
-                <span class="n">offline</span><span class="o">=</span><span class="n">offline</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">clt_id</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scanned_residue</span><span class="p">,</span>
+                <span class="n">offline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">offline</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Could not create interactive plot. The following error&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; occurred </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-    <span class="k">return</span></div>
+                <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AddDeltaBFactor">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.AddDeltaBFactor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddDeltaBFactor</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add delta score in bfactor column of a PDB.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">model</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">,</span>
+            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+            <span class="n">model_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MutationResult</span><span class="p">],</span>
+            <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialisation function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model : PDBFile</span>
+<span class="sd">            PDBfile model to be modified</span>
+<span class="sd">        path : Path</span>
+<span class="sd">            Where to write the new file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_results</span> <span class="o">=</span> <span class="n">model_results</span>
+
+<div class="viewcode-block" id="AddDeltaBFactor.run">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.AddDeltaBFactor.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PDBFile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the addition of delta scores as bfactor in pdb file.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reorder_results</span><span class="p">()</span>
+        <span class="c1"># Define new pdb filename</span>
+        <span class="n">model_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span>
+        <span class="n">output_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_fname</span><span class="si">}</span><span class="s2">_alascan.pdb&quot;</span>
+        <span class="c1"># Add delta_score as a bfactor to the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_delta_score_to_pdb</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
+        <span class="c1"># Update attributes of the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">output_fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">full_name</span> <span class="o">=</span> <span class="n">output_fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">output_fname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span></div>
+
+    
+<div class="viewcode-block" id="AddDeltaBFactor.write_delta_score_to_pdb">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.AddDeltaBFactor.write_delta_score_to_pdb">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_delta_score_to_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add delta scores as b-factors in PDB file.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_path : Path</span>
+<span class="sd">            Path to the pdb file.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output_path : Path</span>
+<span class="sd">            Path to the pdb file with the b-factors added.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Input pdb file path</span>
+        <span class="n">input_pdbfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="c1"># Start writting file containing bfactor</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_pdbfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">):</span>
+                    <span class="n">chain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span>
+                    <span class="n">resid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
+                    <span class="n">chain_res_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">resid</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">delta_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_results</span><span class="p">[</span><span class="n">chain_res_key</span><span class="p">]</span>
+                        <span class="n">norm_delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_score</span><span class="p">(</span><span class="n">delta_score</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                        <span class="n">norm_delta</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="c1"># Generate the bfactor string</span>
+                    <span class="n">delta_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">norm_delta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+                    <span class="c1"># Modify the PDB line</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta_str</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">66</span><span class="p">:]</span>
+                <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output_path</span></div>
+
+
+<div class="viewcode-block" id="AddDeltaBFactor.reorder_results">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.AddDeltaBFactor.reorder_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reorder_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform initial data manuputation to simply downstream access.</span>
+<span class="sd">        </span>
+<span class="sd">        Organise mutation results into dictionary, with chain-resid keys </span>
+<span class="sd">        and values delta score (e.g.: {&quot;A-115&quot;: 5}),</span>
+<span class="sd">        and determine min and max score within the model to normalize data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">all_delta_scores</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Loop over mutation results</span>
+        <span class="k">for</span> <span class="n">mut_result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_results</span><span class="p">:</span>
+            <span class="c1"># Create key</span>
+            <span class="n">chain_res_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mut_result</span><span class="o">.</span><span class="n">chain</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">mut_result</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="c1"># Point delta score value</span>
+            <span class="n">delta_score</span> <span class="o">=</span> <span class="n">mut_result</span><span class="o">.</span><span class="n">delta_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Hold data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_results</span><span class="p">[</span><span class="n">chain_res_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta_score</span>
+            <span class="n">all_delta_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_score</span><span class="p">)</span>
+        <span class="c1"># Obtain min and max delta score to be able to normalize later</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_delta_scores</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">all_delta_scores</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_score</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">all_delta_scores</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_score</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+    
+<div class="viewcode-block" id="AddDeltaBFactor.normalize_score">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.AddDeltaBFactor.normalize_score">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalise the input score based on observed scores for this model</span>
+
+<span class="sd">        In case normalisation cannot be performed, returns 50.0</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        score : float</span>
+<span class="sd">            Input score to be normalized</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        norm100 : float</span>
+<span class="sd">            Normalized score between 0 and 100</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">score</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_score</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">norm100</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">norm</span>
+        <span class="k">return</span> <span class="n">norm100</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="write_scan_out">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.write_scan_out">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">write_scan_out</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_scan_out</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MutationResult</span><span class="p">],</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Save mutation results per model to tsv file.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    results : List[Any]</span>
+<span class="sd">    results : List[MutationResult]</span>
 <span class="sd">        List of mutation results from scanning (comes from MutationResult)</span>
 <span class="sd">    model_id : str</span>
 <span class="sd">        Identifier for the model used in filename.</span>
@@ -565,7 +633,7 @@
 <span class="sd">    If results list is empty, no file is created.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No scan results for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No scan results for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="c1"># Convert scan output to dataframe</span>
@@ -577,7 +645,7 @@
             <span class="n">d_score</span><span class="p">,</span> <span class="n">d_vdw</span><span class="p">,</span> <span class="n">d_elec</span><span class="p">,</span> <span class="n">d_des</span><span class="p">,</span> <span class="n">d_bsa</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">delta_scores</span>
             
             <span class="n">scan_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">res_num</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ori_resname</span><span class="p">,</span> 
+                <span class="n">result</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">ori_resname</span><span class="p">,</span> 
                 <span class="n">result</span><span class="o">.</span><span class="n">target_resname</span><span class="p">,</span> <span class="n">m_score</span><span class="p">,</span> <span class="n">m_vdw</span><span class="p">,</span> <span class="n">m_elec</span><span class="p">,</span> <span class="n">m_des</span><span class="p">,</span> <span class="n">m_bsa</span><span class="p">,</span>
                 <span class="n">d_score</span><span class="p">,</span> <span class="n">d_vdw</span><span class="p">,</span> <span class="n">d_elec</span><span class="p">,</span> <span class="n">d_des</span><span class="p">,</span> <span class="n">d_bsa</span>
             <span class="p">])</span>
@@ -593,49 +661,115 @@
                      <span class="s1">&#39;delta_desolv&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_bsa&#39;</span><span class="p">]</span>
         
         <span class="n">df_scan</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">scan_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df_columns</span><span class="p">)</span>
+        <span class="c1"># Compute z-scores</span>
         <span class="n">df_scan</span> <span class="o">=</span> <span class="n">add_zscores</span><span class="p">(</span><span class="n">df_scan</span><span class="p">,</span> <span class="s1">&#39;delta_score&#39;</span><span class="p">)</span>
         
         <span class="c1"># Sort by chain id, then by residue id</span>
         <span class="n">df_scan</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;res&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># Save to tsv (per model)</span>
+        <span class="c1"># Get csv data as string</span>
+        <span class="n">csv_io</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">df_scan</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_io</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">csv_io</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Save to tsv</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scan_</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
-        <span class="n">df_scan</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">fl_content</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">70</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# `alascan` results for </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# native score = </span><span class="si">{</span><span class="n">native_score</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# z_score is calculated with respect to the other residues</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">70</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fl_content</span><span class="p">)</span></div>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="c1"># Write comments at start of the file</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# `alascan` results for </span><span class="si">{</span><span class="n">model_id</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# native score = </span><span class="si">{</span><span class="n">native_score</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# z_score is calculated with respect to the other residues</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;#&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">80</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Write csv content</span>
+            <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">csv_io</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 
 
-<div class="viewcode-block" id="MutationResult">
-<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.MutationResult">[docs]</a>
-<span class="nd">@dataclass</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">MutationResult</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Result from a single mutation.&quot;&quot;&quot;</span>
-    <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">chain</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">res_num</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">ori_resname</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">target_resname</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="c1"># components of &quot;mutant_scores&quot;: score, vdw, elec, desolv, bsa</span>
-    <span class="n">mutant_scores</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>  
-    <span class="n">delta_scores</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>   
-    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">error_msg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+<div class="viewcode-block" id="group_scan_by_cluster">
+<a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.group_scan_by_cluster">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">group_scan_by_cluster</span><span class="p">(</span>
+        <span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">],</span>
+        <span class="n">results_by_model</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MutationResult</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]],</span>
+            <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+            <span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Group models alascan data per cluster.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    models : List[PDBFile]</span>
+<span class="sd">        List of input models</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clt_scan : Dict[str, Dict[str, Dict[str, Union[float, int]]]]</span>
+<span class="sd">        Dictionary containing alascan data for each cluster, grouped by</span>
+<span class="sd">        residue identifyer.</span>
+<span class="sd">    clt_pops: Dict[str, int]</span>
+<span class="sd">        Dictionary containing number of entries for each cluster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define holders</span>
+    <span class="n">clt_scan</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">clt_pops</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Loop over models</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="c1"># Point cluster id</span>
+        <span class="n">cl_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">clt_id</span>
+        <span class="c1"># unclustered models have cl_id = None</span>
+        <span class="k">if</span> <span class="n">cl_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cl_id</span> <span class="o">=</span> <span class="s2">&quot;unclustered&quot;</span>
+        <span class="c1"># Initiate key if this cluster id is encountered for the first time</span>
+        <span class="k">if</span> <span class="n">cl_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">:</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">clt_pops</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Increase the population of that cluster</span>
+        <span class="n">clt_pops</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Point scan results for this model</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">model_scan_dt</span> <span class="o">=</span> <span class="n">results_by_model</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="c1"># Loop over the mutation results</span>
+        <span class="k">for</span> <span class="n">mut_result</span> <span class="ow">in</span> <span class="n">model_scan_dt</span><span class="p">:</span>
+            <span class="c1"># Extract data related to residue information</span>
+            <span class="n">chain</span> <span class="o">=</span> <span class="n">mut_result</span><span class="o">.</span><span class="n">chain</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">mut_result</span><span class="o">.</span><span class="n">resid</span>
+            <span class="n">ori_resname</span> <span class="o">=</span> <span class="n">mut_result</span><span class="o">.</span><span class="n">ori_resname</span>
+            <span class="c1"># Define unique string identifying this residue</span>
+            <span class="n">ident</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">ori_resname</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="c1"># Create variable with appropriate key</span>
+            <span class="k">if</span> <span class="n">ident</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;delta_score&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;delta_vdw&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;delta_elec&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;delta_desolv&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;delta_bsa&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;frac_pr&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="p">}</span>
+            <span class="c1"># Add data</span>
+            <span class="n">delta_scores</span> <span class="o">=</span> <span class="n">mut_result</span><span class="o">.</span><span class="n">delta_scores</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s2">&quot;delta_score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s2">&quot;delta_vdw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s2">&quot;delta_elec&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_scores</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s2">&quot;delta_desolv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_scores</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s2">&quot;delta_bsa&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_scores</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">clt_scan</span><span class="p">[</span><span class="n">cl_id</span><span class="p">][</span><span class="n">ident</span><span class="p">][</span><span class="s2">&quot;frac_pr&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">clt_scan</span><span class="p">,</span> <span class="n">clt_pops</span></div>
 
 
 
 <div class="viewcode-block" id="InterfaceScanner">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.InterfaceScanner">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InterfaceScanner</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scan interface of a model to get tartget residues and create corresponding mutation jobs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scan interface of a model to get tartget residues and create</span>
+<span class="sd">    corresponding mutation jobs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> 
@@ -659,7 +793,7 @@
 <span class="sd">        library_mode : bool</span>
 <span class="sd">            If True, execute mutations sequentially inside InterfaceScanner.run() </span>
 <span class="sd">            If False, just prepare jobs - execution will be taken care of in init.py </span>
-<span class="sd">            of alascan module by haddock Engine  </span>
+<span class="sd">            of alascan module by haddock Engine</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mutation_res</span> <span class="o">=</span> <span class="n">mutation_res</span>
@@ -669,11 +803,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_resdic</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
             <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;resdic&quot;</span><span class="p">)}</span>
-        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;resdic&quot;</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">rel_path</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="c1"># for library mode</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="o">.</span><span class="n">stem</span>
@@ -701,13 +836,17 @@
             
             <span class="c1"># Load coordinates</span>
             <span class="n">atoms</span> <span class="o">=</span> <span class="n">get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">)</span>
-            <span class="n">coords</span><span class="p">,</span> <span class="n">chain_ranges</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">add_resname</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">_chain_ranges</span> <span class="o">=</span> <span class="n">load_coords</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span>
+                <span class="n">atoms</span><span class="p">,</span>
+                <span class="n">add_resname</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
             
             <span class="c1"># Determine target residues: get interface, then apply user filers, if given </span>
             <span class="c1"># Get all interface residues        </span>
             <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;int_cutoff&quot;</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
             <span class="n">interface</span> <span class="o">=</span> <span class="n">CAPRI</span><span class="o">.</span><span class="n">identify_interface</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
-            
+
             <span class="c1"># get user_chains for the check down the line</span>
             <span class="n">user_chains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chains&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
@@ -740,13 +879,14 @@
                 <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">interface</span><span class="p">[</span><span class="n">chain</span><span class="p">]:</span>
                     <span class="n">ori_resname</span> <span class="o">=</span> <span class="n">resname_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">res</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
                     <span class="n">end_resname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutation_res</span>
-                    <span class="c1"># Skip if scan_residue is the same as original (e.g. skip ALA-&gt;ALA)</span>
+                    <span class="c1"># Skip if scan_residue is the same as original</span>
+                    <span class="c1"># (e.g. skip ALA-&gt;ALA)</span>
                     <span class="k">if</span> <span class="n">ori_resname</span> <span class="o">!=</span> <span class="n">end_resname</span><span class="p">:</span>
                         <span class="n">job</span> <span class="o">=</span> <span class="n">ModelPointMutation</span><span class="p">(</span>
                             <span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span>
                             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
                             <span class="n">chain</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span>
-                            <span class="n">res_num</span><span class="o">=</span><span class="n">res</span><span class="p">,</span>
+                            <span class="n">resid</span><span class="o">=</span><span class="n">res</span><span class="p">,</span>
                             <span class="n">ori_resname</span><span class="o">=</span><span class="n">ori_resname</span><span class="p">,</span>
                             <span class="n">target_resname</span><span class="o">=</span><span class="n">end_resname</span><span class="p">,</span>
                             <span class="n">native_scores</span><span class="o">=</span><span class="n">native_scores</span><span class="p">,</span>
@@ -756,12 +896,19 @@
     
             <span class="c1"># Execute jobs if in library mode</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">library_mode</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_mutations_jobs</span><span class="p">)</span><span class="si">}</span><span class="s2"> mutations for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Executing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_mutations_jobs</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;mutations for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_mutations_jobs</span><span class="p">)</span>
                 
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_mutations_jobs</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing mutation </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">chain</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">res_num</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">ori_resname</span><span class="si">}</span><span class="s2">-&gt;</span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">target_resname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Processing mutation </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">chain</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">resid</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">ori_resname</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;-&gt;</span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">target_resname</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
                     <span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
                     <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
@@ -790,7 +937,7 @@
         <span class="n">model_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> 
         <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
         <span class="n">chain</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
-        <span class="n">res_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">resid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
         <span class="n">ori_resname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">target_resname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
         <span class="n">native_scores</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> 
@@ -807,7 +954,7 @@
 <span class="sd">            Identifier for the model</span>
 <span class="sd">        chain : str</span>
 <span class="sd">            Chain identifier</span>
-<span class="sd">        res_num : int</span>
+<span class="sd">        resid : int</span>
 <span class="sd">            Residue number</span>
 <span class="sd">        ori_resname : str</span>
 <span class="sd">            Original residue name</span>
@@ -821,7 +968,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chain</span> <span class="o">=</span> <span class="n">chain</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">res_num</span> <span class="o">=</span> <span class="n">res_num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">=</span> <span class="n">resid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ori_resname</span> <span class="o">=</span> <span class="n">ori_resname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span> <span class="o">=</span> <span class="n">target_resname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">native_scores</span> <span class="o">=</span> <span class="n">native_scores</span>
@@ -831,7 +978,7 @@
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.alascan.scan.html#haddock.modules.analysis.alascan.scan.ModelPointMutation.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the point mutation.&quot;&quot;&quot;</span>
-        <span class="n">mutation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">res_num</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">mutation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span><span class="si">}</span><span class="s2">&quot;</span>
         
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Setup working directory</span>
@@ -839,7 +986,7 @@
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sc_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             
             <span class="c1"># Perform mutation</span>
-            <span class="n">mut_pdb</span> <span class="o">=</span> <span class="n">mutate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span><span class="p">)</span>
+            <span class="n">mut_pdb</span> <span class="o">=</span> <span class="n">mutate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span><span class="p">)</span>
             
             <span class="c1"># Calculate mutant scores</span>
             <span class="n">mutant_scores</span> <span class="o">=</span> <span class="n">calc_score</span><span class="p">(</span><span class="n">mut_pdb</span><span class="p">,</span> <span class="n">run_dir</span><span class="o">=</span><span class="n">sc_dir</span><span class="p">,</span> <span class="n">outputpdb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mutants</span><span class="p">)</span>
@@ -851,7 +998,7 @@
                           <span class="n">n_des</span> <span class="o">-</span> <span class="n">m_des</span><span class="p">,</span> <span class="n">n_bsa</span> <span class="o">-</span> <span class="n">m_bsa</span><span class="p">)</span>
 
             <span class="c1"># Handle output files</span>
-            <span class="n">em_mut_pdb</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">mut_pdb</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s1">&#39;_hs.pdb&#39;</span><span class="p">)</span>
+            <span class="n">em_mut_pdb</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mut_pdb</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_hs.pdb&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mutants</span><span class="p">:</span>
                 <span class="c1"># if output_mutants = False, then remove both files</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mut_pdb</span><span class="p">):</span>
@@ -867,14 +1014,14 @@
                 <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">sc_dir</span><span class="p">)</span>
             
             <span class="k">return</span> <span class="n">MutationResult</span><span class="p">(</span>
-                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">res_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">res_num</span><span class="p">,</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">resid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span>
                 <span class="n">ori_resname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ori_resname</span><span class="p">,</span> <span class="n">target_resname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span><span class="p">,</span>
                 <span class="n">mutant_scores</span><span class="o">=</span><span class="n">mutant_scores</span><span class="p">,</span> <span class="n">delta_scores</span><span class="o">=</span><span class="n">delta_scores</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
             
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">MutationResult</span><span class="p">(</span>
-                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">res_num</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">res_num</span><span class="p">,</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">resid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span>
                 <span class="n">ori_resname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ori_resname</span><span class="p">,</span> <span class="n">target_resname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_resname</span><span class="p">,</span>
                 <span class="n">mutant_scores</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">delta_scores</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                 <span class="n">success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">error_msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -891,7 +1038,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 05, 2025.
+      <span class="lastupdated">Last updated on Aug 06, 2025.
       </span></p>
   </div>
 

@@ -387,13 +387,13 @@ class AddDeltaBFactor():
         self.input_results = model_results
 
     def run(self) -> PDBFile:
-        """Performs the addition of delta scores as bfactor in pdb file."""
+        """Perform the addition of delta scores as bfactor in pdb file."""
         self.reorder_results()
         # Define new pdb filename
         model_fname = self.model.file_name.removesuffix(".pdb")
         output_fname = f"{model_fname}_alascan.pdb"
         # Add delta_score as a bfactor to the model
-        self.add_delta_to_bfactor(output_fname)
+        self.write_delta_score_to_pdb(output_fname)
         # Update attributes of the model
         self.model.ori_name = self.model.file_name
         self.model.file_name = output_fname
@@ -402,8 +402,8 @@ class AddDeltaBFactor():
         self.model.path = str(Path(".").resolve())
         return self.model
     
-    def add_delta_to_bfactor(self, output_path: Path) -> Path:
-        """Add delta scores as b-factors.
+    def write_delta_score_to_pdb(self, output_path: Path) -> Path:
+        """Add delta scores as b-factors in PDB file.
         
         Parameters
         ----------
@@ -437,7 +437,12 @@ class AddDeltaBFactor():
         return output_path
 
     def reorder_results(self) -> None:
-        """Perform initial data manuputation to simply downstream access."""
+        """Perform initial data manuputation to simply downstream access.
+        
+        Organise mutation results into dictionary, with chain-resid keys 
+        and values delta score (e.g.: {"A-115": 5}),
+        and determine min and max score within the model to normalize data.
+        """
         self.model_results: Dict[str, float] = {}
         all_delta_scores: List[float] = []
         # Loop over mutation results
@@ -446,6 +451,7 @@ class AddDeltaBFactor():
             chain_res_key = f"{mut_result.chain}-{mut_result.res_num}"
             # Point delta score value
             delta_score = mut_result.delta_scores[0]
+            # Hold data
             self.model_results[chain_res_key] = delta_score
             all_delta_scores.append(delta_score)
         # Obtain min and max delta score to be able to normalize later

@@ -798,8 +798,8 @@ def test_mutate(protprot_model_list, monkeypatch):
             mutate(mut_fname, "A", 19, "HOH")
 
 
-def test_add_delta_to_bfactor(protprot_model_list, results_by_model, monkeypatch):
-    """Test the add_delta_to_bfactor function."""
+def test_write_delta_score_to_pdb(protprot_model_list, results_by_model, monkeypatch):
+    """Test the write_delta_score_to_pdb method."""
     with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         monkeypatch.chdir(path=tmpdir)
@@ -813,7 +813,7 @@ def test_add_delta_to_bfactor(protprot_model_list, results_by_model, monkeypatch
             results_by_model["protprot_complex_1"],
             )
         add_delta_to_bfactor_obj.reorder_results()
-        add_delta_to_bfactor_obj.add_delta_to_bfactor("bfactor_pdb.pdb")
+        add_delta_to_bfactor_obj.write_delta_score_to_pdb("bfactor_pdb.pdb")
         # ALA 19 should have beta = 100.0
         assert np.isclose(100.0, float(open("bfactor_pdb.pdb").readline()[60:66]))
 

@@ -187,9 +187,9 @@ class HaddockModule(BaseCNSModule):
             self.finish_with_error(
                 "No restraints found for [rigidbody] module. "
                 "For targeted docking, supply CNS-valid restraints file(s) "
-                "using `ambig_fname` and/or `unambig_fname` and/or "
-                "`hbond_fname` parameter(s). "
-                "For ab-initio docking, set `cmrest` or `ranair` "
+                "using 'ambig_fname' and/or 'unambig_fname' and/or "
+                "'hbond_fname' parameter(s). "
+                "For ab-initio docking, set 'cmrest' or 'ranair' "
                 "parameters to true."
                 )
 

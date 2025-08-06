@@ -13,8 +13,8 @@ from tests import golden_data
 from . import has_mpi
 
 
-@pytest.fixture
-def rigidbody_module():
+@pytest.fixture(name="rigidbody_module")
+def fixture_rigidbody_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         rigidbody = RigidbodyModule(
             order=0, path=Path(tmpdir), initial_params=DEFAULT_RIGIDBODY_CONFIG
@@ -74,6 +74,26 @@ class MockPreviousIO:
 
     def output(self):
         return None
+
+
+def test_rigidbody_norestraints_guardrail(rigidbody_module):
+    # Previous input models
+    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
+    # Base parameters
+    rigidbody_module.params["sampling"] = 2
+    rigidbody_module.params["mode"] = "local"
+    rigidbody_module.params["debug"] = False
+    # Case 1
+    with pytest.raises(RuntimeError) as error:
+        # Set all restraints parameters to false
+        rigidbody_module.params["cmrest"] = False
+        rigidbody_module.params["ranair"] = False
+        rigidbody_module.params["ambig_fname"] = False
+        rigidbody_module.params["unambig_fname"] = False
+        rigidbody_module.params["hbond_fname"] = False
+        rigidbody_module.run()
+    assert "No restraints found in the configuration file." in str(error)
+
 
 
 def test_rigidbody_local(rigidbody_module):

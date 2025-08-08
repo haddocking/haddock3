@@ -29,7 +29,7 @@ from haddock.libs.libfcc import (
     Cluster,
     Element,
     parse_contact_file,
-    read_matrix,
+    create_elements,
     )
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, get_engine
@@ -135,7 +135,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Cluster
         log.info("Clustering...")
-        pool = read_matrix(
+        pool = create_elements(
             matrix,
             self.params["clust_cutoff"],
             self.params["strictness"],

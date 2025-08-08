@@ -112,10 +112,33 @@ def output_clusters(handle, cluster):
         write("\n")
 
 
-def read_matrix(matrix, cutoff_param, strictness):
+def load_matrix(matrix_path) -> list[tuple[int, int, float, float]]:
+    """Read in a four column matrix (1 2 0.123 0.456\n)
+
+    Parameters
+    ----------
+    matrix_path : str or Path
+        Path to the matrix file
+
+    Returns
+    -------
+    matrix : list[tuple[int, int, float, float]]
+        Content of the matrix
     """
-    Reads in a four column matrix (1 2 0.123 0.456\n)
-    and creates an dictionary of Elements.
+    matrix: list[tuple[int, int, float, float]] = []
+    with open(matrix_path, "r") as fin:
+        for line in fin:
+            ref, mobi, d_rm, d_mr = line.split()
+            ref = int(ref)
+            mobi = int(mobi)
+            d_rm = float(d_rm)
+            d_mr = float(d_mr)
+            matrix.append((ref, mobi, d_rm, d_mr))
+    return matrix
+
+
+def create_elements(matrix, cutoff_param, strictness):
+    """Creates an dictionary of Elements.
 
     The strictness factor is a <float> that multiplies by the cutoff
     to produce a new cutoff for the second half of the matrix. Used to

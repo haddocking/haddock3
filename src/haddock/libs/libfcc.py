@@ -112,7 +112,7 @@ def output_clusters(handle, cluster):
         write("\n")
 
 
-def read_matrix(path, cutoff_param, strictness):
+def read_matrix(matrix, cutoff_param, strictness):
     """
     Reads in a four column matrix (1 2 0.123 0.456\n)
     and creates an dictionary of Elements.
@@ -128,13 +128,9 @@ def read_matrix(path, cutoff_param, strictness):
 
     elements = {}
 
-    f = open(path, "r")
-    for line in f:
-        ref, mobi, d_rm, d_mr = line.split()
-        ref = int(ref)
-        mobi = int(mobi)
-        d_rm = float(d_rm)
-        d_mr = float(d_mr)
+    # Loop over matrix rows
+    for row in matrix:
+        ref, mobi, d_rm, d_mr = row
 
         # Create or Retrieve Elements
         if ref not in elements:
@@ -154,8 +150,6 @@ def read_matrix(path, cutoff_param, strictness):
             r.add_neighbor(m)
         if d_mr >= cutoff_param and d_rm >= partner_cutoff:
             m.add_neighbor(r)
-
-    f.close()
 
     return elements
 

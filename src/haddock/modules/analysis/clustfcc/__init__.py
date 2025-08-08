@@ -1,20 +1,22 @@
-"""Cluster modules with FCC.
+"""Fraction of Common Contacts (FCC) clustering module.
 
 The module takes the models generated in the previous step and calculates the
 contacts between them. Then, the module calculates the FCC matrix and clusters
-the models based on the calculated contacts.
+the models based on their contact similarities.
 
-For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*
-"""  # noqa: E501
+For more details please check
+*Rodrigues, J. P. et al.
+Proteins: Struct. Funct. Bioinform.
+80, 1810–1817 (2012)*
+"""
 
-import importlib.resources
 import os
 from pathlib import Path
 
-from haddock import FCC_path, log
+from haddock import log
 from haddock.core.defaults import CONTACT_FCC_EXEC, MODULE_DEFAULT_YAML
+from haddock.core.exceptions import ModuleError
 from haddock.core.typing import Union
-from haddock.fcc import calc_fcc_matrix, cluster_fcc
 from haddock.libs.libclust import (
     add_cluster_info,
     get_cluster_matrix_plot_clt_dt,
@@ -24,11 +26,13 @@ from haddock.libs.libclust import (
     )
 from haddock.libs.libfcc import (
     calculate_pairwise_matrix,
+    Cluster,
+    Element,
     parse_contact_file,
-    read_matrix,
+    create_elements,
     )
 from haddock.libs.libsubprocess import JobInputFirst
-from haddock.modules import BaseHaddockModule, get_engine, read_from_yaml_config
+from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.clustfcc.clustfcc import (
     get_cluster_centers,
@@ -59,14 +63,13 @@ class HaddockModule(BaseHaddockModule):
     def confirm_installation(cls) -> None:
         """Confirm if FCC is installed and available."""
         # The FCC binary can be either in the default binary path or in the
-
-        dcfg = read_from_yaml_config(DEFAULT_CONFIG)
-        dcfg["executable"] = CONTACT_FCC_EXEC
+        if not CONTACT_FCC_EXEC.exists():
+            raise ModuleError(
+                f"CONTACT FCC execultable not found at: {CONTACT_FCC_EXEC}"
+                )
 
     def _run(self) -> None:
         """Execute module."""
-        contact_executable = Path(FCC_path, self.params["executable"])
-
         # Get the models generated in previous step
         models_to_clust = self.previous_io.retrieve_models(individualize=True)
 
@@ -102,9 +105,12 @@ class HaddockModule(BaseHaddockModule):
             else:
                 contact_file_l.append(str(job.output))
 
+        # Check if any contact file could not be retrieved
         if not_found:
             # No contacts were calculated, we cannot cluster
-            self.finish_with_error("Several files were not generated:" f" {not_found}")
+            self.finish_with_error(
+                f"Several files were not generated: {not_found}"
+                )
 
         log.info("Calculating the FCC matrix")
         parsed_contacts = parse_contact_file(
@@ -113,7 +119,7 @@ class HaddockModule(BaseHaddockModule):
         )
 
         # Imporant: matrix is a generator object, be careful with it
-        matrix = calculate_pairwise_matrix(
+        matrix_gen = calculate_pairwise_matrix(
             parsed_contacts,
             False,
         )
@@ -121,26 +127,30 @@ class HaddockModule(BaseHaddockModule):
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
         fcc_matrix_f = Path("fcc.matrix")
+        matrix = list(matrix_gen)
         with open(fcc_matrix_f, "w") as fh:
-            for data in list(matrix):
+            for data in matrix:
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
-                data_str += os.linesep
-                fh.write(data_str)
+                fh.write(f"{data_str}{os.linesep}")
 
         # Cluster
         log.info("Clustering...")
-        pool = read_matrix(
-            fcc_matrix_f,
+        pool = create_elements(
+            matrix,
             self.params["clust_cutoff"],
             self.params["strictness"],
         )
 
-        # iterate clustering until at least one cluster is found
-        clusters, min_population = iterate_clustering(
-            pool,
-            self.params["min_population"],
-        )
-        self.params["min_population"] = min_population
+        if not pool:
+            self.params["min_population"] = 1
+            clusters = [Cluster(1, Element(1))]
+        else:
+            # iterate clustering until at least one cluster is found
+            clusters, min_population = iterate_clustering(
+                pool,
+                self.params["min_population"],
+            )
+            self.params["min_population"] = min_population
 
         # Prepare output and read the elements
         if clusters:
@@ -154,7 +164,9 @@ class HaddockModule(BaseHaddockModule):
             )
 
             # ranking clusters
-            _scores, sorted_score_dic = rank_clusters(clt_dic, min_population)
+            _scores, sorted_score_dic = rank_clusters(
+                clt_dic, self.params["min_population"],
+                )
 
             # Add this info to the models
             self.output_models = add_cluster_info(sorted_score_dic, clt_dic)

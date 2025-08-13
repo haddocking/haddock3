@@ -6,7 +6,6 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import Union
-from haddock.fcc import cluster_fcc
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
@@ -16,7 +15,7 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
-from haddock.libs.libfcc import read_matrix
+from haddock.libs.libfcc import create_elements, load_matrix
 from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.libs.libontology import ModuleIO
 from haddock.modules.analysis.clustfcc.clustfcc import (
@@ -134,9 +133,10 @@ def reclustfcc(
         clustfcc_params["min_population"] = min_population
     clustfcc_params["plot_matrix"] = plot_matrix
 
+    matrix = load_matrix(Path(clustfcc_dir, "fcc.matrix"))
     # load the fcc matrix
-    pool = read_matrix(
-        Path(clustfcc_dir, "fcc.matrix"),
+    pool = create_elements(
+        matrix,
         clustfcc_params["clust_cutoff"],
         clustfcc_params["strictness"],
     )

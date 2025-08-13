@@ -105,7 +105,7 @@ def plot_cluster_matrix(
 
     upper_diag, lower_diag = [], []
     # Read matrix
-    with open(matrix_path, 'r') as f:
+    with open(matrix_path, "r") as f:
         # Loop over lines
         for _ in f:
             # Split line

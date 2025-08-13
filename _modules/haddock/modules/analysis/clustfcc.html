@@ -81,23 +81,25 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.clustfcc</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Cluster modules with FCC.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Fraction of Common Contacts (FCC) clustering module.</span>
 
 <span class="sd">The module takes the models generated in the previous step and calculates the</span>
 <span class="sd">contacts between them. Then, the module calculates the FCC matrix and clusters</span>
-<span class="sd">the models based on the calculated contacts.</span>
+<span class="sd">the models based on their contact similarities.</span>
 
-<span class="sd">For more details please check *Rodrigues, J. P. et al. Proteins: Struct. Funct. Bioinform. 80, 1810–1817 (2012)*</span>
-<span class="sd">&quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+<span class="sd">For more details please check</span>
+<span class="sd">*Rodrigues, J. P. et al.</span>
+<span class="sd">Proteins: Struct. Funct. Bioinform.</span>
+<span class="sd">80, 1810–1817 (2012)*</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.resources</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">FCC_path</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">CONTACT_FCC_EXEC</span><span class="p">,</span> <span class="n">MODULE_DEFAULT_YAML</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.fcc</span><span class="w"> </span><span class="kn">import</span> <span class="n">calc_fcc_matrix</span><span class="p">,</span> <span class="n">cluster_fcc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libclust</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">add_cluster_info</span><span class="p">,</span>
     <span class="n">get_cluster_matrix_plot_clt_dt</span><span class="p">,</span>
@@ -107,11 +109,13 @@
     <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfcc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">calculate_pairwise_matrix</span><span class="p">,</span>
+    <span class="n">Cluster</span><span class="p">,</span>
+    <span class="n">Element</span><span class="p">,</span>
     <span class="n">parse_contact_file</span><span class="p">,</span>
-    <span class="n">read_matrix</span><span class="p">,</span>
+    <span class="n">create_elements</span><span class="p">,</span>
     <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobInputFirst</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span><span class="p">,</span> <span class="n">read_from_yaml_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">get_engine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_analysis_exec_mode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.analysis.clustfcc.clustfcc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_cluster_centers</span><span class="p">,</span>
@@ -146,15 +150,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if FCC is installed and available.&quot;&quot;&quot;</span>
         <span class="c1"># The FCC binary can be either in the default binary path or in the</span>
-
-        <span class="n">dcfg</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span>
-        <span class="n">dcfg</span><span class="p">[</span><span class="s2">&quot;executable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CONTACT_FCC_EXEC</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">CONTACT_FCC_EXEC</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ModuleError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;CONTACT FCC execultable not found at: </span><span class="si">{</span><span class="n">CONTACT_FCC_EXEC</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
-        <span class="n">contact_executable</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">FCC_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;executable&quot;</span><span class="p">])</span>
-
         <span class="c1"># Get the models generated in previous step</span>
         <span class="n">models_to_clust</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span><span class="n">individualize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -190,9 +193,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">contact_file_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
 
+        <span class="c1"># Check if any contact file could not be retrieved</span>
         <span class="k">if</span> <span class="n">not_found</span><span class="p">:</span>
             <span class="c1"># No contacts were calculated, we cannot cluster</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="s2">&quot;Several files were not generated:&quot;</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Several files were not generated: </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating the FCC matrix&quot;</span><span class="p">)</span>
         <span class="n">parsed_contacts</span> <span class="o">=</span> <span class="n">parse_contact_file</span><span class="p">(</span>
@@ -201,7 +207,7 @@
         <span class="p">)</span>
 
         <span class="c1"># Imporant: matrix is a generator object, be careful with it</span>
-        <span class="n">matrix</span> <span class="o">=</span> <span class="n">calculate_pairwise_matrix</span><span class="p">(</span>
+        <span class="n">matrix_gen</span> <span class="o">=</span> <span class="n">calculate_pairwise_matrix</span><span class="p">(</span>
             <span class="n">parsed_contacts</span><span class="p">,</span>
             <span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
@@ -209,26 +215,30 @@
         <span class="c1"># write the matrix to a file, so we can read it afterwards and don&#39;t</span>
         <span class="c1">#  need to reinvent the wheel handling this</span>
         <span class="n">fcc_matrix_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;fcc.matrix&quot;</span><span class="p">)</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">matrix_gen</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fcc_matrix_f</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">matrix</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">:</span>
                 <span class="n">data_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">data_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span>
-                <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data_str</span><span class="p">)</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_str</span><span class="si">}{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Cluster</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clustering...&quot;</span><span class="p">)</span>
-        <span class="n">pool</span> <span class="o">=</span> <span class="n">read_matrix</span><span class="p">(</span>
-            <span class="n">fcc_matrix_f</span><span class="p">,</span>
+        <span class="n">pool</span> <span class="o">=</span> <span class="n">create_elements</span><span class="p">(</span>
+            <span class="n">matrix</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;clust_cutoff&quot;</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;strictness&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
-        <span class="c1"># iterate clustering until at least one cluster is found</span>
-        <span class="n">clusters</span><span class="p">,</span> <span class="n">min_population</span> <span class="o">=</span> <span class="n">iterate_clustering</span><span class="p">(</span>
-            <span class="n">pool</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pool</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">Element</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># iterate clustering until at least one cluster is found</span>
+            <span class="n">clusters</span><span class="p">,</span> <span class="n">min_population</span> <span class="o">=</span> <span class="n">iterate_clustering</span><span class="p">(</span>
+                <span class="n">pool</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_population</span>
 
         <span class="c1"># Prepare output and read the elements</span>
         <span class="k">if</span> <span class="n">clusters</span><span class="p">:</span>
@@ -242,7 +252,9 @@
             <span class="p">)</span>
 
             <span class="c1"># ranking clusters</span>
-            <span class="n">_scores</span><span class="p">,</span> <span class="n">sorted_score_dic</span> <span class="o">=</span> <span class="n">rank_clusters</span><span class="p">(</span><span class="n">clt_dic</span><span class="p">,</span> <span class="n">min_population</span><span class="p">)</span>
+            <span class="n">_scores</span><span class="p">,</span> <span class="n">sorted_score_dic</span> <span class="o">=</span> <span class="n">rank_clusters</span><span class="p">(</span>
+                <span class="n">clt_dic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_population&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
 
             <span class="c1"># Add this info to the models</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">add_cluster_info</span><span class="p">(</span><span class="n">sorted_score_dic</span><span class="p">,</span> <span class="n">clt_dic</span><span class="p">)</span>
@@ -305,7 +317,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 06, 2025.
+      <span class="lastupdated">Last updated on Aug 13, 2025.
       </span></p>
   </div>
 

@@ -222,6 +222,33 @@ together in the same cluster.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libfcc.create_elements">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">create_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strictness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#create_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.create_elements" title="Link to this definition"></a></dt>
+<dd><p>Creates an dictionary of Elements.</p>
+<p>The strictness factor is a &lt;float&gt; that multiplies by the cutoff
+to produce a new cutoff for the second half of the matrix. Used to
+allow some variability while keeping very small interfaces from clustering
+with anything remotely similar.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libfcc.load_matrix">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">load_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix_path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#load_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.load_matrix" title="Link to this definition"></a></dt>
+<dd><p>Read in a four column matrix (1 2 0.123 0.456
+)</p>
+<blockquote>
+<div><dl class="simple">
+<dt>matrix_path<span class="classifier">str or Path</span></dt><dd><p>Path to the matrix file</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>matrix<span class="classifier">list[tuple[int, int, float, float]]</span></dt><dd><p>Content of the matrix</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libfcc.output_clusters">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">output_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#output_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.output_clusters" title="Link to this definition"></a></dt>
 <dd><p>Outputs the cluster name, center, and members.</p>
@@ -231,22 +258,6 @@ together in the same cluster.</p>
 <dt class="sig sig-object py" id="haddock.libs.libfcc.parse_contact_file">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">parse_contact_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_chain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#parse_contact_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.parse_contact_file" title="Link to this definition"></a></dt>
 <dd><p>Parses a list of contact files.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.libfcc.read_matrix">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libfcc.</span></span><span class="sig-name descname"><span class="pre">read_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strictness</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libfcc.html#read_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libfcc.read_matrix" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Reads in a four column matrix (1 2 0.123 0.456</p>
-</div></blockquote>
-<dl>
-<dt>)</dt><dd><p>and creates an dictionary of Elements.</p>
-<p>The strictness factor is a &lt;float&gt; that multiplies by the cutoff
-to produce a new cutoff for the second half of the matrix. Used to
-allow some variability while keeping very small interfaces from clustering
-with anything remotely similar.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>
@@ -263,7 +274,7 @@ with anything remotely similar.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 06, 2025.
+      <span class="lastupdated">Last updated on Aug 13, 2025.
       </span></p>
   </div>
 

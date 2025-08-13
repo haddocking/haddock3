@@ -90,12 +90,20 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfcc</span><span class="w"> </span><span class="kn">import</span> <span class="n">cluster_elements</span><span class="p">,</span> <span class="n">output_clusters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libfcc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Cluster</span><span class="p">,</span>
+    <span class="n">cluster_elements</span><span class="p">,</span>
+    <span class="n">Element</span><span class="p">,</span>
+    <span class="n">output_clusters</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="iterate_clustering">
 <a class="viewcode-back" href="../../../../../modules/analysis/haddock.modules.analysis.clustfcc.clustfcc.html#haddock.modules.analysis.clustfcc.clustfcc.iterate_clustering">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">iterate_clustering</span><span class="p">(</span><span class="n">pool</span><span class="p">,</span> <span class="n">min_population_param</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">iterate_clustering</span><span class="p">(</span>
+        <span class="n">pool</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Element</span><span class="p">],</span>
+        <span class="n">min_population_param</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Cluster</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Iterate over the clustering process until a cluster is found.</span>
 
@@ -109,30 +117,25 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    clusters : list</span>
+<span class="sd">    clusters : list[Cluster]</span>
 <span class="sd">        A list of clusters.</span>
 
 <span class="sd">    min_population : int</span>
 <span class="sd">        The min_population used to obtain the clusters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cluster_check</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">cluster_check</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">min_population</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_population_param</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clustering with min_population=</span><span class="si">{</span><span class="n">min_population</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">clusters</span> <span class="o">=</span> <span class="n">cluster_elements</span><span class="p">(</span>
-                <span class="n">pool</span><span class="p">,</span>
-                <span class="n">threshold</span><span class="o">=</span><span class="n">min_population</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">clusters</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[WARNING] No cluster was found, decreasing min_population!&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">cluster_check</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="c1"># pass the actual min_population back to the param dict</span>
-                <span class="c1">#  because it will be used in the detailed output</span>
-                <span class="k">break</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">cluster_check</span><span class="p">:</span>
-            <span class="c1"># No cluster was obtained in any min_population</span>
-            <span class="n">cluster_check</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Loop from min_population to population == 1</span>
+    <span class="k">for</span> <span class="n">min_population</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_population_param</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clustering with min_population=</span><span class="si">{</span><span class="n">min_population</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">clusters</span> <span class="o">=</span> <span class="n">cluster_elements</span><span class="p">(</span>
+            <span class="n">pool</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">min_population</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># No clusters found</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">clusters</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[WARNING] No cluster was found, decreasing min_population!&quot;</span><span class="p">)</span>
+        <span class="c1"># Clusters were generated</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
     <span class="k">return</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">min_population</span></div>
 
 
@@ -310,7 +313,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 06, 2025.
+      <span class="lastupdated">Last updated on Aug 13, 2025.
       </span></p>
   </div>
 

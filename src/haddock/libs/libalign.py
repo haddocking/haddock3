@@ -445,6 +445,7 @@ def load_coords(
     numbering_dic=None,
     model2ref_chain_dict=None,
     add_resname=None,
+    keep_hetatm: bool = False,
 ):
     """Load coordinates from PDB.
 
@@ -463,6 +464,9 @@ def load_coords(
 
     add_resname : bool
         use the residue name in the identifier
+    
+    keep_hetatm : bool
+        Should HETATM lines be considered ?
 
     Returns
     -------
@@ -475,6 +479,11 @@ def load_coords(
     coord_dic: CoordsDict = {}
     chain_dic: ResDict = {}
     idx: int = 0
+    # Set types of coordinates lines to extract
+    if keep_hetatm:
+        coordinates_line_to_extract = ("ATOM", "HETATM")
+    else:
+        coordinates_line_to_extract = ("ATOM", )
     # Check filetype
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
@@ -482,7 +491,7 @@ def load_coords(
     with open(pdb_f, "r") as fh:
         for line in fh.readlines():
             # Skip non ATOM records lines
-            if not line.startswith("ATOM"):
+            if not line.startswith(coordinates_line_to_extract):
                 continue
             # Extract PDB line data
             atom_name = line[slc_name].strip()

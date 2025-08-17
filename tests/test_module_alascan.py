@@ -14,12 +14,11 @@ from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan.scan import (
-    add_delta_to_bfactor,
+    AddDeltaBFactor,
     add_zscores,
-    alascan_cluster_analysis,
     calc_score,
-    create_alascan_plots,
-    generate_alascan_output,
+    ClusterOutputer,
+    group_scan_by_cluster,
     mutate,
     write_scan_out,
     MutationResult,
@@ -148,7 +147,7 @@ def example_df_scan_clt():
     ]
     columns = [
         "chain",
-        "resnum",
+        "resid",
         "resname",
         "full_resname",
         "score",
@@ -200,7 +199,7 @@ def fixture_mutation_job(complex_pdb):
         model_path=complex_pdb,
         model_id="test_model",
         chain="A", 
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         native_scores=native_scores,
@@ -214,7 +213,7 @@ def fixture_successful_mutation_result():
     return MutationResult(
         model_id="protprot_complex_1",
         chain="A",
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         mutant_scores=(-108.540, -43.234, -275.271, -10.252, 1589.260),
@@ -229,7 +228,7 @@ def fixture_successful_mutation_result_2():
     return MutationResult(
         model_id="protprot_complex_1",
         chain="A",
-        res_num=20,
+        resid=20,
         ori_resname="ILE",
         target_resname="ALA",
         mutant_scores=(-18.540, -41.234, -270.271, -11.252, 589.260),
@@ -244,7 +243,7 @@ def fixture_failed_mutation_result():
     return MutationResult(
         model_id="protprot_complex_1",
         chain="A",
-        res_num=20,
+        resid=20,
         ori_resname="ILE",
         target_resname="ALA",
         mutant_scores=(0, 0, 0, 0, 0),
@@ -252,6 +251,14 @@ def fixture_failed_mutation_result():
         success=False,
         error_msg="Mutation failed"
     )
+
+
+@pytest.fixture(name="results_by_model")
+def fixture_results_by_model(successful_mutation_result, successful_mutation_result_2):
+    return {
+        "protprot_complex_1": [successful_mutation_result, successful_mutation_result_2],
+        "protprot_complex_2": [successful_mutation_result, successful_mutation_result_2],
+    }
 
 # custom mocks 
 class MockPreviousIO:
@@ -262,23 +269,6 @@ class MockPreviousIO:
         return [
             PDBFile(file_name="protprot_complex_1.pdb", path=str(golden_data)),
         ]
-
-
-def mock_alascan_cluster_analysis():
-    """Mock alascan_cluster_analysis."""
-    # Return whatever is necessary for the `run` method to work
-    return {
-        0: {
-            "X-X-X": {
-                "delta_score": 0.0,
-                "delta_vdw": 0.0,
-                "delta_elec": 0.0,
-                "delta_desolv": 0.0,
-                "delta_bsa": 0.0,
-                "frac_pr": 0.0,
-            }
-        },
-    }
 
 
 # tests starts here
@@ -303,7 +293,7 @@ def test_mutation_result_creation():
     result = MutationResult(
         model_id="test.pdb",
         chain="A",
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         mutant_scores=(-108.5, -43.2, -275.3, -10.3, 1589.3),
@@ -313,7 +303,7 @@ def test_mutation_result_creation():
     # Test all attributes
     assert result.model_id == "test.pdb"
     assert result.chain == "A"
-    assert result.res_num == 19
+    assert result.resid == 19
     assert result.ori_resname == "THR"
     assert result.target_resname == "ALA"
     assert result.mutant_scores == (-108.5, -43.2, -275.3, -10.3, 1589.3)
@@ -328,7 +318,7 @@ def test_mutation_result_success_failure_states():
     success_result = MutationResult(
         model_id="success_model",
         chain="A",
-        res_num=10,
+        resid=10,
         ori_resname="VAL",
         target_resname="ALA",
         mutant_scores=(-95.2, -28.1, -290.5, -12.0, 1450.8),
@@ -346,7 +336,7 @@ def test_mutation_result_success_failure_states():
     failure_result = MutationResult(
         model_id="failure_model",
         chain="B",
-        res_num=25,
+        resid=25,
         ori_resname="PHE",
         target_resname="ALA",
         mutant_scores=(0, 0, 0, 0, 0),
@@ -588,7 +578,7 @@ def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
         library_mode=False
     )
     mutation_jobs = scanner.run()
-    expected_residues = {(job.chain, job.res_num) for job in mutation_jobs}
+    expected_residues = {(job.chain, job.resid) for job in mutation_jobs}
     # only residues in resdic_*,  not entire inteface
     assert expected_residues == {("A", 19), ("B", 30)}
 
@@ -643,7 +633,7 @@ def test_model_point_mutation_init(complex_pdb):
         model_path=complex_pdb,
         model_id="protprot_complex_1",
         chain="A",
-        res_num=19,
+        resid=19,
         ori_resname="THR",
         target_resname="ALA",
         native_scores=native_scores,
@@ -652,7 +642,7 @@ def test_model_point_mutation_init(complex_pdb):
     assert job.model_path == Path(complex_pdb)
     assert job.model_id == "protprot_complex_1"
     assert job.chain == "A"
-    assert job.res_num == 19
+    assert job.resid == 19
     assert job.ori_resname == "THR"
     assert job.target_resname == "ALA"
     assert job.native_scores == native_scores
@@ -681,7 +671,7 @@ def test_model_point_mutation_run(mocker, mutation_job, monkeypatch):
         assert result.success is True
         assert result.model_id == "test_model"
         assert result.chain == "A"
-        assert result.res_num == 19
+        assert result.resid == 19
         assert result.ori_resname == "THR"
         assert result.target_resname == "ALA"
         # check resulted mutant_scores aproximately match expected mutant_scores
@@ -725,7 +715,7 @@ def test_model_point_mutation_run_with_output_mutants_true(mocker, monkeypatch):
             model_path=Path("test.pdb"),
             model_id="test_model",
             chain="A",
-            res_num=19,
+            resid=19,
             ori_resname="THR",
             target_resname="ALA",
             native_scores=(-106.7, -29.6, -316.5, -13.8, 1494.7),
@@ -758,7 +748,7 @@ def test_model_point_mutation_fail():
         model_path=Path("non-pdb-here.pdb"),
         model_id="test",
         chain="A",
-        res_num=1,
+        resid=1,
         ori_resname="ALA", 
         target_resname="TRP",
         native_scores=(0, 0, 0, 0, 0),
@@ -808,15 +798,24 @@ def test_mutate(protprot_model_list, monkeypatch):
             mutate(mut_fname, "A", 19, "HOH")
 
 
-def test_add_delta_to_bfactor(protprot_model_list, example_df_scan, monkeypatch):
-    """Test the add_delta_to_bfactor function."""
+def test_write_delta_score_to_pdb(protprot_model_list, results_by_model, monkeypatch):
+    """Test the write_delta_score_to_pdb method."""
     with tempfile.TemporaryDirectory() as tmpdir:
         mut_fname = Path(golden_data, protprot_model_list[0].file_name)
         monkeypatch.chdir(path=tmpdir)
         mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
-        add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
+        # Update attributes
+        protprot_model_list[0].file_name = mut_pdb_fname
+        protprot_model_list[0].path = tmpdir
+        add_delta_to_bfactor_obj = AddDeltaBFactor(
+            protprot_model_list[0],
+            tmpdir,
+            results_by_model["protprot_complex_1"],
+            )
+        add_delta_to_bfactor_obj.reorder_results()
+        add_delta_to_bfactor_obj.write_delta_score_to_pdb("bfactor_pdb.pdb")
         # ALA 19 should have beta = 100.0
-        assert np.isclose(100.0, float(open(mut_pdb_fname).readline()[60:66]))
+        assert np.isclose(100.0, float(open("bfactor_pdb.pdb").readline()[60:66]))
 
 
 def test_add_zscores(example_df_scan_clt):
@@ -857,49 +856,92 @@ def test_calc_score_wrong(mocker):
         calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
 
 
-def test_generate_alascan_output(mocker, protprot_model_list, scan_file, monkeypatch):
+def test_generate_alascan_output(protprot_model_list, results_by_model, monkeypatch):
     """Test the generate_alascan_output method."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.tsv"))
         monkeypatch.chdir(tmpdir)
-        models_to_export = generate_alascan_output(protprot_model_list, path=tmpdir)
-        assert len(models_to_export) == 1
-        assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
-        assert models_to_export[0].file_name == "protprot_complex_1_alascan.pdb"
+        new_model_to_export = AddDeltaBFactor(
+            protprot_model_list[0],
+            tmpdir,
+            results_by_model["protprot_complex_1"],
+            ).run()
+        assert new_model_to_export.ori_name == "protprot_complex_1.pdb"
+        assert new_model_to_export.file_name == "protprot_complex_1_alascan.pdb"
 
 
-def test_alascan_cluster_analysis(protprot_input_list, scan_file, monkeypatch):
+def test_alascan_group_scan_by_cluster(
+        protprot_input_list,
+        results_by_model,
+        monkeypatch,
+        ):
+    """Test grouping made by group_scan_by_cluster."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
+        assert "unclustered" in clt_scan.keys()
+        assert clt_pops["unclustered"] == 2
+
+        # Set the cluster id to 1 for second input
+        protprot_input_list[1].clt_id = 1
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
+        assert "unclustered" in clt_scan.keys()
+        assert 1 in clt_scan.keys()
+        assert clt_pops["unclustered"] == 1
+        assert clt_pops[1] == 1
+
+
+def test_alascan_cluster_full_outputs(
+        protprot_input_list,
+        results_by_model,
+        monkeypatch,
+        ):
     """Test alascan_cluster_analysis."""
     with tempfile.TemporaryDirectory() as tmpdir:
         monkeypatch.chdir(tmpdir)
-        shutil.copy(scan_file, Path("scan_protprot_complex_1.tsv"))
-        shutil.copy(scan_file, Path("scan_protprot_complex_2.tsv"))
-        alascan_cluster_analysis(protprot_input_list)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
+        cluster_analysis = ClusterOutputer(
+            clt_scan["unclustered"],
+            "unclustered",
+            clt_pops["unclustered"],
+            scan_residue="ALA",
+            generate_plot=True,
+            offline=False,
+        )
+        cluster_analysis.run()
 
         assert Path("scan_clt_unclustered.tsv").exists()
+        assert Path("scan_clt_unclustered.html").exists()
 
-        protprot_input_list[1].clt_id = 1
-        alascan_cluster_analysis(protprot_input_list)
 
-        assert Path("scan_clt_1.tsv").exists()
+def test_alascan_cluster_no_plot(protprot_input_list, results_by_model, monkeypatch):
+    """Test alascan_cluster_analysis."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        monkeypatch.chdir(tmpdir)
+        clt_scan, clt_pops = group_scan_by_cluster(
+            protprot_input_list,
+            results_by_model,
+            )
+        cluster_analysis = ClusterOutputer(
+            clt_scan["unclustered"],
+            "unclustered",
+            clt_pops["unclustered"],
+            scan_residue="ALA",
+            generate_plot=False,
+            offline=False,
+        )
+        cluster_analysis.run()
+
         assert Path("scan_clt_unclustered.tsv").exists()
-
-
-def test_create_alascan_plots(mocker, caplog):
-    """Test create_alascan_plots."""
-    mocker.patch("pandas.read_csv", return_value=pd.DataFrame())
-    create_alascan_plots({"-": []}, scan_residue="ALA")
-
-    for record in caplog.records:
-        assert record.levelname == "WARNING"
-
-    # now assuming existing file but wrong plot creation
-    mocker.patch("pandas.read_csv", return_value=[])
-    mocker.patch("os.path.exists", return_value=True)
-
-    create_alascan_plots({"-": []}, scan_residue="ALA")
-    for record in caplog.records:
-        assert record.levelname in ["INFO", "WARNING"]
+        assert not Path("scan_clt_unclustered.html").exists()
 
 
 def test_write_scan_out_with_mutation_results(successful_mutation_result, successful_mutation_result_2, monkeypatch):

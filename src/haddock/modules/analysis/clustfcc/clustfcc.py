@@ -6,10 +6,18 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-from haddock.libs.libfcc import cluster_elements, output_clusters
+from haddock.libs.libfcc import (
+    Cluster,
+    cluster_elements,
+    Element,
+    output_clusters,
+    )
 
 
-def iterate_clustering(pool, min_population_param):
+def iterate_clustering(
+        pool: dict[int, Element],
+        min_population_param: int,
+        ) -> tuple[list[Cluster], int]:
     """
     Iterate over the clustering process until a cluster is found.
 
@@ -23,30 +31,25 @@ def iterate_clustering(pool, min_population_param):
 
     Returns
     -------
-    clusters : list
+    clusters : list[Cluster]
         A list of clusters.
 
     min_population : int
         The min_population used to obtain the clusters.
     """
-    cluster_check = False
-    while not cluster_check:
-        for min_population in range(min_population_param, 0, -1):
-            log.info(f"Clustering with min_population={min_population}")
-            _, clusters = cluster_elements(
-                pool,
-                threshold=min_population,
-            )
-            if not clusters:
-                log.info("[WARNING] No cluster was found, decreasing min_population!")
-            else:
-                cluster_check = True
-                # pass the actual min_population back to the param dict
-                #  because it will be used in the detailed output
-                break
-        if not cluster_check:
-            # No cluster was obtained in any min_population
-            cluster_check = True
+    # Loop from min_population to population == 1
+    for min_population in range(min_population_param, 0, -1):
+        log.info(f"Clustering with min_population={min_population}")
+        _, clusters = cluster_elements(
+            pool,
+            threshold=min_population,
+        )
+        # No clusters found
+        if not clusters:
+            log.info("[WARNING] No cluster was found, decreasing min_population!")
+        # Clusters were generated
+        else:
+            break
     return clusters, min_population
 
 

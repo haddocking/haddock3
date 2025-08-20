@@ -11,3 +11,4 @@
 - 2025-08-01: Fix alascan bug when no contact found - Issue #1343
 - 2025-08-06: Adding guardrail in rigidbody module when no restraints provided - Issue #1345
 - 2025-08-08: Allow to generate cluster with clustfcc when only one model provided - Issue #1327
+- 2025-08-17: Combined bumps of packages version (coverage, hypothesis, pytest-random-order and kaleido)

@@ -409,6 +409,10 @@ def map_cg(chain):
         segid = aares.segid.strip()
         resi = aares.id[1]
 
+        if resn not in cg_mapping:
+            log.warning(f"Residue {resn} not in cg_mapping — skipping.")
+            continue  # skip to next residue
+
         # for each atom segment, calculate its center of mass and map the correct bead
         for atom_segment in cg_mapping[resn]:
             atoms = [aares[a] for a in atom_segment.split() if a in aares.child_dict]

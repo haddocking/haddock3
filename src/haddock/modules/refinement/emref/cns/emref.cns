@@ -475,7 +475,17 @@ if ($reorient = true) then
     coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
 end if
 
-write coordinates format=pdbo output=$output_pdb_filename end
+inline @MODULE:check_coordinates.cns
+  
+if ($failure eq true) then
+    evaluate ($failfile = $output_pdb_filename - ".pdb" + ".fail")
+    set display=$failfile end
+    display "MAX/MIN possible coordinates exceeded - stopping"
+    close $failfile end
+    stop
+else
+    write coordinates format=pdbo output=$output_pdb_filename end
+end if
 
 set message=normal echo=on end
 

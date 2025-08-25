@@ -49,25 +49,25 @@ class CustomBuild(build_ext):
 
     def run(self):
         """Run the custom build"""
-        # print("Building HADDOCK3 C/C++ binary dependencies...")
-        # self.build_executable(
-        #     name="contact_fcc",
-        #     cmd=["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
-        # )
-        # self.build_executable(
-        #     name="fast-rmsdmatrix",
-        #     cmd=[
-        #         "gcc",
-        #         "-Wall",
-        #         "-O3",
-        #         "-march=native",
-        #         "-std=c99",
-        #         "-o",
-        #         "fast-rmsdmatrix",
-        #         "src/haddock/deps/fast-rmsdmatrix.c",
-        #         "-lm",
-        #     ],
-        # )
+        print("Building HADDOCK3 C/C++ binary dependencies...")
+        self.build_executable(
+            name="contact_fcc",
+            cmd=["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
+        )
+        self.build_executable(
+            name="fast-rmsdmatrix",
+            cmd=[
+                "gcc",
+                "-Wall",
+                "-O3",
+                "-march=native",
+                "-std=c99",
+                "-o",
+                "fast-rmsdmatrix",
+                "src/haddock/deps/fast-rmsdmatrix.c",
+                "-lm",
+            ],
+        )
         print("Downloading the binaries...")
         self.download_binaries()
 

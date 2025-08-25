@@ -162,32 +162,42 @@ class PostInstallCommand(install):
     @staticmethod
     def cns_warning():
         """Warn the user that CNS could not be executed"""
-        with open("/dev/tty", "w") as tty:
-            tty.write("\n" + "=" * 79 + "\n")
-            tty.write("=" * 79 + "\n")
-            tty.write("=" * 79 + "\n")
-            tty.write(
+        try:
+            with open("/dev/tty", "w") as tty:
+                tty.write("\n" + "=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write(
+                    "\n⚠️ WARNING: The pre-compiled CNS binary could not be executed ⚠️\n\n"
+                )
+                tty.write("This may be due to missing dependencies on your system.\n")
+                tty.write(
+                    "Please refer to the installation instructions for troubleshooting steps:\n"
+                )
+                tty.write(
+                    "`https://github.com/haddocking/haddock3/blob/main/docs/CNS.md`\n\n"
+                )
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.flush()
+        except Exception as _:
+            # Fallback for systems without /dev/tty
+            sys.stderr.write(
                 "\n⚠️ WARNING: The pre-compiled CNS binary could not be executed ⚠️\n\n"
             )
-            tty.write("This may be due to missing dependencies on your system.\n")
-            tty.write(
-                "Please refer to the installation instructions for troubleshooting steps:\n"
-            )
-            tty.write(
-                "`https://github.com/haddocking/haddock3/blob/main/docs/CNS.md`\n\n"
-            )
-            tty.write("=" * 79 + "\n")
-            tty.write("=" * 79 + "\n")
-            tty.write("=" * 79 + "\n")
-            tty.flush()
 
     @staticmethod
     def cns_valid():
         """Write a message to the user that CNS works"""
-        with open("/dev/tty", "w") as tty:
-            tty.write("\n" + "=" * 79 + "\n")
-            tty.write("CNS execution passed ✅ \n")
-            tty.write("=" * 79 + "\n")
+        try:
+            # Fallback for systems without /dev/tty
+            with open("/dev/tty", "w") as tty:
+                tty.write("\n" + "=" * 79 + "\n")
+                tty.write("CNS execution passed ✅ \n")
+                tty.write("=" * 79 + "\n")
+        except Exception as _:
+            sys.stdout.write("CNS execution passed ✅ \n")
 
 
 setup(

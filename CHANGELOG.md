@@ -1,5 +1,6 @@
 # Changelog
 
+- 2025-08-25: Distribute the `haddock-restraints` binary
 - 2025-08-22: Added check for max/min possible coordinates in CNS scripts - Issue #1350
 - 2025-08-17: Combined bumps of packages version (coverage, hypothesis, pytest-random-order and kaleido)
 - 2025-08-06: Adding guardrail in rigidbody module when no restraints provided - Issue #1345

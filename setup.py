@@ -10,6 +10,7 @@ from pathlib import Path
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
 
 
 CNS_BINARIES = {
@@ -137,9 +138,72 @@ class CustomBuild(build_ext):
         return f"{machine}-{system}"
 
 
+class PostInstallCommand(install):
+    def run(self):
+        install.run(self)
+        self.check_cns_binary()
+
+    def check_cns_binary(self):
+        """Execute the CNS binary to ensure it works"""
+        cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
+        proc = subprocess.run(
+            [cns_path],
+            input="stop\n",
+            text=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+        if proc.returncode != 0:
+            self.cns_warning()
+        if proc.returncode == 0:
+            self.cns_valid()
+
+    @staticmethod
+    def cns_warning():
+        """Warn the user that CNS could not be executed"""
+        try:
+            with open("/dev/tty", "w") as tty:
+                tty.write("\n" + "=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write(
+                    "\n⚠️ WARNING: The pre-compiled CNS binary could not be executed ⚠️\n\n"
+                )
+                tty.write("This may be due to missing dependencies on your system.\n")
+                tty.write(
+                    "Please refer to the installation instructions for troubleshooting steps:\n"
+                )
+                tty.write(
+                    "`https://github.com/haddocking/haddock3/blob/main/docs/CNS.md`\n\n"
+                )
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.flush()
+        except Exception as _:
+            # Fallback for systems without /dev/tty
+            sys.stderr.write(
+                "\n⚠️ WARNING: The pre-compiled CNS binary could not be executed ⚠️\n\n"
+            )
+
+    @staticmethod
+    def cns_valid():
+        """Write a message to the user that CNS works"""
+        try:
+            # Fallback for systems without /dev/tty
+            with open("/dev/tty", "w") as tty:
+                tty.write("\n" + "=" * 79 + "\n")
+                tty.write("CNS execution passed ✅ \n")
+                tty.write("=" * 79 + "\n")
+        except Exception as _:
+            sys.stdout.write("CNS execution passed ✅ \n")
+
+
 setup(
     cmdclass={
         "build_ext": CustomBuild,
+        "install": PostInstallCommand,
     },
     ext_modules=cpp_extensions,
 )

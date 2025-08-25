@@ -69,9 +69,7 @@ docs = [
   "mock>=5.1.0",
   "myst-parser>=3.0.1",
 ]
-mpi = [
-  "mpi4py==4.1.0",
-]
+mpi = ["mpi4py==4.1.0"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"
@@ -93,6 +91,7 @@ haddock3-analyse = "haddock.clis.cli_analyse:maincli"
 haddock3-traceback = "haddock.clis.cli_traceback:maincli"
 haddock3-re = "haddock.clis.cli_re:maincli"
 haddock3-restraints = "haddock.clis.cli_restraints:maincli"
+haddock-restraints = "haddock.clis.wrapper_haddock_restraints:main"
 
 [tool.setuptools]
 packages = ["haddock"]

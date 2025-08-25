@@ -1,10 +1,15 @@
 # Container workflow for HADDOCK3
 
-This repository provides everything you need to build, run, and extend an **Apptainer/Singularity** container for HADDOCK3. [**HADDOCK3**](https://doi.org/10.1021/acs.jcim.5c00969)(High Ambiguity Driven protein–protein Docking) is a flexible, information-driven software suite for modeling biomolecular complexes using experimental and theoretical restraints. **Docker**, **Singularity**, and **Apptainer** are containerization platforms that package applications and all their dependencies into lightweight, portable images, ensuring reproducible execution across different environments.
+Build, run, and extend an **Apptainer/Singularity** container for HADDOCK3. [**HADDOCK3**](https://doi.org/10.1021/acs.jcim.5c00969)(High Ambiguity Driven protein–protein Docking) is a flexible, information-driven software suite for modeling biomolecular complexes using experimental and theoretical restraints. **Docker**, **Singularity**, and **Apptainer** are containerization platforms that package applications and all their dependencies into lightweight, portable images, ensuring reproducible execution across different environments.
 
 A ready-to-use Docker image for HADDOCK3 is published on the GitHub container registry, simply pull:
 ```bash
-docker pull ghcr.io/haddocking/haddock3:2025.5.0
+# For the latest release
+docker pull ghcr.io/haddocking/haddock3:latest
+
+# Or pin to a specific release for reproducibility
+docker pull ghcr.io/haddocking/haddock3:2025.8.0
+
 ```
 See the [HADDOCK3 container package](https://github.com/haddocking/haddock3/pkgs/container/haddock3) for details and version tags. This image serves as the canonical, versioned distribution of HADDOCK3 and can be used across development, CI/CD, and cloud environments.
 
@@ -12,12 +17,12 @@ To use this as the foundation for HPC-friendly SIF images, build **Apptainer** o
 
 ```bash
 # Build Apptainer image
-apptainer build haddock3_mpi.sif docker://ghcr.io/haddocking/haddock3:2025.5.0
+apptainer build haddock3_mpi.sif docker://ghcr.io/haddocking/haddock3:2025.8.0
 
 # Or, build with Singularity
-singularity build haddock3_mpi.sif docker://ghcr.io/haddocking/haddock3:2025.5.0
+singularity build haddock3_mpi.sif docker://ghcr.io/haddocking/haddock3:2025.8.0
   ```
-**Note:** Refer to the [**usage.md**](https://github.com/Comp-era/HADDOCK3-Container/blob/main/docs/usage.md) and the example SLURM script available in the `scripts` folder for detailed instructions on how to run HADDOCK3 jobs in an HPC environment.
+**Note:** Refer to the [**usage.md**](https://github.com/haddocking/haddock3/blob/main/usage-container/docs/usage.md) and the example SLURM script available in the `scripts` folder for detailed instructions on how to run HADDOCK3 jobs in an HPC environment.
 <pre> <strong>Version updates:</strong> The HADDOCK3 image is regularly updated. Please check the tags at <a href="https://github.com/haddocking/haddock3/pkgs/container/haddock3">ghcr.io/haddocking/haddock3</a> for the latest version. </pre>
 
 ---
@@ -27,8 +32,9 @@ Containerization techniques enable highly reproducible, customizable, and scalab
 1. **Clone**
 
     ```bash
-    git clone https://github.com/Comp-era/HADDOCK3-Container.git
-    cd HADDOCK3-Container/recipe
+    git clone https://github.com/haddocking/haddock3.git
+    cd haddock3/usage-container/usage-container/recipe
+    
     ```
 
     **Repository Structure**
@@ -47,7 +53,7 @@ Containerization techniques enable highly reproducible, customizable, and scalab
 2. **Build** 
 
 A definition file is a blueprint that tells the containerization platform how to build the container. It specifies the base OS, software packages, environment variables, and custom setup steps, ensuring your container is reproducible and tailored to your workflow.
-A ready-to-use `HADDOCK3.def` is provided in the ([recipe/](https://github.com/Comp-era/HADDOCK3-Container/tree/main/recipe)) directory.
+A ready-to-use `HADDOCK3.def` is provided in the ([recipe/](https://github.com/haddocking/haddock3/blob/main/usage-container/recipe)) directory.
 
    ```bash
    # Apptainer
@@ -71,15 +77,6 @@ A ready-to-use `HADDOCK3.def` is provided in the ([recipe/](https://github.com/C
      ```
 
 
-4. **Download a pre-built image**
-
-   You can also pull the pre-built apptainer image I created directly from GitHub’s container registry using the ORAS protocol:
-
-   ```bash
-   apptainer pull oras://ghcr.io/comp-era/haddock3:2025.06-v1.0-haddock3-mpi
-   ```
----
-
 ##  Resources & Tutorials
 
 - **Apptainer Installation & Usage**: Detailed installation instructions and usage examples can be found on the official docs: [apptainer.org/docs/admin/main/installation.html](https://apptainer.org/docs/admin/main/installation.html)
@@ -100,21 +97,8 @@ A ready-to-use `HADDOCK3.def` is provided in the ([recipe/](https://github.com/C
 
 See the `docs/` folder:
 
-- [**usage.md**](https://github.com/Comp-era/HADDOCK3-Container/blob/main/docs/usage.md) – Detailed usage and instructions to run Apptainer.
+- [**usage.md**](https://github.com/haddocking/haddock3/blob/main/usage-container/docs/usage.md) – Detailed usage and instructions to run Apptainer.
 
----
-
-##  Contributing
-
-Kindly refer to [CONTRIBUTING.md](CONTRIBUTING.md) , for contributions.
-
-
-
----
-
-##  License
-
-MIT License © 2025 Shantanu Khatri.
 
 ---
 

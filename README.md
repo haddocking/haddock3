@@ -84,7 +84,7 @@ Check the [EXAMPLES](https://github.com/haddocking/haddock3/blob/main/examples/R
 ## Container Usage Examples
 
 - [Container Usage Guide](usage-container/docs/usage.md)  
-  (see detailed docs on running, builidng container, Slurm snippets, etc.)
+  (see detailed docs on running, building container, Slurm snippets, etc.)
 
 ## Support
 

@@ -12,8 +12,8 @@ from typing import cast
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
-from setuptools.command.install import install
 from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 CNS_BINARIES = {
     "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",

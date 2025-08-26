@@ -207,25 +207,6 @@ class DevelopCommand(develop):
         print("Downloading binaries for editable installation...")
         build_cmd.download_binaries()
 
-        # Check CNS binary
-        self.check_cns_binary()
-
-    def check_cns_binary(self):
-        """Check CNS binary for editable installs"""
-        cns_path = Path("src", "haddock", "bin", "cns")
-        proc = subprocess.run(
-            [cns_path],
-            input="stop\n",
-            text=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-
-        if proc.returncode != 0:
-            PostInstallCommand.cns_warning()
-        if proc.returncode == 0:
-            PostInstallCommand.cns_valid()
-
 
 class PostInstallCommand(install):
     def run(self):

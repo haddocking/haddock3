@@ -48,7 +48,7 @@ cpp_extensions = [
 
 
 class CustomBuild(build_ext):
-    """Custom build handles the C/C++ dependencies"""
+    """Custom build handles the C/C++ dependencies and downloading of binaries"""
 
     def run(self):
         """Run the custom build"""
@@ -173,6 +173,8 @@ class CustomBuild(build_ext):
 class DevelopCommand(develop):
     """Custom develop command for editable installations"""
 
+    # NOTE: This is what is performed when using `pip install -e`
+
     def run(self):
         # First run the standard develop command
         develop.run(self)
@@ -209,6 +211,10 @@ class DevelopCommand(develop):
 
 
 class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+
+    # NOTE: This is only executed for the installation, for editable see `DevelopCommand`
+
     def run(self):
         install.run(self)
         self.check_cns_binary()

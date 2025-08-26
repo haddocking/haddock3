@@ -234,10 +234,7 @@ class PostInstallCommand(install):
 
     def check_cns_binary(self):
         """Execute the CNS binary to ensure it works"""
-        if getattr(self, "editable_mode", False):
-            cns_path = Path("src", "haddock", "bin", "cns")
-        else:
-            cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
+        cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
         proc = subprocess.run(
             [cns_path],
             input="stop\n",

@@ -8,10 +8,12 @@ import sys
 import tarfile
 import urllib.request
 from pathlib import Path
+from typing import cast
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
+from setuptools.command.develop import develop
 
 CNS_BINARIES = {
     "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
@@ -110,7 +112,7 @@ class CustomBuild(build_ext):
         ]
 
         # Determine the target directory
-        if hasattr(self, "build_lib"):
+        if hasattr(self, "build_lib") and self.build_lib and not self.inplace:
             target_bin_dir = Path(self.build_lib, "haddock", "bin")
         else:
             target_bin_dir = Path("src", "haddock", "bin")
@@ -168,6 +170,63 @@ class CustomBuild(build_ext):
         return f"{machine}-{system}"
 
 
+class DevelopCommand(develop):
+    """Custom develop command for editable installations"""
+
+    def run(self):
+        # First run the standard develop command
+        develop.run(self)
+
+        # Then run our custom build steps
+        build_cmd = cast(CustomBuild, self.get_finalized_command("build_ext"))
+        # specify we are building in place
+        build_cmd.inplace = True
+
+        # Build the executables
+        print("Building executables for editable installation...")
+        build_cmd.build_executable(
+            name="contact_fcc",
+            cmd=["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
+        )
+        build_cmd.build_executable(
+            name="fast-rmsdmatrix",
+            cmd=[
+                "gcc",
+                "-Wall",
+                "-O3",
+                "-march=native",
+                "-std=c99",
+                "-o",
+                "fast-rmsdmatrix",
+                "src/haddock/deps/fast-rmsdmatrix.c",
+                "-lm",
+            ],
+        )
+
+        # Download binaries to source directory
+        print("Downloading binaries for editable installation...")
+        build_cmd.download_binaries()
+
+        # Check CNS binary
+        self.check_cns_binary()
+
+    def check_cns_binary(self):
+        """Check CNS binary for editable installs"""
+        cns_path = Path("src", "haddock", "bin", "cns")
+        proc = subprocess.run(
+            [cns_path],
+            input="stop\n",
+            text=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+        if proc.returncode != 0:
+            PostInstallCommand.cns_warning()
+        if proc.returncode == 0:
+            PostInstallCommand.cns_valid()
+
+
 class PostInstallCommand(install):
     def run(self):
         install.run(self)
@@ -175,7 +234,10 @@ class PostInstallCommand(install):
 
     def check_cns_binary(self):
         """Execute the CNS binary to ensure it works"""
-        cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
+        if getattr(self, "editable_mode", False):
+            cns_path = Path("src", "haddock", "bin", "cns")
+        else:
+            cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
         proc = subprocess.run(
             [cns_path],
             input="stop\n",
@@ -221,12 +283,12 @@ class PostInstallCommand(install):
     def cns_valid():
         """Write a message to the user that CNS works"""
         try:
-            # Fallback for systems without /dev/tty
             with open("/dev/tty", "w") as tty:
                 tty.write("\n" + "=" * 79 + "\n")
                 tty.write("CNS execution passed ✅ \n")
                 tty.write("=" * 79 + "\n")
         except Exception as _:
+            # Fallback for systems without /dev/tty
             sys.stdout.write("CNS execution passed ✅ \n")
 
 
@@ -234,6 +296,7 @@ setup(
     cmdclass={
         "build_ext": CustomBuild,
         "install": PostInstallCommand,
+        "develop": DevelopCommand,
     },
     ext_modules=cpp_extensions,
 )

@@ -73,3 +73,29 @@ jobs:
         run: |
           sphinx-apidoc -f -e -o docs/ src/haddock -d 1
           sphinx-build docs haddock3-docs
+
+  dev:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
+
+      - name: install haddock3 in editable mode
+        run: pip install -e '.[mpi,dev,docs]'

@@ -1,0 +1,7 @@
+haddock.clis.wrapper\_haddock\_restraints module
+================================================
+
+.. automodule:: haddock.clis.wrapper_haddock_restraints
+   :members:
+   :undoc-members:
+   :show-inheritance:

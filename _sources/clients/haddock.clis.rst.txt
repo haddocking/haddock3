@@ -29,6 +29,7 @@ Submodules
    haddock.clis.cli_score
    haddock.clis.cli_traceback
    haddock.clis.cli_unpack
+   haddock.clis.wrapper_haddock_restraints
 
 Module contents
 ---------------

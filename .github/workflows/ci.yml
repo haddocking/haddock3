@@ -95,3 +95,13 @@ jobs:
 
       - name: install haddock3 in editable mode
         run: pip install -e '.[mpi,dev,docs]'
+
+      - name: check installed binaries
+        run: |
+          required_bins="contact_fcc cns haddock-restraints fast-rmsdmatrix"
+          for bin in $required_bins; do
+            if [ ! -x "src/bin/$bin" ]; then
+              echo "src/bin/$bin is missing or not executable"; exit 1;
+            fi
+          done
+          ls -l src/bin

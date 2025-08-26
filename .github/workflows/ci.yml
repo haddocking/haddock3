@@ -104,4 +104,4 @@ jobs:
               echo "src/haddock/bin/$bin is missing or not executable"; exit 1;
             fi
           done
-          ls -l src/bin
+          ls -l src/haddock/bin

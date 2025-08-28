@@ -754,8 +754,18 @@ buffer message
 end
 buffer message reset end
 
-write structure output=$output_psf_filename end
-write coordinates format=pdbo output=$output_pdb_filename end
+inline @MODULE:check_coordinates.cns
+  
+if ($failure eq true) then
+    evaluate ($failfile = $output_pdb_filename - ".pdb" + ".fail")
+    set display=$failfile end
+    display "MAX/MIN possible coordinates exceeded - stopping"
+    close $failfile end
+    stop
+else
+    write structure output=$output_psf_filename end
+    write coordinates format=pdbo output=$output_pdb_filename end
+end if
 
 display OUTPUT: $output_pdb_filename
 display OUTPUT: $output_psf_filename

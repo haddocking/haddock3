@@ -173,6 +173,28 @@ def fixture_protlig_input_list():
         yield [pdb_obj_1, pdb_obj_2]
 
 
+@pytest.fixture(name="prot_HETATMlig_input_list")
+def fixture_prot_HETATMlig_input_list():
+    """Protein-Ligand with HETATM input."""
+    with (
+        tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_1,
+        tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_2,
+    ):
+        dst_prot_1 = tmp_1.name
+        dst_prot_2 = tmp_2.name
+
+        src_prot_1 = Path(golden_data, "protlig_complex_1_HETATM.pdb")
+        src_prot_2 = Path(golden_data, "protlig_complex_2.pdb")
+
+        shutil.copy(src_prot_1, dst_prot_1)
+        shutil.copy(src_prot_2, dst_prot_2)
+
+        pdb_obj_1 = PDBFile(file_name=dst_prot_1, path=Path(dst_prot_1).parent)
+        pdb_obj_2 = PDBFile(file_name=dst_prot_2, path=Path(dst_prot_2).parent)
+
+        yield [pdb_obj_1, pdb_obj_2]
+
+
 @pytest.fixture(name="protprot_onechain_list")
 def fixture_protprot_onechain_list() -> Generator[list[PDBFile], Any, Any]:
     """Protein-Protein complex with a single chain ID."""

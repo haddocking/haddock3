@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2025.5.0"
+version = "2025.8.1"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -51,15 +51,15 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "coverage==7.9.1",
+  "coverage==7.10.1",
   "pytest==8.3.5",
   "pytest-cov==6.2.1",
-  "hypothesis==6.135.20",
+  "hypothesis==6.136.6",
   "pytest-mock==3.14.1",
   "fastapi==0.115.12",
   "httpx==0.28.1",
-  "kaleido==0.2.1",
-  "pytest-random-order==1.1.1",
+  "kaleido==1.0.0",
+  "pytest-random-order==1.2.0",
 ]
 docs = [
   "sphinx>=7",
@@ -69,9 +69,7 @@ docs = [
   "mock>=5.1.0",
   "myst-parser>=3.0.1",
 ]
-mpi = [
-  "mpi4py==4.1.0",
-]
+mpi = ["mpi4py==4.1.0"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"
@@ -93,6 +91,7 @@ haddock3-analyse = "haddock.clis.cli_analyse:maincli"
 haddock3-traceback = "haddock.clis.cli_traceback:maincli"
 haddock3-re = "haddock.clis.cli_re:maincli"
 haddock3-restraints = "haddock.clis.cli_restraints:maincli"
+haddock-restraints = "haddock.clis.wrapper_haddock_restraints:main"
 
 [tool.setuptools]
 packages = ["haddock"]

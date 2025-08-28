@@ -25,7 +25,7 @@ from . import golden_data
 
 
 def remove_aln_files(class_name):
-    """Remove intermediary alignment files."""
+    """Helper function to remove intermediary alignment files."""
     file_l = [
         Path(class_name.path, "blosum62.izone"),
         Path(class_name.path, "blosum62_A.aln"),
@@ -37,7 +37,7 @@ def remove_aln_files(class_name):
 
 
 def read_capri_file(fname):
-    """???"""
+    """Helper function that reads a capri tsv file."""
     file_content = [
         e.split()[1:] for e in open(fname).readlines() if not e.startswith("#")
     ]
@@ -52,6 +52,7 @@ def fixture_params():
         "ligand_chains": ["B"],
         "aln_method": "sequence",
         "allatoms": False,
+        "keep_hetatm": False,
     }
 
 
@@ -63,6 +64,19 @@ def fixture_params_all():
         "ligand_chains": ["B"],
         "aln_method": "sequence",
         "allatoms": True,
+        "keep_hetatm": False,
+    }
+
+
+@pytest.fixture(name="params_hetatm")
+def fixture_params_hetatm():
+    """Parameters when HETATM must be kept."""
+    return {
+        "receptor_chain": "A",
+        "ligand_chains": ["B"],
+        "aln_method": "sequence",
+        "allatoms": False,
+        "keep_hetatm": True,
     }
 
 
@@ -255,6 +269,25 @@ def fixture_protprot_allatm_caprimodule_cg(protprot_input_list_cg, params_all):
         path=_path,
         params=params_all,
         ff="martini2",
+    )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture(name="prot_hetatmlig_caprimodule")
+def fixture_prot_hetatmlig_caprimodule(prot_HETATMlig_input_list, params_hetatm):
+    """Protein-Ligand CAPRI module."""
+    reference = prot_HETATMlig_input_list[0]
+    model = prot_HETATMlig_input_list[1]
+    _path = prot_HETATMlig_input_list[1].path
+    capri = CAPRI(
+        identificator=42,
+        reference=reference,
+        model=model,
+        path=_path,
+        params=params_hetatm,
     )
 
     yield capri
@@ -1007,6 +1040,7 @@ def test_capri_run(mocker, monkeypatch):
                 "lovoalign_exec": None,
                 "fnat_cutoff": 10,
                 "irmsd_cutoff": 10,
+                "keep_hetatm": False,
             },
         )
         rand_fnat = random.random()
@@ -1102,6 +1136,7 @@ def test_extract_data_from_capri_class(mocker, monkeypatch):
                 "allatoms": True,
                 "receptor_chain": "X",
                 "ligand_chains": ["X"],
+                "keep_hetatm": False,
             },
         )
 
@@ -1197,6 +1232,7 @@ def test_extract_data_from_capri_class_multiple_refs(mocker, monkeypatch):
                 reference=Path(f"anything_{ref_index}"),
                 params={
                     "allatoms": True,
+                    "keep_hetatm": False,
                     "receptor_chain": "X",
                     "ligand_chains": ["X"],
                     "dockq": True,
@@ -1269,6 +1305,7 @@ def test_capri_object_sorting_methods(mocker):
                 "lrmsd": False,
                 "irmsd": False,
                 "global_rmsd": False,
+                "keep_hetatm": False,
             },
         )
         for i in range(5)
@@ -1312,3 +1349,15 @@ def test_capri_object_sorting_methods(mocker):
 
         # Turn off metric computation parameter
         capri_object.params[param_perf_key] = False
+
+
+def test_capri_keep_hetatm(prot_hetatmlig_caprimodule):
+    """Test evaluation of capri metrics when extracting HETATMs."""
+    prot_hetatmlig_caprimodule.calc_irmsd()
+    assert np.isclose(prot_hetatmlig_caprimodule.irmsd, 0.22, atol=0.01)
+    prot_hetatmlig_caprimodule.calc_fnat()
+    assert np.isclose(prot_hetatmlig_caprimodule.fnat, 1.0, atol=0.01)
+    prot_hetatmlig_caprimodule.calc_lrmsd()
+    assert np.isclose(prot_hetatmlig_caprimodule.lrmsd, 0.49, atol=0.01)
+    prot_hetatmlig_caprimodule.calc_ilrmsd()
+    assert np.isclose(prot_hetatmlig_caprimodule.ilrmsd, 0.49, atol=0.01)

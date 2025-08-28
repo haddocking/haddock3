@@ -77,7 +77,7 @@ def test_alascan_default(alascan_module, mocker):
 
     expected_csv1 = Path(alascan_module.path, "scan_protprot_complex_1.tsv")
     expected_csv2 = Path(alascan_module.path, "scan_protprot_complex_2.tsv")
-    expected_clt_csv = Path(alascan_module.path, "scan_clt_-.tsv")
+    expected_clt_csv = Path(alascan_module.path, "scan_clt_unclustered.tsv")
 
     assert expected_csv1.exists(), f"{expected_csv1} does not exist"
     assert expected_csv2.exists(), f"{expected_csv2} does not exist"
@@ -89,9 +89,9 @@ def test_alascan_default(alascan_module, mocker):
     # ARG 17 B should have a negative delta_score
     assert df.loc[df["ori_resname"] == "ARG"].iloc[0, :]["delta_score"] < 0.0
 
-    # check clt csv
+    # check cluster csv
     df_clt = pd.read_csv(expected_clt_csv, sep="\t", comment="#")
-    assert df_clt.shape == (18, 11), f"{expected_clt_csv} has wrong shape"
+    assert df_clt.shape == (18, 16), f"{expected_clt_csv} has wrong shape"
     # average delta score of A-38-ASP should be negative
     assert (
         df_clt.loc[df_clt["full_resname"] == "A-38-ASP"].iloc[0, :]["delta_score"] < 0.0
@@ -106,7 +106,7 @@ def test_alascan_single_model(alascan_module, mocker):
     alascan_module.run()
 
     expected_csv = Path(alascan_module.path, "scan_2oob.tsv")
-    expected_clt_csv = Path(alascan_module.path, "scan_clt_-.tsv")
+    expected_clt_csv = Path(alascan_module.path, "scan_clt_unclustered.tsv")
 
     assert expected_csv.exists(), f"{expected_csv} does not exist"
     assert expected_clt_csv.exists(), f"{expected_clt_csv} does not exist"

@@ -197,3 +197,13 @@ allatoms:
         backbone atoms will be considered, otherwise all the heavy-atoms.
   group: analysis
   explevel: easy
+
+keep_hetatm:
+  default: false
+  type: boolean
+  title: HETATM to be considered during the analysis.
+  short: HETATM to be considered during the analysis.
+  long: HETATM to be considered during the analysis. If false (default), only
+        ATOM coordinates lines will be used, otherwise the HETATM from reference will also be used.
+  group: analysis
+  explevel: easy

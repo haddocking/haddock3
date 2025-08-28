@@ -29,15 +29,14 @@ diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
 """
 
-from datetime import datetime
 from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
-from haddock.core.typing import FilePath, Sequence, Union
+from haddock.core.typing import FilePath, Optional, Sequence, Union
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libparallel import GenericTask, Scheduler
+from haddock.libs.libparallel import GenericTask
 from haddock.libs.libpdb import check_combination_chains
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -170,6 +169,30 @@ class HaddockModule(BaseCNSModule):
 
         return l
 
+    def restraints_guardrail(self, ambig_fnames: Optional[list[str]]) -> None:
+        """Makes sure any restraints are available for the docking."""
+        # List all types of restraints
+        all_restraints = (
+            ambig_fnames,
+            self.params["ambig_fname"],
+            self.params["unambig_fname"],
+            self.params["hbond_fname"],
+            self.params["cmrest"],
+            self.params["ranair"],
+            self.params["surfrest"],
+        )
+        # If not any restraints provided
+        if not any(all_restraints):
+            # Terminate docking
+            self.finish_with_error(
+                "No restraints found for [rigidbody] module. "
+                "For targeted docking, supply CNS-valid restraints file(s) "
+                "using 'ambig_fname' and/or 'unambig_fname' and/or "
+                "'hbond_fname' parameter(s). "
+                "For ab-initio docking, set 'cmrest' or 'ranair' "
+                "parameters to true."
+                )
+
     def _run(self) -> None:
         """Execute module."""
         # Pool of jobs to be executed by the CNS engine
@@ -208,7 +231,8 @@ class HaddockModule(BaseCNSModule):
         else:
             ambig_fnames = None
 
-        start = datetime.now()
+        self.restraints_guardrail(ambig_fnames)
+
         self.output_models: list[PDBFile] = []
         self.log("Preparing jobs...")
         if self.params["mode"] != "local":
@@ -221,9 +245,6 @@ class HaddockModule(BaseCNSModule):
             cns_input = self.prepare_cns_input_parallel(
                 models_to_dock, sampling_factor, ambig_fnames  # type: ignore
             )
-        end = datetime.now()
-
-        self.log(f"Preparation took {(end - start).total_seconds()} seconds")
 
         jobs = self.make_cns_jobs(cns_input)
 

@@ -112,7 +112,8 @@ def load_contacts(
     cutoff: float = 5.0,
     numbering_dic: Optional[dict[str, dict[int, int]]] = None,
     model2ref_chain_dict: Optional[dict[str, str]] = None,
-    ff: str = "aa"
+    ff: str = "aa",
+    keep_hetatm: bool = False,
 ) -> set[tuple]:
     """Load residue-based contacts.
 
@@ -124,6 +125,8 @@ def load_contacts(
         Cutoff distance for the interface identification.
     ff : string
         Force-field information : aa (all-atom), martini2 or martini3
+    keep_hetatm : bool
+        Should HETATM coordinates be considered ? (default False)
 
     Returns
     -------
@@ -139,6 +142,7 @@ def load_contacts(
         atoms,
         numbering_dic=numbering_dic,
         model2ref_chain_dict=model2ref_chain_dict,
+        keep_hetatm=keep_hetatm,
     )
     # create coordinate arrays
     coord_arrays: dict[str, NDFloat] = {}
@@ -224,6 +228,7 @@ class CAPRI:
         self.atoms = self._load_atoms(model, reference, full=self.allatoms, ff=self.ff)
         self.r_chain = params["receptor_chain"]
         self.l_chains = params["ligand_chains"]
+        self.keep_hetatm = params["keep_hetatm"]
         self.model2ref_numbering = None
         self.model2ref_chain_dict = None
         self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
@@ -242,14 +247,22 @@ class CAPRI:
             The cutoff distance for the intermolecular contacts.
         """
         # Identify reference interface
-        ref_interface_resdic = self.identify_interface(self.reference, cutoff, self.ff)
+        ref_interface_resdic = self.identify_interface(
+            self.reference,
+            cutoff,
+            self.ff,
+            keep_hetatm=self.keep_hetatm,
+            )
 
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
         else:
             # Load interface coordinates
             ref_coord_dic, _ = load_coords(
-                self.reference, self.atoms, ref_interface_resdic
+                self.reference,
+                self.atoms,
+                ref_interface_resdic,
+                keep_hetatm=self.keep_hetatm,
             )
             try:
                 mod_coord_dic, _ = load_coords(
@@ -258,6 +271,7 @@ class CAPRI:
                     ref_interface_resdic,
                     numbering_dic=self.model2ref_numbering,
                     model2ref_chain_dict=self.model2ref_chain_dict,
+                    keep_hetatm=self.keep_hetatm,
                 )
             except ALIGNError as alignerror:
                 log.warning(alignerror)
@@ -292,13 +306,18 @@ class CAPRI:
 
     def calc_lrmsd(self) -> None:
         """Calculate the L-RMSD."""
-        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
+        ref_coord_dic, _ = load_coords(
+            self.reference,
+            self.atoms,
+            keep_hetatm=self.keep_hetatm,
+            )
         try:
             mod_coord_dic, _ = load_coords(
                 self.model,
                 self.atoms,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
+                keep_hetatm=self.keep_hetatm,
             )
         except ALIGNError as alignerror:
             log.warning(alignerror)
@@ -397,11 +416,19 @@ class CAPRI:
             The cutoff distance for the intermolecular contacts.
         """
         # Identify interface
-        ref_interface_resdic = self.identify_interface(self.reference, cutoff, self.ff)
-        # Load interface coordinates
+        ref_interface_resdic = self.identify_interface(
+            self.reference,
+            cutoff,
+            self.ff,
+            keep_hetatm=self.keep_hetatm,
+            )
 
+        # Load interface coordinates
         ref_int_coord_dic, _ = load_coords(
-            self.reference, self.atoms, ref_interface_resdic
+            self.reference,
+            self.atoms,
+            ref_interface_resdic,
+            keep_hetatm=self.keep_hetatm,
         )
         try:
             mod_int_coord_dic, _ = load_coords(
@@ -410,6 +437,7 @@ class CAPRI:
                 ref_interface_resdic,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
+                keep_hetatm=self.keep_hetatm,
             )
         except ALIGNError as alignerror:
             log.warning(alignerror)
@@ -498,7 +526,13 @@ class CAPRI:
         cutoff : float
             The cutoff distance for the intermolecular contacts.
         """
-        ref_contacts = load_contacts(self.reference, cutoff, ff=self.ff)
+        ref_contacts = load_contacts(
+            self.reference,
+            cutoff,
+            ff=self.ff,
+            keep_hetatm=self.keep_hetatm,
+            )
+        
         if len(ref_contacts) != 0:
             try:
                 model_contacts = load_contacts(
@@ -506,7 +540,8 @@ class CAPRI:
                     cutoff,
                     numbering_dic=self.model2ref_numbering,  # type: ignore
                     model2ref_chain_dict=self.model2ref_chain_dict,  # type: ignore
-                    ff=self.ff
+                    ff=self.ff,
+                    keep_hetatm=self.keep_hetatm,
                 )
             except ALIGNError as alignerror:
                 log.warning(alignerror)
@@ -519,7 +554,11 @@ class CAPRI:
     def calc_global_rmsd(self) -> None:
         """Calculate the full structure RMSD."""
         # Load reference atomic coordinates
-        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
+        ref_coord_dic, _ = load_coords(
+            self.reference,
+            self.atoms,
+            keep_hetatm=self.keep_hetatm,
+            )
         # Load model atomic coordinates
         try:
             model_coord_dic, _ = load_coords(
@@ -527,6 +566,7 @@ class CAPRI:
                 self.atoms,
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict,
+                keep_hetatm=self.keep_hetatm,
             )
         except ALIGNError as alignerror:
             log.warning(alignerror)
@@ -700,6 +740,7 @@ class CAPRI:
         pdb_f: PDBPath,
         cutoff: float = 5.0,
         ff: str = "aa",
+        keep_hetatm: bool = False,
     ) -> dict[str, list[int]]:
         """Identify the interface.
 
@@ -711,6 +752,8 @@ class CAPRI:
             Cutoff distance for the interface identification.
         ff : string
             Force-field information : aa (all-atom), martini2 or martini3
+        keep_hetatm : bool
+            Should HETATM coordinates be considered ? (default False)
 
         Returns
         -------
@@ -721,7 +764,7 @@ class CAPRI:
             pdb_f = pdb_f.rel_path
 
         interface_resdic: dict[str, list[int]] = {}
-        contacts = load_contacts(pdb_f, cutoff, ff=ff)
+        contacts = load_contacts(pdb_f, cutoff, ff=ff, keep_hetatm=keep_hetatm)
 
         for contact in contacts:
             first_chain, first_resid, sec_chain, sec_resid = contact

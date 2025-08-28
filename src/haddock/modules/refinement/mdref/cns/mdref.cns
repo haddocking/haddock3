@@ -480,6 +480,23 @@ end if
 energy end
 
 evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+evaluate ($ebond = $bond)
+evaluate ($eangl= $angl)
+evaluate ($eimpr= $impr)
+evaluate ($edihe= $dihe)
+
+evaluate ($result=0)
+print thres=0.05 bonds
+evaluate ($rms_bonds=$result)
+evaluate ($result=0)
+print thres=5. angles
+evaluate ($rms_angles=$result)
+evaluate ($result=0)
+print thres=5. impropers
+evaluate ($rms_impropers=$result)
+evaluate ($result=0)
+print thres=30. dihedrals
+evaluate ($rms_dihedrals=$result)
 
 
 {* ===================== calculate final energies and write structure *}
@@ -574,11 +591,17 @@ if ($reorient = true) then
     coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
 end if
 
-write coordinates sele=(not (resn WA* or resn HOH or resn TIP* or resn DMS)) format=pdbo output=$output_pdb_filename end
-
-set message=normal echo=on end
-
-display OUTPUT: $output_pdb_filename
+inline @MODULE:check_coordinates.cns
+  
+if ($failure eq true) then
+    evaluate ($failfile = $output_pdb_filename - ".pdb" + ".fail")
+    set display=$failfile end
+    display "MAX/MIN possible coordinates exceeded - stopping"
+    close $failfile end
+    stop
+else
+    write coordinates sele=(not (resn WA* or resn HOH or resn TIP* or resn DMS)) format=pdbo output=$output_pdb_filename end
+end if
 
 if ($refine.keepwater eq true) then
     evaluate ($filename= $output_pdb_filename - ".pdb" + "_solvent.pdb")

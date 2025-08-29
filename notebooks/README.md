@@ -9,4 +9,4 @@ Current notebooks:
 
 | Notebooks                           |      Description                     |    Colab    |
 |-------------------------------------|--------------------------------------|--------------|
-| HADDOCK3-antibody-antigen.ipynb     | antibogy-antigen tutorial (based on our [online tutorial]([https://colab.research.google.com/github/haddocking/haddock3/notebooks/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-antibody-antigen/))) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/notebooks/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb) |
+| HADDOCK3-antibody-antigen.ipynb     | antibogy-antigen tutorial (based on our [online tutorial]([https://colab.research.google.com/github/haddocking/haddock3/notebooks/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-antibody-antigen/))) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb){target:new} |

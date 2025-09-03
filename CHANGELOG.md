@@ -1,6 +1,6 @@
 # Changelog
 
-- 2025-08-30: Added notebooks directory with an antibody-antigen tutorial on Colab
+- 2025-09-03: Added support for THR glycosylation - Issue #1371
 - 2025-08-25: Distribute the `haddock-restraints` binary
 - 2025-08-22: Added check for max/min possible coordinates in CNS scripts - Issue #1350
 - 2025-08-17: Combined bumps of packages version (coverage, hypothesis, pytest-random-order and kaleido)

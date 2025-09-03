@@ -60,29 +60,30 @@ def test_pdb_string_to_structure_and_structure_to_pdb_string(sample_pdb):
 
 
 @has_notebook
-# @patch("haddock.libs.libnotebooks.py3Dmol")
-def test_align_full_success(mock_py3Dmol, tmp_path, sample_pdb):
+def test_align_full_success(tmp_path, sample_pdb):
     # Patch py3Dmol and create two similar minimal pdb files
     pdb1 = tmp_path / "model1.pdb"
     pdb2 = tmp_path / "model2.pdb"
     pdb1.write_text(sample_pdb)
     pdb2.write_text(sample_pdb)
-    mock_view = MagicMock()
-    # mock_py3Dmol.view.return_value = mock_view
 
     view = libnotebooks.align_full(
         str(pdb1), str(pdb2), chains=["A"], atom_types=["CA"], show_labels=False
     )
-    # Should return the mocked view
-    assert view == mock_view
+    # Check this is a view
+    # NOTE: Yes this import needs to be here and not on top
+    import py3Dmol
+
+    assert isinstance(view, py3Dmol.view)
 
 
 @has_notebook
-# @patch("haddock.libs.libnotebooks.py3Dmol")
-def test_align_full_file_not_found(mock_py3Dmol):
-    mock_view = MagicMock()
-    # mock_py3Dmol.view.return_value = mock_view
+def test_align_full_file_not_found():
 
     result = libnotebooks.align_full("nofile1.pdb", "nofile2.pdb")
-    assert result[0] == mock_view
     assert result[1] is None
+
+    # NOTE: Yes this import needs to be here and not on top
+    import py3Dmol
+
+    assert isinstance(result[0], py3Dmol.view)

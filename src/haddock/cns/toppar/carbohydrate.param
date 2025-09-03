@@ -54,6 +54,7 @@ BOND CC6  OAS    1000.0    1.44
 BOND CCS  NH1    1000.0    1.45   !as extended atom carbon-N
 BOND CCE  NH1    1000.0    1.45   !as extended atom carbon-N
 BOND CCA  NH1    1000.0    1.45   !as extended atom carbon-N
+BOND CH1E OAS    1000.0    1.385
 BOND CCS  C      1000.0    1.52   !"    "       "     "   -C
 BOND CCE  C      1000.0    1.52
 BOND CCA  C      1000.0    1.52
@@ -114,6 +115,7 @@ ANGLe CCE  OAS  CCS   500.0   116.0
 ANGLe CCA  OAS  CCS   500.0   115.0
 ANGLe CCE  OAS  CC6   500.0   116.0
 ANGLe CCA  OAS  CCE   500.0   112.0 !alpha 1,1 link 
+ANGLe CH1E OAS  CCE   500.0   112.0 !alpha 1,1 link 
 ANGLe CCA  OAS  CC6   500.0   111.5 !alpha 1,6 link 
 ANGLe O    C    CCS   500.0   120.0 !Mo & Jensen, Acta B, 31, 2867 (1975), 8/30/93
 ANGLe C    CCS  HAS   500.0   109.5 !  8/30/93

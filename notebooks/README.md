@@ -7,7 +7,7 @@ This directory contains Jupyter notebooks that can be directly launched on Googl
 
 To run it locally on your system see the instructions below (does require a working python3 (3.9 to 3.13) installation).
 
-## Current notebooks:
+## Current notebooks
 
 | Notebooks                           |      Description                     |    Colab    |
 |-------------------------------------|--------------------------------------|--------------|
@@ -36,5 +36,5 @@ wget https://raw.githubusercontent.com/haddocking/haddock3/61032f25043db1cfa470c
 # run the jypyter notebook server
 jupyter notebook
 ```
-go to http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb - click `Run All` 
+go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click `Run All` 
 

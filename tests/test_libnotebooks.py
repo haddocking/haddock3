@@ -1,6 +1,5 @@
-import os
-import pytest
-from unittest.mock import patch, mock_open, MagicMock
+"""Test the libnotebooks library."""
+from unittest.mock import patch, MagicMock
 from haddock.libs import libnotebooks
 
 # Sample minimal PDB string for tests

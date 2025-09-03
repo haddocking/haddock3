@@ -71,7 +71,7 @@ docs = [
 ]
 mpi = ["mpi4py==4.1.0"]
 
-notebooks = ["py3Dmol"]
+notebooks = ["py3Dmol>=2.5.2"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

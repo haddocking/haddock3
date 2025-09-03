@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2025.8.1"
+version = "2025.8.2"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -70,6 +70,8 @@ docs = [
   "myst-parser>=3.0.1",
 ]
 mpi = ["mpi4py==4.1.0"]
+
+notebooks = ["py3Dmol"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

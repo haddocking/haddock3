@@ -8,6 +8,7 @@ This directory contains Jupyter notebooks that can be directly launched on Googl
 To run it locally on your system see the instructions below (does require a working python3 (3.9 to 3.13) installation).
 
 ---
+
 ## Current notebooks
 
 | Notebooks                           |      Description                     |    Colab    |
@@ -15,6 +16,7 @@ To run it locally on your system see the instructions below (does require a work
 | HADDOCK3-antibody-antigen.ipynb     | antibogy-antigen tutorial (based on our [online tutorial](https://www.bonvinlab.org/education/HADDOCK3/HADDOCK3-antibody-antigen/)) | [Launch Colab](https://colab.research.google.com/github/haddocking/haddock3/blob/main/notebooks/HADDOCK3-antibody-antigen.ipynb) |
 
 ---
+
 ## Instructions for local execution
 
 ```bash
@@ -39,9 +41,11 @@ jupyter notebook
 go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click `Run All` 
 
 ---
+
 ## Other execution options
 
 ### [https://notebooks.egi.eu](https://notebooks.egi.eu)
+
 Free for non-profit, but does require registration with the EGI SSO.
 
 Once logged in and the session is active, start a Jypyter notebook and import the notebook from an URL specifying the same https address as above to the local execution.

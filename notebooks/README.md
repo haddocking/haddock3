@@ -16,7 +16,6 @@ To run it locally on your system see the instructions below (does require a work
 
 ## Instructions for local execution
 
-
 ```bash
 # create a directory
 cd $HOME

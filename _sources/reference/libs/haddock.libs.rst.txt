@@ -27,6 +27,7 @@ Submodules
    haddock.libs.liblog
    haddock.libs.libmath
    haddock.libs.libmpi
+   haddock.libs.libnotebooks
    haddock.libs.libontology
    haddock.libs.libparallel
    haddock.libs.libpdb

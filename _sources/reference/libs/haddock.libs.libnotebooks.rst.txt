@@ -1,0 +1,7 @@
+haddock.libs.libnotebooks module
+================================
+
+.. automodule:: haddock.libs.libnotebooks
+   :members:
+   :undoc-members:
+   :show-inheritance:

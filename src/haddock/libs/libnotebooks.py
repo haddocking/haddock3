@@ -81,7 +81,7 @@ def align_full(
         Colors for chains in model 1
     model2_colors : dict, default {'A': 'blue', 'B': 'green'}
         Colors for chains in model 2
-    atom_types : list, default ['CA']
+    atom_types : list, default ['CA', 'P', 'C1']
         Atom types to use for alignment (['CA'] or ['CA', 'CB', 'N', 'C'])
     show_labels : bool, default False
         Whether to show descriptive labels

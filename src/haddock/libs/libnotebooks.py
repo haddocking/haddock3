@@ -83,7 +83,7 @@ def align_full(
         Colors for chains in model 2
     atom_types : list, default ['CA']
         Atom types to use for alignment (['CA'] or ['CA', 'CB', 'N', 'C'])
-    show_labels : bool, default True
+    show_labels : bool, default False
         Whether to show descriptive labels
     show_per_chain_rmsd : bool, default True
         Whether to calculate and display per-chain RMSD values

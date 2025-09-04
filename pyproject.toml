@@ -10,7 +10,7 @@ readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
 license = { text = "Apache License 2.0" }
 classifiers = [
-  "Development Status :: 5 - Stable/Production",
+  "Development Status :: 5 - Production/Stable",
   "License :: OSI Approved :: Apache Software License",
   "Natural Language :: English",
   "Operating System :: POSIX",

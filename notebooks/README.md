@@ -38,3 +38,7 @@ jupyter notebook
 ```
 go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click `Run All` 
 
+
+## Other execution options
+
+* [http://notebooks.egi.eu](http://notebooks.egi.eu) - free, but does require registration with the EGI SSO

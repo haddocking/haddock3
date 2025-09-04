@@ -2,7 +2,6 @@
 
 ![haddock3-logo](https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/docs/figs/HADDOCK3-logo.png)
 
-
 This directory contains Jupyter notebooks that can be directly launched on Google Colab.
 
 To run it locally on your system see the instructions below (does require a working python3 (3.9 to 3.13) installation).

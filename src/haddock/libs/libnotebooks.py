@@ -55,9 +55,9 @@ def align_full(
     chains=["A", "B"],
     width=800,
     height=600,
-    model1_colors={"A": "red", "B": "orange"},
-    model2_colors={"A": "blue", "B": "green"},
-    atom_types=["CA"],
+    model1_colors={"A": "red", "B": "orange", "C":"pink”}
+    model2_colors={"A": "blue", "B": "green", "C":"lime”}
+    atom_types=["P",'C1','CA']
     show_labels=False,
     show_per_chain_rmsd=True,
 ):

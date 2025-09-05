@@ -41,7 +41,7 @@ jobs:
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install haddock3 with extra dependencies
-        run: pip install '.[mpi,dev,docs]'
+        run: pip install '.[mpi,dev,docs,notebooks]'
 
       - name: run unit tests
         run: >-
@@ -94,7 +94,7 @@ jobs:
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
 
       - name: install haddock3 in editable mode
-        run: pip install -e '.[mpi,dev,docs]'
+        run: pip install -e '.[mpi,dev,docs,notebooks]'
 
       - name: check installed binaries
         run: |

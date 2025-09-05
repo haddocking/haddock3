@@ -4,7 +4,6 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2025.8.2"
 version = "2025.9.2"
 description = "HADDOCK3"
 readme = "README.md"

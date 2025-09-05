@@ -97,13 +97,10 @@ class HaddockModule(BaseHaddockModule):
 
             # For clustered models
             else:
-                # Building basename for the job
-                name = f"cluster{clust_id}_"
                 # Handles case where clustered models were not scored before
-                if clust_rank is None:
-                    name += "unranked"
-                else:
-                    name += f"rank{clust_rank}"
+                rank_id = "Unranked" if clust_rank is None else clust_rank
+                # Building basename for the job
+                name = f"cluster{rank_id}"
                 # Create a contact map object
                 contmap_job = ClusteredContactMap(
                     [Path(model.rel_path) for model in clt_models],

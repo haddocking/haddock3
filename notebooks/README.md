@@ -32,7 +32,7 @@ source .venv/bin/activate
 pip install notebook
 
 # download the notebook
-wget https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/add-notebooks/notebooks/HADDOCK3-antibody-antigen.ipynb
+wget https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/notebooks/HADDOCK3-antibody-antigen.ipynb
 
 # run the jypyter notebook server
 jupyter notebook

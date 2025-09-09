@@ -5,7 +5,7 @@ import shutil
 import zipfile
 from enum import Enum
 from pathlib import Path
-import os
+import glob
 
 from haddock.libs.libsubprocess import CNSJob
 
@@ -18,7 +18,6 @@ def ping_dirac() -> bool:
     """Ping the Dirac caserver to check if it's reachable."""
     cmd = "/opt/diracos/bin/dirac-proxy-info"
     result = subprocess.run([cmd], shell=True, capture_output=True)
-    print(result.stdout.decode())
     return result.returncode == 0
 
 
@@ -29,6 +28,7 @@ class JobStatus(Enum):
     DONE = "Done"
     MATCHED = "Matched"
     COMPLETING = "Completing"
+    FAILED = "Failed"
 
     @classmethod
     def from_string(cls, value):
@@ -44,10 +44,8 @@ class GridJob:
     def __init__(self, cnsjob: CNSJob, instructions: str) -> None:
         self.name = str(uuid.uuid4())
         self.loc = Path(tempfile.mkdtemp(prefix="haddock_grid_"))
-        # self.input = cnsjob.input_file
         self.input_f = self.loc / "input.inp"
         self.expected_output_f = cnsjob.output_file
-        self.cns_exec = self.loc / "cns"
         self.id = None
         self.site = None
         self.stdout_f = None
@@ -57,23 +55,21 @@ class GridJob:
         self.jdl = self.loc / "job.jdl"
         self.status = JobStatus.UNKNOWN
 
-        # Copy input file to job directory
+        # TODO: Figure out all the files needed to be copied
+        # Write the `.inp` file
         with open(self.input_f, "w") as f:
             f.write(cnsjob.input_file)
 
+        # CREATE PAYLOAD
+        with zipfile.ZipFile(f"{self.loc}/payload.zip", "w") as z:
+            z.write(self.input_f, arcname="input.inp")
+            z.write(cnsjob.cns_exec, arcname="cns")
+
+        # CREATE JOB SCRIPT
         with open(self.job_script, "w") as f:
             f.write(instructions)
 
-        shutil.copy2(cnsjob.cns_exec, self.cns_exec)
-        # make sure the cns is executable
-        os.chmod(self.cns_exec, 0o755)
-
-        # Make the payload, zip the contents of the `loc`
-        with zipfile.ZipFile(f"{self.loc}/payload.zip", "w") as z:
-            z.write(self.job_script, arcname="job.sh")
-            z.write(self.input_f, arcname="input.inp")
-            z.write(self.cns_exec, arcname="cns")
-
+        # CREATE THE JDL
         with open(self.jdl, "w") as f:
             f.write(self.make_jdl())
 
@@ -104,13 +100,8 @@ class GridJob:
 
         self.stdout_f = Path(f"{self.loc}/{self.id}/job.out")
         self.stderr_f = Path(f"{self.loc}/{self.id}/job.err")
-        self.output_f = Path(f"{self.loc}/{self.id}/output.zip")
 
-        output_files = []
-        with zipfile.ZipFile(self.output_f, "r") as z:
-            z.extractall(self.loc)
-            for f in z.namelist():
-                output_files.append(Path(f"{self.loc}/{self.id}/{f}"))
+        output_files = glob.glob(f"{self.loc}/{self.id}/*")
 
         print(f"Output files: {output_files}")
         return output_files

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2025-09-09: Removes undesired directory created when running the uni-tests - Issue #1380
 - 2025-09-05: Consistancy in cluster naming in contactmap module - Issue #1359
 - 2025-09-03: Added support for THR-glycosylation - Issue #1371
 - 2025-08-25: Distribute the `haddock-restraints` binary

@@ -1,8 +1,5 @@
-from math import exp
 from haddock.libs.libgrid import GridJob
-import tempfile
 import pytest
-from pathlib import Path
 from haddock.libs.libsubprocess import CNSJob
 import time
 
@@ -31,7 +28,7 @@ stop"""
 def test_submit_cns_job_to_grid(cnsjob):
     instructions = """#!/bin/bash
 unzip payload.zip
-./cns input.inp 
+./cns < input.inp 
 """
     j = GridJob(cnsjob, instructions)
     j.submit()
@@ -41,7 +38,7 @@ unzip payload.zip
         j.update_status()
         print(j)
         time.sleep(2)
-
-    assert j.status == JobStatus.DONE
+        if j.status == JobStatus.FAILED:
+            pytest.fail("Job failed on the grid")
 
     j.retrieve_output()

@@ -14,11 +14,15 @@ def grid_job():
 echo 'Hello World'
 hostname
 touch output.txt
-
 zip output.zip output.txt
 exit 0
 """
-    yield GridJob(instructions)
+    j = GridJob(instructions)
+    print(j)
+
+    yield j
+
+    j.clean()
 
 
 @has_grid
@@ -32,7 +36,7 @@ def test_gridjob_run(grid_job):
     assert grid_job.status == JobStatus.UNKNOWN
     assert grid_job.id is None
 
-    grid_job.run()
+    grid_job.submit()
 
     assert grid_job.status != JobStatus.UNKNOWN
     assert grid_job.id is not None
@@ -41,14 +45,13 @@ def test_gridjob_run(grid_job):
 @has_grid
 def test_gridjob_status(grid_job):
 
-    grid_job.run()
+    grid_job.submit()
 
-    for _ in range(60):
+    # HACK: WAIT FOREVER
+    while grid_job.status != JobStatus.DONE:
         grid_job.update_status()
         print(grid_job)
-        time.sleep(0.5)
-        if grid_job.status == JobStatus.DONE:
-            break
+        time.sleep(2)
 
     assert grid_job.status == JobStatus.DONE
 

@@ -30,6 +30,11 @@ igroup
     interaction (resn SHA) (resn SHA) weight * 1.0 vdw 0.0 elec 0.0 end
     interaction (resn SHA) (not resn SHA) weight * 0.0 end
 
+    ! turn off vdw interaction of CG charged beads with all other particles
+    interaction  (name SCD1) (all) weight vdw 0.0 end
+    interaction  (name SCD2) (all) weight vdw 0.0 end
+
+
 end
 
 

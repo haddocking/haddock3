@@ -1,0 +1,424 @@
+! dna-rna_restraints.def
+!    Define backbone dihedral angles, hbonds and planarity restraints
+!    for nucleic acids
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{+ file: dna-rna_restraints.def +}
+{+ description: Creates restraints to maintain conformation of DNA/RNA +}
+{+ Additions and changes were made to allow for flexibility during docking +}
+{+ comment:This file is to be read by refinement files that modify atom coordinates +}
+{+ authors: Axel T. Brunger, and Paul D. Adams +}
+{+ modified by Alexandre Bonvin and Marc van Dijk for HADDOCK use +}
+
+{============================================== base planarity =============================================}
+
+{* Restrain base planarity. This selection must only include nucleotide residues *}
+evaluate ($dna_bases_planar=true)
+
+{=================================== sugar-pucker dihedral angle restraints ================================}
+
+{* Pick the dihedral angles of the sugar pucker from the input structure
+   and restrain them within the given error range *}
+evaluate ($dna_pick_pucdih=true)
+
+{* dihedral C1'-C2'-C3'-C4' error range *}
+evaluate ($error_nu2=0.0)
+{* dihedral C5'-C4'-C3'-C2' error range *}
+evaluate ($error_nu3=0.0)
+{* dihedral C1'-O4'-C4'-C5' error range *}
+evaluate ($error_nu4=0.0)
+
+{================================ phosphate backbone dihedral angle restraints =============================}
+
+{* Pick the dihedral angles of the phosphate backbone from the input structure and
+   restrain them within the given error range *}
+evaluate ($dna_pick_bacdih=true)
+
+{* Error range for phosphate backbone dihedrals *}
+{* alpha dihedral O3'-P-O5'-C5' error range *}
+evaluate ($error_alpha=10.0)
+{* beta dihedral P-O5'-C5'-C4' error range *}
+evaluate ($error_beta=40.0)
+{* gamma dihedral O5'-C5'-C4'-C3' error range *}
+evaluate ($error_gamma=20.0)
+{* delta dihedral C5'-C4'-C3'-O3' error range *}
+evaluate ($error_delta=50.0)
+{* epsilon dihedral C4'-C3'-O3'-P error range *}
+evaluate ($error_eps=10.0)
+{* zeta dihedral C3'-O3'-P-O5' error range *}
+evaluate ($error_zeta=50.0)
+
+
+{=========================================== Watson-Crick base pairs =======================================}
+
+{* automatically pick Watson-Crick restraint values from structure *}
+evaluate ($dna_pick_wc=true)
+
+{* error range used for dna_pick_wc defined Watson-Crick restraints *}
+evaluate ($wc_low=0.05)
+evaluate ($wc_up=0.05)
+
+
+{=========================================== Coarse-Grained ===========================================================}
+{* Is the DNA/RNA molecule CG? *}
+evaluate ($dna_cg=false)
+
+{=========================================================================================================}
+{                        things below this line do not normally need to be changed                        }
+{=========================================================================================================}
+
+
+{- find max and min residue numbers -}
+evaluate ($min_resid = 99999)
+evaluate ($max_resid = -99999)
+show sum(1) ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag )
+if ( $result > 0 ) then
+    for $id in id  ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag ) loop resid
+        show (resid) ( id $id )
+        evaluate ($resid=decode($result))
+        evaluate ($min_resid = max($min_resid,$resid))
+        evaluate ($max_resid = max($max_resid,$resid))
+    end loop resid
+end if
+
+{- the planarity restraints single bases -}
+if ($dna_bases_planar=true) then
+    for $id in id ( tag and (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) ) loop plan
+        show (segid) (id $id)
+        evaluate ($segid=$result)
+        show (resid) (id $id)
+        evaluate ($resid=decode($result))
+        evaluate ($plweight = 20)
+
+        restraints plane
+            group
+                selection=( segid $segid and resid $resid and
+                          (resn T   or resn C   or resn G   or resn A   or resn U or
+                           resn DT  or resn DC  or resn DG  or resn DA) and
+                           not (name c#' or name h#' or name h#'' or name o#p or
+                           name h7# or name o#' or name p or name h#t or name o#t))
+                weight=$plweight
+            end
+        end
+    end loop plan
+end if
+
+{- Dihedral restraints for the sugar pucker -}
+
+if ($dna_pick_pucdih=true) then
+    show sum(1) ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag )
+    if ( $result > 0 ) then
+        for $id in id ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag ) loop resid
+            show (segid) (id $id)
+            evaluate ($segid=$result)
+            show (resid) ( id $id )
+            evaluate ($resid=decode($result))
+            pick dihedral
+                ( segid $segid and resid $resid and name c1' )
+                ( segid $segid and resid $resid and name c2' )
+                ( segid $segid and resid $resid and name c3' )
+                ( segid $segid and resid $resid and name c4' )
+                geometry
+            evaluatate ($dihedral_nu2=$result)
+            pick dihedral
+                ( segid $segid and resid $resid and name c5' )
+                ( segid $segid and resid $resid and name c4' )
+                ( segid $segid and resid $resid and name c3' )
+                ( segid $segid and resid $resid and name c2' )
+                geometry
+            evaluatate ($dihedral_nu3=$result)
+            pick dihedral
+                ( segid $segid and resid $resid and name c1' )
+                ( segid $segid and resid $resid and name o4' )
+                ( segid $segid and resid $resid and name c4' )
+                ( segid $segid and resid $resid and name c5' )
+                geometry
+            evaluatate ($dihedral_nu4=$result)
+            restraints dihedral
+                assign  ( segid $segid and resid $resid and name c1' )
+                        ( segid $segid and resid $resid and name c2' )
+                        ( segid $segid and resid $resid and name c3' )
+                        ( segid $segid and resid $resid and name c4' )
+                        20.0 $dihedral_nu2 $error_nu2 2
+                assign  ( segid $segid and resid $resid and name c5' )
+                        ( segid $segid and resid $resid and name c4' )
+                        ( segid $segid and resid $resid and name c3' )
+                        ( segid $segid and resid $resid and name c2' )
+                        20.0 $dihedral_nu3 $error_nu3 2
+                assign  ( segid $segid and resid $resid and name c1' )
+                        ( segid $segid and resid $resid and name o4' )
+                        ( segid $segid and resid $resid and name c4' )
+                        ( segid $segid and resid $resid and name c5' )
+                        20.0 $dihedral_nu4 $error_nu4 2
+                scale=20.0
+            end
+        end loop resid
+        flags include cdih end
+    end if
+end if
+
+{- Dihedral restraints for the phosphate backbone -}
+
+if ($dna_pick_bacdih=true) then
+    show sum(1) ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag )
+    if ( $result > 0 ) then
+        evaluate ($resid=$min_resid)
+        evaluate ($nres=$max_resid - $min_resid + 1)
+        evaluate ($error_alpha=$error_alpha)
+        evaluate ($error_beta=$error_beta)
+        evaluate ($error_gamma=$error_gamma)
+        evaluate ($error_zeta=$error_zeta)
+        evaluate ($error_epsilon=$error_eps)
+        evaluate ($error_delta=$error_delta)
+        for $id in id ( (resn DA or resn A or resn DG or resn G or resn DT or resn T or resn DC or resn C or resn U) and tag ) loop resid
+            show (segid) (id $id)
+            evaluate ($segid=$result)
+            show (resid) ( id $id )
+            evaluate ($resid=decode($result))
+            if ($resid > $min_resid) then
+                evaluate ($rprec = $resid - 1)
+                ! check if previous residue exists
+                show sum(1) ( resid $rprec and tag )
+                if ( $result > 0 ) then
+                    pick dihedral
+                        ( segid $segid and resid $rprec and name O3' )
+                        ( segid $segid and resid $resid and name P )
+                        ( segid $segid and resid $resid and name O5' )
+                        ( segid $segid and resid $resid and name C5' )
+                        geometry
+                    evaluatate ($dihedral_alpha=$result)
+                    pick dihedral
+                        ( segid $segid and resid $resid and name P )
+                        ( segid $segid and resid $resid and name O5' )
+                        ( segid $segid and resid $resid and name C5' )
+                        ( segid $segid and resid $resid and name C4' )
+                        geometry
+                    evaluatate ($dihedral_beta=$result)
+                    restraint dihedral
+                        ! alpha
+                        assign ( segid $segid and resid $rprec and name O3' )
+                               ( segid $segid and resid $resid and name P )
+                               ( segid $segid and resid $resid and name O5' )
+                               ( segid $segid and resid $resid and name C5' )
+                               1.0 $dihedral_alpha $error_alpha 2
+                        ! beta
+                        assign ( segid $segid and resid $resid and name P )
+                               ( segid $segid and resid $resid and name O5' )
+                               ( segid $segid and resid $resid and name C5' )
+                               ( segid $segid and resid $resid and name C4' )
+                               1.0 $dihedral_beta $error_beta 2
+                        scale 200.0
+                    end
+                end if
+            end if
+
+            pick dihedral
+                ( segid $segid and resid $resid and name O5' )
+                ( segid $segid and resid $resid and name C5' )
+                ( segid $segid and resid $resid and name C4' )
+                ( segid $segid and resid $resid and name C3' )
+                geometry
+            evaluatate ($dihedral_gamma=$result)
+            pick dihedral
+                ( segid $segid and resid $resid and name C5' )
+                ( segid $segid and resid $resid and name C4' )
+                ( segid $segid and resid $resid and name C3' )
+                ( segid $segid and resid $resid and name O3' )
+                geometry
+            evaluatate ($dihedral_delta=$result)
+
+            restraints dihedral
+                ! gamma
+                assign ( segid $segid and resid $resid and name O5' )
+                       ( segid $segid and resid $resid and name C5' )
+                       ( segid $segid and resid $resid and name C4' )
+                       ( segid $segid and resid $resid and name C3' )
+                       1.0 $dihedral_gamma $error_gamma 2
+                ! delta
+                assign ( segid $segid and resid $resid and name C5' )
+                       ( segid $segid and resid $resid and name C4' )
+                       ( segid $segid and resid $resid and name C3' )
+                       ( segid $segid and resid $resid and name O3' )
+                       1.0 $dihedral_delta $error_delta 2
+                scale=200.0
+            end
+
+            if ($resid < $max_resid) then
+                evaluate ($rfoll = $resid + 1)
+                ! check if next residue exists
+                show sum(1) ( resid $rfoll and segid $segid and tag )
+                if ( $result > 0 ) then
+                    pick dihedral
+                        ( segid $segid and resid $resid and name C4' )
+                        ( segid $segid and resid $resid and name C3' )
+                        ( segid $segid and resid $resid and name O3' )
+                        ( segid $segid and resid $rfoll and name P )
+                        geometry
+                    evaluatate ($dihedral_epsilon=$result)
+                    pick dihedral
+                        ( segid $segid and resid $resid and name C3' )
+                        ( segid $segid and resid $resid and name O3' )
+                        ( segid $segid and resid $rfoll and name P )
+                        ( segid $segid and resid $rfoll and name O5' )
+                        geometry
+                    evaluatate ($dihedral_zeta=$result)
+                    restraint dihedral
+                        ! epsilon
+                        assign ( segid $segid and resid $resid and name C4' )
+                               ( segid $segid and resid $resid and name C3' )
+                               ( segid $segid and resid $resid and name O3' )
+                               ( segid $segid and resid $rfoll and name P )
+                               1.0 $dihedral_epsilon $error_epsilon 2
+                        ! zeta
+                        assign ( segid $segid and resid $resid and name C3' )
+                               ( segid $segid and resid $resid and name O3' )
+                               ( segid $segid and resid $rfoll and name P )
+                               ( segid $segid and resid $rfoll and name O5' )
+                               1.0 $dihedral_zeta $error_zeta 2
+                        scale 200.0
+                    end
+                end if
+            end if
+        end loop resid
+        flags include cdih end
+    end if
+end if
+
+{- Watson-Crick base pairing -}
+    
+if ($dna_pick_wc = true) then
+    evaluate ($hbcut = 3.5)
+    ! We only to check for ADE and CYT
+    show sum(1) ( (resn DA or resn A or resn DC or resn C) and tag )
+    if ( $result > 0 ) then
+        noe
+            class hres
+            averaging hres cent
+            potential hres square
+            sqconstant hres 1.
+            sqexponent hres 2
+            scale hres 70.
+        end
+        for $id in id ( (resn DA or resn A or resn DC or resn C) and tag ) loop resid
+            show (segid) (id $id)
+            evaluate ($segid=$result)
+            show (resid) ( id $id )
+            evaluate ($resid=decode($result))
+            evaluate ($presid=$resid-1)
+            evaluate ($fresid=$resid+1)
+            evaluate ($ares_name = none)
+            show ( resn ) (id $id)
+            evaluate ($ares=$result)
+
+            if ( $ares = DA ) then
+                eval ($ares_name = ADE)
+            elseif ( $ares = A ) then
+                eval ($ares_name = ADE)
+            end if
+
+            if ( $ares = DC ) then
+                eval ($ares_name = CYT)
+            elseif ( $ares = C ) then
+                eval ($ares_name = CYT)
+            end if
+            
+            if ($ares_name = ADE) then
+                show sum(1) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3) 
+                               and (resid $resid and name N1) around $hbcut)
+                if ($result = 1) then
+                    show (resid) ( ((resn DT or resn T or resn U) and not (resid $presid or resid $fresid) and name N3) 
+                                  and (resid $resid and name N1) around $hbcut)
+                    evaluate ($rpair = $result)
+                    pick bond
+                        (resid $resid and name N6)
+                        (resid $rpair and name O4)
+                        geometry
+                    evaluate ($n6o4=$result)
+                    pick bond
+                        (resid $resid and name N1)
+                        (resid $rpair and name N3)
+                        geometry
+                    evaluate ($n1n3=$result)
+                    pick bond
+                        (resid $resid and name N1)
+                        (resid $rpair and name O4)
+                        geometry
+                    evaluate ($n1o4=$result)
+                    pick bond
+                        (resid $resid and name N1)
+                        (resid $rpair and name O2)
+                        geometry
+                    evaluate ($n1o2=$result)
+                    noe
+                        assign (resid $resid and name N6) 
+                               (resid $rpair and name O4)
+                               $n6o4 $wc_low $wc_up
+                        assign (resid $resid and name N1)
+                               (resid $rpair and name N3)
+                               $n1n3 $wc_low $wc_up
+                        assign (resid $resid and name N1)
+                               (resid $rpair and name O4)
+                               $n1o4 $wc_low $wc_up
+                        assign (resid $resid and name N1)
+                               (resid $rpair and name O2)
+                               $n1o2 $wc_low $wc_up
+                    end
+                end if
+            end if
+
+            !find possible pairing for DC/C with DG/G
+            if ($ares_name = CYT) then
+                show sum(1) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1) 
+                               and (resid $resid and name N3) around $hbcut)
+                if ($result = 1) then
+                    show (resid) ( ((resn DG or resn G) and not (resid $presid or resid $fresid) and name N1) 
+                                  and (resid $resid and name N3) around $hbcut)
+                    evaluate ($rpair = $result)
+                    pick bond
+                        (resid $resid and name N3)
+                        (resid $rpair and name N1)
+                        geometry
+                    evaluate ($n3n1=$result)
+                    pick bond
+                        (resid $resid and name N4)
+                        (resid $rpair and name O6)
+                        geometry
+                    evaluate ($n4o6=$result)
+                    pick bond
+                        (resid $resid and name O2)
+                        (resid $rpair and name N2)
+                        geometry
+                    evaluate ($o2n2=$result)
+                    pick bond
+                        (resid $resid and name N3)
+                        (resid $rpair and name O6)
+                        geometry
+                    evaluate ($n3o6=$result)
+                    pick bond
+                        (resid $resid and name N3)
+                        (resid $rpair and name N2)
+                        geometry
+                    evaluate ($n3n2=$result)
+                    noe
+                        assign (resid $resid and name N3)
+                               (resid $rpair and name N1) $n3n1 $wc_low $wc_up
+                        assign (resid $resid and name N4)
+                               (resid $rpair and name O6) $n4o6 $wc_low $wc_up
+                        assign (resid $resid and name O2)
+                               (resid $rpair and name N2) $o2n2 $wc_low $wc_up
+                        assign (resid $resid and name N3)
+                               (resid $rpair and name O6) $n3o6 $wc_low $wc_up
+                        assign (resid $resid and name N3)
+                               (resid $rpair and name N2) $n3n2 $wc_low $wc_up
+                    end
+                end if
+            end if
+        end loop resid
+    end if
+end if

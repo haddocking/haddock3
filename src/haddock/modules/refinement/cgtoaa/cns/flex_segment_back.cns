@@ -1,0 +1,58 @@
+! flex_segment_back.cns
+!    Define the semi-flexible segments (both side-chains and backbone)
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+do (store5 = 0) (all)
+do (store6 = 0) (all)
+
+!first flexible segments for docking
+evaluate($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    evaluate($nchain1 = $nchain1 + 1)
+    evaluate($nf=0)
+
+    if ($nseg$nchain1 = 0) then
+        display NO FLEXIBLE SEGMENTS for molecule $nchain1
+    else
+        if ($nseg$nchain1 < 0) then
+            display AUTOMATIC DEFINITION OF FLEXIBLE SEGMENTS BASED ON INTERMOLECULAR PROXIMITY FOR MOLECULE $nchain1
+            inline @MODULE:flexauto-neighbors.cns
+        else
+            display FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
+            while ($nf < $nseg$nchain1) loop Xflex
+                evaluate($nf=$nf + 1)
+                do (store5 = $nchain1) ( resid $seg_sta_$nchain1_$nf : $seg_end_$nchain1_$nf
+                                         and segid $prot_segid_$nchain1)
+                display FLEXIBLE SEGMENT NR $nf FROM $seg_sta_$nchain1_$nf TO $seg_end_$nchain1_$nf
+            end loop Xflex
+        end if
+    end if
+end loop nloop1
+
+!then fully flexible segments for all stages
+display NO FLEXIBLE SEGMENTS for all molecule at this stage
+if ($nfle = 0) then
+    display NO FULLY FLEXIBLE SEGMENTS
+else
+    evaluate($nf=0)
+    while ($nf < $nfle) loop Xfflex
+        evaluate($nf=$nf + 1)
+        do (store5 = 1) ( resid $fle_sta_$nf : $fle_end_$nf and segid $fle_seg_$nf )
+            display FULLY FLEXIBLE SEGMENT NR $nf FROM $fle_sta_$nf TO $fle_end_$nf FOR CHAIN $fle_seg_$nf
+    end loop Xfflex
+end if
+
+do (store5 = 21) (resn WAT or resn HOH or resn TIP*)
+
+do (store1 = 0) (all)
+do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name OH2)
+show sum (store1) ((resn WAT or resn HOH or resn TIP*))
+

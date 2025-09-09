@@ -1,11 +1,13 @@
-import os
 import subprocess
 import tempfile
 import uuid
+import shutil
 import zipfile
-from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+import os
+
+from haddock.libs.libsubprocess import CNSJob
 
 SUBMIT_CMD = "/opt/diracos/bin/dirac-wms-job-submit"
 STATUS_CMD = "/opt/diracos/bin/dirac-wms-job-status"
@@ -39,27 +41,43 @@ class JobStatus(Enum):
 
 
 class GridJob:
-
-    def __init__(self, instructions: str) -> None:
-        self.loc = tempfile.mkdtemp()
+    def __init__(self, cnsjob: CNSJob, instructions: str) -> None:
+        self.name = str(uuid.uuid4())
+        self.loc = Path(tempfile.mkdtemp(prefix="haddock_grid_"))
+        # self.input = cnsjob.input_file
+        self.input_f = self.loc / "input.inp"
+        self.expected_output_f = cnsjob.output_file
+        self.cns_exec = self.loc / "cns"
         self.id = None
         self.site = None
         self.stdout_f = None
         self.stderr_f = None
         self.output_f = None
-        self.job = self.loc + "/job.sh"
-        self.jdl = self.loc + "/job.jdl"
+        self.job_script = self.loc / "job.sh"
+        self.jdl = self.loc / "job.jdl"
         self.status = JobStatus.UNKNOWN
-        self.name = str(uuid.uuid4())
 
-        # DEBUG:
-        with open(self.job, "w") as f:
+        # Copy input file to job directory
+        with open(self.input_f, "w") as f:
+            f.write(cnsjob.input_file)
+
+        with open(self.job_script, "w") as f:
             f.write(instructions)
+
+        shutil.copy2(cnsjob.cns_exec, self.cns_exec)
+        # make sure the cns is executable
+        os.chmod(self.cns_exec, 0o755)
+
+        # Make the payload, zip the contents of the `loc`
+        with zipfile.ZipFile(f"{self.loc}/payload.zip", "w") as z:
+            z.write(self.job_script, arcname="job.sh")
+            z.write(self.input_f, arcname="input.inp")
+            z.write(self.cns_exec, arcname="cns")
 
         with open(self.jdl, "w") as f:
             f.write(self.make_jdl())
 
-    def run(self) -> None:
+    def submit(self) -> None:
         result = subprocess.run(
             [SUBMIT_CMD, f"{self.loc}/job.jdl"],
             shell=False,
@@ -67,6 +85,9 @@ class GridJob:
             text=True,
             cwd=self.loc,
         )
+
+        # print(self.input_file)
+        print(result.stdout)
 
         self.id = int(result.stdout.split()[-1])
         self.update_status()
@@ -99,6 +120,8 @@ class GridJob:
             [STATUS_CMD, str(self.id)], shell=False, capture_output=True, text=True
         )
 
+        print(result.stdout)
+
         output_dict = self.parse_output(result.stdout)
 
         self.id = output_dict["JobID"]
@@ -113,10 +136,15 @@ class GridJob:
             'StdOutput = "job.out";',
             'StdError = "job.err";',
             'JobType = "WeNMR";',
-            'InputSandbox = {"job.sh"};',
-            'OutputSandbox = {"job.out", "job.err", "output.zip"};',
+            'InputSandbox = {"job.sh", "payload.zip"};',
+            'OutputSandbox = {"job.out", "job.err",'
+            + f' "{self.expected_output_f}"'
+            + "};",
         ]
-        return "[\n    " + "\n    ".join(jdl_lines) + "\n]"
+        return "[\n    " + "\n    ".join(jdl_lines) + "\n]\n"
+
+    def clean(self):
+        shutil.rmtree(self.loc)
 
     @staticmethod
     def parse_output(output_str: str) -> dict:

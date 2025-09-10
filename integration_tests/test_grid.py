@@ -1,11 +1,10 @@
 from haddock.libs.libgrid import GridJob
 import pytest
 from haddock.libs.libsubprocess import CNSJob
-import time
 
 from haddock.libs.libgrid import JobStatus
 
-from . import CNS_EXEC
+from . import CNS_EXEC, has_grid
 
 
 @pytest.fixture
@@ -25,6 +24,7 @@ stop"""
     )
 
 
+@has_grid
 def test_submit_cns_job_to_grid(cnsjob):
     instructions = """#!/bin/bash
 unzip payload.zip
@@ -37,7 +37,6 @@ unzip payload.zip
     while j.status != JobStatus.DONE:
         j.update_status()
         print(j)
-        time.sleep(2)
         if j.status == JobStatus.FAILED:
             pytest.fail("Job failed on the grid")
 

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2025-09-09: Added notebooks with tutorials - Issue #1367
 - 2025-09-05: Consistancy in cluster naming in contactmap module - Issue #1359
 - 2025-09-03: Added support for THR-glycosylation - Issue #1371
 - 2025-08-25: Distribute the `haddock-restraints` binary

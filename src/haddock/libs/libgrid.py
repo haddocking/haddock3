@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Tuple
+import time
 
 from haddock import log
 from haddock.libs.libsubprocess import CNSJob
@@ -27,6 +28,7 @@ warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarni
 # STATUS_CMD = "/opt/diracos/bin/dirac-wms-job-status"
 # GETOUTPUT_CMD = "/opt/diracos/bin/dirac-wms-job-get-output"
 JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
+MAX_RETRIES = 10
 
 # Important patterns to adjust the paths in the `.inp` file
 OUTPUT_PATTERN = r'\$output_\w+\s*=\s*"([^"]+)"|\$output_\w+\s*=\s*([^\s;]+)'
@@ -112,6 +114,8 @@ class GridJob:
         self.status = JobStatus.UNKNOWN
         # List of files to be included in the payload
         self.payload_fnames = []
+        # Counter for retries
+        self.retries = 0
 
         # NOTE: `cnsjob.input_file` can be a string or a path, handle the polymorfism here
         if isinstance(cnsjob.input_file, Path):
@@ -269,6 +273,8 @@ class GridJob:
             dst = Path(self.wd / f"{self.id}_dirac.err")
             shutil.copy(self.stderr_f, dst)
 
+            log.debug(f"ID stderr: {self.stderr_f.read_text()}")
+
         # Copy the output to the expected location
         for output_f in self.expected_outputs:
             src = Path(f"{self.loc}/{self.id}/{output_f}")
@@ -280,9 +286,6 @@ class GridJob:
         src = Path(f"{self.loc}/{self.id}/cns.log")
         with open(src, "rb") as f_in, gzip.open(f"{self.cns_out_f}.gz", "wb") as f_out:
             f_out.writelines(f_in)
-
-        # Since the output is retrieved, we no longer need anything else
-        self.clean()
 
     def update_status(self):
         """Update the status of the job by querying DIRAC."""
@@ -317,7 +320,7 @@ class GridJob:
             'StdOutput = "job.out";',
             'StdError = "job.err";',
             f'JobType = "{JOB_TYPE}";',
-            'Site = "EGI.SARA.nl";',
+            # 'Site = "EGI.SARA.nl";',
             'InputSandbox = {"job.sh", "payload.zip"};',
             "OutputSandbox = {" + f"{output_sandbox_str}" + "};",
         ]
@@ -405,40 +408,56 @@ class GRIDScheduler:
         total = len(queue)
         complete = False
         while not complete:
-            with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
-                results = list(
-                    # TODO: Refactor this for clarity
-                    executor.map(
-                        lambda item: (
-                            item[0],
-                            item[0].update_status()
-                            or (
-                                log.debug(item[0])
-                                if item[0].status != JobStatus.DONE
-                                else None
-                            )
-                            or item[0].status == JobStatus.DONE
-                            or item[0].status == JobStatus.FAILED,
-                        ),
-                        queue.items(),
-                    )
-                )
-            for job, is_done in results:
-                if is_done:
-                    queue[job] = True
 
+            # Only process jobs that are not done yet
+            pending_jobs = [job for job, done in queue.items() if not done]
+
+            if pending_jobs:
+                with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
+                    results = list(executor.map(self.process_job, pending_jobs))
+
+                for job, is_done in results:
+                    if is_done:
+                        queue[job] = True
             done = sum(1 for done in queue.values() if done)
             log.info(f"{done}/{total} jobs completed.")
             complete = all(queue.values())
 
+            if not complete:
+                # NOTE: It's not our responsibility to handle rate limiting, we can expect DIRAC
+                #  to take care of that.
+                # This sleep is just to avoid excessive polling which can cause high load.
+                #  0.1 second is a good compromise between responsiveness and load, do not increase!
+                time.sleep(0.1)
+
         log.info("All jobs completed.")
 
-        # Retrieve outputs
-        log.info("Retrieving outputs...")
+    @staticmethod
+    def process_job(job: GridJob) -> Tuple[GridJob, bool]:
+        """Process a single job: update status, retrieve output if done, handle retries if failed.
 
-        # NOTE: Maybe its worth doing the retrieval of the
-        #  output after the status is DONE in the logic above
-        with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
-            executor.map(lambda job: job.retrieve_output(), queue.keys())
+        NOTE: This function is parallelized, that is why things like cleaning, download, retry
+         are here. If you are adding new functionality, consider if it should be here or in the
+         sequential part of the code.
+        """
+        job.update_status()
 
-        log.info("All outputs retrieved.")
+        is_complete = job.status in {JobStatus.DONE, JobStatus.FAILED}
+
+        if job.status == JobStatus.FAILED:
+            # Jobs on the grid can fail for many reasons outside our control
+            #  So if the job is failed, resubmit it up to MAX_RETRIES times
+            if job.retries < MAX_RETRIES:
+                is_complete = False
+                log.warning(
+                    f"Job {job.name} failed, it will be retried - {job.retries}/{MAX_RETRIES}"
+                )
+                job.retries += 1
+                job.submit()
+
+        if job.status == JobStatus.DONE:
+            log.debug(f"Job {job.name} is done, retrieving output...")
+            job.retrieve_output()
+            job.clean()
+
+        return job, is_complete

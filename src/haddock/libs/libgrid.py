@@ -23,10 +23,6 @@ import warnings
 #  not many operations are being duplicated
 warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarning)
 
-# PROXYINFO_CMD = "/opt/diracos/bin/dirac-proxy-info"
-# SUBMIT_CMD = "/opt/diracos/bin/dirac-wms-job-submit"
-# STATUS_CMD = "/opt/diracos/bin/dirac-wms-job-status"
-# GETOUTPUT_CMD = "/opt/diracos/bin/dirac-wms-job-get-output"
 JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
 MAX_RETRIES = 10
 
@@ -38,10 +34,14 @@ AT_PATTERN = r"@@(?!\$)(.*)"
 
 def ping_dirac() -> bool:
     """Ping the Dirac server to check if it's reachable."""
+    if not validate_dirac():
+        return False
+
     result = subprocess.run(["dirac-proxy-info"], capture_output=True)
     if result.returncode != 0:
         log.error(f"Dirac proxy info failed: {result.stderr.decode().strip()}")
         return False
+
     return True
 
 

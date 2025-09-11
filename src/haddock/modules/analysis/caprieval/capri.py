@@ -9,7 +9,6 @@ from itertools import combinations
 from math import isnan
 from pathlib import Path
 
-
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
 import numpy as np
@@ -41,7 +40,7 @@ from haddock.libs.libalign import (
     load_coords,
     make_range,
     )
-from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
+from haddock.libs.libio import write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.modules import get_module_steps_folders
 
@@ -133,7 +132,7 @@ def load_contacts(
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
-    atoms = get_atoms(pdb_f, full=True)
+    atoms = get_atoms(pdb_f, atom_selection="heavyatoms")
     ref_coord_dic, _ = load_coords(
         pdb_f,
         atoms,
@@ -217,9 +216,10 @@ class CAPRI:
         self.fnat = float("nan")
         self.dockq = float("nan")
         self.rmsd = float("nan")
-        self.allatoms = params["allatoms"]
-        self.atoms = self._load_atoms(model, reference, full=self.allatoms)
+        self.atom_selection = params["atom_selection"]
+        self.atoms = self._load_atoms(model, reference, atom_selection=self.atom_selection)
         self.r_chain = params["receptor_chain"]
+        self.r_residues = [int(i) for i in params["receptor_residues"]]
         self.l_chains = params["ligand_chains"]
         self.keep_hetatm = params["keep_hetatm"]
         self.model2ref_numbering = None
@@ -247,7 +247,7 @@ class CAPRI:
             )
 
         if len(ref_interface_resdic) == 0:
-            log.warning("No reference interface found")
+            log.warning(f"No inferface found in reference {self.reference}")
         else:
             # Load interface coordinates
             ref_coord_dic, _ = load_coords(
@@ -414,7 +414,6 @@ class CAPRI:
             keep_hetatm=self.keep_hetatm,
             )
         # Load interface coordinates
-
         ref_int_coord_dic, _ = load_coords(
             self.reference,
             self.atoms,
@@ -613,7 +612,7 @@ class CAPRI:
                 method=self.params["alignment_method"],
                 lovoalign_exec=self.params["lovoalign_exec"],
             )
-            self.model2ref_numbering, self.model2ref_chain_dict = align_func(
+            model2ref_numbering, self.model2ref_chain_dict = align_func(
                 self.reference, self.model, self.path
             )
         except ALIGNError:
@@ -622,22 +621,39 @@ class CAPRI:
                 f"and {self.model}, skipping..."
             )
             return
+        else:
+            # Check if the user selected specific residues to align on
+            if len(self.r_residues) >= 0:
+                # Find model chain
+                model_receptor_chain = None
+                for model_chain, ref_chain in self.model2ref_chain_dict.items():
+                    if ref_chain == self.r_chain:
+                        model_receptor_chain = model_chain
+                # Generate subset of the model2ref mapping
+                # where only selected residues are mapped to the selected
+                # residues in the reference
+                # NOTE: r_c_m2r_n_s == receptor_chain_model2ref_numbering_subset
+                r_c_m2r_n_s = {
+                    modi: refi
+                    for modi, refi in model2ref_numbering[model_receptor_chain].items()
+                    if refi in self.r_residues
+                }
+                # Modify the mapping for the receptor chain only
+                model2ref_numbering[model_receptor_chain] = r_c_m2r_n_s
+            self.model2ref_numbering = model2ref_numbering
         # print(f"model2ref_numbering {self.model2ref_numbering}")
         # print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
         if self.params["fnat"]:
-            fnat_cutoff = self.params["fnat_cutoff"]
-            self.calc_fnat(cutoff=fnat_cutoff)
+            self.calc_fnat(cutoff=self.params["fnat_cutoff"])
 
         if self.params["irmsd"]:
-            irmsd_cutoff = self.params["irmsd_cutoff"]
-            self.calc_irmsd(cutoff=irmsd_cutoff)
+            self.calc_irmsd(cutoff=self.params["irmsd_cutoff"])
 
         if self.params["lrmsd"]:
             self.calc_lrmsd()
 
         if self.params["ilrmsd"]:
-            ilrmsd_cutoff = self.params["irmsd_cutoff"]
-            self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
+            self.calc_ilrmsd(cutoff=self.params["irmsd_cutoff"])
 
         if self.params["dockq"]:
             self.calc_dockq()
@@ -694,7 +710,7 @@ class CAPRI:
     def _load_atoms(
         model: PDBPath,
         reference: PDBPath,
-        full: bool = False,
+        atom_selection: str = "backbone",
     ) -> AtomsDict:
         """
         Load atoms from a model and reference.
@@ -705,7 +721,7 @@ class CAPRI:
             PDB file of the model to have its atoms identified
         reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             PDB file of the model to have its atoms identified
-        full : bool
+        atom_selection : str
             If False, only backbone atoms will be retrieved, otherwise all atoms
 
         Returns
@@ -713,8 +729,8 @@ class CAPRI:
         atom_dic : dict
             Dictionary containing atoms observed in model and reference
         """
-        model_atoms = get_atoms(model, full=full)
-        reference_atoms = get_atoms(reference, full=full)
+        model_atoms = get_atoms(model, atom_selection=atom_selection)
+        reference_atoms = get_atoms(reference, atom_selection=atom_selection)
         atoms_dict: AtomsDict = {}
         atoms_dict.update(model_atoms)
         atoms_dict.update(reference_atoms)

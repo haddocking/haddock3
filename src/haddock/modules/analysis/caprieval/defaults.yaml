@@ -112,6 +112,17 @@ receptor_chain:
   group: analysis
   explevel: easy
 
+receptor_residues:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 1000
+  title: List of residues
+  short: The residue numbers that should be used in the alignment and in the
+  long: List of residues to consider
+  group: analysis
+  explevel: easy
+
 ligand_chains:
   default: []
   type: list
@@ -147,22 +158,22 @@ sort_ascending:
   type: boolean
   title: Sort in ascending order
   short: Sort in ascending order.
-  long: Sort in ascending order.
+  long: When set to true, sort models in ascending order, otherwise in descending order.
   group: analysis
   explevel: easy
 
 alignment_method:
   default: sequence
   type: string
-  minchars: 0
-  maxchars: 100
+  minchars: 1
+  maxchars: 30
   choices:
-    - structure
     - sequence
+    - structure
   title: Alignment method used to match the numbering.
   short: Which alignment method should be used to match the numbering.
   long: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results
-    for structures that are too different, for that use
+    for structures that are too different, for that use structural alignment.
   group: analysis
   explevel: easy
 
@@ -188,9 +199,15 @@ clt_threshold:
   group: analysis
   explevel: easy
 
-allatoms:
-  default: false
-  type: boolean
+atom_selection:
+  choices:
+  - backbone
+  - CA/P
+  - heavyatoms
+  default: backbone
+  minchars: 1
+  maxchars: 50
+  type: string
   title: Atoms to be considered during the analysis.
   short: Atoms to be considered during the analysis.
   long: Atoms to be considered during the analysis. If false (default), only

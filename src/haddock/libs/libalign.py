@@ -581,7 +581,7 @@ def load_coords(
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
+def get_atoms(pdb: PDBPath, atom_selection: str = "backbone") -> AtomsDict:
     """Identify what is the molecule type of each PDB.
 
     Parameters
@@ -599,10 +599,15 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
-    atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
-    atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
-    if full:
+    if atom_selection == "backbone":
+        atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
+        atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
+        atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
+    elif atom_selection == "CA/P":
+        atom_dic.update((r, ["CA"]) for r in PROT_RES)
+        atom_dic.update((r, ["P"]) for r in DNA_RES)
+        atom_dic.update((r, ["P"]) for r in RNA_RES)
+    elif atom_selection == "heavyatoms":
         atom_dic.update(PROT_SIDE_CHAINS_DICT)
         atom_dic.update(DNA_FULL_DICT)
         atom_dic.update(RNA_FULL_DICT)
@@ -614,8 +619,8 @@ def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     if not exists:
         raise Exception(msg)
 
-    with open(pdb) as fh:
-        for line in fh.readlines():
+    with open(pdb, "r") as fh:
+        for line in fh:
             if line.startswith(("ATOM", "HETATM")):
                 resname = line[slc_resname].strip()
                 atom_name = line[slc_name].strip()

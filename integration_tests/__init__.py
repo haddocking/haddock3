@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from haddock.libs.libgrid import ping_dirac
 import pytest
 
 if "CNS_EXEC" in os.environ:
@@ -27,3 +28,4 @@ except ImportError:
     MPI_ENABLED = False
 
 has_mpi = pytest.mark.skipif(not MPI_ENABLED, reason="MPI is not enabled")
+has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")

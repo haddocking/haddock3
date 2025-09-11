@@ -316,6 +316,8 @@ class GRIDScheduler:
         with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
             executor.map(lambda job: job.submit(), queue.keys())
 
+        log.info("All jobs submitted.")
+
         # Wait for jobs to finish
         total = len(queue)
         complete = False
@@ -348,6 +350,7 @@ class GRIDScheduler:
 
         log.info("All jobs completed.")
 
+        log.info("Retrieving outputs...")
         # Retrieve outputs
         with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
             executor.map(lambda job: job.retrieve_output(), queue.keys())

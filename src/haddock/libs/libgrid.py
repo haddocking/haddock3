@@ -454,8 +454,9 @@ class GRIDScheduler:
             #  So if the job is failed, resubmit it up to MAX_RETRIES times
             if job.retries < MAX_RETRIES:
                 is_complete = False
+                expected_output_str = ",".join(job.expected_outputs)
                 log.warning(
-                    f"Job {job.name} failed, it will be retried - {job.retries}/{MAX_RETRIES}"
+                    f"Job {job.name} ({expected_output_str})  failed, it will be retried - {job.retries}/{MAX_RETRIES}"
                 )
                 job.retries += 1
                 job.submit()

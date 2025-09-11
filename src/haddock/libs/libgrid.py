@@ -187,12 +187,16 @@ class GridJob:
         ===================================================================================
         !! IMPORTANT !!
         ===================================================================================
+
             This is a very important step. The `.inp` files coming from the modules
                 have several paths that are absolute paths in the local filesystem.
+
             When this job is running in the GRID, the paths will no longer be valid.
+
             This processing here will identify all the paths and input files in the
                 `.inp` file and replace them with a structure that will be valid in
                 the GRID.
+
         ===================================================================================
         !! IMPORTANT !!
         ===================================================================================
@@ -352,7 +356,7 @@ class GridJob:
         match_var = re.findall(VAR_PATTERN, line)
         match_at = re.findall(AT_PATTERN, line)
 
-        # NOTE: In CNS it cannot match both
+        # NOTE: In CNS it cannot match both patterns at the same time
         if match_at:
             item = match_at[0].strip('"').strip("'")
         elif match_var:
@@ -382,7 +386,7 @@ class GridJob:
 
 @dataclass
 class GRIDScheduler:
-    """placeholder"""
+    """Scheduler to manage and run jobs on the GRID via DIRAC."""
 
     tasks: list[CNSJob]
     params: dict
@@ -419,13 +423,14 @@ class GRIDScheduler:
                 for job, is_done in results:
                     if is_done:
                         queue[job] = True
+
             done = sum(1 for done in queue.values() if done)
             log.info(f"{done}/{total} jobs completed.")
             complete = all(queue.values())
 
             if not complete:
-                # NOTE: It's not our responsibility to handle rate limiting, we can expect DIRAC
-                #  to take care of that.
+                # NOTE: It's not our responsibility to handle rate limiting!
+                # We can expect DIRAC to take care of that.
                 # This sleep is just to avoid excessive polling which can cause high load.
                 #  0.1 second is a good compromise between responsiveness and load, do not increase!
                 time.sleep(0.1)

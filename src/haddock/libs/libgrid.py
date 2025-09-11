@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import tempfile
 import uuid
+import os
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -14,16 +15,51 @@ from typing import Optional, Tuple
 from haddock import log
 from haddock.libs.libsubprocess import CNSJob
 
-PROXYINFO_CMD = "/opt/diracos/bin/dirac-proxy-info"
-SUBMIT_CMD = "/opt/diracos/bin/dirac-wms-job-submit"
-STATUS_CMD = "/opt/diracos/bin/dirac-wms-job-status"
-GETOUTPUT_CMD = "/opt/diracos/bin/dirac-wms-job-get-output"
+import warnings
+
+# NOTE: When creating the payload.zip, this warning appears because we are replicating `toppar_path`
+#  subdirectory structure. It can be ignored safely, but keep an eye on it to make sure
+#  not many operations are being duplicated
+warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarning)
+
+# PROXYINFO_CMD = "/opt/diracos/bin/dirac-proxy-info"
+# SUBMIT_CMD = "/opt/diracos/bin/dirac-wms-job-submit"
+# STATUS_CMD = "/opt/diracos/bin/dirac-wms-job-status"
+# GETOUTPUT_CMD = "/opt/diracos/bin/dirac-wms-job-get-output"
+JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
+
+# Important patterns to adjust the paths in the `.inp` file
+OUTPUT_PATTERN = r'\$output_\w+\s*=\s*"([^"]+)"|\$output_\w+\s*=\s*([^\s;]+)'
+VAR_PATTERN = r"\(\$\s*[^=]*=(?!.?\$)(.*)\)"  # https://regex101.com/r/dYqlZP/1
+AT_PATTERN = r"@@(?!\$)(.*)"
 
 
 def ping_dirac() -> bool:
-    """Ping the Dirac caserver to check if it's reachable."""
-    result = subprocess.run([PROXYINFO_CMD], shell=True, capture_output=True)
-    return result.returncode == 0
+    """Ping the Dirac server to check if it's reachable."""
+    result = subprocess.run(["dirac-proxy-info"], capture_output=True)
+    if result.returncode != 0:
+        log.error(f"Dirac proxy info failed: {result.stderr.decode().strip()}")
+        return False
+    return True
+
+
+def validate_dirac() -> bool:
+    """Check if the DIRAC client is valid and configured."""
+    expected_cmds = [
+        "dirac-proxy-info",
+        "dirac-wms-job-submit",
+        "dirac-wms-job-status",
+        "dirac-wms-job-get-output",
+    ]
+
+    for cmd in expected_cmds:
+        # Expect the commands to be in the PATH
+        which_cmd = shutil.which(cmd)
+        if not which_cmd:
+            log.error(f"Command '{cmd}' not found in PATH.")
+            return False
+
+    return True
 
 
 class JobStatus(Enum):
@@ -46,6 +82,8 @@ class JobStatus(Enum):
 
 
 class GridJob:
+    """GridJob is a class tha represents a job to be run on the GRID via DIRAC."""
+
     def __init__(self, cnsjob: CNSJob) -> None:
         # Unique name for the job
         self.name = str(uuid.uuid4())
@@ -99,25 +137,29 @@ class GridJob:
     def prepare_payload(
         self, cns_exec_path: Path, cns_script_path: Path, toppar_path: Path
     ):
-        """placeholder"""
-        # CRAWL THE INPUT FILE AND REPLICATE THE FILE STRUCTURE
+        """Prepare the payload.zip file containing all necessary files."""
+
+        # We need to process the input file first to adjust paths and identify outputs
         self.process_input_f()
 
-        #  CNS SCRIPTS
+        # Find the CNS scripts that should be inside the payload
         for f in cns_script_path.glob("*"):
             self.payload_fnames.append(Path(f))
 
-        # TOPPAR (including subdirectories)
+        # Find the TOPPAR files that should be inside the payload
         for f in toppar_path.rglob("*"):
             if f.is_file():  # Only add files, not directories
                 self.payload_fnames.append(f)
 
-        # CREATE PAYLOAD
+        # Create the payload.zip
         with zipfile.ZipFile(f"{self.loc}/payload.zip", "w") as z:
+            #  It must contain the CNS executable and the input file,
             z.write(self.input_f, arcname="input.inp")
             z.write(cns_exec_path, arcname="cns")
             for f in set(self.payload_fnames):
-                # Preserve the relative path structure from toppar_path
+                # NOTE: Preserve the relative path structure from `toppar_path`!
+                #  This is important because some CNS scripts have relative paths
+                #   hardcoded in it
                 if f.is_relative_to(toppar_path):
                     relative_path = f.relative_to(toppar_path)
                     z.write(f, arcname=str(relative_path))
@@ -125,23 +167,184 @@ class GridJob:
                     z.write(f, arcname=Path(f).name)
 
     def create_job_script(self):
-        """placeholder"""
-        instructions = """#!/bin/bash
-export MODULE=./
-export TOPPAR=./
-unzip payload.zip
-./cns < input.inp > cns.log
-"""
-        # CREATE JOB SCRIPT
+        """Create the job script that will be executed in the grid."""
+        instructions = "#!/bin/bash" + os.linesep
+        instructions += "export MODULE=./" + os.linesep
+        instructions += "export TOPPAR=./" + os.linesep
+        instructions += "unzip payload.zip" + os.linesep
+        instructions += "./cns < input.inp > cns.log" + os.linesep
+
         with open(self.job_script, "w") as f:
             f.write(instructions)
 
+    def process_input_f(self):
+        """Process the input file to adjust paths and identify outputs.
+
+        ===================================================================================
+        !! IMPORTANT !!
+        ===================================================================================
+            This is a very important step. The `.inp` files coming from the modules
+                have several paths that are absolute paths in the local filesystem.
+            When this job is running in the GRID, the paths will no longer be valid.
+            This processing here will identify all the paths and input files in the
+                `.inp` file and replace them with a structure that will be valid in
+                the GRID.
+        ===================================================================================
+        !! IMPORTANT !!
+        ===================================================================================
+        """
+
+        # Read the file first
+        with open(self.input_f, "r") as f:
+            lines = f.readlines()
+
+        # Write the modified lines back
+        with open(self.input_f, "w") as f:
+            for line in lines:
+
+                # Parse this line and try to identify output files
+                output = self._find_output(line)
+                if output:
+                    self.expected_outputs.append(output)
+
+                # Process the line to adjust paths, if any
+                new_line, found_fname = self._process_line(line)
+
+                f.write(new_line)
+
+                # Collect the files that need to be in the payload
+                if found_fname:
+                    src_path = Path(found_fname)
+                    dst_path = self.loc / Path(found_fname).name
+                    shutil.copy(src_path, dst_path)
+                    self.payload_fnames.append(dst_path)
+
+    def submit(self) -> None:
+        """Interface to submit the job to DIRAC."""
+
+        try:
+            # The SUBMIT_CMD returns the job ID in stdout
+            result = subprocess.run(
+                ["dirac-wms-job-submit", f"{self.loc}/job.jdl"],
+                shell=False,
+                capture_output=True,
+                text=True,
+                cwd=self.loc,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            log.error(
+                f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
+            )
+            raise
+
+        # Add the ID to the object
+        self.id = int(result.stdout.split()[-1])
+
+        # Update the status
+        self.update_status()
+
+    def retrieve_output(self):
+        """Retrieve the output files from DIRAC."""
+        try:
+            subprocess.run(
+                ["dirac-wms-job-get-output", str(self.id)],
+                shell=False,
+                capture_output=True,
+                text=True,
+                cwd=self.loc,
+            )
+        except subprocess.CalledProcessError as e:
+            log.error(
+                f"Retrieving output failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
+            )
+            raise
+
+        # NOTE: This is the output of the `job.sh`
+        self.stdout_f = Path(f"{self.loc}/{self.id}/job.out")
+        self.stderr_f = Path(f"{self.loc}/{self.id}/job.err")
+
+        # If the job failed for some reason, save the output
+        if self.stderr_f.exists():
+            dst = Path(self.wd / f"{self.id}_dirac.err")
+            shutil.copy(self.stderr_f, dst)
+
+        # Copy the output to the expected location
+        for output_f in self.expected_outputs:
+            src = Path(f"{self.loc}/{self.id}/{output_f}")
+            dst = Path(self.wd / f"{output_f}")
+            shutil.copy(src, dst)
+
+        # The `cns.log` is the `.out` file generated by CNS
+        # Q: Is there any scenario in which this should not be compressed?
+        src = Path(f"{self.loc}/{self.id}/cns.log")
+        with open(src, "rb") as f_in, gzip.open(f"{self.cns_out_f}.gz", "wb") as f_out:
+            f_out.writelines(f_in)
+
+        # Since the output is retrieved, we no longer need anything else
+        self.clean()
+
+    def update_status(self):
+        """Update the status of the job by querying DIRAC."""
+        try:
+            result = subprocess.run(
+                ["dirac-wms-job-status", str(self.id)],
+                shell=False,
+                capture_output=True,
+                text=True,
+            )
+        except subprocess.CalledProcessError as e:
+            log.error(
+                f"Updating the status failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
+            )
+            raise
+
+        output_dict = self.parse_output(result.stdout)
+
+        self.id = output_dict["JobID"]
+        self.status = JobStatus.from_string(output_dict["Status"])
+        self.site = output_dict.get("Site", "Unknown")
+
+    def create_jdl(self):
+        """Create the JDL file that describes the job to DIRAC."""
+        output_sandbox = ["job.out", "job.err", "cns.log"]
+        output_sandbox.extend(self.expected_outputs)
+        output_sandbox_str = ", ".join(f'"{fname}"' for fname in output_sandbox)
+        jdl_lines = [
+            f'JobName = "{self.name}";',
+            'Executable = "job.sh";',
+            'Arguments = "";',
+            'StdOutput = "job.out";',
+            'StdError = "job.err";',
+            f'JobType = "{JOB_TYPE}";',
+            'Site = "EGI.SARA.nl";',
+            'InputSandbox = {"job.sh", "payload.zip"};',
+            "OutputSandbox = {" + f"{output_sandbox_str}" + "};",
+        ]
+
+        jdl_string = "[\n    " + "\n    ".join(jdl_lines) + "\n]\n"
+
+        with open(self.jdl, "w") as f:
+            f.write(jdl_string)
+
+    def clean(self):
+        """Clean up the temporary directory where the job lives."""
+        shutil.rmtree(self.loc)
+
+    @staticmethod
+    def parse_output(output_str: str) -> dict[str, str]:
+        """Parse the output string from DIRAC commands into a dictionary."""
+        items = output_str.replace(";", "")
+        status_dict = {}
+        for item in items.split(" "):
+            if "=" in item:
+                key, value = item.split("=", 1)
+                status_dict[key.strip()] = value.strip()
+        return status_dict
+
     @staticmethod
     def _process_line(line: str) -> Tuple[str, Optional[str]]:
-
-        # https://regex101.com/r/dYqlZP/1
-        VAR_PATTERN = r"\(\$\s*[^=]*=(?!.?\$)(.*)\)"
-        AT_PATTERN = r"@@(?!\$)(.*)"
+        """Process a line to identify and adjust paths."""
 
         match_var = re.findall(VAR_PATTERN, line)
         match_at = re.findall(AT_PATTERN, line)
@@ -164,133 +367,11 @@ unzip payload.zip
 
     @staticmethod
     def _find_output(line) -> Optional[str]:
-        # Pattern to match $output_* variables assigned to a filename
-        pattern = r'\$output_\w+\s*=\s*"([^"]+)"|\$output_\w+\s*=\s*([^\s;]+)'
-        match = re.search(pattern, line)
+        """Parse the line and identify if this contains an output file declaration."""
+        match = re.search(OUTPUT_PATTERN, line)
         if match:
-            # Check which group captured the filename
-            filename = match.group(1) if match.group(1) else match.group(2)
-            return filename
+            return match.group(1) if match.group(1) else match.group(2)
         return None
-
-    def process_input_f(self):
-        """Read the `.inp` file, edit the paths and copy the files to the `loc`"""
-        original_paths = []
-        output_filename = None
-
-        # Read the file first
-        with open(self.input_f, "r") as f:
-            lines = f.readlines()
-
-        # Write the modified lines back
-        with open(self.input_f, "w") as f:
-            for line in lines:
-                output = self._find_output(line)
-                if output:
-                    self.expected_outputs.append(output)
-
-                new_line, found_fname = self._process_line(line)
-
-                if found_fname:
-                    original_paths.append(Path(found_fname))
-
-                f.write(new_line)
-
-        for src_path in original_paths:
-            dst_path = self.loc / src_path.name
-            shutil.copy(src_path, dst_path)
-            self.payload_fnames.append(dst_path)
-
-        return original_paths, output_filename
-
-    def submit(self) -> None:
-        """placeholder"""
-        result = subprocess.run(
-            [SUBMIT_CMD, f"{self.loc}/job.jdl"],
-            shell=False,
-            capture_output=True,
-            text=True,
-            cwd=self.loc,
-        )
-
-        self.id = int(result.stdout.split()[-1])
-        self.update_status()
-
-    def retrieve_output(self):
-        """placeholder"""
-        # TODO: Add error handling
-        subprocess.run(
-            [GETOUTPUT_CMD, str(self.id)],
-            shell=False,
-            capture_output=True,
-            text=True,
-            cwd=self.loc,
-        )
-
-        # NOTE: This is the output of the `job.sh`
-        self.stdout_f = Path(f"{self.loc}/{self.id}/job.out")
-        self.stderr_f = Path(f"{self.loc}/{self.id}/job.err")
-
-        # Copy the output to the expected location
-        for output_f in self.expected_outputs:
-            src = Path(f"{self.loc}/{self.id}/{output_f}")
-            dst = Path(self.wd / f"{output_f}")
-            shutil.copy(src, dst)
-
-        src = Path(f"{self.loc}/{self.id}/cns.log")
-        with open(src, "rb") as f_in, gzip.open(f"{self.cns_out_f}.gz", "wb") as f_out:
-            f_out.writelines(f_in)
-
-        self.clean()
-
-    def update_status(self):
-        """placeholder"""
-        result = subprocess.run(
-            [STATUS_CMD, str(self.id)], shell=False, capture_output=True, text=True
-        )
-
-        output_dict = self.parse_output(result.stdout)
-
-        self.id = output_dict["JobID"]
-        self.status = JobStatus.from_string(output_dict["Status"])
-        self.site = output_dict.get("Site", "Unknown")
-
-    def create_jdl(self):
-        """placeholder"""
-        output_sandbox = ["job.out", "job.err", "cns.log"]
-        output_sandbox.extend(self.expected_outputs)
-        output_sandbox_str = ", ".join(f'"{fname}"' for fname in output_sandbox)
-        jdl_lines = [
-            f'JobName = "{self.name}";',
-            'Executable = "job.sh";',
-            'Arguments = "";',
-            'StdOutput = "job.out";',
-            'StdError = "job.err";',
-            'JobType = "WeNMR-DEV";',
-            'Site = "EGI.SARA.nl";',
-            'InputSandbox = {"job.sh", "payload.zip"};',
-            "OutputSandbox = {" + f"{output_sandbox_str}" + "};",
-        ]
-
-        jdl_string = "[\n    " + "\n    ".join(jdl_lines) + "\n]\n"
-
-        with open(self.jdl, "w") as f:
-            f.write(jdl_string)
-
-    def clean(self):
-        """placeholder"""
-        shutil.rmtree(self.loc)
-
-    @staticmethod
-    def parse_output(output_str: str) -> dict:
-        """placeholder"""
-        items = output_str.replace(";", "")
-        status_dict = {}
-        for item in items.split(" "):
-            if "=" in item:
-                key, value = item.split("=", 1)
-                status_dict[key.strip()] = value.strip()
-        return status_dict
 
     def __repr__(self) -> str:
         return f"ID: {self.id} Name: {self.name} Output: {self.expected_outputs} Status: {self.status.value} Site: {self.site}"
@@ -319,6 +400,8 @@ class GRIDScheduler:
         log.info("All jobs submitted.")
 
         # Wait for jobs to finish
+        log.info("Checking job status...")
+
         total = len(queue)
         complete = False
         while not complete:
@@ -334,7 +417,8 @@ class GRIDScheduler:
                                 if item[0].status != JobStatus.DONE
                                 else None
                             )
-                            or item[0].status == JobStatus.DONE,
+                            or item[0].status == JobStatus.DONE
+                            or item[0].status == JobStatus.FAILED,
                         ),
                         queue.items(),
                     )
@@ -343,15 +427,17 @@ class GRIDScheduler:
                 if is_done:
                     queue[job] = True
 
-            # count how many are done
             done = sum(1 for done in queue.values() if done)
             log.info(f"{done}/{total} jobs completed.")
             complete = all(queue.values())
 
         log.info("All jobs completed.")
 
-        log.info("Retrieving outputs...")
         # Retrieve outputs
+        log.info("Retrieving outputs...")
+
+        # NOTE: Maybe its worth doing the retrieval of the
+        #  output after the status is DONE in the logic above
         with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
             executor.map(lambda job: job.retrieve_output(), queue.keys())
 

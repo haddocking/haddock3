@@ -1,5 +1,6 @@
 # Changelog
 
+- 2025-09-11: Corrected antibody-antigen notebook - Issue #1383
 - 2025-09-09: Removes undesired directory created when running the uni-tests - Issue #1380
 - 2025-09-09: Added notebooks with tutorials - Issue #1367
 - 2025-09-05: Consistancy in cluster naming in contactmap module - Issue #1359

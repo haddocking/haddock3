@@ -69,7 +69,7 @@ docs = [
   "mock>=5.1.0",
   "myst-parser>=3.0.1",
 ]
-mpi = ["mpi4py==4.1.0"]
+mpi = ["mpi4py>=4.0.2"]
 
 notebooks = ["py3Dmol>=2.5.2"]
 

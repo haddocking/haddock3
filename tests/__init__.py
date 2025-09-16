@@ -3,6 +3,7 @@
 import pytest
 from pathlib import Path
 
+from haddock.libs.libgrid import ping_dirac
 from haddock.modules import modules_category
 
 
@@ -41,3 +42,5 @@ except ImportError:
 has_notebook = pytest.mark.skipif(
     not NOTEBOOK_ENABLED, reason="notebook dependencies not found"
 )
+
+has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")

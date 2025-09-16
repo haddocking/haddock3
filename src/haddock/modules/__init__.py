@@ -433,7 +433,7 @@ def get_engine(
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
 
     elif mode == "grid":
-        return partial(GRIDScheduler, params=params)  # type: ignore)
+        return partial(GRIDScheduler, params=params)  # type: ignore
 
     else:
         available_engines = ("batch", "local", "mpi")

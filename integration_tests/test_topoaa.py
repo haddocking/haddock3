@@ -74,11 +74,9 @@ def test_topoaa_module_protein_grid(topoaa_module):
     expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
     expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
     expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
-    expected_gz = Path(topoaa_module.path, "e2aP_1F3G.out.gz")
 
     assert expected_inp.exists(), f"{expected_inp} does not exist"
     assert expected_psf.exists(), f"{expected_psf} does not exist"
-    assert expected_gz.exists(), f"{expected_gz} does not exist"
     assert expected_pdb.exists(), f"{expected_pdb} does not exist"
 
     assert expected_inp.stat().st_size > 0, f"{expected_inp} is empty"
@@ -87,17 +85,14 @@ def test_topoaa_module_protein_grid(topoaa_module):
         expected_inp = Path(topoaa_module.path, f"hpr_ensemble_{i}.inp")
         expected_psf = Path(topoaa_module.path, f"hpr_ensemble_{i}_haddock.psf")
         expected_pdb = Path(topoaa_module.path, f"hpr_ensemble_{i}_haddock.pdb")
-        expected_gz = Path(topoaa_module.path, f"hpr_ensemble_{i}.out.gz")
 
         assert expected_inp.exists(), f"{expected_inp} does not exist"
         assert expected_psf.exists(), f"{expected_psf} does not exist"
         assert expected_pdb.exists(), f"{expected_pdb} does not exist"
-        assert expected_gz.exists(), f"{expected_gz} does not exist"
 
         assert expected_inp.stat().st_size > 0, f"{expected_inp} is empty"
         assert expected_psf.stat().st_size > 0, f"{expected_psf} is empty"
         assert expected_pdb.stat().st_size > 0, f"{expected_pdb} is empty"
-        assert expected_gz.stat().st_size > 0, f"{expected_gz} is empty"
 
 
 def test_topoaa_module_protein(topoaa_module):

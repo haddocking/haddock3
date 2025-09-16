@@ -147,7 +147,7 @@ class GridJob:
 
     def prepare_payload(
         self, cns_exec_path: Path, cns_script_path: Path, toppar_path: Path
-    ):
+    ) -> None:
         """Prepare the payload.zip file containing all necessary files."""
 
         # We need to process the input file first to adjust paths and identify outputs
@@ -177,7 +177,7 @@ class GridJob:
                 else:
                     z.write(f, arcname=Path(f).name)
 
-    def create_job_script(self):
+    def create_job_script(self) -> None:
         """Create the job script that will be executed in the grid."""
         instructions = "#!/bin/bash" + os.linesep
         instructions += "export MODULE=./" + os.linesep
@@ -188,7 +188,7 @@ class GridJob:
         with open(self.job_script, "w") as f:
             f.write(instructions)
 
-    def process_input_f(self):
+    def process_input_f(self) -> None:
         """Process the input file to adjust paths and identify outputs.
 
         ===================================================================================
@@ -259,7 +259,7 @@ class GridJob:
         # Update the status
         self.update_status()
 
-    def retrieve_output(self):
+    def retrieve_output(self) -> None:
         """Retrieve the output files from DIRAC."""
         try:
             subprocess.run(
@@ -298,7 +298,7 @@ class GridJob:
         with open(src, "rb") as f_in, gzip.open(f"{self.cns_out_f}.gz", "wb") as f_out:
             f_out.writelines(f_in)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the status of the job by querying DIRAC."""
         try:
             result = subprocess.run(
@@ -319,7 +319,7 @@ class GridJob:
         self.status = JobStatus.from_string(output_dict["Status"])
         self.site = output_dict.get("Site", "Unknown")
 
-    def create_jdl(self):
+    def create_jdl(self) -> None:
         """Create the JDL file that describes the job to DIRAC."""
         output_sandbox = ["job.out", "job.err", "cns.log"]
         output_sandbox.extend(self.expected_outputs)
@@ -340,7 +340,7 @@ class GridJob:
         with open(self.jdl, "w") as f:
             f.write(jdl_string)
 
-    def clean(self):
+    def clean(self) -> None:
         """Clean up the temporary directory where the job lives."""
         shutil.rmtree(self.loc)
 

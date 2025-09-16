@@ -179,11 +179,13 @@ class GridJob:
 
     def create_job_script(self) -> None:
         """Create the job script that will be executed in the grid."""
-        instructions = "#!/bin/bash" + os.linesep
-        instructions += "export MODULE=./" + os.linesep
-        instructions += "export TOPPAR=./" + os.linesep
-        instructions += "unzip payload.zip" + os.linesep
-        instructions += "./cns < input.inp > cns.log" + os.linesep
+        # NOTE: We use `\n` instead of `os.linesep` because this will
+        #  be executed in a Linux environment inside the grid
+        instructions = "#!/bin/bash\n"
+        instructions += "export MODULE=./\n"
+        instructions += "export TOPPAR=./\n"
+        instructions += "unzip payload.zip\n"
+        instructions += "./cns < input.inp > cns.log\n"
 
         with open(self.job_script, "w") as f:
             f.write(instructions)

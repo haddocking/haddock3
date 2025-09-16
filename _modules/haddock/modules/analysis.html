@@ -105,15 +105,16 @@
 <span class="sd">        If a `resdic_*` parameter has chain IDs with more than one letter.</span>
 <span class="sd">        For example, `resdic_AB`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">resdic_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;resdic_&#39;</span><span class="p">))</span>
+    <span class="n">resdic_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;resdic_&quot;</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">resdic_params</span><span class="p">:</span>
-        <span class="n">chainid</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">chainid</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chainid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;We found the parameter </span><span class="si">{</span><span class="n">param</span><span class="si">!r}</span><span class="s2"> which has &quot;</span>
                 <span class="s2">&quot;more than one character in the chain &quot;</span>
                 <span class="s2">&quot;identifier. Chain IDs should have only one character.&quot;</span>
-                <span class="p">)</span></div>
+            <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="get_analysis_exec_mode">
@@ -130,14 +131,21 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
-<span class="sd">        The execution mode to use for the analysis modules. </span>
+<span class="sd">        The execution mode to use for the analysis modules.</span>
 <span class="sd">        If it&#39;s &quot;batch&quot;, it will be changed to &quot;local&quot;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">!=</span> <span class="s2">&quot;batch&quot;</span><span class="p">:</span>
-        <span class="n">exec_mode</span> <span class="o">=</span> <span class="n">mode</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">exec_mode</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
-    <span class="k">return</span> <span class="n">exec_mode</span></div>
+    <span class="c1"># =====================================================================#</span>
+    <span class="c1"># EXPLANATION #</span>
+    <span class="c1"># =====================================================================#</span>
+    <span class="c1"># This function is called in the analysis-based modules to OVERWRITE</span>
+    <span class="c1">#  the mode selected by the user.</span>
+    <span class="c1"># This must be done because the analysis modules do not support being</span>
+    <span class="c1">#  executed over the HPC system or the GRID</span>
+    <span class="c1">#</span>
+    <span class="c1"># The function below returns &quot;local&quot; if the user selected either</span>
+    <span class="c1">#  `batch` or `grid` as execution mode. Thus effectively forcing the</span>
+    <span class="c1">#  execution to be local.</span>
+    <span class="k">return</span> <span class="s2">&quot;local&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="s2">&quot;grid&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">mode</span></div>
 
 </pre></div>
 
@@ -149,7 +157,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 15, 2025.
+      <span class="lastupdated">Last updated on Sep 16, 2025.
       </span></p>
   </div>
 

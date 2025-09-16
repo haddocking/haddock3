@@ -109,6 +109,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_mandatory_general_parameters</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.yaml2cfg</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml_config</span><span class="p">,</span> <span class="n">find_incompatible_parameters</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libhpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">HPCScheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libgrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">GRIDScheduler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">folder_exists</span><span class="p">,</span> <span class="n">working_directory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libmpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPIScheduler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">PDBFile</span>
@@ -553,6 +554,9 @@
     <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;mpi&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">MPIScheduler</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
 
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;grid&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">GRIDScheduler</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
     <span class="k">else</span><span class="p">:</span>
         <span class="n">available_engines</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;mpi&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -654,7 +658,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Sep 15, 2025.
+      <span class="lastupdated">Last updated on Sep 16, 2025.
       </span></p>
   </div>
 

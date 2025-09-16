@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.libs.libgrid module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="libhpc: HPC execution functions" href="haddock.libs.libhpc.html" />
+    <link rel="prev" title="libfunc: functional-programming helping tools" href="haddock.libs.libfunc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../core/haddock.core.html">Core Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="haddock.libs.html">Libs Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="haddock.libs.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="haddock.libs.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libalign.html">libalign: sequence and structural alignments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcli.html">libcli: functions helping clients</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libclust.html">libclust: functions related to clustering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libcns.html">libcns: creating CNS files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfcc.html">haddock.libs.libfcc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libfunc.html">libfunc: functional-programming helping tools</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">haddock.libs.libgrid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libhpc.html">libhpc: HPC execution functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libinteractive.html">libinteractive: functions related to interactive tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libio.html">libio: I/O helping functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.liblog.html">liblog: Logging helping functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmath.html">libmath: Math helping functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libmpi.html">libmpi: MPI execution functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libnotebooks.html">haddock.libs.libnotebooks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libontology.html">libontology: module communication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libparallel.html">libparallel: multiprocessing helping functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libpdb.html">libpdb: PDB helping functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libplots.html">libplots: plotting functionalities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libprodigy.html">libprodigy: classes and functions related to the use of prodigy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.librestraints.html">librestraints: functions related to restraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libstructure.html">libstructure: functions related to structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libsubprocess.html">libsubprocess: subprocess execution functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libtimer.html">libtimer: timing functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libutil.html">libutil: utility functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.libs.libworkflow.html">libworkflow: workflow functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="haddock.libs.html#module-haddock.libs">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../gear/haddock.gear.html">Gear Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Library Reference</a></li>
+          <li class="breadcrumb-item"><a href="haddock.libs.html">Libs Reference</a></li>
+      <li class="breadcrumb-item active">haddock.libs.libgrid module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/libs/haddock.libs.libgrid.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.libs.libgrid">
+<span id="haddock-libs-libgrid-module"></span><h1>haddock.libs.libgrid module<a class="headerlink" href="#module-haddock.libs.libgrid" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GRIDScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libgrid.</span></span><span class="sig-name descname"><span class="pre">GRIDScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob" title="haddock.libs.libsubprocess.CNSJob"><span class="pre">CNSJob</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GRIDScheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GRIDScheduler" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Scheduler to manage and run jobs on the GRID via DIRAC.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GRIDScheduler.params">
+<span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></em><a class="headerlink" href="#haddock.libs.libgrid.GRIDScheduler.params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GRIDScheduler.process_job">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#haddock.libs.libgrid.GridJob" title="haddock.libs.libgrid.GridJob"><span class="pre">GridJob</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#haddock.libs.libgrid.GridJob" title="haddock.libs.libgrid.GridJob"><span class="pre">GridJob</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GRIDScheduler.process_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GRIDScheduler.process_job" title="Link to this definition"></a></dt>
+<dd><p>Process a single job: update status, retrieve output if done, handle retries if failed.</p>
+<dl class="simple">
+<dt>NOTE: This function is parallelized, that is why things like cleaning, download, retry</dt><dd><p>are here. If you are adding new functionality, consider if it should be here or in the
+sequential part of the code.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GRIDScheduler.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GRIDScheduler.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GRIDScheduler.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the tasks.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GRIDScheduler.tasks">
+<span class="sig-name descname"><span class="pre">tasks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob" title="haddock.libs.libsubprocess.CNSJob"><span class="pre">CNSJob</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#haddock.libs.libgrid.GRIDScheduler.tasks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libgrid.</span></span><span class="sig-name descname"><span class="pre">GridJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cnsjob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="haddock.libs.libsubprocess.html#haddock.libs.libsubprocess.CNSJob" title="haddock.libs.libsubprocess.CNSJob"><span class="pre">CNSJob</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>GridJob is a class tha represents a job to be run on the GRID via DIRAC.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.clean">
+<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.clean" title="Link to this definition"></a></dt>
+<dd><p>Clean up the temporary directory where the job lives.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.create_jdl">
+<span class="sig-name descname"><span class="pre">create_jdl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.create_jdl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.create_jdl" title="Link to this definition"></a></dt>
+<dd><p>Create the JDL file that describes the job to DIRAC.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.create_job_script">
+<span class="sig-name descname"><span class="pre">create_job_script</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.create_job_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.create_job_script" title="Link to this definition"></a></dt>
+<dd><p>Create the job script that will be executed in the grid.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.parse_output">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.parse_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.parse_output" title="Link to this definition"></a></dt>
+<dd><p>Parse the output string from DIRAC commands into a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.prepare_payload">
+<span class="sig-name descname"><span class="pre">prepare_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cns_exec_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cns_script_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">toppar_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.prepare_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.prepare_payload" title="Link to this definition"></a></dt>
+<dd><p>Prepare the payload.zip file containing all necessary files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.process_input_f">
+<span class="sig-name descname"><span class="pre">process_input_f</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.process_input_f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.process_input_f" title="Link to this definition"></a></dt>
+<dd><p>Process the input file to adjust paths and identify outputs.</p>
+<section id="important">
+<h2>!! IMPORTANT !!<a class="headerlink" href="#important" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt>This is a very important step. The <cite>.inp</cite> files coming from the modules</dt><dd><p>have several paths that are absolute paths in the local filesystem.</p>
+</dd>
+</dl>
+<p>When this job is running in the GRID, the paths will no longer be valid.</p>
+<dl class="simple">
+<dt>This processing here will identify all the paths and input files in the</dt><dd><p><cite>.inp</cite> file and replace them with a structure that will be valid in
+the GRID.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id1">
+<h2>!! IMPORTANT !!<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.retrieve_output">
+<span class="sig-name descname"><span class="pre">retrieve_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.retrieve_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.retrieve_output" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the output files from DIRAC.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.submit" title="Link to this definition"></a></dt>
+<dd><p>Interface to submit the job to DIRAC.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.GridJob.update_status">
+<span class="sig-name descname"><span class="pre">update_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#GridJob.update_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.GridJob.update_status" title="Link to this definition"></a></dt>
+<dd><p>Update the status of the job by querying DIRAC.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libgrid.</span></span><span class="sig-name descname"><span class="pre">JobStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#JobStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.JobStatus" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.COMPLETING">
+<span class="sig-name descname"><span class="pre">COMPLETING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Completing'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.COMPLETING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.DONE">
+<span class="sig-name descname"><span class="pre">DONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Done'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.DONE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.FAILED">
+<span class="sig-name descname"><span class="pre">FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Failed'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.FAILED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.MATCHED">
+<span class="sig-name descname"><span class="pre">MATCHED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Matched'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.MATCHED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Running'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.RUNNING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.UNKNOWN">
+<span class="sig-name descname"><span class="pre">UNKNOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Unknown'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.UNKNOWN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.WAITING">
+<span class="sig-name descname"><span class="pre">WAITING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Waiting'</span></em><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.WAITING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.JobStatus.from_string">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#JobStatus.from_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.JobStatus.from_string" title="Link to this definition"></a></dt>
+<dd><p>Convert string to JobStatus enum.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.ping_dirac">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libgrid.</span></span><span class="sig-name descname"><span class="pre">ping_dirac</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#ping_dirac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.ping_dirac" title="Link to this definition"></a></dt>
+<dd><p>Ping the Dirac server to check if it’s reachable.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libgrid.validate_dirac">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libgrid.</span></span><span class="sig-name descname"><span class="pre">validate_dirac</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/haddock/libs/libgrid.html#validate_dirac"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libgrid.validate_dirac" title="Link to this definition"></a></dt>
+<dd><p>Check if the DIRAC client is valid and configured.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.libs.libfunc.html" class="btn btn-neutral float-left" title="libfunc: functional-programming helping tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="haddock.libs.libhpc.html" class="btn btn-neutral float-right" title="libhpc: HPC execution functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, BonvinLab.
+      <span class="lastupdated">Last updated on Sep 16, 2025.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

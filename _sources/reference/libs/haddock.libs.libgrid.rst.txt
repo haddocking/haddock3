@@ -1,0 +1,7 @@
+haddock.libs.libgrid module
+===========================
+
+.. automodule:: haddock.libs.libgrid
+   :members:
+   :undoc-members:
+   :show-inheritance:

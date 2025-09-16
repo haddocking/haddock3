@@ -10,7 +10,7 @@ from haddock.modules.sampling.rigidbody import (
 )
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 from tests import golden_data
-from . import has_mpi
+from . import has_mpi, has_grid
 
 
 @pytest.fixture(name="rigidbody_module")
@@ -96,7 +96,6 @@ def test_rigidbody_norestraints_guardrail(rigidbody_module):
     assert "No restraints found" in str(error)
 
 
-
 def test_rigidbody_local(rigidbody_module):
 
     sampling = 2
@@ -118,6 +117,29 @@ def test_rigidbody_local(rigidbody_module):
 
         assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.out.gz").stat().st_size > 0
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
+
+
+@has_grid
+def test_rigidbody_grid(rigidbody_module):
+
+    sampling = 2
+    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
+    rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["cmrest"] = True
+    rigidbody_module.params["mol_fix_origin_1"] = True
+    rigidbody_module.params["mol_fix_origin_2"] = False
+    rigidbody_module.params["mode"] = "grid"
+    rigidbody_module.params["debug"] = True
+
+    rigidbody_module.run()
+
+    for i in range(1, sampling + 1):
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
+
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
 
 

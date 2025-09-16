@@ -4,11 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from haddock.modules.topology.topoaa import \
-    DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
+from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
-from . import CNS_EXEC
+from . import CNS_EXEC, has_grid
 from integration_tests import GOLDEN_DATA
 
 
@@ -35,7 +34,7 @@ def extract_nter_cter(fpath) -> tuple[str, str]:
                 resid = _[22:26].strip()
                 # First residue should be Nter one
                 if nter_resi is None:
-                    nter_resi = resid 
+                    nter_resi = resid
                 # Last residue should be Cter one
                 if cter_resi is None:
                     cter_resi = resid
@@ -53,6 +52,47 @@ def extract_nter_cter(fpath) -> tuple[str, str]:
                 # Increment last residue
                 cter += _
     return nter, cter
+
+
+@has_grid
+def test_topoaa_module_protein_grid(topoaa_module):
+    """Topoaa module with protein-protein input"""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
+        Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
+    ]
+    topoaa_module.params["mol1"]["prot_segid"] = "A"
+    # Create mol2 parameters by copying the ones found for mol1
+    topoaa_module.params["mol2"] = copy.deepcopy(topoaa_module.params["mol1"])
+    topoaa_module.params["mol2"]["prot_segid"] = "B"
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+    topoaa_module.params["mode"] = "grid"
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "e2aP_1F3G.inp")
+    expected_psf = Path(topoaa_module.path, "e2aP_1F3G_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "e2aP_1F3G_haddock.pdb")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    assert expected_inp.stat().st_size > 0, f"{expected_inp} is empty"
+
+    for i in range(1, 10 + 1):
+        expected_inp = Path(topoaa_module.path, f"hpr_ensemble_{i}.inp")
+        expected_psf = Path(topoaa_module.path, f"hpr_ensemble_{i}_haddock.psf")
+        expected_pdb = Path(topoaa_module.path, f"hpr_ensemble_{i}_haddock.pdb")
+
+        assert expected_inp.exists(), f"{expected_inp} does not exist"
+        assert expected_psf.exists(), f"{expected_psf} does not exist"
+        assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+        assert expected_inp.stat().st_size > 0, f"{expected_inp} is empty"
+        assert expected_psf.stat().st_size > 0, f"{expected_psf} is empty"
+        assert expected_pdb.stat().st_size > 0, f"{expected_pdb} is empty"
 
 
 def test_topoaa_module_protein(topoaa_module):
@@ -188,7 +228,7 @@ def test_topoaa_THRglycosylationAA(topoaa_module):
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
     topoaa_module.params["delenph"] = False
-    
+
     topoaa_module.run()
 
     expected_inp = Path(topoaa_module.path, "thr-glycosylation.inp")
@@ -231,7 +271,16 @@ def test_topoaa_module_protein_noCter(topoaa_module):
 
     nter, cter = extract_nter_cter(expected_pdb)
     assert "OXT" not in cter
-    assert all([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+    assert all(
+        [
+            nh in nter
+            for nh in (
+                "HT1",
+                "HT2",
+                "HT3",
+            )
+        ]
+    )
 
 
 def test_topoaa_module_protein_noNter(topoaa_module):
@@ -256,7 +305,17 @@ def test_topoaa_module_protein_noNter(topoaa_module):
 
     nter, cter = extract_nter_cter(expected_pdb)
     assert "OXT" in cter
-    assert not any([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+    assert not any(
+        [
+            nh in nter
+            for nh in (
+                "HT1",
+                "HT2",
+                "HT3",
+            )
+        ]
+    )
+
 
 def test_topoaa_module_protein_noter(topoaa_module):
     """Topoaa module without charged termini."""
@@ -280,7 +339,16 @@ def test_topoaa_module_protein_noter(topoaa_module):
 
     nter, cter = extract_nter_cter(expected_pdb)
     assert "OXT" not in cter
-    assert not any([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+    assert not any(
+        [
+            nh in nter
+            for nh in (
+                "HT1",
+                "HT2",
+                "HT3",
+            )
+        ]
+    )
 
 
 def test_topoaa_module_protein_charged_ters(topoaa_module):
@@ -305,7 +373,16 @@ def test_topoaa_module_protein_charged_ters(topoaa_module):
 
     nter, cter = extract_nter_cter(expected_pdb)
     assert "OXT" in cter
-    assert all([nh in nter for nh in ("HT1", "HT2", "HT3",)])
+    assert all(
+        [
+            nh in nter
+            for nh in (
+                "HT1",
+                "HT2",
+                "HT3",
+            )
+        ]
+    )
 
 
 def test_topoaa_module_dna_5_phosphate(topoaa_module):
@@ -328,7 +405,18 @@ def test_topoaa_module_dna_5_phosphate(topoaa_module):
     assert expected_gz.exists()
 
     five_prime, _three_prime = extract_nter_cter(expected_pdb)
-    assert all([fp in five_prime for fp in ("H5T", "O5T", "OP2", "OP1", "P",)])
+    assert all(
+        [
+            fp in five_prime
+            for fp in (
+                "H5T",
+                "O5T",
+                "OP2",
+                "OP1",
+                "P",
+            )
+        ]
+    )
 
 
 def test_topoaa_module_dna_5_oh(topoaa_module):
@@ -351,5 +439,15 @@ def test_topoaa_module_dna_5_oh(topoaa_module):
     assert expected_gz.exists()
 
     five_prime, _three_prime = extract_nter_cter(expected_pdb)
-    assert not any([fp in five_prime for fp in ("O5T", "OP2", "OP1", "P",)])
+    assert not any(
+        [
+            fp in five_prime
+            for fp in (
+                "O5T",
+                "OP2",
+                "OP1",
+                "P",
+            )
+        ]
+    )
     assert "H5T" in five_prime

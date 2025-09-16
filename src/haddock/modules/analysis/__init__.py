@@ -47,5 +47,15 @@ def get_analysis_exec_mode(mode: str) -> str:
         The execution mode to use for the analysis modules.
         If it's "batch", it will be changed to "local".
     """
+    # =====================================================================#
+    # EXPLANATION #
+    # =====================================================================#
+    # This function is called in the analysis-based modules to OVERWRITE
+    #  the mode selected by the user.
+    # This must be done because the analysis modules do not support being
+    #  executed over the HPC system or the GRID
+    #
+    # The function below returns "local" if the user selected either
+    #  `batch` or `grid` as execution mode. Thus effectively forcing the
+    #  execution to be local.
     return "local" if mode in ("batch", "grid") else mode
-

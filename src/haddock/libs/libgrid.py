@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Tuple
-import time
 
 from haddock import log
 from haddock.libs.libsubprocess import CNSJob
@@ -22,7 +21,15 @@ import warnings
 #  subdirectory structure. It can be ignored safely, but keep an eye on it to make sure
 #  not many operations are being duplicated
 warnings.filterwarnings("ignore", message="Duplicate name:*", category=UserWarning)
-
+# =====================================================================#
+# EXPLANATION #
+# =====================================================================#
+# `JOB_TYPE` is an environment variable that can be set to specify the
+#  type of job associated with a given VO. This is usually important for
+#  accounting purposes, as different job types may have different resources
+#  associated with it.
+# There is an explanation about this in the user manual.
+# =====================================================================#
 JOB_TYPE = os.getenv("HADDOCK3_GRID_JOB_TYPE", "WeNMR-DEV")
 MAX_RETRIES = 10
 
@@ -324,7 +331,6 @@ class GridJob:
             'StdOutput = "job.out";',
             'StdError = "job.err";',
             f'JobType = "{JOB_TYPE}";',
-            # 'Site = "EGI.SARA.nl";',
             'InputSandbox = {"job.sh", "payload.zip"};',
             "OutputSandbox = {" + f"{output_sandbox_str}" + "};",
         ]
@@ -401,6 +407,18 @@ class GRIDScheduler:
         log.info(f"Submitting {len(queue)} jobs to the grid...")
 
         # Submit jobs
+        # =====================================================================#
+        # EXPLANATION #
+        # =====================================================================#
+        # Use multiple threads to submit jobs in parallel. When submitting jobs
+        #  each `.submit()` call can take a few seconds, so using multiple
+        #  processes can speed up the submission significantly.
+        #
+        # `ThreadPoolExecutor` is used to initialize a pool of threads, and
+        #  then `executor.map` is used to apply the `submit` method to each job
+        #  this will effectively submit all jobs in parallel, using
+        #  `self.params["ncores"]` threads.
+        # =====================================================================#
         with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
             executor.map(lambda job: job.submit(), queue.keys())
 
@@ -417,23 +435,44 @@ class GRIDScheduler:
             pending_jobs = [job for job, done in queue.items() if not done]
 
             if pending_jobs:
+                # =====================================================================#
+                # EXPLANATION #
+                # =====================================================================#
+                # Use multiple threads to check job status in parallel. When checking
+                #  the status of jobs, each `.update_status()` call can take a few
+                #  seconds, so using multiple threads can speed up the process
+                #
+                # `ThreadPoolExecutor` is used to initialize a pool of threads, and
+                #  then `executor.map` is used to apply the `process_job` method to each
+                #  job, this will effectively check the status of all jobs in parallel,
+                #  using `self.params["ncores"]` threads.
+                # =====================================================================#
                 with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
+                    # =====================================================================#
+                    # EXPLANATION #
+                    # =====================================================================#
+                    # The function `process_job` will return a tuple with the job and a
+                    #  boolean. This return values are captured in `results` list.
+                    #  The boolean will be True if the job is done (either successfully or
+                    #  failed after retries), and False otherwise - meaning the job is
+                    #  still running or waiting.
+                    # =====================================================================#
                     results = list(executor.map(self.process_job, pending_jobs))
 
                 for job, is_done in results:
+                    # =====================================================================#
+                    # EXPLANATION #
+                    # =====================================================================#
+                    # Here we update the `queue` dictionary to avoid checking the jobs that
+                    #  are already done.
+                    # =====================================================================#
                     if is_done:
                         queue[job] = True
 
+            # Do some simple logging to keep track of progress.
             done = sum(1 for done in queue.values() if done)
             log.info(f"{done}/{total} jobs completed.")
             complete = all(queue.values())
-
-            if not complete:
-                # NOTE: It's not our responsibility to handle rate limiting!
-                # We can expect DIRAC to take care of that.
-                # This sleep is just to avoid excessive polling which can cause high load.
-                #  0.1 second is a good compromise between responsiveness and load, do not increase!
-                time.sleep(0.1)
 
         log.info("All jobs completed.")
 

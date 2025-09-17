@@ -5,6 +5,7 @@ import tempfile
 import uuid
 import os
 import zipfile
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from enum import Enum
@@ -12,7 +13,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 from haddock import log
-from haddock.libs.libsubprocess import CNSJob
+from haddock.libs.libsubprocess import CNSJob, Job
 
 import warnings
 
@@ -124,6 +125,12 @@ class GridJob:
         self.payload_fnames = []
         # Counter for retries
         self.retries = 0
+        # Tracker for timings
+        self.timings: dict[JobStatus, Optional[datetime]] = {
+            JobStatus.WAITING: None,
+            JobStatus.RUNNING: None,
+            JobStatus.DONE: None,
+        }
 
         # NOTE: `cnsjob.input_file` can be a string or a path, handle the polymorfism here
         if isinstance(cnsjob.input_file, Path):
@@ -237,6 +244,8 @@ class GridJob:
     def submit(self) -> None:
         """Interface to submit the job to DIRAC."""
 
+        self.timings[JobStatus.WAITING] = datetime.now()
+
         try:
             # The SUBMIT_CMD returns the job ID in stdout
             result = subprocess.run(
@@ -274,6 +283,8 @@ class GridJob:
                 f"Retrieving output failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
             )
             raise
+
+        self.timings[JobStatus.DONE] = datetime.now()
 
         # NOTE: This is the output of the `job.sh`
         self.stdout_f = Path(f"{self.loc}/{self.id}/job.out")
@@ -320,6 +331,9 @@ class GridJob:
         self.status = JobStatus.from_string(output_dict["Status"])
         self.site = output_dict.get("Site", "Unknown")
 
+        if self.status == JobStatus.RUNNING and not self.timings[JobStatus.RUNNING]:
+            self.timings[JobStatus.RUNNING] = datetime.now()
+
     def create_jdl(self) -> None:
         """Create the JDL file that describes the job to DIRAC."""
         output_sandbox = [
@@ -344,6 +358,21 @@ class GridJob:
 
         with open(self.jdl, "w") as f:
             f.write(jdl_string)
+
+    def calculate_efficiency(self) -> float:
+        wait = self.timings[JobStatus.WAITING]
+        running = self.timings[JobStatus.RUNNING]
+        done = self.timings[JobStatus.DONE]
+
+        if not wait or not running or not done:
+            return 0.0
+
+        time_in_queue = running - wait
+        time_running = done - running
+        total_time = time_in_queue + time_running
+        efficiency = time_running.total_seconds() / total_time.total_seconds()
+
+        return efficiency
 
     def clean(self) -> None:
         """Clean up the temporary directory where the job lives."""
@@ -509,5 +538,8 @@ class GRIDScheduler:
             log.debug(f"Job {job.name} is done, retrieving output...")
             job.retrieve_output()
             job.clean()
+
+            efficiency = job.calculate_efficiency()
+            log.info(f"Job {job.name} completed with {efficiency:.2%} efficiency")
 
         return job, is_complete

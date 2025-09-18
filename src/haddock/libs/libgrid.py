@@ -5,6 +5,7 @@ import tempfile
 import uuid
 import os
 import zipfile
+import random
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -13,7 +14,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 from haddock import log
-from haddock.libs.libsubprocess import CNSJob, Job
+from haddock.libs.libsubprocess import CNSJob
 
 import warnings
 
@@ -79,6 +80,7 @@ class JobStatus(Enum):
     MATCHED = "Matched"
     COMPLETING = "Completing"
     FAILED = "Failed"
+    STAGED = "Staged"
 
     @classmethod
     def from_string(cls, value):
@@ -88,6 +90,11 @@ class JobStatus(Enum):
             if status.value.lower() == value:
                 return status
         return cls.UNKNOWN
+
+
+class Tag(Enum):
+    PROBING = "Probing"
+    DEFAULT = "Default"
 
 
 class GridJob:
@@ -120,17 +127,15 @@ class GridJob:
         # JDL file that describes the job to DIRAC
         self.jdl = self.loc / "job.jdl"
         # Internal status of the job
-        self.status = JobStatus.UNKNOWN
+        self.status = JobStatus.STAGED
         # List of files to be included in the payload
         self.payload_fnames = []
         # Counter for retries
         self.retries = 0
         # Tracker for timings
-        self.timings: dict[JobStatus, Optional[datetime]] = {
-            JobStatus.WAITING: None,
-            JobStatus.RUNNING: None,
-            JobStatus.DONE: None,
-        }
+        self.timings: dict[JobStatus, datetime] = {}
+        # Tag for the job
+        self.tag = Tag.DEFAULT
 
         # NOTE: `cnsjob.input_file` can be a string or a path, handle the polymorfism here
         if isinstance(cnsjob.input_file, Path):
@@ -244,6 +249,10 @@ class GridJob:
     def submit(self) -> None:
         """Interface to submit the job to DIRAC."""
 
+        # If this is a re-submission the timings will already be set,
+        #  make sure it is clean
+        self.clean_timings()
+
         self.timings[JobStatus.WAITING] = datetime.now()
 
         try:
@@ -268,6 +277,10 @@ class GridJob:
         # Update the status
         self.update_status()
 
+    def clean_timings(self) -> None:
+        """Clean the timings dictionary."""
+        self.timings = {}
+
     def retrieve_output(self) -> None:
         """Retrieve the output files from DIRAC."""
         try:
@@ -283,8 +296,6 @@ class GridJob:
                 f"Retrieving output failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
             )
             raise
-
-        self.timings[JobStatus.DONE] = datetime.now()
 
         # NOTE: This is the output of the `job.sh`
         self.stdout_f = Path(f"{self.loc}/{self.id}/job.out")
@@ -331,16 +342,18 @@ class GridJob:
         self.status = JobStatus.from_string(output_dict["Status"])
         self.site = output_dict.get("Site", "Unknown")
 
-        if self.status == JobStatus.RUNNING and not self.timings[JobStatus.RUNNING]:
+        log.debug(self)
+
+        if self.status == JobStatus.RUNNING and JobStatus.RUNNING not in self.timings:
+            # job is running and we have not tracket it yet, save the time
             self.timings[JobStatus.RUNNING] = datetime.now()
+        elif self.status == JobStatus.DONE and JobStatus.DONE not in self.timings:
+            # job is done and we have not tracked it yet, save the time
+            self.timings[JobStatus.DONE] = datetime.now()
 
     def create_jdl(self) -> None:
         """Create the JDL file that describes the job to DIRAC."""
-        output_sandbox = [
-            "job.out",
-            "job.err",
-            "cns.log",
-        ]
+        output_sandbox = ["job.out", "job.err", "cns.log"]
         output_sandbox.extend(self.expected_outputs)
         output_sandbox_str = ", ".join(f'"{fname}"' for fname in output_sandbox)
         jdl_lines = [
@@ -359,13 +372,13 @@ class GridJob:
         with open(self.jdl, "w") as f:
             f.write(jdl_string)
 
-    def calculate_efficiency(self) -> float:
-        wait = self.timings[JobStatus.WAITING]
-        running = self.timings[JobStatus.RUNNING]
-        done = self.timings[JobStatus.DONE]
-
-        if not wait or not running or not done:
-            return 0.0
+    def calculate_efficiency(self) -> Optional[float]:
+        try:
+            wait = self.timings[JobStatus.WAITING]
+            running = self.timings[JobStatus.RUNNING]
+            done = self.timings[JobStatus.DONE]
+        except KeyError:
+            return None
 
         time_in_queue = running - wait
         time_running = done - running
@@ -424,113 +437,170 @@ class GridJob:
         return f"ID: {self.id} Name: {self.name} Output: {self.expected_outputs} Status: {self.status.value} Site: {self.site}"
 
 
-@dataclass
 class GRIDScheduler:
     """Scheduler to manage and run jobs on the GRID via DIRAC."""
 
-    tasks: list[CNSJob]
-    params: dict
+    def __init__(
+        self, tasks: list[CNSJob], params: dict, probing: float = 0.05
+    ) -> None:
+        self.workload: list[GridJob] = [GridJob(t) for t in tasks]
+
+        # Get how many jobs account for 10%
+        subset_size = max(1, int(len(self.workload) * probing))
+
+        # Randomly select that many jobs
+        subset_keys = random.sample(list(self.workload), subset_size)
+
+        for job in self.workload:
+            if job in subset_keys:
+                job.tag = Tag.PROBING
+
+        self.params: dict = params
 
     def run(self) -> None:
         """Execute the tasks."""
-        queue = {}
 
-        # Convert CNSJobs to GridJobs
-        queue = {GridJob(t): False for t in self.tasks}
+        batch_size = self.probe_grid_efficiency()
 
-        log.info(f"Submitting {len(queue)} jobs to the grid...")
-
-        # Submit jobs
-        # =====================================================================#
-        # EXPLANATION #
-        # =====================================================================#
-        # Use multiple threads to submit jobs in parallel. When submitting jobs
-        #  each `.submit()` call can take a few seconds, so using multiple
-        #  processes can speed up the submission significantly.
+        # TODO: Use self.workload to create `CompositeGridJobs` with
+        #  the optimal batch size and submit those instead
         #
-        # `ThreadPoolExecutor` is used to initialize a pool of threads, and
-        #  then `executor.map` is used to apply the `submit` method to each job
-        #  this will effectively submit all jobs in parallel, using
-        #  `self.params["ncores"]` threads.
-        # =====================================================================#
-        with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
-            executor.map(lambda job: job.submit(), queue.keys())
+        raise NotImplementedError("Batch submission not implemented yet")
 
-        log.info("All jobs submitted.")
-
-        # Wait for jobs to finish
-        log.info("Checking job status...")
-
-        total = len(queue)
+    def wait_for_completion(self) -> None:
+        """Wait for jobs with status WAITING or RUNNING to complete."""
         complete = False
         while not complete:
-
-            # Only process jobs that are not done yet
-            pending_jobs = [job for job, done in queue.items() if not done]
-
-            if pending_jobs:
-                # =====================================================================#
-                # EXPLANATION #
-                # =====================================================================#
-                # Use multiple threads to check job status in parallel. When checking
-                #  the status of jobs, each `.update_status()` call can take a few
-                #  seconds, so using multiple threads can speed up the process
-                #
-                # `ThreadPoolExecutor` is used to initialize a pool of threads, and
-                #  then `executor.map` is used to apply the `process_job` method to each
-                #  job, this will effectively check the status of all jobs in parallel,
-                #  using `self.params["ncores"]` threads.
-                # =====================================================================#
+            jobs_to_check = [
+                job
+                for job in self.workload
+                if job.status
+                not in {JobStatus.STAGED, JobStatus.DONE, JobStatus.FAILED}
+            ]
+            log.info(f"Checking status of {len(jobs_to_check)} jobs...")
+            if jobs_to_check:
                 with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
-                    # =====================================================================#
-                    # EXPLANATION #
-                    # =====================================================================#
-                    # The function `process_job` will return a tuple with the job and a
-                    #  boolean. This return values are captured in `results` list.
-                    #  The boolean will be True if the job is done (either successfully or
-                    #  failed after retries), and False otherwise - meaning the job is
-                    #  still running or waiting.
-                    # =====================================================================#
-                    results = list(executor.map(self.process_job, pending_jobs))
+                    executor.map(self.process_job, jobs_to_check)
+            else:
+                complete = True
 
-                for job, is_done in results:
-                    # =====================================================================#
-                    # EXPLANATION #
-                    # =====================================================================#
-                    # Here we update the `queue` dictionary to avoid checking the jobs that
-                    #  are already done.
-                    # =====================================================================#
-                    if is_done:
-                        queue[job] = True
+    def submit_jobs(self, tag: Tag = Tag.DEFAULT) -> None:
+        """Submit jobs to the GRID in parallel."""
+        # Filter jobs by tag
+        queue = [
+            job
+            for job in self.workload
+            if job.tag == tag and job.status == JobStatus.STAGED
+        ]
+        log.info(f"Submitting {len(queue)} '{tag.value}' jobs to the grid...")
+        with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
+            executor.map(lambda job: job.submit(), queue)
 
-            # Do some simple logging to keep track of progress.
-            done = sum(1 for done in queue.values() if done)
-            log.info(f"{done}/{total} jobs completed.")
-            complete = all(queue.values())
+    def probe_grid_efficiency(self) -> float:
+        """Submit a small number of jobs to probe the efficiency of the GRID."""
+        log.info("Probing the grid efficiency...")
 
-        log.info("All jobs completed.")
+        # Submit
+        self.submit_jobs(tag=Tag.PROBING)
+
+        # Wait
+        self.wait_for_completion()
+
+        # Calculate actual durations from timestamps
+        waiting_durations = []
+        running_durations = []
+
+        for job in self.workload:
+            wait_start = job.timings.get(JobStatus.WAITING)
+            run_start = job.timings.get(JobStatus.RUNNING)
+            done_time = job.timings.get(JobStatus.DONE)
+
+            if wait_start is None or run_start is None or done_time is None:
+                continue  # Skip jobs without complete timing info
+
+            else:
+                log.debug(f"Job {job.expected_outputs}")
+                log.debug(f"   timings: {job.timings}")
+
+            # Calculate waiting duration (WAITING to RUNNING)
+            waiting_duration = (run_start - wait_start).total_seconds()
+            waiting_durations.append(waiting_duration)
+
+            # Calculate running duration (RUNNING to DONE)
+            running_duration = (done_time - run_start).total_seconds()
+            running_durations.append(running_duration)
+
+        if not running_durations or not waiting_durations:
+            log.warning(
+                "Average running time is zero, cannot calculate optimal batch size"
+            )
+            return 1
+
+        # Calculate average durations
+        avg_waiting = sum(waiting_durations) / len(waiting_durations)
+        avg_running = sum(running_durations) / len(running_durations)
+
+        target_efficiency = 0.9
+        batch_size = self.calculate_optimal_batch_size(
+            N=1,  # each batch had one job
+            W=avg_waiting,
+            R=avg_running,
+            T=target_efficiency,
+        )
+
+        log.info(
+            f"To achieve {target_efficiency:.0%} efficiency, submit {batch_size} jobs simultaneously."
+        )
+
+        return batch_size
 
     @staticmethod
-    def process_job(job: GridJob) -> Tuple[GridJob, bool]:
+    def calculate_optimal_batch_size(N: int, W: float, R: float, T: float) -> int:
+        """Calculate the optimal batch size to achieve target efficiency."""
+        # The efficiency of a given batch can be described as:
+        #
+        #  E = N x R / W + N x R
+        #
+        # Where E is efficiency, N is the number of jobs running at the same time
+        #  R is the average running time, W is the average waiting time
+        #
+        # The current efficiency is then:
+        E = (N * R) / (W + N * R)
+
+        log.debug(f"Current efficiency with {N} job(s): {E:.1%}")
+
+        # So to achieve a target efficiency T
+        # We solve for N, which is the batch size:
+        #  E = N * R / W + N * R
+        #  T * (W + N * R) = N * R
+        #  T * W + T * N * R = N * R
+        #  T * W = N * R - T * N * R
+        #  T * W = N * R * (1 - T)
+        #  N = T * W / R * (1 - T)
+        batch_size = (T * W) / (R * (1 - T))
+
+        batch_size = max(1, round(batch_size))  # Ensure at least 1 job
+        return batch_size
+
+    @staticmethod
+    def process_job(job: GridJob):
         """Process a single job: update status, retrieve output if done, handle retries if failed.
 
         NOTE: This function is parallelized, that is why things like cleaning, download, retry
          are here. If you are adding new functionality, consider if it should be here or in the
          sequential part of the code.
         """
-        job.update_status()
 
-        is_complete = job.status in {JobStatus.DONE, JobStatus.FAILED}
+        job.update_status()
 
         if job.status == JobStatus.FAILED:
             # Jobs on the grid can fail for many reasons outside our control
             #  So if the job is failed, resubmit it up to MAX_RETRIES times
             if job.retries < MAX_RETRIES:
-                is_complete = False
                 expected_output_str = ",".join(job.expected_outputs)
                 job.retries += 1
                 log.warning(
-                    f"Job {job.name} ({expected_output_str}) failed, re-submitting - {job.retries}/{MAX_RETRIES}"
+                    f"Job {job.name} ({expected_output_str}) failed on {job.site}, re-submitting - {job.retries}/{MAX_RETRIES}"
                 )
                 job.submit()
 
@@ -538,8 +608,3 @@ class GRIDScheduler:
             log.debug(f"Job {job.name} is done, retrieving output...")
             job.retrieve_output()
             job.clean()
-
-            efficiency = job.calculate_efficiency()
-            log.info(f"Job {job.name} completed with {efficiency:.2%} efficiency")
-
-        return job, is_complete

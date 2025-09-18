@@ -429,12 +429,11 @@ class GRIDScheduler:
     ) -> None:
         self.workload: list[GridJob] = [GridJob(t) for t in tasks]
 
-        # Get how many jobs account for 10%
+        # Get a subset of the jobs to be used for probing the grid
         subset_size = max(1, int(len(self.workload) * probing))
 
         # Randomly select that many jobs
         subset_keys = random.sample(list(self.workload), subset_size)
-
         for job in self.workload:
             if job in subset_keys:
                 job.tag = Tag.PROBING

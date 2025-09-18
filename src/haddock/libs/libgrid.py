@@ -559,7 +559,7 @@ class GRIDScheduler:
         """Calculate the optimal batch size to achieve target efficiency."""
         # The efficiency of a given batch can be described as:
         #
-        #  E = N x R / W + N x R
+        #  E = N * R / W + N * R
         #
         # Where E is efficiency, N is the number of jobs running at the same time
         #  R is the average running time, W is the average waiting time

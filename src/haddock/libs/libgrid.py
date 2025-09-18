@@ -548,7 +548,7 @@ class GRIDScheduler:
             T=target_efficiency,
         )
 
-        log.info(
+        log.debug(
             f"To achieve {target_efficiency:.0%} efficiency, submit {batch_size} jobs simultaneously."
         )
 
@@ -567,7 +567,7 @@ class GRIDScheduler:
         # The current efficiency is then:
         E = (N * R) / (W + N * R)
 
-        log.debug(f"Current efficiency with {N} job(s): {E:.1%}")
+        log.debug(f"Current efficiency with {N} job(s) per batch: {E:.1%}")
 
         # So to achieve a target efficiency T
         # We solve for N, which is the batch size:

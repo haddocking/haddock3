@@ -8,7 +8,6 @@ import zipfile
 import random
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Tuple
@@ -371,21 +370,6 @@ class GridJob:
 
         with open(self.jdl, "w") as f:
             f.write(jdl_string)
-
-    def calculate_efficiency(self) -> Optional[float]:
-        try:
-            wait = self.timings[JobStatus.WAITING]
-            running = self.timings[JobStatus.RUNNING]
-            done = self.timings[JobStatus.DONE]
-        except KeyError:
-            return None
-
-        time_in_queue = running - wait
-        time_running = done - running
-        total_time = time_in_queue + time_running
-        efficiency = time_running.total_seconds() / total_time.total_seconds()
-
-        return efficiency
 
     def clean(self) -> None:
         """Clean up the temporary directory where the job lives."""

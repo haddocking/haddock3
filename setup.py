@@ -22,13 +22,13 @@ CNS_BINARIES = {
     "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
 }
 
-HADDOCK_RESTRAINTS_VERSION = "0.9.0"
+HADDOCK_RESTRAINTS_VERSION = "0.10.0"
 BASE_GITHUB_URL = f"https://github.com/haddocking/haddock-restraints/releases/download/v{HADDOCK_RESTRAINTS_VERSION}"
 HADDOCK_RESTRAINTS_BINARIES = {
-    "x86_64-linux": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-x86_64-unknown-linux-gnu.tar.gz",
+    "x86_64-linux": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-x86_64-unknown-linux-musl.tar.gz",
     "x86_64-darwin": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-x86_64-apple-darwin.tar.gz",
     "arm64-darwin": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-aarch64-apple-darwin.tar.gz",
-    "aarch64-linux": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-aarch64-unknown-linux-gnu.tar.gz",
+    "aarch64-linux": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-aarch64-unknown-linux-musl.tar.gz",
 }
 
 

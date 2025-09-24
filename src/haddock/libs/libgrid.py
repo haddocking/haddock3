@@ -18,6 +18,7 @@ from typing import Optional, Tuple, Union
 from haddock import log
 from haddock.core.defaults import cns_exec as CNS_EXEC
 from haddock.libs.libsubprocess import CNSJob
+from haddock.libs.libutil import parse_ncores
 
 # NOTE: When creating the payload.zip, this warning appears because we are replicating `toppar_path`
 #  subdirectory structure. It can be ignored safely, but keep an eye on it to make sure
@@ -142,16 +143,18 @@ class GridInterface(ABC):
         #
         self.module_path = module_path
         self.toppar_path = toppar_path
+        #
+        self.packaged = False
 
         # `parse_input` is an abstract compatibility method that will handle
         #  different types of input. It can be either a string, a path or
         #  a list of paths/strings
         self.parse_input(input)
 
-        # `prepare` is the main method that will prepare everything
-        self.prepare()
+        # # `prepare` is the main method that will prepare everything
+        # self.prepare()
 
-    def prepare(self) -> None:
+    def package(self) -> None:
 
         # We need to process the input file first to adjust paths and identify outputs
         self.process_input_f()
@@ -159,14 +162,16 @@ class GridInterface(ABC):
         # CREATE JOB FILE
         self.create_job_script()
 
+        # CREATE THE JDL
+        self.create_jdl()
+
         # CREATE PAYLOAD
         self.prepare_payload(
             cns_script_path=Path(self.module_path),
             toppar_path=Path(self.toppar_path),
         )
 
-        # CREATE THE JDL
-        self.create_jdl()
+        self.packaged = True
 
     @abstractmethod
     def parse_input(self, input: Union[Path, str, list[str]]) -> None:
@@ -226,7 +231,7 @@ class GridInterface(ABC):
         self.status = JobStatus.from_string(output_dict["Status"])
         self.site = output_dict.get("Site", "Unknown")
 
-        # log.debug(self)
+        log.debug(self)
 
         if self.status == JobStatus.RUNNING and JobStatus.RUNNING not in self.timings:
             # job is running and we have not tracket it yet, save the time
@@ -268,6 +273,9 @@ class GridInterface(ABC):
         # If this is a re-submission the timings will already be set,
         #  make sure it is clean
         self.clean_timings()
+
+        if not self.packaged:
+            self.package()
 
         self.timings[JobStatus.WAITING] = datetime.now()
 
@@ -471,7 +479,7 @@ class CompositeGridJob(GridInterface):
             module_path=module_path,
         )  # initialize the base class
 
-        self.prepare()
+        # self.prepare()
 
     def create_job_script(self) -> None:
         """Create the job script that will be executed in the grid."""
@@ -557,8 +565,8 @@ class GRIDScheduler:
         self, tasks: list[CNSJob], params: dict, probing: float = 0.05
     ) -> None:
 
-        self.params: dict = params
         self.probing: bool = True
+        self.ncores = parse_ncores(params["ncores"])
 
         # NOTE: The initialization of a GridJob has A LOT of I/O
         #  related to it. It needs to read files, copy things around,
@@ -574,10 +582,7 @@ class GRIDScheduler:
             for t in tasks
         ]
 
-        # FIXME: This is a magic number, think of a smarter way to
-        #  cutoff the minimum number of jobs to probe the grid
-        # Get a subset of the jobs to be used for probing the grid
-        subset_size = max(10, min(100, int(len(self.workload) * probing)))
+        subset_size = min(self.ncores, int(len(self.workload) * probing))
 
         # Randomly select that many jobs
         if len(self.workload) >= subset_size:
@@ -631,7 +636,7 @@ class GRIDScheduler:
             ]
             log.info(f"Checking status of {len(jobs_to_check)} jobs...")
             if jobs_to_check:
-                with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
+                with ThreadPoolExecutor(max_workers=self.ncores) as executor:
                     executor.map(self.process_job, jobs_to_check)
             else:
                 complete = True
@@ -644,8 +649,13 @@ class GRIDScheduler:
             for job in self.workload
             if job.tag == tag and job.status == JobStatus.STAGED
         ]
+
+        log.info(f"Packaging {len(queue)} jobs...")
+        with ThreadPoolExecutor(max_workers=self.ncores) as executor:
+            executor.map(lambda job: job.package(), queue)
+
         log.info(f"Submitting {len(queue)} '{tag.value}' jobs to the grid...")
-        with ThreadPoolExecutor(max_workers=self.params["ncores"]) as executor:
+        with ThreadPoolExecutor(max_workers=self.ncores) as executor:
             executor.map(lambda job: job.submit(), queue)
 
     def probe_grid_efficiency(self) -> int:

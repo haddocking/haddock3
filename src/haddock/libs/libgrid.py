@@ -1,4 +1,5 @@
 import glob
+import math
 import os
 import random
 import re
@@ -325,14 +326,13 @@ class GridInterface(ABC):
         if self.stderr_f.exists():
             dst = Path(self.wd / f"{self.id}_dirac.err")
             shutil.copy(self.stderr_f, dst)
-
             log.debug(f"ID stderr: {self.stderr_f.read_text()}")
-
-        # Copy the output to the expected location
 
         ls = glob.glob(f"{self.loc}/{self.id}/*")
         log.debug(f"Files in the output sandbox: {ls}")
         log.debug(f"Expected outputs: {self.expected_outputs}")
+
+        # Copy the output to the expected location
         for output_f in self.expected_outputs:
             src = Path(f"{self.loc}/{self.id}/{output_f}")
             dst = Path(self.wd / f"{output_f}")
@@ -508,19 +508,12 @@ class CompositeGridJob(GridInterface):
 
         lines_iter = iter(inp.split("\n"))
         for line in lines_iter:
-            if line.strip() == "! end of the recipe":
-                next_line = next(lines_iter, "")
-                if next_line.strip() == "stop":
-                    # End current recipe section and start a new one
-                    _input += "! end of the recipe\nstop\n"
-                    self.input_str_list.append(_input.rstrip("\n"))
-                    _input = ""  # Reset for next recipe
-                else:
-                    # If next line is not "stop", we still need to add it back
-                    _input += line + "\n"
-                    _input += next_line + "\n"
+            if line.startswith("stop"):
+                _input += "! end of the recipe\nstop\n"
+                self.input_str_list.append(_input.rstrip("\n"))
+                _input = ""  # Reset for next recipe
             else:
-                # Add all other lines to the output
+                # If next line is not "stop", we still need to add it back
                 _input += line + "\n"
 
         # If there's remaining content without a termination signal, add it as the last recipe
@@ -589,9 +582,10 @@ class GRIDScheduler:
         # Here we set the `subset_size` to be the minimum between `ncores`
         # and the 5% of the total number of jobs. By setting it to the number
         # of cores, we can be sure that we will be able to measure the metrics.
+        # We also need to ensure there is at least one job to probe the grid.
         #
         # HACK: This is not ideal, but it is a compromise between accuracy and speed.
-        subset_size = min(self.ncores, int(len(self.workload) * probing))
+        subset_size = min(self.ncores, max(1, math.ceil(len(self.workload) * probing)))
         # ===============================================================#
 
         # Randomly select that many jobs
@@ -603,6 +597,17 @@ class GRIDScheduler:
         else:
             log.info("Not enough jobs to probe the grid, skipping probing step")
             self.probing = False
+
+    def run(self) -> None:
+        """Execute the tasks."""
+
+        self.probe_grid_efficiency()
+
+        self.create_batches()
+
+        self.submit_jobs()
+
+        self.wait_for_completion()
 
     def create_batches(self):
         """Create batches of jobs to be submitted together."""
@@ -623,17 +628,6 @@ class GRIDScheduler:
 
         self.workload = composite_jobs
 
-    def run(self) -> None:
-        """Execute the tasks."""
-
-        self.probe_grid_efficiency()
-
-        self.create_batches()
-
-        self.submit_jobs()
-
-        self.wait_for_completion()
-
     def wait_for_completion(self) -> None:
         """Wait for jobs with status WAITING or RUNNING to complete."""
         complete = False
@@ -644,8 +638,8 @@ class GRIDScheduler:
                 if job.status
                 not in {JobStatus.STAGED, JobStatus.DONE, JobStatus.FAILED}
             ]
-            log.info(f"Checking status of {len(jobs_to_check)} jobs...")
             if jobs_to_check:
+                log.info(f"Checking status of {len(jobs_to_check)} jobs...")
                 with ThreadPoolExecutor(max_workers=self.ncores) as executor:
                     executor.map(self.process_job, jobs_to_check)
             else:
@@ -660,7 +654,7 @@ class GRIDScheduler:
         ]
 
         log.info(
-            f"Preparing {len(queue)} payload(s), each contains {self.batch_size} job(s)..."
+            f"Preparing {len(queue)} payload(s) each containing {self.batch_size} job(s)..."
         )
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
             executor.map(lambda job: job.package(), queue)
@@ -726,6 +720,12 @@ class GRIDScheduler:
 
         log.debug(
             f"To achieve {target_efficiency:.0%} efficiency, submit {batch_size} jobs per batch."
+        )
+
+        # Make sure batch size is not larger than the number of default jobs
+        # TODO: Add a warning if this happens?
+        batch_size = min(
+            batch_size, len([j for j in self.workload if j.tag == Tag.DEFAULT])
         )
 
         self.batch_size = batch_size

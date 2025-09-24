@@ -557,6 +557,8 @@ class GRIDScheduler:
         self, tasks: list[CNSJob], params: dict, probing: float = 0.05
     ) -> None:
 
+        self.params: dict = params
+        self.probing: bool = True
         self.workload: list[GridJob] = [
             GridJob(
                 input=t.input_file,
@@ -566,16 +568,20 @@ class GRIDScheduler:
             for t in tasks
         ]
 
+        # FIXME: This is a magic number, think of a smarter way to
+        #  cutoff the minimum number of jobs to probe the grid
         # Get a subset of the jobs to be used for probing the grid
-        subset_size = max(1, int(len(self.workload) * probing))
+        subset_size = max(10, min(100, int(len(self.workload) * probing)))
 
         # Randomly select that many jobs
-        subset_keys = random.sample(list(self.workload), subset_size)
-        for job in self.workload:
-            if job in subset_keys:
-                job.tag = Tag.PROBING
-
-        self.params: dict = params
+        if len(self.workload) >= subset_size:
+            subset_keys = random.sample(list(self.workload), subset_size)
+            for job in self.workload:
+                if job in subset_keys:
+                    job.tag = Tag.PROBING
+        else:
+            log.info("Not enough jobs to probe the grid, skipping probing step")
+            self.probing = False
 
     def create_batches(self, batch_size: int):
         """Create batches of jobs to be submitted together."""
@@ -638,6 +644,8 @@ class GRIDScheduler:
 
     def probe_grid_efficiency(self) -> int:
         """Submit a small number of jobs to probe the efficiency of the GRID."""
+        if not self.probing:
+            return 1
         log.info("Probing the grid efficiency...")
 
         # Submit

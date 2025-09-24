@@ -611,6 +611,8 @@ class GRIDScheduler:
 
     def create_batches(self):
         """Create batches of jobs to be submitted together."""
+        log.info("Increasing batch size to increase efficiency.")
+
         jobs = [j for j in self.workload if j.tag == Tag.DEFAULT]
 
         toppar_path = jobs[0].toppar_path
@@ -639,7 +641,7 @@ class GRIDScheduler:
                 not in {JobStatus.STAGED, JobStatus.DONE, JobStatus.FAILED}
             ]
             if jobs_to_check:
-                log.info(f"Checking status of {len(jobs_to_check)} jobs...")
+                log.info(f"Checking status of {len(jobs_to_check)} payload(s)...")
                 with ThreadPoolExecutor(max_workers=self.ncores) as executor:
                     executor.map(self.process_job, jobs_to_check)
             else:
@@ -718,10 +720,6 @@ class GRIDScheduler:
             T=target_efficiency,
         )
 
-        log.debug(
-            f"To achieve {target_efficiency:.0%} efficiency, submit {batch_size} jobs per batch."
-        )
-
         # Make sure batch size is not larger than the number of default jobs
         # TODO: Add a warning if this happens?
         batch_size = min(
@@ -743,7 +741,7 @@ class GRIDScheduler:
         # The current efficiency is then:
         E = (N * R) / (W + N * R)
 
-        log.debug(f"Current efficiency with {N} job(s) per batch: {E:.1%}")
+        log.info(f"Current efficiency with {N} job(s) per payload: {E:.1%}")
 
         # So to achieve a target efficiency T
         # We solve for N, which is the batch size:

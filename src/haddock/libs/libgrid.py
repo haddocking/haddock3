@@ -138,21 +138,21 @@ class GridInterface(ABC):
         self.timings: dict[JobStatus, datetime] = {}
         # Tag for the job
         self.tag = Tag.DEFAULT
-        # `self.input_str` is the content of the `.inp` file
+        # `input_str` is the content of the `.inp` file
         self.input_str = ""
-        #
+        # `input_str_list` is a list of separate recipes`
+        self.input_str_list = []  # Initialize the list to store separate recipes
+        # `module_path` is the path to the CNS module files
         self.module_path = module_path
+        # `toppar_path` is the path to the TOPPAR files`
         self.toppar_path = toppar_path
-        #
+        # Indicator if this job has been packaged
         self.packaged = False
 
         # `parse_input` is an abstract compatibility method that will handle
         #  different types of input. It can be either a string, a path or
         #  a list of paths/strings
         self.parse_input(input)
-
-        # # `prepare` is the main method that will prepare everything
-        # self.prepare()
 
     def package(self) -> None:
 
@@ -479,8 +479,6 @@ class CompositeGridJob(GridInterface):
             module_path=module_path,
         )  # initialize the base class
 
-        # self.prepare()
-
     def create_job_script(self) -> None:
         """Create the job script that will be executed in the grid."""
         # NOTE: We use `\n` instead of `os.linesep` because this will
@@ -500,6 +498,7 @@ class CompositeGridJob(GridInterface):
             f.write(instructions)
 
     def parse_input(self, input: Union[Path, str, list[str]]) -> None:
+        """Read a concatenated list of `.inp` files and split them into separate recipes."""
         if not isinstance(input, list):
             raise ValueError("CompositeGridJob input must be a list of strings")
 
@@ -508,7 +507,6 @@ class CompositeGridJob(GridInterface):
         _input = ""
 
         lines_iter = iter(inp.split("\n"))
-        self.input_str_list = []  # Initialize the list to store separate recipes
         for line in lines_iter:
             if line.strip() == "! end of the recipe":
                 next_line = next(lines_iter, "")
@@ -567,12 +565,8 @@ class GRIDScheduler:
 
         self.probing: bool = True
         self.ncores = parse_ncores(params["ncores"])
+        self.batch_size = 1
 
-        # NOTE: The initialization of a GridJob has A LOT of I/O
-        #  related to it. It needs to read files, copy things around,
-        #  and overall it is quite slow. Since this is I/O, there is
-        #  not much we can do to speed it up, it's actually better
-        #  to run it sequentially. ):
         self.workload: list[GridJob] = [
             GridJob(
                 input=t.input_file,
@@ -582,7 +576,23 @@ class GRIDScheduler:
             for t in tasks
         ]
 
+        # ===============================================================#
+        #
+        # ! IMPORTANT !
+        #
+        # The `subset_size` is the number of jobs to be used for probing the grid
+        # In theory we could send any number of jobs, but in practice we need to
+        #  consider that the submission itself takes time. So we can come to the
+        #  scenario in which we spend more time submitting jobs than measuring,
+        #  this means that we would not be able to properly evaluate the grid
+        #  capacity.
+        # Here we set the `subset_size` to be the minimum between `ncores`
+        # and the 5% of the total number of jobs. By setting it to the number
+        # of cores, we can be sure that we will be able to measure the metrics.
+        #
+        # HACK: This is not ideal, but it is a compromise between accuracy and speed.
         subset_size = min(self.ncores, int(len(self.workload) * probing))
+        # ===============================================================#
 
         # Randomly select that many jobs
         if len(self.workload) >= subset_size:
@@ -594,7 +604,7 @@ class GRIDScheduler:
             log.info("Not enough jobs to probe the grid, skipping probing step")
             self.probing = False
 
-    def create_batches(self, batch_size: int):
+    def create_batches(self):
         """Create batches of jobs to be submitted together."""
         jobs = [j for j in self.workload if j.tag == Tag.DEFAULT]
 
@@ -602,8 +612,8 @@ class GRIDScheduler:
         module_path = jobs[0].module_path
 
         composite_jobs = []
-        for batch in range(0, len(jobs), batch_size):
-            input = [j.input_str for j in jobs[batch : batch + batch_size]]
+        for batch in range(0, len(jobs), self.batch_size):
+            input = [j.input_str for j in jobs[batch : batch + self.batch_size]]
             job = CompositeGridJob(
                 input=input,
                 toppar_path=toppar_path,
@@ -616,9 +626,9 @@ class GRIDScheduler:
     def run(self) -> None:
         """Execute the tasks."""
 
-        batch_size = self.probe_grid_efficiency()
+        self.probe_grid_efficiency()
 
-        self.create_batches(batch_size=batch_size)
+        self.create_batches()
 
         self.submit_jobs()
 
@@ -643,25 +653,27 @@ class GRIDScheduler:
 
     def submit_jobs(self, tag: Tag = Tag.DEFAULT) -> None:
         """Submit jobs to the GRID in parallel."""
-        # Filter jobs by tag
         queue = [
             job
             for job in self.workload
             if job.tag == tag and job.status == JobStatus.STAGED
         ]
 
-        log.info(f"Packaging {len(queue)} jobs...")
+        log.info(
+            f"Preparing {len(queue)} payload(s), each contains {self.batch_size} job(s)..."
+        )
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
             executor.map(lambda job: job.package(), queue)
 
-        log.info(f"Submitting {len(queue)} '{tag.value}' jobs to the grid...")
+        log.info(f"Submitting {len(queue)} '{tag.value}' payloads to the grid...")
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
             executor.map(lambda job: job.submit(), queue)
 
-    def probe_grid_efficiency(self) -> int:
+    def probe_grid_efficiency(self):
         """Submit a small number of jobs to probe the efficiency of the GRID."""
         if not self.probing:
-            return 1
+            return
+
         log.info("Probing the grid efficiency...")
 
         # Submit
@@ -698,7 +710,7 @@ class GRIDScheduler:
             log.warning(
                 "Average running time is zero, cannot calculate optimal batch size"
             )
-            return 1
+            return
 
         # Calculate average durations
         avg_waiting = sum(waiting_durations) / len(waiting_durations)
@@ -716,7 +728,7 @@ class GRIDScheduler:
             f"To achieve {target_efficiency:.0%} efficiency, submit {batch_size} jobs per batch."
         )
 
-        return batch_size
+        self.batch_size = batch_size
 
     @staticmethod
     def calculate_optimal_batch_size(N: int, W: float, R: float, T: float) -> int:

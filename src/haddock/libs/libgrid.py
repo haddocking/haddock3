@@ -559,6 +559,12 @@ class GRIDScheduler:
 
         self.params: dict = params
         self.probing: bool = True
+
+        # NOTE: The initialization of a GridJob has A LOT of I/O
+        #  related to it. It needs to read files, copy things around,
+        #  and overall it is quite slow. Since this is I/O, there is
+        #  not much we can do to speed it up, it's actually better
+        #  to run it sequentially. ):
         self.workload: list[GridJob] = [
             GridJob(
                 input=t.input_file,

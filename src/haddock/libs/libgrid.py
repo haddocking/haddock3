@@ -294,6 +294,7 @@ class GridInterface(ABC):
             log.error(
                 f"Job submission failed: {e}\nStdout: {e.stdout}\nStderr: {e.stderr}"
             )
+            # TODO: Add some sort of retry/fallback mechanism here?
             raise
 
         # Add the ID to the object
@@ -595,11 +596,13 @@ class GRIDScheduler:
                 if job in subset_keys:
                     job.tag = Tag.PROBING
         else:
-            log.info("Not enough jobs to probe the grid, skipping probing step")
+            log.warning("> Not enough jobs to probe the grid, skipping probing step <")
             self.probing = False
 
     def run(self) -> None:
         """Execute the tasks."""
+        log.info("#" * 42)
+        log.info("=== Running tasks with GRID Scheduler ===")
 
         self.probe_grid_efficiency()
 
@@ -609,9 +612,11 @@ class GRIDScheduler:
 
         self.wait_for_completion()
 
-    def create_batches(self):
+        log.info("#" * 42)
+
+    def create_batches(self) -> None:
         """Create batches of jobs to be submitted together."""
-        log.info("Increasing batch size to increase efficiency.")
+        log.info("++ Concatenating jobs to increase efficiency...")
 
         jobs = [j for j in self.workload if j.tag == Tag.DEFAULT]
 
@@ -619,8 +624,9 @@ class GRIDScheduler:
         module_path = jobs[0].module_path
 
         composite_jobs = []
-        for batch in range(0, len(jobs), self.batch_size):
+        for i, batch in enumerate(range(0, len(jobs), self.batch_size), start=1):
             input = [j.input_str for j in jobs[batch : batch + self.batch_size]]
+            log.debug(f" Payload {i}, n={len(input)} job(s)")
             job = CompositeGridJob(
                 input=input,
                 toppar_path=toppar_path,
@@ -628,10 +634,14 @@ class GRIDScheduler:
             )
             composite_jobs.append(job)
 
+        log.info(
+            f"++ Created {len(composite_jobs)} payload(s) with up to {self.batch_size} job(s) each"
+        )
         self.workload = composite_jobs
 
     def wait_for_completion(self) -> None:
         """Wait for jobs with status WAITING or RUNNING to complete."""
+        log.info("++ Waiting...")
         complete = False
         while not complete:
             jobs_to_check = [
@@ -641,7 +651,7 @@ class GRIDScheduler:
                 not in {JobStatus.STAGED, JobStatus.DONE, JobStatus.FAILED}
             ]
             if jobs_to_check:
-                log.info(f"Checking status of {len(jobs_to_check)} payload(s)...")
+                log.debug(f"+ Checking status of {len(jobs_to_check)} payload(s)...")
                 with ThreadPoolExecutor(max_workers=self.ncores) as executor:
                     executor.map(self.process_job, jobs_to_check)
             else:
@@ -655,22 +665,19 @@ class GRIDScheduler:
             if job.tag == tag and job.status == JobStatus.STAGED
         ]
 
-        log.info(
-            f"Preparing {len(queue)} payload(s) each containing {self.batch_size} job(s)..."
-        )
+        log.info(f"++ Submitting {len(queue)} '{tag.value}' payloads to the grid...")
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
             executor.map(lambda job: job.package(), queue)
 
-        log.info(f"Submitting {len(queue)} '{tag.value}' payloads to the grid...")
         with ThreadPoolExecutor(max_workers=self.ncores) as executor:
             executor.map(lambda job: job.submit(), queue)
 
-    def probe_grid_efficiency(self):
+    def probe_grid_efficiency(self) -> None:
         """Submit a small number of jobs to probe the efficiency of the GRID."""
         if not self.probing:
             return
 
-        log.info("Probing the grid efficiency...")
+        log.info("++ Probing grid efficiency...")
 
         # Submit
         self.submit_jobs(tag=Tag.PROBING)
@@ -704,7 +711,7 @@ class GRIDScheduler:
 
         if not running_durations or not waiting_durations:
             log.warning(
-                "Average running time is zero, cannot calculate optimal batch size"
+                "> Average running time is zero, cannot calculate optimal batch size <"
             )
             return
 
@@ -741,7 +748,7 @@ class GRIDScheduler:
         # The current efficiency is then:
         E = (N * R) / (W + N * R)
 
-        log.info(f"Current efficiency with {N} job(s) per payload: {E:.1%}")
+        log.info(f"+ Current efficiency with {N} job(s) per payload: {E:.1%}")
 
         # So to achieve a target efficiency T
         # We solve for N, which is the batch size:
@@ -757,7 +764,7 @@ class GRIDScheduler:
         return batch_size
 
     @staticmethod
-    def process_job(job: GridJob):
+    def process_job(job: GridJob) -> None:
         """Process a single job: update status, retrieve output if done, handle retries if failed.
 
         NOTE: This function is parallelized, that is why things like cleaning, download, retry
@@ -774,7 +781,7 @@ class GRIDScheduler:
                 expected_output_str = ",".join(job.expected_outputs)
                 job.retries += 1
                 log.warning(
-                    f"Job {job.name} ({expected_output_str}) failed on {job.site}, re-submitting - {job.retries}/{MAX_RETRIES}"
+                    f"> Job {job.name} ({expected_output_str}) failed on {job.site}, re-submitting - {job.retries}/{MAX_RETRIES} <"
                 )
                 log.debug(f"job {job.name} at {job.loc}")
                 job.submit()

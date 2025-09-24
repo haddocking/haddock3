@@ -2,7 +2,7 @@
 # Protein-protein docking example with NMR-derived ambiguous interaction restraints
 run_dir = "run-grid"
 mode = "grid"
-ncores = 4
+ncores = 8
 debug = true
 molecules = ["data/e2aP_1F3G.pdb", "data/hpr_ensemble.pdb"]
 

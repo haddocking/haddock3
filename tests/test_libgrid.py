@@ -1,136 +1,121 @@
 import pytest
 
+from haddock.libs.libgrid import (
+    GridJob,
+    CompositeGridJob,
+    JobStatus,
+    Tag,
+    ping_dirac,
+    validate_dirac,
+)
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_ping_dirac():
-    pass
+
+@pytest.fixture
+def dummy_paths(tmp_path):
+    toppar = tmp_path / "toppar"
+    toppar.mkdir()
+    module = tmp_path / "module"
+    module.mkdir()
+    return toppar, module
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_validate_diract():
-    pass
+def test_gridjob_create_jdl_and_job_script(dummy_paths):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.name = "testjob"
+    job.expected_outputs = ["foo.out"]
+    job.jdl = job.loc / "job.jdl"
+    job.job_script = job.loc / "job.sh"
+    job.create_jdl()
+    job.create_job_script()
+    assert job.jdl.exists()
+    assert job.job_script.exists()
+    content = job.jdl.read_text()
+    assert f'JobName = "{job.name}";' in content
+    assert '"foo.out"' in content
 
 
-@pytest.mark.skip(reason="Not implemented yet")
+def test_gridjob_process_input_f(tmp_path, dummy_paths):
+    toppar, module = dummy_paths
+    input_str = '$output_test = "result.txt";\n'
+    job = GridJob(input=input_str, toppar_path=toppar, module_path=module)
+    job.name = "testjob"
+    job.loc = tmp_path
+    job.input_str = input_str
+    job.process_input_f()
+    assert "result.txt" in job.expected_outputs
+    inp_file = tmp_path / f"{job.name}.inp"
+    assert inp_file.exists()
+
+
+def test_compositegridjob_parse_input_and_process(dummy_paths):
+    toppar, module = dummy_paths
+    input_list = ["line1\nstop\n", "line2\nstop\n"]
+    job = CompositeGridJob(input=input_list, toppar_path=toppar, module_path=module)
+    assert len(job.input_str_list) == 2
+    job.process_input_f()
+    for idx in range(2):
+        inp_file = job.loc / f"{idx}_{job.name}.inp"
+        assert inp_file.exists()
+
+
+def test_gridjob_repr(dummy_paths):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    s = repr(job)
+    assert "ID:" in s and "Name:" in s and "Status:" in s
+
+
 def test_jobstatus_from_string():
-    pass
+    assert JobStatus.from_string("Running") == JobStatus.RUNNING
+    assert JobStatus.from_string("unknown") == JobStatus.UNKNOWN
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_package():
-    pass
+def test_tag_enum():
+    assert Tag.PROBING.value == "Probing"
+    assert Tag.DEFAULT.value == "Default"
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_create_jdl():
-    pass
+def test_parse_output():
+    s = "JobID=123 Status=Running Site=TestSite;"
+    d = GridJob.parse_output(s)
+    assert d["JobID"] == "123"
+    assert d["Status"] == "Running"
+    assert d["Site"] == "TestSite"
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_update_status():
-    pass
+def test_process_line_and_find_output():
+    line = '$output_test = "foo.txt";'
+    new_line, found = GridJob._process_line(line)
+    assert new_line == line
+    output = GridJob._find_output(line)
+    assert output == "foo.txt"
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_prepare_payload():
-    pass
+def test_clean_timings(dummy_paths):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    job.timings = {"foo": 123}
+    job.clean_timings()
+    assert job.timings == {}
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_submit():
-    pass
+def test_clean_removes_tmpdir(dummy_paths):
+    toppar, module = dummy_paths
+    job = GridJob(input="input", toppar_path=toppar, module_path=module)
+    loc = job.loc
+    assert loc.exists()
+    job.clean()
+    assert not loc.exists()
 
 
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_retrieve_output():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_clean_timings():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_clean():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface_parse_output():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface__process_line():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridinterface__find_output():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridjob_parse_input():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridjob_create_job_script():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridjob_process_input_f():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_compositegridjob_create_job_script():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_compositegridjob_parse_input():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_compositegridjob_process_input_f():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_run():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_create_batches():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_wait_for_completion():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_submit_jobs():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_probe_grid_efficiency():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_calculate_optimal_batch_size():
-    pass
-
-
-@pytest.mark.skip(reason="Not implemented yet")
-def test_gridscheduler_process_jobs():
-    pass
+def test_ping_and_validate_dirac(monkeypatch):
+    monkeypatch.setattr("shutil.which", lambda cmd: "/usr/bin/" + cmd)
+    monkeypatch.setattr(
+        "subprocess.run",
+        lambda *a, **k: type(
+            "R", (), {"returncode": 0, "stderr": b"", "stdout": b""}
+        )(),
+    )
+    assert validate_dirac()
+    assert ping_dirac()

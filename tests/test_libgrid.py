@@ -119,3 +119,40 @@ def test_ping_and_validate_dirac(monkeypatch):
     )
     assert validate_dirac()
     assert ping_dirac()
+
+
+def test_process_line(tmp_path, monkeypatch):
+    # No match
+    line = "no pattern here"
+    new_line, found = GridJob._process_line(line)
+    assert new_line == line
+    assert found is None
+
+    # AT_PATTERN match and file exists
+    test_file = tmp_path / "foo.txt"
+    test_file.write_text("data")
+    line = f"@@{test_file}"
+    monkeypatch.chdir(tmp_path)
+    new_line, found = GridJob._process_line(line)
+    assert new_line == line.replace(str(test_file), "foo.txt")
+    assert found == str(test_file)
+
+    # VAR_PATTERN match and file does not exist
+    line = '($ test="bar.txt")'
+    new_line, found = GridJob._process_line(line)
+    assert new_line == line
+    assert found is None
+
+
+def test_find_output():
+    line = '$output_test = "foo.txt";'
+    output = GridJob._find_output(line)
+    assert output == "foo.txt"
+
+    line2 = "$output_test = bar.txt;"
+    output2 = GridJob._find_output(line2)
+    assert output2 == "bar.txt"
+
+    line3 = "no output here"
+    output3 = GridJob._find_output(line3)
+    assert output3 is None

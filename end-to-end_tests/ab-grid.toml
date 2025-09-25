@@ -1,33 +1,36 @@
 run_dir = "ab-grid"
 mode = "grid"
 ncores = 24
-molecules = ["data/4G6K_fv.pdb", "data/4I1B-matched.pdb"]
+molecules = [
+  "../examples/docking-antibody-antigen/data/4G6K_fv.pdb",
+  "../examples/docking-antibody-antigen/data/4I1B-matched.pdb",
+]
 [topoaa]
 [rigidbody]
 tolerance = 5
-ambig_fname = "data/ambig.tbl"
-unambig_fname = "data/unambig.tbl"
+ambig_fname = "../examples/docking-antibody-antigen/data/ambig.tbl"
+unambig_fname = "../examples/docking-antibody-antigen/data/unambig.tbl"
 sampling = 10000
 ["caprieval.0"]
-reference_fname = "data/4G6M-matched.pdb"
+reference_fname = "../examples/docking-antibody-antigen/data/4G6M-matched.pdb"
 [seletop]
 select = 500
 ["caprieval.1"]
-reference_fname = "data/4G6M-matched.pdb"
+reference_fname = "../examples/docking-antibody-antigen/data/4G6M-matched.pdb"
 [flexref]
 tolerance = 5
-ambig_fname = "data/ambig.tbl"
-unambig_fname = "data/unambig.tbl"
+ambig_fname = "../examples/docking-antibody-antigen/data/ambig.tbl"
+unambig_fname = "../examples/docking-antibody-antigen/data/unambig.tbl"
 ["caprieval.2"]
-reference_fname = "data/4G6M-matched.pdb"
+reference_fname = "../examples/docking-antibody-antigen/data/4G6M-matched.pdb"
 [emref]
 tolerance = 5
-ambig_fname = "data/ambig.tbl"
-unambig_fname = "data/unambig.tbl"
+ambig_fname = "../examples/docking-antibody-antigen/data/ambig.tbl"
+unambig_fname = "../examples/docking-antibody-antigen/data/unambig.tbl"
 ["caprieval.3"]
-reference_fname = "data/4G6M-matched.pdb"
+reference_fname = "../examples/docking-antibody-antigen/data/4G6M-matched.pdb"
 [clustfcc]
 [seletopclusts]
 top_models = 4
 ["caprieval.4"]
-reference_fname = "data/4G6M-matched.pdb"
+reference_fname = "../examples/docking-antibody-antigen/data/4G6M-matched.pdb"

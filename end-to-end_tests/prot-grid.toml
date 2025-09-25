@@ -1,5 +1,4 @@
-# ====================================================================
-run_dir = "run-grid"
+run_dir = "prot-grid"
 mode = "grid"
 ncores = 8
 debug = true
@@ -25,4 +24,3 @@ emref.ambig_fname = "data/e2a-hpr_air.tbl"
 clustfcc.min_population = 1
 seletopclusts.top_models = 4
 caprieval.3.reference_fname = "data/e2a-hpr_1GGR.pdb"
-# ====================================================================

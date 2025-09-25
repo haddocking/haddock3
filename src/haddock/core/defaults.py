@@ -23,6 +23,7 @@ if not cns_exec.exists():
         sys.exit(1)
     else:
         cns_exec = Path(_cns_exec)
+        cns_exec_linux = cns_exec.with_name(cns_exec.name + "_linux")
 
 CONTACT_FCC_EXEC = Path(files("haddock").joinpath("bin/contact_fcc"))  # type: ignore
 FAST_RMSDMATRIX_EXEC = Path(files("haddock").joinpath("bin/fast-rmsdmatrix"))  # type: ignore

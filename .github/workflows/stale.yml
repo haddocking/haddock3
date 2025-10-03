@@ -13,6 +13,12 @@ jobs:
       pull-requests: write
       actions: write
     steps:
+      - name: Clear stale action cache
+        run: |
+          gh cache delete _state || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        continue-on-error: true
       - uses: actions/stale@v10
         with:
           stale-pr-message: "This PR is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."

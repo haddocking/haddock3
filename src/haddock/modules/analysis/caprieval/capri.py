@@ -710,7 +710,7 @@ class CAPRI:
     def _load_atoms(
         model: PDBPath,
         reference: PDBPath,
-        atom_selection: str = "backbone",
+        atom_selection: str = "backbone/bases",
     ) -> AtomsDict:
         """
         Load atoms from a model and reference.

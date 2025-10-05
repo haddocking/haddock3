@@ -201,10 +201,10 @@ clt_threshold:
 
 atom_selection:
   choices:
-  - backbone
-  - CA/P
+  - backbone/bases
+  - CAlpha/C1Base
   - heavyatoms
-  default: backbone
+  default: backbone/bases
   minchars: 1
   maxchars: 50
   type: string

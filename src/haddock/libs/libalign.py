@@ -127,24 +127,25 @@ PROT_SIDE_CHAINS_DICT = {
 
 # Bases
 DNA_ATOMS = [
-    "C5",
-    "N9",
-    "N2",
-    "C8",
-    "O2",
-    "N4",
-    "N7",
-    "C7",
-    "N1",
-    "N6",
-    "C2",
-    "O4",
-    "C6",
-    "N3",
-    "C4",
-    "O6",
+    "C5", # DA,DT,DC,DG
+    "N9", # DA,DG
+    "N2", # DG
+    "C8", # DA,DG
+    "O2", # DT,DC
+    "N4", # DC
+    "N7", # DA,DG
+    "C7", # DT
+    "N1", # DA,DT,DC,DG
+    "N6", # DA
+    "C2", # DA,DT,DC,DG
+    "O4", # DT,DC
+    "C6", # DA,DT,DC,DG
+    "N3", # DA,DT,DC,DG
+    "C4", # DA,DT,DC,DG
+    "O6", # DG
 ]
 
+# Bases + sugar + phosphate 
 DNA_FULL_DICT = {
     "DA": [
         "P",
@@ -265,7 +266,27 @@ DNA_FULL_DICT = {
 }
 
 RNA_RES = ["A", "G", "C", "U"]
-RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+
+# Bases
+RNA_ATOMS = [
+    "C2", # A,U,C,G
+    "C4", # A,U,C,G
+    "C5", # A,U,C,G
+    "C6", # A,U,C,G
+    "C8", # A,G
+    "N1", # A,U,C,G
+    "N2", # G
+    "N3", # A,U,C,G
+    "N4", # C
+    "N6", # A
+    "N7", # A,G
+    "N9", # A,G
+    "O2", # U,C
+    "O4", # U
+    "O6", # G
+    ]
+
+RNA_BACKBONE = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
 
 RNA_FULL_DICT = {
     "A": [
@@ -599,14 +620,14 @@ def get_atoms(pdb: PDBPath, atom_selection: str = "backbone") -> AtomsDict:
         dictionary of atoms
     """
     atom_dic: AtomsDict = {}
-    if atom_selection == "backbone":
+    if atom_selection == "backbone/bases":
         atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
         atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
         atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
-    elif atom_selection == "CA/P":
+    elif atom_selection == "CAlpha/C1Base":
         atom_dic.update((r, ["CA"]) for r in PROT_RES)
-        atom_dic.update((r, ["P"]) for r in DNA_RES)
-        atom_dic.update((r, ["P"]) for r in RNA_RES)
+        atom_dic.update((r, ["C1'"]) for r in DNA_RES)
+        atom_dic.update((r, ["C1'"]) for r in RNA_RES)
     elif atom_selection == "heavyatoms":
         atom_dic.update(PROT_SIDE_CHAINS_DICT)
         atom_dic.update(DNA_FULL_DICT)

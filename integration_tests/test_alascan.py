@@ -27,6 +27,23 @@ def alascan_module():
         yield alascan
 
 
+@pytest.fixture
+def alascan_module_protlig(alascan_module):
+    """Return a default alascan module."""
+    # Copy parameters and toplogy of the ligand
+    shutil.copy(
+        Path(GOLDEN_DATA, "ligand.top"),
+        Path(alascan_module.path, "ligand.top"),
+        )
+    shutil.copy(
+        Path(GOLDEN_DATA, "ligand.param"),
+        Path(alascan_module.path, "ligand.param"),
+        )
+    # Set the parameters to point the file
+    alascan_module.params["ligand_param_fname"] = Path(alascan_module.path, "ligand.param")
+    alascan_module.params["ligand_top_fname"] = Path(alascan_module.path, "ligand.top")
+    yield alascan_module
+
 class MockPreviousIO:
     def __init__(self, path):
         self.path = path
@@ -69,6 +86,24 @@ class MockPreviousIO_single_model:
     def output(self):
         return None
 
+
+class MockPreviousIO_protlig:
+    def __init__(self, path):
+        self.path = path
+
+    def retrieve_models(self, individualize: bool = False):
+        shutil.copy(
+            Path(GOLDEN_DATA, "protlig_complex_1.pdb"),
+            Path(self.path, "protlig_complex_1.pdb"),
+        )
+        model_list = [
+            PDBFile(file_name="protlig_complex_1.pdb", path=self.path),
+        ]
+
+        return model_list
+
+    def output(self):
+        return None
 
 def test_alascan_default(alascan_module, mocker):
     """Test the alascan module."""
@@ -148,3 +183,41 @@ def test_alascan_mutation_resiudes():
     config_allowed_resiudes = set(default_config["scan_residue"]["choices"])
     script_allowed_resiudes = set(list(RES_CODES.keys()))
     assert config_allowed_resiudes == script_allowed_resiudes
+
+
+def test_alascan_with_ligand_topar(alascan_module_protlig):
+    """Test the use of alascan in presence of a ligand."""
+    alascan_module_protlig.previous_io = MockPreviousIO_protlig(path=alascan_module_protlig.path)
+    alascan_module_protlig.run()
+
+    expected_csv = Path(alascan_module_protlig.path, "scan_protlig_complex_1.tsv")
+    expected_clt_csv = Path(alascan_module_protlig.path, "scan_clt_unclustered.tsv")
+
+    assert expected_csv.exists(), f"{expected_csv} does not exist"
+    assert expected_clt_csv.exists(), f"{expected_clt_csv} does not exist"
+
+    # List mutated files
+    mutated_filepaths = list(Path(alascan_module_protlig.path).glob("protlig_complex_1-*.pdb"))
+    assert len(mutated_filepaths) > 1
+
+    # Loop over files
+    for mutated_fpath in mutated_filepaths:
+        # Make sure the ligand is in it
+        file_content = mutated_fpath.read_text()
+        assert file_content.count("G39") > 20
+
+
+def test_alascan_without_ligand_topar(alascan_module):
+    """Test the use of alascan in presence of a ligand."""
+    alascan_module.previous_io = MockPreviousIO_protlig(path=alascan_module.path)
+    alascan_module.run()
+
+    expected_csv = Path(alascan_module.path, "scan_protlig_complex_1.tsv")
+    expected_clt_csv = Path(alascan_module.path, "scan_clt_unclustered.tsv")
+
+    assert not expected_csv.exists(), f"{expected_csv} does exist"
+    assert not expected_clt_csv.exists(), f"{expected_clt_csv} does exist"
+
+    # List mutated files
+    mutated_filepaths = list(Path(alascan_module.path).glob("protlig_complex_1-*.pdb"))
+    assert len(mutated_filepaths) == 0

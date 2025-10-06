@@ -26,7 +26,6 @@ from haddock.core.typing import (
     Callable,
     FilePath,
     Namespace,
-    Optional,
     )
 from haddock.libs.libcli import _ParamsToDict
 
@@ -150,7 +149,7 @@ def main(
     from contextlib import suppress
     from pathlib import Path
 
-    from haddock import log
+    from haddock import log, EmptyPath
     from haddock.gear.haddockmodel import HaddockModel
     from haddock.gear.yaml2cfg import read_from_yaml_config
     from haddock.gear.zerofill import zero_fill
@@ -191,7 +190,7 @@ def main(
                     sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
                 value = value.lower() == "true"
             elif param.endswith("_fname"):
-                value = Path(value).resolve()
+                value = EmptyPath() if str(value) == "" else Path(value).resolve()
             else:
                 value = default_type(value)
             ems_dict[param] = value

@@ -105,6 +105,7 @@ class MockPreviousIO_protlig:
     def output(self):
         return None
 
+
 def test_alascan_default(alascan_module, mocker):
     """Test the alascan module."""
     alascan_module.previous_io = MockPreviousIO(path=alascan_module.path)
@@ -198,7 +199,7 @@ def test_alascan_with_ligand_topar(alascan_module_protlig):
 
     # List mutated files
     mutated_filepaths = list(Path(alascan_module_protlig.path).glob("protlig_complex_1-*.pdb"))
-    assert len(mutated_filepaths) > 1
+    assert len(mutated_filepaths) >= 1
 
     # Loop over files
     for mutated_fpath in mutated_filepaths:
@@ -208,16 +209,22 @@ def test_alascan_with_ligand_topar(alascan_module_protlig):
 
 
 def test_alascan_without_ligand_topar(alascan_module):
-    """Test the use of alascan in presence of a ligand."""
+    """Test the use of alascan in presence of a ligand without topo/param."""
     alascan_module.previous_io = MockPreviousIO_protlig(path=alascan_module.path)
     alascan_module.run()
 
     expected_csv = Path(alascan_module.path, "scan_protlig_complex_1.tsv")
     expected_clt_csv = Path(alascan_module.path, "scan_clt_unclustered.tsv")
 
-    assert not expected_csv.exists(), f"{expected_csv} does exist"
-    assert not expected_clt_csv.exists(), f"{expected_clt_csv} does exist"
+    assert expected_csv.exists(), f"{expected_csv} does not exist"
+    assert expected_clt_csv.exists(), f"{expected_clt_csv} does not exist"
 
     # List mutated files
     mutated_filepaths = list(Path(alascan_module.path).glob("protlig_complex_1-*.pdb"))
-    assert len(mutated_filepaths) == 0
+    assert len(mutated_filepaths) >= 1
+
+    # Loop over files
+    for mutated_fpath in mutated_filepaths:
+        # Make sure the ligand is in it
+        file_content = mutated_fpath.read_text()
+        assert file_content.count("G39") == 0

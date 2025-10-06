@@ -92,12 +92,13 @@ class MockPreviousIO_protlig:
         self.path = path
 
     def retrieve_models(self, individualize: bool = False):
+        fname = "protlig_complex_1.pdb"
         shutil.copy(
-            Path(GOLDEN_DATA, "protlig_complex_1.pdb"),
-            Path(self.path, "protlig_complex_1.pdb"),
+            Path(GOLDEN_DATA, fname),
+            Path(self.path, fname),
         )
         model_list = [
-            PDBFile(file_name="protlig_complex_1.pdb", path=self.path),
+            PDBFile(file_name=fname, path=self.path),
         ]
 
         return model_list
@@ -186,7 +187,7 @@ def test_alascan_mutation_resiudes():
     assert config_allowed_resiudes == script_allowed_resiudes
 
 
-def test_alascan_with_ligand_topar(alascan_module_protlig):
+def test_alascan_with_ligand_topar(alascan_module_protlig, mocker):
     """Test the use of alascan in presence of a ligand."""
     alascan_module_protlig.previous_io = MockPreviousIO_protlig(path=alascan_module_protlig.path)
     alascan_module_protlig.run()
@@ -208,7 +209,7 @@ def test_alascan_with_ligand_topar(alascan_module_protlig):
         assert file_content.count("G39") > 20
 
 
-def test_alascan_without_ligand_topar(alascan_module):
+def test_alascan_without_ligand_topar(alascan_module, mocker):
     """Test the use of alascan in presence of a ligand without topo/param."""
     alascan_module.previous_io = MockPreviousIO_protlig(path=alascan_module.path)
     alascan_module.run()
@@ -225,6 +226,6 @@ def test_alascan_without_ligand_topar(alascan_module):
 
     # Loop over files
     for mutated_fpath in mutated_filepaths:
-        # Make sure the ligand is in it
+        # Make sure the ligand is not in it
         file_content = mutated_fpath.read_text()
         assert file_content.count("G39") == 0

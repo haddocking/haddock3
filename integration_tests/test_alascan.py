@@ -28,21 +28,28 @@ def alascan_module():
 
 
 @pytest.fixture
-def alascan_module_protlig(alascan_module):
+def alascan_module_protlig():
     """Return a default alascan module."""
-    # Copy parameters and toplogy of the ligand
-    shutil.copy(
-        Path(GOLDEN_DATA, "ligand.top"),
-        Path(alascan_module.path, "ligand.top"),
+    with tempfile.TemporaryDirectory() as tmpdir:
+        alascan = AlascanModule(
+            order=0, path=Path(tmpdir), initial_params=DEFAULT_ALASCAN_CONFIG
         )
-    shutil.copy(
-        Path(GOLDEN_DATA, "ligand.param"),
-        Path(alascan_module.path, "ligand.param"),
-        )
-    # Set the parameters to point the file
-    alascan_module.params["ligand_param_fname"] = Path(alascan_module.path, "ligand.param")
-    alascan_module.params["ligand_top_fname"] = Path(alascan_module.path, "ligand.top")
-    yield alascan_module
+        alascan.params["int_cutoff"] = 3.5
+        alascan.params["output_mutants"] = True
+        # Copy parameters and toplogy of the ligand
+        shutil.copy(
+            Path(GOLDEN_DATA, "ligand.top"),
+            Path(alascan.path, "ligand.top"),
+            )
+        shutil.copy(
+            Path(GOLDEN_DATA, "ligand.param"),
+            Path(alascan.path, "ligand.param"),
+            )
+        # Set the parameters to point the file
+        alascan.params["ligand_param_fname"] = Path(alascan.path, "ligand.param")
+        alascan.params["ligand_top_fname"] = Path(alascan.path, "ligand.top")
+        yield alascan
+
 
 class MockPreviousIO:
     def __init__(self, path):

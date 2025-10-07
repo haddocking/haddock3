@@ -719,7 +719,7 @@ class GRIDScheduler:
 
         target_efficiency = 0.9
         batch_size = self.calculate_optimal_batch_size(
-            N=1,  # each batch had one job
+            N=self.batch_size,
             W=avg_waiting,
             R=avg_running,
             T=target_efficiency,

@@ -304,7 +304,12 @@ class GridInterface(ABC):
         self.update_status()
 
     def retrieve_output(self) -> None:
-        """Retrieve the output files from DIRAC."""
+        """Retrieve the output files from DIRAC.
+
+        The `dirac-wms-job-get-output` command downloads the output sandbox, this means that
+         anything that was specified in the `OutputSandbox` section of the JDL file will be
+         put in the current working directory following the pattern: `working_dir/job_id/`
+        """
         try:
             subprocess.run(
                 ["dirac-wms-job-get-output", str(self.id)],

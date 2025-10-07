@@ -591,10 +591,8 @@ class GRIDScheduler:
 
         # Randomly select that many jobs
         if len(self.workload) >= subset_size:
-            subset_keys = random.sample(list(self.workload), subset_size)
-            for job in self.workload:
-                if job in subset_keys:
-                    job.tag = Tag.PROBING
+            for i in random.sample(range(len(self.workload)), subset_size):
+                self.workload[i].tag = Tag.PROBING
         else:
             log.warning("> Not enough jobs to probe the grid, skipping probing step <")
             self.probing = False

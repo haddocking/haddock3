@@ -1,5 +1,6 @@
 # Changelog
 
+- 2025-10-06: Added possibility to use alascan with ligands - Issue #1411
 - 2025-09-11: Added `grid` mode
 - 2025-09-11: Corrected antibody-antigen notebook - Issue #1383
 - 2025-09-09: Removes undesired directory created when running the uni-tests - Issue #1380

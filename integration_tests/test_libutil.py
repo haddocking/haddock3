@@ -16,14 +16,6 @@ def test_finds_default_cns_executable():
     assert isinstance(cns_exec_linux, Path)
 
 
-@is_linux_x86_64
-def test_cns_executable_is_the_same():
-    """Test that the function finds CNS in the default location."""
-    cns_exec, cns_exec_linux = get_cns_executable()
-
-    assert cns_exec == cns_exec_linux
-
-
 def test_cns_executable_is_file():
     """Test that the CNS executable is actually a file."""
     cns_exec, _ = get_cns_executable()

@@ -9,7 +9,6 @@ import yaml
 from haddock import core_path
 from haddock.libs.libutil import get_cns_executable
 
-
 cns_exec, cns_exec_linux = get_cns_executable()
 
 CONTACT_FCC_EXEC = Path(files("haddock").joinpath("bin/contact_fcc"))  # type: ignore

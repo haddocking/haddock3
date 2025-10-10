@@ -3,18 +3,16 @@
 import collections.abc
 import contextlib
 import os
+import platform
 import re
 import shutil
 import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
+from importlib.resources import files
 from pathlib import Path
 
-from importlib.resources import files
-
-
-import platform
 import haddock
 from haddock import EmptyPath, log
 from haddock.core.exceptions import SetupError
@@ -35,7 +33,6 @@ from haddock.core.typing import (
     Union,
 )
 from haddock.gear.greetings import get_goodbye_help
-
 
 check_subprocess = partial(
     subprocess.run,

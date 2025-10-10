@@ -159,3 +159,5 @@ docs/haddock.modules.base_cns_module.rst
 docs/setup.rst
 docs/clients/*rst
 log
+end-to-end_tests/ab-grid
+end-to-end_tests/prot-grid

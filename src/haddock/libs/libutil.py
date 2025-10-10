@@ -1,4 +1,5 @@
 """General utilities."""
+
 import collections.abc
 import contextlib
 import os
@@ -10,6 +11,11 @@ from copy import deepcopy
 from functools import partial
 from pathlib import Path
 
+from importlib.resources import files
+
+
+import platform
+import haddock
 from haddock import EmptyPath, log
 from haddock.core.exceptions import SetupError
 from haddock.core.typing import (
@@ -62,7 +68,7 @@ def make_list_if_string(item: Union[str, list[str]]) -> list[str]:
 
 
 def transform_to_list(
-    item: Union[Iterable[AnyT], AnyT]
+    item: Union[Iterable[AnyT], AnyT],
 ) -> Union[list[AnyT], tuple[AnyT, ...]]:
     """
     Put `item` into a list if not a list already.
@@ -130,7 +136,7 @@ def remove_dict_keys(d: ParamMap, keys: Container[str]) -> ParamDict:
 
 def cpu_count() -> int:
     """Count number of available CPU for the process.
-    
+
     User suggestion, by https://github.com/EricDeveaud
 
     Note: pid 0 == current process
@@ -142,9 +148,10 @@ def cpu_count() -> int:
     process_ncores : int
         Number of cores allocated to the process pid.
     """
+
     def _cpu_count() -> int:
         """Detect number of cores available.
-        
+
         Returns
         -------
         ncores : int
@@ -159,7 +166,7 @@ def cpu_count() -> int:
                 ncores = int(_process_ncores)
         except AttributeError:
             # If unsucessful, return the number cores detected in the machine
-            # Note: this can happen on MacOS, where the os.sched_getaffinity 
+            # Note: this can happen on MacOS, where the os.sched_getaffinity
             # may not be defined/exist.
             ncores = int(os.cpu_count())
         return ncores
@@ -422,3 +429,56 @@ def recursive_convert_paths_to_strings(params: ParamMapT) -> ParamMapT:
             params[param] = value
 
     return params
+
+
+def get_cns_executable() -> tuple[Path, Path]:
+    """
+    Locate CNS executable and its Linux variant for grid execution.
+
+    Returns:
+        Tuple of (cns_exec, cns_exec_linux) paths
+
+    Raises:
+        SystemExit: If CNS executable cannot be found
+    """
+    # Try default location first
+    cns_exec = Path(files(haddock).joinpath("bin/cns"))  # type: ignore
+
+    if not cns_exec.exists():
+        log.error("CNS executable not found at %s", cns_exec)
+
+        # Fall back to environment variable
+        cns_exec_env = os.environ.get("CNS_EXEC")
+        if cns_exec_env is None:
+            log.error(
+                "Please define the CNS binary location by setting the CNS_EXEC "
+                "environment variable"
+            )
+            sys.exit(1)
+
+        cns_exec = Path(cns_exec_env)
+        if not cns_exec.exists():
+            log.error("CNS executable not found at %s", cns_exec)
+            sys.exit(1)
+
+    # Determine Linux-specific executable for grid usage
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+    current_arch = f"{machine}-{system}"
+
+    if current_arch == "x86_64-linux":
+        cns_exec_linux = cns_exec
+    else:
+        # Look for Linux binary variant
+        cns_exec_linux = cns_exec.with_name(f"{cns_exec.name}_linux")
+
+        if not cns_exec_linux.exists():
+            log.warning(
+                "Current architecture is %s, but grid execution requires "
+                "an x86_64-linux binary",
+                current_arch,
+            )
+            log.warning("Linux CNS binary not found at %s", cns_exec_linux)
+            log.warning("GRID mode will not be available")
+
+    return cns_exec, cns_exec_linux

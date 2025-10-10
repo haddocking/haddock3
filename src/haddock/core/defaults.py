@@ -1,29 +1,16 @@
 """All default parameters used by the framework."""
 
-import os
 import string
-import sys
 from importlib.resources import files
 from pathlib import Path
 
 import yaml
 
-import haddock
-from haddock import core_path, log
+from haddock import core_path
+from haddock.libs.libutil import get_cns_executable
 
 
-cns_exec = Path(files(haddock).joinpath("bin/cns"))  # type: ignore
-if not cns_exec.exists():
-    log.warning("CNS executable not found at %s", cns_exec)
-    _cns_exec = os.environ.get("CNS_EXEC")
-    if _cns_exec is None:
-        log.error(
-            "Please define the location the CNS binary by setting a CNS_EXEC system variable"
-        )
-        sys.exit(1)
-    else:
-        cns_exec = Path(_cns_exec)
-        cns_exec_linux = cns_exec.with_name(cns_exec.name + "_linux")
+cns_exec, cns_exec_linux = get_cns_executable()
 
 CONTACT_FCC_EXEC = Path(files("haddock").joinpath("bin/contact_fcc"))  # type: ignore
 FAST_RMSDMATRIX_EXEC = Path(files("haddock").joinpath("bin/fast-rmsdmatrix"))  # type: ignore

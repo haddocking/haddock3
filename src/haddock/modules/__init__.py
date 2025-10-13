@@ -28,6 +28,7 @@ from haddock.gear.known_cns_errors import find_all_cns_errors
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config, find_incompatible_parameters
 from haddock.libs.libhpc import HPCScheduler
+from haddock.libs.libgrid import GRIDScheduler
 from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO, PDBFile
@@ -430,6 +431,9 @@ def get_engine(
         )
     elif mode == "mpi":
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
+
+    elif mode == "grid":
+        return partial(GRIDScheduler, params=params)  # type: ignore
 
     else:
         available_engines = ("batch", "local", "mpi")

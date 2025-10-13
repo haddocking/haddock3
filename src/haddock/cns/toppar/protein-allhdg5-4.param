@@ -171,6 +171,7 @@ checkversion 1.3
  BOND  CH1E NH1     1000.000 {sd=     0.001}      1.458
  BOND  CH1E NH3     1000.000 {sd=     0.001}      1.486
  BOND  CH1E OH1     1000.000 {sd=     0.001}      1.433 !included 14-apr-99
+ BOND  CH1E OAS     1000.000 {sd=     0.001}      1.433 !for THR-linked glycans
  BOND  CH1E OHP     1000.000 {sd=     0.001}      1.433 
  BOND  CH2E CH2E    1000.000 {sd=     0.001}      1.520
  BOND  CH2E CH2P    1000.000 {sd=     0.001}      1.490
@@ -397,6 +398,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH1E CH1E NH1      500.00 {sd=     0.031}    111.4875
  ANGLe  CH1E CH1E NH3      500.00 {sd=     0.031}    111.4875 
  ANGLe  CH1E CH1E OH1      500.00 {sd=     0.031}    109.600  ! included 14-APR-99
+ ANGLe  CH1E CH1E OAS      500.00 {sd=     0.031}    109.600 !for THR-linked glycans
  ANGLe  CH2E CH1E OH1      500.00 {sd=     0.031}    109.600  
  ANGLe  NH3  CH1E OH1      500.00 {sd=     0.031}    109.600  
  ANGLe  CH1E CH1E OHP      500.00 {sd=     0.031}    109.600  
@@ -431,6 +433,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2  OHP  PP       500.00 {sd=     0.031}    120.0000
  ANGLe  CH1E OHP  PP       500.00 {sd=     0.031}    120.0000
  ANGLe  CH2E OHP  PP       500.00 {sd=     0.031}    120.0000
+ ANGLe  CH2E C    NH1      500.00 {sd=     0.031}    116.1998
  ANGLe  CH2E C    NH2      500.00 {sd=     0.031}    116.4617
  ANGLe  CH2E C    O        500.00 {sd=     0.031}    120.9106
  ANGLe  CH2P C    O        500.00 {sd=     0.031}    120.9106
@@ -515,6 +518,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH3E CH1E NH1      500.00 {sd=     0.031}    110.3844
  ANGLe  CH3E CH1E NH3      500.00 {sd=     0.031}    110.4751
  ANGLe  CH3E CH1E OH1      500.00 {sd=     0.031}    109.300 !included 14-APR-99
+ ANGLe  CH3E CH1E OAS      500.00 {sd=     0.031}    109.300 !for THR-linked glycans
  ANGLe  CH3E CH1E OHP      500.00 {sd=     0.031}    109.300 
  ANGLe  CH3E CH2E HA       500.00 {sd=     0.031}    108.0408
  ANGLe  CH3E CH2E OH1      500.00 {sd=     0.031}    108.0961
@@ -574,6 +578,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  HA   CH1E NH1      500.00 {sd=     0.031}    108.0508
  ANGLe  HA   CH1E NH3      500.00 {sd=     0.031}    108.5074
  ANGLe  HA   CH1E OH1      500.00 {sd=     0.031}    108.6930 !assume like CH2E
+ ANGLe  HA   CH1E OAS      500.00 {sd=     0.031}    108.6930 ! for THR glycosylation
  ANGLe  HA   CH1P OH1      500.00 {sd=     0.031}    108.6930 !assume like CH2E
  ANGLe  HA   CH1E OHP      500.00 {sd=     0.031}    108.6930 !assume like CH2E
  ANGLe  HA   CH2E HA       500.00 {sd=     0.031}    109.4074
@@ -916,6 +921,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CH3E CH3E CH1E HA        500.00 {sd=     0.031}    0    -65.0462
  IMPRoper  CH3E CH3E CH2E HA        500.00 {sd=     0.031}    0    -65.1424
  IMPRoper  CH3E OH1  CH1E HA        500.00 {sd=     0.031}    0     66.1521
+ IMPRoper  CH3E OAS  CH1E HA        500.00 {sd=     0.031}    0     66.1521 !for THR glycosylation
  IMPRoper  CH3E OHP  CH1E HA        500.00 {sd=     0.031}    0     66.1521
  IMPRoper  CH2P OHP  CH1P HA        500.00 {sd=     0.031}    0     66.1521  ! To change sign if stereochemistry is wrong
  IMPRoper  CH2P OHP  CH1E HA        500.00 {sd=     0.031}    0     66.1521  ! To change sign if stereochemistry is wrong
@@ -1154,6 +1160,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  CH2E CH2E SE   CH3E   2.00     3  0.0000 ! for MSE
  DIHEdral  CH3E CH1E CH1E NH1    2.00     3  0.0000
  DIHEdral  CH3E CH1E CH1E OH1    2.00     3  0.0000
+ DIHEdral  CH1E CH1E OAS  CCE    2.00     3  0.0000 !for THR-linked glycans
  DIHEdral  CH2E CH2E CH1E OH1    2.00     3  0.0000
  DIHEdral  CH3E CH1E CH2E CH1E   2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E C      2.00     3  0.0000
@@ -1167,6 +1174,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  NH1  CH1E CH2E OH1    2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E OH1C   2.00     3  0.0000 ! for covalent Serine (SEC)
  DIHEdral  NH1  CH1E CH1E OH1    2.00     3  0.0000 !added 14-APR-99
+ DIHEdral  NH1  CH1E CH1E OAS    2.00     3  0.0000 !for THR-linked glycans
  DIHEdral  NH1  CH1E CH2E OHP    2.00     3  0.0000
  DIHEdral  NH1  CH1E CH1E OHP    2.00     3  0.0000 
  DIHEdral  NH1  CH1E CH2E S      2.00     3  0.0000

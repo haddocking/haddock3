@@ -612,6 +612,7 @@ class CAPRI:
             align_func = get_align(
                 method=self.params["alignment_method"],
                 lovoalign_exec=self.params["lovoalign_exec"],
+                alig_fname=self.params["alig_fname"],
             )
             self.model2ref_numbering, self.model2ref_chain_dict = align_func(
                 self.reference, self.model, self.path

@@ -11,6 +11,7 @@ Main functions
 * :py:func:`pdb2fastadic`
 * :py:func:`get_atoms`
 * :py:func:`get_align`
+* :pt:func:`align_custom`
 * :py:func:`align_struct`
 * :py:func:`align_seq`
 * :py:func:`make_range`
@@ -770,7 +771,7 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
 
 
 def get_align(
-    method: str, lovoalign_exec: FilePath
+    method: str, lovoalign_exec: FilePath, alig_fname: Optional[FilePath] = None
 ) -> partial[dict[str, dict[int, int]]]:
     """
     Get the alignment function.
@@ -783,15 +784,25 @@ def get_align(
     lovoalign_exec : str
         Path to the lovoalign executable.
 
+    alig_fname : str
+        Path to the custom alignment file, optional
+
     Returns
     -------
     align_func : functools.partial
         desired alignment function
     """
-    if method == "structure":
+    if alig_fname:
+        if not Path(alig_fname).exists():
+            raise FileNotFoundError(f"Custom alignment file {alig_fname} not found")
+        align_func = partial(align_custom, custom_alig_file = Path(alig_fname))
+
+    elif method == "structure":
         align_func = partial(align_strct, lovoalign_exec=lovoalign_exec)
+    
     elif method == "sequence":
         align_func = partial(align_seq)
+    
     else:
         available_alns = ("sequence", "structure")
         raise ValueError(
@@ -799,6 +810,73 @@ def get_align(
             f"Available options are {', '.join(available_alns)}"
         )
     return align_func
+
+
+def align_custom(
+    reference: PDBFile,
+    model: PDBFile,
+    output_path: FilePath,
+    custom_alig_file: FilePath,
+) -> tuple[dict[str, dict[int, int]], dict[str, str]]: 
+    """
+    Parse custom alignment file to extract numbering relationship.
+
+        Parameters
+    ----------
+    reference : :py:class:`haddock.libs.libontology.PDBFile`
+
+    model : :py:class:`haddock.libs.libontology.PDBFile`
+
+    output_path : Path
+
+    custom_alig_file : Path 
+        Path to the custom .izone alignment file
+
+    Returns
+    -------
+    numbering_dic : dict
+        dictionary of residue mapping (one per chain)
+
+    model2ref_chain_dict : dict 
+        dictionary of chain mapping
+
+    """
+    numbering_dic: dict[str, dict[int, int]] = {}
+    model2ref_chain_dict: dict[str, str] = {}
+
+    # read align file, skip everything that is not 'ZONE'
+    with open(custom_alig_file, 'r') as f:
+        zone_lines = (line.strip() for line in f if line.strip().startswith('ZONE'))
+
+        for line in zone_lines:
+            if len(line.split()) <2:
+                log.warning(f"Unexpected {line} in {custom_alig_file}, skipping")
+                continue
+        
+            mapping = line.split()[1]
+            if ':' not in mapping:
+                log.warning(f"Missing colon in mapping: {line}")
+                continue
+
+            # constructs dictionaries
+            try:
+                model_side, ref_side = mapping.split(':')
+                model_chain = model_side[0]
+                model_resid = int(model_side[1:])
+                ref_chain = ref_side[0]
+                ref_resid = int(ref_side[1:])
+
+                if ref_chain not in numbering_dic:
+                    numbering_dic[ref_chain] = {}
+                    
+                numbering_dic[ref_chain][model_resid] = ref_resid
+                model2ref_chain_dict[model_chain] = ref_chain
+
+            except (ValueError, IndexError) as e:
+                log.warning(f"Could not parse line: {line} ({e})")
+                continue
+
+    return numbering_dic, model2ref_chain_dict
 
 
 def align_strct(

@@ -80,17 +80,21 @@
              
   <h1>Source code for haddock.libs.libutil</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;General utilities.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections.abc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">haddock</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -110,7 +114,6 @@
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.greetings</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_goodbye_help</span>
-
 
 <span class="n">check_subprocess</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
@@ -151,7 +154,7 @@
 <div class="viewcode-block" id="transform_to_list">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.transform_to_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform_to_list</span><span class="p">(</span>
-    <span class="n">item</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">AnyT</span><span class="p">]</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="n">AnyT</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AnyT</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AnyT</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Put `item` into a list if not a list already.</span>
@@ -231,7 +234,7 @@
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.cpu_count">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cpu_count</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Count number of available CPU for the process.</span>
-<span class="sd">    </span>
+
 <span class="sd">    User suggestion, by https://github.com/EricDeveaud</span>
 
 <span class="sd">    Note: pid 0 == current process</span>
@@ -243,9 +246,10 @@
 <span class="sd">    process_ncores : int</span>
 <span class="sd">        Number of cores allocated to the process pid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_cpu_count</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Detect number of cores available.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ncores : int</span>
@@ -260,7 +264,7 @@
                 <span class="n">ncores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_process_ncores</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="c1"># If unsucessful, return the number cores detected in the machine</span>
-            <span class="c1"># Note: this can happen on MacOS, where the os.sched_getaffinity </span>
+            <span class="c1"># Note: this can happen on MacOS, where the os.sched_getaffinity</span>
             <span class="c1"># may not be defined/exist.</span>
             <span class="n">ncores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ncores</span>
@@ -548,6 +552,62 @@
 
     <span class="k">return</span> <span class="n">params</span></div>
 
+
+
+<div class="viewcode-block" id="get_cns_executable">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.get_cns_executable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cns_executable</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate CNS executable and its Linux variant for grid execution.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (cns_exec, cns_exec_linux) paths</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        SystemExit: If CNS executable cannot be found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Try default location first</span>
+    <span class="n">cns_exec</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">files</span><span class="p">(</span><span class="n">haddock</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;bin/cns&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cns_exec</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CNS executable not found at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cns_exec</span><span class="p">)</span>
+
+        <span class="c1"># Fall back to environment variable</span>
+        <span class="n">cns_exec_env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CNS_EXEC&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cns_exec_env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Please define the CNS binary location by setting the CNS_EXEC &quot;</span>
+                <span class="s2">&quot;environment variable&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">cns_exec</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cns_exec_env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cns_exec</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CNS executable not found at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cns_exec</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Determine Linux-specific executable for grid usage</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">machine</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">current_arch</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">system</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">current_arch</span> <span class="o">==</span> <span class="s2">&quot;x86_64-linux&quot;</span><span class="p">:</span>
+        <span class="n">cns_exec_linux</span> <span class="o">=</span> <span class="n">cns_exec</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Look for Linux binary variant</span>
+        <span class="n">cns_exec_linux</span> <span class="o">=</span> <span class="n">cns_exec</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cns_exec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_linux&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cns_exec_linux</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Current architecture is </span><span class="si">%s</span><span class="s2">, but grid execution requires &quot;</span>
+                <span class="s2">&quot;an x86_64-linux binary&quot;</span><span class="p">,</span>
+                <span class="n">current_arch</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Linux CNS binary not found at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cns_exec_linux</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;GRID mode will not be available&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cns_exec</span><span class="p">,</span> <span class="n">cns_exec_linux</span></div>
+
 </pre></div>
 
            </div>
@@ -558,7 +618,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 10, 2025.
+      <span class="lastupdated">Last updated on Oct 14, 2025.
       </span></p>
   </div>
 

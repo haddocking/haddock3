@@ -155,8 +155,8 @@ alig_fname:
   default: ''
   type: file
   title: Alignment filename
-  short description: Filename of the file containing alignment information, izone format. 
-  long description: Alignment file in izone format containing the mapping between residues. E.g. "ZONE A1:A5" means that 
+  short: Filename of the file containing alignment information, izone format. 
+  long: Alignment file in izone format containing the mapping between residues. E.g. "ZONE A1:A5" means that 
     residue 1 of chain A of the model corresponds to residue 5 of chain A or the reference. 
     Note that if this parameter is provided, the 'alignment_method' parameter is ignored. 
   group: analysis

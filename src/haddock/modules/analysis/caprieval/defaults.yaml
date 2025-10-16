@@ -159,6 +159,7 @@ alig_fname:
   long: Alignment file in izone format containing the mapping between residues. E.g. "ZONE A1:A5" means that 
     residue 1 of chain A of the model corresponds to residue 5 of chain A or the reference. 
     Note that if this parameter is provided, the 'alignment_method' parameter is ignored. 
+    Note that all caprieval metrics will be calculated using exclusively the chains and residues f srom izone file. 
   group: analysis
   explevel: easy
 

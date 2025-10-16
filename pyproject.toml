@@ -96,9 +96,6 @@ haddock3-re = "haddock.clis.cli_re:maincli"
 haddock3-restraints = "haddock.clis.cli_restraints:maincli"
 haddock-restraints = "haddock.clis.wrapper_haddock_restraints:main"
 
-[tool.coverage.run]
-source = ["haddock3"]
-
 [tool.setuptools]
 packages = ["haddock"]
 package-dir = { "" = "src" }

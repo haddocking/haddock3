@@ -161,7 +161,7 @@ alig_fname:
     Note that if this parameter is provided, the 'alignment_method' parameter is ignored. 
     Note that all caprieval metrics will be calculated using exclusively the chains and residues f srom izone file. 
   group: analysis
-  explevel: easy
+  explevel: expert
 
 alignment_method:
   default: sequence

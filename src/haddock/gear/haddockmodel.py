@@ -1,6 +1,5 @@
 """Represent an Haddock model."""
 
-
 from haddock.core.typing import FilePath
 
 
@@ -9,6 +8,7 @@ class HaddockModel:
 
     def __init__(self, pdb_f: FilePath) -> None:
         self.energies = self._load_energies(pdb_f)
+        self.interface_energies = self._load_per_interface_energies(pdb_f)
 
     @staticmethod
     def _load_energies(pdb_f: FilePath) -> dict[str, float]:
@@ -50,14 +50,75 @@ class HaddockModel:
 
         return energy_dic
 
+    @staticmethod
+    def _load_per_interface_energies(
+            pdb_f: FilePath,
+            ) -> dict[str, dict[str, float]]:
+        """Read a pdb file and parse per interface scores.
+
+        Parameters
+        ----------
+        pdb : PDBFile
+            A PDBFile object.
+
+        Returns
+        -------
+        interfaces_scores : dict[str, dict[str, float]]
+            Dictionary holding per interfaces scores.
+        """
+        header = None
+        interfaces_scores: dict[str, dict[str, float]] = {}
+        with open(pdb_f, "r") as filin:
+            for _ in filin:
+                if _.startswith("REMARK Interface"):
+                    s_ = _.strip().split()[2:]
+                    # Extract header
+                    if not header:
+                        header = s_
+                    # Extract data
+                    else:
+                        chain1 = s_[header.index("Chain1")]
+                        chain2 = s_[header.index("Chain2")]
+                        haddockscore = float(s_[header.index("HADDOCKscore")])
+                        evdw = float(s_[header.index("Evdw")])
+                        eelec = float(s_[header.index("Eelec")])
+                        edesol = float(s_[header.index("Edesol")])
+                        bsa = float(s_[header.index("BSA")])
+                        # Combine chains together
+                        chains_key = f"{chain1}_{chain2}"
+                        # Hold data
+                        interfaces_scores[chains_key] = {
+                            "HADDOCKscore": haddockscore,
+                            "vdw": evdw,
+                            "elec": eelec,
+                            "desolv": edesol,
+                            "bsa": bsa,
+                            }
+        return interfaces_scores
+
     def calc_haddock_score(self, **weights: float) -> float:
         """Calculate the haddock score based on the weights and energies."""
-        weighted_terms: list[float] = []
-        for key, weight in weights.items():
-            component_id = key.split('_')[1]
-            value = self.energies[component_id]
-            weighted_terms.append(value * weight)
+        return self.calc_score(self.energies, **weights)
 
-        # the haddock score is simply the sum of the weighted terms
-        haddock_score = sum(weighted_terms)
-        return haddock_score
+    @staticmethod
+    def calc_score(energies: dict[str, float], **weights: float) -> float:
+        """Compute sum of weighted energy terms.
+
+        Parameters
+        ----------
+        energies : dict[str, float]
+            Dict of energy values for each energy term
+
+        Returns
+        -------
+        weighted_score : float
+            Sum of weighted energy terms
+        """
+        weighted_score: float = 0.0
+        for weight_name, weight_value in weights.items():
+            component_id = weight_name.split("_")[1]
+            try:
+                weighted_score += energies[component_id] * weight_value
+            except KeyError:
+                continue
+        return weighted_score

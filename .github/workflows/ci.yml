@@ -25,7 +25,7 @@ jobs:
       checks: write
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
       fail-fast: false
 
     steps:
@@ -86,7 +86,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: install system dependencies
         run: |

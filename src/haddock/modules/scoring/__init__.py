@@ -1,9 +1,9 @@
 """HADDOCK3 modules to score models."""
 import pandas as pd
 
-from haddock.core.typing import FilePath, Path, Any
+from haddock.core.typing import FilePath, Optional, Path, Any
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.modules import BaseHaddockModule, PDBFile
+from haddock.modules import BaseHaddockModule
 from haddock.modules.base_cns_module import BaseCNSModule
 
 
@@ -148,12 +148,10 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         ----------
         interface_combinations : list[str]
             Input list of chains to be considered.
-            Each list entry can be composed of multiple coma
-            separated chains, to be considered as one.
+            Each list entry must be composed of two chains separated by coma.
             e.g.: 
-            ["A", "B"]      -> only consider the score interface between A and B
-            ["A,B", "C"]    -> consider the interface scores between A,C and B,C
-            ["A", "B", "C"] -> consider interfaces between A,C and A,C and B,C
+            []              -> Consider all non-redundant chain pairs
+            ["A,H", "A,L"]  -> Consider only the interface scores between A,H and A,L
 
         Returns
         -------
@@ -194,7 +192,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
 
     @staticmethod
     def build_interface_sets_combinations(
-            interface_combinations: list[str] | None,
+            interface_combinations: list[str],
             ) -> list[str]:
         """Build desired combinatation of interfaces.
 
@@ -202,54 +200,29 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         ----------
         interface_combinations : list[str] | None
             Input list of chains to be considered.
-            Each list entry can be composed of multiple coma
-            separated chains, to be considered as one.
+            Each list entry must be composed of two chains separated by coma.
             e.g.: 
-            ["A", "B"]      -> only consider the score interface between A and B
-            ["A,B", "C"]    -> consider the interface scores between A,C and B,C
-            ["A", "B", "C"] -> consider interfaces between A,C and A,C and B,C
+            []              -> Consider all non-redundant chain pairs
+            ["A,H", "A,L"]  -> Consider only the interface scores between A,H and A,L
 
         Returns
         -------
         combinations : list[str]
             Unpacked list of interface combinations to consider.
-            e.g.:
-            ["A", "B"]      -> ["A_B"]
-            ["A,B", "C"]    -> ["A_C", "B_C"]
-            ["A", "B", "C"] -> ["A_B", "A_C", "B_C"]
+            ["A,H", "A,L"]  -> ["A_H", "A_L"]
         """
-        combinations: list[str] = []
-        # Check if scores must be updated
-        if interface_combinations is None:
-            return combinations
-        elif len(interface_combinations) < 2:
-            msg = (
-                "Not able to perform scoring by chain combinations if number "
-                "of selected chains < 2 "
-                f"(current {len(interface_combinations)} "
-                f"-> {interface_combinations})"
-            )
-            print(msg)
-            return combinations
-
-        # Loop over selections
-        for j, chains_i in enumerate(interface_combinations[:-1], start=1):
-            # Second loop over selections (but not itself)
-            for chains_j in interface_combinations[j:]:
-                # Loop over chains in each selection
-                for chain_i in chains_i.split(","):
-                    for chain_j in chains_j.split(","):
-                        # Create a combination
-                        # Strip the chains to make sure no spaces added by user
-                        chain_comb = f"{chain_i.strip()}_{chain_j.strip()}"
-                        combinations.append(chain_comb)
+        combinations: list[str] = [
+            "_".join([c.strip() for c in chains.split(",")])
+            for chains in interface_combinations
+            if chains.count(",") == 1  # ensures input only contains pairs
+        ]
         return combinations
 
     @staticmethod
     def compute_interfaces_score(
             interface_energies: dict[str, dict[str, float]],
             interface_sets_combinations: list[str],
-            ) -> float | None:
+            ) -> Optional[float]:
         """Compute the sum of selected interface haddock score.
 
         Parameters

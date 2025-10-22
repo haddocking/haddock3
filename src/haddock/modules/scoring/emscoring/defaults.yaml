@@ -15,18 +15,18 @@ interface_combinations:
   minitems: 0
   maxitems: 20
   title: Chains to be scored.
-  short: List of chains to be scored. If empty/unspecified, all inter-chains
-   contacts will be considered for the final prediction.
+  short: List of chains to be scored. Use this parameter to provide a list of 
+   chain pairs (coma separated) that should be considered for the calculation.
+   If empty/unspecified, all inter-chains contacts will be considered
+   for the final prediction.
   long: List of chains to be scored. If empty/unspecified, all inter-chains
    contacts will be considered for the final prediction. In specific cases,
    for example antibody-antigen complexes, some chains should be considered
-   as a single molecule. Use the chains parameter to provide a list of chains
-   that should be considered for the calculation. Use commas to include
-   multiple chains as part of a single group.
-   ["A", "B"]      => Contacts calculated (only) between chains A and B.
-   ["A,B", "C"]    => Contacts calculated (only) between chains A and C; and B and C.
-   ["A", "B", "C"] => Contacts calculated (only) between chains A and B; B and C; and A and C.
-  group: scoring
+   as a single molecule. Use this parameter to provide a list of chain pairs
+   (separated by coma) that should be considered for the calculation.
+   []             => Compute all interface scores
+   ["A,H", "A,L"] => Compute sum of per-interface scores between chains A and H; A and L
+  group: 'scoring'
   explevel: expert
 w_air:
   default: 0.0

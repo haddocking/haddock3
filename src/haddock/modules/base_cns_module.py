@@ -1,6 +1,7 @@
 """Functionalities related to CNS modules."""
 import os
 import shutil
+import tarfile
 from pathlib import Path
 
 from haddock import log
@@ -9,7 +10,6 @@ from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.typing import Any, FilePath, Optional, Union
 from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.libs.libio import working_directory
-from haddock.libs.libutil import sort_numbered_paths
 from haddock.modules import BaseHaddockModule
 
 
@@ -129,26 +129,34 @@ class BaseCNSModule(BaseHaddockModule):
             list of ambig_fname files to be used by the CNS module
         """
         ambig_fname: Optional[Path] = self.params["ambig_fname"]
-        ambig_fnames = None
+        ambig_fnames: Union[list[FilePath], None] = None
         if ambig_fname:
             if ambig_fname.name.endswith("tgz"):
-                exp_name = ambig_fname.name.split(".tbl.tgz")[0]
-                exp_dir = ambig_fname.parent
-                self.log(f"Searching for {exp_name}*tbl files in {exp_dir}")
-                path = ambig_fname.parent
-                ambig_fnames = list(path.glob(f"{exp_name}*tbl"))
+                self.log(f"Searching for tbl files in {ambig_fname}")
+                basepath = ambig_fname.parent
+                # Open archive to retrieve members
+                with tarfile.open(ambig_fname, mode="r:gz") as targz:
+                    # Get filenames
+                    tbl_files = targz.getmembers()
+                # At that stage, they should be already extracted
+                # and we simply need to generate the full paths
+                _ambig_fnames = [Path(basepath, tbl.name) for tbl in tbl_files]
+                # Make sure they exists
+                ambig_fnames = [p for p in _ambig_fnames if p.exists()]
                 # abort execution if no files are found
                 if len(ambig_fnames) == 0:
-                    raise Exception(
-                        f"No {exp_name}*tbl files found in {exp_dir}"
-                        )
+                    raise Exception(f"No tbl files found in {ambig_fname} !")
                 self.log(f"Found {len(ambig_fnames)} compatible tbl files")
-                ambig_fnames = sort_numbered_paths(*ambig_fnames)
+                # Sort them to make sure we get the same order every time
+                ambig_fnames.sort()
         else:
             if self.params["previous_ambig"]:
                 # check if there is restraint information in all models
                 if None in prev_ambig_fnames:
-                    raise Exception("'previous_ambig' option selected but no available restraint information in models")  # noqa: E501
+                    raise Exception(
+                        "'previous_ambig' option selected but no available "
+                        "restraint information in models"
+                        )
                 self.log("Using previously defined restraints")
                 ambig_fnames = prev_ambig_fnames.copy()
         return ambig_fnames

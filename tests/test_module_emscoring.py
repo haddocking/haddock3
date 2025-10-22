@@ -1,6 +1,5 @@
 """Test the emscoring module."""
 
-import os
 import tempfile
 from pathlib import Path
 

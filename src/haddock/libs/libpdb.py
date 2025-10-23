@@ -169,9 +169,10 @@ def sanitize(
     custom_topology: Optional[FilePath] = None,
 ) -> Union[FilePathT, Path]:
     """Sanitize a PDB file."""
+    to_keep = _to_keep.copy()
     if custom_topology:
         custom_res_to_keep = get_supported_residues(custom_topology)
-        _to_keep.extend(custom_res_to_keep)
+        to_keep.extend(custom_res_to_keep)
 
     good_lines: list[str] = []
     with open(pdb_file_path) as input_handler:
@@ -183,7 +184,7 @@ def sanitize(
                     line = line.replace(tag, new_tag)
                 # check if this residue is known
                 res = line[17:20].strip()
-                if res and res in _to_keep:
+                if res and res in to_keep:
                     good_lines.append(line)
         # Terminate file with an END statement
         if len(good_lines) > 0 and good_lines[-1] != "END":

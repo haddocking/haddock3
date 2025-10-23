@@ -205,7 +205,7 @@ class HaddockModule(BaseCNSModule):
         ens_dic: dict[int, dict[int, str]] = {}
         origi_ens_dic: dict[int, dict[int, str]] = {}
         # get the all-atom psf files in a list
-        psf_files = []
+        psf_files: dict[int, dict[int, str]] = {}#[]
 
         force_field = self.params["cgffversion"]
 
@@ -220,6 +220,12 @@ class HaddockModule(BaseCNSModule):
                 libpdb.split_ensemble(Path(mol.file_name), dest=Path.cwd(),)[0]
                 for mol in molecule
             ]
+
+            # Get psf files for aa topology
+            psf_files[i] = [
+                    Path(mol.as_posix()[:-4]+".psf") 
+                    for mol in splited_models
+                    ]
 
             # get the MD5 hash of each model
             ens_dic[i] = [
@@ -237,7 +243,6 @@ class HaddockModule(BaseCNSModule):
             for task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
-                psf_files.append(Path(model.as_posix()[:-4]+".psf"))
 
                 if self.params["ligand_top_fname"]:
                     custom_top = self.params["ligand_top_fname"]
@@ -310,7 +315,7 @@ class HaddockModule(BaseCNSModule):
                 processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
 
                 topology = TopologyFile(processed_topology, path=".")
-                psf_file_uniq = psf_files[i-1].as_posix().split('/') 
+                psf_file_uniq = psf_files[i][j].as_posix().split('/')
                 aa_topo_path = psf_file_uniq[0] + "/" + psf_file_uniq[1]
                 aa_topology = TopologyFile(psf_file_uniq[2], path=aa_topo_path)
                 pdb = PDBFile(

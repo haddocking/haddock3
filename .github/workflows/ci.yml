@@ -45,15 +45,13 @@ jobs:
 
       - name: run unit tests
         run: >-
-          pytest --random-order tests/
-          --cov --cov-report=term-missing --cov-append
-          --hypothesis-show-statistics
+          pytest -v --random-order tests/
+          --cov --cov-append
 
       - name: run integration tests
         run: >-
-          pytest --random-order integration_tests/
-          --cov --cov-report=term-missing --cov-append
-          --hypothesis-show-statistics
+          pytest -v --random-order integration_tests/
+          --cov --cov-append
 
       - name: generate coverage report
         run: |

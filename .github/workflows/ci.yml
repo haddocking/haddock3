@@ -72,7 +72,7 @@ jobs:
           sphinx-build docs haddock3-docs
 
   coverage-upload:
-    needs: tests
+    needs: ci
     runs-on: ubuntu-latest
     if: >-
       ${{ github.event_name != 'pull_request' ||

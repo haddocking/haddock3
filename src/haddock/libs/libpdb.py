@@ -1,6 +1,7 @@
 """Parse molecular structures in PDB format."""
 
 import os
+from copy import deepcopy
 from functools import partial
 from pathlib import Path
 
@@ -20,9 +21,8 @@ from haddock.core.typing import (
     TypeVar,
     Union,
 )
-from haddock.libs.libio import working_directory, PDBFile
+from haddock.libs.libio import PDBFile, working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
-
 
 slc_record = slice(0, 6)
 slc_serial = slice(6, 11)
@@ -169,7 +169,7 @@ def sanitize(
     custom_topology: Optional[FilePath] = None,
 ) -> Union[FilePathT, Path]:
     """Sanitize a PDB file."""
-    to_keep = _to_keep.copy()
+    to_keep = deepcopy(_to_keep)
     if custom_topology:
         custom_res_to_keep = get_supported_residues(custom_topology)
         to_keep.extend(custom_res_to_keep)
@@ -305,9 +305,7 @@ def read_RECORD_section(
     return chainids
 
 
-read_chainids = partial(
-    read_RECORD_section, section_slice=slc_chainid, func=list
-)  # noqa: E501
+read_chainids = partial(read_RECORD_section, section_slice=slc_chainid, func=list)
 read_segids = partial(read_RECORD_section, section_slice=slc_segid, func=list)
 
 
@@ -442,10 +440,7 @@ def add_TER_on_chain_breaks(
         "O3'",
         "O5'",  # for DNA/RNA
     )
-    current_resid: tuple[str, str] = (
-        "-",
-        "-",
-    )
+    current_resid: tuple[str, str] = ("-", "-")
     previous_residue: residueT = {"lines": []}
     current_residue: residueT = {"lines": []}
     # Read input file

@@ -80,7 +80,9 @@
              
   <h1>Source code for haddock.libs.libpdb</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Parse molecular structures in PDB format.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -99,10 +101,9 @@
     <span class="n">Optional</span><span class="p">,</span>
     <span class="n">TypeVar</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">working_directory</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libio</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">working_directory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_result_or_same_in_list</span><span class="p">,</span> <span class="n">sort_numbered_paths</span>
-
 
 <span class="n">slc_record</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 <span class="n">slc_serial</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
@@ -146,15 +147,15 @@
 <span class="sd">        Formatted atom name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># string formats for atom name</span>
-    <span class="n">_3</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">{:&lt;3s}</span><span class="s1">&#39;</span>
-    <span class="n">_4</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:&lt;4s}</span><span class="s1">&#39;</span>
+    <span class="n">_3</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">{:&lt;3s}</span><span class="s2">&quot;</span>
+    <span class="n">_4</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;4s}</span><span class="s2">&quot;</span>
     <span class="c1"># len of element, atom formatting string</span>
     <span class="c1"># anything outside this is an error</span>
     <span class="n">_atom_format_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c1"># len of element: {len of atom name}</span>
         <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">_3</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">_3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">_3</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="n">_4</span><span class="p">},</span>
         <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">_4</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">_4</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">_4</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="n">_4</span><span class="p">},</span>
-        <span class="p">}</span>
+    <span class="p">}</span>
 
     <span class="n">atm</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="n">len_atm</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span>
@@ -163,7 +164,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_atom_format_dict</span><span class="p">[</span><span class="n">len_ele</span><span class="p">][</span><span class="n">len_atm</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Could not format this atom:type -&gt; </span><span class="si">{</span><span class="n">atom</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Could not format this atom:type -&gt; </span><span class="si">{</span><span class="n">atom</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="c1"># raising KeyError assures that no context in IDPConfGen</span>
         <span class="c1"># will handle it. @joaomcteixeira never handles pure Python</span>
         <span class="c1"># exceptions, those are treated as bugs.</span>
@@ -194,7 +195,7 @@
     <span class="s2">&quot;HIE&quot;</span><span class="p">:</span> <span class="s2">&quot;HIS&quot;</span><span class="p">,</span>
     <span class="s2">&quot;WAT &quot;</span><span class="p">:</span> <span class="s2">&quot;TIP3&quot;</span><span class="p">,</span>
     <span class="s2">&quot; 0.00969&quot;</span><span class="p">:</span> <span class="s2">&quot; 0.00   &quot;</span><span class="p">,</span>
-    <span class="p">}</span>
+<span class="p">}</span>
 
 <span class="c1"># Get list of supported residues to keep when pre-processing</span>
 <span class="n">_to_keep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">supported_residues</span><span class="p">)</span>
@@ -202,8 +203,7 @@
 
 <div class="viewcode-block" id="split_ensemble">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.split_ensemble">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">split_ensemble</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                   <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_ensemble</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Split a multimodel PDB file into different structures.</span>
 
@@ -251,8 +251,7 @@
 
 <div class="viewcode-block" id="swap_segid_chain">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.swap_segid_chain">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">swap_segid_chain</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-                     <span class="n">new_pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">swap_segid_chain</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">new_pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add to the Chain ID column the found Segid.&quot;&quot;&quot;</span>
     <span class="n">abs_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_handler</span><span class="p">:</span>
@@ -266,13 +265,15 @@
 <div class="viewcode-block" id="sanitize">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.sanitize">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sanitize</span><span class="p">(</span>
-        <span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePathT</span><span class="p">,</span>
-        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">custom_topology</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">FilePathT</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+    <span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePathT</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">custom_topology</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">FilePathT</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sanitize a PDB file.&quot;&quot;&quot;</span>
+    <span class="n">to_keep</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">_to_keep</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">custom_topology</span><span class="p">:</span>
         <span class="n">custom_res_to_keep</span> <span class="o">=</span> <span class="n">get_supported_residues</span><span class="p">(</span><span class="n">custom_topology</span><span class="p">)</span>
-        <span class="n">_to_keep</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">custom_res_to_keep</span><span class="p">)</span>
+        <span class="n">to_keep</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">custom_res_to_keep</span><span class="p">)</span>
 
     <span class="n">good_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_handler</span><span class="p">:</span>
@@ -284,7 +285,7 @@
                     <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">new_tag</span><span class="p">)</span>
                 <span class="c1"># check if this residue is known</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">res</span> <span class="ow">and</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">_to_keep</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">res</span> <span class="ow">and</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">to_keep</span><span class="p">:</span>
                     <span class="n">good_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="c1"># Terminate file with an END statement</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good_lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">good_lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;END&quot;</span><span class="p">:</span>
@@ -292,9 +293,7 @@
 
     <span class="c1"># Check if anything has been kept from this file</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">SetupError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;No coordinates kept after sanitzing </span><span class="si">{</span><span class="n">pdb_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">SetupError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No coordinates kept after sanitzing </span><span class="si">{</span><span class="n">pdb_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_handler</span><span class="p">:</span>
@@ -311,8 +310,9 @@
 
 <div class="viewcode-block" id="identify_chainseg">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.identify_chainseg">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">identify_chainseg</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-                      <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identify_chainseg</span><span class="p">(</span>
+    <span class="n">pdb_file_path</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return segID OR chainID.&quot;&quot;&quot;</span>
     <span class="n">segids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">chains</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -332,11 +332,11 @@
                     <span class="n">segids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">segid</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">chainid</span><span class="p">:</span>
                     <span class="n">chains</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chainid</span><span class="p">)</span>
-                
+
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">segid</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">chainid</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Could not identify chainID or segID in pdb </span><span class="si">{</span><span class="n">pdb_file_path</span><span class="si">}</span><span class="s2">, line </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
+                    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
         <span class="n">segids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">segids</span><span class="p">)))</span>
@@ -359,15 +359,14 @@
     <span class="n">new_models</span> <span class="o">=</span> <span class="n">get_result_or_same_in_list</span><span class="p">(</span>
         <span class="n">get_pdb_file_suffix_variations</span><span class="p">,</span>
         <span class="n">pdb_file_path</span><span class="p">,</span>
-        <span class="p">)</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">new_models</span></div>
 
 
 
 <div class="viewcode-block" id="get_pdb_file_suffix_variations">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.get_pdb_file_suffix_variations">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_pdb_file_suffix_variations</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-                                   <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pdb_file_suffix_variations</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List suffix variations of a PDB file in the current path.</span>
 
@@ -397,9 +396,10 @@
 <div class="viewcode-block" id="read_RECORD_section">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.read_RECORD_section">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_RECORD_section</span><span class="p">(</span>
-        <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">section_slice</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">lines</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">section_slice</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a set of observations from a section of the ATOM line.</span>
 
@@ -412,22 +412,23 @@
     <span class="n">chainids</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
         <span class="n">the_line</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
-        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;ATOM&#39;</span><span class="p">,</span> <span class="s1">&#39;HETATM&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">the_line</span> <span class="o">:=</span> <span class="n">line</span><span class="p">[</span><span class="n">section_slice</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>  <span class="c1"># noqa: E501</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="p">(</span><span class="n">the_line</span> <span class="o">:=</span> <span class="n">line</span><span class="p">[</span><span class="n">section_slice</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>  <span class="c1"># noqa: E501</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">chainids</span></div>
 
 
 
-<span class="n">read_chainids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_chainid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+<span class="n">read_chainids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_chainid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 <span class="n">read_segids</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">read_RECORD_section</span><span class="p">,</span> <span class="n">section_slice</span><span class="o">=</span><span class="n">slc_segid</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="add_TER_on_chain_breaks">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.add_TER_on_chain_breaks">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_TER_on_chain_breaks</span><span class="p">(</span>
-        <span class="n">input_pdb</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-        <span class="n">output_pdb</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">input_pdb</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+    <span class="n">output_pdb</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Detect chain breaks and add TER statements between them.</span>
 
 <span class="sd">    Parameters</span>
@@ -438,7 +439,7 @@
 <span class="sd">        Output PDB filepath with added TER statements between chain breaks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Residue</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span>
-    <span class="n">residueT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;residueT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Residue</span><span class="p">)</span>
+    <span class="n">residueT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;residueT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Residue</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">euclidean_dist</span><span class="p">(</span><span class="n">atm1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">atm2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute Euclidean distances between two points.</span>
@@ -478,7 +479,7 @@
         <span class="n">backbone_dists</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;protein&quot;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>  <span class="c1"># very loose !</span>
             <span class="s2">&quot;DNA&quot;</span><span class="p">:</span> <span class="mf">4.5</span><span class="p">,</span>
-            <span class="p">}</span>
+        <span class="p">}</span>
         <span class="c1"># Detect type of residues</span>
         <span class="c1"># DNA case</span>
         <span class="k">try</span><span class="p">:</span>
@@ -510,7 +511,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">write_residue</span><span class="p">(</span><span class="n">fhandler</span><span class="p">,</span> <span class="n">residue_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes residues line to file.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fhandler : _type_</span>
@@ -520,12 +521,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">residue_lines</span><span class="p">:</span>
             <span class="n">fhandler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">write_previous_residue</span><span class="p">(</span>
-            <span class="n">fhandler</span><span class="p">,</span>
-            <span class="n">previous</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span>
-            <span class="n">current</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fhandler</span><span class="p">,</span>
+        <span class="n">previous</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span>
+        <span class="n">current</span><span class="p">:</span> <span class="n">residueT</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write residue lines to file, possibly ending by TER.</span>
 
 <span class="sd">        Parameters</span>
@@ -543,23 +544,30 @@
         <span class="n">chain_break</span> <span class="o">=</span> <span class="n">detected_chain_break</span><span class="p">(</span>
             <span class="n">previous</span><span class="p">,</span>
             <span class="n">current</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="c1"># If chain break detected or new chain in file</span>
         <span class="k">if</span> <span class="n">chain_break</span> <span class="ow">or</span> <span class="n">previous</span><span class="p">[</span><span class="s2">&quot;chain&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">current</span><span class="p">[</span><span class="s2">&quot;chain&quot;</span><span class="p">]:</span>
             <span class="n">fhandler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TER</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Initiate parsing variables</span>
     <span class="n">BB_atomnames</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># for peptide bonds</span>
-        <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span>  <span class="c1"># for DNA/RNA</span>
-        <span class="p">)</span>
-    <span class="n">current_resid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;N&quot;</span><span class="p">,</span>  <span class="c1"># for peptide bonds</span>
+        <span class="s2">&quot;O3&#39;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span>  <span class="c1"># for DNA/RNA</span>
+    <span class="p">)</span>
+    <span class="n">current_resid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
     <span class="n">previous_residue</span><span class="p">:</span> <span class="n">residueT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lines&quot;</span><span class="p">:</span> <span class="p">[]}</span>
     <span class="n">current_residue</span><span class="p">:</span> <span class="n">residueT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lines&quot;</span><span class="p">:</span> <span class="p">[]}</span>
     <span class="c1"># Read input file</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_pdb</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_pdb</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">,</span> <span class="p">)):</span>
+            <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;ATOM&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;HETATM&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">):</span>
                 <span class="c1"># Extract specific data from coordinates record</span>
                 <span class="n">chainid</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">slc_chainid</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">resid</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">slc_resseq</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -570,15 +578,14 @@
                     <span class="c1"># Make sure it is not first residue</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">previous_residue</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="c1"># Write previous residue</span>
-                        <span class="n">write_previous_residue</span><span class="p">(</span>
-                            <span class="n">fout</span><span class="p">,</span>
-                            <span class="n">previous_residue</span><span class="p">,</span>
-                            <span class="n">current_residue</span>
-                            <span class="p">)</span>
+                        <span class="n">write_previous_residue</span><span class="p">(</span><span class="n">fout</span><span class="p">,</span> <span class="n">previous_residue</span><span class="p">,</span> <span class="n">current_residue</span><span class="p">)</span>
                     <span class="c1"># Reset previous residue to current residue</span>
                     <span class="n">previous_residue</span> <span class="o">=</span> <span class="n">current_residue</span>
                     <span class="c1"># Initialize new current residue</span>
-                    <span class="n">current_resid</span> <span class="o">=</span> <span class="p">(</span><span class="n">chainid</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="n">current_resid</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">chainid</span><span class="p">,</span>
+                        <span class="n">resid</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">current_residue</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lines&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chainid</span><span class="p">}</span>
 
                 <span class="c1"># Hold residue line</span>
@@ -591,13 +598,9 @@
                         <span class="nb">float</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">slc_x</span><span class="p">]),</span>
                         <span class="nb">float</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">slc_y</span><span class="p">]),</span>
                         <span class="nb">float</span><span class="p">(</span><span class="n">_</span><span class="p">[</span><span class="n">slc_z</span><span class="p">]),</span>
-                        <span class="p">]</span>
+                    <span class="p">]</span>
         <span class="c1"># Last previous residue</span>
-        <span class="n">write_previous_residue</span><span class="p">(</span>
-            <span class="n">fout</span><span class="p">,</span>
-            <span class="n">previous_residue</span><span class="p">,</span>
-            <span class="n">current_residue</span>
-            <span class="p">)</span>
+        <span class="n">write_previous_residue</span><span class="p">(</span><span class="n">fout</span><span class="p">,</span> <span class="n">previous_residue</span><span class="p">,</span> <span class="n">current_residue</span><span class="p">)</span>
         <span class="c1"># Last residue</span>
         <span class="n">write_residue</span><span class="p">(</span><span class="n">fout</span><span class="p">,</span> <span class="n">current_residue</span><span class="p">[</span><span class="s2">&quot;lines&quot;</span><span class="p">])</span>
         <span class="c1"># Write final TER statement</span>
@@ -617,9 +620,7 @@
         <span class="n">chainsegs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">segids</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">chains</span><span class="p">)))</span>
         <span class="c1"># check if any of chainsegs is already in chainid_list</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">chainseg</span> <span class="ow">in</span> <span class="n">chainid_list</span> <span class="k">for</span> <span class="n">chainseg</span> <span class="ow">in</span> <span class="n">chainsegs</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Chain/seg IDs are not unique for pdbs </span><span class="si">{</span><span class="n">combination</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chain/seg IDs are not unique for pdbs </span><span class="si">{</span><span class="n">combination</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="n">chainid_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">chainsegs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">chainid_list</span></div>
 

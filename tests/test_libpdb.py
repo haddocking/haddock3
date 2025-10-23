@@ -1,5 +1,6 @@
 """Test lib PDB."""
 
+import shutil
 import pytest
 import tempfile
 
@@ -12,6 +13,7 @@ from haddock.libs.libpdb import (
     check_combination_chains,
     read_chainids,
     read_segids,
+    sanitize,
 )
 
 
@@ -77,6 +79,24 @@ def fixture_good_rigidbody_molecules():
     return [receptor, ligand]
 
 
+@pytest.fixture
+def protlig_complex_pdb():
+    src = Path(golden_data, "protlig_complex_1.pdb")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        dst = Path(tmpdir, "protlig_complex_1.pdb")
+        shutil.copy(src, dst)
+        yield dst
+
+
+@pytest.fixture
+def ligand_topology_file():
+    src = Path(golden_data, "ligand.top")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        dst = Path(tmpdir, "ligand.top")
+        shutil.copy(src, dst)
+        yield dst
+
+
 def test_check_combination_chains(good_rigid_molecules, wrong_rigid_molecules):
     """Test check_combination_chains."""
     exp_chains = ["A", "B"]
@@ -85,3 +105,48 @@ def test_check_combination_chains(good_rigid_molecules, wrong_rigid_molecules):
     # when input molecules share chains there should be a ValueError
     with pytest.raises(ValueError):
         check_combination_chains(wrong_rigid_molecules)
+
+
+def test_sanitize(protlig_complex_pdb, monkeypatch):
+
+    monkeypatch.chdir(protlig_complex_pdb.parent)
+
+    output = sanitize(
+        pdb_file_path=protlig_complex_pdb, overwrite=False, custom_topology=None
+    )
+
+    assert len(output.read_text()) == 476608
+
+
+def test_sanitize_with_custom_topology(
+    protlig_complex_pdb, ligand_topology_file, monkeypatch
+):
+    monkeypatch.chdir(protlig_complex_pdb.parent)
+
+    output = sanitize(
+        pdb_file_path=protlig_complex_pdb,
+        overwrite=False,
+        custom_topology=ligand_topology_file,
+    )
+
+    assert len(output.read_text()) == 478552
+
+
+def test_sanitize_not_changing_global(
+    protlig_complex_pdb, ligand_topology_file, monkeypatch
+):
+    monkeypatch.chdir(protlig_complex_pdb.parent)
+
+    from haddock.libs.libpdb import _to_keep
+
+    initial_global_to_keep = len(_to_keep)
+
+    _ = sanitize(
+        pdb_file_path=protlig_complex_pdb,
+        overwrite=False,
+        custom_topology=ligand_topology_file,
+    )
+
+    current_global_to_keep = len(_to_keep)
+
+    assert current_global_to_keep == initial_global_to_keep

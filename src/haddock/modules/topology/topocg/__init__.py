@@ -172,9 +172,10 @@ class HaddockModule(BaseCNSModule):
         """Execute module."""
 
         try:
-            _molecules = self.previous_io.retrieve_models(individualize=True)
-            molecules_paths: list[Path] = [mol.rel_path for mol in _molecules]  # type: ignore
-            molecules = make_molecules(molecules_paths, no_parent=True)
+            _molecules = self.previous_io.output
+            molecules = []
+            for mol in _molecules:
+                molecules.append(make_molecules([mol[key].rel_path for key in mol]))
         except Exception as e:
             self.finish_with_error(e)
 
@@ -209,24 +210,26 @@ class HaddockModule(BaseCNSModule):
         force_field = self.params["cgffversion"]
 
         for i, molecule in enumerate(molecules, start=1):
-            self.log(f"Molecule {i}: {molecule.with_parent}")
+            #self.log(f"Molecule {i}: {molecule.with_parent}")
             models_dic[i] = []
             # Copy the molecule to the step folder
 
             # Split models
-            self.log(
-                f"Split models if needed for {molecule.with_parent}",
-                level="debug",
-            )
             # these come already sorted
-            splited_models = libpdb.split_ensemble(
-                Path(molecule.with_parent),
-                dest=Path.cwd(),
-            )
+            splited_models = [
+                libpdb.split_ensemble(Path(mol.file_name), dest=Path.cwd(),)[0]
+                for mol in molecule
+            ]
 
             # get the MD5 hash of each model
-            ens_dic[i] = self.get_md5(molecule.with_parent)
-            origi_ens_dic[i] = self.get_ensemble_origin(molecule.with_parent)
+            ens_dic[i] = [
+                self.get_md5(mol.file_name)
+                for mol in molecule
+                ]
+            origi_ens_dic[i] = [
+                self.get_ensemble_origin(mol.file_name)
+                for mol in molecule
+            ]
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
@@ -291,37 +294,20 @@ class HaddockModule(BaseCNSModule):
             md5_dic = ens_dic[i]
             origin_names = origi_ens_dic[i]
             for j, model in enumerate(models_dic[i]):
-                md5_hash = None
+                if len(md5_dic[j]) == 0:
+                    md5_hash = None
+                else:
+                    md5_hash = md5_dic[j]
+                origin_name_model = origin_names[j]
                 try:
-                    model_id = int(model.stem.split("_")[-1])
+                    model_id = int(model.stem.split("_")[-2])
+                    origin_name_model = ("_").join(model.stem.split("_"))
                 except ValueError:
                     model_id = 0
+                    origin_name_model = str(model.stem).split(".pdb")[0]
 
-                if model_id in md5_dic:
-                    md5_hash = md5_dic[model_id]
-
-                model_name = model.stem
-                processed_pdb = Path(f"{model_name}_cg_{force_field}.{Format.PDB}")
-                processed_topology = Path(f"{model_name}_cg_{force_field}.{Format.TOPOLOGY}")
-
-                # Check if origin or md5 is available
-                if md5_hash or model_id in origin_names.keys():
-                    # Select prefix
-                    if md5_hash:
-                        prefix_name = md5_hash
-                    else:
-                        prefix_name = origin_names[model_id]
-                    # Check if topology and file created
-                    if processed_pdb.exists() and processed_topology.exists():
-                        # Build new filename
-                        model_name = f"{prefix_name}_from_{model_name}"
-                        # Rename files
-                        processed_pdb = processed_pdb.rename(
-                            f"{model_name}_haddock_cg_{force_field}.{Format.PDB}"
-                        )
-                        processed_topology = processed_topology.rename(
-                            f"{model_name}_haddock_cg_{force_field}.{Format.TOPOLOGY}"
-                        )
+                processed_pdb = Path(f"{origin_name_model}_cg_{force_field}.{Format.PDB}")
+                processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
 
                 topology = TopologyFile(processed_topology, path=".")
                 psf_file_uniq = psf_files[i-1].as_posix().split('/') 
@@ -331,7 +317,7 @@ class HaddockModule(BaseCNSModule):
                     file_name=processed_pdb,
                     topology=topology,
                     aa_topology=aa_topology,
-                    cgtoaa_tbl=Path("../"+self.path.as_posix()+"/"+model_name+"_cg_to_aa.tbl"),
+                    cgtoaa_tbl=Path("../"+self.path.as_posix()+"/"+origin_name_model+"_cg_to_aa.tbl"),
                     path=".",
                     md5=md5_hash,
                 )

@@ -12,8 +12,10 @@ import os
 import subprocess
 import glob
 import time
-
+import shutil
 from random import randint
+
+import numpy as np
 
 from haddock import log
 from haddock.core.typing import Any, Generator, Path, Union
@@ -25,7 +27,7 @@ from haddock.libs.libontology import NaN, PDBFile
 # Notes: Please feel free to modify the #SBATCH entries to fit your needs/setup
 SLURM_HEADER_GPU = """#SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task={NCORES}
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 """
@@ -34,6 +36,7 @@ SLURM_HEADER_CPU = """#SBATCH -J hd3-voroscoring-cpu
 #SBATCH --partition haddock
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=1
+#SBATCH --cpus-per-task={NCORES}
 """
 
 # Job template
@@ -52,6 +55,7 @@ CONDA_INSTALL_DIR="{CONDA_INSTALL_DIR}"
 CONDA_ENV_NAME="{CONDA_ENV_NAME}"
 FTDMP_INSTALL_DIR="{FTDMP_INSTALL_DIR}"
 VOROMQA_SCRIPT="ftdmp-qa-all"
+NCORES={NCORES}
 
 # Define workflow variables
 OUTPUT_FPATH="$WORKDIR/$OUTPUT_FNAME"
@@ -77,8 +81,8 @@ mkdir -p $WORKDIR
 cd $FTDMP_INSTALL_DIR
 echo "Directory: $PWD"
 # run voro-mqa
-echo "./$VOROMQA_SCRIPT --conda-path $CONDA_INSTALL_DIR --conda-env $CONDA_ENV_NAME --workdir '$WORKDIR' --rank-names 'protein_protein_voromqa_and_global_and_gnn_no_sr' < $PDB_LIST_PATH > $OUTPUT_FPATH"
-./$VOROMQA_SCRIPT --conda-path $CONDA_INSTALL_DIR --conda-env $CONDA_ENV_NAME --workdir $WORKDIR --rank-names 'protein_protein_voromqa_and_global_and_gnn_no_sr' --output-redundancy-threshold 1.0 < $PDB_LIST_PATH > $OUTPUT_FPATH
+echo "./$VOROMQA_SCRIPT --conda-path $CONDA_INSTALL_DIR --conda-env $CONDA_ENV_NAME --workdir '$WORKDIR' --rank-names 'protein_protein_voromqa_and_global_and_gnn_no_sr' --output-redundancy-threshold 1.0 --processors $NCORES < $PDB_LIST_PATH > $OUTPUT_FPATH"
+./$VOROMQA_SCRIPT --conda-path $CONDA_INSTALL_DIR --conda-env $CONDA_ENV_NAME --workdir $WORKDIR --rank-names 'protein_protein_voromqa_and_global_and_gnn_no_sr' --output-redundancy-threshold 1.0 --processors $NCORES < $PDB_LIST_PATH > $OUTPUT_FPATH
 # Let the magic happen..
 
 # 4. Analyze results
@@ -113,6 +117,7 @@ class VoroMQA():
         self.models = models
         self.workdir = workdir
         self.params = params
+        self.batch_size = 300
         self.output = Path(output)
 
     def run(self):
@@ -123,18 +128,43 @@ class VoroMQA():
             str(Path(mdl.path, mdl.file_name).resolve())
             for mdl in self.models
             ]
+        # Get optimised batch size
+        ncores = self.optimize_ncores(len(all_pdbs), self.batch_size)
         # Loop over batches
-        for bi, batch in enumerate(self.batched(all_pdbs, size=300)):
+        for bi, batch in enumerate(self.batched(all_pdbs, size=self.batch_size)):
             # Run slurm
-            self.run_voro_batch(batch, batch_index=bi + 1)
+            self.run_voro_batch(batch, batch_index=bi + 1, ncores=ncores)
         # Recombine all batches output files
-        scores_fpath = self.recombine_batches()
+        scores_fpath = self.recombine_batches(clean_intermediates=self.params["debug"])
         log.info(f"Generated output file: {scores_fpath}")
+
+    def optimize_ncores(self, nb_entries: int, batch_size: int) -> int:
+        """Optimize number of cores to be used.
+
+        - Finds number of batches that will be created.
+        - Devide the number of allocated cores by number of batches
+
+        Parameters
+        ----------
+        nb_entries : int
+            Number of PDB entries to score
+        batch_size : int
+            Size of each batch
+
+        Returns
+        -------
+        optimised_ncores : int
+            Number of cores to be used in voronota-mqa
+        """
+        nb_batchs = int(np.ceil(nb_entries / batch_size))
+        optimised_ncores = int(np.ceil(self.params["ncores"] / nb_batchs))
+        return optimised_ncores
 
     def run_voro_batch(
             self,
             pdb_filepaths: list[str],
             batch_index: int = 1,
+            ncores: int = 1,
             ) -> None:
         """Preset and launch predictions on subset of pdb files.
 
@@ -144,6 +174,8 @@ class VoroMQA():
             List of absolute path to the PDBs to score
         batch_index : int, optional
             Index of the batch, by default 1
+        ncores : int
+            Number of cores to use.
         """
         # Create workdir
         batch_workdir = Path(self.workdir, f"batch_{batch_index}")
@@ -155,13 +187,14 @@ class VoroMQA():
 
         # Format config file
         batch_cfg = VOROMQA_CFG_TEMPLATE.format(
-            HEADER=SLURM_HEADER_CPU,
+            HEADER=SLURM_HEADER_CPU.format(NCORES=NCORES),
             CONDA_INSTALL_DIR=self.params["conda_install_dir"],
             CONDA_ENV_NAME=self.params["conda_env_name"],
             FTDMP_INSTALL_DIR=self.params["ftdmp_install_dir"],
             JOBNAME=f"hd3_voro_b{batch_index}",
             WORKDIR=batch_workdir,
             PDB_LIST_PATH=pdb_files_list_path,
+            NCORES=NCORES,
             )
         
         # Write it
@@ -170,11 +203,6 @@ class VoroMQA():
 
         # Launch script
         self._launch_computation(batch_workdir, batch_cfg_fpath)
-        #initdir = os.getcwd()
-        #os.chdir(batch_workdir)
-        #log.info(f"sbatch {batch_cfg_fpath}")
-        #subprocess.run(f"sbatch {batch_cfg_fpath}", shell=True)
-        #os.chdir(initdir)
 
     def _launch_computation(self, batch_workdir: str, batch_cfg_fpath: str) -> None:
         """Execute a given script from working directory.
@@ -192,8 +220,13 @@ class VoroMQA():
             log.info(cmd_)
             subprocess.run(cmd_, shell=True)
 
-    def recombine_batches(self) -> str:
+    def recombine_batches(self, clean_intermediates: bool = False) -> str:
         """Recombine batches output file in a single one.
+
+        Parameters
+        ----------
+        clean_intermediates : bool
+            Should intermediate files be removed ?
 
         Returns
         -------
@@ -207,8 +240,8 @@ class VoroMQA():
         combined_header: list[str] = []
         for batch_results in batches_result_paths:
             # Read voro results
-            with open(batch_results, 'r') as filin:
-                header = filin.readline().strip().split(' ')
+            with open(batch_results, "r") as filin:
+                header = filin.readline().strip().split(" ")
                 for head in header:
                     if head not in combined_header:
                         combined_header.append(head)
@@ -229,15 +262,21 @@ class VoroMQA():
         # Write final output file
         finale_output_fpath = f"{self.workdir}/{self.output}"
         with open(finale_output_fpath, "w") as filout:
-            file_header = '\t'.join(combined_header)
+            file_header = "\t".join(combined_header)
             filout.write(file_header + os.linesep)
             for entry in sorted_entries:
                 ordered_data = [
-                    entry[h] if h in entry.keys() else '-'
+                    entry[h] if h in entry.keys() else "-"
                     for h in combined_header
                     ]
-                line = '\t'.join(ordered_data)
+                line = "\t".join(ordered_data)
                 filout.write(line + os.linesep)
+
+        # Clean intermediate files
+        if clean_intermediates:
+            for batch_fpath in batches_result_paths:
+                shutil.rmtree(batch_fpath)
+
         return finale_output_fpath
     
     def wait_for_termination(self, wait_time: float = 60) -> list[Path]:
@@ -295,7 +334,7 @@ class VoroMQA():
         batch : Generator[list[str], None, None]
             List of pdb files <= size.
         """
-        batch = []
+        batch: list[str] = []
         for pdb in entries:
             batch.append(pdb)
             if len(batch) == size:
@@ -349,12 +388,6 @@ def update_models_with_scores(
             scores_mapper[model_filename] = score
             rank += 1
             ranking_mapper[model_filename] = rank
-
-    # Compute rankings
-    #ranking_mapper = {
-    #    model_filename: rank
-    #    for rank, model_filename in enumerate(sorted(scores_mapper), start=1)
-    #    }
 
     # Loop over input models
     for model in models:

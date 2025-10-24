@@ -495,6 +495,25 @@ evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
 evaluate ($eintfree = $eintcplx)
 {* at this stage the two are similar since rigid-body EM only *}
 
+evaluate ($ebond = $bond)
+evaluate ($eangl= $angl)
+evaluate ($eimpr= $impr)
+evaluate ($edihe= $dihe)
+
+evaluate ($result=0)
+print thres=0.05 bonds
+evaluate ($rms_bonds=$result)
+evaluate ($result=0)
+print thres=5. angles
+evaluate ($rms_angles=$result)
+evaluate ($result=0)
+print thres=5. impropers
+evaluate ($rms_impropers=$result)
+evaluate ($result=0)
+print thres=30. dihedrals
+evaluate ($rms_dihedrals=$result)
+
+
 {* =========================== write out structure after rigid body refinement *}
 
 !bestener.cns: for waterdock, store3 contains store5 from lowest energy structure
@@ -579,7 +598,17 @@ if ($reorient eq true) then
     coor sele=(segid $prot_segid_1) orient end
 end if
 
-write coordinates format=pdbo output=$output_pdb_filename end
+inline @MODULE:check_coordinates.cns
+  
+if ($failure eq true) then
+    evaluate ($failfile = $output_pdb_filename - ".pdb" + ".fail")
+    set display=$failfile end
+    display "MAX/MIN possible coordinates exceeded - stopping"
+    close $failfile end
+    stop
+else
+    write coordinates format=pdbo output=$output_pdb_filename end
+end if
 
 set message=normal echo=on end
 display OUTPUT: $output_pdb_filename

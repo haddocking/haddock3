@@ -5,12 +5,15 @@ import os
 import platform
 import subprocess
 import sys
+import tarfile
 import urllib.request
 from pathlib import Path
+from typing import cast
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
-
+from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 CNS_BINARIES = {
     "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
@@ -18,6 +21,16 @@ CNS_BINARIES = {
     "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
     "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
 }
+
+HADDOCK_RESTRAINTS_VERSION = "0.10.0"
+BASE_GITHUB_URL = f"https://github.com/haddocking/haddock-restraints/releases/download/v{HADDOCK_RESTRAINTS_VERSION}"
+HADDOCK_RESTRAINTS_BINARIES = {
+    "x86_64-linux": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-x86_64-unknown-linux-musl.tar.gz",
+    "x86_64-darwin": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-x86_64-apple-darwin.tar.gz",
+    "arm64-darwin": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-aarch64-apple-darwin.tar.gz",
+    "aarch64-linux": f"{BASE_GITHUB_URL}/haddock-restraints-v{HADDOCK_RESTRAINTS_VERSION}-aarch64-unknown-linux-musl.tar.gz",
+}
+
 
 cpp_extensions = [
     Extension(
@@ -35,7 +48,7 @@ cpp_extensions = [
 
 
 class CustomBuild(build_ext):
-    """Custom build handles the C/C++ dependencies"""
+    """Custom build handles the C/C++ dependencies and downloading of binaries"""
 
     def run(self):
         """Run the custom build"""
@@ -58,8 +71,8 @@ class CustomBuild(build_ext):
                 "-lm",
             ],
         )
-        print("Downloading the CNS binary...")
-        self.download_cns()
+        print("Downloading the binaries...")
+        self.download_binaries()
 
         # Run the standard build
         build_ext.run(self)
@@ -90,34 +103,64 @@ class CustomBuild(build_ext):
             print(f"Error building {name}: {e}")
             raise
 
-    def download_cns(self):
-        """Helper function to download the CNS binary"""
-
+    def download_binaries(self):
+        """Helper function to download binaries"""
         arch = self.get_arch()
+        binary_configs = [
+            (HADDOCK_RESTRAINTS_BINARIES, Path("haddock-restraints.tar.gz")),
+            (CNS_BINARIES, Path("cns")),
+        ]
 
-        if arch not in CNS_BINARIES:
-            print(f"Unknown architecture: {arch}")
-            sys.exit(1)
+        # Determine the target directory
+        if hasattr(self, "build_lib") and self.build_lib and not self.inplace:
+            target_bin_dir = Path(self.build_lib, "haddock", "bin")
+        else:
+            target_bin_dir = Path("src", "haddock", "bin")
 
-        cns_binary_url = CNS_BINARIES[arch]
+        target_bin_dir.mkdir(exist_ok=True, parents=True)
 
-        src_bin_dir = Path("src", "haddock", "bin")
-        src_bin_dir.mkdir(exist_ok=True, parents=True)
+        for binary_dict, filename in binary_configs:
+            if arch not in binary_dict:
+                print(f"Unknown architecture: {arch}")
+                sys.exit(1)
+            binary_url = binary_dict[arch]
 
-        cns_exec = Path(src_bin_dir, "cns")
-        status, msg = self.download_file(cns_binary_url, cns_exec)
-        if not status:
-            print(msg)
-            sys.exit(1)
+            download_path = Path(target_bin_dir, filename.name)
+            status, msg = self.download_file(binary_url, download_path)
+            if not status:
+                print(msg)
+                sys.exit(1)
 
-        # Make it executable
-        os.chmod(cns_exec, 0o755)
+            if arch != "x86_64-linux" and filename.name == "cns":
+                # Force the download of the linux binary, this is needed for GRID executions
+                download_path = Path(target_bin_dir, "cns_linux")
+                status, msg = self.download_file(
+                    binary_dict["x86_64-linux"], download_path
+                )
+                if not status:
+                    print(msg)
+                    sys.exit(1)
 
-        # If build_lib exists, also copy to there
-        if hasattr(self, "build_lib"):
-            install_bin_dir = Path(self.build_lib, "haddock", "bin")
-            install_bin_dir.mkdir(exist_ok=True, parents=True)
-            self.copy_file(cns_exec, Path(install_bin_dir, "cns"))
+            if "".join(filename.suffixes) == ".tar.gz":
+                try:
+                    with tarfile.open(download_path, "r:gz") as tar:
+                        tar.extractall(path=target_bin_dir)
+                    # Remove the compressed file
+                    download_path.unlink()
+                    # The executable should be the filename without .tar.gz suffixes
+                    executable = Path(
+                        target_bin_dir, filename.with_suffix("").with_suffix("").name
+                    )
+                except tarfile.TarError as e:
+                    print(f"Error extracting {download_path}: {e}")
+                    sys.exit(1)
+            else:
+                executable = download_path
+
+            print(f"Downloaded {filename} to {executable}")
+
+            # Make it executable
+            os.chmod(executable, 0o755)
 
     @staticmethod
     def download_file(url, dest) -> tuple[bool, str]:
@@ -137,9 +180,117 @@ class CustomBuild(build_ext):
         return f"{machine}-{system}"
 
 
+class DevelopCommand(develop):
+    """Custom develop command for editable installations"""
+
+    # NOTE: This is what is performed when using `pip install -e`
+
+    def run(self):
+        # First run the standard develop command
+        develop.run(self)
+
+        # Then run our custom build steps
+        build_cmd = cast(CustomBuild, self.get_finalized_command("build_ext"))
+        # specify we are building in place
+        build_cmd.inplace = True
+
+        # Build the executables
+        print("Building executables for editable installation...")
+        build_cmd.build_executable(
+            name="contact_fcc",
+            cmd=["g++", "-O2", "-o", "contact_fcc", "src/haddock/deps/contact_fcc.cpp"],
+        )
+        build_cmd.build_executable(
+            name="fast-rmsdmatrix",
+            cmd=[
+                "gcc",
+                "-Wall",
+                "-O3",
+                "-march=native",
+                "-std=c99",
+                "-o",
+                "fast-rmsdmatrix",
+                "src/haddock/deps/fast-rmsdmatrix.c",
+                "-lm",
+            ],
+        )
+
+        # Download binaries to source directory
+        print("Downloading binaries for editable installation...")
+        build_cmd.download_binaries()
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+
+    # NOTE: This is only executed for the installation, for editable see `DevelopCommand`
+
+    def run(self):
+        install.run(self)
+        self.check_cns_binary()
+
+    def check_cns_binary(self):
+        """Execute the CNS binary to ensure it works"""
+        cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
+        proc = subprocess.run(
+            [cns_path],
+            input="stop\n",
+            text=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+
+        if proc.returncode != 0:
+            self.cns_warning()
+        if proc.returncode == 0:
+            self.cns_valid()
+
+    @staticmethod
+    def cns_warning():
+        """Warn the user that CNS could not be executed"""
+        try:
+            with open("/dev/tty", "w") as tty:
+                tty.write("\n" + "=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write(
+                    "\n⚠️ WARNING: The pre-compiled CNS binary could not be executed ⚠️\n\n"
+                )
+                tty.write("This may be due to missing dependencies on your system.\n")
+                tty.write(
+                    "Please refer to the installation instructions for troubleshooting steps:\n"
+                )
+                tty.write(
+                    "`https://github.com/haddocking/haddock3/blob/main/docs/CNS.md`\n\n"
+                )
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.write("=" * 79 + "\n")
+                tty.flush()
+        except Exception as _:
+            # Fallback for systems without /dev/tty
+            sys.stderr.write(
+                "\n⚠️ WARNING: The pre-compiled CNS binary could not be executed ⚠️\n\n"
+            )
+
+    @staticmethod
+    def cns_valid():
+        """Write a message to the user that CNS works"""
+        try:
+            with open("/dev/tty", "w") as tty:
+                tty.write("\n" + "=" * 79 + "\n")
+                tty.write("CNS execution passed ✅ \n")
+                tty.write("=" * 79 + "\n")
+        except Exception as _:
+            # Fallback for systems without /dev/tty
+            sys.stdout.write("CNS execution passed ✅ \n")
+
+
 setup(
     cmdclass={
         "build_ext": CustomBuild,
+        "install": PostInstallCommand,
+        "develop": DevelopCommand,
     },
     ext_modules=cpp_extensions,
 )

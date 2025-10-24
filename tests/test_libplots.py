@@ -232,8 +232,14 @@ def example_capri_ss_dashcluster():
 def example_df_scan_clt():
     """Return example alascan clt DataFrame."""
     example_clt_data = [
-        ["A", 38, "ASP", "A-38-ASP", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
-        ["A", 69, "LYS", "A-38-ASP", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
+        [
+            "A", 38, "ASP", "A-38-ASP", -2.0, -1.0, 0.1, -0.4, 0.04, -2.3,
+            0.23, -0.5, 0.05, -7.2, 0.72, 1.0,
+        ],
+        [
+            "A", 69, "LYS", "A-38-ASP", -0.0, 1.0, 0.1, -0.4, 0.04, -2.3,
+            0.23, -0.5, 0.05, -7.2, 0.72, 1.0,
+        ],
     ]
     columns = [
         "chain",
@@ -242,10 +248,15 @@ def example_df_scan_clt():
         "full_resname",
         "score",
         "delta_score",
+        "delta_score_std",
         "delta_vdw",
+        "delta_vdw_std",
         "delta_elec",
+        "delta_elec_std",
         "delta_desolv",
+        "delta_desolv_std",
         "delta_bsa",
+        "delta_bsa_std",
         "frac_pres",
     ]
 

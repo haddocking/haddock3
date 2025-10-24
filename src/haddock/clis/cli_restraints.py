@@ -46,7 +46,14 @@ from haddock.clis.restraints.z_surface_restraints import (
     add_z_surf_restraints_arguments,
     gen_z_surface_restraints,
     )
-
+from haddock.clis.restraints.random_removal import (
+    add_rand_removal_arguments,
+    main as random_removal,
+    )
+from haddock.clis.restraints.restrain_ligand import (
+    add_restrain_ligand_arguments,
+    main as restrain_ligand,
+    )
 
 # Command line interface parser
 ap = argparse.ArgumentParser(
@@ -56,7 +63,9 @@ ap = argparse.ArgumentParser(
 )
 
 subparsers = ap.add_subparsers(
-    title="subcommands", description="valid subcommands", help="additional help"
+    title="subcommands",
+    description="valid subcommands",
+    help="additional help",
 )
 
 # restrain_bodies subcommand
@@ -95,6 +104,20 @@ z_surface_restraints_subcommand = add_z_surf_restraints_arguments(
     z_surface_restraints_subcommand
 )
 
+# random_removal subcommand
+restraints_random_removal_subcommand = subparsers.add_parser("random_removal")
+restraints_random_removal_subcommand.set_defaults(func=random_removal)
+restraints_random_removal_subcommand = add_rand_removal_arguments(
+    restraints_random_removal_subcommand
+)
+
+# restrain_ligand subcommand
+restraints_restrain_ligand_subcommand = subparsers.add_parser("restrain_ligand")
+restraints_restrain_ligand_subcommand.set_defaults(func=restrain_ligand)
+restraints_restrain_ligand_subcommand = add_restrain_ligand_arguments(
+    restraints_restrain_ligand_subcommand
+)
+
 
 def _ap():
     return ap
@@ -109,7 +132,10 @@ def maincli():
     """Execute main client."""
     args = ap.parse_args()
     cmd = vars(load_args(ap))
-    cmd.pop("func")
+    try:
+        cmd.pop("func")
+    except KeyError:
+        sys.exit(ap.print_help())
     args.func(**cmd)
 
 

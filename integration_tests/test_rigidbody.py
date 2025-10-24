@@ -5,14 +5,16 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import Format, PDBFile, Persistent
-from haddock.modules.sampling.rigidbody import \
-    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG
+from haddock.modules.sampling.rigidbody import (
+    DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG,
+)
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 from tests import golden_data
+from . import has_mpi, has_grid
 
 
-@pytest.fixture
-def rigidbody_module():
+@pytest.fixture(name="rigidbody_module")
+def fixture_rigidbody_module():
     with tempfile.TemporaryDirectory() as tmpdir:
         rigidbody = RigidbodyModule(
             order=0, path=Path(tmpdir), initial_params=DEFAULT_RIGIDBODY_CONFIG
@@ -74,6 +76,26 @@ class MockPreviousIO:
         return None
 
 
+def test_rigidbody_norestraints_guardrail(rigidbody_module):
+    # Previous input models
+    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
+    # Base parameters
+    rigidbody_module.params["sampling"] = 2
+    rigidbody_module.params["mode"] = "local"
+    rigidbody_module.params["debug"] = False
+    # Set all restraints parameters to false
+    rigidbody_module.params["cmrest"] = False
+    rigidbody_module.params["ranair"] = False
+    rigidbody_module.params["surfrest"] = False
+    rigidbody_module.params["ambig_fname"] = False
+    rigidbody_module.params["unambig_fname"] = False
+    rigidbody_module.params["hbond_fname"] = False
+    # Expect an error when module starts
+    with pytest.raises(RuntimeError) as error:
+        rigidbody_module.run()
+    assert "No restraints found" in str(error)
+
+
 def test_rigidbody_local(rigidbody_module):
 
     sampling = 2
@@ -98,6 +120,30 @@ def test_rigidbody_local(rigidbody_module):
         assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
 
 
+@has_grid
+def test_rigidbody_grid(rigidbody_module):
+
+    sampling = 2
+    rigidbody_module.previous_io = MockPreviousIO(path=rigidbody_module.path)
+    rigidbody_module.params["sampling"] = sampling
+    rigidbody_module.params["cmrest"] = True
+    rigidbody_module.params["mol_fix_origin_1"] = True
+    rigidbody_module.params["mol_fix_origin_2"] = False
+    rigidbody_module.params["mode"] = "grid"
+    rigidbody_module.params["debug"] = True
+
+    rigidbody_module.run()
+
+    for i in range(1, sampling + 1):
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").exists()
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").exists()
+        assert not Path(rigidbody_module.path, f"rigidbody_{i}.seed").exists()
+
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.pdb").stat().st_size > 0
+        assert Path(rigidbody_module.path, f"rigidbody_{i}.inp").stat().st_size > 0
+
+
+@has_mpi
 def test_rigidbody_mpi(rigidbody_module):
 
     sampling = 2

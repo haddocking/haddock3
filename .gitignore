@@ -137,8 +137,12 @@ tags
 # VSCode
 .vscode
 
-## Specific to this project
-bin/cns
+# Binaries
+src/haddock/bin/cns
+src/haddock/bin/contact_fcc
+src/haddock/bin/fast-rmsdmatrix
+src/haddock/bin/haddock-restraints
+
 # ignore generated data of the examples
 examples/*/run*
 examples/*/capriscoring-test/*
@@ -154,5 +158,6 @@ docs/haddock.modules.rst
 docs/haddock.modules.base_cns_module.rst
 docs/setup.rst
 docs/clients/*rst
-src/haddock/bin/
 log
+end-to-end_tests/ab-grid
+end-to-end_tests/prot-grid

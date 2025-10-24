@@ -22,6 +22,7 @@ from haddock.libs.libalign import (
     make_range,
     pdb2fastadic,
     rearrange_xyz_files,
+    align_custom,
     )
 
 from . import golden_data
@@ -567,3 +568,47 @@ def test_check_chains():
         assert obs_r_chain == exp_r_chain
         assert obs_l_chain == exp_l_chain
 
+### new
+def test_align_custom_basic():
+    """Test basic custom alignment file parsing.
+    Use protdna_complex_1.pdb and protdna_complex_2.pdb and a 1:1
+    custom alignment file protdna_complex.izone
+    """
+    ref = Path(golden_data, "protdna_complex_1.pdb")
+    mod = Path(golden_data, "protdna_complex_2.pdb")
+    custom_izone = Path(golden_data, "protdna_complex.izone")
+
+    observed_numb_dic, observed_chm_dict = align_custom(
+        reference=ref,
+        model=mod,
+        output_path=golden_data,
+        custom_alig_file=custom_izone
+    )
+
+    expected_chm_dict = {"A": "A", "B": "B"}
+     
+    assert isinstance(observed_numb_dic, dict)
+    assert "A" in observed_numb_dic
+    assert "B" in observed_numb_dic
+    assert isinstance(observed_numb_dic["A"], dict)
+    assert isinstance(observed_numb_dic["B"], dict)
+    # protein has 64 residues, each should be in mapping
+    assert len(observed_numb_dic["A"]) == 64
+    # same for dna
+    assert len(observed_numb_dic["B"]) == 22
+    # several random residues 
+    assert observed_numb_dic["A"][-1] == -1
+    assert observed_numb_dic["B"][38] == 38
+    assert isinstance(observed_chm_dict, dict)
+    assert observed_chm_dict == expected_chm_dict
+    
+    # all mapped residues are integers
+    for chain, mappings in observed_numb_dic.items():
+        for model_res, ref_res in mappings.items():
+            assert isinstance(model_res, int)
+            assert isinstance(ref_res, int)
+
+    # all mapped chains are strings
+    for model_chain, ref_chain in observed_chm_dict.items():
+        assert isinstance(model_chain, str)
+        assert isinstance(ref_chain, str)

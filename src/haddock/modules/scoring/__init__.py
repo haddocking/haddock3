@@ -151,6 +151,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
             # NOTE: per_interface_scoring must be set to true for the interface
             # scores to be present as REMARKS in the header of the PDB file.
             self.params["per_interface_scoring"] = True
+        return interface_combinations
     
     def update_pdb_scores(
             self,

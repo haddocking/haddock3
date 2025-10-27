@@ -25,7 +25,7 @@ jobs:
       checks: write
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
       fail-fast: false
 
     steps:
@@ -45,34 +45,46 @@ jobs:
 
       - name: run unit tests
         run: >-
-          pytest --random-order tests/
-          --cov --cov-report=term-missing --cov-append
-          --hypothesis-show-statistics
+          pytest -v --random-order tests/
+          --cov --cov-append --cov-report=
 
       - name: run integration tests
         run: >-
-          pytest --random-order integration_tests/
-          --cov --cov-report=term-missing --cov-append
-          --hypothesis-show-statistics
+          pytest -v --random-order integration_tests/
+          --cov --cov-append --cov-report=
 
       - name: generate coverage report
         run: |
           coverage report
           coverage xml
 
-      - uses: codacy/codacy-coverage-reporter-action@v1
-        if: >-
-          ${{ github.event_name != 'pull_request' ||
-          github.event.pull_request.head.repo.full_name == github.repository }}
+      - name: upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.14'
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./coverage.xml
+          name: coverage-report
+          path: coverage.xml
 
       - name: check if docs are buildable
         continue-on-error: true
         run: |
           sphinx-apidoc -f -e -o docs/ src/haddock -d 1
           sphinx-build docs haddock3-docs
+
+  coverage-upload:
+    needs: ci
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+      - uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage.xml
 
   dev:
     runs-on: ubuntu-latest
@@ -86,7 +98,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: install system dependencies
         run: |

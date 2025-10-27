@@ -248,7 +248,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                 reverse_interface = f"{split_inter[1]}_{split_inter[0]}"
                 if reverse_interface in interface_energies.keys():
                     interface_score = interface_energies[reverse_interface]["HADDOCKscore"]
-                selected_interfaces_scores.append(interface_score)
+                    selected_interfaces_scores.append(interface_score)
         # Sum all desired interfaces scores
         if len(selected_interfaces_scores) > 1:
             new_score = sum(selected_interfaces_scores)

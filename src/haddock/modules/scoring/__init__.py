@@ -64,13 +64,15 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         ----------
         output_fname : FilePath
             Path to the file where to write scoring data.
+        models : list[HaddockModel]
+            List of HaddockModel object obtained by loading the PDB files.
         sep : str, optional
             Character used as separator in file, by default "\t"
         ascending_sort : bool, optional
             Should the data be sorted in ascending order, by default True
         """
         # Skip the analysis if not desired by the user
-        if not self.params["per_interface_scoring"]:
+        if not self.per_interface_scoring:
             return
 
         # Retrieve all interfaces data for all pdb
@@ -138,6 +140,18 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                 )
         return
     
+    def extract_interface_combinations(self) -> list[str]:
+        # Here we pop the parameter as not supported by CNS and only used
+        # at the python level for downstream analysis
+        interface_combinations = self.params.pop("interface_combinations")
+        # Set the per_interface_scoring parameter value as set by the user
+        self.per_interface_scoring = self.params["per_interface_scoring"]
+        # Check if the parameter is used
+        if interface_combinations != []:
+            # NOTE: per_interface_scoring must be set to true for the interface
+            # scores to be present as REMARKS in the header of the PDB file.
+            self.params["per_interface_scoring"] = True
+    
     def update_pdb_scores(
             self,
             interface_combinations: list[str],
@@ -177,10 +191,18 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                 pdb.unw_energies = haddock_model.energies
                 # Compute set of interfaces if some are defined
                 if len(desired_interfaces) >= 1:
-                    haddock_score = self.compute_interfaces_score(
-                        haddock_model.interface_energies,
-                        desired_interfaces,
-                    )
+                    try:
+                        score = self.compute_interfaces_score(
+                            haddock_model.interface_energies,
+                            desired_interfaces,
+                        )
+                    # In case the output is None, fall back to standard
+                    # haddock score that will always be ok to compute
+                    except TypeError:
+                        # Compute the haddock score
+                        score = haddock_model.calc_haddock_score(**weights)
+                    finally:
+                        haddock_score = score
                 # Otherwise simply compute the standard haddock score
                 else:
                     # Compute the haddock score
@@ -234,7 +256,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         """
         # Minimum set of interfaces must be >= 1
         if len(interface_sets_combinations) < 1:
-            return None
+            raise ValueError
 
         # Get all desired interfaces scores
         selected_interfaces_scores: list[float] = []
@@ -253,5 +275,5 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         if len(selected_interfaces_scores) > 1:
             new_score = sum(selected_interfaces_scores)
         else:
-            new_score = None
+            raise ValueError
         return new_score

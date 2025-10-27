@@ -48,7 +48,7 @@ class HaddockModule(CNSScoringModule):
 
         # Here we pop the parameter as not supported by CNS and only used
         # at the python level for downstream analysis
-        interface_combinations = self.params.pop("interface_combinations")
+        interface_combinations = self.extract_interface_combinations()
 
         # Prepare all CNS runs
         self.output_models = []

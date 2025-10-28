@@ -199,7 +199,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                         )
                     # In case the output is None, fall back to standard
                     # haddock score that will always be ok to compute
-                    except TypeError:
+                    except ValueError:
                         # Compute the haddock score
                         score = haddock_model.calc_haddock_score(**weights)
                     finally:

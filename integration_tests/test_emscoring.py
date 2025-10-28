@@ -142,3 +142,19 @@ def test_emscoring_3chains(emscoring_module):
 
     # Ensure the score are different
     assert df_all["score"].tolist() != df_combi["score"].tolist()
+
+    # Set chain combination parameter
+    emscoring_module.params["interface_combinations"] = ["H,B", "L,B"]
+    emscoring_module.run()
+
+    expected_pdb2 = Path(emscoring_module.path, "emscoring_1.pdb")
+    expected_csv_combi_revert = Path(emscoring_module.path, "emscoring.tsv")
+    
+    assert expected_pdb2.exists(), f"{expected_pdb2} does not exist"
+    assert expected_csv_combi_revert.exists(), f"{expected_csv_combi_revert} does not exist"
+    df_combi_revert = pd.read_csv(expected_csv_combi_revert, sep="\t", comment="#")
+
+    # Ensure the score are the same
+    combi_score = df_combi_revert["score"].tolist()[0]
+    revert_score = df_combi["score"].tolist()[0]
+    assert revert_score == pytest.approx(combi_score, abs=1)

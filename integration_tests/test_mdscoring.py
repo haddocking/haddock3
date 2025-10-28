@@ -126,6 +126,11 @@ def test_mdscoring_default(mdscoring_module, calc_fnat):
 def test_mdscoring_3chains(mdscoring_module):
     """Test the mdscoring module with interface selection."""
     mdscoring_module.previous_io = MockPreviousIO_3chains(path=mdscoring_module.path)
+    # Reduces the number of md steps to fasten the tests
+    mdscoring_module.params["nemsteps"] = 20
+    mdscoring_module.params["waterheatsteps"] = 10
+    mdscoring_module.params["watersteps"] = 10
+    mdscoring_module.params["watercoolsteps"] = 10
     mdscoring_module.run()
 
     expected_pdb1 = Path(mdscoring_module.path, "mdscoring_1.pdb")
@@ -147,6 +152,7 @@ def test_mdscoring_3chains(mdscoring_module):
 
     expected_pdb1 = Path(mdscoring_module.path, "mdscoring_1.pdb")
     expected_csv_combi = Path(mdscoring_module.path, "mdscoring.tsv")
+    print([_ for _ in expected_pdb1.read_text().split("\n") if "REMARK" in _])
 
     assert expected_pdb1.exists(), f"{expected_pdb1} does not exist"
     assert expected_csv_combi.exists(), f"{expected_csv_combi} does not exist"
@@ -154,3 +160,4 @@ def test_mdscoring_3chains(mdscoring_module):
 
     # Ensure the score are different
     assert df_all["score"].tolist() != df_combi["score"].tolist()
+

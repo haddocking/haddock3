@@ -257,7 +257,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         """
         # Minimum set of interfaces must be >= 1
         if len(interface_sets_combinations) < 1:
-            raise ValueError
+            raise ValueError("No input interfaces")
 
         # Get all desired interfaces scores
         selected_interfaces_scores: list[float] = []
@@ -276,5 +276,5 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         if len(selected_interfaces_scores) > 1:
             new_score = sum(selected_interfaces_scores)
         else:
-            raise ValueError
+            raise ValueError("Selected interface not found")
         return new_score

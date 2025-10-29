@@ -156,7 +156,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
     def update_pdb_scores(
             self,
             interface_combinations: list[str],
-            ) -> list[HaddockModel]:
+            ) -> tuple[list[HaddockModel], dict[str, list[str]]]:
         """Update the score attributes in the output pdb files.
 
         Parameters
@@ -182,6 +182,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
 
+        interface_errors: dict[str, list[str]] = {}
         # Check for generated output, fail it not all expected files are found
         output_haddock_models: list[HaddockModel] = []
         for pdb in self.output_models:
@@ -199,8 +200,13 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                         )
                     # In case the output is None, fall back to standard
                     # haddock score that will always be ok to compute
-                    except ValueError:
-                        # Compute the haddock score
+                    except ValueError as interface_error:
+                        # Hold that specific error
+                        error_msg = str(interface_error)
+                        if error_msg not in interface_errors.keys():
+                            interface_errors[error_msg] = []
+                        interface_errors[error_msg].append(pdb.file_name)
+                        # Compute the haddock score instead
                         score = haddock_model.calc_haddock_score(**weights)
                     finally:
                         haddock_score = score
@@ -211,6 +217,12 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                 # Set the score attribute
                 pdb.score = haddock_score
                 output_haddock_models.append(haddock_model)
+        # Log errors
+        for error_msg, models in interface_errors.items():
+            self.log(
+                f"Interface error: '{error_msg}' occured {len(models)} times."
+                " Falling back on classic HADDOCKscore."
+                )
         return output_haddock_models
 
     @staticmethod
@@ -256,7 +268,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
             List of interface combinations to consider
         """
         # Minimum set of interfaces must be >= 1
-        if len(interface_sets_combinations) < 1:
+        if len(interface_sets_combinations) == 0:
             raise ValueError("No input interfaces")
 
         # Get all desired interfaces scores
@@ -273,7 +285,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
                     interface_score = interface_energies[reverse_interface]["HADDOCKscore"]
                     selected_interfaces_scores.append(interface_score)
         # Sum all desired interfaces scores
-        if len(selected_interfaces_scores) > 1:
+        if len(selected_interfaces_scores) >= 1:
             new_score = sum(selected_interfaces_scores)
         else:
             raise ValueError("Selected interface not found")

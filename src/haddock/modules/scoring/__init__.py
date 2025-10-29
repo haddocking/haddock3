@@ -141,6 +141,19 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         return
     
     def extract_interface_combinations(self) -> list[str]:
+        """Read interface specific parameters.
+
+        Removes the `interface_combinations` from the parameters as not
+        supported by CNS.
+        Sets the `per_interface_scoring` to True if `interface_combinations`
+        is not empty, as it is required for the interface-scores to be
+        present in the PDB file.
+
+        Returns
+        -------
+        interface_combinations : list[str]
+            List of user-defined combinations.
+        """
         # Here we pop the parameter as not supported by CNS and only used
         # at the python level for downstream analysis
         interface_combinations = self.params.pop("interface_combinations")
@@ -149,7 +162,7 @@ class CNSScoringModule(BaseCNSModule, ScoringModule):
         # Check if the parameter is used
         if interface_combinations != []:
             # NOTE: per_interface_scoring must be set to true for the interface
-            # scores to be present as REMARKS in the header of the PDB file.
+            # scores to be present as REMARK in the header of the PDB file.
             self.params["per_interface_scoring"] = True
         return interface_combinations
     

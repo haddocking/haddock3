@@ -8,7 +8,6 @@ from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath
-from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob

@@ -114,40 +114,8 @@
 </ul>
 </div>
 </section>
-<section id="module-haddock.modules.scoring.sasascore">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.scoring.sasascore" title="Link to this heading"></a></h2>
-<p>Surface accessibility scoring module.</p>
-<p>This module performs a solvent accessibility analysis based on
-some user-defined residues that should be buried or accessible.</p>
-<p>If a supposedly buried (resp. accessible) residue is accessible (resp. buried),
-the score should increase by one. The lower the final score the more consistent
-the model with the user data.</p>
-<p>To run this module, the user must provide a dictionary with the buried and/or accessible
-residues. The keys of the dictionary should be the chain identifiers and the values
-should be lists of residue numbers.</p>
-<p>Example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resdic_buried_A</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">resdic_accessible_B</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-</pre></div>
-</div>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.sasascore.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/haddock/modules/scoring/sasascore/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/scoring/sasascore.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.sasascore.HaddockModule" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="index.html#haddock.modules.scoring.ScoringModule" title="haddock.modules.scoring.ScoringModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScoringModule</span></code></a></p>
-<p>HADDOCK3 module to perform accessibility scoring.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/scoring/sasascore.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.sasascore.HaddockModule.confirm_installation" title="Link to this definition"></a></dt>
-<dd><p>Confirm module is installed.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.HaddockModule.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sasascore'</span></em><a class="headerlink" href="#haddock.modules.scoring.sasascore.HaddockModule.name" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 </section>
 <section id="default-parameters">
 <h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
@@ -224,7 +192,7 @@ should be lists of residue numbers.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 23, 2025.
+      <span class="lastupdated">Last updated on Oct 29, 2025.
       </span></p>
   </div>
 

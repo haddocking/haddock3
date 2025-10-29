@@ -224,6 +224,18 @@ the previous step of the workflow. No restraints are applied during this step.</
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>
+<section id="interface-combinations">
+<h4>interface_combinations<a class="headerlink" href="#interface-combinations" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: []</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: Chains to be scored.</div>
+<div class="line"><em>short description</em>: List of chains to be scored. Use this parameter to provide a list of chain pairs (coma separated) that should be considered for the calculation. If empty/unspecified, all inter-chains contacts will be considered for the final prediction.</div>
+<div class="line"><em>long description</em>: List of chains to be scored. If empty/unspecified, all inter-chains contacts will be considered for the final prediction. In specific cases, for example antibody-antigen complexes, some chains should be considered as a single molecule. Use this parameter to provide a list of chain pairs (separated by coma) that should be considered for the calculation. []             =&gt; Compute all interface scores [“A,H”, “A,L”] =&gt; Compute sum of per-interface scores between chains A and H; A and L</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
 <section id="nemsteps">
 <h4>nemsteps<a class="headerlink" href="#nemsteps" title="Link to this heading"></a></h4>
 <div class="line-block">
@@ -380,7 +392,7 @@ the previous step of the workflow. No restraints are applied during this step.</
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 23, 2025.
+      <span class="lastupdated">Last updated on Oct 29, 2025.
       </span></p>
   </div>
 

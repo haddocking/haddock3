@@ -91,7 +91,6 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.haddockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockModel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcns</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_cns_input</span><span class="p">,</span> <span class="n">prepare_expected_pdb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDBFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNSJob</span>
@@ -113,7 +112,7 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cns_script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">,</span> <span class="s2">&quot;emscoring.cns&quot;</span><span class="p">)</span>
+        <span class="n">cns_script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.cns&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">,</span> <span class="n">cns_script</span><span class="o">=</span><span class="n">cns_script</span><span class="p">)</span>
 
 <div class="viewcode-block" id="HaddockModule.confirm_installation">
@@ -134,6 +133,11 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
+        <span class="c1"># Here we pop the parameter as not supported by CNS and only used</span>
+        <span class="c1"># at the python level for downstream analysis</span>
+        <span class="n">interface_combinations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_interface_combinations</span><span class="p">()</span>
+
+        <span class="c1"># Itereate over models to prepare CNS inputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">model_num</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models_to_score</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">scoring_input</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
@@ -142,17 +146,17 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                <span class="s2">&quot;emscoring&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">debug</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">],</span>
                 <span class="n">seed</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">seed</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">scoring_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;emscoring_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.out&quot;</span>
-            <span class="n">err_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;emscoring_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.cnserr&quot;</span>
+            <span class="n">scoring_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.out&quot;</span>
+            <span class="n">err_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_num</span><span class="si">}</span><span class="s2">.cnserr&quot;</span>
 
             <span class="c1"># create the expected PDBobject</span>
-            <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_num</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;emscoring&quot;</span><span class="p">)</span>
+            <span class="n">expected_pdb</span> <span class="o">=</span> <span class="n">prepare_expected_pdb</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_num</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="c1"># fill the ori_name field of expected_pdb</span>
             <span class="n">expected_pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
             <span class="n">expected_pdb</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">md5</span>
@@ -171,29 +175,19 @@
         <span class="n">engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;CNS jobs have finished&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Get the weights from the defaults</span>
-        <span class="n">_weight_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;w_vdw&quot;</span><span class="p">,</span> <span class="s2">&quot;w_elec&quot;</span><span class="p">,</span> <span class="s2">&quot;w_desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;w_air&quot;</span><span class="p">,</span> <span class="s2">&quot;w_bsa&quot;</span><span class="p">)</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">_weight_keys</span><span class="p">}</span>
-
-        <span class="c1"># Check for generated output, fail it not all expected files are found</span>
-        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">is_present</span><span class="p">():</span>
-                <span class="n">haddock_model</span> <span class="o">=</span> <span class="n">HaddockModel</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
-                <span class="n">pdb</span><span class="o">.</span><span class="n">unw_energies</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">energies</span>
-
-                <span class="n">haddock_score</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">calc_haddock_score</span><span class="p">(</span><span class="o">**</span><span class="n">weights</span><span class="p">)</span>
-                <span class="n">pdb</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">haddock_score</span>
-
-        <span class="n">output_fname</span> <span class="o">=</span> <span class="s2">&quot;emscoring.tsv&quot;</span>
+        <span class="c1"># Update the score attributes for each output pdb</span>
+        <span class="n">output_haddock_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_pdb_scores</span><span class="p">(</span><span class="n">interface_combinations</span><span class="p">)</span>
+    
+        <span class="c1"># Set output filename</span>
+        <span class="n">output_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.tsv&quot;</span>
+        <span class="c1"># Process per-interface analysis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">per_interface_output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="n">output_haddock_models</span><span class="p">)</span>
+        <span class="c1"># Generate output</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving output to </span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span>
-        
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;per_interface_scoring&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">per_interface_output</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span></div>
+        <span class="c1"># Export models to next module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span></div>
 
-
-        
 </pre></div>
 
            </div>
@@ -204,7 +198,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 23, 2025.
+      <span class="lastupdated">Last updated on Oct 29, 2025.
       </span></p>
   </div>
 

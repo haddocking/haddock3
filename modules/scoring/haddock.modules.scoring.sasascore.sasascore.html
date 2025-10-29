@@ -105,65 +105,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-haddock.modules.scoring.sasascore.sasascore">
-<span id="haddock-modules-scoring-sasascore-sasascore-module"></span><h1>haddock.modules.scoring.sasascore.sasascore module<a class="headerlink" href="#module-haddock.modules.scoring.sasascore.sasascore" title="Link to this heading"></a></h1>
-<p>Accessibility scoring calculations.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.sasascore.AccScore">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.sasascore.sasascore.</span></span><span class="sig-name descname"><span class="pre">AccScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buried_resdic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_resdic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probe_radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identificator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/scoring/sasascore/sasascore.html#AccScore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.sasascore.sasascore.AccScore" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>AccScore class.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.sasascore.AccScore.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/scoring/sasascore/sasascore.html#AccScore.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.sasascore.sasascore.AccScore.run" title="Link to this definition"></a></dt>
-<dd><p>Run accessibility calculations.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.sasascore.calc_acc_score">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.sasascore.sasascore.</span></span><span class="sig-name descname"><span class="pre">calc_acc_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buried_resdic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_resdic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/scoring/sasascore/sasascore.html#calc_acc_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.sasascore.sasascore.calc_acc_score" title="Link to this definition"></a></dt>
-<dd><p>Calculate the accessibility score.</p>
-<p>The accessibility score is calculated as the sum of the number of
-residues that are not in the correct category (buried or accessible).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>result_dict</strong> (<em>dict</em>) – A dictionary with the results from the accessibility calculation.</p></li>
-<li><p><strong>buried_resdic</strong> (<em>dict</em>) – A dictionary with the buried residues.</p></li>
-<li><p><strong>acc_resdic</strong> (<em>dict</em>) – A dictionary with the accessible residues.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>acc_score</strong> (<em>int</em>) – The accessibility score.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.modules.scoring.sasascore.sasascore.extract_data_from_accscore_class">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.scoring.sasascore.sasascore.</span></span><span class="sig-name descname"><span class="pre">extract_data_from_accscore_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sasascore_objects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#haddock.modules.scoring.sasascore.sasascore.AccScore" title="haddock.modules.scoring.sasascore.sasascore.AccScore"><span class="pre">AccScore</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">violations_output_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/haddock/modules/scoring/sasascore/sasascore.html#extract_data_from_accscore_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.scoring.sasascore.sasascore.extract_data_from_accscore_class" title="Link to this definition"></a></dt>
-<dd><p>Extracts data attributes from a list of AccScore objects into a structured dictionary,
-optionally sorts the data based on a specified key, and writes the sorted data to
-a file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sasascore_objects</strong> (<em>list[AccScore]</em>) – List of AccScore objects containing data attributes
-to be extracted.</p></li>
-<li><p><strong>violations_output_fname</strong> (<em>Path</em>) – Path to the output file with the sorted violations data</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Optional[dict[int, ParamDict]]</em> – The structured violations_data dictionary</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>(</strong><strong>Include any specific exceptions the function may raise</strong><strong>)</strong> – </p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="haddock-modules-scoring-sasascore-sasascore-module">
+<h1>haddock.modules.scoring.sasascore.sasascore module<a class="headerlink" href="#haddock-modules-scoring-sasascore-sasascore-module" title="Link to this heading"></a></h1>
 </section>
 
 
@@ -178,7 +121,7 @@ to be extracted.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 23, 2025.
+      <span class="lastupdated">Last updated on Oct 29, 2025.
       </span></p>
   </div>
 

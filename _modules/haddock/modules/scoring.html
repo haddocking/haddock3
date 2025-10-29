@@ -83,9 +83,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 modules to score models.&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.haddockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules.base_cns_module</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCNSModule</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">PDBFile</span>
 
 
 <div class="viewcode-block" id="ScoringModule">
@@ -113,20 +114,23 @@
 <span class="sd">            Should the data be sorted in ascending order, by default True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># saves scoring data</span>
-        <span class="n">sc_data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
-            <span class="n">sc_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ori_name</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">md5</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">score</span><span class="p">])</span>
+        <span class="n">sc_data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ori_name</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">md5</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">score</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span>
+            <span class="p">]</span>
         
         <span class="c1"># converts to pandas dataframe and sorts by score</span>
         <span class="n">df_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;original_name&quot;</span><span class="p">,</span> <span class="s2">&quot;md5&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">]</span>
         <span class="n">df_sc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sc_data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df_columns</span><span class="p">)</span>
         <span class="n">df_sc_sorted</span> <span class="o">=</span> <span class="n">df_sc</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="n">ascending_sort</span><span class="p">)</span>
         <span class="c1"># writes to disk</span>
-        <span class="n">df_sc_sorted</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span>
-                            <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span>
-                            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                            <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
-                            <span class="n">float_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">df_sc_sorted</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+            <span class="n">output_fname</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span>
+            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+            <span class="n">float_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">return</span></div>
 </div>
 
@@ -142,6 +146,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">per_interface_output</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">output_fname</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span>
+            <span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HaddockModel</span><span class="p">],</span>
             <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">ascending_sort</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -151,26 +156,33 @@
 <span class="sd">        ----------</span>
 <span class="sd">        output_fname : FilePath</span>
 <span class="sd">            Path to the file where to write scoring data.</span>
+<span class="sd">        models : list[HaddockModel]</span>
+<span class="sd">            List of HaddockModel object obtained by loading the PDB files.</span>
 <span class="sd">        sep : str, optional</span>
 <span class="sd">            Character used as separator in file, by default &quot;\t&quot;</span>
 <span class="sd">        ascending_sort : bool, optional</span>
 <span class="sd">            Should the data be sorted in ascending order, by default True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Skip the analysis if not desired by the user</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">per_interface_scoring</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="c1"># Retrieve all interfaces data for all pdb</span>
         <span class="n">set_interfaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">pdb_interfaces_scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># noqa : E501</span>
+
         <span class="c1"># Loop over models to recover interfaces</span>
-        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pdb</span><span class="p">,</span> <span class="n">haddock_model</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
             <span class="c1"># if the pdb does not exist, skip</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="k">continue</span>
-            <span class="n">interfaces_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_per_interface_scores</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
+            <span class="c1"># Make reverse interface checks</span>
+            <span class="c1"># Score A-&gt;B == Score B-&gt;A</span>
             <span class="n">reversed_interfaces_scores</span> <span class="o">=</span> <span class="p">{}</span>
-
             <span class="c1"># Hold list of interfaces</span>
-            <span class="k">for</span> <span class="n">interface</span><span class="p">,</span> <span class="n">scores</span> <span class="ow">in</span> <span class="n">interfaces_scores</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">interface</span><span class="p">,</span> <span class="n">scores</span> <span class="ow">in</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">interface_energies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="c1"># Check if reverse chain order present</span>
-                <span class="n">split_inter</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+                <span class="n">split_inter</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
                 <span class="n">reverse_interface</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split_inter</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">split_inter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">if</span> <span class="n">reverse_interface</span> <span class="ow">in</span> <span class="n">set_interfaces</span><span class="p">:</span>
                     <span class="n">reversed_interfaces_scores</span><span class="p">[</span><span class="n">reverse_interface</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
@@ -179,15 +191,15 @@
                     <span class="n">set_interfaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interface</span><span class="p">)</span>
 
             <span class="c1"># Combine with reversed interface scores</span>
-            <span class="n">interfaces_scores</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reversed_interfaces_scores</span><span class="p">)</span>
+            <span class="n">haddock_model</span><span class="o">.</span><span class="n">interface_energies</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reversed_interfaces_scores</span><span class="p">)</span>
             <span class="c1"># Hold data</span>
             <span class="n">pdbkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ori_name</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">md5</span><span class="p">)</span>
-            <span class="n">pdb_interfaces_scores</span><span class="p">[</span><span class="n">pdbkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">interfaces_scores</span>
-        
+            <span class="n">pdb_interfaces_scores</span><span class="p">[</span><span class="n">pdbkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">interface_energies</span>
+
         <span class="c1"># Preset output file basename and extension</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_fname</span><span class="p">)</span>
         <span class="n">output_bn</span> <span class="o">=</span> <span class="n">output_file</span><span class="o">.</span><span class="n">stem</span>
-        <span class="n">ouput_ext</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_file</span><span class="o">.</span><span class="n">suffixes</span><span class="p">)</span>
+        <span class="n">ouput_ext</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_file</span><span class="o">.</span><span class="n">suffixes</span><span class="p">)</span>
         <span class="c1"># Write separated files for all interfaces</span>
         <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">set_interfaces</span><span class="p">:</span>
             <span class="c1"># Point data</span>
@@ -196,7 +208,7 @@
                 <span class="k">if</span> <span class="n">interface</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">interfaces_scores</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="k">continue</span>
                 <span class="n">interface_scores</span> <span class="o">=</span> <span class="n">interfaces_scores</span><span class="p">[</span><span class="n">interface</span><span class="p">]</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">interface_scores</span><span class="p">[</span><span class="s1">&#39;HADDOCKscore&#39;</span><span class="p">]</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="n">interface_scores</span><span class="p">[</span><span class="s2">&quot;HADDOCKscore&quot;</span><span class="p">]</span>
                 <span class="n">sc_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pdbkey</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pdbkey</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pdbkey</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">score</span><span class="p">])</span>
             <span class="c1"># Check that the list is not empty</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sc_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -220,52 +232,181 @@
                 <span class="p">)</span>
         <span class="k">return</span></div>
 
+    
+<div class="viewcode-block" id="CNSScoringModule.extract_interface_combinations">
+<a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.extract_interface_combinations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_interface_combinations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read interface specific parameters.</span>
 
-<div class="viewcode-block" id="CNSScoringModule.read_per_interface_scores">
-<a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.read_per_interface_scores">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_per_interface_scores</span><span class="p">(</span><span class="n">pdb</span><span class="p">:</span> <span class="n">PDBFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a pdb file and parse per interface scores.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        pdb : PDBFile</span>
-<span class="sd">            A PDBFile object.</span>
+<span class="sd">        Removes the `interface_combinations` from the parameters as not</span>
+<span class="sd">        supported by CNS.</span>
+<span class="sd">        Sets the `per_interface_scoring` to True if `interface_combinations`</span>
+<span class="sd">        is not empty, as it is required for the interface-scores to be</span>
+<span class="sd">        present in the PDB file.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        interfaces_scores : dict[str, dict[str, float]]</span>
-<span class="sd">            Dictionary holding per interfaces scores.</span>
+<span class="sd">        interface_combinations : list[str]</span>
+<span class="sd">            List of user-defined combinations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">interfaces_scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">filin</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">filin</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;REMARK Interface&#39;</span><span class="p">):</span>
-                    <span class="n">s_</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
-                    <span class="c1"># Extract header</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span><span class="p">:</span>
-                        <span class="n">header</span> <span class="o">=</span> <span class="n">s_</span>
-                    <span class="c1"># Extract data</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">chain1</span> <span class="o">=</span> <span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Chain1&#39;</span><span class="p">)]</span>
-                        <span class="n">chain2</span> <span class="o">=</span> <span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Chain2&#39;</span><span class="p">)]</span>
-                        <span class="n">haddockscore</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;HADDOCKscore&#39;</span><span class="p">)])</span>
-                        <span class="n">evdw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Evdw&#39;</span><span class="p">)])</span>
-                        <span class="n">eelec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Eelec&#39;</span><span class="p">)])</span>
-                        <span class="n">edesol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Edesol&#39;</span><span class="p">)])</span>
-                        <span class="n">bsa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;BSA&#39;</span><span class="p">)])</span>
-                        <span class="c1"># Combine chains together</span>
-                        <span class="n">chains_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">chain2</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="c1"># Hold data</span>
-                        <span class="n">interfaces_scores</span><span class="p">[</span><span class="n">chains_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                            <span class="s1">&#39;HADDOCKscore&#39;</span><span class="p">:</span> <span class="n">haddockscore</span><span class="p">,</span>
-                            <span class="s1">&#39;Evdw&#39;</span><span class="p">:</span> <span class="n">evdw</span><span class="p">,</span>
-                            <span class="s1">&#39;Eelec&#39;</span><span class="p">:</span> <span class="n">eelec</span><span class="p">,</span>
-                            <span class="s1">&#39;Edesol&#39;</span><span class="p">:</span> <span class="n">edesol</span><span class="p">,</span>
-                            <span class="s1">&#39;BSA&#39;</span><span class="p">:</span> <span class="n">bsa</span><span class="p">,</span>
-                            <span class="p">}</span>
-        <span class="k">return</span> <span class="n">interfaces_scores</span></div>
+        <span class="c1"># Here we pop the parameter as not supported by CNS and only used</span>
+        <span class="c1"># at the python level for downstream analysis</span>
+        <span class="n">interface_combinations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;interface_combinations&quot;</span><span class="p">)</span>
+        <span class="c1"># Set the per_interface_scoring parameter value as set by the user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">per_interface_scoring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;per_interface_scoring&quot;</span><span class="p">]</span>
+        <span class="c1"># Check if the parameter is used</span>
+        <span class="k">if</span> <span class="n">interface_combinations</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="c1"># NOTE: per_interface_scoring must be set to true for the interface</span>
+            <span class="c1"># scores to be present as REMARK in the header of the PDB file.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;per_interface_scoring&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">interface_combinations</span></div>
+
+    
+<div class="viewcode-block" id="CNSScoringModule.update_pdb_scores">
+<a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.update_pdb_scores">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_pdb_scores</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">interface_combinations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">HaddockModel</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the score attributes in the output pdb files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        interface_combinations : list[str]</span>
+<span class="sd">            Input list of chains to be considered.</span>
+<span class="sd">            Each list entry must be composed of two chains separated by coma.</span>
+<span class="sd">            e.g.: </span>
+<span class="sd">            []              -&gt; Consider all non-redundant chain pairs</span>
+<span class="sd">            [&quot;A,H&quot;, &quot;A,L&quot;]  -&gt; Consider only the interface scores between A,H and A,L</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output_haddock_models : list[HaddockModel]</span>
+<span class="sd">            List of HaddockModel for each input pdb, that contain the actual</span>
+<span class="sd">            scores loaded from the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Obtain list of user defined interfaces</span>
+        <span class="n">desired_interfaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_interface_sets_combinations</span><span class="p">(</span>
+            <span class="n">interface_combinations</span>
+        <span class="p">)</span>
+        <span class="c1"># Get the weights from the parameters</span>
+        <span class="n">_weight_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;w_vdw&quot;</span><span class="p">,</span> <span class="s2">&quot;w_elec&quot;</span><span class="p">,</span> <span class="s2">&quot;w_desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;w_air&quot;</span><span class="p">,</span> <span class="s2">&quot;w_bsa&quot;</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">_weight_keys</span><span class="p">}</span>
+
+        <span class="n">interface_errors</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Check for generated output, fail it not all expected files are found</span>
+        <span class="n">output_haddock_models</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">HaddockModel</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">is_present</span><span class="p">():</span>
+                <span class="c1"># Convert pdb file into a HaddockModel to read the scores</span>
+                <span class="n">haddock_model</span> <span class="o">=</span> <span class="n">HaddockModel</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="c1"># Set the unweighted energy terms</span>
+                <span class="n">pdb</span><span class="o">.</span><span class="n">unw_energies</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">energies</span>
+                <span class="c1"># Compute set of interfaces if some are defined</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">desired_interfaces</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_interfaces_score</span><span class="p">(</span>
+                            <span class="n">haddock_model</span><span class="o">.</span><span class="n">interface_energies</span><span class="p">,</span>
+                            <span class="n">desired_interfaces</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="c1"># In case the output is None, fall back to standard</span>
+                    <span class="c1"># haddock score that will always be ok to compute</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">interface_error</span><span class="p">:</span>
+                        <span class="c1"># Hold that specific error</span>
+                        <span class="n">error_msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">interface_error</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">error_msg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">interface_errors</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">interface_errors</span><span class="p">[</span><span class="n">error_msg</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">interface_errors</span><span class="p">[</span><span class="n">error_msg</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                        <span class="c1"># Compute the haddock score instead</span>
+                        <span class="n">score</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">calc_haddock_score</span><span class="p">(</span><span class="o">**</span><span class="n">weights</span><span class="p">)</span>
+                    <span class="k">finally</span><span class="p">:</span>
+                        <span class="n">haddock_score</span> <span class="o">=</span> <span class="n">score</span>
+                <span class="c1"># Otherwise simply compute the standard haddock score</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Compute the haddock score</span>
+                    <span class="n">haddock_score</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">calc_haddock_score</span><span class="p">(</span><span class="o">**</span><span class="n">weights</span><span class="p">)</span>
+                <span class="c1"># Set the score attribute</span>
+                <span class="n">pdb</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">haddock_score</span>
+                <span class="n">output_haddock_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">haddock_model</span><span class="p">)</span>
+        <span class="c1"># Log errors</span>
+        <span class="k">for</span> <span class="n">error_msg</span><span class="p">,</span> <span class="n">models</span> <span class="ow">in</span> <span class="n">interface_errors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Interface error: &#39;</span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&#39; occured </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span><span class="si">}</span><span class="s2"> times.&quot;</span>
+                <span class="s2">&quot; Falling back on classic HADDOCKscore.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">output_haddock_models</span></div>
+
+
+<div class="viewcode-block" id="CNSScoringModule.build_interface_sets_combinations">
+<a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.build_interface_sets_combinations">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_interface_sets_combinations</span><span class="p">(</span>
+            <span class="n">interface_combinations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build desired combinatation of interfaces.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        interface_combinations : list[str] | None</span>
+<span class="sd">            Input list of chains to be considered.</span>
+<span class="sd">            Each list entry must be composed of two chains separated by coma.</span>
+<span class="sd">            e.g.: </span>
+<span class="sd">            []              -&gt; Consider all non-redundant chain pairs</span>
+<span class="sd">            [&quot;A,H&quot;, &quot;A,L&quot;]  -&gt; Consider only the interface scores between A,H and A,L</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        combinations : list[str]</span>
+<span class="sd">            Unpacked list of interface combinations to consider.</span>
+<span class="sd">            [&quot;A,H&quot;, &quot;A,L&quot;]  -&gt; [&quot;A_H&quot;, &quot;A_L&quot;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">combinations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">chains</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)])</span>
+            <span class="k">for</span> <span class="n">chains</span> <span class="ow">in</span> <span class="n">interface_combinations</span>
+            <span class="k">if</span> <span class="n">chains</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># ensures input only contains pairs</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">combinations</span></div>
+
+
+<div class="viewcode-block" id="CNSScoringModule.compute_interfaces_score">
+<a class="viewcode-back" href="../../../modules/scoring/index.html#haddock.modules.scoring.CNSScoringModule.compute_interfaces_score">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_interfaces_score</span><span class="p">(</span>
+            <span class="n">interface_energies</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+            <span class="n">interface_sets_combinations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the sum of selected interface haddock score.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        interfaces_scores : dict[str, dict[str, float]]</span>
+<span class="sd">            Scores of the various interfaces present in the pdb.</span>
+<span class="sd">        interface_sets_combinations : list[str]</span>
+<span class="sd">            List of interface combinations to consider</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Minimum set of interfaces must be &gt;= 1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interface_sets_combinations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No input interfaces&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get all desired interfaces scores</span>
+        <span class="n">selected_interfaces_scores</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interface_sets_combinations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">interface</span> <span class="ow">in</span> <span class="n">interface_energies</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">interface_score</span> <span class="o">=</span> <span class="n">interface_energies</span><span class="p">[</span><span class="n">interface</span><span class="p">][</span><span class="s2">&quot;HADDOCKscore&quot;</span><span class="p">]</span>
+                <span class="n">selected_interfaces_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interface_score</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Check if reverse chain order present</span>
+                <span class="n">split_inter</span> <span class="o">=</span> <span class="n">interface</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">reverse_interface</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">split_inter</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">split_inter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">reverse_interface</span> <span class="ow">in</span> <span class="n">interface_energies</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">interface_score</span> <span class="o">=</span> <span class="n">interface_energies</span><span class="p">[</span><span class="n">reverse_interface</span><span class="p">][</span><span class="s2">&quot;HADDOCKscore&quot;</span><span class="p">]</span>
+                    <span class="n">selected_interfaces_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interface_score</span><span class="p">)</span>
+        <span class="c1"># Sum all desired interfaces scores</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_interfaces_scores</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">new_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">selected_interfaces_scores</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Selected interface not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_score</span></div>
 </div>
 
 </pre></div>
@@ -278,7 +419,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 23, 2025.
+      <span class="lastupdated">Last updated on Oct 29, 2025.
       </span></p>
   </div>
 

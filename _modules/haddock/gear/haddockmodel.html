@@ -81,7 +81,6 @@
   <h1>Source code for haddock.gear.haddockmodel</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Represent an Haddock model.&quot;&quot;&quot;</span>
 
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span>
 
 
@@ -91,61 +90,157 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent HADDOCK model.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdb_f</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_energies</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span>
-
+        <span class="n">remarks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_remarks</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_energies</span><span class="p">(</span><span class="n">remarks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interface_energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_per_interface_energies</span><span class="p">(</span><span class="n">remarks</span><span class="p">)</span>
+    
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_load_energies</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="n">energy_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_remarks</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load remark lines from PDB file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pdb_f : FilePath</span>
+<span class="sd">            Path to a PDB file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        remarks : list[str]</span>
+<span class="sd">            List of PDB lines containing remarks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">remarks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;REMARK&#39;</span><span class="p">):</span>
-                    <span class="c1"># TODO: use regex to do this</span>
-                    <span class="k">if</span> <span class="s1">&#39;energies&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                        <span class="n">energy_values</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
-                            <span class="nb">float</span><span class="p">,</span>
-                            <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-                            <span class="p">)</span>
-                        <span class="n">total</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">improper</span><span class="p">,</span> <span class="n">dihe</span><span class="p">,</span> <span class="n">vdw</span><span class="p">,</span> <span class="n">elec</span><span class="p">,</span> <span class="n">air</span><span class="p">,</span> <span class="n">cdih</span><span class="p">,</span> <span class="n">coup</span><span class="p">,</span> <span class="n">rdcs</span><span class="p">,</span> <span class="n">vean</span><span class="p">,</span> <span class="n">dani</span><span class="p">,</span> <span class="n">xpcs</span><span class="p">,</span> <span class="n">rg</span> <span class="o">=</span> <span class="n">energy_values</span>  <span class="c1"># noqa: E501</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;bonds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bonds</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;angles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">angles</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;improper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">improper</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;dihe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dihe</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;vdw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vdw</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;elec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elec</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;air&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">air</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;cdih&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdih</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;coup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coup</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;rdcs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdcs</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;vean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vean</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;dani&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dani</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;xpcs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpcs</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;rg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rg</span>
-                    <span class="k">if</span> <span class="s1">&#39;buried surface area&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                        <span class="n">bsa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;bsa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bsa</span>
-                    <span class="k">if</span> <span class="s1">&#39;Desolvation energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                        <span class="n">desolv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;desolv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desolv</span>
-                    <span class="k">if</span> <span class="s1">&#39;Symmetry energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                        <span class="n">sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;sym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span>
+                    <span class="n">remarks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">remarks</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_energies</span><span class="p">(</span><span class="n">remarks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load HADDOCK energy terms from PDB remarks.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        remarks : list[str]</span>
+<span class="sd">            List of PDB lines containing remarks.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        energy_dic : dict[str, float]</span>
+<span class="sd">            Dictionary of energy terms with their values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">energy_dic</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">remarks</span><span class="p">:</span>
+            <span class="c1"># TODO: use regex to do this</span>
+            <span class="k">if</span> <span class="s1">&#39;energies&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">energy_values</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
+                    <span class="nb">float</span><span class="p">,</span>
+                    <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="n">total</span><span class="p">,</span> <span class="n">bonds</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">improper</span><span class="p">,</span> <span class="n">dihe</span><span class="p">,</span> <span class="n">vdw</span><span class="p">,</span> <span class="n">elec</span><span class="p">,</span> <span class="n">air</span><span class="p">,</span> <span class="n">cdih</span><span class="p">,</span> <span class="n">coup</span><span class="p">,</span> <span class="n">rdcs</span><span class="p">,</span> <span class="n">vean</span><span class="p">,</span> <span class="n">dani</span><span class="p">,</span> <span class="n">xpcs</span><span class="p">,</span> <span class="n">rg</span> <span class="o">=</span> <span class="n">energy_values</span>  <span class="c1"># noqa: E501</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;bonds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bonds</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;angles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">angles</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;improper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">improper</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;dihe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dihe</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;vdw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vdw</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;elec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">elec</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;air&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">air</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;cdih&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdih</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;coup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">coup</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;rdcs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdcs</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;vean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vean</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;dani&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dani</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;xpcs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xpcs</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;rg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rg</span>
+            <span class="k">if</span> <span class="s1">&#39;buried surface area&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">bsa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;bsa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bsa</span>
+            <span class="k">if</span> <span class="s1">&#39;Desolvation energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">desolv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;desolv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desolv</span>
+            <span class="k">if</span> <span class="s1">&#39;Symmetry energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;sym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span>
 
         <span class="k">return</span> <span class="n">energy_dic</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_per_interface_energies</span><span class="p">(</span>
+            <span class="n">remarks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a pdb file and parse per interface scores.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        remarks : list[str]</span>
+<span class="sd">            List of PDB lines containing remarks.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        interfaces_scores : dict[str, dict[str, float]]</span>
+<span class="sd">            Dictionary holding per interfaces scores.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">interfaces_scores</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">remarks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;REMARK Interface&quot;</span><span class="p">):</span>
+                <span class="n">s_</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">:]</span>
+                <span class="c1"># Extract header</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">header</span><span class="p">:</span>
+                    <span class="n">header</span> <span class="o">=</span> <span class="n">s_</span>
+                <span class="c1"># Extract data</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">chain1</span> <span class="o">=</span> <span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Chain1&quot;</span><span class="p">)]</span>
+                    <span class="n">chain2</span> <span class="o">=</span> <span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Chain2&quot;</span><span class="p">)]</span>
+                    <span class="n">haddockscore</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;HADDOCKscore&quot;</span><span class="p">)])</span>
+                    <span class="n">evdw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Evdw&quot;</span><span class="p">)])</span>
+                    <span class="n">eelec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Eelec&quot;</span><span class="p">)])</span>
+                    <span class="n">edesol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;Edesol&quot;</span><span class="p">)])</span>
+                    <span class="n">bsa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_</span><span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;BSA&quot;</span><span class="p">)])</span>
+                    <span class="c1"># Combine chains together</span>
+                    <span class="n">chains_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">chain2</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="c1"># Hold data</span>
+                    <span class="n">interfaces_scores</span><span class="p">[</span><span class="n">chains_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;HADDOCKscore&quot;</span><span class="p">:</span> <span class="n">haddockscore</span><span class="p">,</span>
+                        <span class="s2">&quot;vdw&quot;</span><span class="p">:</span> <span class="n">evdw</span><span class="p">,</span>
+                        <span class="s2">&quot;elec&quot;</span><span class="p">:</span> <span class="n">eelec</span><span class="p">,</span>
+                        <span class="s2">&quot;desolv&quot;</span><span class="p">:</span> <span class="n">edesol</span><span class="p">,</span>
+                        <span class="s2">&quot;bsa&quot;</span><span class="p">:</span> <span class="n">bsa</span><span class="p">,</span>
+                        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">interfaces_scores</span>
 
 <div class="viewcode-block" id="HaddockModel.calc_haddock_score">
 <a class="viewcode-back" href="../../../reference/gear/haddock.gear.haddockmodel.html#haddock.gear.haddockmodel.HaddockModel.calc_haddock_score">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calc_haddock_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">weights</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the haddock score based on the weights and energies.&quot;&quot;&quot;</span>
-        <span class="n">weighted_terms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">component_id</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">[</span><span class="n">component_id</span><span class="p">]</span>
-            <span class="n">weighted_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span> <span class="o">**</span><span class="n">weights</span><span class="p">)</span></div>
 
-        <span class="c1"># the haddock score is simply the sum of the weighted terms</span>
-        <span class="n">haddock_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighted_terms</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">haddock_score</span></div>
+
+<div class="viewcode-block" id="HaddockModel.calc_score">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.haddockmodel.html#haddock.gear.haddockmodel.HaddockModel.calc_score">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calc_score</span><span class="p">(</span><span class="n">energies</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">**</span><span class="n">weights</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute sum of weighted energy terms.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        energies : dict[str, float]</span>
+<span class="sd">            Dict of energy values for each energy term</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        weighted_score : float</span>
+<span class="sd">            Sum of weighted energy terms</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">weighted_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">weight_name</span><span class="p">,</span> <span class="n">weight_value</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">component_id</span> <span class="o">=</span> <span class="n">weight_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">weighted_score</span> <span class="o">+=</span> <span class="n">energies</span><span class="p">[</span><span class="n">component_id</span><span class="p">]</span> <span class="o">*</span> <span class="n">weight_value</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="k">return</span> <span class="n">weighted_score</span></div>
 </div>
 
 </pre></div>
@@ -158,7 +253,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Oct 23, 2025.
+      <span class="lastupdated">Last updated on Oct 29, 2025.
       </span></p>
   </div>
 

@@ -9,6 +9,25 @@ per_interface_scoring:
   long: With this option true, the interface of all combinations of chains will be analysed and the corresponding HADDOCK scores (without restraints terms) and their components (Eelec, Evdw, Edesol, BSA) will be written to the header of each PDB file.
   group: 'scoring'
   explevel: expert
+interface_combinations:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 20
+  title: Chains to be scored.
+  short: List of chains to be scored. Use this parameter to provide a list of 
+   chain pairs (coma separated) that should be considered for the calculation.
+   If empty/unspecified, all inter-chains contacts will be considered
+   for the final prediction.
+  long: List of chains to be scored. If empty/unspecified, all inter-chains
+   contacts will be considered for the final prediction. In specific cases,
+   for example antibody-antigen complexes, some chains should be considered
+   as a single molecule. Use this parameter to provide a list of chain pairs
+   (separated by coma) that should be considered for the calculation.
+   []             => Compute all interface scores
+   ["A,H", "A,L"] => Compute sum of per-interface scores between chains A and H; A and L
+  group: 'scoring'
+  explevel: expert
 w_air:
   default: 0.0
   type: float

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2025-10-22: Allow the definition of chain combinations to be used for scoring - Issue #1414
 - 2025-09-11: Added `grid` mode
 - 2025-09-11: Corrected antibody-antigen notebook - Issue #1383
 - 2025-09-09: Removes undesired directory created when running the uni-tests - Issue #1380

@@ -6,6 +6,8 @@ import platform
 import subprocess
 import sys
 import tarfile
+from urllib.error import HTTPError, URLError
+import time
 import urllib.request
 from pathlib import Path
 from typing import cast
@@ -163,13 +165,26 @@ class CustomBuild(build_ext):
             os.chmod(executable, 0o755)
 
     @staticmethod
-    def download_file(url, dest) -> tuple[bool, str]:
+    def download_file(url, dest, max_retries=3, delay=2) -> tuple[bool, str]:
         """Download a file from a URL"""
-        try:
-            urllib.request.urlretrieve(url, dest)
-            return True, "Download successful"
-        except Exception as e:  # pylint: disable=broad-except
-            return False, f"Download of {dest} failed: {e} URL: {url}"
+        for attempt in range(max_retries):
+            try:
+                urllib.request.urlretrieve(url, dest)
+                return True, "Download successful"
+            except (URLError, HTTPError) as e:  # pylint: disable=broad-except
+                if attempt < max_retries - 1:
+                    time.sleep(delay)
+                    continue
+                return (
+                    False,
+                    f"Download of {dest} failed after {max_retries} attempts: {e} URL: {url}",
+                )
+            except Exception as e:  # pylint: disable=broad-except
+                return False, f"Download of {dest} failed: {e} URL: {url}"
+        return (
+            False,
+            f"Download of {dest} failed after {max_retries} attempts URL: {url}",
+        )
 
     @staticmethod
     def get_arch():

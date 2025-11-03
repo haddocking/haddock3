@@ -165,7 +165,7 @@ class CustomBuild(build_ext):
             os.chmod(executable, 0o755)
 
     @staticmethod
-    def download_file(url, dest, max_retries=3, delay=2) -> tuple[bool, str]:
+    def download_file(url, dest, max_retries=10, delay=5) -> tuple[bool, str]:
         """Download a file from a URL"""
         for attempt in range(max_retries):
             try:

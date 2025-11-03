@@ -16,10 +16,10 @@ from setuptools.command.develop import develop
 from setuptools.command.install import install
 
 CNS_BINARIES = {
-    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
-    "x86_64-darwin": "https://surfdrive.surf.nl/files/index.php/s/3Fzzte0Zx0L8GTY/download",
-    "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
-    "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
+    "x86_64-linux": "https://surfdrive.surf.nl/public.php/dav/files/BWa5OimzbNliTi6",
+    "x86_64-darwin": "https://surfdrive.surf.nl/public.php/dav/files/3Fzzte0Zx0L8GTY",
+    "arm64-darwin": "https://surfdrive.surf.nl/public.php/dav/files/bYB3xPWf7iwo07X",
+    "aarch64-linux": "https://surfdrive.surf.nl/public.php/dav/files/3rHpxcufHGrntHn",
 }
 
 HADDOCK_RESTRAINTS_VERSION = "0.10.0"

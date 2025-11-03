@@ -126,20 +126,12 @@ class CustomBuild(build_ext):
             binary_url = binary_dict[arch]
 
             download_path = Path(target_bin_dir, filename.name)
-            status, msg = self.download_file(binary_url, download_path)
-            if not status:
-                print(msg)
-                sys.exit(1)
+            _, _ = self.download_file(binary_url, download_path)
 
             if arch != "x86_64-linux" and filename.name == "cns":
                 # Force the download of the linux binary, this is needed for GRID executions
                 download_path = Path(target_bin_dir, "cns_linux")
-                status, msg = self.download_file(
-                    binary_dict["x86_64-linux"], download_path
-                )
-                if not status:
-                    print(msg)
-                    sys.exit(1)
+                _, _ = self.download_file(binary_dict["x86_64-linux"], download_path)
 
             if "".join(filename.suffixes) == ".tar.gz":
                 try:
@@ -169,7 +161,7 @@ class CustomBuild(build_ext):
             urllib.request.urlretrieve(url, dest)
             return True, "Download successful"
         except Exception as e:  # pylint: disable=broad-except
-            return False, f"Download failed: {e}"
+            return False, f"Download of {url} to {dest} failed: {e}"
 
     @staticmethod
     def get_arch():

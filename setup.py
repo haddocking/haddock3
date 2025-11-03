@@ -126,12 +126,20 @@ class CustomBuild(build_ext):
             binary_url = binary_dict[arch]
 
             download_path = Path(target_bin_dir, filename.name)
-            _, _ = self.download_file(binary_url, download_path)
+            downloaded, msg = self.download_file(binary_url, download_path)
+            if not downloaded:
+                print(msg)
+                continue
 
             if arch != "x86_64-linux" and filename.name == "cns":
                 # Force the download of the linux binary, this is needed for GRID executions
                 download_path = Path(target_bin_dir, "cns_linux")
-                _, _ = self.download_file(binary_dict["x86_64-linux"], download_path)
+                downloaded, msg = self.download_file(
+                    binary_dict["x86_64-linux"], download_path
+                )
+                if not downloaded:
+                    print(msg)
+                    continue
 
             if "".join(filename.suffixes) == ".tar.gz":
                 try:

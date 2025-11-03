@@ -169,7 +169,7 @@ class CustomBuild(build_ext):
             urllib.request.urlretrieve(url, dest)
             return True, "Download successful"
         except Exception as e:  # pylint: disable=broad-except
-            return False, f"Download failed: {e}"
+            return False, f"Download of {dest} failed: {e} URL: {url}"
 
     @staticmethod
     def get_arch():

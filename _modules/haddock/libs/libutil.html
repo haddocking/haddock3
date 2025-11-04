@@ -554,6 +554,17 @@
 
 
 
+<div class="viewcode-block" id="get_arch">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.get_arch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_arch</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to figure out the architetchure&quot;&quot;&quot;</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">machine</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">system</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
 <div class="viewcode-block" id="get_cns_executable">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.get_cns_executable">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_cns_executable</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
@@ -566,9 +577,9 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        SystemExit: If CNS executable cannot be found</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Try default location first</span>
-    <span class="n">cns_exec</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">files</span><span class="p">(</span><span class="n">haddock</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;bin/cns&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
-
+    <span class="n">cns_exec_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">files</span><span class="p">(</span><span class="n">haddock</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;cns/bin&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+    <span class="n">arch</span> <span class="o">=</span> <span class="n">get_arch</span><span class="p">()</span>
+    <span class="n">cns_exec</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cns_exec_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arch</span><span class="si">}</span><span class="s2">.bin&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cns_exec</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CNS executable not found at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cns_exec</span><span class="p">)</span>
 
@@ -587,24 +598,16 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Determine Linux-specific executable for grid usage</span>
-    <span class="n">system</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">machine</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">current_arch</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">machine</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">system</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">cns_exec_linux</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cns_exec_dir</span><span class="p">,</span> <span class="s2">&quot;x86_64-linux.bin&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">current_arch</span> <span class="o">==</span> <span class="s2">&quot;x86_64-linux&quot;</span><span class="p">:</span>
-        <span class="n">cns_exec_linux</span> <span class="o">=</span> <span class="n">cns_exec</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Look for Linux binary variant</span>
-        <span class="n">cns_exec_linux</span> <span class="o">=</span> <span class="n">cns_exec</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cns_exec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_linux&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">cns_exec_linux</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Current architecture is </span><span class="si">%s</span><span class="s2">, but grid execution requires &quot;</span>
-                <span class="s2">&quot;an x86_64-linux binary&quot;</span><span class="p">,</span>
-                <span class="n">current_arch</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Linux CNS binary not found at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cns_exec_linux</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;GRID mode will not be available&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cns_exec_linux</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;Current architecture is </span><span class="si">%s</span><span class="s2">, but grid execution requires &quot;</span>
+            <span class="s2">&quot;an x86_64-linux binary&quot;</span><span class="p">,</span>
+            <span class="n">arch</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Linux CNS binary not found at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cns_exec_linux</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;GRID mode will not be available&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">cns_exec</span><span class="p">,</span> <span class="n">cns_exec_linux</span></div>
 

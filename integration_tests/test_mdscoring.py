@@ -64,6 +64,32 @@ class MockPreviousIO:
         return None
 
 
+class MockPreviousIO_3chains:
+    def __init__(self, path):
+        self.path = path
+
+    def retrieve_models(self, individualize: bool = False):
+        file_bn = "ab_ag_BHL"
+        shutil.copy(
+            Path(GOLDEN_DATA, f"{file_bn}.pdb"),
+            Path(self.path, f"{file_bn}.pdb"),
+        )
+
+        # add the topology to the models
+        psf_file = Path(GOLDEN_DATA, f"{file_bn}.psf")
+        model_list = [
+            PDBFile(
+                file_name=f"{file_bn}.pdb",
+                path=self.path,
+                topology=TopologyFile(psf_file),
+            ),
+        ]
+        return model_list
+
+    def output(self) -> None:
+        return None
+
+
 def test_mdscoring_default(mdscoring_module, calc_fnat):
     """Test the mdscoring module."""
     mdscoring_module.previous_io = MockPreviousIO(path=mdscoring_module.path)
@@ -95,3 +121,43 @@ def test_mdscoring_default(mdscoring_module, calc_fnat):
     # check that the score is equal to the global score (it's a dimer!)
     for perint, sc in zip(df_perint["score"].tolist(), df["score"].tolist()):
         assert perint == pytest.approx(sc, abs=0.01)
+
+
+def test_mdscoring_3chains(mdscoring_module):
+    """Test the mdscoring module with interface selection."""
+    mdscoring_module.previous_io = MockPreviousIO_3chains(path=mdscoring_module.path)
+    # Reduces the number of md steps to fasten the tests
+    mdscoring_module.params["nemsteps"] = 20
+    mdscoring_module.params["waterheatsteps"] = 10
+    mdscoring_module.params["watersteps"] = 10
+    mdscoring_module.params["watercoolsteps"] = 10
+    mdscoring_module.run()
+
+    expected_pdb1 = Path(mdscoring_module.path, "mdscoring_1.pdb")
+    expected_csv_all = Path(mdscoring_module.path, "mdscoring.tsv")
+
+    assert expected_pdb1.exists(), f"{expected_pdb1} does not exist"
+    assert expected_csv_all.exists(), f"{expected_csv_all} does not exist"
+    df_all = pd.read_csv(expected_csv_all, sep="\t", comment="#")
+
+    # check the interface scoring
+    expected_BH_interface_csv = Path(mdscoring_module.path, "mdscoring_B_H.tsv")
+    assert expected_BH_interface_csv.exists(), f"{expected_BH_interface_csv} does not exist"
+    expected_BL_interface_csv = Path(mdscoring_module.path, "mdscoring_B_L.tsv")
+    assert expected_BL_interface_csv.exists(), f"{expected_BL_interface_csv} does not exist"
+
+    # Set chain combination parameter
+    mdscoring_module.params["interface_combinations"] = ["B,H", "B,L"]
+    mdscoring_module.run()
+
+    expected_pdb1 = Path(mdscoring_module.path, "mdscoring_1.pdb")
+    expected_csv_combi = Path(mdscoring_module.path, "mdscoring.tsv")
+    print([_ for _ in expected_pdb1.read_text().split("\n") if "REMARK" in _])
+
+    assert expected_pdb1.exists(), f"{expected_pdb1} does not exist"
+    assert expected_csv_combi.exists(), f"{expected_csv_combi} does not exist"
+    df_combi = pd.read_csv(expected_csv_combi, sep="\t", comment="#")
+
+    # Ensure the score are different
+    assert df_all["score"].tolist() != df_combi["score"].tolist()
+

@@ -68,35 +68,3 @@ jobs:
         run: |
           sphinx-apidoc -f -e -o docs/ src/haddock -d 1
           sphinx-build docs haddock3-docs
-
-  dev:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      actions: read
-      checks: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
-
-      - name: install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
-
-      - name: install haddock3 in editable mode
-        run: pip install -e '.[mpi,dev,docs,notebooks]'
-
-      - name: check installed binaries
-        run: |
-          required_bins="contact_fcc cns haddock-restraints fast-rmsdmatrix"
-          for bin in $required_bins; do
-            if [ ! -x "src/haddock/bin/$bin" ]; then
-              echo "src/haddock/bin/$bin is missing or not executable"; exit 1;
-            fi
-          done
-          ls -l src/haddock/bin

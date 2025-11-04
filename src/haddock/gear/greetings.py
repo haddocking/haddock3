@@ -32,7 +32,7 @@ feedback_urls = {
     "GitHub issues": "https://github.com/haddocking/haddock3/issues",
     "BioExcel feedback": "https://www.bonvinlab.org/feedback",
     "BioExcel forum": "https://ask.bioexcel.eu/c/haddock/6",
-    "HADDOCK3 user manual": "https://www.bonvinlab.org/haddock3-user-manual/"
+    "Haddock3 user manual": "https://www.bonvinlab.org/haddock3-user-manual/"
 }
 
 

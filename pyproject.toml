@@ -46,7 +46,7 @@ dependencies = [
   'pandas==2.*',
   'prodigy-prot==2.3.0',
   'prodigy-lig==1.1.4',
-  'plotly==6.3.0',
+  'plotly==6.4.0',
   'freesasa>=2.2.1',
 ]
 
@@ -54,8 +54,8 @@ dependencies = [
 dev = [
   "coverage==7.10.7",
   "pytest==8.4.2",
-  "pytest-cov==6.2.1",
-  "hypothesis==6.140.2",
+  "pytest-cov==7.0.0",
+  "hypothesis==6.141.1",
   "pytest-mock==3.15.1",
   "fastapi==0.121.0",
   "httpx==0.28.1",

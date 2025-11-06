@@ -1,7 +1,10 @@
+import os
+from importlib.resources import files
 from pathlib import Path
 
 import pytest
 
+import haddock
 from haddock.libs.libutil import get_cns_executable
 
 from . import is_linux_x86_64, is_not_linux_x86_64
@@ -38,6 +41,13 @@ def test_non_linux_looks_for_linux_variant():
 
     assert cns_exec != cns_exec_linux
     assert cns_exec_linux.name == f"{cns_exec.name}_linux"
+
+
+def test_cns_binary_is_executable():
+    """Make sure the binaries are executable."""
+    cns_exec_dir = Path(files(haddock).joinpath("cns/bin"))  # type: ignore
+    for f in cns_exec_dir.glob("*"):
+        assert os.access(f, os.X_OK)
 
 
 def test_returns_tuple_of_paths():

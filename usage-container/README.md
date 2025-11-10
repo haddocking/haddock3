@@ -1,6 +1,6 @@
 # Container workflow for HADDOCK3
 
-Build, run, and extend an **Apptainer/Singularity** container for HADDOCK3. [**HADDOCK3**](https://doi.org/10.1021/acs.jcim.5c00969)(High Ambiguity Driven protein–protein Docking) is a flexible, information-driven software suite for modeling biomolecular complexes using experimental and theoretical restraints. **Docker**, **Singularity**, and **Apptainer** are containerization platforms that package applications and all their dependencies into lightweight, portable images, ensuring reproducible execution across different environments.
+Build, run, and extend an **Apptainer/Singularity** container for HADDOCK3. [**HADDOCK3**](https://doi.org/10.1021/acs.jcim.5c00969)(High Ambiguity Driven protein–protein Docking) is a flexible, information-driven software suite for modeling biomolecular complexes using experimental and theoretical restraints. **Docker** and **Apptainer** are containerization platforms that package applications and all their dependencies into lightweight, portable images, ensuring reproducible execution across different environments.
 
 A ready-to-use Docker image for HADDOCK3 is published on the GitHub container registry, simply pull:
 ```bash
@@ -19,8 +19,6 @@ To use this as the foundation for HPC-friendly SIF images, build **Apptainer** o
 # Build Apptainer image
 apptainer build haddock3_mpi.sif docker://ghcr.io/haddocking/haddock3:2025.8.0
 
-# Or, build with Singularity
-singularity build haddock3_mpi.sif docker://ghcr.io/haddocking/haddock3:2025.8.0
   ```
 **Note:** Refer to the [**usage.md**](https://github.com/haddocking/haddock3/blob/main/usage-container/docs/usage.md) and the example SLURM script available in the `scripts` folder for detailed instructions on how to run HADDOCK3 jobs in an HPC environment.
 <pre> <strong>Version updates:</strong> The HADDOCK3 image is regularly updated. Please check the tags at <a href="https://github.com/haddocking/haddock3/pkgs/container/haddock3">ghcr.io/haddocking/haddock3</a> for the latest version. </pre>
@@ -56,14 +54,15 @@ A definition file is a blueprint that tells the containerization platform how to
 A ready-to-use `HADDOCK3.def` is provided in the ([recipe/](https://github.com/haddocking/haddock3/blob/main/usage-container/recipe)) directory.
 
    ```bash
-   # Apptainer
-   apptainer build haddock3_mpi.sif haddock3_mpi.def
+   
+   apptainer build --build-arg HADDOCK_VERSION=1.0.0 \
+   haddock3_mpi.sif \
+   haddock3_mpi.def \
 
-   # Singularity
-   singularity build haddock3_mpi.sif haddock3_mpi.def
+
    ```
 
-    **Tip:** To create your own definition files to layer in additional packages, alternative MPI variants, Python libraries, and any domain-specific utilities.Just simply modify the `%post` section of `HADDOCK3.def` before building.
+    **Tip:** Set the HADDOCK_VERSION build argument to specify which HADDOCK3 version to install.To create your own definition files to layer in additional packages, alternative MPI variants, Python libraries, and any domain-specific utilities.Just simply modify the `%post` section of `HADDOCK3.def` before building.
     
 3. **Verify&Run**
 

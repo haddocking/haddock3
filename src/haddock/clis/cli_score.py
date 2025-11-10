@@ -149,7 +149,7 @@ def main(
     from contextlib import suppress
     from pathlib import Path
 
-    from haddock import log
+    from haddock import log, EmptyPath
     from haddock.gear.haddockmodel import HaddockModel
     from haddock.gear.yaml2cfg import read_from_yaml_config
     from haddock.gear.zerofill import zero_fill
@@ -168,23 +168,29 @@ def main(
     ems_dict = default_emscoring.copy()
     n_warnings = 0
     for param, value in kwargs.items():
+        # Check if the parameter name is in the emscoring module ones
         if param not in default_emscoring:
             sys.exit(
                 f"* ERROR * Parameter {param!r} is not a "
                 f"valid `emscoring` parameter.{os.linesep}"
-                f"Valid emscoring parameters are: {', '.join(sorted(default_emscoring))}"
+                "Valid emscoring parameters are: "
+                f"{', '.join(sorted(default_emscoring))}"
                 )
+        # Compare the user-given value to the default one
         if value != default_emscoring[param]:
             print(
-                f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})"
-            )  # noqa:E501
+                f"* ATTENTION * Value ({value}) of parameter {param} "
+                f"different from default ({default_emscoring[param]})"
+            )
             # get the type of default value
             default_type = type(default_emscoring[param])
-            # convert the value to the same type
+            # cast the value to the same type
             if default_type == bool:
                 if value.lower() not in ["true", "false"]:
                     sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
                 value = value.lower() == "true"
+            elif param.endswith("_fname"):
+                value = EmptyPath() if str(value) == "" else Path(value).resolve()
             else:
                 value = default_type(value)
             ems_dict[param] = value
@@ -210,9 +216,14 @@ def main(
         # create a copy of the input pdb
         input_pdb_copy = Path(tmp.name)
         shutil.copy(input_pdb, input_pdb_copy)
-    
-        params = {
-            "topoaa": {"molecules": [input_pdb_copy]},
+
+        # Setting up a full workflow set of parameters
+        workflow_params = {
+            "topoaa": {
+                "molecules": [input_pdb_copy],
+                "ligand_param_fname": ems_dict["ligand_param_fname"],
+                "ligand_top_fname": ems_dict["ligand_top_fname"],
+                },
             "emscoring": ems_dict,
         }
 
@@ -221,13 +232,13 @@ def main(
         # run workflow
         with working_directory(run_dir):
             workflow = WorkflowManager(
-                workflow_params=params,
+                workflow_params=workflow_params,
                 start=0,
                 run_dir=run_dir,
             )
-
             workflow.run()
 
+    # Build expected pdb filepath
     minimized_mol = Path(run_dir, "1_emscoring", "emscoring_1.pdb")
     haddock_score_component_dic = HaddockModel(minimized_mol).energies
 
@@ -237,6 +248,7 @@ def main(
     air = haddock_score_component_dic["air"]
     bsa = haddock_score_component_dic["bsa"]
 
+    # Compute the haddock score
     # emscoring is equivalent to itw
     haddock_score_itw = (
         ems_dict["w_vdw"] * vdw

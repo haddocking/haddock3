@@ -7,6 +7,8 @@
 #SBATCH --mem=256GB
 #SBATCH --partition=compute
 
+#Some values like `--nodes`,`--mem`  and `--ntasks-per-node` are variable and depend on your HPC configuration
+
 echo "Starting HADDOCK3 Docking Job"
 echo "SLURM_JOBID          = $SLURM_JOBID"
 echo "SLURM_JOB_NODELIST   = $SLURM_JOB_NODELIST"
@@ -17,7 +19,7 @@ echo "Hostname             = $(hostname -s)"
 echo "Working Directory    = $(pwd)"
 echo "Submit Directory     = $SLURM_SUBMIT_DIR"
 
-# Load necessary environment (optional depending on your setup)
+# Load necessary environment (optional depending on your HPC setup)
 source /lustre/oneApi/setvars.sh
 export OMP_NUM_THREADS=1
 

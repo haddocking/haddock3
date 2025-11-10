@@ -46,7 +46,7 @@ scripts/sbatch run_haddock3_slurm.sh
 ### 3. MPI run mode
 
 When using multiple CPUs or running across multiple nodes, **HADDOCK3 must be executed in MPI mode**.
-To ensure proper parallel execution, set the following parameter in your configuration (`.cfg`) file and change mode and the number of ncores:
+To ensure proper parallel execution, set the following parameter in your configuration (`.cfg`) file, and change mode and the number of ncores:
 
 ```ini
 mode = "mpi"

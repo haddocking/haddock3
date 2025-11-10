@@ -855,7 +855,7 @@ def test_capri_run(mocker, monkeypatch):
                 "fnat_cutoff": 10,
                 "irmsd_cutoff": 10,
                 "keep_hetatm": False,
-                "alig_fname": None,
+                "align_fname": None,
             },
         )
         rand_fnat = random.random()

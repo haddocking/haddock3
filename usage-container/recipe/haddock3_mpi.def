@@ -2,7 +2,7 @@ Bootstrap: docker
 From: ubuntu:22.04
 
 %labels
-    Maintainer   Shantanu Khatri
+    Maintainer   HADDOCK-GROUP
     Description  "MPI-ready HADDOCK3 + mpi4py container"
 
 %environment

@@ -771,7 +771,7 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
 
 
 def get_align(
-    method: str, lovoalign_exec: FilePath, alig_fname: Optional[FilePath] = None
+    method: str, lovoalign_exec: FilePath, align_fname: Optional[FilePath] = None
 ) -> partial[dict[str, dict[int, int]]]:
     """
     Get the alignment function.
@@ -784,7 +784,7 @@ def get_align(
     lovoalign_exec : str
         Path to the lovoalign executable.
 
-    alig_fname : str
+    align_fname : str
         Path to the custom alignment file, optional
 
     Returns
@@ -792,10 +792,10 @@ def get_align(
     align_func : functools.partial
         desired alignment function
     """
-    if alig_fname:
-        if not Path(alig_fname).exists():
-            raise FileNotFoundError(f"Custom alignment file {alig_fname} not found")
-        align_func = partial(align_custom, custom_alig_file = Path(alig_fname))
+    if align_fname:
+        if not Path(align_fname).exists():
+            raise FileNotFoundError(f"Custom alignment file {align_fname} not found")
+        align_func = partial(align_custom, custom_alig_file = Path(align_fname))
 
     elif method == "structure":
         align_func = partial(align_strct, lovoalign_exec=lovoalign_exec)

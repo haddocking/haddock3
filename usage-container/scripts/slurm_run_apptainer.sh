@@ -25,7 +25,7 @@ export OMP_NUM_THREADS=1
 cd "${WORK_DIR}"
 
 # Ensure the working directory is set correctly
-apptainer exec --bind /path/to/host/data:/path/to/container/data \
+apptainer run
   /path/to/haddock3_image.sif \
   haddock3 your-docking-config.cfg
 

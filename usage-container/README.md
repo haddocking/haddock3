@@ -33,7 +33,7 @@ Containerization techniques enable highly reproducible, customizable, and scalab
 
     ```bash
     git clone https://github.com/haddocking/haddock3.git
-    cd haddock3/usage-container/usage-container/recipe
+    cd haddock3/usage-container/recipe
     
     ```
 

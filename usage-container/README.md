@@ -89,6 +89,7 @@ A ready-to-use `HADDOCK3.def` is provided in the ([recipe/](https://github.com/h
 - **Host**: Linux with Apptainer or Singularity installed (local machine or HPC environment)
 - **Disk**: ≥ 2 GB free for building
 - **Python**: 3.10+ (inside container)
+- **Permissions:** Root (sudo) privileges are required to build Apptainer images locally.  
 
 ---
 

@@ -62,4 +62,5 @@ This enables HADDOCK3 to distribute workloads efficiently across all allocated C
 - SLURM-enabled HPC environment
 - Docker, Apptainer installed
 - Image: `haddock3_cpu-mpi.sif`
-- `.cfg` configuration file for HADDOCK3
+- `.toml` configuration file for HADDOCK3
+- Root (sudo) privileges are required to build Apptainer images locally

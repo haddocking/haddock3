@@ -1,0 +1,24 @@
+! calc_free-ene.cns
+!    Calculate the total energy of the separated components
+!
+! Script uses the store1 and store2 atom object, and COMP, REF and RMSD object
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+@MODULE:scale_intra_only.cns
+
+evaluate ($eintfree = 0.0)
+@MODULE:flex_segment_back.cns
+fix sele=(((attr store5 = 0) or resn ANI or resn DAN or resn XAN or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP*)) end
+
+minimize powell nstep=100 drop=10.0 nprint=25 end
+fix sele=(not all) end
+energy end
+evaluate ($eintfree = $bond + $angl + $impr + $dihe + $vdw + $elec)
+
+display FREE MOLECULES INTERNAL ENERGY = $eintfree

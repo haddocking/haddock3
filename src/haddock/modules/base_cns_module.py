@@ -142,7 +142,7 @@ class BaseCNSModule(BaseHaddockModule):
                 # and we simply need to generate the full paths
                 _ambig_fnames = [Path(basepath, tbl.name) for tbl in tbl_files]
                 # Make sure they exists
-                ambig_fnames = [p for p in _ambig_fnames if p.exists()]
+                ambig_fnames = [p for p in _ambig_fnames if p.exists() and p.suffix == ".tbl"]
                 # abort execution if no files are found
                 if len(ambig_fnames) == 0:
                     raise Exception(f"No tbl files found in {ambig_fname} !")

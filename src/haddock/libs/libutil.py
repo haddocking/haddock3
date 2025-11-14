@@ -428,6 +428,14 @@ def recursive_convert_paths_to_strings(params: ParamMapT) -> ParamMapT:
     return params
 
 
+def get_arch():
+    """Helper function to figure out the architetchure"""
+    system = platform.system().lower()
+    machine = platform.machine().lower()
+
+    return f"{machine}-{system}"
+
+
 def get_cns_executable() -> tuple[Path, Path]:
     """
     Locate CNS executable and its Linux variant for grid execution.
@@ -438,9 +446,9 @@ def get_cns_executable() -> tuple[Path, Path]:
     Raises:
         SystemExit: If CNS executable cannot be found
     """
-    # Try default location first
-    cns_exec = Path(files(haddock).joinpath("bin/cns"))  # type: ignore
-
+    cns_exec_dir = Path(files(haddock).joinpath("cns/bin"))  # type: ignore
+    arch = get_arch()
+    cns_exec = Path(cns_exec_dir, f"{arch}.bin")
     if not cns_exec.exists():
         log.error("CNS executable not found at %s", cns_exec)
 
@@ -459,23 +467,15 @@ def get_cns_executable() -> tuple[Path, Path]:
             sys.exit(1)
 
     # Determine Linux-specific executable for grid usage
-    system = platform.system().lower()
-    machine = platform.machine().lower()
-    current_arch = f"{machine}-{system}"
+    cns_exec_linux = Path(cns_exec_dir, "x86_64-linux.bin")
 
-    if current_arch == "x86_64-linux":
-        cns_exec_linux = cns_exec
-    else:
-        # Look for Linux binary variant
-        cns_exec_linux = cns_exec.with_name(f"{cns_exec.name}_linux")
-
-        if not cns_exec_linux.exists():
-            log.warning(
-                "Current architecture is %s, but grid execution requires "
-                "an x86_64-linux binary",
-                current_arch,
-            )
-            log.warning("Linux CNS binary not found at %s", cns_exec_linux)
-            log.warning("GRID mode will not be available")
+    if not cns_exec_linux.exists():
+        log.warning(
+            "Current architecture is %s, but grid execution requires "
+            "an x86_64-linux binary",
+            arch,
+        )
+        log.warning("Linux CNS binary not found at %s", cns_exec_linux)
+        log.warning("GRID mode will not be available")
 
     return cns_exec, cns_exec_linux

@@ -6,6 +6,8 @@ import platform
 import subprocess
 import sys
 import tarfile
+from urllib.error import HTTPError, URLError
+import time
 import urllib.request
 from pathlib import Path
 from typing import cast
@@ -15,12 +17,6 @@ from setuptools.command.build_ext import build_ext
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 
-CNS_BINARIES = {
-    "x86_64-linux": "https://surfdrive.surf.nl/files/index.php/s/BWa5OimzbNliTi6/download",
-    "x86_64-darwin": "https://surfdrive.surf.nl/files/index.php/s/3Fzzte0Zx0L8GTY/download",
-    "arm64-darwin": "https://surfdrive.surf.nl/files/index.php/s/bYB3xPWf7iwo07X/download",
-    "aarch64-linux": "https://surfdrive.surf.nl/files/index.php/s/3rHpxcufHGrntHn/download",
-}
 
 HADDOCK_RESTRAINTS_VERSION = "0.10.0"
 BASE_GITHUB_URL = f"https://github.com/haddocking/haddock-restraints/releases/download/v{HADDOCK_RESTRAINTS_VERSION}"
@@ -108,7 +104,6 @@ class CustomBuild(build_ext):
         arch = self.get_arch()
         binary_configs = [
             (HADDOCK_RESTRAINTS_BINARIES, Path("haddock-restraints.tar.gz")),
-            (CNS_BINARIES, Path("cns")),
         ]
 
         # Determine the target directory
@@ -130,16 +125,6 @@ class CustomBuild(build_ext):
             if not status:
                 print(msg)
                 sys.exit(1)
-
-            if arch != "x86_64-linux" and filename.name == "cns":
-                # Force the download of the linux binary, this is needed for GRID executions
-                download_path = Path(target_bin_dir, "cns_linux")
-                status, msg = self.download_file(
-                    binary_dict["x86_64-linux"], download_path
-                )
-                if not status:
-                    print(msg)
-                    sys.exit(1)
 
             if "".join(filename.suffixes) == ".tar.gz":
                 try:
@@ -163,13 +148,26 @@ class CustomBuild(build_ext):
             os.chmod(executable, 0o755)
 
     @staticmethod
-    def download_file(url, dest) -> tuple[bool, str]:
+    def download_file(url, dest, max_retries=10, delay=5) -> tuple[bool, str]:
         """Download a file from a URL"""
-        try:
-            urllib.request.urlretrieve(url, dest)
-            return True, "Download successful"
-        except Exception as e:  # pylint: disable=broad-except
-            return False, f"Download failed: {e}"
+        for attempt in range(max_retries):
+            try:
+                urllib.request.urlretrieve(url, dest)
+                return True, "Download successful"
+            except (URLError, HTTPError) as e:  # pylint: disable=broad-except
+                if attempt < max_retries - 1:
+                    time.sleep(delay)
+                    continue
+                return (
+                    False,
+                    f"Download of {dest} failed after {max_retries} attempts: {e} URL: {url}",
+                )
+            except Exception as e:  # pylint: disable=broad-except
+                return False, f"Download of {dest} failed: {e} URL: {url}"
+        return (
+            False,
+            f"Download of {dest} failed after {max_retries} attempts URL: {url}",
+        )
 
     @staticmethod
     def get_arch():
@@ -231,7 +229,8 @@ class PostInstallCommand(install):
 
     def check_cns_binary(self):
         """Execute the CNS binary to ensure it works"""
-        cns_path = Path(f"{self.install_lib}/haddock/bin/cns")
+        arch = self.get_arch()
+        cns_path = Path(f"{self.install_lib}/haddock/cns/bin/{arch}.bin")
         proc = subprocess.run(
             [cns_path],
             input="stop\n",
@@ -284,6 +283,14 @@ class PostInstallCommand(install):
         except Exception as _:
             # Fallback for systems without /dev/tty
             sys.stdout.write("CNS execution passed ✅ \n")
+
+    @staticmethod
+    def get_arch():
+        """Helper function to figure out the architetchure"""
+        system = platform.system().lower()
+        machine = platform.machine().lower()
+
+        return f"{machine}-{system}"
 
 
 setup(

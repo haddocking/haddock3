@@ -1,6 +1,7 @@
 # Changelog
 
 - 2025-11-17: Simplify the use of multiple ambig archives
+- 2025-11-17: Added possibility to use alascan with ligands - Issue #1411
 - 2025-10-22: Allow the definition of chain combinations to be used for scoring - Issue #1414
 - 2025-09-11: Added `grid` mode
 - 2025-09-11: Corrected antibody-antigen notebook - Issue #1383

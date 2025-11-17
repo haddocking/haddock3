@@ -118,7 +118,7 @@ class HaddockModule(BaseHaddockModule):
                 mutation_res=self.params["scan_residue"],
                 model=model,
                 params=self.params,
-                library_mode = False
+                library_mode=False,
                 )
             for model in models
             ]

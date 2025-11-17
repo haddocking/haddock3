@@ -108,10 +108,10 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
         Path to the mutated pdb file.
     """
     mut_pdb_l = []
-    resname = ''
-    with open(pdb_f, 'r') as fh:
+    resname = ""
+    with open(pdb_f, "r") as fh:
         for line in fh.readlines():
-            if line.startswith('ATOM'):
+            if line.startswith("ATOM"):
                 chain = line[21]
                 resid = int(line[22:26])
                 atom_name = line[12:16].strip()
@@ -125,44 +125,65 @@ def mutate(pdb_f, target_chain, target_resid, mut_resname):
                 else:
                     mut_pdb_l.append(line)
     try:
-        mut_id = f'{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}'
+        mut_id = f"{RES_CODES[resname]}{target_resid}{RES_CODES[mut_resname]}"
     except KeyError:
         raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
     mut_pdb_fname = Path(
-        pdb_f.name.replace('.pdb', f'-{target_chain}_{mut_id}.pdb'))
-    with open(mut_pdb_fname, 'w') as fh:
-        fh.write(''.join(mut_pdb_l))
+        pdb_f.name.replace(".pdb", f"-{target_chain}_{mut_id}.pdb"))
+    with open(mut_pdb_fname, "w") as fh:
+        fh.write("".join(mut_pdb_l))
     return mut_pdb_fname
 
 
-def get_score_string(pdb_f, run_dir, outputpdb=False):
+def get_score_string(
+        pdb_f: str,
+        run_dir: str,
+        outputpdb: bool = False,
+        ligand_param_fname: Union[Path, str] = "",
+        ligand_top_fname: Union[Path, str] = "",
+        ) -> List[str]:
     """Get score output from cli_score.main.
 
     Parameters
     ----------
     pdb_f : str
         Path to the pdb file.
-    
     run_dir : str
         Path to the run directory.
-    
     outputpdb : bool, optional
         If True, the output, energy-minimized pdb file will be written.
         Default is False.
+    ligand_param_fname : Union[Path, str]
+        Path to additional parameter file used by CNS.
+    ligand_top_fname : Union[Path, str]
+        Path to additional topology file used by CNS.
     
     Returns
     -------
-    out : list
+    out : list[str]
         List of strings with the score output.
     """
-    f = io.StringIO()
-    with redirect_stdout(f):
-        cli_score.main(pdb_f, run_dir, full=True, outputpdb=outputpdb)
-    out = f.getvalue().split(os.linesep)
+    stdout = io.StringIO()
+    with redirect_stdout(stdout):
+        cli_score.main(
+            pdb_f,
+            run_dir,
+            full=True,
+            outputpdb=outputpdb,
+            ligand_param_fname=ligand_param_fname,
+            ligand_top_fname=ligand_top_fname,
+            )
+    out = stdout.getvalue().split(os.linesep)
     return out
 
 
-def calc_score(pdb_f, run_dir, outputpdb=False):
+def calc_score(
+        pdb_f: str,
+        run_dir: str,
+        outputpdb: bool = False,
+        ligand_param_fname: Union[Path, str] = "",
+        ligand_top_fname: Union[Path, str] = "",
+        ) -> Tuple[float, float, float, float, float]:
     """Calculate the score of a model.
 
     Parameters
@@ -174,9 +195,15 @@ def calc_score(pdb_f, run_dir, outputpdb=False):
     outputpdb : bool, optional
         If True, the output, energy-minimized pdb file will be written.
         Default is False.
-    
+    ligand_param_fname : Union[Path, str]
+        Path to additional parameter file used by CNS
+    ligand_top_fname : Union[Path, str]
+        Path to additional topology file used by CNS
+
     Returns
     -------
+    Tuple[float, float, float, float, float]
+        All the scores
     score : float
         Haddock score.
     vdw : float
@@ -186,11 +213,21 @@ def calc_score(pdb_f, run_dir, outputpdb=False):
     desolv : float
         Desolvation energy.
     bsa : float
-        Buried surface area.
-    """
-    out_string = get_score_string(pdb_f, run_dir, outputpdb=outputpdb)
+        Buried surface area.   
 
-    for ln in out_string:
+    Raises
+    ------
+    FileNotFoundError
+        Error when the file could not be located.
+    """
+    scores_strings = get_score_string(
+        pdb_f, run_dir,
+        outputpdb=outputpdb,
+        ligand_param_fname=ligand_param_fname,
+        ligand_top_fname=ligand_top_fname,
+        )
+    # Loop over lines to search for the score and components
+    for ln in scores_strings:
         if ln.startswith("> HADDOCK-score (emscoring)"):
             score = float(ln.split()[-1])
         if ln.startswith("> vdw"):
@@ -669,6 +706,8 @@ class InterfaceScanner:
         self.library_mode = library_mode
         self.params = params or {}
         self.point_mutations_jobs = []
+        self.ligand_param_fname = self.params.get("ligand_param_fname", "")
+        self.ligand_top_fname = self.params.get("ligand_top_fname", "")
         self.filter_resdic = {
             key[-1]: value for key, value
             in self.params.items()
@@ -696,7 +735,13 @@ class InterfaceScanner:
             # Calculate native scores
             sc_dir = f"haddock3-score-{self.model_id}-{os.getpid()}"
             try:
-                native_scores = calc_score(self.model_path, run_dir=sc_dir, outputpdb=False)
+                native_scores = calc_score(
+                    self.model_path,
+                    run_dir=sc_dir,
+                    outputpdb=False,
+                    ligand_param_fname=self.ligand_param_fname,
+                    ligand_top_fname=self.ligand_top_fname,
+                    )
             finally:
                 if os.path.exists(sc_dir):
                     shutil.rmtree(sc_dir)
@@ -731,7 +776,11 @@ class InterfaceScanner:
 
             # if (user defined target chains) & (no user target residues) - do use user chains
             elif user_chains:
-                interface = {chain: res for chain, res in interface.items() if chain in user_chains}
+                interface = {
+                    chain: res
+                    for chain, res in interface.items()
+                    if chain in user_chains
+                    }
 
             # get all atoms of the model to verifiy residue type down the line
             resname_dict = {}
@@ -757,7 +806,9 @@ class InterfaceScanner:
                             ori_resname=ori_resname,
                             target_resname=end_resname,
                             native_scores=native_scores,
-                            output_mutants=output_mutants
+                            output_mutants=output_mutants,
+                            ligand_param_fname=self.ligand_param_fname,
+                            ligand_top_fname=self.ligand_top_fname,
                         )
                         self.point_mutations_jobs.append(job)
     
@@ -804,7 +855,9 @@ class ModelPointMutation:
         ori_resname: str,
         target_resname: str, 
         native_scores: Tuple[float, float, float, float, float], 
-        output_mutants: bool = False
+        output_mutants: bool = False,
+        ligand_param_fname: Union[Path, str] = "",
+        ligand_top_fname: Union[Path, str] = "",
     ) -> None:
         """
         Initialize a single point mutation job.
@@ -827,6 +880,10 @@ class ModelPointMutation:
             Native model scores (score, vdw, elec, desolv, bsa)
         output_mutants : bool
             Whether to keep mutant PDB files
+        ligand_param_fname : Union[Path, str]
+            Path to additional parameter file used by CNS
+        ligand_top_fname : Union[Path, str]
+            Path to additional topology file used by CNS
         """
         self.model_path = Path(model_path)
         self.model_id = model_id
@@ -836,7 +893,9 @@ class ModelPointMutation:
         self.target_resname = target_resname
         self.native_scores = native_scores
         self.output_mutants = output_mutants
-    
+        self.ligand_param_fname = ligand_param_fname
+        self.ligand_top_fname = ligand_top_fname
+
     def run(self):
         """Execute the point mutation."""
         mutation_id = f"{self.model_id}_{self.chain}{self.resid}{self.target_resname}"
@@ -846,11 +905,17 @@ class ModelPointMutation:
             sc_dir = f"haddock3-score-{mutation_id}"
             os.makedirs(sc_dir, exist_ok=True)
             
-            # Perform mutation
+            # Perform point mutation on pdb file
             mut_pdb = mutate(self.model_path, self.chain, self.resid, self.target_resname)
             
             # Calculate mutant scores
-            mutant_scores = calc_score(mut_pdb, run_dir=sc_dir, outputpdb=self.output_mutants)
+            mutant_scores = calc_score(
+                mut_pdb,
+                run_dir=sc_dir,
+                outputpdb=self.output_mutants,
+                ligand_param_fname=self.ligand_param_fname,
+                ligand_top_fname=self.ligand_top_fname,
+                )
             
             # Calculate deltas (native - mutant)
             n_score, n_vdw, n_elec, n_des, n_bsa = self.native_scores

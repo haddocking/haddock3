@@ -241,7 +241,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">EmptyPath</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.haddockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">HaddockModel</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.yaml2cfg</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_from_yaml_config</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.gear.zerofill</span><span class="w"> </span><span class="kn">import</span> <span class="n">zero_fill</span>
@@ -260,23 +260,29 @@
     <span class="n">ems_dict</span> <span class="o">=</span> <span class="n">default_emscoring</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">n_warnings</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Check if the parameter name is in the emscoring module ones</span>
         <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_emscoring</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;* ERROR * Parameter </span><span class="si">{</span><span class="n">param</span><span class="si">!r}</span><span class="s2"> is not a &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;valid `emscoring` parameter.</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Valid emscoring parameters are: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">default_emscoring</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Valid emscoring parameters are: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">default_emscoring</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
+        <span class="c1"># Compare the user-given value to the default one</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">default_emscoring</span><span class="p">[</span><span class="n">param</span><span class="p">]:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;* ATTENTION * Value (</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">) of parameter </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> different from default (</span><span class="si">{</span><span class="n">default_emscoring</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="p">)</span>  <span class="c1"># noqa:E501</span>
+                <span class="sa">f</span><span class="s2">&quot;* ATTENTION * Value (</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">) of parameter </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;different from default (</span><span class="si">{</span><span class="n">default_emscoring</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
             <span class="c1"># get the type of default value</span>
             <span class="n">default_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default_emscoring</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>
-            <span class="c1"># convert the value to the same type</span>
+            <span class="c1"># cast the value to the same type</span>
             <span class="k">if</span> <span class="n">default_type</span> <span class="o">==</span> <span class="nb">bool</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">]:</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;* ERROR * Boolean parameter </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> should be True or False&quot;</span><span class="p">)</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span>
+            <span class="k">elif</span> <span class="n">param</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_fname&quot;</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">EmptyPath</span><span class="p">()</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">default_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="n">ems_dict</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -302,9 +308,14 @@
         <span class="c1"># create a copy of the input pdb</span>
         <span class="n">input_pdb_copy</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">input_pdb</span><span class="p">,</span> <span class="n">input_pdb_copy</span><span class="p">)</span>
-    
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;topoaa&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;molecules&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">input_pdb_copy</span><span class="p">]},</span>
+
+        <span class="c1"># Setting up a full workflow set of parameters</span>
+        <span class="n">workflow_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;topoaa&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;molecules&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">input_pdb_copy</span><span class="p">],</span>
+                <span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">:</span> <span class="n">ems_dict</span><span class="p">[</span><span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">:</span> <span class="n">ems_dict</span><span class="p">[</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">],</span>
+                <span class="p">},</span>
             <span class="s2">&quot;emscoring&quot;</span><span class="p">:</span> <span class="n">ems_dict</span><span class="p">,</span>
         <span class="p">}</span>
 
@@ -313,13 +324,13 @@
         <span class="c1"># run workflow</span>
         <span class="k">with</span> <span class="n">working_directory</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
             <span class="n">workflow</span> <span class="o">=</span> <span class="n">WorkflowManager</span><span class="p">(</span>
-                <span class="n">workflow_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">workflow_params</span><span class="o">=</span><span class="n">workflow_params</span><span class="p">,</span>
                 <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="n">run_dir</span><span class="o">=</span><span class="n">run_dir</span><span class="p">,</span>
             <span class="p">)</span>
-
             <span class="n">workflow</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
+    <span class="c1"># Build expected pdb filepath</span>
     <span class="n">minimized_mol</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="s2">&quot;1_emscoring&quot;</span><span class="p">,</span> <span class="s2">&quot;emscoring_1.pdb&quot;</span><span class="p">)</span>
     <span class="n">haddock_score_component_dic</span> <span class="o">=</span> <span class="n">HaddockModel</span><span class="p">(</span><span class="n">minimized_mol</span><span class="p">)</span><span class="o">.</span><span class="n">energies</span>
 
@@ -329,6 +340,7 @@
     <span class="n">air</span> <span class="o">=</span> <span class="n">haddock_score_component_dic</span><span class="p">[</span><span class="s2">&quot;air&quot;</span><span class="p">]</span>
     <span class="n">bsa</span> <span class="o">=</span> <span class="n">haddock_score_component_dic</span><span class="p">[</span><span class="s2">&quot;bsa&quot;</span><span class="p">]</span>
 
+    <span class="c1"># Compute the haddock score</span>
     <span class="c1"># emscoring is equivalent to itw</span>
     <span class="n">haddock_score_itw</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">ems_dict</span><span class="p">[</span><span class="s2">&quot;w_vdw&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">vdw</span>
@@ -389,7 +401,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Nov 07, 2025.
+      <span class="lastupdated">Last updated on Nov 17, 2025.
       </span></p>
   </div>
 

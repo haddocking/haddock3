@@ -27,6 +27,28 @@ int_cutoff
 | *group*: analysis
 | *explevel*: easy
 
+ligand_param_fname
+~~~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand parameter file
+| *short description*: Ligand parameter file in CNS format
+| *long description*: Ligand parameter file in CNS format, for any ligand/residues/molecules not supported by default by HADDOCK.
+| *group*: force field
+| *explevel*: easy
+
+ligand_top_fname
+~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand topology file
+| *short description*: Ligand topology file in CNS format
+| *long description*: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: easy
+
 output_bfactor
 ~~~~~~~~~~~~~~
 

@@ -10,7 +10,7 @@
 !
 
 if ( $log_level = "verbose" ) then
-    set message=normal echo=on end
+    set message=verbose echo=on end
 elseif ( $log_level = "normal" ) then
     set message=normal echo=off end
 else
@@ -77,7 +77,7 @@ evaluate ($refine.keepwater = false)
 !==================================================================!
 
 if ( $log_level = "verbose" ) then
-    set message=normal echo=on end
+    set message=verbose echo=on end
 elseif ( $log_level = "normal" ) then
     set message=normal echo=off end
 else
@@ -85,17 +85,16 @@ else
 end if
 
 
-{* Change segid of CG model and read AA pdb, psf and restraint files =========== *}
+{* Change segid of CG model and read AA pdb, psf files =========== *}
+
+do (segid = segid + "CG") (not segid S)
 
 evaluate ($nchain=0)
 while ($nchain < $data.ncomponents) loop nloop1
     evaluate ($nchain = $nchain + 1)
-    evaluate ($newseg = $prot_segid_$nchain + "CG")
-    do (segid = $newseg) (segid $prot_segid_$nchain)
     structure @@$input_aa_psf_filename_$nchain end
     coor @@$input_aa_pdb_filename_$nchain
 end loop nloop1
-
 
 {* Read paramters and set various force field related variables *}
 
@@ -141,7 +140,7 @@ while ($nchain < $data.ncomponents) loop nloop1
 end loop nloop1
 
 if ( $log_level = "verbose" ) then
-    set message=normal echo=on end
+    set message=verbose echo=on end
 elseif ( $log_level = "normal" ) then
     set message=normal echo=off end
 else
@@ -208,31 +207,28 @@ evaluate ($kinter = 0.1)
 @MODULE:scale_cg-to-aa.cns
 minimize powell nstep=500 drop=40.0 nprint=25 end
 
-if ($failure eq false) then
 ! Short MD optimization
 !
-    {- Friction coefficient, in 1/ps. -}
-    do (fbeta=100) (not segid *CG)
+do (fbeta=100) (not segid *CG)
 
-    evaluate ($bath=300.0)
-    evaluate ($nstep=500 * $scalefac)
-    evaluate ($timestep=0.0005)
+evaluate ($bath=300.0)
+evaluate ($nstep=500 * $scalefac)
+evaluate ($timestep=0.0005)
 
-    do (vx=maxwell($bath)) (all)
-    do (vy=maxwell($bath)) (all)
-    do (vz=maxwell($bath)) (all)
+do (vx=maxwell($bath)) (all)
+do (vy=maxwell($bath)) (all)
+do (vz=maxwell($bath)) (all)
 
-    dynamics cartesian
-        nstep=$nstep
-        timestep=$timestep
-        tcoupling=true temperature=$bath
-        nprint=50
-        cmremove=true
-    end
+dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+end
 
-    minimize powell nstep=500 drop=40.0 nprint=25 end
+minimize powell nstep=500 drop=40.0 nprint=25 end
 
-end if
 
 ! Define secondary structure dihedral angle restraints
 !
@@ -243,31 +239,28 @@ evaluate ($kinter = 0.5)
 @MODULE:scale_cg-to-aa.cns
 minimize powell nstep=500 drop=40.0 nprint=25 end
 
-if ($failure eq false) then
 ! Short MD optimization
 !
-    {- Friction coefficient, in 1/ps. -}
-    do (fbeta=100) (not segid *CG)
+do (fbeta=100) (not segid *CG)
 
-    evaluate ($bath=300.0)
-    evaluate ($nstep=500 * $scalefac)
-    evaluate ($timestep=0.0005)
+evaluate ($bath=300.0)
+evaluate ($nstep=500 * $scalefac)
+evaluate ($timestep=0.0005)
 
-    do (vx=maxwell($bath)) (all)
-    do (vy=maxwell($bath)) (all)
-    do (vz=maxwell($bath)) (all)
+do (vx=maxwell($bath)) (all)
+do (vy=maxwell($bath)) (all)
+do (vz=maxwell($bath)) (all)
 
-    dynamics cartesian
-        nstep=$nstep
-        timestep=$timestep
-        tcoupling=true temperature=$bath
-        nprint=50
-        cmremove=true
-    end
+dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+end
 
-    minimize powell nstep=500 drop=40.0 nprint=25 end
+minimize powell nstep=500 drop=40.0 nprint=25 end
 
-end if
 
 ! Define secondary structure dihedral angle restraints
 !
@@ -278,31 +271,27 @@ evaluate ($kinter = 1.0)
 @MODULE:scale_cg-to-aa.cns
 minimize powell nstep=500 drop=40.0 nprint=25 end
 
-if ($failure eq false) then
 ! Short MD optimization
 !
-    {- Friction coefficient, in 1/ps. -}
-    do (fbeta=100) (not segid *CG)
+do (fbeta=100) (not segid *CG)
 
-    evaluate ($bath=300.0)
-    evaluate ($nstep=500 * $scalefac)
-    evaluate ($timestep=0.0005)
+evaluate ($bath=300.0)
+evaluate ($nstep=500 * $scalefac)
+evaluate ($timestep=0.0005)
 
-    do (vx=maxwell($bath)) (all)
-    do (vy=maxwell($bath)) (all)
-    do (vz=maxwell($bath)) (all)
+do (vx=maxwell($bath)) (all)
+do (vy=maxwell($bath)) (all)
+do (vz=maxwell($bath)) (all)
 
-    dynamics cartesian
-        nstep=$nstep
-        timestep=$timestep
-        tcoupling=true temperature=$bath
-        nprint=50
-        cmremove=true
-    end
+dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+end
 
-    minimize powell nstep=500 drop=40.0 nprint=25 end
-
-end if
+minimize powell nstep=500 drop=40.0 nprint=25 end
 
 ! Define regular AA nonbonded settings
 parameter
@@ -322,31 +311,25 @@ evaluate ($kinter = 1.0)
 @MODULE:scale_cg-to-aa.cns
 minimize powell nstep=500 drop=40.0 nprint=25 end
 
-if ($failure eq false) then
 ! Short MD optimization
 !
-    {- Friction coefficient, in 1/ps. -}
-    do (fbeta=100) (not segid *CG)
+do (fbeta=100) (not segid *CG)
 
-    evaluate ($bath=300.0)
-    evaluate ($nstep=500 * $scalefac)
-    evaluate ($timestep=0.0005)
+evaluate ($bath=300.0)
+evaluate ($nstep=500 * $scalefac)
+evaluate ($timestep=0.0005)
 
-    do (vx=maxwell($bath)) (all)
-    do (vy=maxwell($bath)) (all)
-    do (vz=maxwell($bath)) (all)
+do (vx=maxwell($bath)) (all)
+do (vy=maxwell($bath)) (all)
+do (vz=maxwell($bath)) (all)
 
-    dynamics cartesian
-        nstep=$nstep
-        timestep=$timestep
-        tcoupling=true temperature=$bath
-        nprint=50
-        cmremove=true
-    end
-
-    minimize powell nstep=500 drop=40.0 nprint=25 end
-
-end if
+dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+end
 
 minimize powell nstep=500 drop=40.0 nprint=25 end
 minimize powell nstep=500 drop=10.0 nprint=25 end

@@ -34,9 +34,15 @@ evaluate ($toppar.par_nonbonded = "OPLSX" )
 evaluate ($data.dihedrals_scale= 200)
 evaluate ($data.flags.cdih = false)
 evaluate ($data.error_dih = 10)
+evaluate ($data.flags.noe = false)
 
 ! planarity restraints
 evaluate ($data.flags.plan =  false)
+
+! symmetry restraints
+evaluate ($data.flags.sym = false)
+evaluate ($data.flags.ncs = false)
+evaluate ($data.randremoval = false)
 
 !Dihedral angle energy term:
 evaluate ($data.flags.dihed = true)

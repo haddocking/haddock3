@@ -10,7 +10,7 @@
 !
 
 if ( $log_level = "verbose" ) then
-    set message=verbose echo=on end
+    set message=all echo=on end
 elseif ( $log_level = "normal" ) then
     set message=normal echo=off end
 else
@@ -154,7 +154,7 @@ set seed $seed end
 
 
 if ( $log_level = "verbose" ) then
-    set message=verbose echo=on end
+    set message=all echo=on end
 elseif ( $log_level = "normal" ) then
     set message=normal echo=off end
 else

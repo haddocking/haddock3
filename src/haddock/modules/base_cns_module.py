@@ -144,12 +144,12 @@ class BaseCNSModule(BaseHaddockModule):
                 for tbl in tbl_files:
                     fname = tbl.name
                     # Filter non-".tbl" and hidden files
-                    if any([fname.startswith("."), tbl.suffix != ".tbl"]):
+                    if fname.startswith("."):
                         continue
                     # Build path
                     tbl_fpath = Path(basepath, fname)
                     # Make sure it exists
-                    if tbl_fpath.exists():
+                    if tbl_fpath.exists() and tbl_fpath.suffix == ".tbl":
                         ambig_fnames.append(tbl_fpath)
                 # abort execution if no files are found
                 if len(ambig_fnames) == 0:

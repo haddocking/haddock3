@@ -140,12 +140,17 @@ class BaseCNSModule(BaseHaddockModule):
                     tbl_files = targz.getmembers()
                 # At that stage, they should be already extracted
                 # and we simply need to generate the full paths
-                _ambig_fnames = [Path(basepath, tbl.name) for tbl in tbl_files]
-                # Make sure they exists
-                ambig_fnames = [
-                    p for p in _ambig_fnames
-                    if p.exists() and p.suffix == ".tbl"
-                    ]
+                ambig_fnames = []
+                for tbl in tbl_files:
+                    fname = tbl.name
+                    # Filter non-".tbl" and hidden files
+                    if any([fname.startswith("."), fname.suffix != ".tbl"]):
+                        continue
+                    # Build path
+                    tbl_fpath = Path(basepath, fname)
+                    # Make sure it exists
+                    if tbl_fpath.exists():
+                        ambig_fnames.append(tbl_fpath)
                 # abort execution if no files are found
                 if len(ambig_fnames) == 0:
                     raise Exception(f"No tbl files found in {ambig_fname} !")

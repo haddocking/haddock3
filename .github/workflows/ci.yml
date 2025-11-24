@@ -18,13 +18,14 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
       actions: read
       checks: write
     strategy:
       matrix:
+        os: [ubuntu-latest, macos-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
       fail-fast: false
 
@@ -35,10 +36,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: install system dependencies
+      - name: install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
+
+      - name: install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install open-mpi
 
       - name: install haddock3 with extra dependencies
         run: pip install -e '.[mpi,dev,docs,notebooks]'

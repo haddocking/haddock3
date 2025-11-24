@@ -40,7 +40,7 @@ def test_non_linux_looks_for_linux_variant():
     cns_exec, cns_exec_linux = get_cns_executable()
 
     assert cns_exec != cns_exec_linux
-    assert cns_exec_linux.name == f"{cns_exec.name}_linux"
+    assert cns_exec_linux.name == "x86_64-linux.bin"
 
 
 def test_cns_binary_is_executable():

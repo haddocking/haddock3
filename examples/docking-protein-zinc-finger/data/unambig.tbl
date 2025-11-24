@@ -1,0 +1,9 @@
+!ZINC restraints for NOT4
+assign (resid   14 and   segid B   and   name SG   )(resid  79 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   17 and   segid B   and   name SG   )(resid  79 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   31 and   segid B   and   name SG   )(resid  80 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   33 and   segid B   and   name SG   )(resid  80 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   38 and   segid B   and   name SG   )(resid  79 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   41 and   segid B   and   name SG   )(resid  79 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   53 and   segid B   and   name SG   )(resid  80 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0
+assign (resid   56 and   segid B   and   name SG   )(resid  80 and   segid B   and   name "ZN+2"   )  2.3 2.3 0.0

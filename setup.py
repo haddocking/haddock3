@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """Setup dot py."""
+
 import os
 import platform
 import subprocess
@@ -37,7 +38,7 @@ cpp_extensions = [
     Extension(
         "haddock.bin.fast_rmsdmatrix",
         sources=["src/haddock/deps/fast-rmsdmatrix.c"],
-        extra_compile_args=["-Wall", "-O3", "-march=native", "-std=c99"],
+        extra_compile_args=["-Wall", "-O3", "-std=c99"],
         extra_link_args=["-lm"],
     ),
 ]
@@ -59,7 +60,6 @@ class CustomBuild(build_ext):
                 "gcc",
                 "-Wall",
                 "-O3",
-                "-march=native",
                 "-std=c99",
                 "-o",
                 "fast-rmsdmatrix",

@@ -363,7 +363,7 @@ if ( $select = 0 ) then
 end if
 
 if ( $log_level = "verbose" ) then
-    set message=verbose echo=on end
+    set message=all echo=on end
 elseif ( $log_level = "normal") then
     set message=normal echo=off end
 else

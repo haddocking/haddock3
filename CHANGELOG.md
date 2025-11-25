@@ -1,7 +1,9 @@
 # Changelog
 
-- 2025-11-20: Simplify the use of multiple ambig archives
+- 2025-11-25: Simplify the use of multiple ambig archives
 - 2025-11-19: Corrected CNS verbosity settings - Issue #1446
+- 2025-11-19: Added zinc-finger docking example, related to Issue #1445
+- 2025-11-19: Corrected flexref module for Issue #1445 
 - 2025-11-17: Added possibility to use alascan with ligands - Issue #1411
 - 2025-10-22: Allow the definition of chain combinations to be used for scoring - Issue #1414
 - 2025-09-11: Added `grid` mode

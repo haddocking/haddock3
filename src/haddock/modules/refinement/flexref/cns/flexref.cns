@@ -180,6 +180,14 @@ parameter
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
+{* Check for the presence of ions and add distance restraints / covalent bond == *}
+
+@MODULE:restrain-ions.cns
+@MODULE:covalions.cns
+
+
+{* Define various interaction and energetics settings *}
+
 igroup
     interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
                  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
@@ -243,7 +251,6 @@ else
     set message=off echo=off end
 end if
 
-
 evaluate ($numnoe = 0)
 
 !Make sure that at least as many distance restraints are successfully
@@ -280,7 +287,6 @@ end if
 
 inline @MODULE:setflags.cns
 
-
 {* Check for other restraints ================================================== *}
 
 @MODULE:symmultimer.cns
@@ -306,12 +312,6 @@ end if
 if ($Data.ssdihed eq "alphabeta" ) then
     inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
-
-
-{* Check for the presence of ions and add distance restraints / covalent bond == *}
-
-@MODULE:restrain-ions.cns
-@MODULE:covalions.cns
 
 
 {* Check first for failed structures =========================================== *}
@@ -557,6 +557,7 @@ if ($Data.flags.sym eq true) then
         scale ambi $Data.ambig_cool3
         scale hbon $Data.hbond_cool3
     end
+    evaluate ($result = 0)
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
@@ -565,6 +566,7 @@ if ($Data.flags.sym eq true) then
         evaluate ($violations_test_noe=$test_violations)
     end if
 else
+    evaluate ($result = 0)
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)

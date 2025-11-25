@@ -52,7 +52,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">(Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#lightdock-outdated"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code> (outdated)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#gdock-outdated"><code class="docutils literal notranslate"><span class="pre">gdock</span></code> (outdated)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#openmm"><code class="docutils literal notranslate"><span class="pre">openmm</span></code></a><ul>
@@ -175,32 +174,6 @@ the instructions on the project’s website. Remember to install it under
 the same Python environment you created for HADDOCK3. If you have any
 doubts, please let us know.</p>
 </section>
-<section id="gdock-outdated">
-<h3><code class="docutils literal notranslate"><span class="pre">gdock</span></code> (outdated)<a class="headerlink" href="#gdock-outdated" title="Link to this heading"></a></h3>
-<ol class="arabic simple">
-<li><p>Clone the latest version:</p></li>
-</ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">some</span><span class="o">-</span><span class="n">folder</span>
-<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">rvhonorato</span><span class="o">/</span><span class="n">gdock</span><span class="o">.</span><span class="n">git</span>
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p>Install Python3+ dependencies</p></li>
-</ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">deap</span> <span class="n">scipy</span> <span class="n">mgzip</span> <span class="n">biopython</span>
-</pre></div>
-</div>
-<ol class="arabic simple" start="3">
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">GDOCK_PATH</span></code></p></li>
-</ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">GDOCK_PATH</span><span class="o">=</span><span class="n">some</span><span class="o">-</span><span class="n">folder</span>
-</pre></div>
-</div>
-<p><strong>Important</strong>: These are not the full <code class="docutils literal notranslate"><span class="pre">gdock</span></code> installation
-instructions as only the model generation is used here. Please check the
-<a class="reference external" href="https://github.com/rvhonorato/gdock">repository page</a> for more
-information.</p>
-</section>
 </section>
 <section id="openmm">
 <h2><code class="docutils literal notranslate"><span class="pre">openmm</span></code><a class="headerlink" href="#openmm" title="Link to this heading"></a></h2>
@@ -254,7 +227,7 @@ of the project for a full description of the installation procedure.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, BonvinLab.
-      <span class="lastupdated">Last updated on Nov 24, 2025.
+      <span class="lastupdated">Last updated on Nov 25, 2025.
       </span></p>
   </div>
 

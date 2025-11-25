@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 1
 
-   haddock.modules.sampling.gdock
    haddock.modules.sampling.lightdock
    haddock.modules.sampling.rigidbody
 

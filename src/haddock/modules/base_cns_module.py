@@ -154,7 +154,7 @@ class BaseCNSModule(BaseHaddockModule):
                 # abort execution if no files are found
                 if len(ambig_fnames) == 0:
                     raise Exception(f"No tbl files found in {ambig_fname} !")
-                self.log(f"Found {len(ambig_fnames)} compatible tbl files")
+                self.log(f"Found {len(ambig_fnames)} tbl files")
                 # Sort them to make sure we get the same order every time
                 ambig_fnames.sort()
         else:

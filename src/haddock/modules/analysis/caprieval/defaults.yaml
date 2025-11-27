@@ -151,6 +151,19 @@ sort_ascending:
   group: analysis
   explevel: easy
 
+align_fname:
+  default: ''
+  type: file
+  title: Alignment filename
+  short: Filename of the file containing alignment information, izone format. 
+  long: Alignment file in izone format containing the mapping between residues. E.g. "ZONE A1:A5" means that 
+    residue 1 of chain A of the model corresponds to residue 5 of chain A or the reference. 
+    Note that if this parameter is provided, the 'alignment_method' parameter is ignored. 
+    Note that all caprieval metrics will be calculated using exclusively the chains and residues f srom izone file. 
+    Note that there is no prior consistency verification between izone and pdb files - incorrect izone may crash caprieval.  
+  group: analysis
+  explevel: expert
+
 alignment_method:
   default: sequence
   type: string

@@ -1,7 +1,8 @@
 """MD scoring module.
 
 This module will perform a short MD simulation on the input models and
-score them. No restraints are applied during this step.
+score them.
+Note that no restraints (AIRs) are applied during this step.
 """
 
 from pathlib import Path

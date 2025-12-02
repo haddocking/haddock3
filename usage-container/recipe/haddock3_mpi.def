@@ -1,0 +1,30 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%labels
+    Maintainer: HADDOCK-GROUP
+    Description: "MPI-ready HADDOCK3 container"
+
+%environment
+    export PATH=/usr/local/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/openmpi/lib:$LD_LIBRARY_PATH
+
+%arguments
+    HADDOCK_VERSION=2025.9.1   # Example HADDOCK3 version (can be overridden during build)
+
+%post
+    # Install core dependencies and MPI
+    apt-get update && apt-get install -y \
+        wget git build-essential cmake gfortran \
+        libfftw3-dev libxml2-dev zlib1g-dev \
+        openmpi-bin libopenmpi-dev \
+        python3 python3-pip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    # Install Python packages with a fixed HADDOCK3 version
+    pip3 install --no-cache-dir --upgrade pip \
+        mpi4py haddock3==${HADDOCK_VERSION}
+
+%runscript
+    echo "Welcome to the MPI-ready HADDOCK3 container."
+    exec "$@"

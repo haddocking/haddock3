@@ -23,11 +23,11 @@ jobs:
         with:
           stale-pr-message: "This PR is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."
           stale-issue-message: "This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days."
-          close-pr-message: 'This PR was closed because it has been stalled for 5 days with no activity.'
-          close-issue-message: 'This issue was closed because it has been stalled for 5 days with no activity.'
+          close-pr-message: "This PR was closed because it has been stalled for 5 days with no activity."
+          close-issue-message: "This issue was closed because it has been stalled for 5 days with no activity."
           days-before-stale: 30
           days-before-close: 5
-          exempt-issue-labels: "bug"
+          exempt-issue-labels: "bug, planned-long-term"
           exempt-pr-labels: "bug"
           remove-stale-when-updated: true
           operations-per-run: 100

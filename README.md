@@ -10,6 +10,7 @@
 [![Downloads](https://static.pepy.tech/badge/haddock3)](https://pepy.tech/project/haddock3)
 ![PyPI - Version](https://img.shields.io/pypi/v/haddock3)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/haddock3)
+[![SBGrid Badge](https://img.shields.io/badge/haddock3-blue?label=SBGrid&labelColor=%3D)](https://sbgrid.org/software/titles/haddock3)
 
 [![ci](https://github.com/haddocking/haddock3/actions/workflows/ci.yml/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/ci.yml)
 [![pages](https://github.com/haddocking/haddock3/actions/workflows/pages.yml/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/pages.yml)

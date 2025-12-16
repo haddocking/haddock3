@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2025.9.1"
+version = "2025.11.0"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -46,7 +46,7 @@ dependencies = [
   'pandas==2.*',
   'prodigy-prot==2.3.0',
   'prodigy-lig==1.1.4',
-  'plotly==6.4.0',
+  'plotly==6.5.0',
   'freesasa>=2.2.1',
 ]
 
@@ -57,9 +57,9 @@ dev = [
   "pytest-cov==7.0.0",
   "hypothesis==6.141.1",
   "pytest-mock==3.15.1",
-  "fastapi==0.121.0",
+  "fastapi==0.123.0",
   "httpx==0.28.1",
-  "kaleido==1.1.0",
+  "kaleido==1.2.0",
   "pytest-random-order==1.2.0",
 ]
 docs = [

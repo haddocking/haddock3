@@ -122,3 +122,39 @@ on your machine.
 
 Please refer to the [official page](http://docs.openmm.org/latest/userguide/)
 of the project for a full description of the installation procedure.
+
+## `voroscoring`
+
+To be able to use the `[voroscoring]` module, several steps are required:
+- haddock3 **MUST** be installed under a conda env
+- A functional installation of [FTDMP](https://github.com/kliment-olechnovic/ftdmp)
+- The setup of a conda environement (e.g.: ftdmp), in which you will install FTDMP (see: [Help in installing a functional installation of ftdmp](#help-in-installing-a-functional-installation-of-ftdmp))
+
+Once those three conditions are fulfilled, when using the `[voroscoring]` module in haddock3, the configuration file must be tuned to contain parameters describing how to load the appropriate conda env (ftdmp) and where to find FTDMP scripts and executables:
+
+```toml
+[voroscoring]
+# This parameter defines the base directory where conda / miniconda is installed
+conda_install_dir = "/absolute/path/to/conda/"
+# This parameter defines the name of the conda env that you created and where FTDMP is installled
+conda_env_name = "ftdmp"
+# This parameter defines where FTDMP scripts / executables can be found
+ftdmp_install_dir = "/absolute/path/to/FTDMP/"
+```
+
+### Help in installing a functional installation of ftdmp
+
+Installing ftdmp under a conda environnement can be difficult.
+
+Here are the steps we performed to install it on our cluster:
+
+```bash
+conda create -n ftdmp python=3.11
+conda activate ftdmp
+pip install torch==2.5.0 torchvision==0.20.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu124
+python -c "import torch; print(torch.__version__)"
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.5.0+cu124.html
+pip install torch_geometric
+conda install -c conda-forge openmm pdbfixer libstdcxx-ng
+conda install r r-essentials --channel conda-forge
+```

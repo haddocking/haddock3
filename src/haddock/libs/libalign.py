@@ -481,7 +481,7 @@ def load_coords(
     idx: int = 0
     # Set types of coordinates lines to extract
     if keep_hetatm:
-        coordinates_line_to_extract = ("ATOM", "HETATM")
+        coordinates_line_to_extract = ("ATOM", "HETATM", )
     else:
         coordinates_line_to_extract = ("ATOM", )
     # Check filetype
@@ -678,13 +678,16 @@ Unrecognized residues' code is `X`.
 """
 
 
-def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
+def pdb2fastadic(pdb_f: PDBPath, keep_hetatm: bool = False) -> dict[str, dict[int, str]]:
     """
     Write the sequence as a fasta.
 
     Parameters
     ----------
     pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+        Path to a PDB file.
+    keep_hetatm : bool
+        Should HETATM coordinates be kept ?
 
     Returns
     -------
@@ -751,9 +754,10 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
 
+    coord_req = ("ATOM", "HETATM", ) if keep_hetatm else ("ATOM", )
     with open(pdb_f) as fh:
         for line in fh.readlines():
-            if line.startswith("ATOM"):
+            if line.startswith(coord_req):
                 res_num = int(line[slc_resseq])
                 res_name = line[slc_resname].strip()
                 chain = line[slc_chainid]
@@ -770,7 +774,7 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
 
 
 def get_align(
-    method: str, lovoalign_exec: FilePath
+    method: str, lovoalign_exec: FilePath, keep_hetatm: bool = False,
 ) -> partial[dict[str, dict[int, int]]]:
     """
     Get the alignment function.
@@ -783,6 +787,9 @@ def get_align(
     lovoalign_exec : str
         Path to the lovoalign executable.
 
+    keep_hetatm : bool
+        Should HETATM be considered in the analysis ?
+
     Returns
     -------
     align_func : functools.partial
@@ -791,7 +798,7 @@ def get_align(
     if method == "structure":
         align_func = partial(align_strct, lovoalign_exec=lovoalign_exec)
     elif method == "sequence":
-        align_func = partial(align_seq)
+        align_func = partial(align_seq, keep_hetatm=keep_hetatm)
     else:
         available_alns = ("sequence", "structure")
         raise ValueError(
@@ -1032,10 +1039,8 @@ class SeqAlign:
         ----------
         ref_ch : str
             reference chain
-
         mod_ch : str
             model chain
-
         align_id : int
             alignment id (index of the alignment)
         """
@@ -1087,7 +1092,7 @@ class SeqAlign:
                     self.align_dic[ref_ch].update({_model_res: _ref_res})
 
 
-def align_seq(reference, model, output_path):
+def align_seq(reference, model, output_path, keep_hetatm: bool = False):
     """
     Sequence align and get the numbering relationship.
 
@@ -1099,14 +1104,17 @@ def align_seq(reference, model, output_path):
 
     output_path : Path
 
+    keep_hetatm : bool
+        Should HETATM be considered when performing the alignment ?
+
     Returns
     -------
     align_dic : dict
         dictionary of sequence alignments (one per chain)
     """
     SeqAln = SeqAlign()
-    SeqAln.seqdic_ref = pdb2fastadic(reference)
-    SeqAln.seqdic_model = pdb2fastadic(model)
+    SeqAln.seqdic_ref = pdb2fastadic(reference, keep_hetatm=keep_hetatm)
+    SeqAln.seqdic_model = pdb2fastadic(model, keep_hetatm=keep_hetatm)
 
     # assign sequences
     for ref_ch in SeqAln.seqdic_ref.keys():

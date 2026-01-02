@@ -29,5 +29,6 @@ jobs:
           days-before-close: 5
           exempt-issue-labels: "bug, planned-long-term"
           exempt-pr-labels: "bug"
+          exempt-draft-pr: true
           remove-stale-when-updated: true
           operations-per-run: 100

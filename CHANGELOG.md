@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-02-04: Updated arm64-darwin and aarch64-linux cns executables
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462
 - 2025-11-25: Simplify the use of multiple ambig archives
 - 2025-11-19: Corrected CNS verbosity settings - Issue #1446

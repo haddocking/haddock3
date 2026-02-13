@@ -2654,6 +2654,119 @@ link pctn head - CIR tail + CTN end
 link pept head - CIR tail + NME end
 link pept head - CIR tail + CIR end
 
+{ peptide linkages for IVA (D-Isovaline, no CB - same link pattern as GLY) }
+{ 13-Feb-2026 (Adithya Subramanian Sahsranamam): IVA link block added using ppg1/ppg2/ppgg/ppgp; terminal links use pctn->CTN and pept->NME. }
+
+{ IVA as head (-): IVA -> PRO/HYP/HY3 }
+link  ppgp head - IVA tail + PRO end
+link  ppgp head - IVA tail + HYP end
+link  ppgp head - IVA tail + HY3 end
+
+{ IVA <-> GLY or IVA (both lack CB) }
+link  ppgg head - IVA tail + GLY end
+link  ppgg head - IVA tail + IVA end
+link  ppgg head - GLY tail + IVA end
+
+{ IVA as tail (+): X -> IVA, use ppg1 (no +CB) }
+link ppg1 head - ACE tail + IVA end
+link ppg1 head - ALA tail + IVA end
+link ppg1 head - CYS tail + IVA end
+link ppg1 head - CFE tail + IVA end
+link ppg1 head - CYM tail + IVA end
+link ppg1 head - CYF tail + IVA end
+link ppg1 head - CYC tail + IVA end
+link ppg1 head - CSP tail + IVA end
+link ppg1 head - ASP tail + IVA end
+link ppg1 head - ASH tail + IVA end
+link ppg1 head - GLU tail + IVA end
+link ppg1 head - GLH tail + IVA end
+link ppg1 head - PCA tail + IVA end
+link ppg1 head - PHE tail + IVA end
+link ppg1 head - HIS tail + IVA end
+link ppg1 head - NEP tail + IVA end
+link ppg1 head - ILE tail + IVA end
+link ppg1 head - LYS tail + IVA end
+link ppg1 head - ALY tail + IVA end
+link ppg1 head - HLY tail + IVA end
+link ppg1 head - MLY tail + IVA end
+link ppg1 head - MLZ tail + IVA end
+link ppg1 head - M3L tail + IVA end
+link ppg1 head - LEU tail + IVA end
+link ppg1 head - MET tail + IVA end
+link ppg1 head - MSE tail + IVA end
+link ppg1 head - ASN tail + IVA end
+link ppg1 head - PRO tail + IVA end
+link ppg1 head - GLN tail + IVA end
+link ppg1 head - ARG tail + IVA end
+link ppg1 head - SER tail + IVA end
+link ppg1 head - SEC tail + IVA end
+link ppg1 head - SEP tail + IVA end
+link ppg1 head - THR tail + IVA end
+link ppg1 head - THP tail + IVA end
+link ppg1 head - TOP tail + IVA end
+link ppg1 head - VAL tail + IVA end
+link ppg1 head - TRP tail + IVA end
+link ppg1 head - TYR tail + IVA end
+link ppg1 head - TYP tail + IVA end
+link ppg1 head - PTR tail + IVA end
+link ppg1 head - TYS tail + IVA end
+link ppg1 head - HYP tail + IVA end
+link ppg1 head - HY3 tail + IVA end
+link ppg1 head - DDZ tail + IVA end
+link ppg1 head - QSR tail + IVA end
+link ppg1 head - PNS tail + IVA end
+link ppg1 head - CIR tail + IVA end
+
+{ IVA as head (-): IVA -> standard residues, use ppg2 (no -CB) }
+link ppg2 head - IVA tail + ALA end
+link ppg2 head - IVA tail + CYS end
+link ppg2 head - IVA tail + CFE end
+link ppg2 head - IVA tail + CYM end
+link ppg2 head - IVA tail + CYF end
+link ppg2 head - IVA tail + CYC end
+link ppg2 head - IVA tail + CSP end
+link ppg2 head - IVA tail + ASP end
+link ppg2 head - IVA tail + ASH end
+link ppg2 head - IVA tail + GLU end
+link ppg2 head - IVA tail + GLH end
+link ppg2 head - IVA tail + PHE end
+link ppg2 head - IVA tail + HIS end
+link ppg2 head - IVA tail + NEP end
+link ppg2 head - IVA tail + ILE end
+link ppg2 head - IVA tail + LYS end
+link ppg2 head - IVA tail + ALY end
+link ppg2 head - IVA tail + HLY end
+link ppg2 head - IVA tail + MLY end
+link ppg2 head - IVA tail + MLZ end
+link ppg2 head - IVA tail + M3L end
+link ppg2 head - IVA tail + LEU end
+link ppg2 head - IVA tail + MET end
+link ppg2 head - IVA tail + MSE end
+link ppg2 head - IVA tail + ASN end
+link ppg2 head - IVA tail + PRO end
+link ppg2 head - IVA tail + GLN end
+link ppg2 head - IVA tail + ARG end
+link ppg2 head - IVA tail + SER end
+link ppg2 head - IVA tail + SEC end
+link ppg2 head - IVA tail + SEP end
+link ppg2 head - IVA tail + THR end
+link ppg2 head - IVA tail + THP end
+link ppg2 head - IVA tail + TOP end
+link ppg2 head - IVA tail + VAL end
+link ppg2 head - IVA tail + TRP end
+link ppg2 head - IVA tail + TYR end
+link ppg2 head - IVA tail + TYP end
+link ppg2 head - IVA tail + PTR end
+link ppg2 head - IVA tail + TYS end
+link ppg2 head - IVA tail + HYP end
+link ppg2 head - IVA tail + HY3 end
+link ppg2 head - IVA tail + DDZ end
+link ppg2 head - IVA tail + PNS end
+link ppg2 head - IVA tail + QSR end
+link ppg2 head - IVA tail + CIR end
+link pctn head - IVA tail + CTN end
+link pept head - IVA tail + NME end
+
 first ACET tail + ACE end
 
 last CTER head - ALA end
@@ -2704,6 +2817,7 @@ last CTER head - DDZ end
 last CTER head - PNS end
 last CTER head - QSR end
 last CTER head - CIR end
+last CTER head - IVA end
 
 set message=$old_message echo=$old_echo end
 

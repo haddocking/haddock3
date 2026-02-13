@@ -44,6 +44,7 @@ checkversion 1.3
 ! PARALLHDG.                                                            !
 !***********************************************************************!
 ! History:
+! 13-Feb-2026 (Adithya Subramanian Sahsranamam): added IVA torsional DIHEdral terms for NH1-CH1E-CH2E-CH3E, H-NH1-CH1E-CH2E, and HA-CH3E-CH1E-NH1.
 ! HADDOCK2.3, several additions for special residues and patches
 ! CNS v1.3, revision 7 (1-10-2012), added improper NE2 CE1 CD2 HE2 for HIS residue
 ! CNS v1,3, revision 6 (8-18-2011), added parameters for MSE residue
@@ -1226,13 +1227,18 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 ! sidechain CH3 and NH3 groups (added 12-MAR-00)
 
  DIHEdral  HC   NH3  CH2E CH2E   1.00     3  0.0000 !Lys 
- DIHEdral  H    NH1  CH2E CH2E   1.00     3  0.0000 !Lys 
- DIHEdral  HA   CH3E CH1E C      1.00     3  0.0000 !Ala 
- DIHEdral  HA   CH3E CH2E CH1E   1.00     3  0.0000 !Ile 
+ DIHEdral  H    NH1  CH2E CH2E   1.00     3  0.0000 !Lys
+ DIHEdral  HA   CH3E CH1E C      1.00     3  0.0000 !Ala
+ DIHEdral  HA   CH3E CH2E CH1E   1.00     3  0.0000 !Ile
  DIHEdral  HA   CH3E CH1E CH1E   1.00     3  0.0000 !Ile/Thr/Val  
  DIHEdral  HA   CH3E CH1E CH2E   1.00     3  0.0000 !Leu  
  DIHEdral  HA   CH3E SM   CH2E   1.00     3  0.0000 !Met 
  DIHEdral  HA   CH3E SE   CH2E   1.00     3  0.0000 !MSE
+
+! added by Aditya Subramanian Sahsranamam Feb 12th 2026
+ DIHEdral  NH1  CH1E CH2E CH3E  2.00     3  0.0000 !IVA chi1 (N-CA-CB1-CG1)
+ DIHEdral  H    NH1  CH1E CH2E   2.00     3  0.0000 !IVA cross-term (HN-N-CA-CB1)
+ DIHEdral  HA   CH3E CH1E NH1    1.00     3  0.0000 !IVA methyl stagger (HB21-CB2-CA-N)
 
  ! added by M. Reau 01-06-21
  DIHEdral  HA   CH3E NH1  H      1.00     3  0.0000 !NME

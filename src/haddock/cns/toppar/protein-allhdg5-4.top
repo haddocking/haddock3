@@ -33,6 +33,7 @@ checkversion 1.3
 ! of calculating structures from NMR restraints.                        !
 !***********************************************************************!
 ! History:
+! 13-Feb-2026 (Adithya Subramanian Sahsranamam): added IVA (D-Isovaline) residue and D-like CA chirality via IMPRoper CB2 C N CB1; added no-op ACET patch for ACE-capped inputs.
 ! HADDOCK2.2, additions for CFE (CYS with iron cluster)
 ! CNS v1.3, revision 7, 1-10-2012, added IMPRoper NE2 CE1 CD2 HE2 for HIS residue
 ! CNS V1.3, revision 7, 11-08-2011, changed changes in CYF residue for CB and SG
@@ -1033,6 +1034,64 @@ residue ILE
   DIHEdral CD1 CG1 CB  CA
   DIHEdral HD11 CD1 CG1 CB   ! UCL methyl stagger 12-MAR-00 
   DIHEdral HG21 CG2 CB  CA   ! UCL methyl stagger 12-MAR-00 
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue IVA  ! D-Isovaline Added by Adithya Subramanian Sahsranamam Feb 12 2026
+  group
+    ! Backbone atoms
+    ATOM N    TYPE=NH1   CHARge=-0.570 end
+    ATOM HN   TYPE=H     CHARge= 0.370 end
+    ATOM CA   TYPE=CH1E  CHARge= 0.200 end
+    ATOM C    TYPE=C     CHARge= 0.500 end
+    ATOM O    TYPE=O     CHARge=-0.500 end
+    ! Side chain atoms
+    ATOM CB2  TYPE=CH3E  CHARge= 0.000 end
+    ATOM HB21 TYPE=HA    CHARge= 0.000 excl = (HB11 HB12 HG11 HG12 HG13) end
+    ATOM HB22 TYPE=HA    CHARge= 0.000 excl = (HB11 HB12 HG11 HG12 HG13) end
+    ATOM HB23 TYPE=HA    CHARge= 0.000 excl = (HB11 HB12 HG11 HG12 HG13) end
+    ATOM CB1  TYPE=CH2E  CHARge= 0.000 end
+    ATOM HB11 TYPE=HA    CHARge= 0.000 excl = (HB21 HB22 HB23 HG11 HG12 HG13) end
+    ATOM HB12 TYPE=HA    CHARge= 0.000 excl = (HB21 HB22 HB23 HG11 HG12 HG13) end
+    ATOM CG1  TYPE=CH3E  CHARge= 0.000 end
+    ATOM HG11 TYPE=HA    CHARge= 0.000 excl = (HB21 HB22 HB23 HB11 HB12) end
+    ATOM HG12 TYPE=HA    CHARge= 0.000 excl = (HB21 HB22 HB23 HB11 HB12) end
+    ATOM HG13 TYPE=HA    CHARge= 0.000 excl = (HB21 HB22 HB23 HB11 HB12) end
+
+  BOND C    O       BOND C    CA
+  BOND CA   N       BOND CA   CB2     BOND CA   CB1
+  BOND N    HN
+  BOND CB2  HB21    BOND CB2  HB22    BOND CB2  HB23
+  BOND CB1  HB11    BOND CB1  HB12    BOND CB1  CG1
+  BOND CG1  HG11    BOND CG1  HG12    BOND CG1  HG13
+
+  ANGLe O    C    CA
+  ANGLe C    CA   N       ANGLe C    CA   CB2     ANGLe C    CA   CB1
+  ANGLe N    CA   CB2     ANGLe N    CA   CB1     ANGLe CB2  CA   CB1
+  ANGLe CA   N    HN
+  ANGLe CA   CB2  HB21    ANGLe CA   CB2  HB22    ANGLe CA   CB2  HB23
+  ANGLe HB21 CB2  HB22    ANGLe HB21 CB2  HB23    ANGLe HB22 CB2  HB23
+  ANGLe CA   CB1  HB11    ANGLe CA   CB1  HB12    ANGLe CA   CB1  CG1
+  ANGLe HB11 CB1  HB12    ANGLe HB11 CB1  CG1     ANGLe HB12 CB1  CG1
+  ANGLe CB1  CG1  HG11    ANGLe CB1  CG1  HG12    ANGLe CB1  CG1  HG13
+  ANGLe HG11 CG1  HG12    ANGLe HG11 CG1  HG13    ANGLe HG12 CG1  HG13
+
+  DIHEdral O    C    CA   N
+  DIHEdral CA   CB1  CG1  HG11
+  DIHEdral N    CA   CB2  HB21
+  DIHEdral N    CA   CB1  CG1
+  DIHEdral CB1  CA   N    HN
+
+  IMPRoper C    CA   N    O    ! planar carbonyl
+!  IMPRoper CB2 N C CB1 !chirality CA L-like
+  IMPRoper CB2 C N CB1 !chirality CA D-like
+
+  IMPRoper HB21 HB22 CA HB23  !stereo CB2
+  IMPRoper HB11 HB12 CA CG1   !stereo CB1
 
   DONO HN   N
   ACCE O    C
@@ -3016,6 +3075,11 @@ RESIdue QSR ! Added by Rodrigo Honorato / Alexandre Bonvin 06/01/2021
    ACCE O     C
 
   END
+
+!----------------------------------------------------------------------
+
+presidue ACET  ! no-op N-terminal patch for ACE cap (already complete)
+end
 
 !----------------------------------------------------------------------
 

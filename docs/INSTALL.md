@@ -81,32 +81,6 @@ the instructions on the project's website. Remember to install it under
 the same Python environment you created for HADDOCK3. If you have any
 doubts, please let us know.
 
-### `gdock` (outdated)
-
-1. Clone the latest version:
-
-```
-cd some-folder
-git clone https://github.com/rvhonorato/gdock.git
-```
-
-2. Install Python3+ dependencies
-
-```
-pip install deap scipy mgzip biopython
-```
-
-3. Set `GDOCK_PATH`
-
-```
-export GDOCK_PATH=some-folder
-```
-
-**Important**: These are not the full `gdock` installation
-instructions as only the model generation is used here. Please check the
-[repository page](https://github.com/rvhonorato/gdock) for more
-information.
-
 ## `openmm`
 
 The use of the openmm module requires the installation of both OpenMM and pdbfixer.

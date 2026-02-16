@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2025.9.0"
+version = "2025.11.0"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -25,6 +25,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 keywords = [
   "Structural Biology",
@@ -33,7 +34,7 @@ keywords = [
   "Protein docking",
   "Proteins",
 ]
-requires-python = ">=3.9, <3.14"
+requires-python = ">=3.9, <3.15"
 dependencies = [
   'pdb-tools>=2.5.0',
   'biopython==1.*',
@@ -45,20 +46,20 @@ dependencies = [
   'pandas==2.*',
   'prodigy-prot==2.3.0',
   'prodigy-lig==1.1.4',
-  'plotly==6.3.0',
+  'plotly==6.5.2',
   'freesasa>=2.2.1',
 ]
 
 [project.optional-dependencies]
 dev = [
-  "coverage==7.10.6",
+  "coverage==7.10.7",
   "pytest==8.4.2",
-  "pytest-cov==6.2.1",
-  "hypothesis==6.140.2",
+  "pytest-cov==7.0.0",
+  "hypothesis==6.141.1",
   "pytest-mock==3.15.1",
-  "fastapi==0.116.1",
+  "fastapi==0.128.0",
   "httpx==0.28.1",
-  "kaleido==1.1.0",
+  "kaleido==1.2.0",
   "pytest-random-order==1.2.0",
 ]
 docs = [
@@ -94,6 +95,14 @@ haddock3-traceback = "haddock.clis.cli_traceback:maincli"
 haddock3-re = "haddock.clis.cli_re:maincli"
 haddock3-restraints = "haddock.clis.cli_restraints:maincli"
 haddock-restraints = "haddock.clis.wrapper_haddock_restraints:main"
+
+[tool.coverage.run]
+source = ["haddock"]
+omit = [
+  "tests/*",
+  "integration_tests/*",
+  "examples/*",
+]
 
 [tool.setuptools]
 packages = ["haddock"]

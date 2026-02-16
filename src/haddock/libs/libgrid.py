@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Optional, Tuple, Union
 
 from haddock import log
-from haddock.core.defaults import cns_exec as CNS_EXEC
+from haddock.core.defaults import cns_exec_linux as CNS_EXEC
 from haddock.libs.libsubprocess import CNSJob
 from haddock.libs.libutil import parse_ncores
 

@@ -2,7 +2,7 @@
 
 ![haddock3-logo](https://raw.githubusercontent.com/haddocking/haddock3/refs/heads/main/docs/figs/HADDOCK3-logo.png)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16914680.svg)](https://doi.org/10.5281/zenodo.16914680)
 [![Research Software Directory](https://img.shields.io/badge/rsd-haddock3-00a3e3.svg)](https://research-software-directory.org/software/haddock3)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F-green)](https://fair-software.eu)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8844/badge)](https://www.bestpractices.dev/projects/8844)
@@ -10,6 +10,7 @@
 [![Downloads](https://static.pepy.tech/badge/haddock3)](https://pepy.tech/project/haddock3)
 ![PyPI - Version](https://img.shields.io/pypi/v/haddock3)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/haddock3)
+[![SBGrid Badge](https://img.shields.io/badge/haddock3-blue?label=SBGrid&labelColor=%3D)](https://sbgrid.org/software/titles/haddock3)
 
 [![ci](https://github.com/haddocking/haddock3/actions/workflows/ci.yml/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/ci.yml)
 [![pages](https://github.com/haddocking/haddock3/actions/workflows/pages.yml/badge.svg)](https://github.com/haddocking/haddock3/actions/workflows/pages.yml)

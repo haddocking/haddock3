@@ -1,0 +1,209 @@
+!
+! UbcH5B to Not4
+!
+assign (resid 3 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+assign (resid 5 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+assign (resid 58 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+assign (resid 63 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+assign (resid 94 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+assign (resid 96 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+assign (resid 98 and segid A) (
+        (resid 15 and segid B) or
+        (resid 16 and segid B) or
+        (resid 17 and segid B) or
+        (resid 18 and segid B) or
+        (resid 35 and segid B) or
+        (resid 41 and segid B) or
+        (resid 45 and segid B) or
+        (resid 48 and segid B) or
+        (resid 49 and segid B) or
+        (resid 50 and segid B) or
+        (resid 52 and segid B) or
+        (resid 53 and segid B) or
+        (resid 54 and segid B) or
+        (resid 57 and segid B)) 3.0 3.0 0.0
+!
+! Not4 to UbcH5B 
+!
+assign (resid 16 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0
+assign (resid 17 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0
+assign (resid 18 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0
+assign (resid 41 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0
+assign (resid 48 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0
+assign (resid 49 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0
+assign (resid 57 and segid B) (
+        (resid 1 and segid A) or
+        (resid 3 and segid A) or
+        (resid 4 and segid A) or
+        (resid 5 and segid A) or
+        (resid 8 and segid A) or
+        (resid 58 and segid A) or
+        (resid 59 and segid A) or
+        (resid 62 and segid A) or
+        (resid 63 and segid A) or
+        (resid 94 and segid A) or
+        (resid 95 and segid A) or
+        (resid 96 and segid A) or
+        (resid 98 and segid A)) 3.0 3.0 0.0

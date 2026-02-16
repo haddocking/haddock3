@@ -10,6 +10,7 @@ from haddock.modules.sampling.rigidbody import \
     DEFAULT_CONFIG as DEFAULT_RIGIDBODY_CONFIG
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidbodyModule
 from integration_tests import GOLDEN_DATA
+from . import has_mpi, has_grid
 
 
 @pytest.fixture
@@ -103,6 +104,7 @@ def test_rigidbody_local(rigidbody_module):
     assert 'CTONNB=  12.000' in file_content
 
 
+@has_mpi
 def test_rigidbody_mpi(rigidbody_module):
 
     sampling = 2

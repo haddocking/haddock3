@@ -63,7 +63,7 @@ def generate_topology(
     )
 
     # AA to CG
-    cg_pdb_name = martinize(input_pdb, output_path, False)
+    cg_pdb_name, shape = martinize(input_pdb, output_path, False)
 
     output = prepare_output(
         output_pdb_filename=f"{cg_pdb_name[:-4]}_{force_field}{input_pdb.suffix}",

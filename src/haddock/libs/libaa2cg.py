@@ -850,6 +850,7 @@ def martinize(input_pdb, output_path, skipss):
     Returns:
         cg_pdb_name: str
     """
+    shape = False
 
     if not input_pdb:
         emsg = "No input file detected"
@@ -964,5 +965,5 @@ def martinize(input_pdb, output_path, skipss):
     tbl_file.write(f"\n{tbl_str}")
     tbl_file.close()
 
-    return cg_pdb_name
+    return cg_pdb_name, shape
 

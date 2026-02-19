@@ -907,6 +907,8 @@ def martinize(input_pdb, output_path, skipss):
             for residue in mapping_dic:
                 if residue.id[0] != " ":  # filter HETATMS
                     continue
+                if residue.resname == "SHA":
+                    shape = True
 
                 structure_builder.init_residue(residue.resname, residue.id[0],
                                                residue.id[1], residue.id[2])

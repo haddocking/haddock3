@@ -65,12 +65,18 @@ def generate_topology(
     # AA to CG
     cg_pdb_name, shape = martinize(input_pdb, output_path, False)
 
-    output = prepare_output(
-        output_pdb_filename=f"{cg_pdb_name[:-4]}_{force_field}{input_pdb.suffix}",
-        output_psf_filename=f"{cg_pdb_name[:-4]}_{force_field}.{Format.TOPOLOGY}",
-    )
-
-    input_str = prepare_single_input(str(cg_pdb_name))
+    if not shape:
+        output = prepare_output(
+            output_pdb_filename=f"{cg_pdb_name[:-4]}_{force_field}{input_pdb.suffix}",
+            output_psf_filename=f"{cg_pdb_name[:-4]}_{force_field}.{Format.TOPOLOGY}",
+        )
+        input_str = prepare_single_input(str(cg_pdb_name))
+    else:
+        output = prepare_output(
+            output_pdb_filename=f"{input_pdb.stem}{input_pdb.suffix}",
+            output_psf_filename=f"{input_pdb.stem}.{Format.TOPOLOGY}",
+        )
+        input_str = prepare_single_input(str(input_pdb))
 
     inp_parts = (
         general_param,
@@ -91,9 +97,9 @@ def generate_topology(
     if write_to_disk:
         output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
         output_inp_filename.write_text(inp)
-        return output_inp_filename
+        return output_inp_filename, shape
     else:
-        return inp
+        return inp, shape
 
 
 class HaddockModule(BaseCNSModule):
@@ -205,13 +211,15 @@ class HaddockModule(BaseCNSModule):
         ens_dic: dict[int, dict[int, str]] = {}
         origi_ens_dic: dict[int, dict[int, str]] = {}
         # get the all-atom psf files in a list
-        psf_files: dict[int, dict[int, str]] = {}#[]
+        psf_files: dict[int, dict[int, str]] = {}
+        shape_dic: dict[int, dict[bool]] = {}
 
         force_field = self.params["cgffversion"]
 
         for i, molecule in enumerate(molecules, start=1):
             #self.log(f"Molecule {i}: {molecule.with_parent}")
             models_dic[i] = []
+            shape_dic[i] = []
             # Copy the molecule to the step folder
 
             # Split models
@@ -257,7 +265,7 @@ class HaddockModule(BaseCNSModule):
                     libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topocg_input = generate_topology(
+                topocg_input, shape = generate_topology(
                     model,
                     self.path,
                     self.recipe_str,
@@ -267,6 +275,7 @@ class HaddockModule(BaseCNSModule):
                     write_to_disk=self.params["debug"],
                     force_field=force_field,
                 )
+                shape_dic[i].append(shape)
 
                 self.log("Topology CNS input created")
 
@@ -298,21 +307,28 @@ class HaddockModule(BaseCNSModule):
             expected[i] = {}
             md5_dic = ens_dic[i]
             origin_names = origi_ens_dic[i]
+
             for j, model in enumerate(models_dic[i]):
                 if len(md5_dic[j]) == 0:
                     md5_hash = None
                 else:
                     md5_hash = md5_dic[j]
                 origin_name_model = origin_names[j]
+
                 try:
                     model_id = int(model.stem.split("_")[-2])
                     origin_name_model = ("_").join(model.stem.split("_"))
                 except ValueError:
                     model_id = 0
                     origin_name_model = str(model.stem).split(".pdb")[0]
-
-                processed_pdb = Path(f"{origin_name_model}_cg_{force_field}.{Format.PDB}")
-                processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
+                
+                shape_mod = shape_dic[i][j]
+                if not shape_mod:
+                    processed_pdb = Path(f"{origin_name_model}_cg_{force_field}.{Format.PDB}")
+                    processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
+                else:
+                    processed_pdb = Path(f"{origin_name_model}.{Format.PDB}")
+                    processed_topology = Path(f"{origin_name_model}.{Format.TOPOLOGY}")
 
                 topology = TopologyFile(processed_topology, path=".")
                 psf_file_uniq = psf_files[i][j].as_posix().split('/')

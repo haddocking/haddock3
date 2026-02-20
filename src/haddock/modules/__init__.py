@@ -395,7 +395,7 @@ EngineMode = Literal["batch", "local", "mpi"]
 def get_engine(
     mode: str,
     params: dict[Any, Any],
-) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
+) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler, GRIDScheduler]]:
     """
     Create an engine to run the jobs.
 

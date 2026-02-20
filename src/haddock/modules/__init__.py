@@ -444,7 +444,7 @@ def get_engine(
             )
 
     else:
-        available_engines = ("batch", "local", "mpi")
+        available_engines = ("batch", "local", "mpi", "grid")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"

@@ -1,6 +1,6 @@
 # Changelog
 
-- 2026-01-20: Add fallback routine to use `Scheduler` if the GRID is not available
+- 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462
 - 2025-11-25: Simplify the use of multiple ambig archives
 - 2025-11-19: Corrected CNS verbosity settings - Issue #1446

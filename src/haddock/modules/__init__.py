@@ -28,7 +28,7 @@ from haddock.gear.known_cns_errors import find_all_cns_errors
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config, find_incompatible_parameters
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libgrid import GRIDScheduler, ping_dirac
+from haddock.libs.libgrid import GRIDScheduler
 from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO, PDBFile
@@ -65,7 +65,9 @@ category_hierarchy = [
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = read_from_yaml_config(modules_defaults_path)  # noqa : E501
+non_mandatory_general_parameters_defaults = read_from_yaml_config(
+    modules_defaults_path
+)  # noqa : E501
 
 incompatible_defaults_params = find_incompatible_parameters(modules_defaults_path)
 
@@ -185,7 +187,9 @@ class BaseHaddockModule(ABC):
         >>> m.update_params(...)
         """
         if update_from_cfg_file and params:
-            _msg = "You can not provide both `update_from_cfg_file` and key arguments."
+            _msg = (
+                "You can not provide both `update_from_cfg_file` " "and key arguments."
+            )
             raise TypeError(_msg)
 
         if update_from_cfg_file:
@@ -301,7 +305,7 @@ class BaseHaddockModule(ABC):
             if detected_errors := find_all_cns_errors(self.path):
                 _msg += linesep
                 for error in detected_errors.values():
-                    _msg += f"{str(error['error'])}{linesep}"
+                    _msg += f'{str(error["error"])}{linesep}'
             # Show final error message
             self.finish_with_error(_msg)
 
@@ -429,19 +433,7 @@ def get_engine(
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
 
     elif mode == "grid":
-        # `grid` mode should only be used IF the grid is reachable,
-        #  if not it should fallback to `local`
-        grid_available = ping_dirac()
-
-        if grid_available:
-            return partial(GRIDScheduler, params=params)  # type: ignore
-        else:
-            log.warning("GRID is not available, activating fallback using `mode=local`")
-            return partial(  # type: ignore
-                Scheduler,
-                ncores=params["ncores"],
-                max_cpus=params["max_cpus"],
-            )
+        return partial(GRIDScheduler, params=params)  # type: ignore
 
     else:
         available_engines = ("batch", "local", "mpi")

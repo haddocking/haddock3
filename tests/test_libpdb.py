@@ -169,6 +169,7 @@ def test_split_ensemble_single_model(tmp_path, monkeypatch, atom_lines):
     result = split_ensemble(dst, dest=tmp_path)
 
     assert len(result) == 1
+    assert result[0].name == "single.pdb"
     assert result[0] == dst
 
 
@@ -192,6 +193,7 @@ def test_split_ensemble_proper_ensemble(tmp_path, monkeypatch, atom_lines):
     result = split_ensemble(dst, dest=tmp_path)
 
     assert len(result) == 2
+    assert [r.name for r in result] == ["ensemble_1.pdb", "ensemble_2.pdb"]
     assert all(r.stat().st_size > 0 for r in result)
 
 
@@ -204,6 +206,7 @@ def test_split_ensemble_model_without_endmdl(tmp_path, monkeypatch, atom_lines):
     result = split_ensemble(dst, dest=tmp_path)
 
     assert len(result) == 1
+    assert result[0].name == "model_without_endmdl_1.pdb"
     assert result[0].stat().st_size > 0
 
 
@@ -227,4 +230,5 @@ def test_split_ensemble_multiple_models_without_endmdl(
     result = split_ensemble(dst, dest=tmp_path)
 
     assert len(result) == 2
+    assert [r.name for r in result] == ["two_models_no_endmdl_1.pdb", "two_models_no_endmdl_2.pdb"]
     assert all(r.stat().st_size > 0 for r in result)

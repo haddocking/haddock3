@@ -238,7 +238,7 @@ def test_split_ensemble_multiple_models_without_endmdl(
 
 
 def test_split_ensemble_non_sequential_model_numbers(tmp_path, monkeypatch, atom_lines):
-    """pdb_tidy is used in `split_ensemble`and it renumbers MODEL records sequentially,
+    """pdb_tidy is used in `split_ensemble` and it renumbers MODEL records sequentially,
     so non-sequential IDs (ex: 1, 5) produce sequential output files (_1.pdb, _2.pdb)
     rather than the original numbers (_1.pdb, _5.pdb)."""
     monkeypatch.chdir(tmp_path)

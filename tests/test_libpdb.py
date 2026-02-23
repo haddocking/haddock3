@@ -152,19 +152,79 @@ def test_sanitize_not_changing_global(
     assert current_global_to_keep == initial_global_to_keep
 
 
-def test_split_ensemble_model_without_endmdl(tmp_path, monkeypatch):
-    """split_ensemble must handle a MODEL record with no ENDMDL.
+@pytest.fixture
+def atom_lines():
+    return (
+        "ATOM      1  N   MET A   1      -0.497   0.778  -7.571  1.00  0.00      A    N  ",
+        "ATOM      2  CA  MET A   1       0.814   0.227  -7.319  1.00  0.00      A    C  ",
+    )
 
-    pdb_splitmodel only writes its output on ENDMDL; a missing ENDMDL
-    produces an empty file that causes sanitize() to raise SetupError.
-    <https://github.com/haddocking/haddock3/issues/1470>
-    """
+
+def test_split_ensemble_single_model(tmp_path, monkeypatch, atom_lines):
     monkeypatch.chdir(tmp_path)
-    src = Path(golden_data, "model_without_endmdl.pdb")
+    content = "\n".join([*atom_lines, "END", ""])
+    dst = tmp_path / "single.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 1
+    assert result[0] == dst
+
+
+def test_split_ensemble_proper_ensemble(tmp_path, monkeypatch, atom_lines):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(
+        [
+            "MODEL        1",
+            *atom_lines,
+            "ENDMDL",
+            "MODEL        2",
+            *atom_lines,
+            "ENDMDL",
+            "END",
+            "",
+        ]
+    )
+    dst = tmp_path / "ensemble.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 2
+    assert all(r.stat().st_size > 0 for r in result)
+
+
+def test_split_ensemble_model_without_endmdl(tmp_path, monkeypatch, atom_lines):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(["MODEL        1", *atom_lines, "END", ""])
     dst = tmp_path / "model_without_endmdl.pdb"
-    shutil.copy(src, dst)
+    dst.write_text(content)
 
     result = split_ensemble(dst, dest=tmp_path)
 
     assert len(result) == 1
     assert result[0].stat().st_size > 0
+
+
+def test_split_ensemble_multiple_models_without_endmdl(
+    tmp_path, monkeypatch, atom_lines
+):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(
+        [
+            "MODEL        1",
+            *atom_lines,
+            "MODEL        2",
+            *atom_lines,
+            "END",
+            "",
+        ]
+    )
+    dst = tmp_path / "two_models_no_endmdl.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 2
+    assert all(r.stat().st_size > 0 for r in result)

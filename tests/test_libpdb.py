@@ -14,6 +14,7 @@ from haddock.libs.libpdb import (
     read_chainids,
     read_segids,
     sanitize,
+    split_ensemble,
 )
 
 
@@ -108,7 +109,6 @@ def test_check_combination_chains(good_rigid_molecules, wrong_rigid_molecules):
 
 
 def test_sanitize(protlig_complex_pdb, monkeypatch):
-
     monkeypatch.chdir(protlig_complex_pdb.parent)
 
     output = sanitize(
@@ -150,3 +150,21 @@ def test_sanitize_not_changing_global(
     current_global_to_keep = len(_to_keep)
 
     assert current_global_to_keep == initial_global_to_keep
+
+
+def test_split_ensemble_model_without_endmdl(tmp_path, monkeypatch):
+    """split_ensemble must handle a MODEL record with no ENDMDL.
+
+    pdb_splitmodel only writes its output on ENDMDL; a missing ENDMDL
+    produces an empty file that causes sanitize() to raise SetupError.
+    <https://github.com/haddocking/haddock3/issues/1470>
+    """
+    monkeypatch.chdir(tmp_path)
+    src = Path(golden_data, "model_without_endmdl.pdb")
+    dst = tmp_path / "model_without_endmdl.pdb"
+    shutil.copy(src, dst)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 1
+    assert result[0].stat().st_size > 0

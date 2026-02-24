@@ -490,7 +490,8 @@ def get_prodrg_exec() -> tuple[Path, Path]:
         SystemExit: If the prodrg executable cannot be found
     """
     prodrg_dir = Path(files(haddock).joinpath("prodrg"))  # type: ignore
-    prodrg_exec = prodrg_dir / "prodrg"
+    arch = get_arch()
+    prodrg_exec = prodrg_dir / f"prodrg_{arch}"
 
     if not prodrg_exec.exists():
         log.error("prodrg executable not found at %s", prodrg_exec)
@@ -508,7 +509,7 @@ def get_prodrg_exec() -> tuple[Path, Path]:
             log.error("prodrg executable not found at %s", prodrg_exec)
             sys.exit(1)
 
-    prodrg_param = prodrg_exec.parent / "prodrg.param"
+    prodrg_param = prodrg_dir / "prodrg.param"
     if not prodrg_param.exists():
         log.error("prodrg.param not found at %s", prodrg_param)
         sys.exit(1)

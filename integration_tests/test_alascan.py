@@ -221,7 +221,6 @@ def test_alascan_with_ligand_topar(alascan_module_protlig, mocker):
 def test_alascan_without_ligand_topar(alascan_module, mocker):
     """Test the use of alascan in presence of a ligand without topo/param."""
     alascan_module.previous_io = MockPreviousIO_protlig(path=alascan_module.path)
-    alascan_module.params["autotoppar"] = False
     alascan_module.run()
 
     expected_csv = Path(alascan_module.path, "scan_protlig_complex_1.tsv")

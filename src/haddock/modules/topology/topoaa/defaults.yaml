@@ -2,20 +2,24 @@ autohis:
   default: true
   type: boolean
   title: Automatic HIS protonation state
-  short: 'The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically
-    set by HADDOCK'
-  long: 'If set to true, HADDOCK will automatically define the protonation state of
+  short:
+    "The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically
+    set by HADDOCK"
+  long:
+    "If set to true, HADDOCK will automatically define the protonation state of
     histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest
-    electrostatic energy'
+    electrostatic energy"
   group: molecule
   explevel: expert
 delenph:
   default: true
   type: boolean
   title: Keep or remove non-polar hydrogen atoms
-  short: If set to true, non-polar hydrogen atoms will be discarded to save computing
+  short:
+    If set to true, non-polar hydrogen atoms will be discarded to save computing
     time
-  long: Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
+  long:
+    Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
     can be in principle discarded. This saves computing time. However this should
     not be done if you are defining distance restraints to specific hydrogen atoms
     (e.g. when using NMR distance restraints).
@@ -32,7 +36,8 @@ log_level:
     - quiet
   title: Log level verbosity for CNS
   short: Set the log level verbosity for CNS
-  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+  long:
+    CNS, the computational engine used by HADDOCK can generate a lot of output
     messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
   group: module
   explevel: guru
@@ -47,16 +52,17 @@ iniseed:
   group: molecule
   explevel: guru
 ligand_param_fname:
-  default: ''
+  default: ""
   type: file
   title: Custom ligand parameter file
   short: Ligand parameter file in CNS format
-  long: Ligand parameter file in CNS format containing all force field parameters
+  long:
+    Ligand parameter file in CNS format containing all force field parameters
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
   group: force field
   explevel: easy
 ligand_top_fname:
-  default: ''
+  default: ""
   type: file
   title: Custom ligand topology file
   short: Ligand topology file in CNS format
@@ -80,7 +86,7 @@ set_bfactor:
   type: boolean
   title: Define if the b-factor column must be overwritten
   short: When true (default), all b-factors are set to a default value of 15
-  long: Defines if the original b-factor values are kept (true) or 
+  long: Defines if the original b-factor values are kept (true) or
     all b-factors are set to a default value for 15 (false).
   group: module
   explevel: expert
@@ -123,16 +129,18 @@ mol1:
   explevel: easy
   title: Input molecule configuration
   short: Specific molecule configuration
-  long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
-        if you input three molecules, you can define mol1, mol2, and mol3
-        subparameters. Those not defined will be populated with the defaults.
+  long:
+    You can expand this parameter and associated sub-parameters to the other input molecules. For example,
+    if you input three molecules, you can define mol1, mol2, and mol3
+    subparameters. Those not defined will be populated with the defaults.
   cyclicpept:
     default: false
     type: boolean
     title: Cyclic peptide
     short: Defines the molecule as a cyclic peptide
-    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A.
-          This cutoff can be changed in the generate-topology.cns script.
+    long:
+      This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A.
+      This cutoff can be changed in the generate-topology.cns script.
     group: molecule
     explevel: easy
   nhisd:
@@ -142,9 +150,10 @@ mol1:
     max: 9999
     title: Number of HISD residue
     short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
-    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues.
-          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
-          Note that HIS is interpreted as a charged Histidine)
+    long:
+      Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues.
+      The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+      Note that HIS is interpreted as a charged Histidine)
     group: molecule
     explevel: expert
   hisd_1:
@@ -164,9 +173,10 @@ mol1:
     max: 9999
     title: Number of HISE residue
     short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
-    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues.
-          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
-          Note that HIS is interpreted as a charged Histidine)
+    long:
+      Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues.
+      The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+      Note that HIS is interpreted as a charged Histidine)
     group: molecule
     explevel: expert
   hise_1:
@@ -184,8 +194,9 @@ mol1:
     type: boolean
     title: N-ter topology
     short: Define if N-terminus should be charged or uncharged
-    long: This option defines how N-terminus residue should be. If false (default), N-ter will be an uncharged NH,
-          as it would be in a peptide bond. If true, N-ter will be a charged NH3+.
+    long:
+      This option defines how N-terminus residue should be. If false (default), N-ter will be an uncharged NH,
+      as it would be in a peptide bond. If true, N-ter will be a charged NH3+.
     group: molecule
     explevel: easy
   charged_cter:
@@ -193,8 +204,9 @@ mol1:
     type: boolean
     title: C-ter topology
     short: Define if C-terminus should be charged or uncharged
-    long: This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO,
-          as it would be in a peptide bond. If true, C-ter will be a charged COO-.
+    long:
+      This option defines how N-terminus residue should be. If false (default), C-ter will be an uncharged CO,
+      as it would be in a peptide bond. If true, C-ter will be a charged COO-.
     group: molecule
     explevel: easy
   5_phosphate:
@@ -202,8 +214,9 @@ mol1:
     type: boolean
     title: Nucleic Acids 5' topology
     short: Define if 5' end should be phosphate or not.
-    long: This option defines how nucleic acid 5' residue should be. If false (default),
-          5' end will be an OH. If true, 5' end will be a phosphate.
+    long:
+      This option defines how nucleic acid 5' residue should be. If false (default),
+      5' end will be an OH. If true, 5' end will be a phosphate.
     group: molecule
     explevel: easy
 molecules:
@@ -216,4 +229,3 @@ molecules:
     and type values of this parameter are meaningless.
   explevel: hidden
   group: molecules
-

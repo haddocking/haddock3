@@ -217,7 +217,9 @@
     <span class="k">assert</span> <span class="n">pdb_file_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">pdb_file_path</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_handler</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">working_directory</span><span class="p">(</span><span class="n">dest</span><span class="p">):</span>
-            <span class="n">split_model</span><span class="p">(</span><span class="n">input_handler</span><span class="p">)</span>
+            <span class="c1"># tidy pdb before splitting</span>
+            <span class="n">tidied</span> <span class="o">=</span> <span class="n">tidy_pdbfile</span><span class="p">(</span><span class="n">input_handler</span><span class="p">)</span>
+            <span class="n">split_model</span><span class="p">(</span><span class="n">tidied</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">sort_numbered_paths</span><span class="p">(</span><span class="o">*</span><span class="n">get_new_models</span><span class="p">(</span><span class="n">pdb_file_path</span><span class="p">))</span></div>
 
@@ -634,7 +636,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 23, 2026.
+      <span class="lastupdated">Last updated on Feb 24, 2026.
       </span></p>
   </div>
 

@@ -8,6 +8,7 @@ import shutil
 from haddock.libs.libligand import identify_unknown_hetatms, run_prodrg
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
+from . import is_linux_x86_64
 
 
 @pytest.fixture
@@ -55,12 +56,28 @@ def test_identify_unknown_hetatms_in_protlig_complex(protlig_complex_pdb):
     assert "G39" in result
 
 
-def test_run_prodrg(ligand_pdb):
-    """run_prodrg returns CNS topology and parameter contents from a ligand PDB."""
-    top, par = run_prodrg(ligand_pdb)
-    assert "MASS" in top
-    assert "BOND" in par
-    assert "NBONds" not in par
+@is_linux_x86_64
+def test_run_prodrg(ligand_pdb, tmp_path):
+    """run_prodrg writes named .top/.param files and returns their paths."""
+    top, par = run_prodrg(ligand_pdb, tmp_path)
+    assert top.exists()
+    assert par.exists()
+    assert top.suffix == ".top"
+    assert par.suffix == ".param"
+    assert "MASS" in top.read_text()
+    assert "BOND" in par.read_text()
+    assert "NBONds" not in par.read_text()
+
+
+@is_linux_x86_64
+def test_run_prodrg_fails_on_complex(protlig_complex_pdb, tmp_path):
+    """run_prodrg raises RuntimeError when given a protein-ligand complex.
+
+    prodrg only accepts small molecule inputs; passing a full complex
+    causes it to abort with 'Too many lines of text in input'.
+    """
+    with pytest.raises(RuntimeError):
+        run_prodrg(protlig_complex_pdb, tmp_path)
 
 
 def test_identify_unknown_hetatms_skips_known(tmp_path):

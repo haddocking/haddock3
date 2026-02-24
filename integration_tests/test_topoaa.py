@@ -163,6 +163,33 @@ def test_topoaa_module_ligand(topoaa_module):
     assert expected_gz.exists()
 
 
+def test_topoaa_module_ligand_automated(topoaa_module):
+    """Topoaa with ligand as input without providing topology/parameter files.
+
+    The module should automatically generate the CNS topology and parameters
+    for the unknown ligand using prodrg.
+    """
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "oseltamivir.pdb"),
+    ]
+    topoaa_module.params["delenph"] = False
+    topoaa_module.params["preprocess"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "oseltamivir.inp")
+    expected_psf = Path(topoaa_module.path, "oseltamivir_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "oseltamivir_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "oseltamivir.out.gz")
+
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+
+
 def test_topoaa_cyclic(topoaa_module):
     """Test the topoaa module to generate a cyclic peptide."""
     topoaa_module.params["molecules"] = [

@@ -51,15 +51,14 @@ jobs:
       - name: install haddock3 with extra dependencies
         run: pip install -e '.[mpi,dev,docs,notebooks]'
 
-      # - name: run unit tests
-      #   run: >-
-      #     pytest -v --random-order tests/
-      #     --cov --cov-report=
+      - name: run unit tests
+        run: >-
+          pytest -v --random-order tests/
+          --cov --cov-report=
 
       - name: run integration tests
         run: >-
-          # pytest -v --random-order integration_tests/
-          pytest -k "topoaa" integration_tests
+          pytest -v --random-order integration_tests/
 
       - name: generate coverage report
         run: |

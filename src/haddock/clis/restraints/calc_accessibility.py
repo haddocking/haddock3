@@ -283,7 +283,7 @@ def calc_accessibility(
     input_pdb_file : str
         Path to the PDB file.
     cutoff : float
-        Relative cutoff for sidechain accessibility, default = 0.4
+        Relative cutoff for sidechain accessibility, default = 0.15
     log_level : str
         Logging level.
     export_to_actpass : bool

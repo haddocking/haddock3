@@ -90,8 +90,9 @@ def run_prodrg(
         # tmp_pdb = Path(tmpdir) / "<???>.pdb"
 
         if not tmp_top.exists() or not tmp_par.exists():
+            ls = list(Path(tmpdir).iterdir())
             raise RuntimeError(
-                f"prodrg finished but expected output files are missing in {tmpdir}"
+                f"prodrg finished but expected output files are missing in {tmpdir}, ls: {ls} "
             )
 
         top_path = output_dir / f"{pdb_file.stem}_prodrg.top"

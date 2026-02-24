@@ -13,8 +13,6 @@ from haddock.libs.libligand import (
 )
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
-from . import is_linux_x86_64
-
 
 @pytest.fixture
 def ligand_pdb():
@@ -61,7 +59,6 @@ def test_identify_unknown_hetatms_in_protlig_complex(protlig_complex_pdb):
     assert "G39" in result
 
 
-@is_linux_x86_64
 def test_run_prodrg(ligand_pdb, tmp_path):
     """run_prodrg writes named .top/.param files and returns their paths."""
     top, par = run_prodrg(ligand_pdb, tmp_path)
@@ -74,7 +71,6 @@ def test_run_prodrg(ligand_pdb, tmp_path):
     assert "NBONds" not in par.read_text()
 
 
-@is_linux_x86_64
 def test_run_prodrg_fails_on_complex(protlig_complex_pdb, tmp_path):
     """run_prodrg raises RuntimeError when given a protein-ligand complex.
 

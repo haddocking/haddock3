@@ -7,7 +7,7 @@ import pytest
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
-from . import CNS_EXEC, has_grid, is_linux_x86_64
+from . import CNS_EXEC, has_grid
 from integration_tests import GOLDEN_DATA
 
 
@@ -163,7 +163,6 @@ def test_topoaa_module_ligand(topoaa_module):
     assert expected_gz.exists()
 
 
-@is_linux_x86_64
 def test_topoaa_module_ligand_automated(topoaa_module):
     """Topoaa with ligand as input without providing topology/parameter files.
 

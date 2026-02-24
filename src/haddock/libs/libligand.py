@@ -8,6 +8,7 @@ from pathlib import Path
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.defaults import prodrg_exec, prodrg_param
 from haddock import log
+import shutil
 
 from haddock.core.typing import FilePath
 
@@ -62,7 +63,7 @@ def run_prodrg(
 
     Raises
     ------
-    RuntimeError
+     RuntimeError
         If prodrg exits with a non-zero return code or the expected output
         files are not created.
     """
@@ -71,9 +72,17 @@ def run_prodrg(
 
     # PRODRG will write its output in its `pwd`, so run it in a temporary one
     with tempfile.TemporaryDirectory() as tmpdir:
+        # NOTE: PRODRG has a max of 79 chars as input, make sure to pass relative paths
+        #  so we need to copy everything to this temporary dir
+        dst = Path(tmpdir, prodrg_param.name)
+        shutil.copy(prodrg_param, dst)
+
+        dst = Path(tmpdir, pdb_file.name)
+        shutil.copy(pdb_file, dst)
+
         result = subprocess.run(
             # NOTE: We need this `PDBELEM` flag here
-            [str(prodrg_exec), str(pdb_file), str(prodrg_param), "PDBELEM"],
+            [str(prodrg_exec), str(pdb_file.name), str(prodrg_param.name), "PDBELEM"],
             cwd=tmpdir,
             capture_output=True,
             text=True,
@@ -96,7 +105,7 @@ def run_prodrg(
             prodrg_log = Path(tmpdir) / "DRGDRG.LOG"
             log.error(f"DRGDRG.log: {prodrg_log.read_text()}")
             log.error(f"DRGDRG.err: {prodrg_err.read_text()}")
-            log.error(f"ls: {ls}")
+            log.debug(f"ls: {ls}")
             raise RuntimeError(
                 f"prodrg finished but expected output files are missing in {tmpdir} "
             )

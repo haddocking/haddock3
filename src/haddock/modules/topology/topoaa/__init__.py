@@ -16,7 +16,7 @@ module in a workflow.
 
 Note that for non-standard bio-molecules
 (apart from standard amino-acids, some modified ones, DNA, RNA, ions
-and carbohydrates ... see `detailed list of supported molecules 
+and carbohydrates ... see `detailed list of supported molecules
 <https://wenmr.science.uu.nl/haddock2.4/library>`_),
 such as small-molecules, parameters and topology must be obtained and provided
 by the user, as there is currently no built-in solution to generate
@@ -32,14 +32,14 @@ from pathlib import Path
 
 from haddock.core.defaults import MODULE_DEFAULT_YAML, cns_exec
 from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap, Union
-from haddock.libs import libpdb
+from haddock.libs import libligand, libpdb
 from haddock.libs.libcns import (
     find_desired_linkfiles,
     generate_default_header,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
-    )
+)
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
@@ -241,7 +241,7 @@ class HaddockModule(BaseCNSModule):
                 f" N-ter: {'un' if not charged_nter else ''}charged"
                 f" C-ter: {'un' if not charged_cter else ''}charged"
                 f" 5'phosphate: {'yes' if phosphate_5 else 'no'}"
-                )
+            )
             # Find appropriate link files for this molecule
             link_files = find_desired_linkfiles(
                 charged_nter=charged_nter,
@@ -265,15 +265,42 @@ class HaddockModule(BaseCNSModule):
                         overwrite=True,
                         custom_topology=custom_top,
                     )
+                    _params = self.params
 
                 else:
-                    libpdb.sanitize(model, overwrite=True)
+                    # No `ligand_top_fname` was provided, check if there are any unknown molecules
+                    unknown = libligand.identify_unknown_hetatms(model)
+                    if unknown:
+                        self.log(
+                            f"Unknown ligand(s) {unknown} detected, "
+                            "running PRODRG to generate topology"
+                        )
+                        top_path = ""
+                        par_path = ""
+                        try:
+                            top_path, par_path = libligand.run_prodrg(model, self.path)
+                        except RuntimeError as e:
+                            # FIXME: Currently this will fail if the user is not on Linux_x86_64
+                            self.finish_with_error(
+                                f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
+                            )
+                        # Inject the automated toppar into the params
+                        _params = {
+                            **self.params,
+                            "ligand_top_fname": top_path,
+                            "ligand_param_fname": par_path,
+                        }
+                        libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
+                    else:
+                        # No unknown atoms, proceed as usual
+                        libpdb.sanitize(model, overwrite=True)
+                        _params = self.params
 
                 # Prepare generation of topologies jobs
                 topoaa_input = generate_topology(
                     model,
                     self.recipe_str,
-                    self.params,
+                    _params,
                     parameters_for_this_molecule,
                     default_params_path=self.toppar_path,
                     write_to_disk=self.params["debug"],

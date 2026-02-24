@@ -367,8 +367,7 @@ def sort_numbered_paths(*paths: FilePathT) -> list[FilePathT]:
     except TypeError as err:
         log.exception(err)
         emsg = (
-            "Mind the packing *argument, input should be strings or Paths, "
-            "not a list."
+            "Mind the packing *argument, input should be strings or Paths, not a list."
         )
         raise TypeError(emsg)
     except IndexError:
@@ -384,8 +383,7 @@ def log_error_and_exit() -> Generator[None, None, None]:
         log.exception(err)
         log.error(err)
         log.error(
-            "An error has occurred, see log file. "
-            "And contact the developers if needed."
+            "An error has occurred, see log file. And contact the developers if needed."
         )
         log.info(get_goodbye_help())
         sys.exit(1)
@@ -479,3 +477,40 @@ def get_cns_executable() -> tuple[Path, Path]:
         log.warning("GRID mode will not be available")
 
     return cns_exec, cns_exec_linux
+
+
+def get_prodrg_exec() -> tuple[Path, Path]:
+    """
+    Locate the prodrg binary and its parameter file.
+
+    Returns:
+        Tuple of (prodrg_exec, prodrg_param) paths
+
+    Raises:
+        SystemExit: If the prodrg executable cannot be found
+    """
+    prodrg_dir = Path(files(haddock).joinpath("prodrg"))  # type: ignore
+    prodrg_exec = prodrg_dir / "prodrg"
+
+    if not prodrg_exec.exists():
+        log.error("prodrg executable not found at %s", prodrg_exec)
+
+        prodrg_exec_env = os.environ.get("PRODRG_EXEC")
+        if prodrg_exec_env is None:
+            log.error(
+                "Please define the prodrg binary location by setting the "
+                "PRODRG_EXEC environment variable"
+            )
+            sys.exit(1)
+
+        prodrg_exec = Path(prodrg_exec_env)
+        if not prodrg_exec.exists():
+            log.error("prodrg executable not found at %s", prodrg_exec)
+            sys.exit(1)
+
+    prodrg_param = prodrg_exec.parent / "prodrg.param"
+    if not prodrg_param.exists():
+        log.error("prodrg.param not found at %s", prodrg_param)
+        sys.exit(1)
+
+    return prodrg_exec, prodrg_param

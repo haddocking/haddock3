@@ -8,7 +8,7 @@ Nucleic acids bases are considered to be always accessible.
 Usage:
     haddock3-restraints calc_accessibility
         <input_pdb_file>            Path to a PDB file to analyse
-        [-c <cutoff>]               Relative side-chain accessibility cutoff
+        [-c <cutoff>]               Relative side-chain accessibility cutoff (default: 0.15)
         [--log_level <log_level>]   DEBUG, INFO, WARNING, ERROR, or CRITICAL
         [--export_to_actpass]       Flag to export accessible resiudes
         [--probe_radius <probe_radius>]   Probe radius for the accessibility calculation
@@ -39,7 +39,7 @@ def add_calc_accessibility_arguments(calc_accessibility_subcommand):
         "--cutoff",
         help="Relative cutoff for sidechain accessibility",
         required=False,
-        default=0.4,
+        default=0.15,
         type=float,
         )
     
@@ -271,7 +271,7 @@ def export_passive(
 
 def calc_accessibility(
         input_pdb_file: Union[Path, str],
-        cutoff: float = 0.4,
+        cutoff: float = 0.15,
         log_level: str = "INFO",
         export_to_actpass: bool = False,
         probe_radius: float = DEFAULT_PROBE_RADIUS,

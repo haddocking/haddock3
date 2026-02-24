@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 import tempfile
 import shutil
-from haddock.libs.libligand import identify_unknown_hetatms
+from haddock.libs.libligand import identify_unknown_hetatms, run_prodrg
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
 
@@ -53,6 +53,14 @@ def test_identify_unknown_hetatms_in_protlig_complex(protlig_complex_pdb):
     """Find HETATMS in a prot/ligand complex"""
     result = identify_unknown_hetatms(protlig_complex_pdb)
     assert "G39" in result
+
+
+def test_run_prodrg(ligand_pdb):
+    """run_prodrg returns CNS topology and parameter contents from a ligand PDB."""
+    top, par = run_prodrg(ligand_pdb)
+    assert "MASS" in top
+    assert "BOND" in par
+    assert "NBONds" not in par
 
 
 def test_identify_unknown_hetatms_skips_known(tmp_path):

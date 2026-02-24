@@ -7,6 +7,7 @@ from pathlib import Path
 
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.defaults import prodrg_exec, prodrg_param
+from haddock import log
 
 from haddock.core.typing import FilePath
 
@@ -91,8 +92,13 @@ def run_prodrg(
 
         if not tmp_top.exists() or not tmp_par.exists():
             ls = list(Path(tmpdir).iterdir())
+            prodrg_err = Path(tmpdir) / "DRGDRG.ERR"
+            prodrg_log = Path(tmpdir) / "DRGDRG.LOG"
+            log.error(f"DRGDRG.log: {prodrg_log.read_text()}")
+            log.error(f"DRGDRG.err: {prodrg_err.read_text()}")
+            log.error(f"ls: {ls}")
             raise RuntimeError(
-                f"prodrg finished but expected output files are missing in {tmpdir}, ls: {ls} "
+                f"prodrg finished but expected output files are missing in {tmpdir} "
             )
 
         top_path = output_dir / f"{pdb_file.stem}_prodrg.top"

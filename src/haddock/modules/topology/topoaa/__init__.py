@@ -267,7 +267,7 @@ class HaddockModule(BaseCNSModule):
                     )
                     _params = self.params
 
-                else:
+                elif self.params["autotoppar"]:
                     # No `ligand_top_fname` was provided, check if there are any unknown molecules
                     unknown = libligand.identify_unknown_hetatms(model)
                     if unknown:
@@ -292,9 +292,11 @@ class HaddockModule(BaseCNSModule):
                         }
                         libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
                     else:
-                        # No unknown atoms, proceed as usual
-                        libpdb.sanitize(model, overwrite=True)
+                        self.log("No unknown atoms found")
                         _params = self.params
+                else:
+                    libpdb.sanitize(model, overwrite=True)
+                    _params = self.params
 
                 # Prepare generation of topologies jobs
                 topoaa_input = generate_topology(

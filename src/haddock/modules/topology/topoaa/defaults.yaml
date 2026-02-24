@@ -11,6 +11,14 @@ autohis:
     electrostatic energy"
   group: molecule
   explevel: expert
+autotoppar:
+  default: false
+  type: boolean
+  title: Automatically generate topologies and parameters for unknown atoms
+  short: Automatically generate topologies and parameters for unknown atoms
+  long: Automatically generate topologies and parameters for unknown atoms
+  group: molecule
+  explevel: easy
 delenph:
   default: true
   type: boolean

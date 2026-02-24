@@ -5,7 +5,12 @@ import pytest
 from pathlib import Path
 import tempfile
 import shutil
-from haddock.libs.libligand import identify_unknown_hetatms, run_prodrg
+from haddock.libs.libligand import (
+    identify_unknown_hetatms,
+    run_prodrg,
+    _remove_nbonds,
+    _sanitize_atom_names,
+)
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
 from . import is_linux_x86_64
@@ -78,6 +83,44 @@ def test_run_prodrg_fails_on_complex(protlig_complex_pdb, tmp_path):
     """
     with pytest.raises(RuntimeError):
         run_prodrg(protlig_complex_pdb, tmp_path)
+
+
+def test_remove_nbonds_removes_block():
+    """NBONds...END block is stripped from parameter content."""
+    content = "BOND CP1 OP1 100.0\nNBONds\n  tolerance 0.5\nEND\nANGLE CP1 CP2\n"
+    result = _remove_nbonds(content)
+    assert "NBONds" not in result
+    assert "BOND CP1 OP1 100.0" in result
+    assert "ANGLE CP1 CP2" in result
+
+
+def test_remove_nbonds_no_block():
+    """Content without an NBONds block is returned unchanged."""
+    content = "BOND CP1 OP1 100.0\nANGLE CP1 CP2\n"
+    assert _remove_nbonds(content) == content
+
+
+def test_sanitize_atom_names_removes_colons():
+    """Colons in atom type names are removed."""
+    content = "MASS HT:A   1.0080\n  ATOM H:A  TYPE=HT:A CHARGE=-0.019 END\n"
+    result = _sanitize_atom_names(content)
+    assert ":" not in result
+    assert "MASS HTA" in result
+    assert "ATOM HA  TYPE=HTA" in result
+
+
+def test_sanitize_atom_names_preserves_comment_colons():
+    """Colons inside comment lines are not removed."""
+    content = "! cite: Author et al.\nMASS HT:A   1.0080\n"
+    result = _sanitize_atom_names(content)
+    assert "cite: Author et al." in result
+    assert "HTA" in result
+
+
+def test_sanitize_atom_names_no_colons():
+    """Content without colons is returned unchanged."""
+    content = "MASS HTA   1.0080\n  ATOM HA  TYPE=HTA CHARGE=-0.019 END\n"
+    assert _sanitize_atom_names(content) == content
 
 
 def test_identify_unknown_hetatms_skips_known(tmp_path):

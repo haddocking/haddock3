@@ -173,6 +173,7 @@ def test_topoaa_module_ligand_automated(topoaa_module):
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "oseltamivir.pdb"),
     ]
+    topoaa_module.params["autotoppar"] = True
     topoaa_module.params["delenph"] = False
     topoaa_module.params["preprocess"] = False
     topoaa_module.params["cns_exec"] = CNS_EXEC

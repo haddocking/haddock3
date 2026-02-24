@@ -67,6 +67,12 @@ def run_prodrg(
         If prodrg exits with a non-zero return code or the expected output
         files are not created.
     """
+    if prodrg_exec is None or prodrg_param is None:
+        raise RuntimeError(
+            "prodrg is not available on this platform. "
+            "Provide the binary path via the PRODRG_EXEC environment variable."
+        )
+
     pdb_file = Path(pdb_file).resolve()
     output_dir = Path(output_dir)
 

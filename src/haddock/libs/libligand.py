@@ -74,7 +74,7 @@ def run_prodrg(
         )
 
     pdb_file = Path(pdb_file).resolve()
-    output_dir = Path(output_dir)
+    output_dir = Path(output_dir).resolve()
 
     # PRODRG will write its output in its `pwd`, so run it in a temporary one
     with tempfile.TemporaryDirectory() as tmpdir:

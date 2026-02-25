@@ -14,6 +14,7 @@ from haddock.libs.libligand import (
 from haddock.core.supported_molecules import supported_HETATM
 from . import golden_data as GOLDEN_DATA
 
+
 @pytest.fixture
 def ligand_pdb():
     src = Path(GOLDEN_DATA, "ligand.pdb")
@@ -69,6 +70,16 @@ def test_run_prodrg(ligand_pdb, tmp_path):
     assert "MASS" in top.read_text()
     assert "BOND" in par.read_text()
     assert "NBONds" not in par.read_text()
+
+
+def test_run_prodrg_with_relative_output_dir(ligand_pdb, tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    # Simulate topoaa passing Path(".") while CWD == the module output dir
+    top, par = run_prodrg(ligand_pdb, Path("."))
+    assert top.parent == tmp_path
+    assert par.parent == tmp_path
+    assert top.exists()
+    assert par.exists()
 
 
 def test_run_prodrg_fails_on_complex(protlig_complex_pdb, tmp_path):

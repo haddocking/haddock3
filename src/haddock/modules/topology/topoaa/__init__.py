@@ -284,12 +284,18 @@ class HaddockModule(BaseCNSModule):
                             self.finish_with_error(
                                 f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
                             )
-                        # Inject the automated toppar into the params
+                        # Inject the automated toppar into the params for module
                         _params = {
                             **self.params,
                             "ligand_top_fname": top_path,
                             "ligand_param_fname": par_path,
                         }
+                        # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
+                        #  this means that if these were NOT defined in other modules, they will take the
+                        #  values defined here
+                        self._output_params["ligand_top_fname"] = top_path
+                        self._output_params["ligand_param_fname"] = par_path
+
                         libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
                     else:
                         self.log("No unknown atoms found")

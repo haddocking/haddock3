@@ -98,11 +98,7 @@ haddock-restraints = "haddock.clis.wrapper_haddock_restraints:main"
 
 [tool.coverage.run]
 source = ["haddock"]
-omit = [
-  "tests/*",
-  "integration_tests/*",
-  "examples/*",
-]
+omit = ["tests/*", "integration_tests/*", "end-to-end_tests/*", "examples/*"]
 
 [tool.setuptools]
 packages = ["haddock"]

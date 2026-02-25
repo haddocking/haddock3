@@ -24,6 +24,7 @@ international_good_byes = [
     "Do pobachennya",
     "Tchau",
     "再见",
+    "Hoşça kal"
 ]
 
 # List of urls to be printed to the screen at the end of a workflow

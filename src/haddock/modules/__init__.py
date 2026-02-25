@@ -139,6 +139,14 @@ class BaseHaddockModule(ABC):
         self._params: ParamDict = {}
         self.update_params(update_from_cfg_file=params_fname)
 
+        # Some modules might need to overwrite parameters defined by the user
+        # This can be done via `_output_params` - whatever the module adds to this
+        # variable, will be propagated down to other modules.
+        # For example: `topoaa` needs to pass `ligand_param_fname` to `rigidbody` module
+        #  so somewhere in the `topoaa` module we need to set: `self._output_params[VALUE] = VAR`
+        # IMPORANT: This will be propagated to ALL modules and can have unexpected effects
+        self._output_params: dict = {}
+
     @property
     def params(self) -> ParamDict:
         """Configuration parameters."""  # noqa: D401

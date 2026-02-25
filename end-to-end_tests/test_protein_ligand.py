@@ -18,6 +18,8 @@ def test_protein_ligand_autotoppar_workflow(monkeypatch):
     ligand topology or parameter files.  ``autotoppar=True`` instructs topoaa
     to invoke prodrg automatically, and the generated files are propagated to
     all downstream modules via ``_output_params``.
+
+    This test will fail if any of the modules crash.
     """
     example_data = Path(EXAMPLES_DIR, "docking-protein-ligand", "data")
 
@@ -41,11 +43,15 @@ def test_protein_ligand_autotoppar_workflow(monkeypatch):
 
         run_dir = Path("run")
 
-        # Auto-generated prodrg topology files (key assertion for autotoppar)
-        autotoppar_param = Path(run_dir, "0_topoaa", "oseltamivir_zwitterion_prodrg.param")
+        # Check if the auto-generated prodrg topology files were generated
+        autotoppar_param = Path(
+            run_dir, "0_topoaa", "oseltamivir_zwitterion_prodrg.param"
+        )
         autotoppar_top = Path(run_dir, "0_topoaa", "oseltamivir_zwitterion_prodrg.top")
         assert autotoppar_param.exists(), f"{autotoppar_param} was not generated"
         assert autotoppar_top.exists(), f"{autotoppar_top} was not generated"
+
+        # TODO: Check for more things?
 
         # Verify that all workflow steps produced output directories
         assert Path(run_dir, "0_topoaa").exists()

@@ -31,15 +31,18 @@ except ImportError:
 
 has_mpi = pytest.mark.skipif(not MPI_ENABLED, reason="MPI is not enabled")
 
+import platform as _platform
+
 try:
     import deeprank_gnn.predict  # noqa: F401
 
-    DEEPRANK_ENABLED = True
+    DEEPRANK_ENABLED = _platform.system() == "Linux"
 except (ImportError, ModuleNotFoundError):
     DEEPRANK_ENABLED = False
 
 has_deeprank = pytest.mark.skipif(
-    not DEEPRANK_ENABLED, reason="deeprank_gnn is not installed"
+    not DEEPRANK_ENABLED,
+    reason="deeprank_gnn is not installed or not supported on this platform",
 )
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 is_linux_x86_64 = pytest.mark.skipif(

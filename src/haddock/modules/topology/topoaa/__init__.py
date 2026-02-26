@@ -280,7 +280,6 @@ class HaddockModule(BaseCNSModule):
                         try:
                             top_path, par_path = libligand.run_prodrg(model, Path("."))
                         except RuntimeError as e:
-                            # FIXME: This will only work for `x86-64-linux` or `arm64-darwin`
                             self.finish_with_error(
                                 f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
                             )

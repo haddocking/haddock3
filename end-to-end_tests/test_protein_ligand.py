@@ -31,7 +31,7 @@ def test_protein_ligand_autotoppar_workflow(monkeypatch):
         monkeypatch.chdir(tmpdir)
         cli_main(cfg)
 
-        run_dir = Path("run1-autotoppar")
+        run_dir = Path("run1-autotoppar-test")
 
         # Check if the auto-generated prodrg topology files were generated
         autotoppar_param = Path(

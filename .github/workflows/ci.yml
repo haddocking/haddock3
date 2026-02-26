@@ -17,8 +17,7 @@ on:
     - cron: "0 */6 * * *" # every 6 hours
 
 jobs:
-  # Run the full suite on Linux + Python 3.14 first.
-  # All other combinations will only run if this one is passing.
+  # Full suite on Linux + Python 3.14: unit tests, coverage, integration, e2e, docs.
   test-linux-py314:
     runs-on: ubuntu-latest
     permissions:
@@ -70,9 +69,8 @@ jobs:
           sphinx-apidoc -f -e -o docs/ src/haddock -d 1
           sphinx-build docs haddock3-docs
 
-  # Run the remaining OSxPython combinations
+  # Run the remaining OSxPython combinations in parallel
   test-matrix:
-    needs: test-linux-py314
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read

@@ -11,7 +11,7 @@ import pytest
 from haddock.libs.libontology import PDBFile
 from haddock.modules.scoring.deeprank.deeprank import DeeprankWraper
 
-from . import golden_data as GOLDEN_DATA
+from . import golden_data as GOLDEN_DATA, has_deeprank
 
 
 @pytest.fixture
@@ -29,6 +29,7 @@ def deeprank_wrapper():
         )
 
 
+@has_deeprank
 def test_run(deeprank_wrapper):
     """Test the execution method of the wrapper."""
     deeprank_wrapper.run()
@@ -44,6 +45,7 @@ def test_run(deeprank_wrapper):
     assert expected_csv.exists()
 
 
+@has_deeprank
 def test_retrieve_scores(deeprank_wrapper):
     """Check the method that retrieves the scores."""
     deeprank_wrapper.run()

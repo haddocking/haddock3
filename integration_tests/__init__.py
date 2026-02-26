@@ -32,10 +32,10 @@ except ImportError:
 has_mpi = pytest.mark.skipif(not MPI_ENABLED, reason="MPI is not enabled")
 
 try:
-    import deeprank_gnn  # noqa: F401
+    import deeprank_gnn.predict  # noqa: F401
 
     DEEPRANK_ENABLED = True
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     DEEPRANK_ENABLED = False
 
 has_deeprank = pytest.mark.skipif(

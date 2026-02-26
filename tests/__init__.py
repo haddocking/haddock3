@@ -44,3 +44,14 @@ has_notebook = pytest.mark.skipif(
 )
 
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
+
+try:
+    import deeprank_gnn.predict  # noqa: F401
+
+    DEEPRANK_ENABLED = True
+except (ImportError, ModuleNotFoundError):
+    DEEPRANK_ENABLED = False
+
+has_deeprank = pytest.mark.skipif(
+    not DEEPRANK_ENABLED, reason="deeprank_gnn is not installed"
+)

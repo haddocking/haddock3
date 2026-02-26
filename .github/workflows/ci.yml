@@ -48,9 +48,14 @@ jobs:
           brew install open-mpi
 
       - name: install haddock3 with extra dependencies
+        if: matrix.python-version != '3.14'
         run: |
           pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
           pip install -e '.[mpi,dev,docs,notebooks,deeprank-gnn-esm]'
+
+      - name: install haddock3 with extra dependencies (no deeprank, Python 3.14)
+        if: matrix.python-version == '3.14'
+        run: pip install -e '.[mpi,dev,docs,notebooks]'
 
       - name: run unit tests
         run: >-

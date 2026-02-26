@@ -48,7 +48,9 @@ jobs:
           brew install open-mpi
 
       - name: install haddock3 with extra dependencies
-        run: pip install -e '.[mpi,dev,docs,notebooks]'
+        run: |
+          pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install -e '.[mpi,dev,docs,notebooks,deeprank-gnn-esm]'
 
       - name: run unit tests
         run: >-

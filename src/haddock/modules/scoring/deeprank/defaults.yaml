@@ -14,13 +14,3 @@ chain_j:
   long: Chain ID of the second partner used by deeprank for scoring.
   group: "scoring"
   explevel: easy
-ncores:
-  default: 1
-  type: integer
-  min: 1
-  max: 96
-  title: Number of CPU cores
-  short: Number of cores to use for deeprank scoring.
-  long: Number of CPU cores to use for deeprank scoring.
-  group: "execution"
-  explevel: easy

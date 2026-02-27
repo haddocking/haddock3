@@ -57,7 +57,15 @@ except (ImportError, ModuleNotFoundError):
 has_deeprank = pytest.mark.skipif(
     not DEEPRANK_ENABLED,
     reason="deeprank_gnn is not installed or not supported on this platform",
-_CHROME_BINS = ("google-chrome", "google-chrome-stable", "chromium-browser", "chromium", "chrome")
+)
+
+_CHROME_BINS = (
+    "google-chrome",
+    "google-chrome-stable",
+    "chromium-browser",
+    "chromium",
+    "chrome",
+)
 has_chrome = pytest.mark.skipif(
     not any(shutil.which(b) for b in _CHROME_BINS),
     reason="Google Chrome not found (required by Kaleido for PNG export)",

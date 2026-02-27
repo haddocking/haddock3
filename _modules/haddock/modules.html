@@ -222,6 +222,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">:</span> <span class="n">ParamDict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="o">=</span><span class="n">params_fname</span><span class="p">)</span>
 
+        <span class="c1"># Some modules might need to overwrite parameters defined by the user</span>
+        <span class="c1"># This can be done via `_output_params` - whatever the module adds to this</span>
+        <span class="c1"># variable, will be propagated down to other modules.</span>
+        <span class="c1"># For example: `topoaa` needs to pass `ligand_param_fname` to `rigidbody` module</span>
+        <span class="c1">#  so somewhere in the `topoaa` module we need to set: `self._output_params[VALUE] = VAR`</span>
+        <span class="c1"># IMPORANT: This will be propagated to ALL modules and can have unexpected effects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamDict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Configuration parameters.&quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
@@ -666,7 +674,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 26, 2026.
+      <span class="lastupdated">Last updated on Feb 27, 2026.
       </span></p>
   </div>
 

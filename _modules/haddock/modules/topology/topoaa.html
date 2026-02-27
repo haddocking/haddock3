@@ -98,7 +98,7 @@
 
 <span class="sd">Note that for non-standard bio-molecules</span>
 <span class="sd">(apart from standard amino-acids, some modified ones, DNA, RNA, ions</span>
-<span class="sd">and carbohydrates ... see `detailed list of supported molecules </span>
+<span class="sd">and carbohydrates ... see `detailed list of supported molecules</span>
 <span class="sd">&lt;https://wenmr.science.uu.nl/haddock2.4/library&gt;`_),</span>
 <span class="sd">such as small-molecules, parameters and topology must be obtained and provided</span>
 <span class="sd">by the user, as there is currently no built-in solution to generate</span>
@@ -114,14 +114,14 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_DEFAULT_YAML</span><span class="p">,</span> <span class="n">cns_exec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">ParamDict</span><span class="p">,</span> <span class="n">ParamMap</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs</span><span class="w"> </span><span class="kn">import</span> <span class="n">libpdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs</span><span class="w"> </span><span class="kn">import</span> <span class="n">libligand</span><span class="p">,</span> <span class="n">libpdb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libcns</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">find_desired_linkfiles</span><span class="p">,</span>
     <span class="n">generate_default_header</span><span class="p">,</span>
     <span class="n">load_workflow_params</span><span class="p">,</span>
     <span class="n">prepare_output</span><span class="p">,</span>
     <span class="n">prepare_single_input</span><span class="p">,</span>
-    <span class="p">)</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">,</span> <span class="n">TopologyFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libstructure</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_molecules</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libsubprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNSJob</span>
@@ -337,7 +337,7 @@
                 <span class="sa">f</span><span class="s2">&quot; N-ter: </span><span class="si">{</span><span class="s1">&#39;un&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">charged_nter</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">charged&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; C-ter: </span><span class="si">{</span><span class="s1">&#39;un&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">charged_cter</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">charged&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot; 5&#39;phosphate: </span><span class="si">{</span><span class="s1">&#39;yes&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">phosphate_5</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;no&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
             <span class="c1"># Find appropriate link files for this molecule</span>
             <span class="n">link_files</span> <span class="o">=</span> <span class="n">find_desired_linkfiles</span><span class="p">(</span>
                 <span class="n">charged_nter</span><span class="o">=</span><span class="n">charged_nter</span><span class="p">,</span>
@@ -361,15 +361,49 @@
                         <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="n">custom_topology</span><span class="o">=</span><span class="n">custom_top</span><span class="p">,</span>
                     <span class="p">)</span>
+                    <span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
 
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;autotoppar&quot;</span><span class="p">]:</span>
+                    <span class="c1"># No `ligand_top_fname` was provided, check if there are any unknown molecules</span>
+                    <span class="n">unknown</span> <span class="o">=</span> <span class="n">libligand</span><span class="o">.</span><span class="n">identify_unknown_hetatms</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Unknown ligand(s) </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2"> detected, &quot;</span>
+                            <span class="s2">&quot;running PRODRG to generate topology&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">top_path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="n">par_path</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">top_path</span><span class="p">,</span> <span class="n">par_path</span> <span class="o">=</span> <span class="n">libligand</span><span class="o">.</span><span class="n">run_prodrg</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">))</span>
+                        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                        <span class="c1"># Inject the automated toppar into the params for module</span>
+                        <span class="n">_params</span> <span class="o">=</span> <span class="p">{</span>
+                            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                            <span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">:</span> <span class="n">top_path</span><span class="p">,</span>
+                            <span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">:</span> <span class="n">par_path</span><span class="p">,</span>
+                        <span class="p">}</span>
+                        <span class="c1"># Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules</span>
+                        <span class="c1">#  this means that if these were NOT defined in other modules, they will take the</span>
+                        <span class="c1">#  values defined here</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">[</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_path</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">[</span><span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_path</span>
+
+                        <span class="n">libpdb</span><span class="o">.</span><span class="n">sanitize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">custom_topology</span><span class="o">=</span><span class="n">top_path</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;No unknown atoms found&quot;</span><span class="p">)</span>
+                        <span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">libpdb</span><span class="o">.</span><span class="n">sanitize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
 
                 <span class="c1"># Prepare generation of topologies jobs</span>
                 <span class="n">topoaa_input</span> <span class="o">=</span> <span class="n">generate_topology</span><span class="p">(</span>
                     <span class="n">model</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">_params</span><span class="p">,</span>
                     <span class="n">parameters_for_this_molecule</span><span class="p">,</span>
                     <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
                     <span class="n">write_to_disk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">],</span>
@@ -461,7 +495,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Feb 26, 2026.
+      <span class="lastupdated">Last updated on Feb 27, 2026.
       </span></p>
   </div>
 

@@ -3,6 +3,17 @@
 Easy
 ````
 
+autotoppar
+~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Automatically generate topologies and parameters for unknown atoms
+| *short description*: Automatically generate topologies and parameters for unknown atoms
+| *long description*: Automatically generate topologies and parameters for unknown atoms
+| *group*: molecule
+| *explevel*: easy
+
 delenph
 ~~~~~~~
 

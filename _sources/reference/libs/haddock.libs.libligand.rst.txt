@@ -1,0 +1,7 @@
+haddock.libs.libligand module
+=============================
+
+.. automodule:: haddock.libs.libligand
+   :members:
+   :undoc-members:
+   :show-inheritance:

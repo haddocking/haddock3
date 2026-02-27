@@ -7,9 +7,10 @@ from pathlib import Path
 import yaml
 
 from haddock import core_path
-from haddock.libs.libutil import get_cns_executable
+from haddock.libs.libutil import get_cns_executable, get_prodrg_exec
 
 cns_exec, cns_exec_linux = get_cns_executable()
+prodrg_exec, prodrg_param = get_prodrg_exec()
 
 CONTACT_FCC_EXEC = Path(files("haddock").joinpath("bin/contact_fcc"))  # type: ignore
 FAST_RMSDMATRIX_EXEC = Path(files("haddock").joinpath("bin/fast-rmsdmatrix"))  # type: ignore

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG
 - 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462
 - 2025-11-25: Simplify the use of multiple ambig archives

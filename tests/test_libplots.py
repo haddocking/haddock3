@@ -17,7 +17,7 @@ from haddock.libs.libplots import (
     scatter_plot_handler,
     read_capri_table,
     )
-from . import data_folder, golden_data
+from . import data_folder, golden_data, has_chrome
 
 
 @pytest.fixture(name="example_capri_ss")
@@ -317,6 +317,7 @@ def test_box_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
         assert len(list(Path(".").glob("*.png"))) == 0
 
 
+@has_chrome
 def test_box_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch):
     """Test box plot generation with png format definition."""
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -345,6 +346,7 @@ def test_scatter_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
         assert len(list(Path(".").glob("*.png"))) == 0
 
 
+@has_chrome
 def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch):
     """Test scatter plot generation with png format definition."""
     with tempfile.TemporaryDirectory() as tmpdir:

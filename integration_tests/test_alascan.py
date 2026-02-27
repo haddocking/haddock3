@@ -8,7 +8,7 @@ import pandas as pd
 from haddock.modules.analysis.alascan import (
     DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG,
     HaddockModule as AlascanModule,
-    )
+)
 from haddock.modules.analysis.alascan.scan import RES_CODES
 from haddock.libs.libio import read_from_yaml
 from haddock.libs.libontology import PDBFile
@@ -40,11 +40,11 @@ def alascan_module_protlig():
         shutil.copy(
             Path(GOLDEN_DATA, "ligand.top"),
             Path(alascan.path, "ligand.top"),
-            )
+        )
         shutil.copy(
             Path(GOLDEN_DATA, "ligand.param"),
             Path(alascan.path, "ligand.param"),
-            )
+        )
         # Set the parameters to point the file
         alascan.params["ligand_param_fname"] = Path(alascan.path, "ligand.param")
         alascan.params["ligand_top_fname"] = Path(alascan.path, "ligand.top")
@@ -73,7 +73,7 @@ class MockPreviousIO:
 
     def output(self):
         return None
-    
+
 
 class MockPreviousIO_single_model:
     def __init__(self, path):
@@ -158,7 +158,7 @@ def test_alascan_single_model(alascan_module, mocker):
     # check single complex csv
     df = pd.read_csv(expected_csv, sep="\t", comment="#")
     assert df.shape == (12, 15), f"{expected_csv} has wrong shape"
-    
+
     # there should be several mutants saved to file
     # for each mutation in df, check that the corresponding file exists
     from haddock.libs.libalign import PROT_SIDE_CHAINS_DICT
@@ -170,7 +170,7 @@ def test_alascan_single_model(alascan_module, mocker):
         mut_file = Path(alascan_module.path, f"2oob-{mut_file_identifier}.pdb")
         assert mut_file.exists(), f"{mut_file} does not exist"
         # now let's open the file and check that the mutation is correct
-        
+
         heavy_atoms = []
         with open(mut_file, "r") as f:
             for ln in f:
@@ -179,9 +179,7 @@ def test_alascan_single_model(alascan_module, mocker):
                     if not atom_name.startswith("H"):
                         heavy_atoms.append(atom_name)
         # heavy_atoms should be = PROT_SIDE_CHAINS_DICT["LYS"] (order may vary)
-        assert set(heavy_atoms) == set(
-            PROT_SIDE_CHAINS_DICT["LYS"]
-        ), (
+        assert set(heavy_atoms) == set(PROT_SIDE_CHAINS_DICT["LYS"]), (
             f"Heavy atoms for {mut_file_identifier} are not correct: {heavy_atoms}"
         )
 
@@ -196,7 +194,9 @@ def test_alascan_mutation_resiudes():
 
 def test_alascan_with_ligand_topar(alascan_module_protlig, mocker):
     """Test the use of alascan in presence of a ligand."""
-    alascan_module_protlig.previous_io = MockPreviousIO_protlig(path=alascan_module_protlig.path)
+    alascan_module_protlig.previous_io = MockPreviousIO_protlig(
+        path=alascan_module_protlig.path
+    )
     alascan_module_protlig.run()
 
     expected_csv = Path(alascan_module_protlig.path, "scan_protlig_complex_1.tsv")
@@ -206,7 +206,9 @@ def test_alascan_with_ligand_topar(alascan_module_protlig, mocker):
     assert expected_clt_csv.exists(), f"{expected_clt_csv} does not exist"
 
     # List mutated files
-    mutated_filepaths = list(Path(alascan_module_protlig.path).glob("protlig_complex_1-*.pdb"))
+    mutated_filepaths = list(
+        Path(alascan_module_protlig.path).glob("protlig_complex_1-*.pdb")
+    )
     assert len(mutated_filepaths) >= 1
 
     # Loop over files

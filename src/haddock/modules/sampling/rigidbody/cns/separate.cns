@@ -147,8 +147,39 @@ if ($nfixed < $data.ncomponents) then
             evaluate ($ncount = $ncount + 1)
   
         end loop orientsym
-  
+        
+    elseif ($membrane eq true) then
+    
+      ! We are dealing with a membrane which should be oriented in the xy plane
+      if ($memside ne "unknown") then
+        evaluate ($memresnum = decode($memside) )
+        show ave (z) (segid $memchain and resid $memresnum)
+        if ($result > 0) then
+           evaluate ($zshift = $spacing)
+        else
+           evaluate ($zshift = -1.0 * $spacing)
+        end if
+      end if
+      evaluate ($ncount = 1)
+      while ($ncount < $data.ncomponents) loop spacingmem
+        evaluate ($ncount = $ncount + 1)
+        if ($mol_fix_origin_$ncount eq false) then
+          if ($memside eq "unknown") then
+            evaluate ($ranside = 2*random(1.0)-1 )
+            if ($ranside < 0.0) then
+              evaluate ($zshift = -1.0 * $spacing)
+            else 
+              evaluate ($zshift = $spacing)
+            end if
+          end if
+          coor trans 
+  	        sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) 
+  	        vector=(0, 0, $zshift) end
+        end if
+      end loop spacingmem
+
     else
+
         ! Do we need fix any molecule?
         evaluate($n_moving_mol = 0)
         evaluate ($ncount = 0)

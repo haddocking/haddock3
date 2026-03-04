@@ -151,6 +151,14 @@ define(
 {* carbohydrate parameter file *}
 {===>} carbo_parameter_infile="TOPPAR:carbohydrate.param";
 
+{================= lipids topology and parameter files ===============}
+
+{* carbohydrate topology file *}
+{===>} lipid_topology_infile="TOPPAR:lipids.top";
+
+{* carbohydrate parameter file *}
+{===>} lipid_parameter_infile="TOPPAR:lipids.param";
+
 {================= solvent topology and parameter files ====================}
 
 {* solvent topology file *}
@@ -223,6 +231,9 @@ topology
     if ( &BLANK%carbo_topology_infile = false ) then
         @@&carbo_topology_infile
     end if
+    if ( &BLANK%lipid_topology_infile = false ) then
+        @@&lipid_topology_infile
+    end if
     if ( &BLANK%solv_topology_infile = false ) then
         @@&solv_topology_infile
     end if
@@ -258,6 +269,9 @@ parameter
     end if
     if ( &BLANK%carbo_parameter_infile = false ) then
         @@&carbo_parameter_infile
+    end if
+    if ( &BLANK%lipid_parameter_infile = false ) then
+        @@&lipid_parameter_infile
     end if
     if ( &BLANK%solv_parameter_infile = false ) then
         @@&solv_parameter_infile

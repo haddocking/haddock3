@@ -10,6 +10,7 @@ from pdbtools.pdb_splitchain import run as split_chain
 from pdbtools.pdb_splitmodel import run as split_model
 from pdbtools.pdb_tidy import run as tidy_pdbfile
 
+from haddock import log
 from haddock.core.exceptions import SetupError
 from haddock.core.supported_molecules import supported_residues
 from haddock.core.typing import (
@@ -188,6 +189,9 @@ def sanitize(
                 res = line[17:20].strip()
                 if res and res in to_keep:
                     good_lines.append(line)
+                else:
+                    if not (line.startswith(("TER", "END"))):
+                        log.warning(f"Unsupported residue at {line} - discarded")            
         # Terminate file with an END statement
         if len(good_lines) > 0 and good_lines[-1] != "END":
             good_lines.append("END")

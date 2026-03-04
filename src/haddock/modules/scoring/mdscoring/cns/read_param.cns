@@ -18,6 +18,9 @@ eval ($nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param")
 {* carbohydrate parameter file *}
 eval ($carbo_parameter_infile="TOPPAR:carbohydrate.param")
 
+{* lipids parameter file *}
+eval ($lipid_parameter_infile="TOPPAR:lipids.param")
+
 {* solvent parameter file *}
 eval ($solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param")
 
@@ -41,6 +44,7 @@ parameter
     @@$ion_parameter_infile
     @@$nucl_parameter_infile
     @@$carbo_parameter_infile
+    @@$lipid_parameter_infile
     @@$solv_parameter_infile
     @@$ligands_parameter_infile
     @@$heme_parameter_infile

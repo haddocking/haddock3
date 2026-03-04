@@ -179,7 +179,7 @@ end if
 
 {* ============================================================== *}
 ! determine whether the final models should be reoriented along their principal
-! axes before writing to file in it0 and it1
+! axes before writing to file 
 eval($reorient = true)
 eval($fixmol = false)
 evaluate ($ncount = 0)

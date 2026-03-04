@@ -17,6 +17,40 @@ mol_shape_1:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
+membrane:
+  default: false
+  type: boolean
+  title: Does the molecule contain an explicit membrane?
+  short: Defines that a molecule is embedded in an explici membrane.
+  long: Defines that a molecule is embedded in an explici membrane. 
+    The system should be pre-oriented with the membrane parallel to the xy plane and centered at 0 on the z direction. 
+  group: 'molecule'
+  explevel: expert
+memside:
+  default: "unknown"
+  type: string
+  minchars: 1
+  maxchars: 10
+  title: Membrane side for docking
+  short: Defines which side(s) of the membrane will be sampled
+    If "unknown" both sides are sampled
+    If a residue number is define, only the side of the membrane where this residue is located will be sampled
+  long: Defines which side(s) of the membrane will be sampled
+    If "unknown" both sides are sampled
+    If a residue number is defined, only the side of the membrane where this residue is located will be sampled
+    The system should be pre-oriented with the membrane parallel to the xy plane and centered at 0 on the z direction.  
+  group: 'molecule'
+  explevel: expert
+memchain:
+  default: "A"
+  type: string
+  minchars: 1
+  maxchars: 4
+  title: Chain of the molecule embedded into an explicit membrane
+  short: Defines which molecule is embedded in an explici membrane
+  long: Defines which molecule is embedded in an explici membrane 
+  group: 'molecule'
+  explevel: expert
 #
 # Group distance restraints
 #

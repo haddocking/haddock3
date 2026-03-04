@@ -95,6 +95,7 @@ dyna tors
         fix group ( byresidue (resn ANI))
         fix group ( byresidue (resn DAN))
         fix group ( byresidue (resn XAN))
+        fix group ( byresidue (resn DPP))
         fix group (resn SHA)
 
         eval($nchain1 = 0)

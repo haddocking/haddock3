@@ -35,5 +35,8 @@ igroup
     interaction (resn DUM) (resn DUM) weight * 1.0 vdw 0.0 elec 0.0 end
     interaction (resn SHA) (resn SHA) weight * 1.0 vdw 0.0 elec 0.0 end
     interaction (resn SHA) (not resn SHA) weight * 0.0 end
+    interaction (resn DPP) (not resn DPP) weight * 0.0 end
+    interaction (resn PCW) (not resn PCW) weight * 0.0 end
+    interaction (resn PEE) (not resn PEE) weight * 0.0 end
 
 end

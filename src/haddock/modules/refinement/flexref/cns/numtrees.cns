@@ -80,4 +80,7 @@ do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name OH2)
 show sum (store1) ((resn WAT or resn HOH or resn TIP*))
 evaluate ($numtrees = $numtrees + $break + $result)
 
-evaluate ($numtrees = $numtrees + 300)
+do (store1 = 0) (all)
+do (store1 = 1) (tag and (resn DPP or resn PCW or resn PEE)
+show sum (store1) (all)
+evaluate ($numtrees = $numtrees + $result + 300)

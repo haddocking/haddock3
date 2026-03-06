@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 1
 
    haddock.modules.topology.topoaa
-   haddock.modules.topology.topocg
 
 Module contents
 ---------------

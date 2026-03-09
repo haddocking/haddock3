@@ -367,8 +367,7 @@ def sort_numbered_paths(*paths: FilePathT) -> list[FilePathT]:
     except TypeError as err:
         log.exception(err)
         emsg = (
-            "Mind the packing *argument, input should be strings or Paths, "
-            "not a list."
+            "Mind the packing *argument, input should be strings or Paths, not a list."
         )
         raise TypeError(emsg)
     except IndexError:
@@ -384,8 +383,7 @@ def log_error_and_exit() -> Generator[None, None, None]:
         log.exception(err)
         log.error(err)
         log.error(
-            "An error has occurred, see log file. "
-            "And contact the developers if needed."
+            "An error has occurred, see log file. And contact the developers if needed."
         )
         log.info(get_goodbye_help())
         sys.exit(1)
@@ -479,3 +477,50 @@ def get_cns_executable() -> tuple[Path, Path]:
         log.warning("GRID mode will not be available")
 
     return cns_exec, cns_exec_linux
+
+
+def get_prodrg_exec() -> tuple[Optional[Path], Optional[Path]]:
+    """
+    Locate the prodrg binary and its parameter file.
+
+    Returns ``(None, None)`` with a warning if the binary cannot be found,
+    allowing the application to start normally. The error will surface later
+    if ``run_prodrg`` is actually called.
+
+    Returns:
+        Tuple of (prodrg_exec, prodrg_param) paths, or (None, None) if not found
+    """
+    prodrg_dir = Path(files(haddock).joinpath("prodrg"))  # type: ignore
+    arch = get_arch()
+    prodrg_exec = prodrg_dir / f"prodrg_{arch}"
+
+    if not prodrg_exec.exists():
+        prodrg_exec_env = os.environ.get("PRODRG_EXEC")
+        if prodrg_exec_env is not None:
+            prodrg_exec = Path(prodrg_exec_env)
+        else:
+            log.warning(
+                "prodrg binary not found for arch %s and PRODRG_EXEC is not set. "
+                "Automated ligand topology generation will not be available.",
+                arch,
+            )
+            return None, None
+
+    if not prodrg_exec.exists():
+        log.warning(
+            "prodrg executable not found at %s. "
+            "Automated ligand topology generation will not be available.",
+            prodrg_exec,
+        )
+        return None, None
+
+    prodrg_param = prodrg_dir / "prodrg.param"
+    if not prodrg_param.exists():
+        log.warning(
+            "prodrg.param not found at %s. "
+            "Automated ligand topology generation will not be available.",
+            prodrg_param,
+        )
+        return None, None
+
+    return prodrg_exec, prodrg_param

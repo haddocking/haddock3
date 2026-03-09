@@ -74,7 +74,7 @@ mpi = ["mpi4py>=4.0.2"]
 
 notebooks = ["py3Dmol>=2.5.2"]
 
-deeprank-gnn-esm = ["deeprank-gnn-esm>=1.0.0"]
+deeprank-gnn-esm = ["deeprank-gnn-esm>=1.0.1"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

@@ -1,6 +1,7 @@
 # Changelog
 
 - 2026-03-04: Enabling explicit membrane docking - Issue #1486
+- 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481
 - 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG
 - 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462

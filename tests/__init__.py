@@ -50,7 +50,7 @@ has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 try:
     import deeprank_gnn.predict  # noqa: F401
 
-    DEEPRANK_ENABLED = _platform.system() == "Linux"
+    DEEPRANK_ENABLED = True
 except (ImportError, ModuleNotFoundError):
     DEEPRANK_ENABLED = False
 

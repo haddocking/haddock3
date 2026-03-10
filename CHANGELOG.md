@@ -1,11 +1,15 @@
 # Changelog
 
+- 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485
+- 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481
+- 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG
+- 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available
 - 2025-12-19: Implemented support for custom symmetry restaints - Issue #1465
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462
 - 2025-11-25: Simplify the use of multiple ambig archives
 - 2025-11-19: Corrected CNS verbosity settings - Issue #1446
 - 2025-11-19: Added zinc-finger docking example, related to Issue #1445
-- 2025-11-19: Corrected flexref module for Issue #1445 
+- 2025-11-19: Corrected flexref module for Issue #1445
 - 2025-11-17: Added possibility to use alascan with ligands - Issue #1411
 - 2025-10-22: Allow the definition of chain combinations to be used for scoring - Issue #1414
 - 2025-09-11: Added `grid` mode

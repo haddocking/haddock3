@@ -55,6 +55,7 @@ def add_rand_removal_arguments(rand_removal_subcommand):
         help="Pseudo-random seed. (default: %(default)s)",
         required=False,
         default=917,  # Same as the one in various modules (iniseed)
+        type=int,
         )
 
     rand_removal_subcommand.add_argument(

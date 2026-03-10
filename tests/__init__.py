@@ -1,6 +1,8 @@
 """Define common test variables."""
 
+import shutil
 import pytest
+import platform
 from pathlib import Path
 
 from haddock.libs.libgrid import ping_dirac
@@ -44,3 +46,13 @@ has_notebook = pytest.mark.skipif(
 )
 
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
+
+_CHROME_BINS = ("google-chrome", "google-chrome-stable", "chromium-browser", "chromium", "chrome")
+has_chrome = pytest.mark.skipif(
+    not any(shutil.which(b) for b in _CHROME_BINS),
+    reason="Google Chrome not found (required by Kaleido for PNG export)",
+)
+is_linux_x86_64 = pytest.mark.skipif(
+    platform.system().lower() != "linux" or platform.machine().lower() != "x86_64",
+    reason="Only runs on x86_64 Linux systems",
+)

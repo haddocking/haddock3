@@ -1,0 +1,20 @@
+chain_i:
+  default: "A"
+  type: string
+  minchars: 1
+  maxchars: 1
+  title: First chain ID
+  short: Chain ID of the first partner.
+  long: Chain ID of the first partner used by deeprank for scoring.
+  group: "scoring"
+  explevel: easy
+chain_j:
+  default: "B"
+  type: string
+  minchars: 1
+  maxchars: 1
+  title: Second chain ID
+  short: Chain ID of the second partner.
+  long: Chain ID of the second partner used by deeprank for scoring.
+  group: "scoring"
+  explevel: easy

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485
 - 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481
 - 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG
 - 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available

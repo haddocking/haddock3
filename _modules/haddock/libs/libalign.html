@@ -576,7 +576,7 @@
     <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="c1"># Set types of coordinates lines to extract</span>
     <span class="k">if</span> <span class="n">keep_hetatm</span><span class="p">:</span>
-        <span class="n">coordinates_line_to_extract</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">)</span>
+        <span class="n">coordinates_line_to_extract</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">,</span> <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">coordinates_line_to_extract</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="p">)</span>
     <span class="c1"># Check filetype</span>
@@ -779,13 +779,16 @@
 
 <div class="viewcode-block" id="pdb2fastadic">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.pdb2fastadic">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">pdb2fastadic</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pdb2fastadic</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">:</span> <span class="n">PDBPath</span><span class="p">,</span> <span class="n">keep_hetatm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the sequence as a fasta.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`</span>
+<span class="sd">        Path to a PDB file.</span>
+<span class="sd">    keep_hetatm : bool</span>
+<span class="sd">        Should HETATM coordinates be kept ?</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -852,9 +855,10 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">):</span>
         <span class="n">pdb_f</span> <span class="o">=</span> <span class="n">pdb_f</span><span class="o">.</span><span class="n">rel_path</span>
 
+    <span class="n">coord_req</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="s2">&quot;HETATM&quot;</span><span class="p">,</span> <span class="p">)</span> <span class="k">if</span> <span class="n">keep_hetatm</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">coord_req</span><span class="p">):</span>
                 <span class="n">res_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">slc_resseq</span><span class="p">])</span>
                 <span class="n">res_name</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_resname</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">chain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">slc_chainid</span><span class="p">]</span>
@@ -874,7 +878,7 @@
 <div class="viewcode-block" id="get_align">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.get_align">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_align</span><span class="p">(</span>
-    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">FilePath</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="p">:</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">keep_hetatm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">partial</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the alignment function.</span>
@@ -887,6 +891,9 @@
 <span class="sd">    lovoalign_exec : str</span>
 <span class="sd">        Path to the lovoalign executable.</span>
 
+<span class="sd">    keep_hetatm : bool</span>
+<span class="sd">        Should HETATM be considered in the analysis ?</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    align_func : functools.partial</span>
@@ -895,7 +902,7 @@
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;structure&quot;</span><span class="p">:</span>
         <span class="n">align_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">align_strct</span><span class="p">,</span> <span class="n">lovoalign_exec</span><span class="o">=</span><span class="n">lovoalign_exec</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;sequence&quot;</span><span class="p">:</span>
-        <span class="n">align_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">align_seq</span><span class="p">)</span>
+        <span class="n">align_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">align_seq</span><span class="p">,</span> <span class="n">keep_hetatm</span><span class="o">=</span><span class="n">keep_hetatm</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">available_alns</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;sequence&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1150,10 +1157,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        ref_ch : str</span>
 <span class="sd">            reference chain</span>
-
 <span class="sd">        mod_ch : str</span>
 <span class="sd">            model chain</span>
-
 <span class="sd">        align_id : int</span>
 <span class="sd">            alignment id (index of the alignment)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1209,7 +1214,7 @@
 
 <div class="viewcode-block" id="align_seq">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libalign.html#haddock.libs.libalign.align_seq">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">align_seq</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">align_seq</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">keep_hetatm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sequence align and get the numbering relationship.</span>
 
@@ -1221,14 +1226,17 @@
 
 <span class="sd">    output_path : Path</span>
 
+<span class="sd">    keep_hetatm : bool</span>
+<span class="sd">        Should HETATM be considered when performing the alignment ?</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    align_dic : dict</span>
 <span class="sd">        dictionary of sequence alignments (one per chain)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">SeqAln</span> <span class="o">=</span> <span class="n">SeqAlign</span><span class="p">()</span>
-    <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span> <span class="o">=</span> <span class="n">pdb2fastadic</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
-    <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span> <span class="o">=</span> <span class="n">pdb2fastadic</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span> <span class="o">=</span> <span class="n">pdb2fastadic</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">keep_hetatm</span><span class="o">=</span><span class="n">keep_hetatm</span><span class="p">)</span>
+    <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_model</span> <span class="o">=</span> <span class="n">pdb2fastadic</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">keep_hetatm</span><span class="o">=</span><span class="n">keep_hetatm</span><span class="p">)</span>
 
     <span class="c1"># assign sequences</span>
     <span class="k">for</span> <span class="n">ref_ch</span> <span class="ow">in</span> <span class="n">SeqAln</span><span class="o">.</span><span class="n">seqdic_ref</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -1525,7 +1533,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Mar 10, 2026.
+      <span class="lastupdated">Last updated on Mar 17, 2026.
       </span></p>
   </div>
 

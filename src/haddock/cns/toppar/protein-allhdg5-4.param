@@ -810,6 +810,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  HA   HA   C    HA        500.00 {sd=     0.031}    0    -70.4459 !EAB
  IMPRoper  C    CH1E O    NH2       500.00 {sd=     0.031}    0      0.0124
  IMPRoper  C    CH2E O    NH2       500.00 {sd=     0.031}    0      0.0124
+ IMPRoper  C    CH2E NH2  O        500.00 {sd=     0.031}    0      0.0124 ! AHX->CTN planar
  IMPRoper  C    CH3E O    NH2       500.00 {sd=     0.031}    0      0.0124
  IMPRoper  C    CH2E OC   OC        500.00 {sd=     0.031}    0     -0.0137
  IMPRoper  C    CH2E OC   OH1       500.00 {sd=     0.031}    0     -0.0137
@@ -851,6 +852,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CH2E C    NH1  CH2G      500.00 {sd=     0.031}    0   -179.9916 !for iso-peptidebond with GLY (AB 2015-10)
  IMPRoper  CH1E C    NH1  CH1E      500.00 {sd=     0.031}    0   -180.0067
  IMPRoper  CH1E C    NH1  CH2E      500.00 {sd=     0.031}    0   -180.0067
+ IMPRoper  CH0  C    NH1  CH2E      500.00 {sd=     0.031}    0   -180.0067 ! AHX after IVA
  IMPRoper  CH1E C    NH1  CH3E      500.00 {sd=     0.031}    0   -180.0067 ! for NME
  IMPRoper  HA  	HA   CH3E NH1 	    500.00 {sd=     0.031}    0    35.2640  ! for NME
  IMPRoper  CH2G C    NH1  CH3E      500.00 {sd=     0.031}    0   -180.0067 ! for NME
@@ -1236,9 +1238,127 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  HA   CH3E SE   CH2E   1.00     3  0.0000 !MSE
 
 ! added by Aditya Subramanian Sahsranamam Feb 12th 2026
- DIHEdral  NH1  CH1E CH2E CH3E  2.00     3  0.0000 !IVA chi1 (N-CA-CB1-CG1)
- DIHEdral  H    NH1  CH1E CH2E   2.00     3  0.0000 !IVA cross-term (HN-N-CA-CB1)
- DIHEdral  HA   CH3E CH1E NH1    1.00     3  0.0000 !IVA methyl stagger (HB21-CB2-CA-N)
+ DIHEdral  NH1  CH0 CH2E CH3E  2.00     3  0.0000 !IVA chi1 (N-CA-CB1-CG1)
+ DIHEdral  H    NH1  CH0 CH2E   2.00     3  0.0000 !IVA cross-term (HN-N-CA-CB1)
+ DIHEdral  HA   CH3E CH0 NH1    1.00     3  0.0000 !IVA methyl stagger (HB21-CB2-CA-N)
+
+! -----------------------------------------------------------------------
+! IVA Isovaline: CH0 (quaternary alpha-carbon) parameters
+! Angles: Butcher et al. 2013, Acta Cryst E69 o1829 (crystal structure)
+! Added Mar 2026
+! -----------------------------------------------------------------------
+
+! Nonbonded -- same as CHAS (both are quaternary C, no implicit H)
+NONBONDED  CH0    0.10000 3.29633 0.10000 3.02906
+
+! Bonds
+BOND  C    CH0    1000.000 {sd=0.001}   1.525   ! C(=O)-CA
+BOND  CH0  NH1    1000.000 {sd=0.001}   1.458   ! CA-N
+BOND  CH0  CH3E   1000.000 {sd=0.001}   1.521   ! CA-CB2 (methyl)
+BOND  CH0  CH2E   1000.000 {sd=0.001}   1.530   ! CA-CB1 (ethyl)
+
+! Angles around CH0 center (Butcher et al. 2013 crystal structure, avg=109.45 ~ tetrahedral)
+ANGLe  C    CH0  NH1      500.00 {sd=0.031}  109.1   ! N-CA-C
+ANGLe  C    CH0  CH3E     500.00 {sd=0.031}  110.7   ! C-CA-CB2
+ANGLe  C    CH0  CH2E     500.00 {sd=0.031}  108.9   ! C-CA-CB1
+ANGLe  NH1  CH0  CH3E     500.00 {sd=0.031}  108.1   ! N-CA-CB2
+ANGLe  NH1  CH0  CH2E     500.00 {sd=0.031}  108.6   ! N-CA-CB1
+ANGLe  CH3E CH0  CH2E     500.00 {sd=0.031}  111.3   ! CB2-CA-CB1
+! Angles with CH0 as terminal atom (values from CH1E equivalents)
+ANGLe  O    C    CH0      500.00 {sd=0.031}  120.8258 ! O-C(carbonyl)-CA
+ANGLe  CH0  C    NH1      500.00 {sd=0.031}  116.1998 ! CA-C-N(next residue)
+ANGLe  CH0  C    NH2      500.00 {sd=0.031}  116.1998 ! CA-C-N(C-term amide)
+ANGLe  CH0  C    N        500.00 {sd=0.031}  116.9940 ! CA-C-N(pro next)
+ANGLe  C    NH1  CH0      500.00 {sd=0.031}  121.6541 ! C(prev)-N-CA
+ANGLe  CH0  NH1  H        500.00 {sd=0.031}  119.2367 ! CA-N-HN
+ANGLe  CH0  CH2E CH3E     500.00 {sd=0.031}  113.7404 ! CA-CB1-CG1
+ANGLe  CH0  CH2E HA       500.00 {sd=0.031}  109.2833 ! CA-CB1-HBx
+ANGLe  CH0  CH3E HA       500.00 {sd=0.031}  109.4726 ! CA-CB2-HBx
+
+! Carbonyl planarity (C as center, equiv to C CH1E NH1 O at line 1056)
+IMPRoper  C    CH0  NH1   O       500.00  0    0.0000  ! planar carbonyl (internal IVA)
+IMPRoper  C    CH0  NH2   O       500.00  0    0.0000  ! planar carbonyl (C-term amide)
+! Peptide bond planarity -- N-H (equiv NH1 C CH1E H at line 1066)
+IMPRoper  NH1  C    CH0   H       500.00  0    0.0000  ! N-H planarity (IVA N)
+! Peptide bond planarity -- omega (equiv CH1E C NH1 CH1E → 180 at line 1086)
+IMPRoper  CH1E C    NH1   CH0     500.00  0    180.0000 ! omega: standard-AA -> IVA
+IMPRoper  CH2G C    NH1   CH0     500.00  0    180.0000 ! omega: GLY -> IVA
+IMPRoper  CH0  C    NH1   CH1E    500.00  0    180.0000 ! omega: IVA -> standard-AA
+IMPRoper  CH0  C    NH1   CH2G    500.00  0    180.0000 ! omega: IVA -> GLY
+IMPRoper  CH0  C    N     CH2P    500.00  0    180.0000 ! omega: IVA -> PRO
+! C-terminal amide planarity (equiv CH1E C NH2 H at line 858)
+IMPRoper  CH0  C    NH2   H       500.00  0    0.0000  ! CA-C-N(amide)-H planarity
+
+! Chirality -- 35.264 deg = arctan(1/sqrt(2)), tetrahedral out-of-plane angle
+! Center atom (CA=CH0) listed first, three substituents follow (DRG convention)
+IMPRoper  CH0  CH3E  NH1  CH2E   400.00  0   35.264  ! L-IVA chirality CA
+IMPRoper  CH0  NH1   CH3E CH2E   400.00  0   35.264  ! D-IVA chirality CA (after LTOD_IVA)
+
+! Stereo (ALA convention: HA HA <central> <4th-substituent>)
+IMPRoper  HA   HA   CH0   HA      500.00  0   35.264  ! CB2 methyl stereo
+IMPRoper  HA   HA   CH0   CH3E    500.00  0   35.264  ! CB1 methylene stereo
+
+! Dihedrals (NH1-CH0-CH3E-HA and CH2E-CH0-NH1-H covered by lines 1239-1241 via reverse)
+DIHEdral  O    C    CH0   NH1    2.00  2  0.0000   ! O-C(carbonyl)-CA-N torsion
+DIHEdral  CH0  CH2E CH3E  HA     1.00  3  0.0000   ! CA-CB1-CG1-HG stagger
+! Backbone MULT 6 dihedrals for CH0 (equiv to CH1E entries at lines 1343-1397)
+! Psi: CB-CA-C-O (0.375 coefficients, equiv line 1343/1345)
+DIHEdral  CH2E  CH0  C    O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !CB1-CA-C-O
+DIHEdral  CH3E  CH0  C    O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !CB2-CA-C-O
+! Psi: CB-CA-C-N (0.5 coefficients, equiv lines 1354-1375)
+DIHEdral  CH2E  CH0  C    NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !CB1-CA-C-N(next)
+DIHEdral  CH3E  CH0  C    NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !CB2-CA-C-N(next)
+DIHEdral  CH2E  CH0  C    NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !CB1-CA-C-N(C-term amide)
+DIHEdral  CH3E  CH0  C    NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !CB2-CA-C-N(C-term amide)
+DIHEdral  CH2E  CH0  C    N      MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !CB1-CA-C-N(PRO next)
+DIHEdral  CH3E  CH0  C    N      MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !CB2-CA-C-N(PRO next)
+! Phi: C(prev)-N-CA-X (equiv lines 1379/1392-1394)
+DIHEdral  C     NH1  CH0  C      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !phi: prev-N-CA-C
+DIHEdral  C     NH1  CH0  CH3E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !phi: prev-N-CA-CB2
+DIHEdral  C     NH1  CH0  CH2E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !phi: prev-N-CA-CB1
+
+! -----------------------------------------------------------------------
+! ADI/AZH azide nitrogen types: NPA (proximal), NPB (middle,+), NPC (terminal,-)
+! Geometry from ATB AWXF B3LYP/6-31G*; GROMOS 54A7 NB params converted to CNS units
+! (epsilon: kJ/mol -> kcal/mol /4.184; sigma -> Rmin/2 = sigma*2^(1/6)/2)
+! -----------------------------------------------------------------------
+
+NONBONDED NPA   0.03343  2.1880  0.03343  1.9660  ! proximal azide N (GROMOS NOpt)
+NONBONDED NPB   0.03343  2.1880  0.03343  1.9660  ! middle azide N+  (GROMOS NOpt)
+NONBONDED NPC   0.03410  2.2840  0.03410  2.0550  ! terminal azide N- (GROMOS NPri)
+
+! Bonds (ATB equilibrium lengths; stiff allhdg-style force constant)
+BOND  CH2E NPA   1000.000  1.480   ! CB1-NN1 C-N bond (sp2 N)
+BOND  NPA  NPB   1000.000  1.230   ! NN1=NN2 double bond
+BOND  NPB  NPC   1000.000  1.140   ! NN2=NN3 triple bond character
+
+! Angles (ATB equilibrium; 500 kcal/mol/rad^2 consistent with allhdg)
+ANGLe CH0  CH2E NPA   500.00  111.0    ! CA-CB1-NN1 (sp3 C angle)
+ANGLe HA   CH2E NPA   500.00  109.5    ! HB-CB1-NN1
+ANGLe CH2E NPA  NPB   500.00  116.0    ! CB1-NN1=NN2 (ATB 116.0 deg)
+ANGLe NPA  NPB  NPC   500.00  174.0    ! NN1=NN2=NN3 near-linear (ATB 174.0 deg)
+
+! Omega planarity: ADI/AZH (CH0) neighbours same as IVA -- already covered by existing
+! CH1E C NH1 CH0 / CH0 C NH1 CH1E entries in the CH0 block above
+
+! Chirality for D-ADI/D-AZH (center-first DRG convention, D-config)
+! CH0 NH1 CH3E CH2E -> 35.264 already in param; same types used here
+
+! Impropers (azide NN1 planarity; NN1 is sp2 with lone pair into N=N pi)
+IMPRoper CH2E NPA  NPB  HA    500.00  0   0.0000  ! NN1 sp2 out-of-plane
+
+! Side-chain dihedrals for azide
+DIHEdral NH1  CH0  CH2E NPA   MULT 6  0.5 1 0.0  0.4 2 0.0  0.3 3 0.0  0.2 4 0.0  0.1 5 0.0  0.05 6 0.0  !chi1 N-CA-CB1-NN1
+DIHEdral CH3E CH0  CH2E NPA   MULT 6  0.5 1 0.0  0.4 2 0.0  0.3 3 0.0  0.2 4 0.0  0.1 5 0.0  0.05 6 0.0  !chi1 CB2-CA-CB1-NN1
+DIHEdral CH0  CH2E NPA  NPB   2.00  3  0.0000  ! chi2 CA-CB1-NN1=NN2 (ADI)
+DIHEdral HA   CH2E NPA  NPB   2.00  3  0.0000  ! HB stagger vs azide (ADI/AZH)
+
+! AZH-specific params: CB(CH2E)-CG(CH2E)-NN1(NPA) geometry
+ANGLe CH2E CH2E NPA   500.00  111.0    ! CB-CG-NN1 (sp3 C to azide N)
+IMPRoper HA   HA   CH2E NPA   500.000 {sd=     0.031}  0  35.2640  ! stereo CG in AZH (HG1 HG2 CB NN1)
+DIHEdral CH1E CH2E CH2E NPA   MULT 6  0.5 1 0.0  0.4 2 0.0  0.3 3 0.0  0.2 4 0.0  0.1 5 0.0  0.05 6 0.0  ! AZH chi1 CA-CB-CG-NN1
+DIHEdral HA   CH2E CH2E NPA   2.00  3  0.0000  ! AZH HB stagger vs CG
+DIHEdral CH2E CH2E NPA  NPB   2.00  3  0.0000  ! AZH chi2 CB-CG-NN1=NN2
 
  ! added by M. Reau 01-06-21
  DIHEdral  HA   CH3E NH1  H      1.00     3  0.0000 !NME
@@ -1317,6 +1437,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 
 ! backbone phi (not active with usual topology file modified 03-JUL-01)
  DIHEdral C      NH1    CH1E   C      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-aaa
+ DIHEdral C      NH1    CH2E   C      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-AHX phi
  DIHEdral C      NH1    CH2G   C      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-gly
 ! backbone phi (not active with usual topology file modified 03-JUL-01)
  DIHEdral CCIS      NH1    CH1E   C      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-aaa
@@ -1330,6 +1451,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 
 ! backbone phi related due to O & CB  N.B. 1.33x the strength of phi above (not active with usual topology file added 03-JUL-01)
  DIHEdral C      NH1    CH1E   CH2E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
+ DIHEdral C      NH1    CH2E   CH2E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-AHX phi-CB
  DIHEdral C      NH1    CH1E   CH3E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-ala
  DIHEdral C      NH1    CH1E   CH1E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-(ile,thr,val)
  DIHEdral CCIS   NH1    CH1E   CH2E   MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
@@ -2037,4 +2159,313 @@ END
 
 set message=$old_message echo=$old_echo end
 
+!----------------------------------------------------------------------
+! VHL (VH032) parameters — ATB GROMOS 54A7 molid:1979636 | Added 2026-03-19
+!----------------------------------------------------------------------
+   BOND H211 CAN  698.5   1.090
+   BOND CAN  NAR  896.3   1.330
+   BOND CAN  SAU  286.8   1.710
+   BOND NAR  CAZ  800.1   1.400
+   BOND CAZ  CAB  599.9   1.480
+   BOND CAZ  CBB  799.8   1.390
+   BOND CAB  H05  2218.5  1.120
+   BOND CAB  H06  2218.5  1.120
+   BOND CAB  H07  2218.5  1.120
+   BOND CBB  SAU  262.9   1.690
+   BOND CBB  CBA  33.5    1.440
+   BOND CBA  CAL  800.1   1.400
+   BOND CBA  CAM  800.1   1.400
+   BOND CAL  H191 699.8   1.100
+   BOND CAL  CAJ  799.8   1.390
+   BOND CAJ  H171 698.5   1.090
+   BOND CAJ  CAY  799.8   1.390
+   BOND CAY  CAK  799.8   1.390
+   BOND CAY  CAO  900.2   1.500
+   BOND CAK  H181 698.5   1.090
+   BOND CAK  CAM  799.8   1.390
+   BOND CAM  H201 699.8   1.100
+   BOND CAO  H221 430.2   1.130
+   BOND CAO  H23  430.2   1.130
+   BOND CAO  NAS  600.4   1.435
+   BOND NAS  H24  893.9   1.000
+   BOND NAS  C1   1001.3  1.380
+   BOND C    NAS  1000.0  1.329  ! AHX(C) -> VHL(NAS) linker peptide bond
+   ANGLe CH2E C   NAS  500.0  116.0  ! AHX CE-C-NAS
+   ANGLe O    C   NAS  500.0  123.0  ! AHX O-C-NAS
+   ANGLe C    NAS CAO  500.0  121.0  ! C-NAS-CAO
+   ANGLe C    NAS H24  500.0  119.0  ! C-NAS-H24
+   BOND C1   O1   1000.8  1.250
+   BOND C1   CA1  478.0   1.540
+   BOND CA1  H01  430.2   1.130
+   BOND CA1  N1   525.8   1.450
+   BOND CA1  CB1  478.0   1.540
+   BOND N1   CD2  525.8   1.450
+   BOND N1   CAX  1001.3  1.380
+   BOND CD2  H30  2218.5  1.120
+   BOND CD2  H31  430.2   1.130
+   BOND CD2  CG   358.5   1.560
+   BOND CG   H29  2218.5  1.120
+   BOND CG   OD1  310.7   1.420
+   BOND CG   CB1  800.0   1.530
+   BOND OD1  H32  358.5   0.971
+   BOND CB1  H26  2218.5  1.120
+   BOND CB1  H27  2218.5  1.120
+   BOND CAX  OAH  1000.8  1.250
+   BOND CAX  CBE  358.5   1.560
+   BOND CBE  H28  430.2   1.130
+   BOND CBE  NAT  525.8   1.450
+   BOND CBE  CBG  358.5   1.560
+   BOND NAT  H02  893.9   1.000
+   BOND NAT  H25  893.9   1.000
+   BOND CBG  CAC  599.7   1.520
+   BOND CBG  CAD  599.7   1.520
+   BOND CBG  CAE  599.7   1.520
+   BOND CAC  H08  2218.5  1.120
+   BOND CAC  H09  2218.5  1.120
+   BOND CAC  H10  2218.5  1.120
+   BOND CAD  H111 2218.5  1.120
+   BOND CAD  H121 2218.5  1.120
+   BOND CAD  H131 2218.5  1.120
+   BOND CAE  H141 2218.5  1.120
+   BOND CAE  H151 2218.5  1.120
+   BOND CAE  H161 2218.5  1.120
+   ! Peptide link and C-terminal patch bonds
+   BOND C    N1   1000.000  1.341  ! ACE C -> VHL N (pepp link)
+   BOND C1   OC   1000.000  1.249  ! VHL C-term carboxylate (CTER patch)
+
+   ANGLe H211 CAN  NAR  120.7   120.0
+   ANGLe H211 CAN  SAU  99.2    123.0
+   ANGLe NAR  CAN  SAU  111.1   116.0
+   ANGLe CAN  NAR  CAZ  68.1    109.5
+   ANGLe NAR  CAZ  CAB  133.8   120.0
+   ANGLe NAR  CAZ  CBB  145.8   115.0
+   ANGLe CAB  CAZ  CBB  153.0   126.0
+   ANGLe CAZ  CAB  H05  126.7   111.0
+   ANGLe CAZ  CAB  H06  126.7   111.0
+   ANGLe CAZ  CAB  H07  126.7   111.0
+   ANGLe H05  CAB  H06  401.6   109.0
+   ANGLe H05  CAB  H07  401.6   109.0
+   ANGLe H06  CAB  H07  401.6   109.0
+   ANGLe CAZ  CBB  SAU  130.3   113.0
+   ANGLe CAZ  CBB  CBA  153.0   126.0
+   ANGLe SAU  CBB  CBA  133.8   120.0
+   ANGLe CAN  SAU  CBB  90.8    90.0
+   ANGLe CBB  CBA  CAL  133.8   120.0
+   ANGLe CBB  CBA  CAM  133.8   120.0
+   ANGLe CAL  CBA  CAM  133.8   120.0
+   ANGLe CBA  CAL  H191 120.7   120.0
+   ANGLe CBA  CAL  CAJ  133.8   120.0
+   ANGLe H191 CAL  CAJ  120.7   120.0
+   ANGLe CAL  CAJ  H171 120.7   120.0
+   ANGLe CAL  CAJ  CAY  133.8   120.0
+   ANGLe H171 CAJ  CAY  120.7   120.0
+   ANGLe CAJ  CAY  CAK  133.8   120.0
+   ANGLe CAJ  CAY  CAO  133.8   120.0
+   ANGLe CAK  CAY  CAO  133.8   120.0
+   ANGLe CAY  CAK  H181 120.7   120.0
+   ANGLe CAY  CAK  CAM  133.8   120.0
+   ANGLe H181 CAK  CAM  120.7   120.0
+   ANGLe CBA  CAM  CAK  133.8   120.0
+   ANGLe CBA  CAM  H201 120.7   120.0
+   ANGLe CAK  CAM  H201 120.7   120.0
+   ANGLe CAY  CAO  H221 105.9   108.5
+   ANGLe CAY  CAO  H23  115.7   107.6
+   ANGLe CAY  CAO  NAS  145.8   115.0
+   ANGLe H221 CAO  H23  111.1   108.0
+   ANGLe H221 CAO  NAS  111.1   108.0
+   ANGLe H23  CAO  NAS  111.1   108.0
+   ANGLe CAO  NAS  H24  111.1   116.0
+   ANGLe CAO  NAS  C1   167.3   122.0
+   ANGLe H24  NAS  C1   93.2    120.0
+   ANGLe NAS  C1   O1   174.5   124.0
+   ANGLe NAS  C1   CA1  145.8   115.0
+   ANGLe O1   C1   CA1  163.7   121.0
+   ANGLe C1   CA1  H01  401.6   109.0
+   ANGLe C1   CA1  N1   145.8   115.0
+   ANGLe C1   CA1  CB1  124.3   109.5
+   ANGLe H01  CA1  N1   121.2   107.6
+   ANGLe H01  CA1  CB1  151.0   111.3
+   ANGLe N1   CA1  CB1  111.1   108.0
+   ANGLe CA1  N1   CD2  148.2   116.0
+   ANGLe CA1  N1   CAX  167.3   122.0
+   ANGLe CD2  N1   CAX  174.5   124.0
+   ANGLe N1   CD2  H30  126.7   111.0
+   ANGLe N1   CD2  H31  125.2   110.3
+   ANGLe N1   CD2  CG   111.1   108.0
+   ANGLe H30  CD2  H31  401.6   109.0
+   ANGLe H30  CD2  CG   107.5   109.6
+   ANGLe H31  CD2  CG   107.5   109.6
+   ANGLe CD2  CG   H29  125.2   110.3
+   ANGLe CD2  CG   OD1  124.3   109.5
+   ANGLe CD2  CG   CB1  124.3   109.5
+   ANGLe H29  CG   OD1  68.1    110.0
+   ANGLe H29  CG   CB1  151.0   111.3
+   ANGLe OD1  CG   CB1  126.7   111.0
+   ANGLe CG   OD1  H32  107.5   109.5
+   ANGLe CA1  CB1  CG   124.3   109.5
+   ANGLe CA1  CB1  H26  107.5   109.6
+   ANGLe CA1  CB1  H27  126.7   111.0
+   ANGLe CG   CB1  H26  125.2   110.3
+   ANGLe CG   CB1  H27  126.7   111.0
+   ANGLe H26  CB1  H27  105.9   108.5
+   ANGLe N1   CAX  OAH  174.5   124.0
+   ANGLe N1   CAX  CBE  133.8   120.0
+   ANGLe OAH  CAX  CBE  163.7   121.0
+   ANGLe CAX  CBE  H28  68.1    109.5
+   ANGLe CAX  CBE  NAT  126.7   111.0
+   ANGLe CAX  CBE  CBG  124.3   109.5
+   ANGLe H28  CBE  NAT  120.2   106.8
+   ANGLe H28  CBE  CBG  120.2   106.8
+   ANGLe NAT  CBE  CBG  145.8   115.0
+   ANGLe CBE  NAT  H02  101.6   109.5
+   ANGLe CBE  NAT  H25  101.6   109.5
+   ANGLe H02  NAT  H25  401.6   109.0
+   ANGLe CBE  CBG  CAC  124.3   109.5
+   ANGLe CBE  CBG  CAD  124.3   109.5
+   ANGLe CBE  CBG  CAE  124.3   109.5
+   ANGLe CAC  CBG  CAD  124.3   109.5
+   ANGLe CAC  CBG  CAE  124.3   109.5
+   ANGLe CAD  CBG  CAE  124.3   109.5
+   ANGLe CBG  CAC  H08  151.0   111.3
+   ANGLe CBG  CAC  H09  151.0   111.3
+   ANGLe CBG  CAC  H10  151.0   111.3
+   ANGLe H08  CAC  H09  105.9   108.5
+   ANGLe H08  CAC  H10  105.9   108.5
+   ANGLe H09  CAC  H10  105.9   108.5
+   ANGLe CBG  CAD  H111 151.0   111.3
+   ANGLe CBG  CAD  H121 151.0   111.3
+   ANGLe CBG  CAD  H131 151.0   111.3
+   ANGLe H111 CAD  H121 105.9   108.5
+   ANGLe H111 CAD  H131 105.9   108.5
+   ANGLe H121 CAD  H131 105.9   108.5
+   ANGLe CBG  CAE  H141 151.0   111.3
+   ANGLe CBG  CAE  H151 151.0   111.3
+   ANGLe CBG  CAE  H161 151.0   111.3
+   ANGLe H141 CAE  H151 105.9   108.5
+   ANGLe H141 CAE  H161 105.9   108.5
+   ANGLe H151 CAE  H161 105.9   108.5
+   ! Peptide link and C-terminal patch angles
+   ANGLe C    N1   CA1  500.00  122.0   ! ACE C - VHL N - VHL CA (pepp)
+   ANGLe C    N1   CD2  500.00  124.0   ! ACE C - VHL N - VHL CD2 (pepp)
+   ANGLe C    N1   CAX  500.00  124.0   ! ACE C - VHL N - VHL CAX (pepp)
+   ANGLe O    C    N1   500.00  124.0   ! ACE O - ACE C - VHL N (pepp)
+   ANGLe CH3E C    N1   500.00  115.0   ! ACE CA(CH3E) - ACE C - VHL N (pepp)
+   ANGLe NAS  C1   OC   500.00  124.0   ! CTER: NAS-C1-OC
+   ANGLe OC   C1   CA1  500.00  121.0   ! CTER: OC-C1-CA1
+   ANGLe OC   C1   OC   500.00  124.0   ! CTER: OC-C1-OC (carboxylate)
+
+   DIHEdral CAN  NAR  CAZ  CBB  10.0    2  180.0
+   DIHEdral NAR  CAN  SAU  CBB  10.0    2  180.0
+   DIHEdral NAR  CAZ  CAB  H05  0.2     6  0.0
+   DIHEdral NAR  CAZ  CBB  SAU  10.0    2  180.0
+   DIHEdral CAZ  CBB  SAU  CAN  10.0    2  180.0
+   DIHEdral CAZ  CBB  CBA  CAL  10.0    2  180.0
+   DIHEdral SAU  CAN  NAR  CAZ  10.0    2  180.0
+   DIHEdral CBA  CAL  CAJ  CAY  10.0    2  180.0
+   DIHEdral CAL  CBA  CAM  CAK  10.0    2  180.0
+   DIHEdral CAL  CAJ  CAY  CAK  10.0    2  180.0
+   DIHEdral CAJ  CAY  CAK  CAM  10.0    2  180.0
+   DIHEdral CAJ  CAY  CAO  NAS  0.2     6  0.0
+   DIHEdral CAY  CAK  CAM  CBA  10.0    2  180.0
+   DIHEdral CAY  CAO  NAS  C1   0.2     6  180.0
+   DIHEdral CAM  CBA  CAL  CAJ  10.0    2  180.0
+   DIHEdral CAO  NAS  C1   CA1  8.0     2  180.0
+   DIHEdral C1   CA1  N1   CAX  0.2     6  180.0
+   DIHEdral O1   C1   CA1  N1   0.2     6  0.0
+   DIHEdral CA1  N1   CD2  CG   0.2     6  180.0
+   DIHEdral CA1  N1   CAX  OAH  8.0     2  180.0
+   DIHEdral N1   CA1  CB1  CG   0.2     3  180.0
+   DIHEdral N1   CD2  CG   CB1  0.2     3  180.0
+   DIHEdral N1   CAX  CBE  NAT  0.2     6  180.0
+   DIHEdral CD2  CG   CB1  CA1  0.2     3  180.0
+   DIHEdral CB1  CG   OD1  H32  0.3     3  0.0
+   DIHEdral CAX  CBE  NAT  H02  0.2     6  180.0
+   DIHEdral CAX  CBE  CBG  CAC  1.4     3  0.0
+   DIHEdral CAC  CBG  CAD  H111 1.4     3  0.0
+   DIHEdral CAC  CBG  CAE  H141 1.4     3  0.0
+   DIHEdral CAD  CBG  CAC  H08  1.4     3  0.0
+   DIHEdral N1   CA1  C1   OC   0.2     6  0.0   ! CTER: same as O1-C1-CA1-N1 with OC type
+
+   IMPRoper N1   CA1  CD2  CAX  40.038  0  0.0
+   IMPRoper CAJ  CAL  H171 CAY  40.038  0  0.0
+   IMPRoper CAK  CAY  H181 CAM  40.038  0  0.0
+   IMPRoper CAL  CBA  H191 CAJ  40.038  0  0.0
+   IMPRoper CAM  CBA  CAK  H201 40.038  0  0.0
+   IMPRoper CAN  H211 NAR  SAU  40.038  0  0.0
+   IMPRoper CAX  N1   OAH  CBE  40.038  0  0.0
+   IMPRoper CAY  CAJ  CAK  CAO  40.038  0  0.0
+   IMPRoper CAZ  NAR  CAB  CBB  40.038  0  0.0
+   IMPRoper C1   NAS  O1   CA1  40.038  0  0.0
+   IMPRoper NAS  CAO  H24  C1   40.038  0  0.0
+   IMPRoper CBA  CBB  CAL  CAM  40.038  0  0.0
+   IMPRoper CBB  CAZ  SAU  CBA  40.038  0  0.0
+   IMPRoper CA1  N1   C1   CB1  80.076  0  35.3
+   IMPRoper CBE  NAT  CAX  CBG  80.076  0  35.3
+   IMPRoper CG   CB1  CD2  OD1  80.076  0  35.3
+   ! Peptide link (pepp) and CTER patch impropers
+   IMPRoper C1   NAS  OC   CA1  500.00  0  0.0     ! CTER: C1 peptide plane (OC replaces O1)
+   IMPRoper C    CH3E N1   O    500.00  0  0.0     ! pepp: ACE C peptide plane
+   IMPRoper CH3E C    N1   CA1  500.00  0  180.0   ! pepp: ACE-VHL omega dihedral planarity
+   IMPRoper C1   CA1  OC   OC   500.00  0  0.0     ! CTER: carboxylate planarity
+
+   NONBONDED N1   0.2198  3.65  0.2198  3.28  !GROMOS NTer
+   NONBONDED CA1  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CAB  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CAC  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CAD  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CAE  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CAJ  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CAK  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CAL  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CAM  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CAN  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CAO  0.245   2.81  0.245   2.53  !GROMOS CPos
+   NONBONDED CAX  0.245   2.81  0.245   2.53  !GROMOS CPos
+   NONBONDED CAY  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CAZ  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED C1   0.245   2.81  0.245   2.53  !GROMOS CPos
+   NONBONDED O1   0.1194  3.4   0.1194  3.06  !GROMOS OEOp
+   NONBONDED NAR  0.1399  3.9   0.1399  3.51  !GROMOS NOpt
+   NONBONDED NAS  0.1529  3.14  0.1529  2.82  !GROMOS N
+   NONBONDED NAT  0.1427  4.07  0.1427  3.66  !GROMOS NPri
+   NONBONDED OAH  0.1194  3.4   0.1194  3.06  !GROMOS OEOp
+   NONBONDED SAU  0.4555  3.31  0.4555  2.98  !GROMOS S
+   NONBONDED CB1  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CBA  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CBB  0.07346 3.52  0.07346 3.17  !GROMOS CAro
+   NONBONDED CBE  0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CBG  0.001672 6.64 0.001672 5.98 !GROMOS CH0
+   NONBONDED CG   0.0663  3.58  0.0663  3.22  !GROMOS C
+   NONBONDED CD2  0.245   2.81  0.245   2.53  !GROMOS CPos
+   NONBONDED OD1  0.1556  2.97  0.1556  2.67  !GROMOS OAlc
+   NONBONDED H01  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H02  0       0     0       0     !GROMOS HS14
+   NONBONDED H05  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H06  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H07  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H08  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H09  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H10  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H111 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H121 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H131 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H141 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H151 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H161 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H171 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H181 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H191 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H201 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H211 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H221 0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H23  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H24  0       0     0       0     !GROMOS HS14
+   NONBONDED H25  0       0     0       0     !GROMOS HS14
+   NONBONDED H26  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H27  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H28  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H29  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H30  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H31  0.02829 2.37  0.02829 2.14  !GROMOS HC
+   NONBONDED H32  0       0     0       0     !GROMOS HS14
 

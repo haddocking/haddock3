@@ -269,6 +269,40 @@ if ( $tobuild > 0 ) then
 
     end loop ltod
 
+    ! Check for D-amino acids with quaternary CA (e.g. IVA/isovaline)
+    ! Selector catches any residue with CB2 but no HA -- no residue name hardcoding
+    for $id in id ( name CA and byres(name CB2) and not byres(name HA) ) loop ltod_iva
+
+        show (segid) (id $id)
+        evaluate ($segid=$result)
+        show (resid) (id $id)
+        evaluate ($resid=$result)
+        show (resn) (id $id)
+        evaluate ($resn=$result)
+
+        pick impr
+            (segid $segid and resid $resid and name CA)
+            (segid $segid and resid $resid and name N)
+            (segid $segid and resid $resid and name CB2)
+            (segid $segid and resid $resid and name CB1)
+            geometry
+
+        ! Positive value = D-config (R) -- apply DIVA to switch from L default
+        if ($result gt 0) then
+            patch DIVA reference=nil=(segid $segid and resid $resid) end
+            buffer message
+                display D-amino acid detected for $resn $resid of chain $segid
+            end
+            flag exclude * include bond impr end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+            flag include angle end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+            flag include vdw end
+            minimize powell nstep=50 drop=10.0 nprint=10 end
+        end if
+
+    end loop ltod_iva
+
     fix selection=( none ) end
 
     flag incl noe cdih end

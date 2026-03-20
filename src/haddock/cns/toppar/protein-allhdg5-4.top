@@ -74,6 +74,7 @@ MASS HC   1.008
 MASS HA   1.008
 MASS C   12.011
 MASS CCIS  12.011
+MASS CH0  12.011 ! C-Alpha type for quaternary amino acids
 MASS CH1E  12.011
 MASS CH2E  12.011
 MASS CH3E  12.011
@@ -101,6 +102,9 @@ MASS NH3 14.007
 MASS NC2 14.007
 MASS NC3 14.007
 MASS NC4 14.007
+MASS NPA 14.007  ! proximal azide N (ADI/AZH)
+MASS NPB 14.007  ! middle azide N+ (ADI/AZH)
+MASS NPC 14.007  ! terminal azide N- (ADI/AZH)
 MASS O   15.999
 MASS OP1 15.999
 MASS OR3 15.999
@@ -1046,7 +1050,7 @@ residue IVA  ! D-Isovaline Added by Adithya Subramanian Sahsranamam Feb 12 2026
     ! Backbone atoms
     ATOM N    TYPE=NH1   CHARge=-0.570 end
     ATOM HN   TYPE=H     CHARge= 0.370 end
-    ATOM CA   TYPE=CH1E  CHARge= 0.200 end
+    ATOM CA   TYPE=CH0   CHARge= 0.200 end
     ATOM C    TYPE=C     CHARge= 0.500 end
     ATOM O    TYPE=O     CHARge=-0.500 end
     ! Side chain atoms
@@ -1087,14 +1091,107 @@ residue IVA  ! D-Isovaline Added by Adithya Subramanian Sahsranamam Feb 12 2026
   DIHEdral CB1  CA   N    HN
 
   IMPRoper C    CA   N    O    ! planar carbonyl
-!  IMPRoper CB2 N C CB1 !chirality CA L-like
-  IMPRoper CB2 C N CB1 !chirality CA D-like
-
-  IMPRoper HB21 HB22 CA HB23  !stereo CB2
-  IMPRoper HB11 HB12 CA CG1   !stereo CB1
+! IMPRoper CA   CB2  N    CB1  ! chirality CA -- L-IVA (commented out; use LIVA patch if needed)
+  IMPRoper CA   N    CB2  CB1  ! chirality CA -- D-IVA default (matches ADI convention)
+  IMPRoper HB21 HB22 CA   HB23 ! stereo CB2
+  IMPRoper HB11 HB12 CA   CG1  ! stereo CB1
 
   DONO HN   N
   ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue ADI ! D-2-amino-3-azido-2-methylpropanoic acid (AzidoD-Isovaline)
+  group
+    ! Backbone atoms
+    ATOM N    TYPE=NH1   CHARge=-0.570 end
+    ATOM HN   TYPE=H     CHARge= 0.370 end
+    ATOM CA   TYPE=CH0   CHARge= 0.200 end
+    ATOM C    TYPE=C     CHARge= 0.500 end
+    ATOM O    TYPE=O     CHARge=-0.500 end
+    ! Methyl side chain (alpha-methyl, same as IVA CB2)
+    ATOM CB2  TYPE=CH3E  CHARge= 0.000 end
+    ATOM HB21 TYPE=HA    CHARge= 0.000 excl = (HB11 HB12) end
+    ATOM HB22 TYPE=HA    CHARge= 0.000 excl = (HB11 HB12) end
+    ATOM HB23 TYPE=HA    CHARge= 0.000 excl = (HB11 HB12) end
+    ! Azidomethyl side chain
+    ATOM CB1  TYPE=CH2E  CHARge= 0.026 end
+    ATOM HB11 TYPE=HA    CHARge= 0.054 excl = (HB21 HB22 HB23) end
+    ATOM HB12 TYPE=HA    CHARge= 0.073 excl = (HB21 HB22 HB23) end
+    ATOM NN1  TYPE=NPA   CHARge=-0.597 end   ! proximal azide N (bonded to CB1)
+    ATOM NN2  TYPE=NPB   CHARge= 0.762 end   ! middle azide N (sp, +)
+    ATOM NN3  TYPE=NPC   CHARge=-0.431 end   ! terminal azide N (sp, -)
+
+  BOND C    O       BOND C    CA
+  BOND CA   N       BOND CA   CB2     BOND CA   CB1
+  BOND N    HN
+  BOND CB2  HB21    BOND CB2  HB22    BOND CB2  HB23
+  BOND CB1  HB11    BOND CB1  HB12    BOND CB1  NN1
+  BOND NN1  NN2     BOND NN2  NN3
+
+  ANGLe O    C    CA
+  ANGLe C    CA   N       ANGLe C    CA   CB2     ANGLe C    CA   CB1
+  ANGLe N    CA   CB2     ANGLe N    CA   CB1     ANGLe CB2  CA   CB1
+  ANGLe CA   N    HN
+  ANGLe CA   CB2  HB21    ANGLe CA   CB2  HB22    ANGLe CA   CB2  HB23
+  ANGLe HB21 CB2  HB22    ANGLe HB21 CB2  HB23    ANGLe HB22 CB2  HB23
+  ANGLe CA   CB1  HB11    ANGLe CA   CB1  HB12    ANGLe CA   CB1  NN1
+  ANGLe HB11 CB1  HB12    ANGLe HB11 CB1  NN1     ANGLe HB12 CB1  NN1
+  ANGLe CB1  NN1  NN2
+  ANGLe NN1  NN2  NN3
+
+  DIHEdral O    C    CA   N
+  DIHEdral N    CA   CB2  HB21
+  DIHEdral N    CA   CB1  NN1
+  DIHEdral CB1  CA   N    HN
+  DIHEdral CA   CB1  NN1  NN2   ! chi2 azide orientation
+
+  IMPRoper C    CA   N    O    ! planar carbonyl
+  IMPRoper CA   N    CB2  CB1  ! D-ADI chirality
+  IMPRoper HB21 HB22 CA   HB23 ! stereo CB2
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue AHX  ! 6-aminohexanoic acid (Ahx linker, B9SH)
+  ! Backbone: N-CA-CB-CG-CD-CE-C(=O)
+  ! Added 2026-03-19 for RAD51 PROTAC ternary docking
+  group
+    ATOM N   TYPE=NH1   CHARge=-0.570 end
+    ATOM HN  TYPE=H     CHARge= 0.370 end
+    ATOM CA  TYPE=CH2E  CHARge= 0.200 end
+    ATOM HA1 TYPE=HA    CHARge= 0.000 end
+    ATOM HA2 TYPE=HA    CHARge= 0.000 end
+    ATOM CB  TYPE=CH2E  CHARge= 0.000 end
+    ATOM HB1 TYPE=HA    CHARge= 0.000 end
+    ATOM HB2 TYPE=HA    CHARge= 0.000 end
+    ATOM CG  TYPE=CH2E  CHARge= 0.000 end
+    ATOM HG1 TYPE=HA    CHARge= 0.000 end
+    ATOM HG2 TYPE=HA    CHARge= 0.000 end
+    ATOM CD  TYPE=CH2E  CHARge= 0.000 end
+    ATOM HD1 TYPE=HA    CHARge= 0.000 end
+    ATOM HD2 TYPE=HA    CHARge= 0.000 end
+    ATOM CE  TYPE=CH2E  CHARge= 0.000 end
+    ATOM HE1 TYPE=HA    CHARge= 0.000 end
+    ATOM HE2 TYPE=HA    CHARge= 0.000 end
+    ATOM C   TYPE=C     CHARge= 0.500 end
+    ATOM O   TYPE=O     CHARge=-0.500 end
+
+  BOND N  HN
+  BOND N  CA    BOND CA HA1   BOND CA HA2
+  BOND CA CB    BOND CB HB1   BOND CB HB2
+  BOND CB CG    BOND CG HG1   BOND CG HG2
+  BOND CG CD    BOND CD HD1   BOND CD HD2
+  BOND CD CE    BOND CE HE1   BOND CE HE2
+  BOND CE C
+  BOND C  O
+
+  ACCE O    C
+  DONO HN   N
 end
 
 !----------------------------------------------------------------------
@@ -3078,10 +3175,6 @@ RESIdue QSR ! Added by Rodrigo Honorato / Alexandre Bonvin 06/01/2021
 
 !----------------------------------------------------------------------
 
-presidue ACET  ! no-op N-terminal patch for ACE cap (already complete)
-end
-
-!----------------------------------------------------------------------
 
 presidue NTER                      ! patch as "NTER - *" to any except PRO
   group
@@ -3592,5 +3685,143 @@ presidue ACCY                ! patch for connecting an acetylated Nter to a CYS 
 end
 
 
+
+!----------------------------------------------------------------------
+! VH032 ligand residue for VHL-targeting PROTACs
+! Added 2026-03-19 for RAD51 PROTAC ternary docking
+!----------------------------------------------------------------------
+
+residue VHL
+  group
+    ATOM H21  TYPE=H211 CHARge=0.192    MASS=1.0080   END
+    ATOM CAN  TYPE=CAN  CHARge=-0.344   MASS=12.0110  END
+    ATOM NAR  TYPE=NAR  CHARge=-0.101   MASS=14.0067  END
+    ATOM CAZ  TYPE=CAZ  CHARge=-0.062   MASS=12.0110  END
+    ATOM CAB  TYPE=CAB  CHARge=-0.152   MASS=12.0110  END
+    ATOM H05  TYPE=H05  CHARge=0.094    MASS=1.0080   END
+    ATOM H06  TYPE=H06  CHARge=0.094    MASS=1.0080   END
+    ATOM H07  TYPE=H07  CHARge=0.094    MASS=1.0080   END
+    ATOM CBB  TYPE=CBB  CHARge=-0.356   MASS=12.0110  END
+    ATOM SAU  TYPE=SAU  CHARge=0.483    MASS=32.0600  END
+    ATOM CBA  TYPE=CBA  CHARge=-0.013   MASS=12.0110  END
+    ATOM CAL  TYPE=CAL  CHARge=-0.109   MASS=12.0110  END
+    ATOM H19  TYPE=H191 CHARge=0.139    MASS=1.0080   END
+    ATOM CAJ  TYPE=CAJ  CHARge=-0.127   MASS=12.0110  END
+    ATOM H17  TYPE=H171 CHARge=0.133    MASS=1.0080   END
+    ATOM CAY  TYPE=CAY  CHARge=-0.085   MASS=12.0110  END
+    ATOM CAK  TYPE=CAK  CHARge=-0.127   MASS=12.0110  END
+    ATOM H18  TYPE=H181 CHARge=0.133    MASS=1.0080   END
+    ATOM CAM  TYPE=CAM  CHARge=-0.109   MASS=12.0110  END
+    ATOM H20  TYPE=H201 CHARge=0.139    MASS=1.0080   END
+    ATOM CAO  TYPE=CAO  CHARge=0.011    MASS=12.0110  END
+    ATOM H22  TYPE=H221 CHARge=0.132    MASS=1.0080   END
+    ATOM H23  TYPE=H23  CHARge=0.094    MASS=1.0080   END
+    ATOM NAS  TYPE=NAS  CHARge=-0.379   MASS=14.0067  END
+    ATOM H24  TYPE=H24  CHARge=0.224    MASS=1.0080   END
+    ATOM C    TYPE=C1   CHARge=0.295    MASS=12.0110  END
+    ATOM O    TYPE=O1   CHARge=-0.359   MASS=15.9994  END
+    ATOM CA   TYPE=CA1  CHARge=0.025    MASS=12.0110  END
+    ATOM H01  TYPE=H01  CHARge=0.122    MASS=1.0080   END
+    ATOM N    TYPE=N1   CHARge=-0.324   MASS=14.0067  END
+    ATOM CD2  TYPE=CD2  CHARge=-0.016   MASS=12.0110  END
+    ATOM H30  TYPE=H30  CHARge=0.099    MASS=1.0080   END
+    ATOM H31  TYPE=H31  CHARge=0.112    MASS=1.0080   END
+    ATOM CG   TYPE=CG   CHARge=0.021    MASS=12.0110  END
+    ATOM H29  TYPE=H29  CHARge=0.096    MASS=1.0080   END
+    ATOM OD1  TYPE=OD1  CHARge=-0.320   MASS=15.9994  END
+    ATOM H32  TYPE=H32  CHARge=0.204    MASS=1.0080   END
+    ATOM CB   TYPE=CB1  CHARge=-0.202   MASS=12.0110  END
+    ATOM H26  TYPE=H26  CHARge=0.106    MASS=1.0080   END
+    ATOM H27  TYPE=H27  CHARge=0.107    MASS=1.0080   END
+    ATOM CAX  TYPE=CAX  CHARge=0.277    MASS=12.0110  END
+    ATOM OAH  TYPE=OAH  CHARge=-0.382   MASS=15.9994  END
+    ATOM CBE  TYPE=CBE  CHARge=-0.018   MASS=12.0110  END
+    ATOM H28  TYPE=H28  CHARge=0.108    MASS=1.0080   END
+    ATOM NAT  TYPE=NAT  CHARge=-0.327   MASS=14.0067  END
+    ATOM H02  TYPE=H02  CHARge=0.156    MASS=1.0080   END
+    ATOM H25  TYPE=H25  CHARge=0.156    MASS=1.0080   END
+    ATOM CBG  TYPE=CBG  CHARge=-0.039   MASS=12.0110  END
+    ATOM CAC  TYPE=CAC  CHARge=-0.214   MASS=12.0110  END
+    ATOM H08  TYPE=H08  CHARge=0.083    MASS=1.0080   END
+    ATOM H09  TYPE=H09  CHARge=0.083    MASS=1.0080   END
+    ATOM H10  TYPE=H10  CHARge=0.083    MASS=1.0080   END
+    ATOM CAD  TYPE=CAD  CHARge=-0.214   MASS=12.0110  END
+    ATOM H11  TYPE=H111 CHARge=0.083    MASS=1.0080   END
+    ATOM H12  TYPE=H121 CHARge=0.083    MASS=1.0080   END
+    ATOM H13  TYPE=H131 CHARge=0.083    MASS=1.0080   END
+    ATOM CAE  TYPE=CAE  CHARge=-0.214   MASS=12.0110  END
+    ATOM H14  TYPE=H141 CHARge=0.083    MASS=1.0080   END
+    ATOM H15  TYPE=H151 CHARge=0.083    MASS=1.0080   END
+    ATOM H16  TYPE=H161 CHARge=0.083    MASS=1.0080   END
+
+  BOND H21  CAN    BOND CAN  NAR    BOND CAN  SAU
+  BOND NAR  CAZ    BOND CAZ  CAB    BOND CAZ  CBB
+  BOND CAB  H05    BOND CAB  H06    BOND CAB  H07
+  BOND CBB  SAU    BOND CBB  CBA
+  BOND CBA  CAL    BOND CBA  CAM
+  BOND CAL  H19    BOND CAL  CAJ
+  BOND CAJ  H17    BOND CAJ  CAY
+  BOND CAY  CAK    BOND CAY  CAO
+  BOND CAK  H18    BOND CAK  CAM
+  BOND CAM  H20
+  BOND CAO  H22    BOND CAO  H23    BOND CAO  NAS
+  BOND NAS  H24    BOND NAS  C
+  BOND C    O      BOND C    CA
+  BOND CA   H01    BOND CA   N      BOND CA   CB
+  BOND N    CD2    BOND N    CAX
+  BOND CD2  H30    BOND CD2  H31    BOND CD2  CG
+  BOND CG   H29    BOND CG   OD1    BOND CG   CB
+  BOND OD1  H32
+  BOND CB   H26    BOND CB   H27
+  BOND CAX  OAH    BOND CAX  CBE
+  BOND CBE  H28    BOND CBE  NAT    BOND CBE  CBG
+  BOND NAT  H02    BOND NAT  H25
+  BOND CBG  CAC    BOND CBG  CAD    BOND CBG  CAE
+  BOND CAC  H08    BOND CAC  H09    BOND CAC  H10
+  BOND CAD  H11    BOND CAD  H12    BOND CAD  H13
+  BOND CAE  H14    BOND CAE  H15    BOND CAE  H16
+
+  IMPRoper N    CA   CD2  CAX
+  IMPRoper CAJ  CAL  H17  CAY
+  IMPRoper CAK  CAY  H18  CAM
+  IMPRoper CAL  CBA  H19  CAJ
+  IMPRoper CAM  CBA  CAK  H20
+  IMPRoper CAN  H21  NAR  SAU
+  IMPRoper CAX  N    OAH  CBE
+  IMPRoper CAY  CAJ  CAK  CAO
+  IMPRoper CAZ  NAR  CAB  CBB
+  IMPRoper C    NAS  O    CA
+  IMPRoper NAS  CAO  H24  C
+  IMPRoper CBA  CBB  CAL  CAM
+  IMPRoper CBB  CAZ  SAU  CBA
+  IMPRoper CA   N    C    CB
+  IMPRoper CBE  NAT  CAX  CBG
+  IMPRoper CG   CB   CD2  OD1
+
+  DONO H24  NAS
+  DONO H32  OD1
+  DONO H02  NAT
+  DONO H25  NAT
+  ACCE OAH  CAX
+  ACCE O    C
+  ACCE OD1  CG
+end
+
+!----------------------------------------------------------------------
+! Patch to link AHX (or any residue with C) to VHL via NAS
+! Applied automatically via protein-allhdg5-4.link: link PVHL head - AHX tail + VHL end
+!----------------------------------------------------------------------
+
+presidue PVHL  ! peptide-like bond: previous C -> VHL NAS
+  add BOND -C +NAS
+
+  add ANGLe -CE  -C  +NAS   ! AHX CE-C-NAS angle
+  add ANGLe -O   -C  +NAS
+  add ANGLe -C   +NAS +CAO
+  add ANGLe -C   +NAS +H24
+
+  add IMPRoper -C  -CE  +NAS -O    ! planar -C
+  add IMPRoper +NAS -C  +CAO +H24  ! planar +NAS
+end
 
 set message=$old_message echo=$old_echo end

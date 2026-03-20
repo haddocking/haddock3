@@ -2870,7 +2870,420 @@ last CTER head - DDZ end
 last CTER head - PNS end
 last CTER head - QSR end
 last CTER head - CIR end
+
+{ peptide linkages for ADI (D-quaternary azide aa, no CB - same pattern as IVA) }
+{ 04-Mar-2026 (Adithya): ADI link block using ppg1/ppg2/ppgg/ppgp; terminals use pctn->CTN and pept->NME. }
+{ ADI as head (-): ADI -> PRO/HYP/HY3 }
+link  ppgp head - ADI tail + PRO end
+link  ppgp head - ADI tail + HYP end
+link  ppgp head - ADI tail + HY3 end
+{ ADI <-> GLY/IVA/ADI (all lack CB) }
+link  ppgg head - ADI tail + GLY end
+link  ppgg head - ADI tail + IVA end
+link  ppgg head - ADI tail + ADI end
+link  ppgg head - GLY tail + ADI end
+link  ppgg head - IVA tail + ADI end
+{ ADI as tail (+): X -> ADI, use ppg1 (no +CB on ADI) }
+link ppg1 head - ACE tail + ADI end
+link ppg1 head - ALA tail + ADI end
+link ppg1 head - CYS tail + ADI end
+link ppg1 head - CFE tail + ADI end
+link ppg1 head - CYM tail + ADI end
+link ppg1 head - CYF tail + ADI end
+link ppg1 head - CYC tail + ADI end
+link ppg1 head - CSP tail + ADI end
+link ppg1 head - ASP tail + ADI end
+link ppg1 head - ASH tail + ADI end
+link ppg1 head - GLU tail + ADI end
+link ppg1 head - GLH tail + ADI end
+link ppg1 head - PHE tail + ADI end
+link ppg1 head - HIS tail + ADI end
+link ppg1 head - NEP tail + ADI end
+link ppg1 head - ILE tail + ADI end
+link ppg1 head - LYS tail + ADI end
+link ppg1 head - ALY tail + ADI end
+link ppg1 head - HLY tail + ADI end
+link ppg1 head - MLY tail + ADI end
+link ppg1 head - MLZ tail + ADI end
+link ppg1 head - M3L tail + ADI end
+link ppg1 head - LEU tail + ADI end
+link ppg1 head - MET tail + ADI end
+link ppg1 head - MSE tail + ADI end
+link ppg1 head - ASN tail + ADI end
+link ppg1 head - PCA tail + ADI end
+link ppg1 head - PRO tail + ADI end
+link ppg1 head - GLN tail + ADI end
+link ppg1 head - ARG tail + ADI end
+link ppg1 head - SER tail + ADI end
+link ppg1 head - SEC tail + ADI end
+link ppg1 head - SEP tail + ADI end
+link ppg1 head - THR tail + ADI end
+link ppg1 head - THP tail + ADI end
+link ppg1 head - TOP tail + ADI end
+link ppg1 head - VAL tail + ADI end
+link ppg1 head - TRP tail + ADI end
+link ppg1 head - TYR tail + ADI end
+link ppg1 head - TYP tail + ADI end
+link ppg1 head - PTR tail + ADI end
+link ppg1 head - TYS tail + ADI end
+link ppg1 head - HYP tail + ADI end
+link ppg1 head - HY3 tail + ADI end
+link ppg1 head - DDZ tail + ADI end
+link ppg1 head - PNS tail + ADI end
+link ppg1 head - QSR tail + ADI end
+link ppg1 head - CIR tail + ADI end
+link ppg1 head - AZH tail + ADI end
+{ ADI as head (-): ADI -> standard residues, use ppg2 (no -CB on ADI) }
+link ppg2 head - ADI tail + ALA end
+link ppg2 head - ADI tail + CYS end
+link ppg2 head - ADI tail + CFE end
+link ppg2 head - ADI tail + CYM end
+link ppg2 head - ADI tail + CYF end
+link ppg2 head - ADI tail + CYC end
+link ppg2 head - ADI tail + CSP end
+link ppg2 head - ADI tail + ASP end
+link ppg2 head - ADI tail + ASH end
+link ppg2 head - ADI tail + GLU end
+link ppg2 head - ADI tail + GLH end
+link ppg2 head - ADI tail + PHE end
+link ppg2 head - ADI tail + HIS end
+link ppg2 head - ADI tail + NEP end
+link ppg2 head - ADI tail + ILE end
+link ppg2 head - ADI tail + LYS end
+link ppg2 head - ADI tail + ALY end
+link ppg2 head - ADI tail + HLY end
+link ppg2 head - ADI tail + MLY end
+link ppg2 head - ADI tail + MLZ end
+link ppg2 head - ADI tail + M3L end
+link ppg2 head - ADI tail + LEU end
+link ppg2 head - ADI tail + MET end
+link ppg2 head - ADI tail + MSE end
+link ppg2 head - ADI tail + ASN end
+link ppg2 head - ADI tail + PRO end
+link ppg2 head - ADI tail + GLN end
+link ppg2 head - ADI tail + ARG end
+link ppg2 head - ADI tail + SER end
+link ppg2 head - ADI tail + SEC end
+link ppg2 head - ADI tail + SEP end
+link ppg2 head - ADI tail + THR end
+link ppg2 head - ADI tail + THP end
+link ppg2 head - ADI tail + TOP end
+link ppg2 head - ADI tail + VAL end
+link ppg2 head - ADI tail + TRP end
+link ppg2 head - ADI tail + TYR end
+link ppg2 head - ADI tail + TYP end
+link ppg2 head - ADI tail + PTR end
+link ppg2 head - ADI tail + TYS end
+link ppg2 head - ADI tail + HYP end
+link ppg2 head - ADI tail + HY3 end
+link ppg2 head - ADI tail + DDZ end
+link ppg2 head - ADI tail + PNS end
+link ppg2 head - ADI tail + QSR end
+link ppg2 head - ADI tail + CIR end
+link ppg2 head - ADI tail + AZH end
+link pctn head - ADI tail + CTN end
+link pept head - ADI tail + NME end
+
+{ peptide linkages for AZH (L-azidohomoalanine, standard L-aa backbone with CB/CG) }
+{ 04-Mar-2026 (Adithya): AZH behaves like LYS for pept. Exceptions: GLY/IVA/ADI/PRO/terminals. }
+{ AZH -> PRO/HYP/HY3 (no +HN on tail) }
+link  pepp head - AZH tail + PRO end
+link  pepp head - AZH tail + HYP end
+link  pepp head - AZH tail + HY3 end
+{ AZH -> GLY/IVA/ADI (no +CB on tail): use ppg1 }
+link ppg1 head - AZH tail + GLY end
+link ppg1 head - AZH tail + IVA end
+link ppg1 head - AZH tail + ADI end
+{ GLY/IVA/ADI -> AZH (no -CB on head): use ppg2 }
+link ppg2 head - GLY tail + AZH end
+link ppg2 head - IVA tail + AZH end
+link ppg2 head - ADI tail + AZH end
+{ AZH terminals }
+link pctn head - AZH tail + CTN end
+link pept head - AZH tail + NME end
+{ AZH as head -> standard residues (pept) }
+link pept head - AZH tail + ALA end
+link pept head - AZH tail + CYS end
+link pept head - AZH tail + CFE end
+link pept head - AZH tail + CYM end
+link pept head - AZH tail + CYF end
+link pept head - AZH tail + CYC end
+link pept head - AZH tail + CSP end
+link pept head - AZH tail + ASP end
+link pept head - AZH tail + ASH end
+link pept head - AZH tail + GLU end
+link pept head - AZH tail + GLH end
+link pept head - AZH tail + PHE end
+link pept head - AZH tail + HIS end
+link pept head - AZH tail + NEP end
+link pept head - AZH tail + ILE end
+link pept head - AZH tail + LYS end
+link pept head - AZH tail + ALY end
+link pept head - AZH tail + HLY end
+link pept head - AZH tail + MLY end
+link pept head - AZH tail + MLZ end
+link pept head - AZH tail + M3L end
+link pept head - AZH tail + LEU end
+link pept head - AZH tail + MET end
+link pept head - AZH tail + MSE end
+link pept head - AZH tail + ASN end
+link pept head - AZH tail + PRO end
+link pept head - AZH tail + GLN end
+link pept head - AZH tail + ARG end
+link pept head - AZH tail + SER end
+link pept head - AZH tail + SEC end
+link pept head - AZH tail + SEP end
+link pept head - AZH tail + THR end
+link pept head - AZH tail + THP end
+link pept head - AZH tail + TOP end
+link pept head - AZH tail + VAL end
+link pept head - AZH tail + TRP end
+link pept head - AZH tail + TYR end
+link pept head - AZH tail + TYP end
+link pept head - AZH tail + PTR end
+link pept head - AZH tail + TYS end
+link pept head - AZH tail + HYP end
+link pept head - AZH tail + HY3 end
+link pept head - AZH tail + DDZ end
+link pept head - AZH tail + PNS end
+link pept head - AZH tail + QSR end
+link pept head - AZH tail + CIR end
+link pept head - AZH tail + AZH end
+{ X -> AZH as tail: standard residue heads (pept) }
+link pept head - ACE tail + AZH end
+link pept head - ALA tail + AZH end
+link pept head - CYS tail + AZH end
+link pept head - CFE tail + AZH end
+link pept head - CYM tail + AZH end
+link pept head - CYF tail + AZH end
+link pept head - CYC tail + AZH end
+link pept head - CSP tail + AZH end
+link pept head - ASP tail + AZH end
+link pept head - ASH tail + AZH end
+link pept head - GLU tail + AZH end
+link pept head - GLH tail + AZH end
+link pept head - PHE tail + AZH end
+link pept head - HIS tail + AZH end
+link pept head - NEP tail + AZH end
+link pept head - ILE tail + AZH end
+link pept head - LYS tail + AZH end
+link pept head - ALY tail + AZH end
+link pept head - HLY tail + AZH end
+link pept head - MLY tail + AZH end
+link pept head - MLZ tail + AZH end
+link pept head - M3L tail + AZH end
+link pept head - LEU tail + AZH end
+link pept head - MET tail + AZH end
+link pept head - MSE tail + AZH end
+link pept head - ASN tail + AZH end
+link pept head - PCA tail + AZH end
+link pept head - PRO tail + AZH end
+link pept head - GLN tail + AZH end
+link pept head - ARG tail + AZH end
+link pept head - SER tail + AZH end
+link pept head - SEC tail + AZH end
+link pept head - SEP tail + AZH end
+link pept head - THR tail + AZH end
+link pept head - THP tail + AZH end
+link pept head - TOP tail + AZH end
+link pept head - VAL tail + AZH end
+link pept head - TRP tail + AZH end
+link pept head - TYR tail + AZH end
+link pept head - TYP tail + AZH end
+link pept head - PTR tail + AZH end
+link pept head - TYS tail + AZH end
+link pept head - HYP tail + AZH end
+link pept head - HY3 tail + AZH end
+link pept head - DDZ tail + AZH end
+link pept head - PNS tail + AZH end
+link pept head - QSR tail + AZH end
+link pept head - CIR tail + AZH end
+
 last CTER head - IVA end
+last CTER head - ADI end
+last CTER head - AZH end
+
+
+{ peptide linkages for AHX (6-aminohexanoic acid linker) }
+{ Added 2026-03-19 for RAD51 PROTAC ternary docking }
+
+{ AHX as head (-): AHX -> PRO/HYP/HY3 }
+link pepp head - AHX tail + PRO end
+link pepp head - AHX tail + HYP end
+link pepp head - AHX tail + HY3 end
+
+{ AHX -> GLY-like (no CB tail) }
+link ppg1 head - AHX tail + GLY end
+link ppg1 head - AHX tail + IVA end
+link ppg1 head - AHX tail + ADI end
+
+{ AHX as head (-): AHX -> standard residues }
+link pept head - AHX tail + ALA end
+link pept head - AHX tail + CYS end
+link pept head - AHX tail + CFE end
+link pept head - AHX tail + CYM end
+link pept head - AHX tail + CYF end
+link pept head - AHX tail + CYC end
+link pept head - AHX tail + CSP end
+link pept head - AHX tail + ASP end
+link pept head - AHX tail + ASH end
+link pept head - AHX tail + GLU end
+link pept head - AHX tail + GLH end
+link pept head - AHX tail + PHE end
+link pept head - AHX tail + HIS end
+link pept head - AHX tail + NEP end
+link pept head - AHX tail + ILE end
+link pept head - AHX tail + LYS end
+link pept head - AHX tail + ALY end
+link pept head - AHX tail + HLY end
+link pept head - AHX tail + MLY end
+link pept head - AHX tail + MLZ end
+link pept head - AHX tail + M3L end
+link pept head - AHX tail + LEU end
+link pept head - AHX tail + MET end
+link pept head - AHX tail + MSE end
+link pept head - AHX tail + ASN end
+link pept head - AHX tail + GLN end
+link pept head - AHX tail + ARG end
+link pept head - AHX tail + SER end
+link pept head - AHX tail + SEC end
+link pept head - AHX tail + SEP end
+link pept head - AHX tail + THR end
+link pept head - AHX tail + THP end
+link pept head - AHX tail + TOP end
+link pept head - AHX tail + VAL end
+link pept head - AHX tail + TRP end
+link pept head - AHX tail + TYR end
+link pept head - AHX tail + TYP end
+link pept head - AHX tail + PTR end
+link pept head - AHX tail + TYS end
+link pept head - AHX tail + DDZ end
+link pept head - AHX tail + PNS end
+link pept head - AHX tail + QSR end
+link pept head - AHX tail + CIR end
+link pept head - AHX tail + AZH end
+link pept head - AHX tail + AHX end
+link pctn head - AHX tail + CTN end
+link pept head - AHX tail + NME end
+
+{ GLY-like residues -> AHX (no CB on head) }
+link ppg2 head - GLY tail + AHX end
+link ppg2 head - IVA tail + AHX end
+link ppg2 head - ADI tail + AHX end
+
+{ Standard residues -> AHX }
+link pept head - ALA tail + AHX end
+link pept head - CYS tail + AHX end
+link pept head - CFE tail + AHX end
+link pept head - CYM tail + AHX end
+link pept head - CYF tail + AHX end
+link pept head - CYC tail + AHX end
+link pept head - CSP tail + AHX end
+link pept head - ASP tail + AHX end
+link pept head - ASH tail + AHX end
+link pept head - GLU tail + AHX end
+link pept head - GLH tail + AHX end
+link pept head - PHE tail + AHX end
+link pept head - HIS tail + AHX end
+link pept head - NEP tail + AHX end
+link pept head - ILE tail + AHX end
+link pept head - LYS tail + AHX end
+link pept head - ALY tail + AHX end
+link pept head - HLY tail + AHX end
+link pept head - MLY tail + AHX end
+link pept head - MLZ tail + AHX end
+link pept head - M3L tail + AHX end
+link pept head - LEU tail + AHX end
+link pept head - MET tail + AHX end
+link pept head - MSE tail + AHX end
+link pept head - ASN tail + AHX end
+link pept head - PRO tail + AHX end
+link pept head - GLN tail + AHX end
+link pept head - ARG tail + AHX end
+link pept head - SER tail + AHX end
+link pept head - SEC tail + AHX end
+link pept head - SEP tail + AHX end
+link pept head - THR tail + AHX end
+link pept head - THP tail + AHX end
+link pept head - TOP tail + AHX end
+link pept head - VAL tail + AHX end
+link pept head - TRP tail + AHX end
+link pept head - TYR tail + AHX end
+link pept head - TYP tail + AHX end
+link pept head - PTR tail + AHX end
+link pept head - TYS tail + AHX end
+link pept head - HYP tail + AHX end
+link pept head - HY3 tail + AHX end
+link pept head - DDZ tail + AHX end
+link pept head - PNS tail + AHX end
+link pept head - QSR tail + AHX end
+link pept head - CIR tail + AHX end
+link pept head - AZH tail + AHX end
+link pept head - AHX tail + AHX end
+link pept head - ACE tail + AHX end
+
+{ AHX terminal links }
+last CTER head - AHX end
+
+
+{ peptide linkages for VHL (VH032 C-terminal cap) }
+{ VHL only connects as tail (+) — it is a C-terminal cap like CTN }
+{ Added 2026-03-19 for RAD51 PROTAC ternary docking }
+
+link pepp head - ACE tail + VHL end
+link pepp head - ALA tail + VHL end
+link pepp head - CYS tail + VHL end
+link pepp head - CFE tail + VHL end
+link pepp head - CYM tail + VHL end
+link pepp head - CYF tail + VHL end
+link pepp head - CYC tail + VHL end
+link pepp head - CSP tail + VHL end
+link pepp head - ASP tail + VHL end
+link pepp head - ASH tail + VHL end
+link pepp head - GLU tail + VHL end
+link pepp head - GLH tail + VHL end
+link pepp head - PHE tail + VHL end
+link pepp head - HIS tail + VHL end
+link pepp head - NEP tail + VHL end
+link pepp head - ILE tail + VHL end
+link pepp head - LYS tail + VHL end
+link pepp head - ALY tail + VHL end
+link pepp head - HLY tail + VHL end
+link pepp head - MLY tail + VHL end
+link pepp head - MLZ tail + VHL end
+link pepp head - M3L tail + VHL end
+link pepp head - LEU tail + VHL end
+link pepp head - MET tail + VHL end
+link pepp head - MSE tail + VHL end
+link pepp head - ASN tail + VHL end
+link pepp head - PRO tail + VHL end
+link pepp head - GLN tail + VHL end
+link pepp head - ARG tail + VHL end
+link pepp head - SER tail + VHL end
+link pepp head - SEC tail + VHL end
+link pepp head - SEP tail + VHL end
+link pepp head - THR tail + VHL end
+link pepp head - THP tail + VHL end
+link pepp head - TOP tail + VHL end
+link pepp head - VAL tail + VHL end
+link pepp head - TRP tail + VHL end
+link pepp head - TYR tail + VHL end
+link pepp head - TYP tail + VHL end
+link pepp head - PTR tail + VHL end
+link pepp head - TYS tail + VHL end
+link pepp head - HYP tail + VHL end
+link pepp head - HY3 tail + VHL end
+link pepp head - DDZ tail + VHL end
+link pepp head - PNS tail + VHL end
+link pepp head - QSR tail + VHL end
+link pepp head - CIR tail + VHL end
+link pepp head - IVA tail + VHL end
+link pepp head - ADI tail + VHL end
+link pepp head - AZH tail + VHL end
+link PVHL head - AHX tail + VHL end  ! custom patch: bonds -C to +NAS (not +N)
+link pepp head - GLY tail + VHL end
+
+last CTER head - VHL end
 
 set message=$old_message echo=$old_echo end
 

@@ -1401,6 +1401,7 @@ DIHEdral CH2E CH2E NPA  NPB   2.00  3  0.0000  ! AZH chi2 CB-CG-NN1=NN2
 
 ! backbone psi related due to O & CB (not active with usual topology file added 07-JUL-01)
  DIHEdral CH2E   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-aaa
+ DIHEdral CH2E   CH2E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !AHX backbone carbonyl
  DIHEdral CH1P   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-aaa
  DIHEdral CH3E   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !ala-aaa
  DIHEdral CH1E   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !(ile,thr,val)-aaa
@@ -1421,6 +1422,7 @@ DIHEdral CH2E CH2E NPA  NPB   2.00  3  0.0000  ! AZH chi2 CB-CG-NN1=NN2
  DIHEdral CH1E   CH1E   CCIS   NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !(ile,thr,val)-aaa
  DIHEdral CH2E   CH1E   C      NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
  DIHEdral CH2E   CH2E   C      NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
+ DIHEdral CH2E   CH2E   C      NAT    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !AHX->VHP junction psi analog
  DIHEdral CH3E   CH1E   C      NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !ala-aaa
  DIHEdral CH1E   CH1E   C      NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !(ile,thr,val)-aaa
  DIHEdral CH2E   CH1E   CCIS   NH2    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
@@ -2189,11 +2191,20 @@ set message=$old_message echo=$old_echo end
    BOND CAO  NAS  600.4   1.435
    BOND NAS  H24  893.9   1.000
    BOND NAS  C1   1001.3  1.380
-   BOND C    NAS  1000.0  1.329  ! AHX(C) -> VHL(NAS) linker peptide bond
-   ANGLe CH2E C   NAS  500.0  116.0  ! AHX CE-C-NAS
-   ANGLe O    C   NAS  500.0  123.0  ! AHX O-C-NAS
-   ANGLe C    NAS CAO  500.0  121.0  ! C-NAS-CAO
-   ANGLe C    NAS H24  500.0  119.0  ! C-NAS-H24
+   BOND C    NAS  1000.0  1.329  ! AHX(C) -> VHL(NAS) - kept for internal VHL use
+   ANGLe CH2E C   NAS  500.0  116.0  ! AHX CE-C-NAS - kept for reference
+   ANGLe O    C   NAS  500.0  123.0  ! AHX O-C-NAS - kept for reference
+   ANGLe C    NAS CAO  500.0  121.0  ! C-NAS-CAO - kept for reference
+   ANGLe C    NAS H24  500.0  119.0  ! C-NAS-H24 - kept for reference
+   BOND C    NAT  1000.0  1.329  ! AHX(C) -> VHL(NAT) linker bond (replaces ACE cap)
+   ANGLe CH2E C   NAT  500.0  116.0  ! AHX CE-C-NAT
+   ANGLe O    C   NAT  500.0  123.0  ! AHX O-C-NAT
+   ANGLe C    NAT CBE  500.0  121.0  ! C-NAT-CBE
+   ANGLe C    NAT H02  500.0  119.0  ! C-NAT-H02
+   DIHEdral CH2E C   NAT  CBE  MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 ! PVHL omega-like torsion
+   DIHEdral O    C   NAT  CBE  8.0     2 180.0  ! PVHL amide planarity
+   DIHEdral C    NAT CBE  CAX  MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 ! PVHL phi-like torsion to CAX
+   DIHEdral C    NAT CBE  CBG  MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 ! PVHL phi-like torsion to CBG
    BOND C1   O1   1000.8  1.250
    BOND C1   CA1  478.0   1.540
    BOND CA1  H01  430.2   1.130
@@ -2406,6 +2417,9 @@ set message=$old_message echo=$old_echo end
    IMPRoper C1   NAS  OC   CA1  500.00  0  0.0     ! CTER: C1 peptide plane (OC replaces O1)
    IMPRoper C    CH3E N1   O    500.00  0  0.0     ! pepp: ACE C peptide plane
    IMPRoper CH3E C    N1   CA1  500.00  0  180.0   ! pepp: ACE-VHL omega dihedral planarity
+   IMPRoper C    CH2E NAT  O    500.00  0  0.0     ! pept-like AHX->VHP carbonyl plane
+   IMPRoper NAT  C    CBE  H02  500.00  0  0.0     ! pept-like AHX->VHP amide plane
+   IMPRoper CH2E C    NAT  CBE  500.00  0  180.0   ! pept-like AHX->VHP omega planarity
    IMPRoper C1   CA1  OC   OC   500.00  0  0.0     ! CTER: carboxylate planarity
 
    NONBONDED N1   0.2198  3.65  0.2198  3.28  !GROMOS NTer
@@ -2468,4 +2482,3 @@ set message=$old_message echo=$old_echo end
    NONBONDED H30  0.02829 2.37  0.02829 2.14  !GROMOS HC
    NONBONDED H31  0.02829 2.37  0.02829 2.14  !GROMOS HC
    NONBONDED H32  0       0     0       0     !GROMOS HS14
-

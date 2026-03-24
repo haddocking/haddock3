@@ -163,3 +163,4 @@ end-to-end_tests/ab-grid
 end-to-end_tests/prot-grid
 src/haddock/cns/toppar/protein-allhdg5-4.param.backup
 src/haddock/cns/toppar/protein-allhdg5-4.top.backup
+*.bak

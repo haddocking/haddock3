@@ -3230,60 +3230,62 @@ last CTER head - AHX end
 { VHL only connects as tail (+) — it is a C-terminal cap like CTN }
 { Added 2026-03-19 for RAD51 PROTAC ternary docking }
 
-link pepp head - ACE tail + VHL end
-link pepp head - ALA tail + VHL end
-link pepp head - CYS tail + VHL end
-link pepp head - CFE tail + VHL end
-link pepp head - CYM tail + VHL end
-link pepp head - CYF tail + VHL end
-link pepp head - CYC tail + VHL end
-link pepp head - CSP tail + VHL end
-link pepp head - ASP tail + VHL end
-link pepp head - ASH tail + VHL end
-link pepp head - GLU tail + VHL end
-link pepp head - GLH tail + VHL end
-link pepp head - PHE tail + VHL end
-link pepp head - HIS tail + VHL end
-link pepp head - NEP tail + VHL end
-link pepp head - ILE tail + VHL end
-link pepp head - LYS tail + VHL end
-link pepp head - ALY tail + VHL end
-link pepp head - HLY tail + VHL end
-link pepp head - MLY tail + VHL end
-link pepp head - MLZ tail + VHL end
-link pepp head - M3L tail + VHL end
-link pepp head - LEU tail + VHL end
-link pepp head - MET tail + VHL end
-link pepp head - MSE tail + VHL end
-link pepp head - ASN tail + VHL end
-link pepp head - PRO tail + VHL end
-link pepp head - GLN tail + VHL end
-link pepp head - ARG tail + VHL end
-link pepp head - SER tail + VHL end
-link pepp head - SEC tail + VHL end
-link pepp head - SEP tail + VHL end
-link pepp head - THR tail + VHL end
-link pepp head - THP tail + VHL end
-link pepp head - TOP tail + VHL end
-link pepp head - VAL tail + VHL end
-link pepp head - TRP tail + VHL end
-link pepp head - TYR tail + VHL end
-link pepp head - TYP tail + VHL end
-link pepp head - PTR tail + VHL end
-link pepp head - TYS tail + VHL end
-link pepp head - HYP tail + VHL end
-link pepp head - HY3 tail + VHL end
-link pepp head - DDZ tail + VHL end
-link pepp head - PNS tail + VHL end
-link pepp head - QSR tail + VHL end
-link pepp head - CIR tail + VHL end
-link pepp head - IVA tail + VHL end
-link pepp head - ADI tail + VHL end
-link pepp head - AZH tail + VHL end
+link PVHL head - ACE tail + VHL end
+link PVHL head - ALA tail + VHL end
+link PVHL head - CYS tail + VHL end
+link PVHL head - CFE tail + VHL end
+link PVHL head - CYM tail + VHL end
+link PVHL head - CYF tail + VHL end
+link PVHL head - CYC tail + VHL end
+link PVHL head - CSP tail + VHL end
+link PVHL head - ASP tail + VHL end
+link PVHL head - ASH tail + VHL end
+link PVHL head - GLU tail + VHL end
+link PVHL head - GLH tail + VHL end
+link PVHL head - PHE tail + VHL end
+link PVHL head - HIS tail + VHL end
+link PVHL head - NEP tail + VHL end
+link PVHL head - ILE tail + VHL end
+link PVHL head - LYS tail + VHL end
+link PVHL head - ALY tail + VHL end
+link PVHL head - HLY tail + VHL end
+link PVHL head - MLY tail + VHL end
+link PVHL head - MLZ tail + VHL end
+link PVHL head - M3L tail + VHL end
+link PVHL head - LEU tail + VHL end
+link PVHL head - MET tail + VHL end
+link PVHL head - MSE tail + VHL end
+link PVHL head - ASN tail + VHL end
+link PVHL head - PRO tail + VHL end
+link PVHL head - GLN tail + VHL end
+link PVHL head - ARG tail + VHL end
+link PVHL head - SER tail + VHL end
+link PVHL head - SEC tail + VHL end
+link PVHL head - SEP tail + VHL end
+link PVHL head - THR tail + VHL end
+link PVHL head - THP tail + VHL end
+link PVHL head - TOP tail + VHL end
+link PVHL head - VAL tail + VHL end
+link PVHL head - TRP tail + VHL end
+link PVHL head - TYR tail + VHL end
+link PVHL head - TYP tail + VHL end
+link PVHL head - PTR tail + VHL end
+link PVHL head - TYS tail + VHL end
+link PVHL head - HYP tail + VHL end
+link PVHL head - HY3 tail + VHL end
+link PVHL head - DDZ tail + VHL end
+link PVHL head - PNS tail + VHL end
+link PVHL head - QSR tail + VHL end
+link PVHL head - CIR tail + VHL end
+link PVHL head - IVA tail + VHL end
+link PVHL head - ADI tail + VHL end
+link PVHL head - AZH tail + VHL end
 link PVHL head - AHX tail + VHL end  ! custom patch: bonds -C to +NAS (not +N)
-link pepp head - GLY tail + VHL end
+link PVHL head - GLY tail + VHL end
 
 last CTER head - VHL end
 
-set message=$old_message echo=$old_echo end
+{ VHP test variant with peptide-like head names for the VH032 entry point }
+link pept head - AHX tail + VHP end
 
+set message=$old_message echo=$old_echo end

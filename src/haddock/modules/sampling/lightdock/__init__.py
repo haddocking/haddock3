@@ -1,4 +1,8 @@
-"""LightDock integration sampling module."""
+"""LightDock integration sampling module.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/sampling.html#lightdock-module>`
+"""
 import shutil
 import subprocess
 from pathlib import Path

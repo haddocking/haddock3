@@ -18,6 +18,9 @@ expected, however, the scoring of the various structures might be improved.
 
 Number of MD steps can be modified using the ``waterheatsteps``, ``watersteps``
 and ``watercoolsteps``.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#mdref-module>`
 """
 
 from pathlib import Path

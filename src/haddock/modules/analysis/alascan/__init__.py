@@ -40,6 +40,9 @@ You can use the parameters below to customize the behavior of the module:
 
     >>> resdic_A = [1,2,3,4]
     >>> resdic_B = [2,3,4]
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#alascan-module>`
 """
 
 from pathlib import Path

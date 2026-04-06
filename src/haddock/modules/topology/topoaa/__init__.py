@@ -21,6 +21,9 @@ and carbohydrates ... see `detailed list of supported molecules
 such as small-molecules, parameters and topology must be obtained and provided
 by the user, as there is currently no built-in solution to generate
 them on the fly.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>`
 """
 
 import operator

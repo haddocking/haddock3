@@ -11,6 +11,9 @@ residues (both intramolecular and intermolecular).
 
 **Chordcharts** are describing only intermolecular contacts in circles,
 connecting with *chords* the two residues that are contacting.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#contactmap-module>`
 """
 
 from copy import deepcopy

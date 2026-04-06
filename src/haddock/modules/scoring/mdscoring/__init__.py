@@ -2,6 +2,9 @@
 
 This module will perform a short MD simulation on the input models and
 score them. No restraints are applied during this step.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#mdscoring-module>`
 """
 
 from pathlib import Path

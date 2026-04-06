@@ -26,6 +26,9 @@ send them to the next step in the workflow. If you want to use other modules
 such as `flexref` or `emref` after the OpenMM module, you need to recreate the
 topologies by simply adding a `[topoaa]` step in the workflow.
 See examples in `examples/thirdparty/openmm` folder.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#openmm-module>`
 """
 import os
 import shutil

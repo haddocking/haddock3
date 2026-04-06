@@ -5,6 +5,9 @@ conjugate gradient method implemented in CNS.
 
 Coordinates of the energy minimized structures are saved, and each
 complex is then evaluated using the HADDOCK scoring function.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#emref-module>`
 """
 
 from pathlib import Path

@@ -3,6 +3,9 @@
 This module performs the scoring of input complexes using PRODIGY-ligand.
 It predicts deltaG of the complex and can return predictions as either deltaG
 or pKd values.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#prodigyligand-module>`
 """
 
 from pathlib import Path

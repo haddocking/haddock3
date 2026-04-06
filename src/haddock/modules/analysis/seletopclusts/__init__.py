@@ -7,6 +7,9 @@ In the standard HADDOCK analysis, the top 4 models of the top 10 clusters
 are shown. In case seletopclusts is run after a sampling module, we can
 keep a few models from all the clusters to have more diversity at the
 refinement stage(s).
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletopclusts-module>`
 """
 
 from pathlib import Path

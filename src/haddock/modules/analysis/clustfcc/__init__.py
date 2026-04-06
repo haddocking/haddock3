@@ -4,10 +4,13 @@ The module takes the models generated in the previous step and calculates the
 contacts between them. Then, the module calculates the FCC matrix and clusters
 the models based on their contact similarities.
 
-For more details please check
+For more details about this clustering method, please check
 *Rodrigues, J. P. et al.
 Proteins: Struct. Funct. Bioinform.
 80, 1810–1817 (2012)*
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustfcc-module>`
 """
 
 import os

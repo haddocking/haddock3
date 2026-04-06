@@ -11,6 +11,9 @@ accessible, the workflow will terminate with an error message.
 
 If the threshold value is too stringent, resulting in no models passed to the
 next module, the workflow will stop with an error message.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filer-module>`
 """
 
 from pathlib import Path

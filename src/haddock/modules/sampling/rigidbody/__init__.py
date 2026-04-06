@@ -27,6 +27,9 @@ unambiguous distance restraints, the solutions of the minimisation will converge
 much better and the sampling can be limited. In *ab-initio* mode, however, very
 diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
+
+For more details about this module, please `refere to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/sampling.html#rigidbody-module>`
 """
 
 from pathlib import Path

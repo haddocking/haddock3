@@ -27,7 +27,7 @@ from haddock.modules.analysis.contactmap.contmap import (
     get_clusters_sets,
     make_contactmap_report,
     topX_models,
-    )
+)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -40,13 +40,13 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-            self,
-            order: int,
-            path: Path,
-            *ignore: Any,
-            init_params: FilePath = DEFAULT_CONFIG,
-            **everything: Any,
-            ) -> None:
+        self,
+        order: int,
+        path: Path,
+        *ignore: Any,
+        init_params: FilePath = DEFAULT_CONFIG,
+        **everything: Any,
+    ) -> None:
         """Initialize class."""
         super().__init__(order, path, init_params)
 
@@ -92,7 +92,7 @@ class HaddockModule(BaseHaddockModule):
                         Path(model.rel_path),
                         Path(jobname),
                         single_models_params,
-                        )
+                    )
                     contact_jobs.append(contmap_job)
 
             # For clustered models
@@ -106,7 +106,7 @@ class HaddockModule(BaseHaddockModule):
                     [Path(model.rel_path) for model in clt_models],
                     Path(name),
                     self.params,
-                    )
+                )
                 contact_jobs.append(contmap_job)
 
         # Find execution engine

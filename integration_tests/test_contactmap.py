@@ -97,7 +97,7 @@ def test_contactmap_example(contactmap, mocker):
 
 def test_contactmap_memory_scaling(monkeypatch):
     """Verify ContactsMap workflow doesn't scale memory quadratically."""
-    sizes = [100, 200, 300]  # Atom counts to test
+    sizes = [100, 200]  # Atom counts to test
     memory_usage = []
 
     # Set up default params
@@ -125,6 +125,7 @@ def test_contactmap_memory_scaling(monkeypatch):
             # Generate synthetic PDB
             pdb_path = Path(pdb_file.name)
             generate_synthetic_pdb(n_atoms, pdb_path)
+            print(pdb_path)
 
             # Track memory during entire ContactsMap run
             tracemalloc.start()

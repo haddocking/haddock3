@@ -1,17 +1,15 @@
 """Integration-test of the CONTact MAP module."""
 
 import os
-import tracemalloc
 import pytest
 import tempfile
 from pathlib import Path
+import glob
 
-from integration_tests.conftest import generate_synthetic_pdb
 
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.contactmap import HaddockModule as CMapModule
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG as CONTMAP_CONF
-from haddock.modules.analysis.contactmap.contmap import ContactsMap
 
 from integration_tests import GOLDEN_DATA
 
@@ -57,7 +55,7 @@ class MockPreviousIO:
         return models
 
 
-def test_contactmap_example(contactmap, mocker):
+def test_contactmap_example(contactmap, monkeypatch, mocker):
     """Test the contact map module run."""
     # mock the previous_io behavior
     contactmap.previous_io = MockPreviousIO
@@ -66,6 +64,7 @@ def test_contactmap_example(contactmap, mocker):
         "haddock.modules.BaseHaddockModule.export_io_models",
         return_value=None,
     )
+    monkeypatch.chdir(contactmap.path)
     # Run the module
     contactmap.run()
     # check outputs
@@ -95,78 +94,29 @@ def test_contactmap_example(contactmap, mocker):
     Path(clust1_html_fpath).unlink(missing_ok=False)
 
 
-def test_contactmap_memory_scaling(monkeypatch):
-    """Verify ContactsMap workflow doesn't scale memory quadratically."""
-    sizes = [100, 200]  # Atom counts to test
-    memory_usage = []
+def test_contactmap_low_memory(contactmap, monkeypatch, mocker):
+    """Test the contact map module fails gracefully with insufficient memory."""
+    contactmap.previous_io = MockPreviousIO
+    mocker.patch(
+        "haddock.modules.BaseHaddockModule.export_io_models",
+        return_value=None,
+    )
 
-    # Set up default params
-    params = {
-        "ca_ca_dist_threshold": 9.0,
-        "shortest_dist_threshold": 7.5,
-        "color_ramp": "Greys",
-        "single_model_analysis": False,
-        "topX": 10,
-        "generate_heatmap": False,
-        "cluster_heatmap_datatype": "shortest-cont-probability",
-        "generate_chordchart": False,
-        "chordchart_datatype": "shortest-dist",
-        "offline": False,
-    }
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_available_memory",
+        return_value=0.0,
+    )
+    mocker.patch(
+        "haddock.modules.analysis.contactmap.get_necessary_memory",
+        return_value=1.0,
+    )
+    monkeypatch.chdir(contactmap.path)
 
-    for n_atoms in sizes:
-        with (
-            tempfile.TemporaryDirectory() as tempdir,
-            tempfile.NamedTemporaryFile(suffix=".pdb", delete=False) as pdb_file,
-            tempfile.NamedTemporaryFile(suffix="_output", delete=False) as output_file,
-        ):
-            monkeypatch.chdir(tempdir)
+    # Run the module - should skip execution due to low memory
+    contactmap.run()
 
-            # Generate synthetic PDB
-            pdb_path = Path(pdb_file.name)
-            generate_synthetic_pdb(n_atoms, pdb_path)
-            print(pdb_path)
+    # Check that the directory is empty
+    ls = list(glob.glob(f"{contactmap.path}/*"))
 
-            # Track memory during entire ContactsMap run
-            tracemalloc.start()
-
-            contactmap = ContactsMap(
-                model=pdb_path,
-                output=Path(output_file.name),
-                params=params,
-            )
-            res_contacts, heavy_contacts = contactmap.run()
-
-            _, peak_mem = tracemalloc.get_traced_memory()
-            tracemalloc.stop()
-
-            # Verify results were generated
-            assert isinstance(res_contacts, list)
-            assert isinstance(heavy_contacts, list)
-            assert len(res_contacts) > 0
-
-            # Record memory usage in megabytes
-            peak_mb = peak_mem / (1024**2)
-            memory_usage.append(peak_mb)
-
-            # Cleanup
-            pdb_path.unlink(missing_ok=True)
-            Path(output_file.name).unlink(missing_ok=True)
-
-    # Check that memory usage does NOT increase with atom count
-    # NOTE: If implementation is memory-efficient (e.g., chunked processing),
-    # memory should stay relatively constant regardless of input size
-    baseline_memory = memory_usage[0]
-
-    for size, mem in zip(sizes[1:], memory_usage[1:]):
-        # Memory should not increase significantly from baseline
-        # Allow 50% increase to account for overhead and variation
-        memory_increase = mem - baseline_memory
-        percent_increase = (memory_increase / baseline_memory) * 100
-
-        assert memory_increase < baseline_memory * 0.5, (
-            f"Memory increased! Baseline ({sizes[0]} atoms): {baseline_memory:.2f}MB → "
-            f"Current ({size} atoms): {mem:.2f}MB "
-            f"(+{percent_increase:.1f}%). "
-            f"Expected memory to stay constant with efficient implementation."
-        )
+    print(ls)
+    assert len(list(glob.glob(f"{contactmap.path}/*"))) == 0

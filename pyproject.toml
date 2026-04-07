@@ -48,6 +48,7 @@ dependencies = [
   'prodigy-lig==1.1.4',
   'plotly==6.5.2',
   'freesasa>=2.2.1',
+  'psutil>=7.2.2',
 ]
 
 [project.optional-dependencies]

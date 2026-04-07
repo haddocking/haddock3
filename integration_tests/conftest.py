@@ -1,8 +1,6 @@
 from pathlib import Path
 
 import pytest
-import string
-import numpy as np
 
 from haddock.modules.analysis.caprieval.capri import load_contacts
 from haddock.libs.libontology import PDBFile

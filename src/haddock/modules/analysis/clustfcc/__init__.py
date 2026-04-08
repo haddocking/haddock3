@@ -9,8 +9,8 @@ For more details about this clustering method, please check
 Proteins: Struct. Funct. Bioinform.
 80, 1810–1817 (2012)*
 
-For more details about this module, please `refere to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustfcc-module>`
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustfcc-module>_`
 """
 
 import os

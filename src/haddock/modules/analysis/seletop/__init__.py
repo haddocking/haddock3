@@ -7,8 +7,8 @@ The number of models to be selected is defined by the parameter `select`.
 In the standard HADDOCK protocol, this number is 200, which can be increased
 if more models should be refined.
 
-For more details about this module, please `refere to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletop-module>`
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletop-module>_`
 """
 from pathlib import Path
 

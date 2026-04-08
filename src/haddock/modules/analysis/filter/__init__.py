@@ -1,19 +1,26 @@
-"""Filter models based on their score.
+"""Filtering module.
 
-This module filters the input models based on their score using a threshold
-value. Models having higher score than the threshold value are filtered out.
+The ``[filter]`` module filters the input models based on their score using a
+``threshold`` value.
+Models having higher score than the threshold value are filtered out.
 
 The number of models to be selected is unknown, and is the set of models that
-have a score below the defined threshold.
-For this module to be functional, a score must be first computed. This can be
-performed by running a CNS module or a scoring module. If scores are not
-accessible, the workflow will terminate with an error message.
+have a **score below the defined threshold**.
 
-If the threshold value is too stringent, resulting in no models passed to the
-next module, the workflow will stop with an error message.
+**Important**:
+For this module to be functional, a score must be first computed.
+For this module to be functional, a score must be first computed.
+This can be performed by running a CNS module or a scoring module.
 
-For more details about this module, please `refere to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filer-module>`
+**Program termination cases**:
+
+* If scores are not
+  accessible, the workflow will terminate with an error message.
+* If the threshold value is too stringent, resulting in no models passed to the
+  next module, the workflow will stop with an error message.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filter-module>_`
 """
 
 from pathlib import Path

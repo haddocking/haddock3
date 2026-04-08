@@ -6,8 +6,8 @@ or pKd values.
 
 Note that PRODIGY-protein is limited to natural amino-acids.
 
-For more details about this module, please `refere to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#prodigyprotein-module>`
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#prodigyprotein-module>_`
 """
 
 from pathlib import Path

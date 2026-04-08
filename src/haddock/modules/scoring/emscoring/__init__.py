@@ -3,8 +3,8 @@
 This module performs energy minimization and scoring of the models generated in
 the previous step of the workflow. No restraints are applied during this step.
 
-For more details about this module, please `refere to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#emscoring-module>`
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/scoring.html#emscoring-module>_`
 """
 
 from pathlib import Path

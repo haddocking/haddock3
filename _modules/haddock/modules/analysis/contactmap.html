@@ -110,7 +110,11 @@
     <span class="n">get_clusters_sets</span><span class="p">,</span>
     <span class="n">make_contactmap_report</span><span class="p">,</span>
     <span class="n">topX_models</span><span class="p">,</span>
-    <span class="p">)</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_available_memory</span><span class="p">,</span>
+    <span class="n">get_necessary_memory</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -125,13 +129,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-            <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-            <span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-            <span class="n">init_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-            <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">ignore</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">init_params</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">=</span> <span class="n">DEFAULT_CONFIG</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">everything</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">init_params</span><span class="p">)</span>
 
@@ -149,10 +153,38 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="p">)</span> <span class="o">==</span> <span class="nb">iter</span><span class="p">:</span>
             <span class="n">_e</span> <span class="o">=</span> <span class="s2">&quot;This module cannot come after one that produced an iterable.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_e</span><span class="p">)</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span><span class="n">individualize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="c1"># === IMPORTANT ================================================================</span>
+        <span class="c1"># This modules uses a NxN distance matrix, this means that the memory</span>
+        <span class="c1"># requirement will increase quadratically and can fail with an out-of-memory</span>
+        <span class="c1"># error. Changing this behaviour would require a total re-write of the module</span>
+        <span class="c1"># as of 04-2026 so instead we apply the following workaround:</span>
+        <span class="c1">#  - Check what is the total size of the models (size is faster than reading)</span>
+        <span class="c1">#  - Guesstimate how many atoms in total it would have based on the size</span>
+        <span class="c1">#  - Calculate the expected matrix size and its memory requirements</span>
+        <span class="c1">#  - Get how much memory the current host system has</span>
+        <span class="c1">#  - If the system has less memory than needed, fail graciously</span>
+        <span class="n">current_memory</span> <span class="o">=</span> <span class="n">get_available_memory</span><span class="p">()</span>
+        <span class="n">needed_memory</span> <span class="o">=</span> <span class="n">get_necessary_memory</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">current_memory</span> <span class="o">&lt;</span> <span class="n">needed_memory</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="n">msg</span><span class="o">=</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Not enough memory to execute `contactmap` &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(needs </span><span class="si">{</span><span class="n">needed_memory</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">Gb has </span><span class="si">{</span><span class="n">current_memory</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">Gb). &quot;</span>
+                    <span class="s2">&quot;! Skipping this module !&quot;</span>
+                <span class="p">),</span>
+                <span class="n">level</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="c1"># ==============================================================================</span>
 
         <span class="c1"># Obtain clusters</span>
         <span class="n">clusters_sets</span> <span class="o">=</span> <span class="n">get_clusters_sets</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
@@ -180,7 +212,7 @@
                         <span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="p">),</span>
                         <span class="n">Path</span><span class="p">(</span><span class="n">jobname</span><span class="p">),</span>
                         <span class="n">single_models_params</span><span class="p">,</span>
-                        <span class="p">)</span>
+                    <span class="p">)</span>
                     <span class="n">contact_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contmap_job</span><span class="p">)</span>
 
             <span class="c1"># For clustered models</span>
@@ -194,7 +226,7 @@
                     <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">clt_models</span><span class="p">],</span>
                     <span class="n">Path</span><span class="p">(</span><span class="n">name</span><span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">contact_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contmap_job</span><span class="p">)</span>
 
         <span class="c1"># Find execution engine</span>

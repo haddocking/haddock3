@@ -94,6 +94,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">haddock</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupError</span>
@@ -658,6 +660,62 @@
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
     <span class="k">return</span> <span class="n">prodrg_exec</span><span class="p">,</span> <span class="n">prodrg_param</span></div>
+
+
+
+<div class="viewcode-block" id="get_available_memory">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.get_available_memory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_memory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the available system memory in GB.</span>
+
+<span class="sd">    Get the available virtual memory in Bytes</span>
+<span class="sd">    then divide it by (1024 ^ 3) to get this value in GigaBytes</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Available memory in gigabytes (GB).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">available</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_necessary_memory">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libutil.html#haddock.libs.libutil.get_necessary_memory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_necessary_memory</span><span class="p">(</span><span class="n">models</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimate the memory required to compute contact maps.</span>
+
+<span class="sd">    Calculates memory based on the largest model&#39;s estimated atom count.</span>
+<span class="sd">    The memory estimate assumes a distance matrix of size (atoms x atoms) * 8 bytes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    models : list</span>
+<span class="sd">        List of model objects with file_name attribute.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Estimated memory requirement in gigabytes (GB).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute an approximation of the matrix size</span>
+    <span class="c1"># Most models will be similar, so just use the first one</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">file_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="n">estimated_atoms</span> <span class="o">=</span> <span class="n">file_size</span> <span class="o">//</span> <span class="mi">10</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">estimated_atoms</span> <span class="o">=</span> <span class="mi">10000</span>
+
+    <span class="k">if</span> <span class="n">estimated_atoms</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">estimated_atoms</span> <span class="o">=</span> <span class="mi">10000</span>
+
+    <span class="n">matrix_size_bytes</span> <span class="o">=</span> <span class="p">(</span><span class="n">estimated_atoms</span> <span class="o">*</span> <span class="n">estimated_atoms</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8</span>
+    <span class="c1"># Convert it into GigaBytes</span>
+    <span class="n">matrix_size_gb</span> <span class="o">=</span> <span class="n">matrix_size_bytes</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">matrix_size_gb</span></div>
 
 </pre></div>
 

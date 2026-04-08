@@ -9,7 +9,6 @@ have a **score below the defined threshold**.
 
 **Important**:
 For this module to be functional, a score must be first computed.
-For this module to be functional, a score must be first computed.
 This can be performed by running a CNS module or a scoring module.
 
 **Program termination cases**:

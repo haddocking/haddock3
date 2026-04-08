@@ -13,7 +13,7 @@ residues (both intramolecular and intermolecular).
 connecting with *chords* the two residues that are contacting.
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#contactmap-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#contactmap-module>`_
 """
 
 from copy import deepcopy

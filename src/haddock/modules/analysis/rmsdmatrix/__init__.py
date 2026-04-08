@@ -26,7 +26,7 @@ thus telling the module to consider residues from 1 to 4 of chain A and from 2
 to 4 of chain B for the alignment and RMSD calculation.
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#rmsdmatrix-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#rmsdmatrix-module>`_
 """
 
 import contextlib

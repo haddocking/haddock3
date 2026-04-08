@@ -9,7 +9,7 @@ keep a few models from all the clusters to have more diversity at the
 refinement stage(s).
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletopclusts-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#seletopclusts-module>`_
 """
 
 from pathlib import Path

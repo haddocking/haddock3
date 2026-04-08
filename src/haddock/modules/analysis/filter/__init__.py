@@ -19,7 +19,7 @@ This can be performed by running a CNS module or a scoring module.
   next module, the workflow will stop with an error message.
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filter-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filter-module>`_
 """
 
 from pathlib import Path

@@ -25,7 +25,7 @@ The following files are generated:
 - **capri_clt.tsv**: a table with the CAPRI metrics for each cluster of models (if clustering information is available).
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#caprieval-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#caprieval-module>`_
 """
 
 

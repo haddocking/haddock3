@@ -34,7 +34,7 @@ the ``[topoaa]`` module. e.g.:
 ``
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>`_
 """
 
 import operator

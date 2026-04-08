@@ -14,7 +14,7 @@ You should use restructureText syntax:
 
 End this module docstring by providing a link to the haddock3-user-manual. e.g:
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>`_
 """
 # Import here what you need
 from pathlib import Path

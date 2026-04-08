@@ -20,7 +20,7 @@ Number of MD steps can be modified using the ``waterheatsteps``, ``watersteps``
 and ``watercoolsteps``.
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#mdref-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#mdref-module>`_
 """
 
 from pathlib import Path

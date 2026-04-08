@@ -28,7 +28,7 @@ matrix.
 .. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustrmsd-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustrmsd-module>`_
 """
 from pathlib import Path
 

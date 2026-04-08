@@ -29,7 +29,7 @@ diverse solutions will be obtained and the sampling should be increased to make
 sure to sample enough the possible interaction space.
 
 For more details about this module, please `refer to the haddock3 user manual
-<https://www.bonvinlab.org/haddock3-user-manual/modules/sampling.html#rigidbody-module>_`
+<https://www.bonvinlab.org/haddock3-user-manual/modules/sampling.html#rigidbody-module>`_
 """
 
 from pathlib import Path

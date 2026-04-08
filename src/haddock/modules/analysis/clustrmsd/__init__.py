@@ -17,9 +17,8 @@ Four parameters can be defined in this context:
 * `n_clusters`: number of desired clusters (if `criterion` is `maxclust`).
 * `clust_cutoff`: value of distance that separates distinct clusters (if `criterion` is
   ``distance``)
-* `min_population` : analogously to the `clustfcc` module, it is the minimum number
-  of models that should be present in a cluster to consider it. If criterion is
-  `maxclust`, the value is ignored.
+* `min_population` : set the minimum number of models that should be present
+  in a cluster to consider it. If criterion is `maxclust`, the value is ignored.
 
 This module passes the path to the RMSD matrix is to the next step of the
 workflow through the `rmsd_matrix.json` file, thus allowing to execute several
@@ -27,7 +26,10 @@ workflow through the `rmsd_matrix.json` file, thus allowing to execute several
 matrix.
 
 .. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
-"""  # noqa: E501
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustrmsd-module>`_
+"""
 from pathlib import Path
 
 from haddock import log

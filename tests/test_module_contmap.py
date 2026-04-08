@@ -35,7 +35,7 @@ from haddock.modules.analysis.contactmap.contmap import (
     within_2PI,
     write_res_contacts,
 )
-from haddock.modules.analysis.contactmap.helper import (
+from haddock.libs.libutil import (
     get_available_memory,
     get_necessary_memory,
 )

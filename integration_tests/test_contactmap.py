@@ -71,10 +71,10 @@ def test_contactmap_example(contactmap, monkeypatch, mocker):
     output_bp = contactmap.path
     # clt_id == None
     clustNone_tsv_fpath = (
-        f"{output_bp}/Unclustered_contactmap_rigidbody_3_cltid_None_contacts.tsv"  # noqa : E501
+        f"{output_bp}/Unclustered_contactmap_rigidbody_3_cltid_None_contacts.tsv"
     )
     clustNone_html_fpath = (
-        f"{output_bp}/Unclustered_contactmap_rigidbody_3_cltid_None_heatmap.html"  # noqa : E501
+        f"{output_bp}/Unclustered_contactmap_rigidbody_3_cltid_None_heatmap.html"
     )
     assert os.path.exists(clustNone_tsv_fpath)
     assert Path(clustNone_tsv_fpath).stat().st_size != 0
@@ -117,6 +117,4 @@ def test_contactmap_low_memory(contactmap, monkeypatch, mocker):
 
     # Check that the directory is empty
     ls = list(glob.glob(f"{contactmap.path}/*"))
-
-    print(ls)
-    assert len(list(glob.glob(f"{contactmap.path}/*"))) == 0
+    assert len(ls) == 0

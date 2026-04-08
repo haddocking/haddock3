@@ -11,8 +11,7 @@ from scipy.spatial.distance import pdist, squareform
 
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.contactmap import DEFAULT_CONFIG
-from haddock.modules.analysis.contactmap import \
-    HaddockModule as ContactMapModule
+from haddock.modules.analysis.contactmap import HaddockModule as ContactMapModule
 from haddock.modules.analysis.contactmap.contmap import (
     PI,
     ClusteredContactMap,
@@ -35,7 +34,11 @@ from haddock.modules.analysis.contactmap.contmap import (
     topX_models,
     within_2PI,
     write_res_contacts,
-    )
+)
+from haddock.libs.libutil import (
+    get_available_memory,
+    get_necessary_memory,
+)
 
 from . import golden_data
 
@@ -625,3 +628,65 @@ def test_make_ideogram_arc_moduloAB():
     assert arc_positions.shape == excpected_output.shape
     for i in range(nb_points):
         assert np.isclose(arc_positions[i], excpected_output[i], atol=0.0001)
+
+
+def test_get_available_memory():
+    """Test get_available_memory function."""
+    memory = get_available_memory()
+    # Should return a positive float (system memory)
+    assert isinstance(memory, float)
+    assert memory > 0
+
+
+def test_get_necessary_memory():
+    """Test get_necessary_memory function with valid models."""
+    models = [
+        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
+    ]
+    memory = get_necessary_memory(models)
+    # Should return a positive float
+    assert isinstance(memory, float)
+    assert memory > 0
+
+
+def test_get_necessary_memory_empty_list():
+    """Test get_necessary_memory with empty list."""
+    models = []
+    memory = get_necessary_memory(models)
+    # Should fall back to default estimate
+    assert isinstance(memory, float)
+    assert memory > 0
+
+
+def test_get_necessary_memory_invalid_files():
+    """Test get_necessary_memory with invalid file paths."""
+    from unittest.mock import patch
+
+    # Mock os.path.getsize to raise an exception
+    with patch("os.path.getsize") as mock_getsize:
+        mock_getsize.side_effect = FileNotFoundError("File not found")
+
+        models = [
+            PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
+        ]
+        memory = get_necessary_memory(models)
+        # Should fall back to default estimate
+        assert isinstance(memory, float)
+        assert memory > 0
+
+
+def test_get_necessary_memory_zero_bytes():
+    """Test get_necessary_memory with zero-byte files."""
+    with tempfile.TemporaryDirectory() as tempdir:
+        # Create a zero-byte file
+        zero_file = Path(tempdir, "empty.pdb")
+        zero_file.write_text("")
+
+        models = [
+            PDBFile(zero_file, path=str(zero_file.parent)),
+        ]
+        memory = get_necessary_memory(models)
+        # Should use default fallback (10000 atoms)
+        assert isinstance(memory, float)
+        assert memory > 0

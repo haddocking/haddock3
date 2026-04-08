@@ -10,7 +10,7 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-noe class dist end
+noe nres=10000 class dist end
 
 ! first deal with monoatomic ions
 evaluate ($pcount = 0)

@@ -101,8 +101,22 @@
 <span class="sd">and carbohydrates ... see `detailed list of supported molecules</span>
 <span class="sd">&lt;https://wenmr.science.uu.nl/haddock2.4/library&gt;`_),</span>
 <span class="sd">such as small-molecules, parameters and topology must be obtained and provided</span>
-<span class="sd">by the user, as there is currently no built-in solution to generate</span>
-<span class="sd">them on the fly.</span>
+<span class="sd">by the user, using `ligand_param_fname` and `ligand_top_fname` parameters.</span>
+<span class="sd">If you do not have them, they can be generated on-the-fly by setting</span>
+<span class="sd">the `autotoppar` parameter to `true`.</span>
+
+<span class="sd">To define specific parameters for a given molecule (charge of terminis,</span>
+<span class="sd">histidine protonations, peptide cyclisation, ...), you should re-define</span>
+<span class="sd">a quasi topoaa module and specify the molecule index, right after</span>
+<span class="sd">the ``[topoaa]`` module. e.g.:</span>
+
+<span class="sd">``</span>
+<span class="sd">[topoaa]</span>
+<span class="sd">[topoaa.mol1]</span>
+<span class="sd">``</span>
+
+<span class="sd">For more details about this module, please `refer to the haddock3 user manual</span>
+<span class="sd">&lt;https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>

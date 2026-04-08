@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Filtering of models based on their score &mdash; haddock3 3.0.0 documentation</title>
+  <title>Filtering module &mdash; haddock3 3.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=34bb78ad" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
@@ -61,7 +61,7 @@
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustfcc.html">FCC Clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustrmsd.html">RMSD Clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.contactmap.html">Contact Map module</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">Filtering of models based on their score</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Filtering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.ilrmsdmatrix.html">Interface Ligand RMSD Matrix calculation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.rmsdmatrix.html">RMSD Matrix calculation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.seletop.html">Selection of top models module</a></li>
@@ -99,7 +99,7 @@
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Modules</a></li>
           <li class="breadcrumb-item"><a href="index.html">Analysis Modules</a></li>
-      <li class="breadcrumb-item active">Filtering of models based on their score</li>
+      <li class="breadcrumb-item active">Filtering module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/modules/analysis/haddock.modules.analysis.filter.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -109,20 +109,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="filtering-of-models-based-on-their-score">
-<h1>Filtering of models based on their score<a class="headerlink" href="#filtering-of-models-based-on-their-score" title="Link to this heading"></a></h1>
+  <section id="filtering-module">
+<h1>Filtering module<a class="headerlink" href="#filtering-module" title="Link to this heading"></a></h1>
 <section id="module-haddock.modules.analysis.filter">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-haddock.modules.analysis.filter" title="Link to this heading"></a></h2>
-<p>Filter models based on their score.</p>
-<p>This module filters the input models based on their score using a threshold
-value. Models having higher score than the threshold value are filtered out.</p>
+<p>Filtering module.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">[filter]</span></code> module filters the input models based on their score using a
+<code class="docutils literal notranslate"><span class="pre">threshold</span></code> value.
+Models having higher score than the threshold value are filtered out.</p>
 <p>The number of models to be selected is unknown, and is the set of models that
-have a score below the defined threshold.
-For this module to be functional, a score must be first computed. This can be
-performed by running a CNS module or a scoring module. If scores are not
-accessible, the workflow will terminate with an error message.</p>
-<p>If the threshold value is too stringent, resulting in no models passed to the
-next module, the workflow will stop with an error message.</p>
+have a <strong>score below the defined threshold</strong>.</p>
+<p><strong>Important</strong>:
+For this module to be functional, a score must be first computed.
+This can be performed by running a CNS module or a scoring module.</p>
+<p><strong>Program termination cases</strong>:</p>
+<ul class="simple">
+<li><p>If scores are not
+accessible, the workflow will terminate with an error message.</p></li>
+<li><p>If the threshold value is too stringent, resulting in no models passed to the
+next module, the workflow will stop with an error message.</p></li>
+</ul>
+<p>For more details about this module, please <a class="reference external" href="https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filter-module">refer to the haddock3 user manual</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.analysis.filter.HaddockModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.filter.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ignore</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/haddock/modules/analysis/filter/defaults.yaml')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">everything</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/filter.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.filter.HaddockModule" title="Link to this definition"></a></dt>

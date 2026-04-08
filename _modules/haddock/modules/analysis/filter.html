@@ -81,19 +81,28 @@
            <div itemprop="articleBody">
              
   <h1>Source code for haddock.modules.analysis.filter</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Filter models based on their score.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Filtering module.</span>
 
-<span class="sd">This module filters the input models based on their score using a threshold</span>
-<span class="sd">value. Models having higher score than the threshold value are filtered out.</span>
+<span class="sd">The ``[filter]`` module filters the input models based on their score using a</span>
+<span class="sd">``threshold`` value.</span>
+<span class="sd">Models having higher score than the threshold value are filtered out.</span>
 
 <span class="sd">The number of models to be selected is unknown, and is the set of models that</span>
-<span class="sd">have a score below the defined threshold.</span>
-<span class="sd">For this module to be functional, a score must be first computed. This can be</span>
-<span class="sd">performed by running a CNS module or a scoring module. If scores are not</span>
-<span class="sd">accessible, the workflow will terminate with an error message.</span>
+<span class="sd">have a **score below the defined threshold**.</span>
 
-<span class="sd">If the threshold value is too stringent, resulting in no models passed to the</span>
-<span class="sd">next module, the workflow will stop with an error message.</span>
+<span class="sd">**Important**:</span>
+<span class="sd">For this module to be functional, a score must be first computed.</span>
+<span class="sd">This can be performed by running a CNS module or a scoring module.</span>
+
+<span class="sd">**Program termination cases**:</span>
+
+<span class="sd">* If scores are not</span>
+<span class="sd">  accessible, the workflow will terminate with an error message.</span>
+<span class="sd">* If the threshold value is too stringent, resulting in no models passed to the</span>
+<span class="sd">  next module, the workflow will stop with an error message.</span>
+
+<span class="sd">For more details about this module, please `refer to the haddock3 user manual</span>
+<span class="sd">&lt;https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#filter-module&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>

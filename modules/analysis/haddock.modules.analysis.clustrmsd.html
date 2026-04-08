@@ -61,7 +61,7 @@
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.clustfcc.html">FCC Clustering module</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">RMSD Clustering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.contactmap.html">Contact Map module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.filter.html">Filtering of models based on their score</a></li>
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.filter.html">Filtering module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.ilrmsdmatrix.html">Interface Ligand RMSD Matrix calculation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.rmsdmatrix.html">RMSD Matrix calculation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="haddock.modules.analysis.seletop.html">Selection of top models module</a></li>
@@ -136,14 +136,14 @@ desired clusters</p></li>
 <li><p><cite>n_clusters</cite>: number of desired clusters (if <cite>criterion</cite> is <cite>maxclust</cite>).</p></li>
 <li><p><cite>clust_cutoff</cite>: value of distance that separates distinct clusters (if <cite>criterion</cite> is
 <code class="docutils literal notranslate"><span class="pre">distance</span></code>)</p></li>
-<li><p><cite>min_population</cite> : analogously to the <cite>clustfcc</cite> module, it is the minimum number
-of models that should be present in a cluster to consider it. If criterion is
-<cite>maxclust</cite>, the value is ignored.</p></li>
+<li><p><cite>min_population</cite> : set the minimum number of models that should be present
+in a cluster to consider it. If criterion is <cite>maxclust</cite>, the value is ignored.</p></li>
 </ul>
 <p>This module passes the path to the RMSD matrix is to the next step of the
 workflow through the <cite>rmsd_matrix.json</cite> file, thus allowing to execute several
 <cite>clustrmsd</cite> modules (possibly with different parameters) on the same RMSD
 matrix.</p>
+<p>For more details about this module, please <a class="reference external" href="https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#clustrmsd-module">refer to the haddock3 user manual</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.clustrmsd.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/haddock/modules/analysis/clustrmsd/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule" title="Link to this definition"></a></dt>

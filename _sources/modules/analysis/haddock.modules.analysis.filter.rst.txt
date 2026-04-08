@@ -1,4 +1,4 @@
-Filtering of models based on their score
+Filtering module
 =======================================
 
 Module contents

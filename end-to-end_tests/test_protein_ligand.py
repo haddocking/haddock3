@@ -15,8 +15,6 @@ DATA_DIR = ROOT_DIR / "data"
 
 def test_protein_ligand_autotoppar_ens_workflow(monkeypatch):
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(Path(EXAMPLE_DIR, "data"), Path(tmpdir, "data"))
-
         src = DATA_DIR / "oseltamivir_ensemble11.pdb"
         dst = Path(tmpdir) / "oseltamivir_ensemble11.pdb"
         shutil.copy(src, dst)

@@ -1,0 +1,14 @@
+run_dir = "autoppar-ens"
+molecules = [
+  "../examples/docking-protein-ligand/data/neuraminidase-2BAT.pdb",
+  "data/oseltamivir_zwitterion.pdb",
+]
+[topoaa]
+autohis = true
+delenph = false
+autotoppar = true
+[rigidbody]
+tolerance = 20
+ambig_fname = "../examples/docking-protein-ligand/data/ambig-active-rigidbody.tbl"
+w_vdw = 1.0
+sampling = 20

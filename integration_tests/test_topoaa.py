@@ -3,9 +3,11 @@ import copy
 from pathlib import Path
 
 import pytest
-
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
+
+from pdbtools.pdb_mkensemble import run as mkensemble
+from haddock.libs.libio import PDBFile, working_directory
 
 from . import CNS_EXEC, has_grid
 from integration_tests import GOLDEN_DATA
@@ -52,6 +54,22 @@ def extract_nter_cter(fpath) -> tuple[str, str]:
                 # Increment last residue
                 cter += _
     return nter, cter
+
+
+@pytest.fixture
+def ligand_ens():
+    ligand = GOLDEN_DATA / "oseltamivir.pdb"
+    with tempfile.TemporaryDirectory() as tempdir:
+        fh = tempfile.NamedTemporaryFile(
+            dir=tempdir, delete=False, suffix=".pdb", mode="w"
+        )
+        for line in mkensemble([ligand] * 10):
+            fh.write(line)
+        fh.close()
+
+        yield fh.name
+
+        Path(fh.name).unlink()
 
 
 @has_grid
@@ -161,6 +179,38 @@ def test_topoaa_module_ligand(topoaa_module):
     assert expected_psf.exists()
     assert expected_pdb.exists()
     assert expected_gz.exists()
+
+
+def test_topoaa_module_ligand_ensemble(topoaa_module, ligand_ens):
+    """Topoaa with ligand as input"""
+    topoaa_module.params["molecules"] = [
+        Path(ligand_ens),
+    ]
+    topoaa_module.params["ligand_top_fname"] = Path(GOLDEN_DATA, "ligand.top")
+    topoaa_module.params["ligand_param_fname"] = Path(GOLDEN_DATA, "ligand.param")
+    topoaa_module.params["delenph"] = False
+    topoaa_module.params["preprocess"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    root_name = Path(ligand_ens).stem
+
+    for i in range(1, 11):
+        expected_inp = Path(topoaa_module.path, f"{root_name}_{i}.inp")
+        expected_psf = Path(
+            topoaa_module.path, f"oseltamivir_from_{root_name}_{i}_haddock.psf"
+        )
+        expected_pdb = Path(
+            topoaa_module.path, f"oseltamivir_from_{root_name}_{i}_haddock.pdb"
+        )
+        expected_gz = Path(topoaa_module.path, f"{root_name}_{i}.out.gz")
+
+        assert expected_inp.exists()
+        assert expected_psf.exists()
+        assert expected_pdb.exists()
+        assert expected_gz.exists()
 
 
 def test_topoaa_module_ligand_automated(topoaa_module):

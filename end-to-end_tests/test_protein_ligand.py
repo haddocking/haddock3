@@ -9,21 +9,33 @@ from haddock.clis.cli import main as cli_main
 EXAMPLE_DIR = (
     Path(__file__).resolve().parents[1] / "examples" / "docking-protein-ligand"
 )
-DATA_DIR = Path(__file__).resolve().parents[0] / "data"
+ROOT_DIR = Path(__file__).resolve().parents[0]
+DATA_DIR = ROOT_DIR / "data"
 
 
 def test_protein_ligand_autotoppar_ens_workflow(monkeypatch):
     with tempfile.TemporaryDirectory() as tmpdir:
         shutil.copytree(Path(EXAMPLE_DIR, "data"), Path(tmpdir, "data"))
-        cfg = Path(tmpdir, "docking-protein-ligand-autotoppar-test.cfg")
-        shutil.copy(
-            Path(EXAMPLE_DIR, "docking-protein-ligand-autotoppar-test.cfg"), cfg
-        )
+
         src = DATA_DIR / "oseltamivir_ensemble11.pdb"
         dst = Path(tmpdir) / "oseltamivir_ensemble11.pdb"
         shutil.copy(src, dst)
 
+        src = EXAMPLE_DIR / "data" / "neuraminidase-2BAT.pdb"
+        dst = Path(tmpdir) / "neuraminidase-2BAT.pdb"
+        shutil.copy(src, dst)
+
+        src = ROOT_DIR / "autoppar_ens.toml"
+        dst = Path(tmpdir) / "autoppar_ens.toml"
+        shutil.copy(src, dst)
+
+        src = EXAMPLE_DIR / "data" / "ambig-active-rigidbody.tbl"
+        dst = Path(tmpdir) / "ambig-active-rigidbody.tbl"
+        shutil.copy(src, dst)
+
         monkeypatch.chdir(tmpdir)
+
+        cfg = Path(tmpdir, "autoppar_ens.toml")
         cli_main(cfg)
 
         run_dir = Path("autoppar-ens")

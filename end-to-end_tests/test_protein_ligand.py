@@ -9,6 +9,36 @@ from haddock.clis.cli import main as cli_main
 EXAMPLE_DIR = (
     Path(__file__).resolve().parents[1] / "examples" / "docking-protein-ligand"
 )
+DATA_DIR = Path(__file__).resolve().parents[0] / "data"
+
+
+def test_protein_ligand_autotoppar_ens_workflow(monkeypatch):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(Path(EXAMPLE_DIR, "data"), Path(tmpdir, "data"))
+        cfg = Path(tmpdir, "docking-protein-ligand-autotoppar-test.cfg")
+        shutil.copy(
+            Path(EXAMPLE_DIR, "docking-protein-ligand-autotoppar-test.cfg"), cfg
+        )
+        src = DATA_DIR / "oseltamivir_ensemble11.pdb"
+        dst = Path(tmpdir) / "oseltamivir_ensemble11.pdb"
+        shutil.copy(src, dst)
+
+        monkeypatch.chdir(tmpdir)
+        cli_main(cfg)
+
+        run_dir = Path("autoppar-ens")
+
+        # Check if the auto-generated prodrg topology files were generated
+        autotoppar_param = Path(
+            run_dir, "00_topoaa", "oseltamivir_zwitterion_prodrg.param"
+        )
+        autotoppar_top = Path(run_dir, "00_topoaa", "oseltamivir_zwitterion_prodrg.top")
+        assert autotoppar_param.exists(), f"{autotoppar_param} was not generated"
+        assert autotoppar_top.exists(), f"{autotoppar_top} was not generated"
+
+        # Verify all workflow steps produced output directories
+        assert Path(run_dir, "00_topoaa").exists()
+        assert Path(run_dir, "01_rigidbody").exists()
 
 
 def test_protein_ligand_autotoppar_workflow(monkeypatch):

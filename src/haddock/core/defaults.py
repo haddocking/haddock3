@@ -34,6 +34,9 @@ RUNDIR = "run_dir"
 INTERACTIVE_RE_SUFFIX = "interactive"
 """Suffix added to interactive haddock3-re runs."""
 
+ANA_FOLDER = "analysis"
+"""Name of the analysis folder."""
+
 MODULE_DEFAULT_YAML = "defaults.yaml"
 """Default name of the yaml default parameters file."""
 

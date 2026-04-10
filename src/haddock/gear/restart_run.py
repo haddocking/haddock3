@@ -62,6 +62,6 @@ def remove_folders_after_number(run_dir: Path, num: int) -> None:
         if int(folder.split('_')[0]) >= num
         ]
     # Loop over folders to remove
-    for torm_folder in from_num_folders:
-        remove_folder(Path(run_dir, torm_folder))
+    for toremove_folder in from_num_folders:
+        remove_folder(Path(run_dir, toremove_folder))
     return

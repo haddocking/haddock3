@@ -6,16 +6,14 @@ import itertools as it
 import json
 import os
 import shutil
-import string
 import sys
-import tarfile
 from contextlib import contextmanager, suppress
 from copy import copy, deepcopy
 from functools import lru_cache, wraps
 from pathlib import Path, PosixPath
 
 from haddock import EmptyPath, contact_us, haddock3_source_path, log
-from haddock.core.defaults import RUNDIR, max_molecules_allowed
+from haddock.core.defaults import ANA_FOLDER, RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.core.typing import (
     Any,
@@ -333,6 +331,8 @@ def setup_run(
         remove_folders_after_number(general_params[RUNDIR], restart_from)
         _data_dir = Path(general_params[RUNDIR], "data")
         remove_folders_after_number(_data_dir, restart_from)
+        _analysis_dir = Path(general_params[RUNDIR], ANA_FOLDER)
+        remove_folders_after_number(_analysis_dir, restart_from)
 
     if restarting_from or starting_from_copy:
         # get run files in folder
@@ -397,7 +397,7 @@ def setup_run(
     enhanced_haddock_params = deepcopy(general_params)
     enhanced_haddock_params.update(modules_params)
     config_files["enhanced_haddock_params"] = enhanced_haddock_params
-    config_saves = save_configuration_files(config_files, data_dir)  # noqa : F841
+    _config_saves = save_configuration_files(config_files, data_dir)  # noqa : F841
 
     if scratch_rest0:
         copy_molecules_to_data_dir(

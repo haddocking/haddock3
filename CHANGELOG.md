@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-04-10: Corrected the definition of ion restraints in flexref - Issue #1510
 - 2026-04-08: Improved docstring in modules
 - 2026-04-08: Increased NOE restraints array size in scoring modules - Issue #1501
 - 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485

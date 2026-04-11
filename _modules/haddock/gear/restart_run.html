@@ -83,7 +83,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmtree</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">haddock.core.defaults</span><span class="w"> </span><span class="kn">import</span> <span class="n">ANA_FOLDER</span><span class="p">,</span> <span class="n">TRACEBACK_FOLDER</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.libs.libutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_negative_int</span><span class="p">,</span> <span class="n">remove_folder</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">haddock.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_module_steps_folders</span>
 
@@ -148,9 +150,37 @@
         <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">num</span>
         <span class="p">]</span>
     <span class="c1"># Loop over folders to remove</span>
-    <span class="k">for</span> <span class="n">torm_folder</span> <span class="ow">in</span> <span class="n">from_num_folders</span><span class="p">:</span>
-        <span class="n">remove_folder</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">torm_folder</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">toremove_folder</span> <span class="ow">in</span> <span class="n">from_num_folders</span><span class="p">:</span>
+        <span class="n">remove_folder</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">,</span> <span class="n">toremove_folder</span><span class="p">))</span>
     <span class="k">return</span></div>
+
+
+
+<div class="viewcode-block" id="preprocess_restart_from">
+<a class="viewcode-back" href="../../../reference/gear/haddock.gear.restart_run.html#haddock.gear.restart_run.preprocess_restart_from">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_restart_from</span><span class="p">(</span><span class="n">rundir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">restart_from</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove all folders and files that are downstream of restart index.</span>
+
+<span class="sd">    Also remove analyses directories and traceback.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rundir : str</span>
+<span class="sd">        Workflow run directory</span>
+<span class="sd">    module_index : int</span>
+<span class="sd">        Index of module to restart from</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove modules data after index</span>
+    <span class="n">remove_folders_after_number</span><span class="p">(</span><span class="n">rundir</span><span class="p">,</span> <span class="n">restart_from</span><span class="p">)</span>
+    <span class="c1"># Remove data for corresponding modules</span>
+    <span class="n">_data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rundir</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+    <span class="n">remove_folders_after_number</span><span class="p">(</span><span class="n">_data_dir</span><span class="p">,</span> <span class="n">restart_from</span><span class="p">)</span>
+    <span class="c1"># Remove analysis folders after index</span>
+    <span class="n">_analysis_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rundir</span><span class="p">,</span> <span class="n">ANA_FOLDER</span><span class="p">)</span>
+    <span class="n">remove_folders_after_number</span><span class="p">(</span><span class="n">_analysis_dir</span><span class="p">,</span> <span class="n">restart_from</span><span class="p">)</span>
+    <span class="c1"># Remove traceback directory</span>
+    <span class="n">_traceback_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rundir</span><span class="p">,</span> <span class="n">TRACEBACK_FOLDER</span><span class="p">)</span>
+    <span class="n">rmtree</span><span class="p">(</span><span class="n">_traceback_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </pre></div>
 
@@ -162,7 +192,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 08, 2026.
+      <span class="lastupdated">Last updated on Apr 11, 2026.
       </span></p>
   </div>
 

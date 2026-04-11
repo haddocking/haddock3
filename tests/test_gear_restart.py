@@ -74,7 +74,7 @@ def test_preprocess_restart_from():
     with tempfile.TemporaryDirectory() as tmpdir:
         # Build mimic of previous run directories
         module_dirs = ["topoaa", "rigidbody", "caprieval"]
-        for module_index, module_name in module_dirs:
+        for module_index, module_name in enumerate(module_dirs):
             os.makedirs(f"{tmpdir}/data/{module_index}_{module_name}")
             os.makedirs(f"{tmpdir}/{module_index}_{module_name}")
             if module_name == "caprieval":

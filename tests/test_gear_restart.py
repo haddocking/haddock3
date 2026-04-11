@@ -5,7 +5,7 @@ import pytest
 import tempfile
 
 from haddock.gear import restart_run
-from haddock.core.defaults import ANA_DIR, TRACEBACK_FOLDER
+from haddock.core.defaults import ANA_FOLDER, TRACEBACK_FOLDER
 
 
 def test_has_help():
@@ -79,7 +79,7 @@ def test_preprocess_restart_from():
             os.makedirs(f"{tmpdir}/{module_index}_{module_name}")
             if module_name == "caprieval":
                 os.makedirs(
-                    f"{tmpdir}/{ANA_DIR}/{module_index}_{module_name}_analysis"
+                    f"{tmpdir}/{ANA_FOLDER}/{module_index}_{module_name}_analysis"
                     )
         os.makedirs(f"{tmpdir}/{TRACEBACK_FOLDER}")
         
@@ -89,7 +89,7 @@ def test_preprocess_restart_from():
         # Verify they were removed
         expected_to_be_removed = [
             f"{tmpdir}/{TRACEBACK_FOLDER}",
-            f"{tmpdir}/{ANA_DIR}/2_caprieval_analysis",
+            f"{tmpdir}/{ANA_FOLDER}/2_caprieval_analysis",
             f"{tmpdir}/2_caprieval",
         ]
         expected_to_stay_there = [

@@ -4,12 +4,8 @@ import os
 import pytest
 import tempfile
 
-from haddock.gear import (
-    restart_run,
-    preprocess_restart_from,
-    ANA_DIR,
-    TRACEBACK_FOLDER,
-)
+from haddock.gear.restart_run import restart_run, preprocess_restart_from
+from haddock.core.defaults import ANA_DIR, TRACEBACK_FOLDER
 
 
 def test_has_help():

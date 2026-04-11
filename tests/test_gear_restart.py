@@ -4,6 +4,8 @@ import os
 import pytest
 import tempfile
 
+from pathlib import Path
+
 from haddock.gear import restart_run
 from haddock.core.defaults import ANA_FOLDER, TRACEBACK_FOLDER
 
@@ -84,7 +86,7 @@ def test_preprocess_restart_from():
         os.makedirs(f"{tmpdir}/{TRACEBACK_FOLDER}")
         
         # Test restart preprocessing function
-        restart_run.preprocess_restart_from(tmpdir, 2)
+        restart_run.preprocess_restart_from(Path(tmpdir), 2)
         
         # Verify they were removed
         expected_to_be_removed = [

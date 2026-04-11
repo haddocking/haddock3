@@ -13,7 +13,7 @@ from functools import lru_cache, wraps
 from pathlib import Path, PosixPath
 
 from haddock import EmptyPath, contact_us, haddock3_source_path, log
-from haddock.core.defaults import ANA_FOLDER, RUNDIR, max_molecules_allowed
+from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.core.typing import (
     Any,
@@ -57,7 +57,7 @@ from haddock.gear.parameters import (
     config_optional_general_parameters_dict,
 )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
-from haddock.gear.restart_run import remove_folders_after_number
+from haddock.gear.restart_run import preprocess_restart_from
 from haddock.gear.validations import (
     v_rundir,
     validate_defaults_yaml,
@@ -328,11 +328,7 @@ def setup_run(
         check_mandatory_argments_are_present(general_params)
 
     if restarting_from:
-        remove_folders_after_number(general_params[RUNDIR], restart_from)
-        _data_dir = Path(general_params[RUNDIR], "data")
-        remove_folders_after_number(_data_dir, restart_from)
-        _analysis_dir = Path(general_params[RUNDIR], ANA_FOLDER)
-        remove_folders_after_number(_analysis_dir, restart_from)
+        preprocess_restart_from(general_params[RUNDIR], restart_from)
 
     if restarting_from or starting_from_copy:
         # get run files in folder

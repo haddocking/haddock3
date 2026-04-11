@@ -180,6 +180,10 @@ parameter
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
+{* Check for the presence of ions and add covalent bond *}
+
+@MODULE:covalions.cns
+
 
 {* Define various interaction and energetics settings *}
 
@@ -308,10 +312,8 @@ if ($Data.ssdihed eq "alphabeta" ) then
     inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
 
-{* Check for the presence of ions and add distance restraints / covalent bond == *}
-
+{* Check for the presence of ions and add distance restraints *}
 @MODULE:restrain-ions.cns
-@MODULE:covalions.cns
 
 
 {* Check first for failed structures =========================================== *}

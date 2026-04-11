@@ -17,14 +17,12 @@ import numpy as np
 import pandas as pd
 
 from haddock import log
+from haddock.core.defaults import TRACEBACK_FOLDER
 from haddock.core.typing import Any, FilePath
 from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libplots import make_traceback_plot
 from haddock.modules import get_module_steps_folders
-
-
-TRACK_FOLDER = "traceback"  # name of the traceback folder
 
 
 def get_steps_without_pdbs(run_dir, all_steps):
@@ -270,7 +268,7 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
         log.info(f"Steps to trace back: {', '.join(sel_step)}")
 
     # creating traceback folder
-    outdir = Path(run_dir, TRACK_FOLDER)
+    outdir = Path(run_dir, TRACEBACK_FOLDER)
     try:
         outdir.mkdir(exist_ok=False)
         log.info(f"Created directory: {str(outdir.resolve())}")
@@ -350,18 +348,18 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
     # ordering the dataframe
     df_output = order_traceback_df(df_output, sel_step)
     # dumping the dataframe
-    track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
+    track_filename = Path(run_dir, TRACEBACK_FOLDER, "traceback.tsv")
     log.info(
         f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
     )
     df_output.to_csv(track_filename, sep="\t", index=False)
 
     # taking (and writing) a subset of the dataframe
-    consensus_filename = Path(run_dir, TRACK_FOLDER, "consensus.tsv")
+    consensus_filename = Path(run_dir, TRACEBACK_FOLDER, "consensus.tsv")
     rank_data_subset = subset_traceback(df_output, consensus_filename)
 
     # plotting the traceback dataframe
-    plot_filename = Path(run_dir, TRACK_FOLDER, "traceback.html")
+    plot_filename = Path(run_dir, TRACEBACK_FOLDER, "traceback.html")
     make_traceback_plot(rank_data_subset, plot_filename, offline=offline)
     return
 

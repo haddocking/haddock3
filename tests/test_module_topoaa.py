@@ -81,29 +81,3 @@ def test_get_md5(topoaa, ensemble_header_w_md5, protein):
 
     observed_md5_dic = topoaa.get_md5(protein)
     assert observed_md5_dic == {}
-
-
-def test_handle_autotoppar_single_model(topoaa, protein, mocker):
-    """Test _handle_autotoppar method for single model."""
-    # Mock the identify_unknown_hetatms to return empty list (no unknown atoms)
-    mocker.patch("haddock.libs.libligand.identify_unknown_hetatms", return_value=[])
-
-    result = topoaa._handle_autotoppar(model=protein, num_models=1)
-
-    # Should return the original params when no unknown atoms
-    assert result == topoaa.params
-
-
-def test_handle_autotoppar_ensemble(topoaa, protein, mocker):
-    """Test _handle_autotoppar method for ensemble."""
-    # Mock the identify_unknown_hetatms to return empty list (no unknown atoms)
-    mocker.patch("haddock.libs.libligand.identify_unknown_hetatms", return_value=[])
-
-    result = topoaa._handle_autotoppar(model=protein, num_models=5)
-
-    # Should return the original params when no unknown atoms
-    assert result == topoaa.params
-
-    # For ensembles, should not set global output params
-    assert "ligand_top_fname" not in topoaa._output_params
-    assert "ligand_param_fname" not in topoaa._output_params

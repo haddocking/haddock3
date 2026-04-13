@@ -98,8 +98,10 @@ do (segid = segid + "CG") (not segid S)
 evaluate ($nchain=0)
 while ($nchain < $data.ncomponents) loop nloop1
     evaluate ($nchain = $nchain + 1)
-    structure @@$input_aa_psf_filename_$nchain end
-    coor @@$input_aa_pdb_filename_$nchain
+    if ($mol_shape_$nchain eq false) then
+        structure @@$input_aa_psf_filename_$nchain end
+        coor @@$input_aa_pdb_filename_$nchain
+    end if
 end loop nloop1
 
 {* Read paramters and set various force field related variables *}
@@ -161,8 +163,8 @@ evaluate ($kinter = 0.001)
 
 flag excl * incl noe end
 
-! Fix the CG model
-fix sele=(segid *CG) end
+! Fix the CG model and any shape
+fix sele=(segid *CG or segid S) end
 
 ! Rigid body EM to position AA model onto CG model
 !
@@ -170,8 +172,10 @@ minimize rigid
     eval ($nchain = 0)
     while ($nchain < $data.ncomponents) loop nloop1
         eval($nchain = $nchain + 1)
-        group (segid $prot_segid_$nchain)
-        translation=true
+        if ($mol_shape_$nchain eq false) then
+            group (segid $prot_segid_$nchain)
+            translation=true
+        end if
     end loop nloop1
     nstep 200
     nprint 10  

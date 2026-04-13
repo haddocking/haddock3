@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-04-12: Add possibility to run MD (mdref, mdscoring) without solvent - Issue #1512
 - 2026-04-10: Corrected the definition of ion restraints in flexref - Issue #1510
 - 2026-04-10: Removing analysis modules downstream when restarting - Issue #1495
 - 2026-04-08: Improved docstring in modules

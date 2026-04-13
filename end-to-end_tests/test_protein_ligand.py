@@ -98,5 +98,4 @@ mdsteps_cool1 = 0
 
         monkeypatch.chdir(tmpdir)
 
-        print(f"tmpdir: {tmpdir}")
         cli_main("run.toml")

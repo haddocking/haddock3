@@ -261,7 +261,7 @@ if ($Data.ssdihed eq "alphabeta" ) then
 end if
 
 
-{* Check for the presence of ions and add distance restraints / covalent bond == *}
+{* Check for the presence of ions and add distance restraints *}
 
 @MODULE:restrain-ions.cns
 

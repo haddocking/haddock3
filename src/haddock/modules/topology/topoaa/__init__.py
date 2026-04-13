@@ -185,69 +185,6 @@ class HaddockModule(BaseCNSModule):
                 origin_dic[model_num] = original_name
         return origin_dic
 
-    def _handle_autotoppar(
-        self,
-        model: Path,
-        num_models: int,
-    ) -> dict:
-        """Handle autotoppar logic for a single model.
-
-        This method runs PRODRG for unknown ligands, stores the generated
-        topology and parameter files, and sets up the appropriate parameters.
-
-        Parameters
-        ----------
-        model : Path
-            The model file path
-        num_models : int
-            Number of models in the ensemble
-
-        Returns
-        -------
-        dict[str, Any]
-            Updated parameters dictionary
-        """
-
-        # Check if there are any unknown molecules
-        unknown = libligand.identify_unknown_hetatms(model)
-        if unknown:
-            self.log(
-                f"Unknown ligand(s) {unknown} detected, "
-                "running PRODRG to generate topology"
-            )
-            top_path = ""
-            par_path = ""
-            try:
-                top_path, par_path = libligand.run_prodrg(model, Path("."))
-            except RuntimeError as e:
-                self.finish_with_error(
-                    f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
-                )
-
-            # Inject the automated toppar into the params for module
-            _params = {
-                **self.params,
-                "ligand_top_fname": top_path,
-                "ligand_param_fname": par_path,
-            }
-
-            # Only set global output params if this is a single model (not ensemble)
-            # For ensembles, we'll store the files per-model in the PDBFile objects
-            # NOTE: In CNS input generation, PDBFile ligand files take precedence over global params,
-            # so this ensures backward compatibility, but may be removed in the future
-            if num_models == 1:
-                # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
-                #  this means that if these were NOT defined in other modules, they will take the
-                #  values defined here
-                self._output_params["ligand_top_fname"] = top_path
-                self._output_params["ligand_param_fname"] = par_path
-
-            libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
-            return _params
-        else:
-            self.log("No unknown atoms found")
-            return self.params
-
     def _run(self) -> None:
         """Execute module."""
         if self.order == 0:
@@ -329,6 +266,9 @@ class HaddockModule(BaseCNSModule):
             # Update molecule parameters with full path to link files
             parameters_for_this_molecule.update(link_files)
 
+            # Dictionary to store ligand files for each model
+            model_ligand_files: dict[str, tuple[Path, Path]] = {}
+
             # Loop over molecules conformations
             for _task_id, model in enumerate(splited_models):
                 self.log(f"Sanitizing molecule {model.name}")
@@ -345,10 +285,47 @@ class HaddockModule(BaseCNSModule):
                     _params = self.params
 
                 elif self.params["autotoppar"]:
-                    _params = self._handle_autotoppar(
-                        model=model,
-                        num_models=len(splited_models),
-                    )
+                    # No `ligand_top_fname` was provided, check if there are any unknown molecules
+                    unknown = libligand.identify_unknown_hetatms(model)
+                    if unknown:
+                        self.log(
+                            f"Unknown ligand(s) {unknown} detected, "
+                            "running PRODRG to generate topology"
+                        )
+                        top_path = ""
+                        par_path = ""
+                        try:
+                            top_path, par_path = libligand.run_prodrg(model, Path("."))
+                        except RuntimeError as e:
+                            self.finish_with_error(
+                                f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
+                            )
+                        # Inject the automated toppar into the params for module
+                        _params = {
+                            **self.params,
+                            "ligand_top_fname": top_path,
+                            "ligand_param_fname": par_path,
+                        }
+
+                        # Store ligand files for this specific model
+                        model_ligand_files[model.stem] = (top_path, par_path)
+
+                        # Only set global output params if this is a single model (not ensemble)
+                        # For ensembles, we'll store the files per-model in the PDBFile objects
+
+                        # NOTE: In CNS input generation, PDBFile ligand files take precedence over global params,
+                        # so this ensures backward compatibility, but may be removed in the future
+                        if len(splited_models) == 1:
+                            # Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules
+                            #  this means that if these were NOT defined in other modules, they will take the
+                            #  values defined here
+                            self._output_params["ligand_top_fname"] = top_path
+                            self._output_params["ligand_param_fname"] = par_path
+
+                        libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
+                    else:
+                        self.log("No unknown atoms found")
+                        _params = self.params
                 else:
                     libpdb.sanitize(model, overwrite=True)
                     _params = self.params

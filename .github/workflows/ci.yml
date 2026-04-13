@@ -17,7 +17,60 @@ on:
     - cron: "0 */6 * * *" # every 6 hours
 
 jobs:
-  ci:
+  # Full suite on Linux + Python 3.14: unit tests, coverage, integration, e2e, docs.
+  test-linux-py314:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openmpi-bin libopenmpi3 libopenmpi-dev
+
+      - name: install haddock3 with extra dependencies
+        run: pip install -e '.[mpi,dev,docs,notebooks]'
+
+      - name: run unit tests
+        run: >-
+          pytest -v --random-order tests/
+          --cov --cov-report=
+
+      - name: generate coverage report
+        run: |
+          coverage report
+          coverage xml
+
+      - uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ./coverage.xml
+
+      - name: run integration tests
+        run: >-
+          pytest -v --random-order integration_tests/
+
+      - name: run end to end tests
+        run: >-
+          pytest -v --random-order --no-cov end-to-end_tests/
+
+      - name: check if docs are buildable
+        continue-on-error: true
+        run: |
+          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
+          sphinx-build docs haddock3-docs
+
+  # Run the remaining OSxPython combinations in parallel
+  test-matrix:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -25,8 +78,17 @@ jobs:
       checks: write
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        # ubuntu-latest    = linux-x86_64
+        # ubuntu-24.04-arm = linux-aarch64
+        # macos-latest     = macos-arm64
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
+        # Test only newest and oldest python version
+        # > versions in the middle are unlikely to have compatibility issues
+        python-version: ["3.9", "3.14"]
+        exclude:
+          # Already covered by test-linux-py314, don't run again
+          - os: ubuntu-latest
+            python-version: "3.14"
       fail-fast: false
 
     steps:
@@ -53,25 +115,7 @@ jobs:
       - name: run unit tests
         run: >-
           pytest -v --random-order tests/
-          --cov --cov-report=
 
       - name: run integration tests
         run: >-
           pytest -v --random-order integration_tests/
-
-      - name: generate coverage report
-        run: |
-          coverage report
-          coverage xml
-
-      - uses: codacy/codacy-coverage-reporter-action@v1
-        if: matrix.python-version == '3.14'
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./coverage.xml
-
-      - name: check if docs are buildable
-        continue-on-error: true
-        run: |
-          sphinx-apidoc -f -e -o docs/ src/haddock -d 1
-          sphinx-build docs haddock3-docs

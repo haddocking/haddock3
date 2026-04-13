@@ -28,4 +28,5 @@ recursive-include varia *.lua
 recursive-include varia *.md
 include src/haddock/bin/*
 include src/haddock/cns/bin/*
+include src/haddock/prodrg/*
 include src/haddock/libs/assets/*

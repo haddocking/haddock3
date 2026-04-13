@@ -14,6 +14,7 @@ from haddock.libs.libpdb import (
     read_chainids,
     read_segids,
     sanitize,
+    split_ensemble,
 )
 
 
@@ -108,7 +109,6 @@ def test_check_combination_chains(good_rigid_molecules, wrong_rigid_molecules):
 
 
 def test_sanitize(protlig_complex_pdb, monkeypatch):
-
     monkeypatch.chdir(protlig_complex_pdb.parent)
 
     output = sanitize(
@@ -150,3 +150,115 @@ def test_sanitize_not_changing_global(
     current_global_to_keep = len(_to_keep)
 
     assert current_global_to_keep == initial_global_to_keep
+
+
+@pytest.fixture
+def atom_lines():
+    return (
+        "ATOM      1  N   MET A   1      -0.497   0.778  -7.571  1.00  0.00      A    N  ",
+        "ATOM      2  CA  MET A   1       0.814   0.227  -7.319  1.00  0.00      A    C  ",
+    )
+
+
+def test_split_ensemble_single_model(tmp_path, monkeypatch, atom_lines):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join([*atom_lines, "END", ""])
+    dst = tmp_path / "single.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 1
+    assert result[0].name == "single.pdb"
+    assert result[0] == dst
+
+
+def test_split_ensemble_proper_ensemble(tmp_path, monkeypatch, atom_lines):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(
+        [
+            "MODEL        1",
+            *atom_lines,
+            "ENDMDL",
+            "MODEL        2",
+            *atom_lines,
+            "ENDMDL",
+            "END",
+            "",
+        ]
+    )
+    dst = tmp_path / "ensemble.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 2
+    assert [r.name for r in result] == ["ensemble_1.pdb", "ensemble_2.pdb"]
+    assert all(r.stat().st_size > 0 for r in result)
+
+
+def test_split_ensemble_model_without_endmdl(tmp_path, monkeypatch, atom_lines):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(["MODEL        1", *atom_lines, "END", ""])
+    dst = tmp_path / "model_without_endmdl.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 1
+    assert result[0].name == "model_without_endmdl_1.pdb"
+    assert result[0].stat().st_size > 0
+
+
+def test_split_ensemble_multiple_models_without_endmdl(
+    tmp_path, monkeypatch, atom_lines
+):
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(
+        [
+            "MODEL        1",
+            *atom_lines,
+            "MODEL        2",
+            *atom_lines,
+            "END",
+            "",
+        ]
+    )
+    dst = tmp_path / "two_models_no_endmdl.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 2
+    assert [r.name for r in result] == [
+        "two_models_no_endmdl_1.pdb",
+        "two_models_no_endmdl_2.pdb",
+    ]
+    assert all(r.stat().st_size > 0 for r in result)
+
+
+def test_split_ensemble_non_sequential_model_numbers(tmp_path, monkeypatch, atom_lines):
+    """pdb_tidy is used in `split_ensemble` and it renumbers MODEL records sequentially,
+    so non-sequential IDs (ex: 1, 5) produce sequential output files (_1.pdb, _2.pdb)
+    rather than the original numbers (_1.pdb, _5.pdb)."""
+    monkeypatch.chdir(tmp_path)
+    content = "\n".join(
+        [
+            "MODEL        1",
+            *atom_lines,
+            "ENDMDL",
+            "MODEL        5",
+            *atom_lines,
+            "ENDMDL",
+            "END",
+            "",
+        ]
+    )
+    dst = tmp_path / "non_sequential.pdb"
+    dst.write_text(content)
+
+    result = split_ensemble(dst, dest=tmp_path)
+
+    assert len(result) == 2
+    assert [r.name for r in result] == ["non_sequential_1.pdb", "non_sequential_2.pdb"]
+    assert all(r.stat().st_size > 0 for r in result)

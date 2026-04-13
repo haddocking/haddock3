@@ -1,0 +1,7 @@
+assign (
+        ( resid 602  and segid A and (name NZ or name SCD1))
+        or
+        ( resid 603  and segid A and (name NZ or name SCD1))
+       )
+       ( resid 85 and segid B and (name SG or name SC1) )
+       2.0 2.0 0.0

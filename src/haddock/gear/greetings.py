@@ -24,6 +24,12 @@ international_good_byes = [
     "Do pobachennya",
     "Tchau",
     "再见",
+    "Hoşça kal",
+    "Slán",
+    "Do widzenia",
+    "Mandi",
+    "Αντίο",
+    "Auf Wiedersehen",
 ]
 
 # List of urls to be printed to the screen at the end of a workflow
@@ -32,7 +38,7 @@ feedback_urls = {
     "GitHub issues": "https://github.com/haddocking/haddock3/issues",
     "BioExcel feedback": "https://www.bonvinlab.org/feedback",
     "BioExcel forum": "https://ask.bioexcel.eu/c/haddock/6",
-    "Haddock3 user manual": "https://www.bonvinlab.org/haddock3-user-manual/"
+    "Haddock3 user manual": "https://www.bonvinlab.org/haddock3-user-manual/",
 }
 
 
@@ -101,10 +107,7 @@ def gen_feedback_messages(print_function: Callable) -> None:
         This function must accept str as first argument.
     """
     print_function(
-        (
-            "Your feedback matters in Haddock3!"
-            " Share your experience and help us grow:"
-        )
+        ("Your feedback matters in Haddock3! Share your experience and help us grow:")
     )
     for name, url in feedback_urls.items():
         print_function(f"{name}: {url}")

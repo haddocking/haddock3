@@ -128,7 +128,9 @@ def split_ensemble(pdb_file_path: Path, dest: Optional[FilePath] = None) -> list
     assert pdb_file_path.is_file(), pdb_file_path
     with open(pdb_file_path) as input_handler:
         with working_directory(dest):
-            split_model(input_handler)
+            # tidy pdb before splitting
+            tidied = tidy_pdbfile(input_handler)
+            split_model(tidied, outname=str(pdb_file_path.stem))
 
     return sort_numbered_paths(*get_new_models(pdb_file_path))
 

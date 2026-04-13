@@ -1,4 +1,5 @@
 """HADDOCK3 workflow logic."""
+
 import importlib
 import sys
 from pathlib import Path
@@ -45,6 +46,17 @@ class WorkflowManager:
                 self._terminated = i  # type: ignore
                 break
 
+            # Forward any params generated at runtime by some module, for example
+            #  auto-generated ligand topology/parameter files to every subsequent
+            #  step that exposes the same key in its config,
+            # Do this ONLY when the user has not already set a value for that key.
+            output_params = getattr(step.module, "_output_params", {})
+            if output_params:
+                for future_step in self.recipe.steps[i + 1 :]:
+                    for key, value in output_params.items():
+                        if future_step.config.get(key) in (None, ""):
+                            future_step.config[key] = value
+
     def clean(self, terminated: Optional[int] = None) -> None:
         """
         Clean steps.
@@ -62,13 +74,13 @@ class WorkflowManager:
     def postprocess(self, self_contained: bool = False) -> None:
         """Postprocess the workflow."""
         # is the workflow going to be cleaned?
-        is_cleaned = self.recipe.steps[0].config['clean']
+        is_cleaned = self.recipe.steps[0].config["clean"]
         # Is the workflow supposed to run offline
-        offline = self.recipe.steps[0].config['offline']
+        offline = self.recipe.steps[0].config["offline"]
         # running mode
-        mode = self.recipe.steps[0].config['mode']
+        mode = self.recipe.steps[0].config["mode"]
         # ncores
-        ncores = self.recipe.steps[0].config['ncores']
+        ncores = self.recipe.steps[0].config["ncores"]
 
         capri_steps: list[int] = []
         for step in self.recipe.steps:
@@ -87,7 +99,7 @@ class WorkflowManager:
             mode=mode,
             ncores=ncores,
             self_contained=self_contained,
-            )
+        )
         # call cli_traceback. If it fails, it's not a big deal
         try:
             cli_traceback("./", offline=offline)

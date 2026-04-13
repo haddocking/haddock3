@@ -28,7 +28,7 @@ from haddock.gear.known_cns_errors import find_all_cns_errors
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config, find_incompatible_parameters
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libgrid import GRIDScheduler
+from haddock.libs.libgrid import GRIDScheduler, ping_dirac
 from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO, PDBFile
@@ -65,9 +65,7 @@ category_hierarchy = [
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = read_from_yaml_config(
-    modules_defaults_path
-)  # noqa : E501
+non_mandatory_general_parameters_defaults = read_from_yaml_config(modules_defaults_path)  # noqa : E501
 
 incompatible_defaults_params = find_incompatible_parameters(modules_defaults_path)
 
@@ -141,6 +139,14 @@ class BaseHaddockModule(ABC):
         self._params: ParamDict = {}
         self.update_params(update_from_cfg_file=params_fname)
 
+        # Some modules might need to overwrite parameters defined by the user
+        # This can be done via `_output_params` - whatever the module adds to this
+        # variable, will be propagated down to other modules.
+        # For example: `topoaa` needs to pass `ligand_param_fname` to `rigidbody` module
+        #  so somewhere in the `topoaa` module we need to set: `self._output_params[VALUE] = VAR`
+        # IMPORANT: This will be propagated to ALL modules and can have unexpected effects
+        self._output_params: dict = {}
+
     @property
     def params(self) -> ParamDict:
         """Configuration parameters."""  # noqa: D401
@@ -187,9 +193,7 @@ class BaseHaddockModule(ABC):
         >>> m.update_params(...)
         """
         if update_from_cfg_file and params:
-            _msg = (
-                "You can not provide both `update_from_cfg_file` " "and key arguments."
-            )
+            _msg = "You can not provide both `update_from_cfg_file` and key arguments."
             raise TypeError(_msg)
 
         if update_from_cfg_file:
@@ -305,7 +309,7 @@ class BaseHaddockModule(ABC):
             if detected_errors := find_all_cns_errors(self.path):
                 _msg += linesep
                 for error in detected_errors.values():
-                    _msg += f'{str(error["error"])}{linesep}'
+                    _msg += f"{str(error['error'])}{linesep}"
             # Show final error message
             self.finish_with_error(_msg)
 
@@ -399,7 +403,7 @@ EngineMode = Literal["batch", "local", "mpi"]
 def get_engine(
     mode: str,
     params: dict[Any, Any],
-) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
+) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler, GRIDScheduler]]:
     """
     Create an engine to run the jobs.
 
@@ -433,10 +437,22 @@ def get_engine(
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
 
     elif mode == "grid":
-        return partial(GRIDScheduler, params=params)  # type: ignore
+        # `grid` mode should only be used IF the grid is reachable,
+        #  if not it should fallback to `local`
+        grid_available = ping_dirac()
+
+        if grid_available:
+            return partial(GRIDScheduler, params=params)  # type: ignore
+        else:
+            log.warning("GRID is not available, activating fallback using `mode=local`")
+            return partial(  # type: ignore
+                Scheduler,
+                ncores=params["ncores"],
+                max_cpus=params["max_cpus"],
+            )
 
     else:
-        available_engines = ("batch", "local", "mpi")
+        available_engines = ("batch", "local", "mpi", "grid")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"

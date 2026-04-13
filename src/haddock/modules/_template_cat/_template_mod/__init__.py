@@ -11,6 +11,10 @@ Anything you want to write to describe the module, also do it here.
 You should use restructureText syntax:
 
     https://docutils.sourceforge.io/docs/user/rst/quickstart.html
+
+End this module docstring by providing a link to the haddock3-user-manual. e.g:
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topoaa-module>`_
 """
 # Import here what you need
 from pathlib import Path

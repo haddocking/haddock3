@@ -52,9 +52,7 @@ class Persistent:
         self.restr_fname = restr_fname
 
     def __repr__(self) -> str:
-        rep = (
-            f"[{self.file_type}|{self.created}] " f"{Path(self.path) / self.file_name}"
-        )
+        rep = f"[{self.file_type}|{self.created}] {Path(self.path) / self.file_name}"
         return rep
 
     def is_present(self) -> bool:
@@ -74,6 +72,8 @@ class PDBFile(Persistent):
         md5: Optional[str] = None,
         restr_fname: Optional[Union[Path, str]] = None,
         unw_energies: Optional[dict[str, float]] = None,
+        ligand_top_fname: Optional[Union[Path, str]] = None,
+        ligand_param_fname: Optional[Union[Path, str]] = None,
     ) -> None:
         super().__init__(file_name, Format.PDB, path, md5, restr_fname)
 
@@ -86,6 +86,8 @@ class PDBFile(Persistent):
         self.len = score
         self.unw_energies = unw_energies
         self.seed = None
+        self.ligand_top_fname = ligand_top_fname
+        self.ligand_param_fname = ligand_param_fname
 
     def __lt__(self, other: "PDBFile") -> bool:
         return self.score < other.score

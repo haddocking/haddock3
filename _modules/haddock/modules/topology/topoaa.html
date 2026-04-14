@@ -362,6 +362,9 @@
             <span class="c1"># Update molecule parameters with full path to link files</span>
             <span class="n">parameters_for_this_molecule</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">link_files</span><span class="p">)</span>
 
+            <span class="c1"># Dictionary to store ligand files for each model</span>
+            <span class="n">model_ligand_files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
             <span class="c1"># Loop over molecules conformations</span>
             <span class="k">for</span> <span class="n">_task_id</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">splited_models</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sanitizing molecule </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -399,11 +402,21 @@
                             <span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">:</span> <span class="n">top_path</span><span class="p">,</span>
                             <span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">:</span> <span class="n">par_path</span><span class="p">,</span>
                         <span class="p">}</span>
-                        <span class="c1"># Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules</span>
-                        <span class="c1">#  this means that if these were NOT defined in other modules, they will take the</span>
-                        <span class="c1">#  values defined here</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">[</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_path</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">[</span><span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_path</span>
+
+                        <span class="c1"># Store ligand files for this specific model</span>
+                        <span class="n">model_ligand_files</span><span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">stem</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">top_path</span><span class="p">,</span> <span class="n">par_path</span><span class="p">)</span>
+
+                        <span class="c1"># Only set global output params if this is a single model (not ensemble)</span>
+                        <span class="c1"># For ensembles, we&#39;ll store the files per-model in the PDBFile objects</span>
+
+                        <span class="c1"># NOTE: In CNS input generation, PDBFile ligand files take precedence over global params,</span>
+                        <span class="c1"># so this ensures backward compatibility, but may be removed in the future</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splited_models</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="c1"># Overwrite `ligand_top_fname` and `ligand_param_fname` in the following modules</span>
+                            <span class="c1">#  this means that if these were NOT defined in other modules, they will take the</span>
+                            <span class="c1">#  values defined here</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">[</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_path</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_output_params</span><span class="p">[</span><span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par_path</span>
 
                         <span class="n">libpdb</span><span class="o">.</span><span class="n">sanitize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">custom_topology</span><span class="o">=</span><span class="n">top_path</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -486,11 +499,22 @@
                         <span class="p">)</span>
 
                 <span class="n">topology</span> <span class="o">=</span> <span class="n">TopologyFile</span><span class="p">(</span><span class="n">processed_topology</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Get ligand files for this model if they exist</span>
+                <span class="n">ligand_top_fname</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">ligand_param_fname</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">stem</span> <span class="ow">in</span> <span class="n">model_ligand_files</span><span class="p">:</span>
+                    <span class="n">ligand_top_fname</span><span class="p">,</span> <span class="n">ligand_param_fname</span> <span class="o">=</span> <span class="n">model_ligand_files</span><span class="p">[</span>
+                        <span class="n">model</span><span class="o">.</span><span class="n">stem</span>
+                    <span class="p">]</span>
+
                 <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span>
                     <span class="n">file_name</span><span class="o">=</span><span class="n">processed_pdb</span><span class="p">,</span>
                     <span class="n">topology</span><span class="o">=</span><span class="n">topology</span><span class="p">,</span>
                     <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
                     <span class="n">md5</span><span class="o">=</span><span class="n">md5_hash</span><span class="p">,</span>
+                    <span class="n">ligand_top_fname</span><span class="o">=</span><span class="n">ligand_top_fname</span><span class="p">,</span>
+                    <span class="n">ligand_param_fname</span><span class="o">=</span><span class="n">ligand_param_fname</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">stem</span>
                 <span class="n">expected</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdb</span>
@@ -509,7 +533,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 13, 2026.
+      <span class="lastupdated">Last updated on Apr 14, 2026.
       </span></p>
   </div>
 

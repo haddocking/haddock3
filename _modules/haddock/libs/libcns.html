@@ -140,11 +140,11 @@
 <div class="viewcode-block" id="find_desired_linkfiles">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.find_desired_linkfiles">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_desired_linkfiles</span><span class="p">(</span>
-        <span class="n">charged_nter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">charged_cter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">phosphate_5</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+    <span class="n">charged_nter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">charged_cter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">phosphate_5</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FilePath</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find appropriate link files to use depending on terminis states.</span>
 
 <span class="sd">    Parameters</span>
@@ -173,7 +173,7 @@
     <span class="k">elif</span> <span class="ow">not</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="n">charged_cter</span><span class="p">:</span>
         <span class="n">prot_link_key</span> <span class="o">=</span> <span class="s2">&quot;NH,COO-&quot;</span>
     <span class="k">elif</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">charged_cter</span><span class="p">:</span>
-        <span class="n">prot_link_key</span><span class="o">=</span> <span class="s2">&quot;NH3+,CO&quot;</span>
+        <span class="n">prot_link_key</span> <span class="o">=</span> <span class="s2">&quot;NH3+,CO&quot;</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="n">charged_nter</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">charged_cter</span><span class="p">:</span>
         <span class="n">prot_link_key</span> <span class="o">=</span> <span class="s2">&quot;NH,CO&quot;</span>
     <span class="c1"># Point to corresponding file</span>
@@ -261,10 +261,7 @@
 <span class="sd">    param_header: str</span>
 <span class="sd">        The string with the CNS parameters defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">non_empty_parameters</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="p">)</span>
+    <span class="n">non_empty_parameters</span> <span class="o">=</span> <span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 
     <span class="c1"># types besides the ones in the if-statements should not enter this loop</span>
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">non_empty_parameters</span><span class="p">:</span>
@@ -317,12 +314,8 @@
 
 
 
-<span class="n">load_axis</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-    <span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Axis</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="p">)</span>  <span class="c1"># noqa: E501</span>
-<span class="n">load_tensor</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-    <span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Tensors</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="p">)</span>  <span class="c1"># noqa: E501</span>
+<span class="n">load_axis</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Axis</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+<span class="n">load_tensor</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Tensors</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
 <span class="n">prepare_output</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
     <span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Output structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="p">)</span>  <span class="c1"># noqa: E501</span>
@@ -459,8 +452,19 @@
     <span class="n">default_params</span> <span class="o">=</span> <span class="n">load_workflow_params</span><span class="p">(</span><span class="o">**</span><span class="n">defaults</span><span class="p">)</span>
     <span class="n">default_params</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">,</span> <span class="n">ambig_fname</span><span class="p">)</span>
 
+    <span class="c1"># Check if any PDBFile has ligand files and override global parameters</span>
+    <span class="c1"># This is important for ensembles with autotoppar where each model has different ligand files</span>
+    <span class="n">pdb_files</span> <span class="o">=</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">input_element</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">pdb_files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_top_fname</span><span class="p">:</span>
+            <span class="n">default_params</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s2">&quot;ligand_top_fname&quot;</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_top_fname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_param_fname</span><span class="p">:</span>
+            <span class="n">default_params</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span>
+                <span class="s2">&quot;ligand_param_fname&quot;</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_param_fname</span>
+            <span class="p">)</span>
+
     <span class="c1"># write the PDBs</span>
-    <span class="n">pdb_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span> <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">input_element</span><span class="p">)]</span>
+    <span class="n">pdb_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span> <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">pdb_files</span><span class="p">]</span>
 
     <span class="c1"># write the PSFs</span>
     <span class="n">psf_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -566,7 +570,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 13, 2026.
+      <span class="lastupdated">Last updated on Apr 14, 2026.
       </span></p>
   </div>
 

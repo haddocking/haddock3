@@ -173,6 +173,13 @@
             <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">)</span>
             <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>
             <span class="n">model</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>  <span class="c1"># type: ignore</span>
+
+            <span class="c1"># Pass the toppar ahead</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">ligand_param_fname</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">ligand_top_fname</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">ligand_param_fname</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">ligand_param_fname</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">ligand_top_fname</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">ligand_top_fname</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
             <span class="n">job</span> <span class="o">=</span> <span class="n">CNSJob</span><span class="p">(</span><span class="n">inp_input</span><span class="p">,</span> <span class="n">log_fname</span><span class="p">,</span> <span class="n">err_fname</span><span class="p">,</span> <span class="n">envvars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">envvars</span><span class="p">)</span>
@@ -292,7 +299,7 @@
                 <span class="s2">&quot;&#39;hbond_fname&#39; parameter(s). &quot;</span>
                 <span class="s2">&quot;For ab-initio docking, set &#39;cmrest&#39; or &#39;ranair&#39; &quot;</span>
                 <span class="s2">&quot;parameters to true.&quot;</span>
-                <span class="p">)</span></div>
+            <span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -318,7 +325,7 @@
                 <span class="s2">&quot;Sampling is smaller than the number&quot;</span>
                 <span class="s2">&quot; of model combinations &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;#model_combinations=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">models_to_dock</span><span class="p">)</span><span class="si">}</span><span class="s2">,&quot;</span>
-                <span class="sa">f</span><span class="s1">&#39; sampling=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="sa">f</span><span class="s2">&quot; sampling=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sampling&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># get all the different ambig files</span>
@@ -340,12 +347,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
             <span class="c1"># Note: `batch` and (pseudo)-`mpi` mode uses files to communicate and cannot extract the information from the task object.</span>
             <span class="n">cns_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_cns_input_sequential</span><span class="p">(</span>
-                <span class="n">models_to_dock</span><span class="p">,</span> <span class="n">sampling_factor</span><span class="p">,</span> <span class="n">ambig_fnames</span>  <span class="c1"># type: ignore</span>
+                <span class="n">models_to_dock</span><span class="p">,</span>
+                <span class="n">sampling_factor</span><span class="p">,</span>
+                <span class="n">ambig_fnames</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cns_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_cns_input_parallel</span><span class="p">(</span>
-                <span class="n">models_to_dock</span><span class="p">,</span> <span class="n">sampling_factor</span><span class="p">,</span> <span class="n">ambig_fnames</span>  <span class="c1"># type: ignore</span>
+                <span class="n">models_to_dock</span><span class="p">,</span>
+                <span class="n">sampling_factor</span><span class="p">,</span>
+                <span class="n">ambig_fnames</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
         <span class="n">jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_cns_jobs</span><span class="p">(</span><span class="n">cns_input</span><span class="p">)</span>
@@ -382,7 +393,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 13, 2026.
+      <span class="lastupdated">Last updated on Apr 14, 2026.
       </span></p>
   </div>
 

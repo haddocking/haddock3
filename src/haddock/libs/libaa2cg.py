@@ -839,16 +839,29 @@ def rename_nucbases(structure):
                         r.resname = ref_dic[r.resname]
 
 
-def martinize(input_pdb, output_path, skipss):
+def martinize(input_pdb: str, output_path: str, skipss: bool):
     """
+    Converts an all-atom (AA) PDB structure into a coarse-grained (CG) model
+    using a MARTINI2.2 mapping and generating CG-to-AA restraints for backmapping.
+    Optionally uses secondary structure for mapping.
     
     Args:
-        input_pdb: str
-        output_path: str
-        skipss: boolean
+        input_pdb (str):
+            Path to the input AA PDB file.
+        output_path (str):
+            Directory where the output files will be written.
+                - A CG PDB file (*_cg.pdb)
+                - A restraint table (*_cg_to_aa.tbl)
+        skipss (bool):
+            If True, skips secondary structure assignment (DSSP step).
+            If False, assigns secondary structure and encodes it
+            into HADDOCK-compatible B-factors.
     
     Returns:
-        cg_pdb_name: str
+        tuple[str, bool]:
+            cg_pdb_name: Path to the generated CG PDB file.
+            shape: True if at least one residue with name "SHA" (shape bead)
+            is detected in the structure, False otherwise.
     """
     shape = False
 

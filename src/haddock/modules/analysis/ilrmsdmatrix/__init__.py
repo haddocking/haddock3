@@ -14,6 +14,9 @@ step of the workflow by means of the json file `rmsd_matrix.json`.
 IMPORTANT: the module assumes coherent numbering for all the receptor and ligand
 chains, as no alignment is performed. The user must ensure that the numbering
 is coherent.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/analysis.html#ilrmsdmatrix-module>`_
 """
 
 import os

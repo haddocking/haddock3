@@ -1,6 +1,11 @@
 # Changelog
 
-- 2026-03-30: Implemented separate control of separation and randome rotations of molecules - Issue #1491
+- 2026-04-14: Implemented separate control of separation and randome rotations of molecules - Issue #1491
+- 2026-04-12: Add possibility to run MD (mdref, mdscoring) without solvent - Issue #1512
+- 2026-04-10: Corrected the definition of ion restraints in flexref - Issue #1510
+- 2026-04-10: Removing analysis modules downstream when restarting - Issue #1495
+- 2026-04-08: Improved docstring in modules
+- 2026-04-08: Increased NOE restraints array size in scoring modules - Issue #1501
 - 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485
 - 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481
 - 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG

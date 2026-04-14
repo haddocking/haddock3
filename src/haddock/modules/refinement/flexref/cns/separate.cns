@@ -37,7 +37,7 @@ if ($nfixed < $data.ncomponents) then
         show ave (y) (attribute store4 = 1)
         evaluate ($yc = $result)
         show ave (z) (attribute store4 = 1)
-        evaluatee ($zc = $result)
+        evaluate ($zc = $result)
     end if
 
     do (xcomp = x) (all)

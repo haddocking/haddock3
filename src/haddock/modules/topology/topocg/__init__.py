@@ -67,8 +67,8 @@ def generate_topology(
 
     if not shape:
         output = prepare_output(
-            output_pdb_filename=f"{cg_pdb_name[:-4]}_{force_field}{input_pdb.suffix}",
-            output_psf_filename=f"{cg_pdb_name[:-4]}_{force_field}.{Format.TOPOLOGY}",
+            output_pdb_filename=f"{Path(cg_pdb_name).stem}_{force_field}{input_pdb.suffix}",
+            output_psf_filename=f"{Path(cg_pdb_name).stem}_{force_field}.{Format.TOPOLOGY}",
         )
         input_str = prepare_single_input(str(cg_pdb_name))
     else:

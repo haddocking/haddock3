@@ -863,7 +863,7 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
             shape: True if at least one residue with name "SHA" (shape bead)
             is detected in the structure, False otherwise.
     """
-    shape = False
+    shape: bool = False
 
     if not input_pdb:
         emsg = "No input file detected"
@@ -948,7 +948,7 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
     cg_model = structure_builder.get_structure()
 
     # Write CG structure
-    cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
+    cg_pdb_name = f"../{output_path}/{Path(pdbf_path).stem}_cg.pdb"
     io.set_structure(cg_model)
     io.save("temp.pdb", write_end=1)
 
@@ -956,15 +956,11 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
     out = open(cg_pdb_name, "w")
     for line in open("temp.pdb", "r"):
-        if "ATOM" in line[:4]:
+        if line.startswith("ATOM"):
             atom_name = line[12:16].split()[0]
             # mind the spacing
-            if len(atom_name) == 3:
-                n_l = f"{line[:12]} {atom_name}{line[16:]}"
-            elif len(atom_name) == 2:
-                n_l = f"{line[:12]} {atom_name} {line[16:]}"
-            elif len(atom_name) == 1:
-                n_l = f"{line[:12]} {atom_name}  {line[16:]}"
+            if 1 <= len(atom_name) <= 3:
+                n_l = f"{line[:12]} {atom_name:<3s}{line[16:]}"
             else:
                 n_l = line
         else:
@@ -974,7 +970,7 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
     Path("temp.pdb").unlink(missing_ok=True)
 
     # Write Restraints
-    tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg_to_aa.tbl"
+    tbl_file_name = f"../{output_path}/{Path(pdbf_path).stem}_cg_to_aa.tbl"
     tbl_file = open(tbl_file_name, "w")
     tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
     tbl_file.write(f"\n{tbl_str}")

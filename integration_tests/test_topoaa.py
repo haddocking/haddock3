@@ -2,6 +2,7 @@ import tempfile
 import copy
 from pathlib import Path
 
+import shutil
 import pytest
 
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
@@ -479,3 +480,35 @@ def test_topoaa_module_dna_5_oh(topoaa_module):
         ]
     )
     assert "H5T" in five_prime
+
+
+def test_topoaa_with_ensemble_ligand_files(topoaa_module):
+    """Test topoaa module with ensemble containing different ligand files."""
+    molecules = [
+        Path(GOLDEN_DATA, "prot.pdb"),
+        Path(GOLDEN_DATA, "oseltamivir_ens.pdb"),
+    ]
+
+    topoaa_module.params["molecules"] = molecules
+    topoaa_module.params["mol1"]["prot_segid"] = "A"
+    topoaa_module.params["mol2"] = copy.deepcopy(topoaa_module.params["mol1"])
+    topoaa_module.params["mol2"]["prot_segid"] = "B"
+    topoaa_module.params["autotoppar"] = True
+
+    topoaa_module.run()
+
+    expected_files = [
+        "prot_haddock.pdb",
+        "prot_haddock.psf",
+        "oseltamivir_from_oseltamivir_ens_1_haddock.pdb",
+        "oseltamivir_from_oseltamivir_ens_1_haddock.psf",
+        "oseltamivir_from_oseltamivir_ens_2_haddock.pdb",
+        "oseltamivir_from_oseltamivir_ens_2_haddock.psf",
+        "oseltamivir_ens_1_prodrg.param",
+        "oseltamivir_ens_2_prodrg.param",
+        "oseltamivir_ens_1_prodrg.top",
+        "oseltamivir_ens_2_prodrg.top",
+    ]
+
+    for f in expected_files:
+        assert Path(topoaa_module.path, f).exists()

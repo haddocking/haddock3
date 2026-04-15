@@ -385,28 +385,31 @@ def prepare_cns_input(
     cgtoaa_tbl_list: list[Path] = []
     if cgtoaa==True:
         if isinstance(input_element.aa_topology, (list)):
+            shape_list = []
             for psf in input_element.aa_topology:
+                shape_list.append(libpdb.check_mol_shape(psf.rel_path))
                 if psf is None:
                     raise ValueError(f"All-Atom Topology not found {input_element.rel_path}. "
                     "Conversion to all-atom requires a topology generated with [topoaa] and "
                     "[topocg].")
                 else:
                     aa_psf_list.append(psf.rel_path.as_posix())
-            for tbl in input_element.cgtoaa_tbl :
-                if tbl is None:
+            for i, tbl in enumerate(input_element.cgtoaa_tbl):
+                if tbl is None and not shape_list[i]:
                     raise ValueError(f"Coarse-Crain to All-Atom restraint file not found "
                     "{input_element.rel_path}. Conversion to all-atom requires a restraint file "
                     "generated with [topocg].")
-                else:
+                elif not shape_list[i]:
                     cgtoaa_tbl_list.append(tbl.as_posix())
         else:
             pdb = input_element
+            shape = libpdb.check_mol_shape(pdb.rel_path)
             if pdb.aa_topology is None:
                 raise ValueError(f"All-Atom Topology not found {input_element.rel_path}."
                 "Conversion to all-atom requires a topology generated with [topoaa] and "
                 "[topocg].")
             aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
-            if pdb.cgtoaa_tbl is None:
+            if pdb.cgtoaa_tbl is None and not shape:
                 raise ValueError(f"Coarse-Crain to All-Atom restraint file not found for"
                 " entry: {input_element.rel_path}. Conversion to all-atom requires a restraint file "
                 "generated with [topocg].")

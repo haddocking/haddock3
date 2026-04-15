@@ -23,20 +23,6 @@ while ($ncount < $data.ncomponents) loop fixed
     end if
 end loop fixed
 
-if ($homosymmetry eq false) then
-    ! Random translation within a 10A cube
-    evaluate ($ncount = 0)
-    while ($ncount < $data.ncomponents) loop randtrans
-        evaluate ($ncount = $ncount +1)
-        if ($mol_fix_origin_$ncount eq false) then
-            evaluate ($xd = 10.0 * (0.5 - ran()))
-            evaluate ($yd = 10.0 * (0.5 - ran()))
-            evaluate ($zd = 10.0 * (0.5 - ran()))
-            coor trans sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) vector=($xd,$yd,$zd) end
-        end if
-    end loop randtrans
-end if
-
 ! Random rotation of molecules
 evaluate ($ncount = 0)
 evaluate ($nrotset = 0)

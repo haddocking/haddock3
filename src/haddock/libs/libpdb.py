@@ -506,3 +506,20 @@ def check_combination_chains(combination: list[PDBFile]) -> list[str]:
             raise ValueError(f"Chain/seg IDs are not unique for pdbs {combination}.")
         chainid_list.extend(chainsegs)
     return chainid_list
+
+
+def check_mol_shape(input_mol: Path):
+    """
+    Checks if molecules provided is a shape or not.
+    
+    Args:
+        input_pdb (PDBFile): input PDB to check if shape.
+    
+    Returns:
+        bool: True if shape, False if not.
+    """
+    shape = False
+    with open(input_mol, 'rt') as input_file_mol:
+        if any('SHA' in line for line in input_file_mol):
+            shape = True
+    return shape

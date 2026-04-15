@@ -50,6 +50,7 @@ def generate_topology(
     default_params_path: Optional[FilePath] = None,
     write_to_disk: Optional[bool] = True,
     force_field: str = "martini2",
+    shape: bool = False,
 ) -> Union[Path, str]:
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
@@ -62,13 +63,12 @@ def generate_topology(
         path=default_params_path
     )
 
-    # AA to CG
-    cg_pdb_name, shape = martinize(input_pdb, output_path, False)
-
     if not shape:
+        # AA to CG
+        cg_pdb_name = martinize(input_pdb, output_path, False)
         output = prepare_output(
-            output_pdb_filename=f"{cg_pdb_name[:-4]}_{force_field}{input_pdb.suffix}",
-            output_psf_filename=f"{cg_pdb_name[:-4]}_{force_field}.{Format.TOPOLOGY}",
+            output_pdb_filename=f"{Path(cg_pdb_name).stem}_{force_field}{input_pdb.suffix}",
+            output_psf_filename=f"{Path(cg_pdb_name).stem}_{force_field}.{Format.TOPOLOGY}",
         )
         input_str = prepare_single_input(str(cg_pdb_name))
     else:
@@ -97,9 +97,9 @@ def generate_topology(
     if write_to_disk:
         output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
         output_inp_filename.write_text(inp)
-        return output_inp_filename, shape
+        return output_inp_filename
     else:
-        return inp, shape
+        return inp
 
 
 class HaddockModule(BaseCNSModule):
@@ -218,9 +218,9 @@ class HaddockModule(BaseCNSModule):
 
         for i, molecule in enumerate(molecules, start=1):
             #self.log(f"Molecule {i}: {molecule.with_parent}")
-            models_dic[i] = []
-            shape_dic[i] = []
+            shape_dic[i] = False
             # Copy the molecule to the step folder
+            models_dic[i] = []
 
             # Split models
             # these come already sorted
@@ -228,6 +228,10 @@ class HaddockModule(BaseCNSModule):
                 libpdb.split_ensemble(Path(mol.file_name), dest=Path.cwd(),)[0]
                 for mol in molecule
             ]
+
+            # check for shape
+            if libpdb.check_mol_shape(splited_models[0]):
+                shape_dic[i] = True
 
             # Get psf files for aa topology
             psf_files[i] = [
@@ -265,7 +269,7 @@ class HaddockModule(BaseCNSModule):
                     libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topocg_input, shape = generate_topology(
+                topocg_input = generate_topology(
                     model,
                     self.path,
                     self.recipe_str,
@@ -274,9 +278,8 @@ class HaddockModule(BaseCNSModule):
                     default_params_path=self.toppar_path,
                     write_to_disk=self.params["debug"],
                     force_field=force_field,
+                    shape=shape_dic[i]
                 )
-                shape_dic[i].append(shape)
-
                 self.log("Topology CNS input created")
 
                 # Add new job to the pool
@@ -322,13 +325,15 @@ class HaddockModule(BaseCNSModule):
                     model_id = 0
                     origin_name_model = str(model.stem).split(".pdb")[0]
                 
-                shape_mod = shape_dic[i][j]
+                shape_mod = shape_dic[i]
                 if not shape_mod:
                     processed_pdb = Path(f"{origin_name_model}_cg_{force_field}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
+                    processed_cgtoaa_tbl=Path("../"+self.path.as_posix()+"/"+origin_name_model+"_cg_to_aa.tbl")
                 else:
                     processed_pdb = Path(f"{origin_name_model}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}.{Format.TOPOLOGY}")
+                    processed_cgtoaa_tbl=None
 
                 topology = TopologyFile(processed_topology, path=".")
                 psf_file_uniq = psf_files[i][j].as_posix().split('/')
@@ -338,7 +343,7 @@ class HaddockModule(BaseCNSModule):
                     file_name=processed_pdb,
                     topology=topology,
                     aa_topology=aa_topology,
-                    cgtoaa_tbl=Path("../"+self.path.as_posix()+"/"+origin_name_model+"_cg_to_aa.tbl"),
+                    cgtoaa_tbl=processed_cgtoaa_tbl,
                     path=".",
                     md5=md5_hash,
                 )

@@ -839,18 +839,31 @@ def rename_nucbases(structure):
                         r.resname = ref_dic[r.resname]
 
 
-def martinize(input_pdb, output_path, skipss):
+def martinize(input_pdb: str, output_path: str, skipss: bool):
     """
+    Converts an all-atom (AA) PDB structure into a coarse-grained (CG) model
+    using a MARTINI2.2 mapping and generating CG-to-AA restraints for backmapping.
+    Optionally uses secondary structure for mapping.
     
     Args:
-        input_pdb: str
-        output_path: str
-        skipss: boolean
+        input_pdb (str):
+            Path to the input AA PDB file.
+        output_path (str):
+            Directory where the output files will be written.
+                - A CG PDB file (*_cg.pdb)
+                - A restraint table (*_cg_to_aa.tbl)
+        skipss (bool):
+            If True, skips secondary structure assignment (DSSP step).
+            If False, assigns secondary structure and encodes it
+            into HADDOCK-compatible B-factors.
     
     Returns:
-        cg_pdb_name: str
+        tuple[str, bool]:
+            cg_pdb_name: Path to the generated CG PDB file.
+            shape: True if at least one residue with name "SHA" (shape bead)
+            is detected in the structure, False otherwise.
     """
-    shape = False
+    shape: bool = False
 
     if not input_pdb:
         emsg = "No input file detected"
@@ -935,7 +948,7 @@ def martinize(input_pdb, output_path, skipss):
     cg_model = structure_builder.get_structure()
 
     # Write CG structure
-    cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
+    cg_pdb_name = f"../{output_path}/{Path(pdbf_path).stem}_cg.pdb"
     io.set_structure(cg_model)
     io.save("temp.pdb", write_end=1)
 
@@ -943,15 +956,11 @@ def martinize(input_pdb, output_path, skipss):
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
     out = open(cg_pdb_name, "w")
     for line in open("temp.pdb", "r"):
-        if "ATOM" in line[:4]:
+        if line.startswith("ATOM"):
             atom_name = line[12:16].split()[0]
             # mind the spacing
-            if len(atom_name) == 3:
-                n_l = f"{line[:12]} {atom_name}{line[16:]}"
-            elif len(atom_name) == 2:
-                n_l = f"{line[:12]} {atom_name} {line[16:]}"
-            elif len(atom_name) == 1:
-                n_l = f"{line[:12]} {atom_name}  {line[16:]}"
+            if 1 <= len(atom_name) <= 3:
+                n_l = f"{line[:12]} {atom_name:<3s}{line[16:]}"
             else:
                 n_l = line
         else:
@@ -961,7 +970,7 @@ def martinize(input_pdb, output_path, skipss):
     Path("temp.pdb").unlink(missing_ok=True)
 
     # Write Restraints
-    tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg_to_aa.tbl"
+    tbl_file_name = f"../{output_path}/{Path(pdbf_path).stem}_cg_to_aa.tbl"
     tbl_file = open(tbl_file_name, "w")
     tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
     tbl_file.write(f"\n{tbl_str}")

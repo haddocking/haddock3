@@ -616,6 +616,9 @@
 <span class="sd">    list of str</span>
 <span class="sd">        List containing strings with the names of the step folders.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make sure the folder exists, otherwise this might throw an error</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[]</span>
     <span class="n">folders</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">())</span>
     <span class="n">steps</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
         <span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folders</span> <span class="k">if</span> <span class="n">step_folder_regex_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">f</span><span class="p">)),</span>
@@ -674,7 +677,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 14, 2026.
+      <span class="lastupdated">Last updated on Apr 15, 2026.
       </span></p>
   </div>
 

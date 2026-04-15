@@ -491,6 +491,9 @@ def get_module_steps_folders(
     list of str
         List containing strings with the names of the step folders.
     """
+    # Make sure the folder exists, otherwise this might throw an error
+    if not Path(folder).exists():
+        return []
     folders = (p.name for p in Path(folder).iterdir() if p.is_dir())
     steps = sorted(
         (f for f in folders if step_folder_regex_re.search(f)),

@@ -1,6 +1,7 @@
 # Changelog
 
 - 2026-04-14: Implemented separate control of separation and randome rotations of molecules - Issue #1491
+- 2026-04-15: Solve bug related to workflow restarting without analysis folder - Issue #1518
 - 2026-04-14: Increase max number of timesteps in openmm module - BioExcel forum 6072
 - 2026-04-12: Add possibility to run MD (mdref, mdscoring) without solvent - Issue #1512
 - 2026-04-10: Corrected the definition of ion restraints in flexref - Issue #1510

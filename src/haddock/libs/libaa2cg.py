@@ -863,7 +863,6 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
             shape: True if at least one residue with name "SHA" (shape bead)
             is detected in the structure, False otherwise.
     """
-    shape: bool = False
 
     if not input_pdb:
         emsg = "No input file detected"
@@ -920,8 +919,6 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
             for residue in mapping_dic:
                 if residue.id[0] != " ":  # filter HETATMS
                     continue
-                if residue.resname == "SHA":
-                    shape = True
 
                 structure_builder.init_residue(residue.resname, residue.id[0],
                                                residue.id[1], residue.id[2])
@@ -976,5 +973,5 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
     tbl_file.write(f"\n{tbl_str}")
     tbl_file.close()
 
-    return cg_pdb_name, shape
+    return cg_pdb_name
 

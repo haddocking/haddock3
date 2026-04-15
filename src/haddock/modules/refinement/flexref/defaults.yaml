@@ -1756,7 +1756,7 @@ separate:
   title: Separate molecules
   short: Translate molecules to separate them
   long: Translate molecules to separate them ensuring a minimum distance
-    that allows rotation without clashes
+    that allows rotations (controlled by the randrot parameter) without clashes
   group: 'sampling'
   explevel: easy
 randrot:

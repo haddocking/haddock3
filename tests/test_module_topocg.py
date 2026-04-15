@@ -72,7 +72,8 @@ def test_generate_topology(topocg, protein):
             force_field=force_field,
         )
 
-    assert observed_inp_out == Path(protein.name).with_suffix(".inp")
+    assert observed_inp_out[0] == Path(protein.name).with_suffix(".inp")
+    assert isinstance(observed_inp_out[1], bool)
     
     # Confirm the expected output file exists
     expected_filename = topocg.path.resolve() /".." / f"{protein.stem}_cg.pdb" #Path(f"/tmp/{protein.stem}_cg.pdb")

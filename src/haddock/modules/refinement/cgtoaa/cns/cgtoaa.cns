@@ -143,8 +143,8 @@ end
 
 evaluate ($nchain=0)
 while ($nchain < $data.ncomponents) loop nloop1
+    evaluate ($nchain = $nchain + 1)
     if ($mol_shape_$nchain eq false) then
-        evaluate ($nchain = $nchain + 1)
         noe @@$input_cgtbl_filename_$nchain end
     end if
 end loop nloop1

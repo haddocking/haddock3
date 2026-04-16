@@ -104,10 +104,6 @@ define(
 {+ choice: true false +}
 {===>} hydrogen_flag=true;
 
-{* which hydrogens to build *}
-{+ choice: "all" "unknown" +}
-{===>} hydrogen_build="all";
-
 {* selection of atoms other than hydrogens for which coordinates
    will be generated *}
 {* to generate coordinates for all unknown atoms use: (not(known)) *}

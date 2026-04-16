@@ -1,5 +1,6 @@
 import tempfile
 import copy
+import gzip
 from pathlib import Path
 
 import shutil
@@ -147,6 +148,7 @@ def test_topoaa_module_ligand(topoaa_module):
     topoaa_module.params["ligand_top_fname"] = Path(GOLDEN_DATA, "ligand.top")
     topoaa_module.params["ligand_param_fname"] = Path(GOLDEN_DATA, "ligand.param")
     topoaa_module.params["delenph"] = False
+    topoaa_module.params["hydrogen_build"] = "unknown"
     topoaa_module.params["preprocess"] = False
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
@@ -162,6 +164,9 @@ def test_topoaa_module_ligand(topoaa_module):
     assert expected_psf.exists()
     assert expected_pdb.exists()
     assert expected_gz.exists()
+    file_content = gzip.open(Path(topoaa_module.path, "oseltamivir.out.gz"), 'rt').read()
+    assert 'hydrogen_build="unknown"' in file_content
+
 
 
 def test_topoaa_module_ligand_automated(topoaa_module):

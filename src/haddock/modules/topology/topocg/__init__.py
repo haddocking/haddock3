@@ -271,7 +271,7 @@ class HaddockModule(BaseCNSModule):
                 # Prepare generation of topologies jobs
                 topocg_input = generate_topology(
                     model,
-                    self.path,
+                    self.path.resolve().parent,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
@@ -329,7 +329,8 @@ class HaddockModule(BaseCNSModule):
                 if not shape_mod:
                     processed_pdb = Path(f"{origin_name_model}_cg_{force_field}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
-                    processed_cgtoaa_tbl=Path("../"+self.path.as_posix()+"/"+origin_name_model+"_cg_to_aa.tbl")
+                    processed_cgtoaa_tbl=Path(
+                        self.path.resolve().parent, f"{origin_name_model}_cg_to_aa.tbl").resolve()
                 else:
                     processed_pdb = Path(f"{origin_name_model}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}.{Format.TOPOLOGY}")

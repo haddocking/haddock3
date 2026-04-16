@@ -945,7 +945,7 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
     cg_model = structure_builder.get_structure()
 
     # Write CG structure
-    cg_pdb_name = f"../{output_path}/{Path(pdbf_path).stem}_cg.pdb"
+    cg_pdb_name = f"{output_path}/{Path(pdbf_path).stem}_cg.pdb"
     io.set_structure(cg_model)
     io.save("temp.pdb", write_end=1)
 
@@ -967,7 +967,7 @@ def martinize(input_pdb: str, output_path: str, skipss: bool):
     Path("temp.pdb").unlink(missing_ok=True)
 
     # Write Restraints
-    tbl_file_name = f"../{output_path}/{Path(pdbf_path).stem}_cg_to_aa.tbl"
+    tbl_file_name = f"{output_path}/{Path(pdbf_path).stem}_cg_to_aa.tbl"
     tbl_file = open(tbl_file_name, "w")
     tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
     tbl_file.write(f"\n{tbl_str}")

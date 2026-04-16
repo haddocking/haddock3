@@ -24,7 +24,8 @@ end if
 !==================================================================!
 
 evaluate ($saprotocol.crossdock=$crossdock)
-evaluate ($saprotocol.randorien=$randorien)
+evaluate ($saprotocol.randrot=$randrot)
+evaluate ($saprotocol.separate=$separate)
 evaluate ($saprotocol.rigidtrans=$rigidtrans)
 evaluate ($saprotocol.ntrials=$ntrials)
 evaluate ($saprotocol.inter_rigid=$inter_rigid)
@@ -312,8 +313,10 @@ while ($nrig < $SaProtocol.ntrials) loop trials
     end if
 
     ! random placement of molecules
-    if ($SaProtocol.randorien eq true) then
+    if ($SaProtocol.separate eq true) then
         @MODULE:separate.cns
+    end if
+    if ($SaProtocol.randrot eq true) then
         @MODULE:random_rotations.cns
     end if
 
@@ -342,7 +345,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
         evaluate ($imini = $imini + 1)
         eval ($ministeps = 500 * nint ($data.ncomponents/6 + 1))
-        if ($SaProtocol.randorien eq true) then
+        if ($SaProtocol.separate eq true) then
             flag excl vdw elec end
         end if
         eval ($nchain1 = 0)

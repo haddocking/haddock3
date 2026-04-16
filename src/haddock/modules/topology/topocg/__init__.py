@@ -274,7 +274,7 @@ class HaddockModule(BaseCNSModule):
                 # Prepare generation of topologies jobs
                 topocg_input = generate_topology(
                     model,
-                    self.path,
+                    self.path.resolve().parent,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
@@ -341,7 +341,7 @@ class HaddockModule(BaseCNSModule):
                         ext=Format.TOPOLOGY,
                         )
                     processed_cgtoaa_tbl = gen_cg_tbl_backmapping_fname(
-                        f"../{self.path.as_posix()}",
+                        self.path.resolve().parent,
                         origin_name_model,
                         )
                 else:
@@ -358,6 +358,7 @@ class HaddockModule(BaseCNSModule):
                     topology=topology,
                     aa_topology=aa_topology,
                     cgtoaa_tbl=processed_cgtoaa_tbl,
+                    shape=shape_mod,
                     path=".",
                     md5=md5_hash,
                 )

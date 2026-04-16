@@ -385,9 +385,7 @@ def prepare_cns_input(
     cgtoaa_tbl_list: list[Path] = []
     if cgtoaa==True:
         if isinstance(input_element.aa_topology, (list)):
-            shape_list = []
             for psf in input_element.aa_topology:
-                shape_list.append(libpdb.check_mol_shape(psf.rel_path))
                 if psf is None:
                     raise ValueError(f"All-Atom Topology not found {input_element.rel_path}. "
                     "Conversion to all-atom requires a topology generated with [topoaa] and "
@@ -395,11 +393,11 @@ def prepare_cns_input(
                 else:
                     aa_psf_list.append(psf.rel_path.as_posix())
             for i, tbl in enumerate(input_element.cgtoaa_tbl):
-                if tbl is None and not shape_list[i]:
+                if tbl is None and not input_element.shape[i]:
                     raise ValueError(f"Coarse-Crain to All-Atom restraint file not found "
                     "{input_element.rel_path}. Conversion to all-atom requires a restraint file "
                     "generated with [topocg].")
-                elif not shape_list[i]:
+                elif not input_element.shape[i]:
                     cgtoaa_tbl_list.append(tbl.as_posix())
         else:
             pdb = input_element
@@ -488,9 +486,11 @@ def prepare_expected_pdb(
         pdb.topology = [p.topology for p in model_obj]
         pdb.aa_topology = [p.aa_topology for p in model_obj]
         pdb.cgtoaa_tbl = [p.cgtoaa_tbl for p in model_obj]
+        pdb.shape = [p.shape for p in model_obj]
     else:
         pdb.topology = model_obj.topology
         pdb.seed = model_obj.seed
         pdb.aa_topology = model_obj.aa_topology
         pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
+        pdb.shape = model_obj.shape
     return pdb

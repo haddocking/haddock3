@@ -319,7 +319,7 @@ class HaddockModule(BaseCNSModule):
                     md5_hash = None
                 else:
                     md5_hash = md5_dic[j]
-                origin_name_model = origin_names[j].stem
+                origin_name_model = model.stem
 
                 # FIXME: _model_id not used ?
                 try:

@@ -238,7 +238,7 @@ class HaddockModule(BaseCNSModule):
 
             # Get psf files for aa topology
             psf_files[i] = [
-                Path(f"{mol.stem}.psf")
+                Path(f"{mol.stem}.{Format.TOPOLOGY}")
                 for mol in splited_models
                 ]
 

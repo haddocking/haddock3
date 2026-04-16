@@ -47,14 +47,14 @@ mol_shape_1
 | *group*: molecule
 | *explevel*: easy
 
-randorien
-~~~~~~~~~
+randrot
+~~~~~~~
 
 | *default*: True
 | *type*: boolean
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
+| *title*: Random rotations
+| *short description*: Randomly rotate the molecules around their respective center of mass
+| *long description*: Randomly rotate the molecules around their respective center of mass
 | *group*: sampling
 | *explevel*: easy
 
@@ -68,6 +68,17 @@ sampling
 | *max*: 50000
 | *short description*: Number of rigidbody docking models to generate
 | *long description*: Number of rigidbody docking models to generate
+| *group*: sampling
+| *explevel*: easy
+
+separate
+~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Separate molecules
+| *short description*: Translate molecules to separate them
+| *long description*: Translate molecules to separate them ensuring a minimum distance that allows rotations (controlled by the randrot parameter) without clashes
 | *group*: sampling
 | *explevel*: easy
 

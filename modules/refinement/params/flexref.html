@@ -202,6 +202,30 @@
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
+<section id="randrot">
+<h2>randrot<a class="headerlink" href="#randrot" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Random rotations</div>
+<div class="line"><em>short description</em>: Randomly rotate the molecules around their respective center of mass</div>
+<div class="line"><em>long description</em>: Randomly rotate the molecules around their respective center of mass</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="separate">
+<h2>separate<a class="headerlink" href="#separate" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Separate molecules</div>
+<div class="line"><em>short description</em>: Translate molecules to separate them</div>
+<div class="line"><em>long description</em>: Translate molecules to separate them ensuring a minimum distance that allows rotations (controlled by the randrot parameter) without clashes</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="sinter-rigid-final">
 <h2>sinter_rigid_final<a class="headerlink" href="#sinter-rigid-final" title="Link to this heading"></a></h2>
 <div class="line-block">
@@ -2817,18 +2841,6 @@
 <div class="line"><em>explevel</em>: guru</div>
 </div>
 </section>
-<section id="randorien">
-<h2>randorien<a class="headerlink" href="#randorien" title="Link to this heading"></a></h2>
-<div class="line-block">
-<div class="line"><em>default</em>: False</div>
-<div class="line"><em>type</em>: boolean</div>
-<div class="line"><em>title</em>: Randomize starting orientations</div>
-<div class="line"><em>short description</em>: Randomize starting orientations</div>
-<div class="line"><em>long description</em>: Randomize starting orientations by separating the molecules in space and randomly rotating those</div>
-<div class="line"><em>group</em>: sampling</div>
-<div class="line"><em>explevel</em>: guru</div>
-</div>
-</section>
 <section id="sinter-cool2-final">
 <h2>sinter_cool2_final<a class="headerlink" href="#sinter-cool2-final" title="Link to this heading"></a></h2>
 <div class="line-block">
@@ -3036,7 +3048,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 15, 2026.
+      <span class="lastupdated">Last updated on Apr 16, 2026.
       </span></p>
   </div>
 

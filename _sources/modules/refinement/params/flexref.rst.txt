@@ -115,6 +115,28 @@ mol_shape_1
 | *group*: molecule
 | *explevel*: easy
 
+randrot
+~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Random rotations
+| *short description*: Randomly rotate the molecules around their respective center of mass
+| *long description*: Randomly rotate the molecules around their respective center of mass
+| *group*: sampling
+| *explevel*: easy
+
+separate
+~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Separate molecules
+| *short description*: Translate molecules to separate them
+| *long description*: Translate molecules to separate them ensuring a minimum distance that allows rotations (controlled by the randrot parameter) without clashes
+| *group*: sampling
+| *explevel*: easy
+
 sinter_rigid_final
 ~~~~~~~~~~~~~~~~~~
 
@@ -2538,17 +2560,6 @@ log_level
 | *short description*: Set the log level verbosity for CNS
 | *long description*: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
 | *group*: module
-| *explevel*: guru
-
-randorien
-~~~~~~~~~
-
-| *default*: False
-| *type*: boolean
-| *title*: Randomize starting orientations
-| *short description*: Randomize starting orientations
-| *long description*: Randomize starting orientations by separating the molecules in space and randomly rotating those
-| *group*: sampling
 | *explevel*: guru
 
 sinter_cool2_final

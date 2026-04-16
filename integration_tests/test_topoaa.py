@@ -165,7 +165,7 @@ def test_topoaa_module_ligand(topoaa_module):
     assert expected_gz.exists()
 
 
-def test_topoaa_module_ligand(topoaa_module):
+def test_topoaa_module_ligand_hydrogen_build(topoaa_module):
     """Topoaa with ligand as input and hydrogen_build set to unknown"""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "oseltamivir.pdb"),

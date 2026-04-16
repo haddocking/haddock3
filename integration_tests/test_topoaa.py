@@ -58,7 +58,7 @@ def extract_nter_cter(fpath) -> tuple[str, str]:
 
 @has_grid
 def test_topoaa_module_protein_grid(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with protein-protein input."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
         Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
@@ -98,7 +98,7 @@ def test_topoaa_module_protein_grid(topoaa_module):
 
 
 def test_topoaa_module_protein(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with protein-protein input."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
         Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
@@ -141,7 +141,7 @@ def test_topoaa_module_protein(topoaa_module):
 
 
 def test_topoaa_module_ligand(topoaa_module):
-    """Topoaa with ligand as input"""
+    """Topoaa with ligand as input."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "oseltamivir.pdb"),
     ]
@@ -166,7 +166,7 @@ def test_topoaa_module_ligand(topoaa_module):
 
 
 def test_topoaa_module_ligand_hydrogen_build(topoaa_module):
-    """Topoaa with ligand as input and hydrogen_build set to unknown"""
+    """Topoaa with ligand as input and hydrogen_build set to unknown."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "oseltamivir.pdb"),
     ]

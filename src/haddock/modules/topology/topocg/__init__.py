@@ -345,6 +345,7 @@ class HaddockModule(BaseCNSModule):
                     topology=topology,
                     aa_topology=aa_topology,
                     cgtoaa_tbl=processed_cgtoaa_tbl,
+                    shape=shape_mod,
                     path=".",
                     md5=md5_hash,
                 )

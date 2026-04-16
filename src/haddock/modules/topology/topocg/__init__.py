@@ -28,13 +28,16 @@ from haddock.libs.libcns import (
     prepare_output,
     prepare_single_input,
     )
+from haddock.libs.libaa2cg import (
+    martinize,
+    gen_cg_filename,
+    gen_cg_tbl_backmapping_fname,
+    )
 from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
-
-from haddock.libs.libaa2cg import martinize 
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -235,9 +238,9 @@ class HaddockModule(BaseCNSModule):
 
             # Get psf files for aa topology
             psf_files[i] = [
-                    Path(mol.as_posix()[:-4]+".psf") 
-                    for mol in splited_models
-                    ]
+                Path(mol.parent, f"{mol.stem}.{Format.TOPOLOGY}")
+                for mol in splited_models
+                ]
 
             # get the MD5 hash of each model
             ens_dic[i] = [
@@ -316,29 +319,39 @@ class HaddockModule(BaseCNSModule):
                     md5_hash = None
                 else:
                     md5_hash = md5_dic[j]
-                origin_name_model = origin_names[j]
+                origin_name_model = model.stem
 
+                # FIXME: _model_id not used ?
                 try:
-                    model_id = int(model.stem.split("_")[-2])
-                    origin_name_model = ("_").join(model.stem.split("_"))
+                    _model_id = int(model.stem.split("_")[-2])
                 except ValueError:
-                    model_id = 0
-                    origin_name_model = str(model.stem).split(".pdb")[0]
-                
+                    _model_id = 0
+
                 shape_mod = shape_dic[i]
                 if not shape_mod:
-                    processed_pdb = Path(f"{origin_name_model}_cg_{force_field}.{Format.PDB}")
-                    processed_topology = Path(f"{origin_name_model}_cg_{force_field}.{Format.TOPOLOGY}")
-                    processed_cgtoaa_tbl=Path(
-                        self.path.resolve().parent, f"{origin_name_model}_cg_to_aa.tbl").resolve()
+                    processed_pdb = gen_cg_filename(
+                        "",
+                        origin_name_model,
+                        force_field=force_field,
+                        )
+                    processed_topology = gen_cg_filename(
+                        "",
+                        origin_name_model,
+                        force_field=force_field,
+                        ext=Format.TOPOLOGY,
+                        )
+                    processed_cgtoaa_tbl = gen_cg_tbl_backmapping_fname(
+                        self.path.resolve().parent,
+                        origin_name_model,
+                        )
                 else:
                     processed_pdb = Path(f"{origin_name_model}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}.{Format.TOPOLOGY}")
-                    processed_cgtoaa_tbl=None
+                    processed_cgtoaa_tbl = None
 
                 topology = TopologyFile(processed_topology, path=".")
                 psf_file_uniq = psf_files[i][j].as_posix().split('/')
-                aa_topo_path = psf_file_uniq[0] + "/" + psf_file_uniq[1]
+                aa_topo_path = f"{psf_file_uniq[0]}/{psf_file_uniq[1]}"
                 aa_topology = TopologyFile(psf_file_uniq[2], path=aa_topo_path)
                 pdb = PDBFile(
                     file_name=processed_pdb,

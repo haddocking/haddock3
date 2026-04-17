@@ -227,6 +227,11 @@ class HaddockModule(BaseHaddockModule):
         # Extract best references per input model
         best_ref_jobs = extract_models_best_references(jobs)
 
+        # Add temporary 'rmds' field to PDBFile so it gets stored in io.json
+        # in case next module needs it
+        for capri_obj in best_ref_jobs:
+            models[capri_obj.identificator - 1].rmsd = float(capri_obj.rmsd)
+
         # Write standard capri_ss file
         extract_data_from_capri_class(
             capri_objects=best_ref_jobs,

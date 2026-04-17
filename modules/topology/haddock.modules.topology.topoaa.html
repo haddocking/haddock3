@@ -205,6 +205,19 @@ the <code class="docutils literal notranslate"><span class="pre">[topoaa]</span>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
+<section id="hydrogen-build">
+<h4>hydrogen_build<a class="headerlink" href="#hydrogen-build" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘all’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Building of hydrogen atoms</div>
+<div class="line"><em>choices</em>: [‘all’, ‘unknown’]</div>
+<div class="line"><em>short description</em>: If set to all, all hydrogen atoms will be regenerated</div>
+<div class="line"><em>long description</em>: By default, all hydrogen atoms are generated (which gives the most robust behavior). But in some cases it might be better to only rebuild the unknown ones (e.g. for small ligand, or very large molecules to save time). In that case the hydrogen_build should be set to unknown.</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="ligand-param-fname">
 <h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Link to this heading"></a></h4>
 <div class="line-block">
@@ -470,7 +483,7 @@ the <code class="docutils literal notranslate"><span class="pre">[topoaa]</span>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 16, 2026.
+      <span class="lastupdated">Last updated on Apr 17, 2026.
       </span></p>
   </div>
 

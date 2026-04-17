@@ -25,6 +25,18 @@ delenph
 | *group*: molecule
 | *explevel*: easy
 
+hydrogen_build
+~~~~~~~~~~~~~~
+
+| *default*: 'all'
+| *type*: string
+| *title*: Building of hydrogen atoms
+| *choices*: ['all', 'unknown']
+| *short description*: If set to all, all hydrogen atoms will be regenerated
+| *long description*: By default, all hydrogen atoms are generated (which gives the most robust behavior). But in some cases it might be better to only rebuild the unknown ones (e.g. for small ligand, or very large molecules to save time). In that case the hydrogen_build should be set to unknown.
+| *group*: molecule
+| *explevel*: easy
+
 ligand_param_fname
 ~~~~~~~~~~~~~~~~~~
 

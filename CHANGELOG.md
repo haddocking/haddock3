@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-04-16: Added control of hydrogen building in topoaa - Issue #1522
 - 2026-04-15: Implemented separate control of separation and randome rotations of molecules - Issue #1491
 - 2026-04-15: Solve bug related to workflow restarting without analysis folder - Issue #1518
 - 2026-04-14: Increase max number of timesteps in openmm module - BioExcel forum 6072

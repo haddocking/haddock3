@@ -1,5 +1,6 @@
 import tempfile
 import copy
+import gzip
 from pathlib import Path
 
 import shutil
@@ -57,7 +58,7 @@ def extract_nter_cter(fpath) -> tuple[str, str]:
 
 @has_grid
 def test_topoaa_module_protein_grid(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with protein-protein input."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
         Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
@@ -97,7 +98,7 @@ def test_topoaa_module_protein_grid(topoaa_module):
 
 
 def test_topoaa_module_protein(topoaa_module):
-    """Topoaa module with protein-protein input"""
+    """Topoaa module with protein-protein input."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "e2aP_1F3G.pdb"),
         Path(GOLDEN_DATA, "hpr_ensemble.pdb"),
@@ -140,7 +141,7 @@ def test_topoaa_module_protein(topoaa_module):
 
 
 def test_topoaa_module_ligand(topoaa_module):
-    """Topoaa with ligand as input"""
+    """Topoaa with ligand as input."""
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "oseltamivir.pdb"),
     ]
@@ -162,6 +163,34 @@ def test_topoaa_module_ligand(topoaa_module):
     assert expected_psf.exists()
     assert expected_pdb.exists()
     assert expected_gz.exists()
+
+
+def test_topoaa_module_ligand_hydrogen_build(topoaa_module):
+    """Topoaa with ligand as input and hydrogen_build set to unknown."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "oseltamivir.pdb"),
+    ]
+    topoaa_module.params["ligand_top_fname"] = Path(GOLDEN_DATA, "ligand.top")
+    topoaa_module.params["ligand_param_fname"] = Path(GOLDEN_DATA, "ligand.param")
+    topoaa_module.params["delenph"] = False
+    topoaa_module.params["hydrogen_build"] = "unknown"
+    topoaa_module.params["preprocess"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "oseltamivir.inp")
+    expected_psf = Path(topoaa_module.path, "oseltamivir_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "oseltamivir_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "oseltamivir.out.gz")
+
+    assert expected_inp.exists()
+    assert expected_psf.exists()
+    assert expected_pdb.exists()
+    assert expected_gz.exists()
+    file_content = gzip.open(Path(topoaa_module.path, "oseltamivir.out.gz"), 'rt').read()
+    assert 'hydrogen_build="unknown"' in file_content
 
 
 def test_topoaa_module_ligand_automated(topoaa_module):

@@ -229,26 +229,28 @@ sstd = dict([(i, ord(i) * null + i + (255 - ord(i)) * null) for i in cgss])
 # CG MAPPING INFORMATION
 
 bb = "CA C N O "
-prot_atoms = {"ALA": [bb + "CB"],
-              "CYS": [bb, "CB SG"],
-              "ASP": [bb, "CB CG OD1 OD2"],
-              "GLU": [bb, "CB CG CD OE1 OE2"],
-              "PHE": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ"],
-              "GLY": [bb],
-              "HIS": [bb, "CB CG", "CD2 NE2", "ND1 CE1"],
-              "ILE": [bb, "CB CG1 CG2 CD1"],
-              "LYS": [bb, "CB CG CD", "CE NZ"],
-              "LEU": [bb, "CB CG CD1 CD2"],
-              "MET": [bb, "CB CG SD CE"],
-              "ASN": [bb, "CB CG ND1 ND2 OD1 OD2"],  # ND1?
-              "PRO": [bb, "CB CG CD"],
-              "GLN": [bb, "CB CG CD OE1 OE2 NE1 NE2"],
-              "ARG": [bb, "CB CG CD", "NE CZ NH1 NH2"],
-              "SER": [bb, "CB OG"],
-              "THR": [bb, "CB OG1 CG2"],
-              "VAL": [bb, "CB CG1 CG2"],
-              "TRP": [bb, "CB CG CD2", "CD1 NE1 CE2", "CE3 CZ3", "CZ2 CH2"],
-              "TYR": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ OH"]}
+prot_atoms = {
+    "ALA": [bb + "CB"],
+    "CYS": [bb, "CB SG"],
+    "ASP": [bb, "CB CG OD1 OD2"],
+    "GLU": [bb, "CB CG CD OE1 OE2"],
+    "PHE": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ"],
+    "GLY": [bb],
+    "HIS": [bb, "CB CG", "CD2 NE2", "ND1 CE1"],
+    "ILE": [bb, "CB CG1 CG2 CD1"],
+    "LYS": [bb, "CB CG CD", "CE NZ"],
+    "LEU": [bb, "CB CG CD1 CD2"],
+    "MET": [bb, "CB CG SD CE"],
+    "ASN": [bb, "CB CG ND1 ND2 OD1 OD2"],  # ND1?
+    "PRO": [bb, "CB CG CD"],
+    "GLN": [bb, "CB CG CD OE1 OE2 NE1 NE2"],
+    "ARG": [bb, "CB CG CD", "NE CZ NH1 NH2"],
+    "SER": [bb, "CB OG"],
+    "THR": [bb, "CB OG1 CG2"],
+    "VAL": [bb, "CB CG1 CG2"],
+    "TRP": [bb, "CB CG CD2", "CD1 NE1 CE2", "CE3 CZ3", "CZ2 CH2"],
+    "TYR": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ OH"],
+    }
 
 bead_names = ["BB", "SC1", "SC2", "SC3", "SC4"]
 
@@ -948,10 +950,13 @@ def martinize(
 
                     tbl_cg_to_aa.append(restrain)
                     restrain_counter += 1
-
-    cg_model = structure_builder.get_structure()
+    # Write CG to AA backmapping restraint file
+    tbl_file_name = gen_cg_tbl_backmapping_fname(f"{output_path}", pdbf_path)
+    with open(tbl_file_name, "w") as tbl_file:
+        tbl_file.write("\n" + "\n".join([tbl for tbl in tbl_cg_to_aa if tbl]))
 
     # Write pre-CG structure
+    cg_model = structure_builder.get_structure()
     io.set_structure(cg_model)
     # Setup in-memory text buffer
     io_file = StringIO()
@@ -963,26 +968,18 @@ def martinize(
     # Write the actual valid CG structure
     # make sure atom names are in the correct place
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
-    cg_pdb_name = gen_cg_filename(f"../{output_path}", pdbf_path)
+    cg_pdb_name = gen_cg_filename(f"{output_path}", pdbf_path)
     out = open(cg_pdb_name, "w")
     for line in io_file.readlines():
+        n_l = line
         if line.startswith("ATOM"):
             atom_name = line[12:16].split()[0]
             # mind the spacing
             if 1 <= len(atom_name) <= 3:
                 n_l = f"{line[:12]} {atom_name:<3s}{line[16:]}"
-            else:
-                n_l = line
-        else:
-            n_l = line
         out.write(n_l)
     out.close()
     del io_file
-
-    # Write CG to AA backmapping restraint file
-    tbl_file_name = gen_cg_tbl_backmapping_fname(f"../{output_path}", pdbf_path)
-    with open(tbl_file_name, "w") as tbl_file:
-        tbl_file.write("\n" + "\n".join([tbl for tbl in tbl_cg_to_aa if tbl]))
 
     return cg_pdb_name
 

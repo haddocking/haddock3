@@ -95,7 +95,6 @@ def generate_topology(
     )
 
     inp = "".join(inp_parts)
-    # change the parameter files as function of the force-field version
 
     if write_to_disk:
         output_inp_filename = Path(f"{input_pdb.stem}.{Format.CNS_INPUT}")
@@ -312,7 +311,6 @@ class HaddockModule(BaseCNSModule):
         for i in models_dic:
             expected[i] = {}
             md5_dic = ens_dic[i]
-            origin_names = origi_ens_dic[i]
 
             for j, model in enumerate(models_dic[i]):
                 if len(md5_dic[j]) == 0:
@@ -330,12 +328,12 @@ class HaddockModule(BaseCNSModule):
                 shape_mod = shape_dic[i]
                 if not shape_mod:
                     processed_pdb = gen_cg_filename(
-                        "",
+                        self.path.resolve().parent,
                         origin_name_model,
                         force_field=force_field,
                         )
                     processed_topology = gen_cg_filename(
-                        "",
+                        self.path.resolve().parent,
                         origin_name_model,
                         force_field=force_field,
                         ext=Format.TOPOLOGY,
@@ -343,14 +341,14 @@ class HaddockModule(BaseCNSModule):
                     processed_cgtoaa_tbl = gen_cg_tbl_backmapping_fname(
                         self.path.resolve().parent,
                         origin_name_model,
-                        )
+                        ).resolve()
                 else:
                     processed_pdb = Path(f"{origin_name_model}.{Format.PDB}")
                     processed_topology = Path(f"{origin_name_model}.{Format.TOPOLOGY}")
                     processed_cgtoaa_tbl = None
 
                 topology = TopologyFile(processed_topology, path=".")
-                psf_file_uniq = psf_files[i][j].as_posix().split('/')
+                psf_file_uniq = psf_files[i][j].as_posix().split("/")
                 aa_topo_path = f"{psf_file_uniq[0]}/{psf_file_uniq[1]}"
                 aa_topology = TopologyFile(psf_file_uniq[2], path=aa_topo_path)
                 pdb = PDBFile(
@@ -364,6 +362,11 @@ class HaddockModule(BaseCNSModule):
                 )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
+
+        # Remove temporary `*_cg.pdb` files if not in debug mode
+        if not self.params["debug"]:
+            for tmp_cg in Path(self.path.resolve().parent).glob(f"{gen_cg_filename('', '*')}"):
+                os.remove(tmp_cg)
 
         # Save module information
         self.output_models = list(expected.values())  # type: ignore

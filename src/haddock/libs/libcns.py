@@ -24,23 +24,22 @@ def generate_default_header(
     path: Optional[FilePath] = None,
 ) -> tuple[str, str, str, str, str, str]:
     """Generate CNS default header."""
-    # TODO: Remove the `type: ignore` comments
     if path is not None:
-        axis = load_axis(**cns_paths.get_axis(path))  # type: ignore
+        axis = load_axis(**cns_paths.get_axis(path))
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
-        tensor = load_tensor(**cns_paths.get_tensors(path))  # type: ignore
+        tensor = load_tensor(**cns_paths.get_tensors(path))
         trans_vec = load_trans_vectors(
-            **cns_paths.get_translation_vectors(path)  # type: ignore
-        )  # noqa: E501
+            **cns_paths.get_translation_vectors(path)
+        )
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
-        axis = load_axis(**cns_paths.axis)  # type: ignore
+        axis = load_axis(**cns_paths.axis)
         link = load_link(cns_paths.link_file)
         scatter = load_scatter(cns_paths.scatter_lib)
-        tensor = load_tensor(**cns_paths.tensors)  # type: ignore
-        trans_vec = load_trans_vectors(**cns_paths.translation_vectors)  # type: ignore
+        tensor = load_tensor(**cns_paths.tensors)
+        trans_vec = load_trans_vectors(**cns_paths.translation_vectors)
         water_box = load_boxtyp20(cns_paths.water_box["boxtyp20"])
 
     return (
@@ -93,7 +92,7 @@ def find_desired_linkfiles(
     # Point to corresponding file
     linkfiles["prot_link_infile"] = cns_paths.PROTEIN_LINK_FILES[prot_link_key]
 
-    # Logic to find linkfile for dna
+    # Logic to find linkfile for DNA/RNA
     nucl_link_key = "5'Phosphate" if phosphate_5 else "5'OH"
     # Point to corresponding file
     linkfiles["nucl_link_infile"] = cns_paths.NUCL_LINK_FILES[nucl_link_key]

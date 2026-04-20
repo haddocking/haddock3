@@ -9,45 +9,29 @@ This guide provides instructions for setting up a HADDOCK3 development environme
 
 ## Development Environment Setup
 
-### 1. Clone Repository
+Clone the repository,setup Python environment and install in editable mode
 
-```bash
+> If you need help seting up your Python environment, look into [docs/PYTHON.md](docs/PYTHON.md)
+
+```
 git clone https://github.com/haddocking/haddock3.git
 cd haddock3
-```
-
-### 2. Python Environment
-
-```bash
-# Create virtual environment
 python3.14 -m venv .venv
 source .venv/bin/activate
+pip install -e '.[dev]'
 ```
 
-### 3. Install Dependencies
-
-```bash
-# Basic development installation
-pip install -e '.[dev,docs]'
-
-# With MPI support (optional)
-pip install -e '.[dev,docs,mpi]'
-```
-
-> **Note for macOS**: If mpi4py installation fails, run `brew install mpi4py` first.
+Please refer to `pyproject.toml` for additional dependencies.
 
 ## Running Tests
 
 HADDOCK3 uses pytest for testing:
 
 ```bash
-# Unit tests
 pytest tests/
 
-# Integration tests
 pytest integration_tests/
 
-# End-to-end tests
 pytest end-to-end_tests/
 ```
 

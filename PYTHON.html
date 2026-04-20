@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Environment Setup for HADDOCK3 &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Python Environment Setup for HADDOCK3</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PYTHON.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="python-environment-setup-for-haddock3">
+<h1>Python Environment Setup for HADDOCK3<a class="headerlink" href="#python-environment-setup-for-haddock3" title="Link to this heading"></a></h1>
+<p>This guide provides instructions for setting up Python environments
+for HADDOCK3 development and usage.</p>
+<section id="python-version-requirements">
+<h2>Python Version Requirements<a class="headerlink" href="#python-version-requirements" title="Link to this heading"></a></h2>
+<p>HADDOCK3 requires Python 3.9 or later:</p>
+<ul class="simple">
+<li><p><strong>Recommended</strong>: Python 3.14+ for best compatibility</p></li>
+<li><p><strong>Supported versions</strong>: 3.9-3.14</p></li>
+<li><p><strong>Minimum required</strong>: Python 3.9</p></li>
+</ul>
+</section>
+<section id="python-installation">
+<h2>Python Installation<a class="headerlink" href="#python-installation" title="Link to this heading"></a></h2>
+<p>HADDOCK3 requires Python 3.9 or later.</p>
+<section id="using-uv-recommended">
+<h3>Using uv (Recommended)<a class="headerlink" href="#using-uv-recommended" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://github.com/astral-sh/uv">uv</a> is a modern Python package manager that
+provides fast dependency resolution and virtual environment management:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install uv</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Create and activate a virtual environment</span>
+uv<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span>--python<span class="o">=</span><span class="m">3</span>.14
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</pre></div>
+</div>
+</section>
+<section id="system-python">
+<h3>System Python<a class="headerlink" href="#system-python" title="Link to this heading"></a></h3>
+<p>Alternatively, use your system’s package manager:</p>
+<section id="linux-ubuntu-debian">
+<h4>Linux (Ubuntu/Debian)<a class="headerlink" href="#linux-ubuntu-debian" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3.14<span class="w"> </span>python3.14-dev<span class="w"> </span>python3.14-venv
+</pre></div>
+</div>
+</section>
+<section id="macos-homebrew">
+<h4>macOS (Homebrew)<a class="headerlink" href="#macos-homebrew" title="Link to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>python@3.14
+</pre></div>
+</div>
+<hr class="docutils" />
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3.14<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w"> </span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="common-issues">
+<h3>Common Issues<a class="headerlink" href="#common-issues" title="Link to this heading"></a></h3>
+<p><strong>Python version conflicts:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check which Python is being used</span>
+which<span class="w"> </span>python
+which<span class="w"> </span>python3
+</pre></div>
+</div>
+<p><strong>Virtual environment activation issues:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ensure proper shell integration</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$VIRTUAL_ENV</span>
+</pre></div>
+</div>
+<p><strong>Permission errors:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use --user flag or virtual environment</span>
+pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>package
+</pre></div>
+</div>
+</section>
+<section id="debugging-tools">
+<h3>Debugging Tools<a class="headerlink" href="#debugging-tools" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check installed packages</span>
+pip<span class="w"> </span>list
+
+<span class="c1"># Check package locations</span>
+pip<span class="w"> </span>show<span class="w"> </span>package_name
+
+<span class="c1"># Verify Python environment</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import sys; print(sys.executable)&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, BonvinLab.
+      <span class="lastupdated">Last updated on Apr 20, 2026.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

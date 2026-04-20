@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Documentation Guide for HADDOCK3 &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Code Documentation Guide for HADDOCK3</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/CODE_DOCUMENTATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="code-documentation-guide-for-haddock3">
+<h1>Code Documentation Guide for HADDOCK3<a class="headerlink" href="#code-documentation-guide-for-haddock3" title="Link to this heading"></a></h1>
+<p>This guide provides comprehensive information about HADDOCK3’s code documentation standards, tools, and processes.</p>
+<section id="documentation-standards">
+<h2>Documentation Standards<a class="headerlink" href="#documentation-standards" title="Link to this heading"></a></h2>
+<section id="docstring-format">
+<h3>Docstring Format<a class="headerlink" href="#docstring-format" title="Link to this heading"></a></h3>
+<p>HADDOCK3 uses <a class="reference external" href="https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings">Google-style docstrings</a> for all Python code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_distance</span><span class="p">(</span><span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Euclidean distance between two atoms.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        atom1 (Atom): First atom object with x, y, z coordinates.</span>
+<span class="sd">        atom2 (Atom): Second atom object with x, y, z coordinates.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Euclidean distance between the atoms in Angstroms.</span>
+<span class="sd">        </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; distance = calculate_distance(atom_a, atom_b)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Distance: {distance:.2f} Å&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Function implementation</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="key-documentation-elements">
+<h3>Key Documentation Elements<a class="headerlink" href="#key-documentation-elements" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Module Docstrings</strong>: Every module should have a module-level docstring explaining its purpose</p></li>
+<li><p><strong>Class Docstrings</strong>: Include description, attributes, and methods</p></li>
+<li><p><strong>Function Docstrings</strong>: Include args, returns, raises, and examples where applicable</p></li>
+<li><p><strong>Type Hints</strong>: Use Python type hints for better code clarity</p></li>
+</ol>
+</section>
+</section>
+<section id="documentation-tools">
+<h2>Documentation Tools<a class="headerlink" href="#documentation-tools" title="Link to this heading"></a></h2>
+<section id="sphinx-documentation">
+<h3>Sphinx Documentation<a class="headerlink" href="#sphinx-documentation" title="Link to this heading"></a></h3>
+<p>HADDOCK3 uses Sphinx to generate HTML documentation from:</p>
+<ul class="simple">
+<li><p>Python docstrings</p></li>
+<li><p>Markdown files (.md)</p></li>
+<li><p>reStructuredText files (.rst)</p></li>
+</ul>
+</section>
+<section id="building-documentation-locally">
+<h3>Building Documentation Locally<a class="headerlink" href="#building-documentation-locally" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install documentation dependencies</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[docs]&#39;</span>
+
+<span class="c1"># Generate API documentation</span>
+sphinx-apidoc<span class="w"> </span>-f<span class="w"> </span>-e<span class="w"> </span>-o<span class="w"> </span>docs/<span class="w"> </span>src/haddock<span class="w"> </span>-d<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Build HTML documentation</span>
+sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>haddock3-docs
+
+<span class="c1"># View documentation</span>
+open<span class="w"> </span>haddock3-docs/index.html<span class="w">  </span><span class="c1"># macOS</span>
+xdg-open<span class="w"> </span>haddock3-docs/index.html<span class="w">  </span><span class="c1"># Linux</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="documentation-structure">
+<h2>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading"></a></h2>
+<section id="source-code-documentation">
+<h3>Source Code Documentation<a class="headerlink" href="#source-code-documentation" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/haddock/
+├── __init__.py          # Package-level documentation
+├── modules/             # Module-specific documentation
+│   ├── __init__.py      # Modules package docs
+│   └── *.py             # Individual module docs
+├── libs/                # Library function documentation
+└── gear/                # Gear/component documentation
+</pre></div>
+</div>
+</section>
+<section id="documentation-files">
+<h3>Documentation Files<a class="headerlink" href="#documentation-files" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>docs/
+├── index.rst            # Main documentation entry point
+├── user/                # User guide documentation
+├── developer/           # Developer documentation
+├── api/                 # Auto-generated API docs
+└── *.md                  # Various markdown guides
+</pre></div>
+</div>
+</section>
+</section>
+<section id="writing-good-documentation">
+<h2>Writing Good Documentation<a class="headerlink" href="#writing-good-documentation" title="Link to this heading"></a></h2>
+<section id="best-practices">
+<h3>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Be Concise but Complete</strong>: Explain what the code does, not how it does it</p></li>
+<li><p><strong>Use Examples</strong>: Include usage examples where helpful</p></li>
+<li><p><strong>Document Exceptions</strong>: Use <code class="docutils literal notranslate"><span class="pre">Raises:</span></code> section for exceptions</p></li>
+<li><p><strong>Update Regularly</strong>: Keep documentation in sync with code changes</p></li>
+<li><p><strong>Use Cross-References</strong>: Link to related functions/classes</p></li>
+</ol>
+</section>
+<section id="common-sections">
+<h3>Common Sections<a class="headerlink" href="#common-sections" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Function docstring template.</span>
+
+<span class="sd">[Summary line]</span>
+
+<span class="sd">[Extended description]</span>
+
+<span class="sd">Args:</span>
+<span class="sd">    param1 (type): Description</span>
+<span class="sd">    param2 (type, optional): Description. Defaults to X.</span>
+
+<span class="sd">Returns:</span>
+<span class="sd">    type: Description of return value</span>
+
+<span class="sd">Raises:</span>
+<span class="sd">    ExceptionType: Description of when this exception is raised</span>
+
+<span class="sd">Note:</span>
+<span class="sd">    Additional notes or warnings</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    &gt;&gt;&gt; result = function_name(arg1, arg2)</span>
+<span class="sd">    &gt;&gt;&gt; print(result)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="documentation-workflow">
+<h2>Documentation Workflow<a class="headerlink" href="#documentation-workflow" title="Link to this heading"></a></h2>
+<section id="for-new-features">
+<h3>For New Features<a class="headerlink" href="#for-new-features" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Write code with proper docstrings</p></li>
+<li><p>Add examples and usage notes</p></li>
+<li><p>Update related documentation files</p></li>
+<li><p>Test documentation builds locally</p></li>
+<li><p>Submit with your pull request</p></li>
+</ol>
+</section>
+<section id="for-bug-fixes">
+<h3>For Bug Fixes<a class="headerlink" href="#for-bug-fixes" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Update affected docstrings if behavior changes</p></li>
+<li><p>Add notes about fixed edge cases</p></li>
+<li><p>Update examples if needed</p></li>
+</ol>
+</section>
+</section>
+<section id="documentation-testing">
+<h2>Documentation Testing<a class="headerlink" href="#documentation-testing" title="Link to this heading"></a></h2>
+<section id="testing-your-documentation">
+<h3>Testing Your Documentation<a class="headerlink" href="#testing-your-documentation" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test docstring examples (if any)</span>
+python<span class="w"> </span>-m<span class="w"> </span>doctest<span class="w"> </span>src/haddock/modules/your_module.py
+
+<span class="c1"># Check for documentation coverage</span>
+pydocstyle<span class="w"> </span>src/haddock/<span class="w"> </span>--select<span class="o">=</span>D100,D101,D102,D103,D104
+</pre></div>
+</div>
+</section>
+<section id="common-documentation-issues">
+<h3>Common Documentation Issues<a class="headerlink" href="#common-documentation-issues" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Missing docstrings</strong>: All public functions/classes should have docstrings</p></li>
+<li><p><strong>Outdated examples</strong>: Examples should work with current code</p></li>
+<li><p><strong>Inconsistent formatting</strong>: Follow Google style guide</p></li>
+<li><p><strong>Broken references</strong>: Check cross-references work</p></li>
+</ul>
+</section>
+</section>
+<section id="advanced-documentation">
+<h2>Advanced Documentation<a class="headerlink" href="#advanced-documentation" title="Link to this heading"></a></h2>
+<section id="mathematical-notation">
+<h3>Mathematical Notation<a class="headerlink" href="#mathematical-notation" title="Link to this heading"></a></h3>
+<p>For complex algorithms, use LaTeX-style math notation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Calculate protein-ligand binding energy.</span>
+
+<span class="sd">Uses the following formula:</span>
+
+<span class="sd">.. math::</span>
+<span class="sd">    \Delta G = \Delta H - T\Delta S</span>
+
+<span class="sd">Where:</span>
+<span class="sd">    - ΔG: Gibbs free energy change</span>
+<span class="sd">    - ΔH: Enthalpy change  </span>
+<span class="sd">    - T: Temperature in Kelvin</span>
+<span class="sd">    - ΔS: Entropy change</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="code-references">
+<h3>Code References<a class="headerlink" href="#code-references" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Perform molecular dynamics simulation.</span>
+
+<span class="sd">See Also:</span>
+<span class="sd">    :func:`~haddock.modules.simulation.setup_simulation`</span>
+<span class="sd">    :class:`~haddock.core.simulation.SimulationEngine`</span>
+
+<span class="sd">Note:</span>
+<span class="sd">    This function uses the OpenMM engine for MD calculations.</span>
+<span class="sd">    For alternative engines, see :mod:`haddock.modules.engines`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting-documentation">
+<h2>Troubleshooting Documentation<a class="headerlink" href="#troubleshooting-documentation" title="Link to this heading"></a></h2>
+<section id="common-problems">
+<h3>Common Problems<a class="headerlink" href="#common-problems" title="Link to this heading"></a></h3>
+<p><strong>Documentation won’t build:</strong></p>
+<ul class="simple">
+<li><p>Check for syntax errors in .rst files</p></li>
+<li><p>Ensure all referenced modules can be imported</p></li>
+<li><p>Verify Sphinx extensions are installed</p></li>
+</ul>
+<p><strong>Missing API documentation:</strong></p>
+<ul class="simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">sphinx-apidoc</span></code> to regenerate API docs</p></li>
+<li><p>Check module <code class="docutils literal notranslate"><span class="pre">__all__</span></code> variables</p></li>
+</ul>
+<p><strong>Broken links:</strong></p>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">sphinx-build</span> <span class="pre">-b</span> <span class="pre">linkcheck</span> <span class="pre">docs</span> <span class="pre">output</span></code> to check links</p></li>
+<li><p>Fix any broken external references</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, BonvinLab.
+      <span class="lastupdated">Last updated on Apr 20, 2026.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

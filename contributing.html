@@ -52,15 +52,25 @@
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing to HADDOCK3</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#contributing-new-code">1. Contributing new code</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#contributing-with-code-additional-details">1.1 Contributing with code (additional details)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#contributing-with-tests-additional-details">1.2 Contributing with tests (additional details)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#dependencies">1.3 Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#code-structure">1.4 Code structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#creating-a-new-module">1.5 Creating a new module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contribution-workflow">Contribution Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prerequisites">1. Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-process">2. Development Process</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#contributing-with-documentation">2. Contributing with documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-contribution-guidelines">Code Contribution Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#project-structure">Project Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#coding-standards">Coding Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-requirements">Testing Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependency-policy">Dependency Policy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation-contributions">Documentation Contributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#local-documentation-build">Local Documentation Build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-structure">Documentation Structure</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pull-request-requirements">Pull Request Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#support-and-communication">Support and Communication</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
@@ -93,211 +103,116 @@
              
   <section id="contributing-to-haddock3">
 <h1>Contributing to HADDOCK3<a class="headerlink" href="#contributing-to-haddock3" title="Link to this heading"></a></h1>
-<p>Welcome, we made many efforts to facilitate your contribution to this
-fantastic project. There are several ways to contribute:</p>
+<p>HADDOCK3 welcomes contributions to improve its
+functionality, documentation, and code quality.
+This guide provides the essential information for
+contributing effectively.</p>
+<section id="contribution-workflow">
+<h2>Contribution Workflow<a class="headerlink" href="#contribution-workflow" title="Link to this heading"></a></h2>
+<section id="prerequisites">
+<h3>1. Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>you can improve tutorials and/or documentation</p></li>
-<li><p>improve the code itself (maybe you even found some bug :bug:?)</p></li>
-<li><p>improve error messages so they become clearer</p></li>
-<li><p>add a new simulation module altogether</p></li>
-<li><p>write more unittests (we dare you to do that :godmode:)</p></li>
+<li><p>Install HADDOCK3 following <a class="reference internal" href="#docs/INSTALL.md"><span class="xref myst">INSTALL.md</span></a></p></li>
+<li><p>Python 3.9+ development environment</p></li>
+<li><p>Familiarity with Git and GitHub workflows</p></li>
 </ul>
-<p>Before attempting any development, please install HADDOCK3 following the
-instructions in the <a class="reference internal" href="#docs/INSTALL.md"><span class="xref myst">INSTALL</span></a> file. Afterwards, follow the
-instructions in this file.</p>
-<section id="contributing-new-code">
-<h2>1. Contributing new code<a class="headerlink" href="#contributing-new-code" title="Link to this heading"></a></h2>
-<p>HADDOCK3 has two main testing workflows. Here, within the repository, we
-test the HADDOCK3’s Python shell, code style, and package building.  Our
-Continuous Integration (CI) pipeline is based on
-pytest and GitHub Actions. We will explain you how to use them.</p>
-<p>To contribute to the HADDOCK3’s Python shell, follow these steps:</p>
+</section>
+<section id="development-process">
+<h3>2. Development Process<a class="headerlink" href="#development-process" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
-<li><p><a class="reference external" href="https://docs.github.com/en/get-started/quickstart/fork-a-repo">Fork</a> the HADDOCK3 repository</p></li>
-<li><p>Create a new branch in your fork (<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">-b</span> <span class="pre">&lt;new_branch_name&gt;</span></code>)</p></li>
-<li><p>Develop your code:</p>
-<ol class="arabic simple">
-<li><p>HADDOCK3 source is in <code class="docutils literal notranslate"><span class="pre">src/haddock</span></code>. Always implement code in
-the lowest Python version supported (this case is 3.9).</p></li>
-<li><p>See more details on how to contribute with code and tests in the
-subheadings below.</p></li>
+<li><p><strong>Fork the repository</strong> and create a feature branch</p></li>
+<li><p><strong>Implement changes</strong> following coding standards</p></li>
+<li><p><strong>Test thoroughly</strong> using pytest framework</p></li>
+<li><p><strong>Update documentation</strong> as needed</p></li>
+<li><p><strong>Submit Pull Request</strong> for review</p></li>
 </ol>
-</li>
-<li><p>Test your code:</p>
-<ol class="arabic simple">
-<li><p>Unit tests sit in the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> folder. Use
-<a class="reference external" href="https://docs.pytest.org/en/6.2.x/">pytest</a> for testing by running <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/</span></code>.</p></li>
-<li><p>Integration tests are located in the <code class="docutils literal notranslate"><span class="pre">integration_tests/</span></code> folder.
-You can run them with <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">integration_tests/</span></code>.</p></li>
-</ol>
-</li>
-<li><p>You can work on these tests until they all pass green before
-submitting your PR.</p></li>
-<li><p>Check if your contribution fulfills the requeriments proposed in the
-PR template, these are based on the experience of some developers to ensure the long-term
-survival of the codebase. Suggestions are always welcomed.</p></li>
-<li><p>Add a list of your new additions to the <code class="docutils literal notranslate"><span class="pre">CHANGELOG.md</span></code> file by
-adding a new sub-header as described bellow.
-Note this applies only after we have released the
-stable <code class="docutils literal notranslate"><span class="pre">haddock3</span> <span class="pre">2025.05.0</span></code> version.</p></li>
-</ol>
-<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span><span class="gh"># Changelog</span>
-
-<span class="gu">## new_version</span>
-
-<span class="k">*</span><span class="w"> </span>your change one
-<span class="k">*</span><span class="w"> </span>your change two
-
-(... the rest of the file ...)
+</section>
+</section>
+<section id="code-contribution-guidelines">
+<h2>Code Contribution Guidelines<a class="headerlink" href="#code-contribution-guidelines" title="Link to this heading"></a></h2>
+<section id="project-structure">
+<h3>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>src/haddock/
+├── clis/          # Command-line interfaces
+├── libs/          # General utility functions
+├── gear/          # Plugin-like functionality modules
+├── core/          # Physical constants and definitions
+└── modules/       # HADDOCK3 simulation modules
 </pre></div>
 </div>
-<ol class="arabic simple" start="8">
-<li><p>Increment the haddock3 <code class="docutils literal notranslate"><span class="pre">version</span></code> variable in the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></p></li>
-<li><p>If you have difficulties with the <code class="docutils literal notranslate"><span class="pre">tests</span></code>, let us know. These tests
-are the same that run on the GitHub Actions once you send the PR. So,
-sending the PR is another way to ensure all tests pass.</p></li>
-<li><p>Submit your PR if you haven’t done so yet :wink:</p></li>
-</ol>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1.  GitHub allows submitting &quot;Draft PRs&quot;. You can use this
-option to let us know you are working on some new good stuff so we
-can help you from the beginning.
-</pre></div>
-</div>
-<section id="contributing-with-code-additional-details">
-<h3>1.1 Contributing with code (additional details)<a class="headerlink" href="#contributing-with-code-additional-details" title="Link to this heading"></a></h3>
-<p><strong>You should also know that…</strong> HADDOCK3 folders, files, and code
-follow a well defined structure with very specific patterns. Inside each
-source folder you will (likely) find a <code class="docutils literal notranslate"><span class="pre">README</span></code> file describing the
-structure of the folder and presenting guidelines on how to better
-contribute to that folder and respective files. Summarizing here:</p>
+</section>
+<section id="coding-standards">
+<h3>Coding Standards<a class="headerlink" href="#coding-standards" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>New command-line clients go in the <code class="docutils literal notranslate"><span class="pre">clis/</span></code> folder. See how the current
-clients here created and use that as a template. Remember to update also the
-<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p></li>
-<li><p>Add any new functions that you foresee are general and
-could serve different places in the code to the <code class="docutils literal notranslate"><span class="pre">libs/</span></code> folder. Find a
-<code class="docutils literal notranslate"><span class="pre">lib*.py</span></code> files that would serve your purpuses, otherwise create a new
-one.</p></li>
-<li><p>Any plug-in like functionality, for example <em>“check if input is
-correct”</em>, should go into its own python module inside the <code class="docutils literal notranslate"><span class="pre">gear/</span></code>
-folder. Any variables, functions, and classes related only to that
-implementation should go all inside the same module (Python file).</p></li>
-<li><p>Any general hard definitions, or physical constants, should go in the
-<code class="docutils literal notranslate"><span class="pre">core/</span></code> folder.</p></li>
-<li><p>If you want to implement a new HADDOCK3 module, navigate to the
-<code class="docutils literal notranslate"><span class="pre">src/haddock/modules/_template_cat</span></code> folder and follow the instructions in the <code class="docutils literal notranslate"><span class="pre">README.md</span></code>
-file there. You will see that all folders and files follow a pattern.</p></li>
-<li><p>Talk with us before developing any CNS related part.</p></li>
+<li><p><strong>Python Version</strong>: Minimum 3.9 compatibility</p></li>
+<li><p><strong>Function Design</strong>: Small, testable functions preferred over complex classes</p></li>
+<li><p><strong>Naming</strong>: Use descriptive variable names</p></li>
+<li><p><strong>Comments</strong>: Explain <em>why</em> not <em>how</em></p></li>
+<li><p><strong>Documentation</strong>: Update docstrings and markdown files</p></li>
 </ul>
 </section>
-<section id="contributing-with-tests-additional-details">
-<h3>1.2 Contributing with tests (additional details)<a class="headerlink" href="#contributing-with-tests-additional-details" title="Link to this heading"></a></h3>
-<p>Inside the <code class="docutils literal notranslate"><span class="pre">tests/</span></code> folder you will find several <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> files.
-Normally, each file has the tests for each <code class="docutils literal notranslate"><span class="pre">*.py</span></code> file in the source. If
-you create new <code class="docutils literal notranslate"><span class="pre">*.py</span></code> files you should create a new test file of the
-same name, <code class="docutils literal notranslate"><span class="pre">test_new_file_name.py</span></code>. Aim at 100% test coverage for the
-code you have created. Write tests according to <a class="reference external" href="https://docs.pytest.org/" title="pytest">pytest</a>. You
-can see examples in our <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> files. You can run the tests using
-the <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/</span></code> command explained above. Or, if you want to run the
-tests for a singly file use <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/test_myfile.py</span></code>.</p>
-</section>
-<section id="dependencies">
-<h3>1.3 Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h3>
-<p>HADDOCK3 is highly interconnected with other projects. Many of them use
-HADDOCK3 core functionalities. Therefore, we aim to keep HADDOCK3 with
-the lowest dependency footprint possible. Avoid adding dependencies when
-developing new functionalities. How?</p>
-<ol class="arabic simple">
-<li><p>Use the Python standard library as much as possible.</p></li>
-<li><p>Numpy is always allowed.</p></li>
-<li><p>If you need to implement heavy calculations, it is best you use
-<a class="reference external" href="https://numba.pydata.org/" title="Numba">Numba</a> instead of C libraries. Talk with us before.</p></li>
-<li><p>You need a small function from a large library. Try to reimplement it
-yourself with the Python standard library.</p>
-<ol class="arabic simple">
-<li><p>If you can’t, talk first with
-us by opening an issue.</p></li>
-</ol>
-</li>
-<li><p>You need a big and complex function or maybe a whole python file from
-another project. If licenses are compatible, copy their code to the
-HADDOCK3 repository writing all necessary headers to grant authorship
-and comply with license requirements.</p>
-<ol class="arabic simple">
-<li><p>If licenses aren’t compatible, talk to us. We may have an
-alternative.</p></li>
-</ol>
-</li>
-<li><p>Your new module largely depends on a library and reimplementing or
-copying is not an option. Then, consider if we can use that dependency
-as a <strong>runtime (thirdparty) dependency</strong> (like <code class="docutils literal notranslate"><span class="pre">gdock</span></code> or <code class="docutils literal notranslate"><span class="pre">lightdock</span></code>) instead of an
-installation dependency.</p></li>
-<li><p>Nothing of the above is possible. You <strong>really</strong> need an <em>install
-dependency</em>. Talk with us before.</p></li>
-</ol>
-</section>
-<section id="code-structure">
-<h3>1.4 Code structure<a class="headerlink" href="#code-structure" title="Link to this heading"></a></h3>
-<p>Write code in the form of small functions, because small functions are
-easier to test. Combine small functions to compose larger functions. If
-you need to use a global variable in a function, pass it as a default
-value of a parameter. Avoid using complex classes, or avoid using
-classes at all, unless you need to maintain a state or you really know
-what you are doing. Flat is better than nested (though it’s harder to
-write, but it’s easier to maintain and read). Use long variable names if
-needed. Write comments that explain why you do stuff, and not how you do
-stuff. Use the <code class="docutils literal notranslate"><span class="pre">TODO:</span></code> flag in your comments to note something for the
-future. If needed, raise an issue.</p>
-</section>
-<section id="creating-a-new-module">
-<h3>1.5 Creating a new module<a class="headerlink" href="#creating-a-new-module" title="Link to this heading"></a></h3>
-<p>To develop a new HADDOCK3 module follow our guidelines and templates
-under <code class="docutils literal notranslate"><span class="pre">src/haddock/modules/_template_cat/_template_mod/</span></code>.</p>
-</section>
-</section>
-<section id="contributing-with-documentation">
-<h2>2. Contributing with documentation<a class="headerlink" href="#contributing-with-documentation" title="Link to this heading"></a></h2>
-<p>You may contribute to HADDOCK3 documentation by improving parts where
-documentation is lacking or writing the documentation for the new code
-you propose. HADDOCK3 documentation is hosted online at
-https://bonvinlab.org/haddock3.</p>
-<p>HADDOCK3 documentation is rendered with
-<a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a> combining markdown
-files, restructured text files, and extracting the docstrings in the
-source code.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder contains all the files used by Sphinx to compile the
-documentation to HTML files. To incorporate new documentation pages or
-update the existing ones, navigate around the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder to learn
-how we have structured it and add/edit the files you find relevant. You
-will see that the structure of folders and files follows the design of
-the documentation website.</p>
-<p>You can render the documentation locally to inspect the end result
-before creating a pull request. To compile the documentation locally:</p>
+<section id="testing-requirements">
+<h3>Testing Requirements<a class="headerlink" href="#testing-requirements" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>install HADDOCK in development mode with the <code class="docutils literal notranslate"><span class="pre">docs</span></code> extra requirements
-(<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">'.[docs]'</span></code>)</p></li>
-<li><p>activate the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> python environment inside the haddock3 github
-folder</p></li>
-<li><p>run the following commands:</p></li>
+<li><p><strong>Unit Tests</strong>: Located in <code class="docutils literal notranslate"><span class="pre">tests/</span></code> directory</p></li>
+<li><p><strong>Integration Tests</strong>: Located in <code class="docutils literal notranslate"><span class="pre">integration_tests/</span></code> directory</p></li>
+<li><p><strong>End-to-End</strong>: Located in <code class="docutils literal notranslate"><span class="pre">end-to-end_tests/</span></code> directory</p></li>
+<li><p><strong>Coverage</strong>: Aim for 100% test coverage for new code</p></li>
+<li><p><strong>Framework</strong>: pytest</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sphinx-apidoc<span class="w"> </span>-f<span class="w"> </span>-e<span class="w"> </span>-o<span class="w"> </span>docs/<span class="w"> </span>src/haddock<span class="w"> </span>-d<span class="w"> </span><span class="m">1</span>
+</section>
+<section id="dependency-policy">
+<h3>Dependency Policy<a class="headerlink" href="#dependency-policy" title="Link to this heading"></a></h3>
+<p>HADDOCK3 maintains minimal dependencies:</p>
+<ol class="arabic simple">
+<li><p>Prefer Python standard library</p></li>
+<li><p>NumPy allowed for numerical operations</p></li>
+<li><p>Avoid adding new dependencies without discussion</p></li>
+<li><p>Consider runtime dependencies for optional functionality</p></li>
+</ol>
+</section>
+</section>
+<section id="documentation-contributions">
+<h2>Documentation Contributions<a class="headerlink" href="#documentation-contributions" title="Link to this heading"></a></h2>
+<p>HADDOCK3 documentation uses Sphinx with Markdown and reStructuredText:</p>
+<section id="local-documentation-build">
+<h3>Local Documentation Build<a class="headerlink" href="#local-documentation-build" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install documentation dependencies</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[docs]&#39;</span>
+
+<span class="c1"># Build documentation</span>
+sphinx-apidoc<span class="w"> </span>-f<span class="w"> </span>-e<span class="w"> </span>-o<span class="w"> </span>docs/<span class="w"> </span>src/haddock<span class="w"> </span>-d<span class="w"> </span><span class="m">1</span>
 sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>haddock3-docs
 </pre></div>
 </div>
-<p>We invite you to read through Sphinx-doc
-webpage if you want to exploit any advanced feature of Sphinx, but we
-already provide examples for virtually any use you may need.</p>
-<p>If you need to install any additional library, talk to us first. The
-documentation requirements are in the <code class="docutils literal notranslate"><span class="pre">devtools</span></code> folder.</p>
-<p>Finally, if you find the need to generate new pages during the HTML
-compilation part, you may follow the <code class="docutils literal notranslate"><span class="pre">devtools/build_defaults_rst.py</span></code> as
-an example. See also the <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code> file <code class="docutils literal notranslate"><span class="pre">setup(app)</span></code> line.</p>
-<p><strong>Troubleshooting:</strong></p>
+</section>
+<section id="documentation-structure">
+<h3>Documentation Structure<a class="headerlink" href="#documentation-structure" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Source files in <code class="docutils literal notranslate"><span class="pre">docs/</span></code> directory</p></li>
+<li><p>Follow existing organization and formatting</p></li>
+<li><p>Update both code docstrings and markdown files</p></li>
+</ul>
+</section>
+</section>
+<section id="pull-request-requirements">
+<h2>Pull Request Requirements<a class="headerlink" href="#pull-request-requirements" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
-<li><p>If you add any new dependency (import statement) in the code, you
-need to add that library name to the <code class="docutils literal notranslate"><span class="pre">mock</span></code> list in the <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>
-file.</p></li>
+<li><p><strong>Testing</strong>: All tests must pass</p></li>
+<li><p><strong>Documentation</strong>: Updated for new features</p></li>
+<li><p><strong>CHANGELOG</strong>: Add entry for significant changes</p></li>
+<li><p><strong>Version</strong>: Update <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> if applicable</p></li>
+<li><p><strong>Code Review</strong>: Address all feedback</p></li>
 </ol>
+</section>
+<section id="support-and-communication">
+<h2>Support and Communication<a class="headerlink" href="#support-and-communication" title="Link to this heading"></a></h2>
+<p>For questions or discussions:</p>
+<ul class="simple">
+<li><p><strong>Issues</strong>: Report bugs or suggest features via GitHub Issues</p></li>
+<li><p><strong>Discussions</strong>: Use GitHub Discussions for general questions</p></li>
+<li><p><strong>Development</strong>: Contact maintainers for major changes</p></li>
+</ul>
 </section>
 </section>
 
@@ -313,7 +228,7 @@ file.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 17, 2026.
+      <span class="lastupdated">Last updated on Apr 20, 2026.
       </span></p>
   </div>
 

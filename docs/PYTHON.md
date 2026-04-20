@@ -13,7 +13,7 @@ HADDOCK3 requires Python 3.9 or later:
 
 ## Python Installation
 
-HADDOCK3 requires Python 3.14 or later.
+HADDOCK3 requires Python 3.9 or later.
 
 ### Using uv (Recommended)
 

@@ -46,6 +46,7 @@ src/haddock/
 
 - **Unit Tests**: Located in `tests/` directory
 - **Integration Tests**: Located in `integration_tests/` directory
+- **End-to-End**: Located in `end-to-end_tests/` directory
 - **Coverage**: Aim for 100% test coverage for new code
 - **Framework**: pytest
 

@@ -15,7 +15,7 @@ EXAMPLE_DIR = (
     Path(__file__).resolve().parents[1] / "examples" / "docking-protein-protein-shape"
 )
 
-def test_protein_protein_shape(monkeypatch):
+def test_protein_protein_shape_CG(monkeypatch):
     """Test protein-protein-shape CG docking example.
 
     Uses docking-protein-protein-shape-CG-test.cfg to run the full pipeline
@@ -26,10 +26,9 @@ def test_protein_protein_shape(monkeypatch):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         shutil.copytree(Path(EXAMPLE_DIR, "data"), Path(tmpdir, "data"))
-        cfg = Path(tmpdir, "docking-protein-protein-shape-CG-test.cfg")
-        shutil.copy(
-            Path(EXAMPLE_DIR, "docking-protein-protein-shape-CG-test.cfg"), cfg
-        )
+        config_fname = "docking-protein-protein-shape-CG-test.cfg"
+        cfg = Path(tmpdir, config_fname)
+        shutil.copy(Path(EXAMPLE_DIR, config_fname), cfg)
 
         monkeypatch.chdir(tmpdir)
         cli_main(cfg)

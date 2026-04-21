@@ -3,6 +3,7 @@ import math
 import tempfile
 from pathlib import Path
 
+from haddock.core.defaults import MODULE_IO_FILE
 import pytest
 
 from haddock.core.typing import Generator
@@ -269,26 +270,18 @@ def test_moduleio_add_list():
     assert moduleio.output == ["literally", "anything"]
 
 
-@pytest.mark.skip(reason="deprecated")
-def test_moduleio_save(mocker, moduleio_with_pdbfile_list):
-    with tempfile.NamedTemporaryFile() as temp_module_io_f:
-        mocker.patch("haddock.core.defaults", temp_module_io_f.name)
+def test_moduleio_save(monkeypatch):
+    with tempfile.TemporaryDirectory() as tempdir:
+        monkeypatch.chdir(tempdir)
 
-        observed_io_filename = moduleio_with_pdbfile_list.save(
-            filename=temp_module_io_f.name
-        )
+        io = ModuleIO()
+        io.add(["something"])
+        io.save()
 
-        assert observed_io_filename.exists()
-        assert observed_io_filename.stat().st_size > 0
+        expected_file = Path(tempdir, MODULE_IO_FILE)
 
-        expected_io_filename = Path.cwd() / temp_module_io_f.name
-
-        assert observed_io_filename == expected_io_filename
-
-        with open(observed_io_filename, "r") as f:
-            observed_data = json.load(f)
-
-        assert isinstance(observed_data, dict)
+        assert expected_file.exists()
+        assert expected_file.stat().st_size > 0
 
 
 def test_moduleio_load(io_json_file, io_data):

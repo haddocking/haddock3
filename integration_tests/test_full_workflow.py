@@ -24,24 +24,24 @@ def test_emscoring_workflow(caplog, monkeypatch):
 
         caplog.set_level("INFO")
         ParamDict = {
-            'topoaa.1': {
-                'autohis': True,
-                'molecules': [Path("protglyc_complex_1.pdb")],
-                'clean': True,
-                'offline': False,
-                'mode': "local",
-                'ncores': 2,
-                },
-            'emscoring.1': {
-                'per_interface_scoring' : False,
-                }
-            }
+            "topoaa.1": {
+                "autohis": True,
+                "molecules": [Path("protglyc_complex_1.pdb")],
+                "clean": True,
+                "offline": False,
+                "mode": "local",
+                "ncores": 2,
+            },
+            "emscoring.1": {
+                "per_interface_scoring": False,
+            },
+        }
 
         workflow = WorkflowManager(
             ParamDict,
             start=0,
             other_params=Any,
-            )
+        )
         workflow.run()
         # assert the directories 0_topoaa and 1_emscoring have been created
         assert os.path.isdir("0_topoaa") is True
@@ -71,16 +71,17 @@ def test_interactive_analysis_on_workflow(monkeypatch):
 
         monkeypatch.chdir(tmpdir)
 
-        
         cli_main(
             Path("workflow.cfg"),
         )
         # read run_dir in workflow.cfg
+        run_dir = Path(".")
         with open("workflow.cfg", "r") as f:
             for line in f:
                 if "run_dir" in line:
                     run_dir = line.split("=")[1].strip().strip('"')
                     break
+
         assert os.path.isdir(run_dir) is True
         assert os.path.isdir(Path(run_dir, "0_topoaa")) is True
         assert os.path.isdir(Path(run_dir, "1_rigidbody")) is True
@@ -90,22 +91,22 @@ def test_interactive_analysis_on_workflow(monkeypatch):
 
         # now running interactive re-clustering
         clustfcc_dir = f"{run_dir}/2_clustfcc"
-        
-        # faking sys.argv in input to haddock3-re
-        monkeypatch.setattr("sys.argv",
-                            ["haddock3-re", "clustfcc", clustfcc_dir, "-f", "0.7"]
-                            )
+
+        # inject `sys.argv` arguments
+        monkeypatch.setattr(
+            "sys.argv", ["haddock3-re", "clustfcc", clustfcc_dir, "-f", "0.7"]
+        )
         maincli()
         assert os.path.isdir(Path(run_dir, "2_clustfcc_interactive")) is True
         assert Path(run_dir, "2_clustfcc_interactive/clustfcc.tsv").exists() is True
         assert Path(run_dir, "2_clustfcc_interactive/clustfcc.txt").exists() is True
-        
+
         # now running interactive re-scoring
         capri_dir = f"{run_dir}/3_caprieval"
         # faking sys.argv in input to haddock3-re
-        monkeypatch.setattr("sys.argv",
-                            ["haddock3-re", "score", capri_dir, "-a", "1.0"]
-                            )
+        monkeypatch.setattr(
+            "sys.argv", ["haddock3-re", "score", capri_dir, "-a", "1.0"]
+        )
         maincli()
         assert os.path.isdir(Path(run_dir, "3_caprieval_interactive")) is True
         assert Path(run_dir, "3_caprieval_interactive/capri_ss.tsv").exists() is True
@@ -119,11 +120,12 @@ def test_interactive_analysis_on_workflow(monkeypatch):
             scale=None,
             is_cleaned=True,
             inter=True,
-            )
+        )
         exp_clustfcc_dir = Path(run_dir, "analysis", "2_clustfcc_interactive_analysis")
-        exp_caprieval_dir = Path(run_dir, "analysis", "3_caprieval_interactive_analysis")
+        exp_caprieval_dir = Path(
+            run_dir, "analysis", "3_caprieval_interactive_analysis"
+        )
         assert os.path.isdir(exp_clustfcc_dir) is True
         assert os.path.isdir(exp_caprieval_dir) is True
         assert Path(exp_clustfcc_dir, "report.html").exists() is True
         assert Path(exp_caprieval_dir, "report.html").exists() is True
-        

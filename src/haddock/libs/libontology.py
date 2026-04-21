@@ -217,26 +217,34 @@ class ModuleIO:
         try:
             content = self._load_pkl(filename)
         except Exception as _:
-            # HACK: We only need this `_load_json` because lots
-            #  of tests were built based on this construction and
-            #  it is hardcoded into some of the `cli.re` tools
+            # ====================================================== #
+            # FIXME: In some tests the moduleio file is being used
+            #  as input for the test. This try/except only exists
+            #  to handle this scenarios - ideally all tests that
+            #  use this constructions MUST be redone to account
+            #  for the pickle instead of the json
             content = self._load_json(filename)
+            # ====================================================== #
 
         self.input = content["input"]
         self.output = content["output"]
         self.cache = content.get("cache", Cache())
 
     @staticmethod
-    def _load_json(filename: FilePath):
-        filename = Path(filename).with_suffix(".json")
-        with open(file=filename, mode="r") as fh:
-            content = jsonpickle.decode(fh.read())
+    def _load_pkl(filename: FilePath):
+        """Load the pickle."""
+        with open(file=filename, mode="rb") as fh:
+            content = pickle.load(fh)
         return content
 
     @staticmethod
-    def _load_pkl(filename: FilePath):
-        with open(file=filename, mode="rb") as fh:
-            content = pickle.load(fh)
+    def _load_json(filename: FilePath):
+        """Try to load a `.json`."""
+        _json_filename = Path(filename).with_suffix(".json")
+        if _json_filename.exists():
+            filename = _json_filename
+        with open(file=filename, mode="r") as fh:
+            content = jsonpickle.decode(fh.read())
         return content
 
     def retrieve_models(

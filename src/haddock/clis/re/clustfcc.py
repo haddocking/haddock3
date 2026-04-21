@@ -111,13 +111,12 @@ def reclustfcc(
     outdir.mkdir(exist_ok=True)
 
     # create an io object
-    # FIXME: For some reason this needs to be `io.json`
     io = ModuleIO()
-    filename = Path(clustfcc_dir, "io.json")
+    filename = Path(clustfcc_dir, MODULE_IO_FILE)
     io.load(filename)
     models = io.input
     # copying ModuleIO file to the new directory
-    shutil.copy(filename, Path(outdir, "io.json"))
+    shutil.copy(filename, Path(outdir, MODULE_IO_FILE))
 
     # load the original clustering parameters via json
     clustfcc_params = read_config(Path(clustfcc_dir, "params.cfg"))

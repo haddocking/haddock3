@@ -1,5 +1,7 @@
 """Test the haddock3-re CLI."""
+
 from haddock.clis.cli_re import maincli as cli_re
+from haddock.core.defaults import MODULE_IO_FILE
 import pytest
 import tempfile
 import subprocess
@@ -21,7 +23,7 @@ def weights_dict():
         "w_desolv": 1.0,
         "w_bsa": -0.01,
         "w_air": 0.01,
-        }
+    }
 
 
 def test_cli_re_empty():
@@ -47,9 +49,8 @@ def test_cli_rescore(weights_dict):
 
             # check if the files are created
             interactive_folder = [
-                el for el in os.listdir(tmpdir)
-                if el.endswith("interactive")
-                ]
+                el for el in os.listdir(tmpdir) if el.endswith("interactive")
+            ]
             assert len(interactive_folder) == 1
             interactive_folder = Path(tmpdir, interactive_folder[0])
 
@@ -76,26 +77,33 @@ def test_cli_reclustfcc():
     with tempfile.TemporaryDirectory() as tmpdir:
         nested_tmpdir = Path(tmpdir, "03_clustfcc")
         os.mkdir(nested_tmpdir)
-        # json file
+
+        # io file
         flexref_json = Path(golden_data, "io_flexref.json")
-        shutil.copy(flexref_json, Path(nested_tmpdir, "io.json"))
+        shutil.copy(flexref_json, Path(nested_tmpdir, MODULE_IO_FILE))
+
         # params.cfg
         clustfcc_params_cfg = Path(golden_data, "params_clustfcc.cfg")
         shutil.copy(clustfcc_params_cfg, Path(nested_tmpdir, "params.cfg"))
+
         # fcc matrix
         fcc_matrix = Path(golden_data, "example_fcc.matrix")
         shutil.copy(fcc_matrix, Path(nested_tmpdir, "fcc.matrix"))
-        subprocess.run([
-            "haddock3-re", "clustfcc", nested_tmpdir,
-            "-f", "0.65",
-            "-p"  # shortcut to --plot_matrix
-            ])
+        subprocess.run(
+            [
+                "haddock3-re",
+                "clustfcc",
+                nested_tmpdir,
+                "-f",
+                "0.65",
+                "-p",  # shortcut to --plot_matrix
+            ]
+        )
 
         # check if the interactive folders is created
         interactive_folder = [
-            el for el in os.listdir(tmpdir)
-            if el.endswith("interactive")
-            ]
+            el for el in os.listdir(tmpdir) if el.endswith("interactive")
+        ]
         assert len(interactive_folder) == 1
         # check that the clustfcc.tsv file is correctly created
         interactive_folder = Path(tmpdir, interactive_folder[0])
@@ -115,7 +123,7 @@ def test_cli_reclustfcc():
         clustfcc_html_matrix = Path(interactive_folder, "fcc_matrix.html")
         assert clustfcc_html_matrix.exists()
         assert clustfcc_html_matrix.stat().st_size != 0
-    
+
 
 def test_cli_reclustrmsd():
     """Test haddock3-re clustrmsd subcommand."""
@@ -130,16 +138,14 @@ def test_cli_reclustrmsd():
         with open(rmsdmatrix_json, "r") as fin, open(tmp_rmsdmatrix_json, "w") as fout:
             for _ in fin:
                 fout.write(
-                    _.replace(
-                        "tests/golden_data",
-                        str(nested_tmpdir_previousstep))
-                    )
-        # example ilrmsd matrix 
+                    _.replace("tests/golden_data", str(nested_tmpdir_previousstep))
+                )
+        # example ilrmsd matrix
         ilrmsd_matrix = Path(golden_data, "example_ilrmsd.matrix")
         shutil.copy(
             ilrmsd_matrix,
             Path(nested_tmpdir_previousstep, "example_ilrmsd.matrix"),
-            )
+        )
 
         # Fake clustrmsd module files
         nested_tmpdir = Path(tmpdir, "2_clustrmsd")
@@ -154,16 +160,20 @@ def test_cli_reclustrmsd():
         dendrogram = Path(golden_data, "example_dendrogram.txt")
         shutil.copy(dendrogram, Path(nested_tmpdir, "dendrogram.txt"))
         # Run re-clustrmsd
-        subprocess.run([
-            "haddock3-re", "clustrmsd", nested_tmpdir,
-            "-n", "2",  # set desired number of clusters
-            "-p"  # shortcut to --plot_matrix
-            ])
+        subprocess.run(
+            [
+                "haddock3-re",
+                "clustrmsd",
+                nested_tmpdir,
+                "-n",
+                "2",  # set desired number of clusters
+                "-p",  # shortcut to --plot_matrix
+            ]
+        )
         # check if the interactive folders is created
         interactive_folder = [
-            el for el in os.listdir(tmpdir)
-            if el.endswith("interactive")
-            ]
+            el for el in os.listdir(tmpdir) if el.endswith("interactive")
+        ]
         assert len(interactive_folder) == 1
 
         # check that the clustrmsd.tsv file is correctly created

@@ -20,7 +20,7 @@ MODULE_PATH_NAME = "step_"
 Module input and generated data will be stored in folder starting by
 this prefix"""
 
-MODULE_IO_FILE = "io.json"
+MODULE_IO_FILE = "io.pkl"
 """Default name for exchange module information file"""
 
 MAX_NUM_MODULES = 10000

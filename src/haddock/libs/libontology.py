@@ -2,17 +2,16 @@
 
 import datetime
 import itertools
-from enum import Enum
+import pickle
+from enum import Enum, auto
 from os import linesep
 from pathlib import Path
-
+from typing import Any, Dict, Generic, Hashable, List, Optional, Tuple, TypeVar
 
 import jsonpickle
 
 from haddock.core.defaults import MODULE_IO_FILE
-from haddock.core.typing import FilePath, Literal, Optional, TypeVar, Union
-from typing import List, Any
-
+from haddock.core.typing import FilePath, Union
 
 NaN = float("nan")
 
@@ -120,12 +119,73 @@ class TopologyFile(Persistent):
         super().__init__(file_name, Format.TOPOLOGY, path)
 
 
+class CacheKey(Enum):
+    RMSD = auto()
+
+
+K = TypeVar("K", bound=Hashable)
+V = TypeVar("V")
+
+
+class Cache(Generic[K, V]):
+    """Cache with searchable entries by composite keys."""
+
+    def __init__(self):
+        # Main storage: key -> list of (search_key, value) tuples
+        self._store: Dict[CacheKey, List[Tuple[K, V]]] = {}
+
+        # Initialize with all CacheKey enum values
+        for key in CacheKey:
+            self._store[key] = []
+
+        # Index for fast lookup: (cache_key, search_key) -> value
+        self._index: Dict[Tuple[CacheKey, K], V] = {}
+
+    def add(self, cache_key: CacheKey, search_key: K, value: V) -> None:
+        """Add entry with searchable key.
+
+        # Example:
+        #  cache.add(CacheKey.RMSD, ("xxx", "yyy", 42.0))
+
+        """
+        self._store[cache_key].append((search_key, value))
+        self._index[(cache_key, search_key)] = value
+
+    def get(self, cache_key: CacheKey, search_key: K) -> Optional[V]:
+        """Retrieve value by search key.
+
+        # Example:
+        #  rmsd = cache.get(CacheKey.RMSD, ("xxx", "yyy"))
+        """
+        return self._index.get((cache_key, search_key))
+
+    def has(self, cache_key: CacheKey, search_key: K) -> bool:
+        """Check if entry exists.
+
+        # Example:
+        #  cache.has(CacheKey.RMSD, ("xxx", "yyy"))
+        """
+        return (cache_key, search_key) in self._index
+
+    def get_all(self, cache_key: CacheKey) -> List[Tuple[K, V]]:
+        """Get all entries for a cache key."""
+        return self._store.get(cache_key, []).copy()
+
+    def clear(self, cache_key: CacheKey) -> None:
+        """Clear all entries for a cache key."""
+        for search_key, _ in self._store[cache_key]:
+            self._index.pop((cache_key, search_key), None)
+        # Clear storage
+        self._store[cache_key].clear()
+
+
 class ModuleIO:
     """Intercommunicating modules and exchange input/output information."""
 
     def __init__(self) -> None:
         self.input: List[Any] = []
         self.output: List[Any] = []
+        self.cache: Cache = Cache()
 
     def add(self, persistent, mode="i"):
         """Add a given filename as input or output."""
@@ -140,21 +200,40 @@ class ModuleIO:
             else:
                 self.output.append(persistent)
 
+    def update_cache(self, cache):
+        """Update the internal cache of ModuleIO."""
+        self.cache = cache
+
     def save(self, path: FilePath = ".", filename: FilePath = MODULE_IO_FILE) -> Path:
         """Save Input/Output needed files by this module to disk."""
         fpath = Path(path, filename)
-        with open(fpath, "w") as output_handler:
-            to_save = {"input": self.input, "output": self.output}
-            jsonpickle.set_encoder_options("json", sort_keys=True, indent=4)
-            output_handler.write(jsonpickle.encode(to_save))  # type: ignore
+        with open(fpath, "wb") as output_handler:
+            data = {"input": self.input, "output": self.output, "cache": self.cache}
+            pickle.dump(data, output_handler)
         return fpath
 
     def load(self, filename: FilePath) -> None:
         """Load the content of a given IO filename."""
+        try:
+            content = self._load_pkl(filename)
+        except pickle.UnpicklingError:
+            content = self._load_json(filename)
+
+        self.input = content["input"]
+        self.output = content["output"]
+        self.cache = content.get("cache", Cache())
+
+    @staticmethod
+    def _load_json(filename: FilePath):
         with open(filename) as json_file:
             content = jsonpickle.decode(json_file.read())
-            self.input = content["input"]  # type: ignore
-            self.output = content["output"]  # type: ignore
+        return content
+
+    @staticmethod
+    def _load_pkl(filename: FilePath):
+        with open(filename, "rb") as fh:
+            content = pickle.load(fh)
+        return content
 
     def retrieve_models(
         self, crossdock: bool = False, individualize: bool = False

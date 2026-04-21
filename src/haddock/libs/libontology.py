@@ -216,7 +216,10 @@ class ModuleIO:
         """Load the content of a given IO filename."""
         try:
             content = self._load_pkl(filename)
-        except pickle.UnpicklingError:
+        except Exception as _:
+            # HACK: We only need this `_load_json` because lots
+            #  of tests were built based on this construction and
+            #  it is hardcoded into some of the `cli.re` tools
             content = self._load_json(filename)
 
         self.input = content["input"]
@@ -225,13 +228,14 @@ class ModuleIO:
 
     @staticmethod
     def _load_json(filename: FilePath):
-        with open(filename) as json_file:
-            content = jsonpickle.decode(json_file.read())
+        filename = Path(filename).with_suffix(".json")
+        with open(file=filename, mode="r") as fh:
+            content = jsonpickle.decode(fh.read())
         return content
 
     @staticmethod
     def _load_pkl(filename: FilePath):
-        with open(filename, "rb") as fh:
+        with open(file=filename, mode="rb") as fh:
             content = pickle.load(fh)
         return content
 

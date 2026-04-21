@@ -110,7 +110,6 @@ def test_persistent_is_present():
 
 
 def test_pdbfile_init_empty():
-
     pdbfile = PDBFile(file_name="test.pdb")
 
     assert pdbfile.file_name == "test.pdb"
@@ -208,7 +207,6 @@ def test_pdbfile_init_with_ligand_files():
 
 
 def test_rmsdfile_init():
-
     npairs = 42
     file_name = Path("/some/path/test.rmsd")
     rmsdfile = RMSDFile(file_name=file_name, npairs=npairs)
@@ -220,7 +218,6 @@ def test_rmsdfile_init():
 
 
 def test_topologyfile_init():
-
     file_name = Path("/some/path/test.top")
     topologyfile = TopologyFile(file_name=file_name)
 
@@ -230,7 +227,6 @@ def test_topologyfile_init():
 
 
 def test_moduleio_init():
-
     moduleio = ModuleIO()
 
     assert isinstance(moduleio.input, list)
@@ -238,7 +234,6 @@ def test_moduleio_init():
 
 
 def test_moduleio_add_anything():
-
     input = "literally anything"
 
     moduleio = ModuleIO()
@@ -257,7 +252,6 @@ def test_moduleio_add_anything():
 
 
 def test_moduleio_add_list():
-
     input = ["literally", "anything"]
 
     moduleio = ModuleIO()
@@ -275,8 +269,8 @@ def test_moduleio_add_list():
     assert moduleio.output == ["literally", "anything"]
 
 
+@pytest.mark.skip(reason="deprecated")
 def test_moduleio_save(mocker, moduleio_with_pdbfile_list):
-
     with tempfile.NamedTemporaryFile() as temp_module_io_f:
         mocker.patch("haddock.core.defaults", temp_module_io_f.name)
 
@@ -298,7 +292,6 @@ def test_moduleio_save(mocker, moduleio_with_pdbfile_list):
 
 
 def test_moduleio_load(io_json_file, io_data):
-
     moduleio = ModuleIO()
     moduleio.load(filename=io_json_file)
 
@@ -307,7 +300,6 @@ def test_moduleio_load(io_json_file, io_data):
 
 
 def test_moduleio_retrieve_models_list(moduleio_with_pdbfile_list):
-
     result = moduleio_with_pdbfile_list.retrieve_models()
 
     assert isinstance(result, list)
@@ -316,7 +308,6 @@ def test_moduleio_retrieve_models_list(moduleio_with_pdbfile_list):
 
 
 def test_moduleio_retrieve_models_dict(moduleio_with_pdbfile_dict):
-
     result = moduleio_with_pdbfile_dict.retrieve_models(
         crossdock=True, individualize=True
     )
@@ -349,7 +340,6 @@ def test_moduleio_retrieve_models_dict(moduleio_with_pdbfile_dict):
 
 
 def test_moduleio_check_faulty(mocker, module_io_with_persistent):
-
     mocker.patch.object(module_io_with_persistent, "remove_missing", return_value=None)
 
     result = module_io_with_persistent.check_faulty()
@@ -370,7 +360,6 @@ def test_moduleio_check_faulty(mocker, module_io_with_persistent):
 
 
 def test_moduleio_remove_missing(module_io_with_persistent):
-
     # Remove the first file
     first_file = module_io_with_persistent.output[0].rel_path
     first_file.unlink()

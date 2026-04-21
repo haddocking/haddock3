@@ -19,9 +19,10 @@ def fixture_fcc_module(monkeypatch):
             order=1,
             path=Path("."),
             initial_params=clustfcc_pars,
-            )
+        )
 
 
+@pytest.mark.skip(reason="deprecated")
 def test_io_json(fcc_module, protprot_input_list):
     """Test the correct creation of the io.json file."""
     # set the input and output models
@@ -31,6 +32,25 @@ def test_io_json(fcc_module, protprot_input_list):
     # export models
     fcc_module.export_io_models()
     expected_io = Path(f"{fcc_module.path}/io.json")
+
+    assert expected_io.exists()
+
+    # check the content of io.json
+    io = ModuleIO()
+    io.load(expected_io)
+    assert io.input[0].file_name == protprot_input_list[0].file_name
+    assert io.output[1].file_name == protprot_input_list[1].file_name
+
+
+def test_io_pkl(fcc_module, protprot_input_list):
+    """Test the correct creation of the io.json file."""
+    # set the input and output models
+    fcc_module.previous_io.output = protprot_input_list
+    fcc_module.output_models = protprot_input_list
+
+    # export models
+    fcc_module.export_io_models()
+    expected_io = Path(f"{fcc_module.path}/io.pkl")
 
     assert expected_io.exists()
 

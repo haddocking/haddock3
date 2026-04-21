@@ -1,11 +1,11 @@
 """Integration test for the caching functionality."""
 
-import pytest
+import pickle
 import tempfile
 from pathlib import Path
-import pickle
 
-from haddock.libs.libontology import ModuleIO, Cache, CacheKey
+from haddock.core.defaults import MODULE_IO_FILE
+from haddock.libs.libontology import Cache, CacheKey, ModuleIO
 
 
 def test_cache_basic_operations():
@@ -62,7 +62,7 @@ def test_module_io_cache_serialization():
         module_io.cache.add(CacheKey.RMSD, ("model3", "model4"), 2.0)
 
         # Save to file
-        save_path = Path(tmpdir) / "test_io.json"
+        save_path = Path(tmpdir) / MODULE_IO_FILE
         module_io.save(save_path.parent, save_path.name)
 
         # Verify file was created

@@ -1,13 +1,14 @@
-import json
 import math
+import pickle
 import tempfile
 from pathlib import Path
 
-from haddock.core.defaults import MODULE_IO_FILE
 import pytest
 
+from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.typing import Generator
 from haddock.libs.libontology import (
+    Cache,
     Format,
     ModuleIO,
     PDBFile,
@@ -67,14 +68,14 @@ def module_io_with_persistent():
 
 
 @pytest.fixture
-def io_data() -> dict:
-    return {"input": ["input"], "output": ["output"]}
+def io_data():
+    return {"input": ["input"], "output": ["output"], "cache": Cache()}
 
 
 @pytest.fixture
-def io_json_file(io_data) -> Generator[Path, None, None]:
-    with tempfile.NamedTemporaryFile(mode="w+") as f:
-        json.dump(io_data, f)
+def io_file(io_data) -> Generator[Path, None, None]:
+    with tempfile.NamedTemporaryFile(mode="wb+") as f:
+        pickle.dump(io_data, f)
 
         f.seek(0)
 
@@ -284,9 +285,9 @@ def test_moduleio_save(monkeypatch):
         assert expected_file.stat().st_size > 0
 
 
-def test_moduleio_load(io_json_file, io_data):
+def test_moduleio_load_json(io_file, io_data):
     moduleio = ModuleIO()
-    moduleio.load(filename=io_json_file)
+    moduleio.load(filename=io_file)
 
     assert moduleio.input == io_data["input"]
     assert moduleio.output == io_data["output"]

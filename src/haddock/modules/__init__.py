@@ -31,7 +31,7 @@ from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libgrid import GRIDScheduler, ping_dirac
 from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
-from haddock.libs.libontology import ModuleIO, PDBFile
+from haddock.libs.libontology import Cache, ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libtimer import log_time
 from haddock.libs.libutil import recursive_dict_update
@@ -129,6 +129,7 @@ class BaseHaddockModule(ABC):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
+        self.cache = self.previous_io.cache
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
@@ -295,6 +296,8 @@ class BaseHaddockModule(ABC):
         io.add(self.previous_io.output, "i")
         # add the output models
         io.add(self.output_models, "o")
+        # update the cache - use the current module's cache which includes previous cache
+        io.update_cache(self.cache)
         # Removes un-generated outputs and compute percentage of ungenerated
         faulty = io.check_faulty()
         # Save outputs

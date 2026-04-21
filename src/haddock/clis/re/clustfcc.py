@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 
 from haddock import log
-from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX, MODULE_IO_FILE
 from haddock.core.typing import Union
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
@@ -14,7 +14,7 @@ from haddock.libs.libclust import (
     plot_cluster_matrix,
     rank_clusters,
     write_structure_list,
-    )
+)
 from haddock.libs.libfcc import create_elements, load_matrix
 from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.libs.libontology import ModuleIO
@@ -23,7 +23,7 @@ from haddock.modules.analysis.clustfcc.clustfcc import (
     iterate_clustering,
     write_clusters,
     write_clustfcc_file,
-    )
+)
 
 
 def add_clustfcc_arguments(clustfcc_subcommand):
@@ -112,11 +112,11 @@ def reclustfcc(
 
     # create an io object
     io = ModuleIO()
-    filename = Path(clustfcc_dir, "io.json")
+    filename = Path(clustfcc_dir, MODULE_IO_FILE)
     io.load(filename)
     models = io.input
-    # copying io.json to the new directory
-    shutil.copy(filename, Path(outdir, "io.json"))
+    # copying ModuleIO file to the new directory
+    shutil.copy(filename, Path(outdir, MODULE_IO_FILE))
 
     # load the original clustering parameters via json
     clustfcc_params = read_config(Path(clustfcc_dir, "params.cfg"))

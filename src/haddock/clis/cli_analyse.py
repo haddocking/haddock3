@@ -30,7 +30,7 @@ from pathlib import Path
 from haddock import log
 from haddock.clis.cli_unpack import main as haddock3_unpack
 from haddock.clis.cli_clean import main as haddock3_clean
-from haddock.core.defaults import INTERACTIVE_RE_SUFFIX, ANA_FOLDER
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX, ANA_FOLDER, MODULE_IO_FILE
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -41,7 +41,7 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     ParamMap,
-    )
+)
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.clean_steps import _unpack_gz
 from haddock.libs.libcli import _ParamsToDict
@@ -55,11 +55,11 @@ from haddock.libs.libplots import (
     report_generator,
     scatter_plot_handler,
     SUPPORTED_OUTPUT_FORMATS,
-    )
+)
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import (
     DEFAULT_CONFIG as caprieval_params,
-    )
+)
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
@@ -117,7 +117,7 @@ ap.add_argument(
     required=False,
     type=bool,
     default=False,
-    )
+)
 
 ap.add_argument(
     "--is_cleaned",
@@ -198,9 +198,9 @@ def maincli() -> None:
 
 
 def get_cluster_ranking(
-        capri_clt_filename: FilePath,
-        top_clusters: int,
-        ) -> ClRank:
+    capri_clt_filename: FilePath,
+    top_clusters: int,
+) -> ClRank:
     """
     Get capri cluster ranking.
 
@@ -251,13 +251,13 @@ def update_paths(
 
 
 def run_capri_analysis(
-        step: str,
-        run_dir: FilePath,
-        capri_dict: ParamMap,
-        is_cleaned: bool,
-        mode: str,
-        ncores: int,
-        ) -> None:
+    step: str,
+    run_dir: FilePath,
+    capri_dict: ParamMap,
+    is_cleaned: bool,
+    mode: str,
+    ncores: int,
+) -> None:
     """
     Run the caprieval analysis.
 
@@ -272,7 +272,7 @@ def run_capri_analysis(
     """
     # retrieve json file with all information
     io = ModuleIO()
-    filename = Path("..", f"{step}/io.json")
+    filename = Path("..", f"{step}/{MODULE_IO_FILE}")
     io.load(filename)
     # unpack the files if they are compressed
     if is_cleaned:
@@ -320,9 +320,8 @@ def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
     for param in kwargs:
         if param not in default_capri:
             sys.exit(
-                f"* ERROR * Parameter {param!r} is not "
-                "a valid `caprieval` parameter"
-                )
+                f"* ERROR * Parameter {param!r} is not a valid `caprieval` parameter"
+            )
         else:
             if param.endswith("fname"):  # using full path for files
                 rel_path = Path(kwargs[param])
@@ -365,11 +364,11 @@ def update_paths_in_capri_dict(
 
 
 def get_top_ranked_mapping(
-        capri_filename: FilePath,
-        cluster_ranking: ClRank,
-        clustered_topX: int = 4,
-        unclustered_topX: int = 10,
-        ) -> dict[Path, Path]:
+    capri_filename: FilePath,
+    cluster_ranking: ClRank,
+    clustered_topX: int = 4,
+    unclustered_topX: int = 10,
+) -> dict[Path, Path]:
     """Obtain mapping of top ranked files to their future paths.
 
     Parameters
@@ -403,11 +402,15 @@ def get_top_ranked_mapping(
             # If clustered structure
             if cl_id != "-":
                 # Retrieve only top 4 models per cluster
-                structs = cl_df.loc[cl_df["model-cluster_ranking"] <= clustered_topX][["model", "model-cluster_ranking"]]  # noqa : E501
+                structs = cl_df.loc[cl_df["model-cluster_ranking"] <= clustered_topX][
+                    ["model", "model-cluster_ranking"]
+                ]  # noqa : E501
             # If un-clustered structures
             else:
                 # Retrieve top 10
-                structs = cl_df.loc[cl_df["caprieval_rank"] <= unclustered_topX][["model", "caprieval_rank"]]  # noqa : E501
+                structs = cl_df.loc[cl_df["caprieval_rank"] <= unclustered_topX][
+                    ["model", "caprieval_rank"]
+                ]  # noqa : E501
             # Rename columns to access them using same keywords
             structs.columns = ["model", "rank"]
             # iterate over the structures
@@ -417,10 +420,7 @@ def get_top_ranked_mapping(
                 # set target name
                 if cl_id != "-":
                     # Give it its cluster name
-                    target_name = (
-                        f"cluster_{cluster_ranking[cl_id]}"
-                        f"_model_{rank}.pdb"
-                        )
+                    target_name = f"cluster_{cluster_ranking[cl_id]}_model_{rank}.pdb"
                 else:
                     # Give it its rank name
                     target_name = f"model_{rank}.pdb"
@@ -437,11 +437,12 @@ def get_top_ranked_mapping(
                     log.warning(f"structure {struct} not found")
     return top_ranked_mapping
 
+
 def zip_top_ranked(
-        top_ranked_mapping: dict[Path, Path],
-        summary_name: str,
-        gen_archive: bool,
-        ) -> Optional[Path]:
+    top_ranked_mapping: dict[Path, Path],
+    summary_name: str,
+    gen_archive: bool,
+) -> Optional[Path]:
     """
     Zip the top ranked structures.
 
@@ -487,7 +488,7 @@ def zip_top_ranked(
             # move archive to summary
             shutil.move("pdb.tgz", output_fname)
             log.info(f"Top structures summary archive {output_fname} created!")
-            return 
+            return
         else:
             log.warning(f"Summary archive {output_fname} not created!")
             return None
@@ -605,13 +606,13 @@ def analyse_step(
             cluster_ranking,
             clustered_topX=clustered_topX,
             unclustered_topX=unclustered_topX,
-            )
+        )
         # provide a zipped archive of the top ranked structures
         zip_top_ranked(
             top_ranked_mapping,
             "summary",
             not self_contained,
-            )
+        )
         log.info("Plotting results..")
         scatters = scatter_plot_handler(
             ss_filename,
@@ -619,14 +620,14 @@ def analyse_step(
             format,
             scale,
             offline=offline,
-            )
+        )
         boxes = box_plot_handler(
             ss_filename,
             cluster_ranking,
             format,
             scale,
             offline=offline,
-            )
+        )
         tables = clt_table_handler(
             clt_filename,
             ss_filename,
@@ -635,7 +636,7 @@ def analyse_step(
             clustered_topX=clustered_topX,
             unclustered_topX=unclustered_topX,
             top_ranked_mapping=top_ranked_mapping if self_contained else None,
-            )
+        )
         report_generator(boxes, scatters, tables, step, ".", offline)
 
 
@@ -674,7 +675,7 @@ def validate_format(_format: Optional[ImgFormat]) -> Optional[ImgFormat]:
                 f"Exporting with format {format} requires the use of `kaleido`"
                 f" package, that seems not to be installed. {os.linesep}"
                 "Please install it with: `pip install kaleido==0.2.*`"
-                )
+            )
         # At this stage, everything should go smooth with the export format
         else:
             # Return supported format
@@ -683,7 +684,7 @@ def validate_format(_format: Optional[ImgFormat]) -> Optional[ImgFormat]:
     raise ValueError(
         f"Format `{format}` is not supported.{os.linesep}"
         f"Supported formats: {SUPPORTED_OUTPUT_FORMATS}."
-        )
+    )
 
 
 def main(
@@ -757,15 +758,9 @@ def main(
     # get the module folders from the run_dir input
     sel_steps = get_module_steps_folders(Path("./"), modules)
     if inter:
-        sel_steps = [
-            st for st in sel_steps
-            if st.endswith(INTERACTIVE_RE_SUFFIX)
-            ]
+        sel_steps = [st for st in sel_steps if st.endswith(INTERACTIVE_RE_SUFFIX)]
     else:
-        sel_steps = [
-            st for st in sel_steps
-            if not st.endswith(INTERACTIVE_RE_SUFFIX)
-            ]
+        sel_steps = [st for st in sel_steps if not st.endswith(INTERACTIVE_RE_SUFFIX)]
     log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis
@@ -780,9 +775,8 @@ def main(
         if dest_path.exists():
             if len(os.listdir(dest_path)) != 0 and not inter:
                 log.warning(
-                    f"{dest_path} exists and is not empty. "
-                    "Skipping analysis..."
-                    )
+                    f"{dest_path} exists and is not empty. Skipping analysis..."
+                )
                 continue
             else:  # subfolder is empty or is interactive, remove it.
                 log.info(f"Removing folder {dest_path}.")
@@ -803,12 +797,12 @@ def main(
                 mode=mode,
                 ncores=ncores,
                 self_contained=self_contained,
-                )
+            )
         except Exception as e:
             log.warning(
                 f"Could not execute the analysis for step {step}. "
                 f"The following error occurred: {e}"
-                )
+            )
             bad_folder_paths.append(target_path)
         else:
             good_folder_paths.append(target_path)
@@ -824,7 +818,7 @@ def main(
             shutil.move(directory, outdir)
             url = f"- [{Path(directory, 'report.html')}](http://0.0.0.0:8000/{Path(directory, 'report.html')}) "  # noqa : E501
             urls.append(url)
-        
+
         # Adding instructions on how to setup the server
         readme_fpath = Path(outdir, "README.md")
         readme_fpath.write_text(
@@ -834,7 +828,7 @@ def main(
             f"python -m http.server --directory .{os.linesep}```{os.linesep}"
             f"And open the link following links in a web browser:{os.linesep}"
             f"{os.linesep.join(urls)}{os.linesep}"
-            )
+        )
         assert readme_fpath.exists()
 
     if bad_folder_paths != []:
@@ -859,7 +853,7 @@ def main(
             # "By default, http server runs on `http://0.0.0.0:8000/`. "
             f"And open the link http://0.0.0.0:8000/{report_file} "
             "in a web browser."
-            )
+        )
         log.info(info_msg)
     os.chdir(ori_cwd)
     return

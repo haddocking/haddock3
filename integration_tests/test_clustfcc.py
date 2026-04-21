@@ -8,6 +8,7 @@ import pytest
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.clustfcc import DEFAULT_CONFIG as clustfcc_pars
 from haddock.modules.analysis.clustfcc import HaddockModule as ClustFCCModule
+from haddock.core.defaults import MODULE_IO_FILE
 
 from integration_tests import GOLDEN_DATA
 
@@ -55,7 +56,7 @@ def fixture_output_list():
         "protprot_complex_1.con",
         "protprot_complex_2.con",
         "clustfcc.txt",
-        "io.json",
+        MODULE_IO_FILE,
         "clustfcc.tsv",
         "fcc_matrix.html",
     ]

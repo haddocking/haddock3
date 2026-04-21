@@ -9,6 +9,7 @@ USAGE::
     haddock3-traceback -r <run_dir>
 
 """
+
 import argparse
 import sys
 from pathlib import Path
@@ -17,7 +18,7 @@ import numpy as np
 import pandas as pd
 
 from haddock import log
-from haddock.core.defaults import TRACEBACK_FOLDER
+from haddock.core.defaults import MODULE_IO_FILE, TRACEBACK_FOLDER
 from haddock.core.typing import Any, FilePath
 from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
@@ -33,10 +34,10 @@ def get_steps_without_pdbs(run_dir, all_steps):
     ----------
     run_dir : str or pathlib.Path
         Path to the run directory.
-    
+
     all_steps : list
         List of all the steps in the run directory.
-    
+
     Returns
     -------
     steps_without_pdbs : list
@@ -119,7 +120,7 @@ def traceback_dataframe(
     df_data.reset_index(inplace=True)
     # assign columns
     data_cols = [el for el in reversed(sel_step)]
-    data_cols.extend([f"00_topo{i+1}" for i in range(max_topo_len)])
+    data_cols.extend([f"00_topo{i + 1}" for i in range(max_topo_len)])
     df_data.columns = data_cols
 
     # same for the rank_dict
@@ -147,10 +148,10 @@ def order_traceback_df(df_output, sel_step):
     ----------
     df_output : pandas.DataFrame
         Dataframe containing the traceback data.
-    
+
     sel_step : list
         List of selected steps.
-    
+
     Returns
     -------
     df_output : pandas.DataFrame
@@ -182,17 +183,17 @@ def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.Data
     ----------
     traceback_df : pandas.DataFrame
         Dataframe containing the traceback data.
-    
+
     cons_filename : pathlib.Path
         name of the consensus file.
-    
+
     Returns
     -------
     rank_data_subset : pandas.DataFrame
         Dataframe containing the subset of the traceback data.
     """
     red_traceback_df = traceback_df.head(40)
-    rank_data = red_traceback_df.filter(regex='rank$')
+    rank_data = red_traceback_df.filter(regex="rank$")
     # get the last column: this will define the name of the models
     last_column = red_traceback_df.columns[-2]
     last_column_data = red_traceback_df[last_column]
@@ -201,11 +202,13 @@ def subset_traceback(traceback_df: pd.DataFrame, cons_filename: Path) -> pd.Data
     # the rank of the last column must be defined
     last_column_rank = last_column + "_rank"
     # copy avoids SettingWithCopyWarning
-    rank_data_subset = rank_data[rank_data[last_column_rank] != '-'].copy()
+    rank_data_subset = rank_data[rank_data[last_column_rank] != "-"].copy()
     rank_columns = rank_data_subset.columns[1:].tolist()
-    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(pd.to_numeric, errors='coerce')
+    rank_data_subset[rank_columns] = rank_data_subset[rank_columns].apply(
+        pd.to_numeric, errors="coerce"
+    )
     rank_data_subset = rank_data_subset.sort_values(by=last_column_rank, ascending=True)
-    
+
     # rename the columns
     rank_data_subset.columns = ["Model"] + rank_columns
     # sum the ranks
@@ -288,10 +291,10 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
                 data_dict[key][-1] = f"../{sel_step[n]}/{data_dict[key][-1]}"
 
         delta = len(sel_step) - n - 1  # how many steps have we gone back?
-        # loading the .json file
-        json_path = Path(run_dir, sel_step[n], "io.json")
+        # loading the ModuleIO pickle
+        io_module_filepath = Path(run_dir, sel_step[n], MODULE_IO_FILE)
         io = ModuleIO()
-        io.load(json_path)
+        io.load(io_module_filepath)
         # list all the values in the data_dict
         ls_values = [x for val in data_dict.values() for x in val]
         # getting and sorting the ranks for the current step folder
@@ -315,7 +318,11 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
                     unk_idx += 1
                 else:
                     # we've already seen this pdb before.
-                    idxs = [i for i, el in enumerate(ls_values) if el==str(pdbfile.rel_path)]
+                    idxs = [
+                        i
+                        for i, el in enumerate(ls_values)
+                        if el == str(pdbfile.rel_path)
+                    ]
                     keys = [list(data_dict.keys())[idx // delta] for idx in idxs]
 
                 # assignment
@@ -349,9 +356,7 @@ def main(run_dir: FilePath, offline: bool = False) -> None:
     df_output = order_traceback_df(df_output, sel_step)
     # dumping the dataframe
     track_filename = Path(run_dir, TRACEBACK_FOLDER, "traceback.tsv")
-    log.info(
-        f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
-    )
+    log.info(f"Output dataframe {track_filename} created with shape {df_output.shape}")
     df_output.to_csv(track_filename, sep="\t", index=False)
 
     # taking (and writing) a subset of the dataframe

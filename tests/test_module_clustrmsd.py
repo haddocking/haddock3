@@ -19,9 +19,10 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     iterate_min_population,
     order_clusters,
     read_matrix,
-    )
+)
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
 from haddock.modules.analysis.rmsdmatrix import HaddockModule as HaddockRMSD
+from haddock.core.defaults import MODULE_IO_FILE
 
 
 @pytest.fixture(name="output_list")
@@ -33,7 +34,7 @@ def fixture_output_list():
         "cluster.out",
         "clustrmsd.txt",
         "clustrmsd.tsv",
-        "io.json",
+        MODULE_IO_FILE,
     ]
 
 

@@ -1,16 +1,14 @@
-import tempfile
 import copy
 import gzip
+import tempfile
 from pathlib import Path
 
-import shutil
 import pytest
 
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
-from . import CNS_EXEC, has_grid
-from integration_tests import GOLDEN_DATA
+from . import CNS_EXEC, EXAMPLE_DIR, GOLDEN_DATA, has_grid
 
 
 @pytest.fixture
@@ -54,6 +52,44 @@ def extract_nter_cter(fpath) -> tuple[str, str]:
                 # Increment last residue
                 cter += _
     return nter, cter
+
+
+@pytest.mark.parametrize("autotoppar_flag", [False, True])
+def test_topoaa_prot_pep_ens_autotoppar(topoaa_module, autotoppar_flag):
+
+    _data_dir = Path(EXAMPLE_DIR, "docking-protein-peptide", "data")
+    topoaa_module.params["molecules"] = [
+        Path(_data_dir, "1NX1_protein.pdb"),
+        Path(_data_dir, "DAIDALSSDFT_3conformations.pdb"),
+    ]
+    topoaa_module.params["mol1"]["prot_segid"] = "A"
+    # Create mol2 parameters by copying the ones found for mol1
+    topoaa_module.params["mol2"] = copy.deepcopy(topoaa_module.params["mol1"])
+    topoaa_module.params["mol2"]["prot_segid"] = "B"
+    topoaa_module.params["debug"] = True
+    topoaa_module.params["autotoppar"] = autotoppar_flag
+    topoaa_module.run()
+
+    expected_files = [
+        "1NX1_protein.inp",
+        "1NX1_protein_haddock.psf",
+        "1NX1_protein_haddock.pdb",
+        "DAIDALSSDFT_3conformations_1.inp",
+        "DAIDALSSDFT_3conformations_1.pdb",
+        "DAIDALSSDFT_alpha_from_DAIDALSSDFT_3conformations_1_haddock.psf",
+        "DAIDALSSDFT_alpha_from_DAIDALSSDFT_3conformations_1_haddock.pdb",
+        "DAIDALSSDFT_3conformations_2.inp",
+        "DAIDALSSDFT_3conformations_2.pdb",
+        "DAIDALSSDFT_ext_from_DAIDALSSDFT_3conformations_2_haddock.psf",
+        "DAIDALSSDFT_ext_from_DAIDALSSDFT_3conformations_2_haddock.pdb",
+        "DAIDALSSDFT_3conformations_3.inp",
+        "DAIDALSSDFT_3conformations_3.pdb",
+        "DAIDALSSDFT_polyII_from_DAIDALSSDFT_3conformations_3_haddock.psf",
+        "DAIDALSSDFT_polyII_from_DAIDALSSDFT_3conformations_3_haddock.pdb",
+    ]
+
+    for f in expected_files:
+        assert Path(topoaa_module.path, f).exists(), f"{f} not found"
 
 
 @has_grid
@@ -189,7 +225,9 @@ def test_topoaa_module_ligand_hydrogen_build(topoaa_module):
     assert expected_psf.exists()
     assert expected_pdb.exists()
     assert expected_gz.exists()
-    file_content = gzip.open(Path(topoaa_module.path, "oseltamivir.out.gz"), 'rt').read()
+    file_content = gzip.open(
+        Path(topoaa_module.path, "oseltamivir.out.gz"), "rt"
+    ).read()
     assert 'hydrogen_build="unknown"' in file_content
 
 

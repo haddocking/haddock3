@@ -325,6 +325,7 @@ class HaddockModule(BaseCNSModule):
                         libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
                     else:
                         self.log("No unknown atoms found")
+                        libpdb.sanitize(model, overwrite=True)
                         _params = self.params
                 else:
                     libpdb.sanitize(model, overwrite=True)

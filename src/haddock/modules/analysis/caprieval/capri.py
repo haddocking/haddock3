@@ -532,7 +532,7 @@ class CAPRI:
             ff=self.ff,
             keep_hetatm=self.keep_hetatm,
             )
-        
+
         if len(ref_contacts) != 0:
             try:
                 model_contacts = load_contacts(

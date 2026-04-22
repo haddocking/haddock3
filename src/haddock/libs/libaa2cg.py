@@ -25,23 +25,26 @@ Updates
  - Implemented feature to check if nucleic acid is a candidate for hbond (Rodrigo Honorato 2018)
 """
 
+import collections
 import itertools
+import math
 import os
 import random
 import subprocess
-import warnings
-from pathlib import Path
-from haddock import log
 import tempfile
-import collections
-import math
+import warnings
 
-from Bio.PDB import Entity
-from Bio.PDB import PDBIO
-from Bio.PDB import PDBParser
+from pathlib import Path
+from io import StringIO
+
+from Bio.PDB import Entity, PDBIO, PDBParser
+from Bio.PDB.Structure import Structure
 from Bio.PDB.StructureBuilder import StructureBuilder
 
+from haddock import log
 from haddock.core.exceptions import ModuleError
+from haddock.core.typing import Optional
+from haddock.libs.libontology import Format
 
 warnings.filterwarnings("ignore")
 
@@ -143,8 +146,8 @@ def typesub(seq, patterns, types):
 
 def ss_classification(ss, program="dssp"):
     """
-   Translates a string encoding the secondary structure to a string of corresponding Martini types, taking the
-   origin of the secondary structure into account, and replacing termini if requested.
+    Translates a string encoding the secondary structure to a string of corresponding Martini types, taking the
+    origin of the secondary structure into account, and replacing termini if requested.
 
     Args:
         ss:
@@ -226,26 +229,28 @@ sstd = dict([(i, ord(i) * null + i + (255 - ord(i)) * null) for i in cgss])
 # CG MAPPING INFORMATION
 
 bb = "CA C N O "
-prot_atoms = {"ALA": [bb + "CB"],
-              "CYS": [bb, "CB SG"],
-              "ASP": [bb, "CB CG OD1 OD2"],
-              "GLU": [bb, "CB CG CD OE1 OE2"],
-              "PHE": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ"],
-              "GLY": [bb],
-              "HIS": [bb, "CB CG", "CD2 NE2", "ND1 CE1"],
-              "ILE": [bb, "CB CG1 CG2 CD1"],
-              "LYS": [bb, "CB CG CD", "CE NZ"],
-              "LEU": [bb, "CB CG CD1 CD2"],
-              "MET": [bb, "CB CG SD CE"],
-              "ASN": [bb, "CB CG ND1 ND2 OD1 OD2"],  # ND1?
-              "PRO": [bb, "CB CG CD"],
-              "GLN": [bb, "CB CG CD OE1 OE2 NE1 NE2"],
-              "ARG": [bb, "CB CG CD", "NE CZ NH1 NH2"],
-              "SER": [bb, "CB OG"],
-              "THR": [bb, "CB OG1 CG2"],
-              "VAL": [bb, "CB CG1 CG2"],
-              "TRP": [bb, "CB CG CD2", "CD1 NE1 CE2", "CE3 CZ3", "CZ2 CH2"],
-              "TYR": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ OH"]}
+prot_atoms = {
+    "ALA": [bb + "CB"],
+    "CYS": [bb, "CB SG"],
+    "ASP": [bb, "CB CG OD1 OD2"],
+    "GLU": [bb, "CB CG CD OE1 OE2"],
+    "PHE": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ"],
+    "GLY": [bb],
+    "HIS": [bb, "CB CG", "CD2 NE2", "ND1 CE1"],
+    "ILE": [bb, "CB CG1 CG2 CD1"],
+    "LYS": [bb, "CB CG CD", "CE NZ"],
+    "LEU": [bb, "CB CG CD1 CD2"],
+    "MET": [bb, "CB CG SD CE"],
+    "ASN": [bb, "CB CG ND1 ND2 OD1 OD2"],  # ND1?
+    "PRO": [bb, "CB CG CD"],
+    "GLN": [bb, "CB CG CD OE1 OE2 NE1 NE2"],
+    "ARG": [bb, "CB CG CD", "NE CZ NH1 NH2"],
+    "SER": [bb, "CB OG"],
+    "THR": [bb, "CB OG1 CG2"],
+    "VAL": [bb, "CB CG1 CG2"],
+    "TRP": [bb, "CB CG CD2", "CD1 NE1 CE2", "CE3 CZ3", "CZ2 CH2"],
+    "TYR": [bb, "CB CG CD1", "CD2 CE2", "CE1 CZ OH"],
+    }
 
 bead_names = ["BB", "SC1", "SC2", "SC3", "SC4"]
 
@@ -544,7 +549,7 @@ def center_of_mass(entity, geometric=False):
     return [sum(coord_list) / sum(masses) for coord_list in w_pos]
 
 
-def determine_hbonds(structure):
+def determine_hbonds(structure: Structure):
     """
 
     Args:
@@ -752,8 +757,8 @@ def create_file_with_cryst(pdb_file: str) -> None:
     return file_out.name
 
 
-def determine_ss(structure, skipss, pdbf_path):
-    """
+def determine_ss(structure: Structure, skipss: bool, pdbf_path: str) -> Structure:
+    """Determine secondary structures from input structure
 
     Args:
         structure:
@@ -807,48 +812,65 @@ def determine_ss(structure, skipss, pdbf_path):
     return structure
 
 
-def rename_nucbases(structure):
+def rename_nucbases(structure: Structure) -> None:
+    """Inplace residue renaming according to HADDOCK ones.
+
+    Parameters
+    ----------
+    structure : Bio.PDB.Structure.Structure
+        Input structure
     """
-
-    Args:
-        structure:
-
-    Returns:
-
-    """
-    chainresdic = dict([(c.get_id(),
-                       [r.get_resname() for r in c.get_residues()]) for m in structure for c in m])
+    chainresdic = {
+        c.get_id(): [r.get_resname() for r in c.get_residues()]
+        for m in structure
+        for c in m
+    }
 
     nucleotide_list = ["CYT", "C", "DC", "THY", "T", "DT", "ADE",
                        "A", "DA", "G", "GUA", "DG", "U", "URI"]
+    rna_resname_mapper = {"CYT": "C", "URI": "U", "ADE": "A", "GUA": "G"}
+    dna_rename_mapper = {"CYT": "DC", "THY": "DT", "ADE": "DA", "GUA": "DG"}
 
     if [True for c in chainresdic for e in chainresdic[c] if e in nucleotide_list]:
-
-        if [True for c in chainresdic for e in chainresdic[c] if e in ["U", "URI"]]:
-            # CG needs 1 letter for RNA
-            ref_dic = {"CYT": "C", "URI": "U", "ADE": "A", "GUA": "G"}
-        else:
-            # CG needs 2 letters for DNA
-            ref_dic = {"CYT": "DC", "THY": "DT", "ADE": "DA", "GUA": "DG"}
-
+        # Check if this is an RNA
+        is_rna = [True for c in chainresdic for e in chainresdic[c] if e in ["U", "URI"]]
+        ref_dic = rna_resname_mapper if is_rna else dna_rename_mapper
+        # Loop over models
         for model in structure:
             for chain in model:
                 for r in chain.get_residues():
                     if r.resname in ref_dic.keys():
-                        # rename
+                        # Rename residue name
                         r.resname = ref_dic[r.resname]
 
 
-def martinize(input_pdb, output_path, skipss):
+def martinize(
+        input_pdb: str,
+        output_path: str,
+        skipss: bool,
+    ) -> tuple[str, bool]:
     """
+    Converts an all-atom (AA) PDB structure into a coarse-grained (CG) model
+    using a MARTINI2.2 mapping and generating CG-to-AA restraints for backmapping.
+    Optionally uses secondary structure for mapping.
     
     Args:
-        input_pdb: str
-        output_path: str
-        skipss: boolean
+        input_pdb (str):
+            Path to the input AA PDB file.
+        output_path (str):
+            Directory where the output files will be written.
+                - A CG PDB file (*_cg.pdb)
+                - A restraint table (*_cg_to_aa.tbl)
+        skipss (bool):
+            If True, skips secondary structure assignment (DSSP step).
+            If False, assigns secondary structure and encodes it
+            into HADDOCK-compatible B-factors.
     
     Returns:
-        cg_pdb_name: str
+        tuple[str, bool]:
+            cg_pdb_name: Path to the generated CG PDB file.
+            shape: True if at least one residue with name "SHA" (shape bead)
+            is detected in the structure, False otherwise.
     """
 
     if not input_pdb:
@@ -928,41 +950,91 @@ def martinize(input_pdb, output_path, skipss):
 
                     tbl_cg_to_aa.append(restrain)
                     restrain_counter += 1
+    # Write CG to AA backmapping restraint file
+    tbl_file_name = gen_cg_tbl_backmapping_fname(f"{output_path}", pdbf_path)
+    with open(tbl_file_name, "w") as tbl_file:
+        tbl_file.write("\n" + "\n".join([tbl for tbl in tbl_cg_to_aa if tbl]))
 
+    # Write pre-CG structure
     cg_model = structure_builder.get_structure()
-
-    # Write CG structure
-    cg_pdb_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg.pdb"
     io.set_structure(cg_model)
-    io.save("temp.pdb", write_end=1)
+    # Setup in-memory text buffer
+    io_file = StringIO()
+    # Write file in it
+    io.save(io_file, write_end=1)
+    # Go back to the start of the file to read it
+    io_file.seek(0)
 
+    # Write the actual valid CG structure
     # make sure atom names are in the correct place
     # .BB. .BB1. .BB2. and not BB.. BB1.. BB2..
+    cg_pdb_name = gen_cg_filename(f"{output_path}", pdbf_path)
     out = open(cg_pdb_name, "w")
-    for line in open("temp.pdb", "r"):
-        if "ATOM" in line[:4]:
+    for line in io_file.readlines():
+        n_l = line
+        if line.startswith("ATOM"):
             atom_name = line[12:16].split()[0]
             # mind the spacing
-            if len(atom_name) == 3:
-                n_l = f"{line[:12]} {atom_name}{line[16:]}"
-            elif len(atom_name) == 2:
-                n_l = f"{line[:12]} {atom_name} {line[16:]}"
-            elif len(atom_name) == 1:
-                n_l = f"{line[:12]} {atom_name}  {line[16:]}"
-            else:
-                n_l = line
-        else:
-            n_l = line
+            if 1 <= len(atom_name) <= 3:
+                n_l = f"{line[:12]} {atom_name:<3s}{line[16:]}"
         out.write(n_l)
     out.close()
-    Path("temp.pdb").unlink(missing_ok=True)
-
-    # Write Restraints
-    tbl_file_name = f"../{output_path}/{pdbf_path.split('/')[-1][:-4]}_cg_to_aa.tbl"
-    tbl_file = open(tbl_file_name, "w")
-    tbl_str = "\n".join([tbl for tbl in tbl_cg_to_aa if tbl])
-    tbl_file.write(f"\n{tbl_str}")
-    tbl_file.close()
+    del io_file
 
     return cg_pdb_name
 
+
+def gen_cg_filename(
+        output_dir: str,
+        input_fname: str,
+        force_field: Optional[str] = None,
+        ext: Optional[str] = None,
+        ) -> str:
+    """Helper function to standarize CG filename from input file.
+
+    Parameters
+    ----------
+    output_dir : str
+        Where to write the file.
+    input_fname : str
+        Name of the original input PDB file.
+    force_field : Optional[str], optional
+        Name of the force-field, by default None
+    ext : Optional[str], optional
+        File extension, by default None
+
+    Returns
+    -------
+    cg_fname : str
+        Name of the CG file.
+    """
+    # Suffix for force-field if defined
+    ff_suffix = f"_{force_field}" if force_field else ""
+    # Set file extension
+    file_ext = ext if ext else Format.PDB
+    # Generate filepath
+    cg_fpath = Path(
+        output_dir,
+        f"{Path(input_fname).stem}_cg{ff_suffix}.{file_ext}"
+        )
+    cg_fname = str(cg_fpath)
+    return cg_fname
+
+
+def gen_cg_tbl_backmapping_fname(output_dir: str, input_fname: str) -> Path:
+    """Helper function to generate CG backmapping retraints filename.
+
+    Parameters
+    ----------
+    output_dir : str
+        Where to write the file.
+    input_fname : str
+        Name of the original input PDB file.
+
+    Returns
+    -------
+    tbl_file_name: Path
+        Name of backmapping restraint filename.
+    """
+    tbl_file_name = Path(output_dir, f"{Path(input_fname).stem}_cg_to_aa.tbl")
+    return tbl_file_name

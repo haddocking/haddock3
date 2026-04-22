@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-04-13: Fixed issue with shape in cgtoa module and added shape docking example
 - 2026-03-30: Added nucleosome-PCR1 CG docking example
 - 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485
 - 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481

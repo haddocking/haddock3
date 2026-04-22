@@ -10,11 +10,10 @@ from Bio.PDB.PDBExceptions import PDBConstructionWarning
 import pytest
 
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.libs.libontology import Format
 from haddock.modules.topology.topocg import DEFAULT_CONFIG as topocg_params
 from haddock.modules.topology.topocg import HaddockModule as Topocg
 from haddock.modules.topology.topocg import generate_topology
-
-from haddock.libs.libontology import Format
 
 from . import golden_data
 
@@ -72,11 +71,17 @@ def test_generate_topology(topocg, protein):
             force_field=force_field,
         )
 
-    assert observed_inp_out == Path(protein.name).with_suffix(".inp")
+    assert observed_inp_out == Path(protein.name).with_suffix(f".{Format.CNS_INPUT}")
     
     # Confirm the expected output file exists
-    expected_filename = topocg.path.resolve() /".." / f"{protein.stem}_cg.pdb" #Path(f"/tmp/{protein.stem}_cg.pdb")
+    expected_filename = topocg.path.resolve() / f"{protein.stem}_cg.pdb"
     assert expected_filename.exists(), f"Expected CG PDB file not found: {expected_filename}"
+
+    # Check that backmapping tbl file has been created
+    tbl_backmapping_fpath = topocg.path.resolve() / f"{protein.stem}_cg_to_aa.tbl"
+    assert tbl_backmapping_fpath.exists(), (
+        f"Expected backmapping retraints file not found: {tbl_backmapping_fpath}"
+    )
 
     # Inspect the content to confirm it's a CG structure
     with open(expected_filename, "r") as f:

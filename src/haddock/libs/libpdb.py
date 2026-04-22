@@ -508,7 +508,7 @@ def check_combination_chains(combination: list[PDBFile]) -> list[str]:
     return chainid_list
 
 
-def check_mol_shape(input_mol: Path):
+def check_mol_shape(input_mol: Path) -> bool:
     """
     Checks if molecules provided is a shape or not.
     

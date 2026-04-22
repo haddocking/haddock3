@@ -220,7 +220,7 @@ class HaddockModule(BaseHaddockModule):
 
         if ff == "martini2":
             references = [
-                Path(martinize(ref_aa, self.path, False))
+                Path(martinize(ref_aa, self.path.resolve().parent, False))
                 for ref_aa in self.get_reference(models)
                 ]
         else:

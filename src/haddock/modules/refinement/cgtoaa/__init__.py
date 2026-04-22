@@ -72,8 +72,7 @@ class HaddockModule(BaseCNSModule):
         for model in models_to_refine:
             model_idx += 1
 
-            #print(self.params["sampling_factor"])
-            for s_ind in range(self.params["sampling_factor"]):
+            for s_ind in range(sampling_factor):
                 cgtoaa_input = prepare_cns_input(
                     idx,
                     model,

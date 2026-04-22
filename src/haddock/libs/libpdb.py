@@ -518,7 +518,7 @@ def check_mol_shape(input_mol: Path) -> bool:
     Returns:
         bool: True if shape, False if not.
     """
-    shape = False
+    shape: bool = False
     with open(input_mol, 'rt') as input_file_mol:
         if any('SHA SHA ' in line for line in input_file_mol):
             shape = True

@@ -53,11 +53,11 @@ def generate_default_header(
 
 
 def find_desired_linkfiles(
-        charged_nter: bool = False,
-        charged_cter: bool = False,
-        phosphate_5: bool = False,
-        path: Optional[FilePath] = None,
-        ) -> dict[str, Path]:
+    charged_nter: bool = False,
+    charged_cter: bool = False,
+    phosphate_5: bool = False,
+    path: Optional[FilePath] = None,
+) -> dict[str, Path]:
     """Find appropriate link files to use depending on terminis states.
 
     Parameters
@@ -86,7 +86,7 @@ def find_desired_linkfiles(
     elif not charged_nter and charged_cter:
         prot_link_key = "NH,COO-"
     elif charged_nter and not charged_cter:
-        prot_link_key= "NH3+,CO"
+        prot_link_key = "NH3+,CO"
     elif not charged_nter and not charged_cter:
         prot_link_key = "NH,CO"
     # Point to corresponding file
@@ -168,10 +168,7 @@ def load_workflow_params(
     param_header: str
         The string with the CNS parameters defined.
     """
-    non_empty_parameters = (
-        (k, v) for k, v in params.items()
-        if filter_empty_vars(v)
-        )
+    non_empty_parameters = ((k, v) for k, v in params.items() if filter_empty_vars(v))
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
@@ -217,12 +214,8 @@ def load_link(mol_link: Path) -> str:
     )
 
 
-load_axis = partial(
-    load_workflow_params, param_header=f"{linesep}! Axis{linesep}"
-)  # noqa: E501
-load_tensor = partial(
-    load_workflow_params, param_header=f"{linesep}! Tensors{linesep}"
-)  # noqa: E501
+load_axis = partial(load_workflow_params, param_header=f"{linesep}! Axis{linesep}")  # noqa: E501
+load_tensor = partial(load_workflow_params, param_header=f"{linesep}! Tensors{linesep}")  # noqa: E501
 prepare_output = partial(
     load_workflow_params, param_header=f"{linesep}! Output structure{linesep}"
 )  # noqa: E501
@@ -349,8 +342,19 @@ def prepare_cns_input(
     default_params = load_workflow_params(**defaults)
     default_params += write_eval_line("ambig_fname", ambig_fname)
 
+    # Check if any PDBFile has ligand files and override global parameters
+    # This is important for ensembles with autotoppar where each model has different ligand files
+    pdb_files = transform_to_list(input_element)
+    for pdb in pdb_files:
+        if hasattr(pdb, "ligand_top_fname") and pdb.ligand_top_fname:
+            default_params += write_eval_line("ligand_top_fname", pdb.ligand_top_fname)
+        if hasattr(pdb, "ligand_param_fname") and pdb.ligand_param_fname:
+            default_params += write_eval_line(
+                "ligand_param_fname", pdb.ligand_param_fname
+            )
+
     # write the PDBs
-    pdb_list = [pdb.rel_path for pdb in transform_to_list(input_element)]
+    pdb_list = [pdb.rel_path for pdb in pdb_files]
 
     # write the PSFs
     psf_list: list[Path] = []

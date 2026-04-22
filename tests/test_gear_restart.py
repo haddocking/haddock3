@@ -93,6 +93,7 @@ def test_preprocess_restart_from():
             f"{tmpdir}/{TRACEBACK_FOLDER}",
             f"{tmpdir}/{ANA_FOLDER}/2_caprieval_analysis",
             f"{tmpdir}/2_caprieval",
+            f"{tmpdir}/data/2_caprieval",
         ]
         expected_to_stay_there = [
             f"{tmpdir}/1_rigidbody",
@@ -101,6 +102,37 @@ def test_preprocess_restart_from():
             f"{tmpdir}/data/0_topoaa",
         ]
         for should_not_exist in expected_to_be_removed:
+            assert not os.path.exists(should_not_exist)
+        for should_exist in expected_to_stay_there:
+            assert os.path.exists(should_exist)
+
+
+def test_preprocess_restart_from_no_folders():
+    """Make sure there is no issue when removing folder when not present."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Build mimic of previous run directories
+        module_dirs = ["topoaa", "rigidbody", "caprieval"]
+        for module_index, module_name in enumerate(module_dirs):
+            os.makedirs(f"{tmpdir}/data/{module_index}_{module_name}")
+            os.makedirs(f"{tmpdir}/{module_index}_{module_name}")
+        
+        # Test restart preprocessing function
+        restart_run.preprocess_restart_from(Path(tmpdir), 2)
+
+        expected_not_to_be_there = [
+            f"{tmpdir}/{TRACEBACK_FOLDER}",
+            f"{tmpdir}/{ANA_FOLDER}/2_caprieval_analysis",
+            f"{tmpdir}/2_caprieval",
+            f"{tmpdir}/data/2_caprieval",
+            f"{tmpdir}/{ANA_FOLDER}",
+        ]
+        expected_to_stay_there = [
+            f"{tmpdir}/1_rigidbody",
+            f"{tmpdir}/data/1_rigidbody",
+            f"{tmpdir}/0_topoaa",
+            f"{tmpdir}/data/0_topoaa",
+        ]
+        for should_not_exist in expected_not_to_be_there:
             assert not os.path.exists(should_not_exist)
         for should_exist in expected_to_stay_there:
             assert os.path.exists(should_exist)

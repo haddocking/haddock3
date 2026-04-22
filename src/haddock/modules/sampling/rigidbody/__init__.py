@@ -84,6 +84,13 @@ class HaddockModule(BaseCNSModule):
             model = PDBFile(output_pdb_fname, path=".", restr_fname=ambig_fname)
             model.topology = [e.topology for e in combination]
             model.seed = seed  # type: ignore
+
+            # Pass the toppar ahead
+            for e in combination:
+                if e.ligand_param_fname and e.ligand_top_fname:
+                    model.ligand_param_fname = e.ligand_param_fname
+                    model.ligand_top_fname = e.ligand_top_fname
+
             self.output_models.append(model)
 
             job = CNSJob(inp_input, log_fname, err_fname, envvars=self.envvars)
@@ -194,7 +201,7 @@ class HaddockModule(BaseCNSModule):
                 "'hbond_fname' parameter(s). "
                 "For ab-initio docking, set 'cmrest' or 'ranair' "
                 "parameters to true."
-                )
+            )
 
     def _run(self) -> None:
         """Execute module."""
@@ -219,7 +226,7 @@ class HaddockModule(BaseCNSModule):
                 "Sampling is smaller than the number"
                 " of model combinations "
                 f"#model_combinations={len(models_to_dock)},"
-                f' sampling={self.params["sampling"]}.'
+                f" sampling={self.params['sampling']}."
             )
 
         # get all the different ambig files
@@ -241,12 +248,16 @@ class HaddockModule(BaseCNSModule):
         if self.params["mode"] != "local":
             # Note: `batch` and (pseudo)-`mpi` mode uses files to communicate and cannot extract the information from the task object.
             cns_input = self.prepare_cns_input_sequential(
-                models_to_dock, sampling_factor, ambig_fnames  # type: ignore
+                models_to_dock,
+                sampling_factor,
+                ambig_fnames,  # type: ignore
             )
 
         else:
             cns_input = self.prepare_cns_input_parallel(
-                models_to_dock, sampling_factor, ambig_fnames  # type: ignore
+                models_to_dock,
+                sampling_factor,
+                ambig_fnames,  # type: ignore
             )
 
         jobs = self.make_cns_jobs(cns_input)

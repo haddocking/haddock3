@@ -95,10 +95,10 @@ class HaddockModule(BaseHaddockModule):
             The force-field used in those models.
         """
         try:
-            ff = models[0].topology[0].stem.split("_")[-1]
+            ff = Path(models[0].topology[0].rel_path).stem.split("_")[-1]
         except TypeError:
             try:
-                ff = models[0].topology.stem.split("_")[-1]
+                ff = Path(models[0].topology.rel_path).stem.split("_")[-1]
             except AttributeError:
                 ff = "aa"
         

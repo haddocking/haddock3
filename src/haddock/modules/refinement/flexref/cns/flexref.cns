@@ -22,7 +22,8 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.randorien=$randorien)
+evaluate ($saprotocol.randrot=$randrot)
+evaluate ($saprotocol.separate=$separate)
 evaluate ($saprotocol.tadhigh_t=$temp_high)
 evaluate ($saprotocol.t1_init=$temp_cool1_init)
 evaluate ($saprotocol.t2_init=$temp_cool2_init)
@@ -248,8 +249,10 @@ if ($select gt 0) then
 end if
 
 ! random placement of molecules
-if ($SaProtocol.randorien eq true) then
+if ($SaProtocol.separate eq true) then
     @MODULE:separate.cns
+end if
+if ($SaProtocol.randrot eq true) then
     @MODULE:random_rotations.cns
 end if
 

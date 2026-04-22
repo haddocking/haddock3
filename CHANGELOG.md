@@ -1,6 +1,10 @@
 # Changelog
 
 - 2026-04-13: Fixed issue with shape in cgtoa module and added shape docking example
+- 2026-04-16: Added control of hydrogen building in topoaa - Issue #1522
+- 2026-04-15: Implemented separate control of separation and randome rotations of molecules - Issue #1491
+- 2026-04-15: Solve bug related to workflow restarting without analysis folder - Issue #1518
+- 2026-04-14: Increase max number of timesteps in openmm module - BioExcel forum 6072
 - 2026-04-12: Add possibility to run MD (mdref, mdscoring) without solvent - Issue #1512
 - 2026-04-10: Corrected the definition of ion restraints in flexref - Issue #1510
 - 2026-04-10: Removing analysis modules downstream when restarting - Issue #1495

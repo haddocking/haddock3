@@ -1,6 +1,5 @@
 """Specific tests for topocg."""
 
-import os
 import tempfile
 from math import isnan
 from pathlib import Path

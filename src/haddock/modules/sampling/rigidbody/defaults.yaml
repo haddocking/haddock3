@@ -850,12 +850,21 @@ rotate180:
     If set to true, HADDOCK will rotate the molecule by 180 degree around an axis perpendicular to the interface.
   group: 'sampling'
   explevel: expert
-randorien:
+separate:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: Separate molecules
+  short: Translate molecules to separate them
+  long: Translate molecules to separate them ensuring a minimum distance
+    that allows rotations (controlled by the randrot parameter) without clashes
+  group: 'sampling'
+  explevel: easy
+randrot:
+  default: true
+  type: boolean
+  title: Random rotations
+  short: Randomly rotate the molecules around their respective center of mass
+  long: Randomly rotate the molecules around their respective center of mass
   group: 'sampling'
   explevel: easy
 rigidtrans:

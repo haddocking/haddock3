@@ -76,7 +76,7 @@ class HaddockModule(BaseHaddockModule):
             if isinstance(model, list):
                 return True
         return False
-    
+
     @staticmethod
     def find_ff(models: list[PDBFile]) -> str:
         """Finds the force-field information (all-atom or martini) from the topology 

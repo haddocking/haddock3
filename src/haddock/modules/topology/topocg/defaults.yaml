@@ -8,7 +8,7 @@ cgffversion:
   title: MARTINI Force-field version
   short: Force-field version for the coarse-grain mapping and parameters
   long: Force-field version for the coarse-grain mapping and parameters. 
-  group: module
+  group: "force-field"
   explevel: expert
 autohis:
   default: true

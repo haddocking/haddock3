@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-04-23: Merging the coarse-graining branch into the main branch.
 - 2026-04-13: Fixed issue with shape in cgtoa module and added shape docking example
 - 2026-04-16: Added control of hydrogen building in topoaa - Issue #1522
 - 2026-04-15: Implemented separate control of separation and randome rotations of molecules - Issue #1491

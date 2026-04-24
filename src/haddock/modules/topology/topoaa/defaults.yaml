@@ -149,6 +149,17 @@ disulphide_dist:
   long: Cutoff distance in Angstroms for identification of disulphide bonds (SH - SH)
   group: molecule
   explevel: guru
+acecys_dist:
+  default: 4.00
+  type: float
+  precision: 2
+  min: 0.00
+  max: 999999.99
+  title: Cutoff distance for detecting ACE-CYS cyclisation
+  short: Cutoff distance in Angstroms for identification of ACE-CYS cyclisation 
+  long: Cutoff distance in Angstroms for identification of ACE-CYS cyclisation (CYS S - ACE CA)
+  group: molecule
+  explevel: guru
 mol1:
   type: dict
   group: input molecules

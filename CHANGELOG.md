@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-04-23: Merging the coarse-graining branch into the main branch.
+- 2026-04-13: Fixed issue with shape in cgtoa module and added shape docking example
 - 2026-04-16: Added control of hydrogen building in topoaa - Issue #1522
 - 2026-04-15: Implemented separate control of separation and randome rotations of molecules - Issue #1491
 - 2026-04-15: Solve bug related to workflow restarting without analysis folder - Issue #1518
@@ -9,10 +11,12 @@
 - 2026-04-10: Removing analysis modules downstream when restarting - Issue #1495
 - 2026-04-08: Improved docstring in modules
 - 2026-04-08: Increased NOE restraints array size in scoring modules - Issue #1501
+- 2026-03-30: Added nucleosome-PCR1 CG docking example
 - 2026-03-09: Automated type casting for optional argument seed in haddock3-restraints random_removal - Issue #1485
 - 2026-02-28: Switched to ilRMSD clustering from protein-ligand examples - Issue #1481
 - 2026-02-24: Implement automated toppar generation for unknown atoms with PRODRG
 - 2026-02-20: Add fallback routine to use `Scheduler` if the GRID is not available
+- 2025-12-19: Implemented support for custom symmetry restaints - Issue #1465
 - 2025-12-15: Added missing NGA glycan parameters - Issue #1462
 - 2025-11-25: Simplify the use of multiple ambig archives
 - 2025-11-19: Corrected CNS verbosity settings - Issue #1446

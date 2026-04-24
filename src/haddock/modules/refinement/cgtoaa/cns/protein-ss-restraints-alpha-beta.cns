@@ -1,0 +1,128 @@
+! protein-ss-restraints-alpha-beta.cns
+!    Define automatically secondary structure dihedral angle restraints
+!    for helical and beta-sheet segments
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{+ file: protein-ss-restraints.def +}
+{+ description: Creates dihedral angle restraints to maintain conformation of the protein backbone +}
+{+ comment:This file is to be read by refinement files that modify atom coordinates +}
+{+ authors: Axel T. Brunger, and Paul D. Adams +}
+{+ modified by Alexandre Bonvin for HADDOCK use +}
+
+{=========================================================================================================}
+{                        things below this line do not normally need to be changed                        }
+{=========================================================================================================}
+
+{- Dihedral restraints for the protein backbone in alpha-beta regions -}
+
+do (store1 = 1) (all)
+restraint dihedral
+    nass = 50000
+end
+evaluate ($group=1)
+evaluate ($done=false)
+while ( $done = false ) loop bdihe
+    if ( $exist_prot_segid_$group = true ) then
+        show sum(1) ( segid $prot_segid_$group )
+        if ( $result > 0 ) then
+            evaluate ($error_phi=$Data.error_dih)
+            evaluate ($error_psi=$Data.error_dih)
+            for $id in id ( segid $prot_segid_$group and tag and not resn TIP* ) loop resid
+                show (segid) (id $id)
+                evaluate ($segid=$result)
+                show (resid) ( id $id )
+                evaluate ($resid=decode($result))
+                evaluate ($alphaphi = 0)
+                evaluate ($alphapsi = 0)
+                evaluate ($alpha_check = 0)
+                evaluate ($betaphi = 0)
+                evaluate ($betapsi = 0)
+                evaluate ($beta_check = 0)
+                evaluate ($rprec = $resid - 1)
+                show sum (store1) (resid $rprec and name C)
+                if ($result ne 0) then
+                    pick dihedral
+                        ( segid $segid and resid $rprec and name C )
+                        ( segid $segid and resid $resid and name N )
+                        ( segid $segid and resid $resid and name CA )
+                        ( segid $segid and resid $resid and name C ) 
+                        geometry
+                    evaluate ($dihedral_phi=$result)
+                    evaluate ($alphaphi=max($dihedral_phi,-77))
+                    evaluate ($alphaphi=max($dihedral_phi,-37))
+                    if ($alphaphi eq -37) then
+                        evaluate ($alpha_check = 1)
+                    else
+                        evaluate ($alpha_check = 0)
+                    end if
+                    evaluate ($betaphi=max($dihedral_phi,-145))
+                    evaluate ($betaphi=max($dihedral_phi,-105))
+                    if ($betaphi eq -105) then
+                        evaluate ($beta_check = 1)
+                    else
+                        evaluate ($beta_check = 0)
+                    end if
+                end if
+                evaluate ($rnext = $resid + 1)
+                show sum (store1) (resid $rnext and name N)
+                if ($result ne 0) then
+                    pick dihedral
+                        ( segid $segid and resid $resid and name N )
+                        ( segid $segid and resid $resid and name CA )
+                        ( segid $segid and resid $resid and name C )
+                        ( segid $segid and resid $rnext and name N ) 
+                        geometry
+                    evaluate ($dihedral_psi=$result)
+                    evaluate ($alphapsi=max($dihedral_psi,-67))
+                    evaluate ($alphapsi=max($dihedral_psi,-27))
+                    if ($alphapsi eq -27) then
+                        evaluate ($alpha_check = $alpha_check + 1)
+                    end if
+                    evaluate ($betapsi=max($dihedral_psi,105))
+                    evaluate ($betapsi=max($dihedral_psi,145))
+                    if ($betapsi eq 145) then
+                        evaluate ($beta_check = $beta_check + 1)
+                    end if
+                end if
+                evaluate ($defrest = 0) 
+                if ($alpha_check eq 2) then
+                    evaluate ($defrest = 1)
+                end if
+                if ($beta_check eq 2) then
+                    evaluate ($defrest = 1)
+                end if
+                if ($defrest = 1) then
+                    restraint dihedral
+                        ! phi
+                        assign  ( segid $segid and resid $rprec and name C )
+                                ( segid $segid and resid $resid and name N )
+                                ( segid $segid and resid $resid and name CA )
+                                ( segid $segid and resid $resid and name C ) 
+                                1.0 $dihedral_phi $error_phi 2
+                        ! psi
+                        assign  ( segid $segid and resid $resid and name N )
+                                ( segid $segid and resid $resid and name CA )
+                                ( segid $segid and resid $resid and name C )
+                                ( segid $segid and resid $rnext and name N ) 
+                                1.0 $dihedral_psi $error_psi 2
+                        scale 200.0
+                    end
+                end if
+            end loop resid
+        end if
+    else
+        evaluate ($done=true)
+    end if
+    evaluate ($group=$group+1)
+end loop bdihe
+
+flags include cdih end
+
+

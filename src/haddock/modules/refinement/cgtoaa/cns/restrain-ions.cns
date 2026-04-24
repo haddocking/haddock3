@@ -1,0 +1,109 @@
+! restrain-ions.cns
+!    distance restraints between an ion and any coordinating atom within 5A 
+!    to maintain the coordination topologu
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+noe class dist end
+
+! first deal with monoatomic ions
+evaluate ($pcount = 0)
+for $id1 in id ( name "LI+1" or name "F-1"  or name "NA+1" or name "MG+2" or name "AL+3" 
+              or name "CL-1" or name "K+1"  or name "CA+2" or name "V+2"  or name "V+3" 
+              or name "CR+2" or name "CR+3" or name "MN+2" or name "MN+3" or name "FE+2" 
+              or name "FE+3" or name "NI+2" or name "CO+2" or name "CO+3" or name "CU+1" 
+              or name "CU+2" or name "ZN+2" or name "BR-1" or name "SR+2" or name "MO+3" 
+              or name "AG+1" or name "CD+2" or name "I-1"  or name "CS+2" or name "HO+3" 
+              or name "YB+2" or name "YB+3" or name "OS+4" or name "IR+3" or name "PT+2" 
+              or name "AU+1" or name "AU+2" or name "HG+1" or name "HG+2" or name "PB+2" 
+              or name "U+3"  or name "U+4"  or name "ZN+1" or name "ZN"  ) loop sions 
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resname) (id $id1)
+    evaluate ($resname1=$result)
+    show (name) (id $id1)
+    evaluate ($name1=$result)
+
+    evaluate ($mindis = 4.0)
+    for $id2 in id ( (name O* or name S* or name N*) and (id $id1) around $mindis and
+                     (resn ACE or resn ALA or resn ALY or resn ARG or resn ASN or resn ASH or resn ASP or 
+                      resn CSP or resn CTN or resn CYC or resn CYF or resn CYM or resn CYS or resn DDZ or 
+                      resn GLN or resn GLH or resn GLU or resn GLY or resn HIS or resn HY3 or resn HYP or
+                      resn ILE or resn LEU or resn LYS or resn M3L or resn MLY or resn MLZ or resn MET or
+                      resn MSE or resn NEP or resn NME or resn PHE or resn PNS or resn PRO or resn PTR or
+                      resn QSR or resn SEP or resn SER or resn SEC or resn THR or resn TOP or resn TRP or
+                      resn TYP or resn TYR or resn TYS or resn VAL or resn A   or resn C   or resn G   or
+                      resn T   or resn DA  or resn DC  or resn DG  or resn DT  or resn DJ )) loop search
+
+         pick bond (id $id1) (id $id2) geometry
+         evaluate ($upper = $result)
+         show (segid) (id $id2)
+         evaluate ($segid2=$result)
+         show (resid) (id $id2)
+         evaluate ($resid2=$result)
+         show (name) (id $id2)
+         evaluate ($name2=$result)
+
+         if ($segid1 eq $segid2) then
+             noe
+                 assign (resid $resid1 and segid $segid1 and name $name1)
+                        (resid $resid2 and segid $segid2 and name $name2) $upper 0.1 0.1
+             end
+         end if
+
+     end loop search
+
+end loop sions
+
+! then deal with multiatomic mions
+evaluate ($pcount = 0)
+for $id1 in id ( (resn SO4 or resn PO4 or resn WO4) and name O* ) loop mions 
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resname) (id $id1)
+    evaluate ($resname1=$result)
+    show (name) (id $id1)
+    evaluate ($name1=$result)
+
+    evaluate ($mindis = 4.0)
+    for $id2 in id ( (name O* or name S* or name N*) and (id $id1) around $mindis and
+                     (resn ACE or resn ALA or resn ALY or resn ARG or resn ASN or resn ASH or resn ASP or 
+                      resn CSP or resn CTN or resn CYC or resn CYF or resn CYM or resn CYS or resn DDZ or 
+                      resn GLN or resn GLH or resn GLU or resn GLY or resn HIS or resn HY3 or resn HYP or
+                      resn ILE or resn LEU or resn LYS or resn M3L or resn MLY or resn MLZ or resn MET or
+                      resn MSE or resn NEP or resn NME or resn PHE or resn PNS or resn PRO or resn PTR or
+                      resn QSR or resn SEP or resn SER or resn SEC or resn THR or resn TOP or resn TRP or
+                      resn TYP or resn TYR or resn TYS or resn VAL or resn A   or resn C   or resn G   or
+                      resn T   or resn DA  or resn DC  or resn DG  or resn DT  or resn DJ )) loop search
+
+         pick bond (id $id1) (id $id2) geometry
+         evaluate ($upper = $result)
+         show (segid) (id $id2)
+         evaluate ($segid2=$result)
+         show (resid) (id $id2)
+         evaluate ($resid2=$result)
+         show (name) (id $id2)
+         evaluate ($name2=$result)
+
+         if ($segid1 eq $segid2) then
+             noe
+                 assign (resid $resid1 and segid $segid1 and name $name1)
+                        (resid $resid2 and segid $segid2 and name $name2) $upper 0.1 0.1
+             end
+         end if
+
+    end loop search
+
+end loop mions

@@ -1,0 +1,21 @@
+! setflags.cns
+!    Defines energy flags
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+if ($Data.flags.noe  =  TRUE) then
+    flags include noe end
+end if 
+if ($Data.flags.cdih =  TRUE) then
+    flags include cdih end
+end if 
+if ($Data.flags.ncs  =  TRUE) then
+    flags include ncs end
+end if

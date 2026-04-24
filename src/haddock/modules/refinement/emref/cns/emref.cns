@@ -77,6 +77,7 @@ evaluate ($data.flags.dihed = true)
 !Electrostatics:
 evaluate ($data.flags.elec =$elecflag)
 evaluate ($data.epsilon =$epsilon)
+evaluate ($Data.epsilon_cg =$epsilon_cg)
 evaluate ($data.dielec  =$dielec)
 
 !Interaction matrix:
@@ -113,11 +114,9 @@ evaluate ($refine.keepwater = false)
 @MODULE:read_param.cns
 
 parameter
-    bond  (resn WAT ) (resn WAT ) 1000 TOKEN
+    bond  (all) (all) 1000 TOKEN
     angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
-    bond  (resn HOH ) (resn HOH ) 1000 TOKEN
     angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
-    bond  (resn TIP*) (resn TIP*) 1000 TOKEN
     angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
 end
 
@@ -143,12 +142,28 @@ if ($data.flags.elec eq true) then
     else
         parameter nbonds eps=$data.epsilon cdie end end
     end if
-    parameter nbonds ? end end
 else
     evaluate ($elec=0.0)
     flag exclude elec end
 end if
 
+! check for the presence of a CG model
+! and adapt non-bonded parameters
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    parameter
+        nbonds
+            nbxmod=5 atom cdie shift
+            cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=$Data.epsilon_cg e14fac=0.4 inhibit 0.25
+            wmin=0.5 tolerance 0.5
+        end
+    end
+    evaluate ($coarse = TRUE)
+end if
+
+parameter nbonds ? end end
 
 {* Read the distance restraints ================================ *}
 set seed $seed end
@@ -280,12 +295,12 @@ while ($nchain1 < $data.ncomponents) loop nloop1
 end loop nloop1
 
 if ($nemsteps > 0) then
-    minimize powell nstep=$nemsteps drop=10 end
+    minimize powell nstep=$nemsteps drop=10 nprint=10 end
 end if
 
 ! second round of minimization with weak harmonic restraints on non interface backbone atoms
 do (harm = 0)  (all)
-do (harm = 1)  (name CA or name BB or name C or name N or name P or name C# or name C##)
+do (harm = 1)  (name CA or name BB or name BB# or name C or name N or name P or name C# or name C##)
 
 eval ($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
@@ -294,13 +309,13 @@ while ($nchain1 < $data.ncomponents) loop nloop1
 end loop nloop1
 
 if ($nemsteps > 0) then
-    minimize powell nstep=$nemsteps drop=10 end
+    minimize powell nstep=$nemsteps drop=10 nprint=10 end
 end if
 
 ! final minimization without harmonic restraints
 
 flag excl harm end
-mini powell nstep 200 drop=10 end
+mini powell nstep=$nemsteps drop=10 nprint=10 end
 
 {* ======================= calculate free molecules internal energy ============ *}
 
@@ -324,13 +339,6 @@ if ($data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($data.dielec eq "rdie") then
-    parameter nbonds eps=$data.epsilon rdie shift switch end end
-    ! shift statement needed first to activate switch (CNS bug?)
-else
-    parameter nbonds eps=$data.epsilon cdie end end
-end if
-parameter nbonds ? end end
 inline @MODULE:calc_free-ene.cns
 
 fix sele=(not all) end
@@ -352,6 +360,8 @@ evaluate ($elec = 0.0)
 evaluate ($eintcplx = 0.0)
 if ($data.flags.elec eq true) then
     flag include elec end
+    ! reset epsilon to the default AA value
+    parameter nbonds eps=$Data.epsilon end end
 end if
 
 energy end

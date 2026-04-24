@@ -289,6 +289,34 @@ def test_topoaa_cyclic(topoaa_module):
     assert "disulphide" in file_content
 
 
+def test_topoaa_cyclic_ace_cys(topoaa_module):
+    """Test the topoaa module to generate a cyclic ACE-CYS peptide."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "ace-cys-cyclic-peptide.pdb"),
+    ]
+    topoaa_module.params["acecys_dist"] = 5.0
+    topoaa_module.params["mol1"]["cyclicpept"] = True
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "ace-cys-cyclic-peptide.inp")
+    expected_psf = Path(topoaa_module.path, "ace-cys-cyclic-peptide_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "ace-cys-cyclic-peptide_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "ace-cys-cyclic-peptide.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with open(expected_psf, encoding="utf-8", mode="r") as f:
+        file_content = f.read()
+
+    assert "COVAL-ACE-CYS" in file_content
+
+
 def test_topoaa_THRglycosylation(topoaa_module):
     """Test the topoaa module to detect THR-glycosylation."""
     topoaa_module.params["molecules"] = [

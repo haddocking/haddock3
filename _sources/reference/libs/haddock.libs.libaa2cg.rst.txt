@@ -1,0 +1,7 @@
+haddock.libs.libaa2cg module
+============================
+
+.. automodule:: haddock.libs.libaa2cg
+   :members:
+   :undoc-members:
+   :show-inheritance:

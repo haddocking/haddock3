@@ -380,6 +380,9 @@
 
                 <span class="n">haddock_score</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">calc_haddock_score</span><span class="p">(</span><span class="o">**</span><span class="n">weights</span><span class="p">)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">haddock_score</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">aa_topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">model_topo</span><span class="o">.</span><span class="n">aa_topology</span> <span class="k">for</span> <span class="n">model_topo</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="o">=</span> <span class="p">[</span><span class="n">model_topo</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="k">for</span> <span class="n">model_topo</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">model_topo</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">model_topo</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">export_io_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span></div>
 
@@ -393,7 +396,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 21, 2026.
+      <span class="lastupdated">Last updated on Apr 24, 2026.
       </span></p>
   </div>
 

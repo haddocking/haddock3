@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.topology.topocg package &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Sampling Modules" href="../sampling/index.html" />
+    <link rel="prev" title="All-atom topology module" href="haddock.modules.topology.topoaa.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Topology Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="haddock.modules.topology.topoaa.html">All-atom topology module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">haddock.modules.topology.topocg package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#module-haddock.modules.topology">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Modules</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Topology Modules</a></li>
+      <li class="breadcrumb-item active">haddock.modules.topology.topocg package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/topology/haddock.modules.topology.topocg.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="haddock-modules-topology-topocg-package">
+<h1>haddock.modules.topology.topocg package<a class="headerlink" href="#haddock-modules-topology-topocg-package" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+</section>
+<section id="default-parameters">
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading"></a></h2>
+<section id="easy">
+<h3>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h3>
+<section id="ligand-param-fname">
+<h4>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand parameter file</div>
+<div class="line"><em>short description</em>: Ligand parameter file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-top-fname">
+<h4>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand topology file</div>
+<div class="line"><em>short description</em>: Ligand topology file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions…) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="mol1">
+<h4>mol1<a class="headerlink" href="#mol1" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>title</em>: Input molecule configuration</div>
+<div class="line"><em>short description</em>: Specific molecule configuration</div>
+<div class="line"><em>long description</em>: You can expand this parameter and associated sub-parameters to the other input molecules. For example, if you input three molecules, you can define mol1, mol2, and mol3 subparameters. Those not defined will be populated with the defaults.</div>
+<div class="line"><em>group</em>: input molecules</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+<section id="mol1-cyclicpept">
+<h5>mol1.cyclicpept<a class="headerlink" href="#mol1-cyclicpept" title="Link to this heading"></a></h5>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Cyclic peptide</div>
+<div class="line"><em>short description</em>: Defines the molecule as a cyclic peptide</div>
+<div class="line"><em>long description</em>: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. This cutoff can be changed in the generate-topology.cns script.</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="mol1-hisd-1">
+<h5>mol1.hisd_1<a class="headerlink" href="#mol1-hisd-1" title="Link to this heading"></a></h5>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: HISD residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number of the Histidine to be defined as HISD</div>
+<div class="line"><em>long description</em>: Residue number of the Histidine to be defined as HISD</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="mol1-hise-1">
+<h5>mol1.hise_1<a class="headerlink" href="#mol1-hise-1" title="Link to this heading"></a></h5>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: HISE residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number of the Histidine to be defined as HISE</div>
+<div class="line"><em>long description</em>: Residue number of the Histidine to be defined as HISE</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="mol1-nhisd">
+<h5>mol1.nhisd<a class="headerlink" href="#mol1-nhisd" title="Link to this heading"></a></h5>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of HISD residue</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false</div>
+<div class="line"><em>long description</em>: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, …). Add as many as needed. Note that HIS is interpreted as a charged Histidine)</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="mol1-nhise">
+<h5>mol1.nhise<a class="headerlink" href="#mol1-nhise" title="Link to this heading"></a></h5>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of HISE residue</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false</div>
+<div class="line"><em>long description</em>: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, …). Add as many as needed. Note that HIS is interpreted as a charged Histidine)</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+</section>
+<section id="expert">
+<h3>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h3>
+<section id="autohis">
+<h4>autohis<a class="headerlink" href="#autohis" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Automatic HIS protonation state</div>
+<div class="line"><em>short description</em>: The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically set by HADDOCK</div>
+<div class="line"><em>long description</em>: If set to true, HADDOCK will automatically define the protonation state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest electrostatic energy</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="cgffversion">
+<h4>cgffversion<a class="headerlink" href="#cgffversion" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘martini2’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: MARTINI Force-field version</div>
+<div class="line"><em>choices</em>: [‘martini2’]</div>
+<div class="line"><em>short description</em>: Force-field version for the coarse-grain mapping and parameters</div>
+<div class="line"><em>long description</em>: Force-field version for the coarse-grain mapping and parameters.</div>
+<div class="line"><em>group</em>: force-field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="limit">
+<h4>limit<a class="headerlink" href="#limit" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Limit the number of input molecules.</div>
+<div class="line"><em>short description</em>: When true, the topocg module can accept any number of input molecules.</div>
+<div class="line"><em>long description</em>: Enable/disable the limit of input molecules for the topocg module. Setting the limit to false is useful when the topocg module is followed by scoring modules such as emscoring, or other analysis modules. If topocg is used in the middle of the workflow this parameter has no effect.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="tolerance">
+<h4>tolerance<a class="headerlink" href="#tolerance" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 99</div>
+<div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+<section id="guru">
+<h3>Guru<a class="headerlink" href="#guru" title="Link to this heading"></a></h3>
+<section id="cyclicpept-dist">
+<h4>cyclicpept_dist<a class="headerlink" href="#cyclicpept-dist" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 2.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Cutoff distance for cyclisation</div>
+<div class="line"><em>min</em>: 0.0</div>
+<div class="line"><em>max</em>: 999999.99</div>
+<div class="line"><em>short description</em>: Cutoff distance in Angstroms for identification of backbone cyclic peptide</div>
+<div class="line"><em>long description</em>: Cutoff distance in Angstroms for identification of backbone cyclic peptide (N - C)</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="disulphide-dist">
+<h4>disulphide_dist<a class="headerlink" href="#disulphide-dist" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 2.2</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Cutoff distance for S-S bonds</div>
+<div class="line"><em>min</em>: 0.0</div>
+<div class="line"><em>max</em>: 999999.99</div>
+<div class="line"><em>short description</em>: Cutoff distance in Angstroms for identification of disulphide bonds</div>
+<div class="line"><em>long description</em>: Cutoff distance in Angstroms for identification of disulphide bonds (SH - SH)</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="iniseed">
+<h4>iniseed<a class="headerlink" href="#iniseed" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 917</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Random seed</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999999999999999</div>
+<div class="line"><em>short description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>long description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="log-level">
+<h4>log_level<a class="headerlink" href="#log-level" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘quiet’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>choices</em>: [‘verbose’, ‘normal’, ‘quiet’]</div>
+<div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
+<div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="haddock.modules.topology.topoaa.html" class="btn btn-neutral float-left" title="All-atom topology module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../sampling/index.html" class="btn btn-neutral float-right" title="Sampling Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, BonvinLab.
+      <span class="lastupdated">Last updated on Apr 24, 2026.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

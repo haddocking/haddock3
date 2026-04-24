@@ -1,0 +1,1102 @@
+
+
+Easy
+````
+
+elecflag
+~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Include electrostatics energy
+| *short description*: Include electrostatics energy during the calculations.
+| *long description*: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.
+| *group*: force field
+| *explevel*: easy
+
+ligand_param_fname
+~~~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand parameter file
+| *short description*: Ligand parameter file in CNS format
+| *long description*: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: easy
+
+ligand_top_fname
+~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand topology file
+| *short description*: Ligand topology file in CNS format
+| *long description*: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: easy
+
+mol_shape_1
+~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Is the molecule a shape?
+| *short description*: Defines a molecule as a shape.
+| *long description*: Defines a molecule as a shape, which is a collection of beads.
+| *group*: molecule
+| *explevel*: easy
+
+
+Expert
+``````
+
+dielec
+~~~~~~
+
+| *default*: 'cdie'
+| *type*: string
+| *title*: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+| *choices*: ['cdie', 'rdie']
+| *short description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+| *long description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r
+| *group*: force field
+| *explevel*: expert
+
+dihedflag
+~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Use torsion angle dihedral energy term
+| *short description*: Turns on the torsion angle dihedral energy terms of the force field.
+| *long description*: Turns on the torsion angle dihedral energy terms of the force field.
+| *group*: force field
+| *explevel*: expert
+
+epsilon
+~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Dielectric constant
+| *min*: 1
+| *max*: 78
+| *short description*: Dielectric constant for the electrostatic Coulomb energy term.
+| *long description*: Dielectric constant for the electrostatic Coulomb energy term.
+| *group*: force field
+| *explevel*: expert
+
+epsilon_cg
+~~~~~~~~~~
+
+| *default*: 10.0
+| *type*: float
+| *title*: Dielectric constant for coarse-grained mode
+| *min*: 1
+| *max*: 78
+| *short description*: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+| *long description*: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+| *group*: force field
+| *explevel*: expert
+
+fle_end_1
+~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of this (1st) fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_seg_1
+~~~~~~~~~
+
+| *default*: 'none'
+| *type*: string
+| *title*: Segment ID (segid)
+| *short description*: Segment ID of the molecule for which this flexible segment is defined.
+| *long description*: Segment ID of the molecule for which this (1st) flexible segment is defined.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_1
+~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of this (1st) fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+max_nmodels
+~~~~~~~~~~~
+
+| *default*: 50000
+| *type*: integer
+| *title*: Maximum number of models to refine
+| *min*: 1
+| *max*: 100000
+| *short description*: This parameter controls the maximum number of models to refine.
+| *long description*: This parameter controls the maximum number of models to refine.
+| *group*: sampling
+| *explevel*: expert
+
+mol_fix_origin_1
+~~~~~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Fix molecule
+| *short description*: Fixes the molecule in its original position.
+| *long description*: Fixes the molecule in its original position.
+| *group*: molecule
+| *explevel*: expert
+
+nemsteps
+~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Number of EM steps
+| *min*: 1
+| *max*: 10000
+| *short description*: Number of energy minimisation steps to perform.
+| *long description*: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.
+| *group*: sampling
+| *explevel*: expert
+
+nseg1
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg10
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg11
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg12
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg13
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg14
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg15
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg16
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg17
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg18
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg19
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg2
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg20
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg3
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg4
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg5
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg6
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg7
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg8
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg9
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *min*: -1
+| *max*: 1000
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+sampling_factor
+~~~~~~~~~~~~~~~
+
+| *default*: 1
+| *type*: integer
+| *title*: Sampling factor for each starting model
+| *min*: 1
+| *max*: 500
+| *short description*: This parameter control how many times a model will be refined.
+| *long description*: This parameter control how many times a model will be refined. For EM refinement only it does not make sense to increase it unless random removal of restraints is turned on. If not then the energy minimisation will lead to the same final conformation.
+| *group*: sampling
+| *explevel*: expert
+
+seg_end_10_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_11_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_12_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_13_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_14_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_15_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_16_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_17_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_18_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_19_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_1_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_20_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_2_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_3_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_4_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_5_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_6_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_7_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_8_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_9_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_10_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_11_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_12_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_13_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_14_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_15_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_16_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_17_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_18_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_19_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_1_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_20_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_2_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_3_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_4_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_5_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_6_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_7_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_8_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_9_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *min*: -9999
+| *max*: 9999
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+tolerance
+~~~~~~~~~
+
+| *default*: 5
+| *type*: integer
+| *title*: Failure tolerance percentage
+| *min*: 0
+| *max*: 99
+| *short description*: Percentage of allowed failures for a module to successfully complete
+| *long description*: Percentage of allowed failures for a module to successfully complete
+| *group*: module
+| *explevel*: expert
+
+w_air
+~~~~~
+
+| *default*: 0.1
+| *type*: float
+| *title*: Weight of the distance restraint energy
+| *min*: 0
+| *max*: 9999
+| *short description*: Weight of the distance restraints energy in the scoring function
+| *long description*: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_bsa
+~~~~~
+
+| *default*: 0.0
+| *type*: float
+| *title*: Weight of the buried surface area term
+| *min*: -9999
+| *max*: 9999
+| *short description*: Weight of the buried surface area term in the scoring function
+| *long description*: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.
+| *group*: scoring
+| *explevel*: expert
+
+w_cdih
+~~~~~~
+
+| *default*: 0.0
+| *type*: float
+| *title*: Weight of the dihedral angle restraint energy
+| *min*: 0
+| *max*: 9999
+| *short description*: Weight of the dihedral angle restraints energy in the scoring function
+| *long description*: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_desolv
+~~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the desolvation energy term
+| *min*: -9999
+| *max*: 9999
+| *short description*: Weight of the desolvation energy term in the scoring function
+| *long description*: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.
+| *group*: scoring
+| *explevel*: expert
+
+w_elec
+~~~~~~
+
+| *default*: 0.2
+| *type*: float
+| *title*: Weight of the intermolecular electrostatic energy
+| *min*: -9999
+| *max*: 9999
+| *short description*: Weight of the intermolecular electrostatic energy in the scoring function
+| *long description*: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.
+| *group*: scoring
+| *explevel*: expert
+
+w_sym
+~~~~~
+
+| *default*: 0.1
+| *type*: float
+| *title*: Weight of the symmetry restraint energy
+| *min*: 0
+| *max*: 9999
+| *short description*: Weight of the symmetry restraints energy in the scoring function
+| *long description*: Weight of the symmetry restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_vdw
+~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the intermolecular van der Waals energy
+| *min*: -9999
+| *max*: 9999
+| *short description*: Weight of the intermolecular van der Waals energy in the scoring function
+| *long description*: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.
+| *group*: scoring
+| *explevel*: expert
+
+
+Guru
+````
+
+iniseed
+~~~~~~~
+
+| *default*: 917
+| *type*: integer
+| *title*: Random seed
+| *min*: 0
+| *max*: 9999999999999999
+| *short description*: Random seed used in CNS to initialize the random seed function
+| *long description*: Random seed used in CNS to initialize the random seed function
+| *group*: sampling
+| *explevel*: guru
+
+log_level
+~~~~~~~~~
+
+| *default*: 'quiet'
+| *type*: string
+| *title*: Log level verbosity for CNS
+| *choices*: ['verbose', 'normal', 'quiet']
+| *short description*: Set the log level verbosity for CNS
+| *long description*: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
+| *group*: module
+| *explevel*: guru
+

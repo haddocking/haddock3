@@ -15,6 +15,7 @@ Submodules
 .. toctree::
    :maxdepth: 1
 
+   haddock.libs.libaa2cg
    haddock.libs.libalign
    haddock.libs.libcli
    haddock.libs.libclust

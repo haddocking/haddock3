@@ -1,0 +1,1295 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easy &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=34bb78ad" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            haddock3
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brief introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/haddock.clis.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Easy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modules/refinement/params/cgtoaa.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="easy">
+<h1>Easy<a class="headerlink" href="#easy" title="Link to this heading"></a></h1>
+<section id="elecflag">
+<h2>elecflag<a class="headerlink" href="#elecflag" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Include electrostatics energy</div>
+<div class="line"><em>short description</em>: Include electrostatics energy during the calculations.</div>
+<div class="line"><em>long description</em>: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-param-fname">
+<h2>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand parameter file</div>
+<div class="line"><em>short description</em>: Ligand parameter file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-top-fname">
+<h2>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand topology file</div>
+<div class="line"><em>short description</em>: Ligand topology file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions…) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="mol-shape-1">
+<h2>mol_shape_1<a class="headerlink" href="#mol-shape-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Is the molecule a shape?</div>
+<div class="line"><em>short description</em>: Defines a molecule as a shape.</div>
+<div class="line"><em>long description</em>: Defines a molecule as a shape, which is a collection of beads.</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+<section id="expert">
+<h1>Expert<a class="headerlink" href="#expert" title="Link to this heading"></a></h1>
+<section id="dielec">
+<h2>dielec<a class="headerlink" href="#dielec" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘cdie’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
+<div class="line"><em>choices</em>: [‘cdie’, ‘rdie’]</div>
+<div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
+<div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="dihedflag">
+<h2>dihedflag<a class="headerlink" href="#dihedflag" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Use torsion angle dihedral energy term</div>
+<div class="line"><em>short description</em>: Turns on the torsion angle dihedral energy terms of the force field.</div>
+<div class="line"><em>long description</em>: Turns on the torsion angle dihedral energy terms of the force field.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="epsilon">
+<h2>epsilon<a class="headerlink" href="#epsilon" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Dielectric constant</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 78</div>
+<div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="epsilon-cg">
+<h2>epsilon_cg<a class="headerlink" href="#epsilon-cg" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Dielectric constant for coarse-grained mode</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 78</div>
+<div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.</div>
+<div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="fle-end-1">
+<h2>fle_end_1<a class="headerlink" href="#fle-end-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: End residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the fully flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of this (1st) fully flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="fle-seg-1">
+<h2>fle_seg_1<a class="headerlink" href="#fle-seg-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘none’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID (segid)</div>
+<div class="line"><em>short description</em>: Segment ID of the molecule for which this flexible segment is defined.</div>
+<div class="line"><em>long description</em>: Segment ID of the molecule for which this (1st) flexible segment is defined.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="fle-sta-1">
+<h2>fle_sta_1<a class="headerlink" href="#fle-sta-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the fully flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of this (1st) fully flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="max-nmodels">
+<h2>max_nmodels<a class="headerlink" href="#max-nmodels" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 50000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Maximum number of models to refine</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 100000</div>
+<div class="line"><em>short description</em>: This parameter controls the maximum number of models to refine.</div>
+<div class="line"><em>long description</em>: This parameter controls the maximum number of models to refine.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="mol-fix-origin-1">
+<h2>mol_fix_origin_1<a class="headerlink" href="#mol-fix-origin-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Fix molecule</div>
+<div class="line"><em>short description</em>: Fixes the molecule in its original position.</div>
+<div class="line"><em>long description</em>: Fixes the molecule in its original position.</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nemsteps">
+<h2>nemsteps<a class="headerlink" href="#nemsteps" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 10</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of EM steps</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 10000</div>
+<div class="line"><em>short description</em>: Number of energy minimisation steps to perform.</div>
+<div class="line"><em>long description</em>: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg1">
+<h2>nseg1<a class="headerlink" href="#nseg1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg10">
+<h2>nseg10<a class="headerlink" href="#nseg10" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg11">
+<h2>nseg11<a class="headerlink" href="#nseg11" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg12">
+<h2>nseg12<a class="headerlink" href="#nseg12" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg13">
+<h2>nseg13<a class="headerlink" href="#nseg13" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg14">
+<h2>nseg14<a class="headerlink" href="#nseg14" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg15">
+<h2>nseg15<a class="headerlink" href="#nseg15" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg16">
+<h2>nseg16<a class="headerlink" href="#nseg16" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg17">
+<h2>nseg17<a class="headerlink" href="#nseg17" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg18">
+<h2>nseg18<a class="headerlink" href="#nseg18" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg19">
+<h2>nseg19<a class="headerlink" href="#nseg19" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg2">
+<h2>nseg2<a class="headerlink" href="#nseg2" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg20">
+<h2>nseg20<a class="headerlink" href="#nseg20" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg3">
+<h2>nseg3<a class="headerlink" href="#nseg3" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg4">
+<h2>nseg4<a class="headerlink" href="#nseg4" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg5">
+<h2>nseg5<a class="headerlink" href="#nseg5" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg6">
+<h2>nseg6<a class="headerlink" href="#nseg6" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg7">
+<h2>nseg7<a class="headerlink" href="#nseg7" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg8">
+<h2>nseg8<a class="headerlink" href="#nseg8" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nseg9">
+<h2>nseg9<a class="headerlink" href="#nseg9" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of semi-flexible segments</div>
+<div class="line"><em>min</em>: -1</div>
+<div class="line"><em>max</em>: 1000</div>
+<div class="line"><em>short description</em>: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, &gt;1 manual definition).</div>
+<div class="line"><em>long description</em>: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg&gt;=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="sampling-factor">
+<h2>sampling_factor<a class="headerlink" href="#sampling-factor" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Sampling factor for each starting model</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 500</div>
+<div class="line"><em>short description</em>: This parameter control how many times a model will be refined.</div>
+<div class="line"><em>long description</em>: This parameter control how many times a model will be refined. For EM refinement only it does not make sense to increase it unless random removal of restraints is turned on. If not then the energy minimisation will lead to the same final conformation.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-10-1">
+<h2>seg_end_10_1<a class="headerlink" href="#seg-end-10-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-11-1">
+<h2>seg_end_11_1<a class="headerlink" href="#seg-end-11-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-12-1">
+<h2>seg_end_12_1<a class="headerlink" href="#seg-end-12-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-13-1">
+<h2>seg_end_13_1<a class="headerlink" href="#seg-end-13-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-14-1">
+<h2>seg_end_14_1<a class="headerlink" href="#seg-end-14-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-15-1">
+<h2>seg_end_15_1<a class="headerlink" href="#seg-end-15-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-16-1">
+<h2>seg_end_16_1<a class="headerlink" href="#seg-end-16-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-17-1">
+<h2>seg_end_17_1<a class="headerlink" href="#seg-end-17-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-18-1">
+<h2>seg_end_18_1<a class="headerlink" href="#seg-end-18-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-19-1">
+<h2>seg_end_19_1<a class="headerlink" href="#seg-end-19-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-1-1">
+<h2>seg_end_1_1<a class="headerlink" href="#seg-end-1-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-20-1">
+<h2>seg_end_20_1<a class="headerlink" href="#seg-end-20-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-2-1">
+<h2>seg_end_2_1<a class="headerlink" href="#seg-end-2-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-3-1">
+<h2>seg_end_3_1<a class="headerlink" href="#seg-end-3-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-4-1">
+<h2>seg_end_4_1<a class="headerlink" href="#seg-end-4-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-5-1">
+<h2>seg_end_5_1<a class="headerlink" href="#seg-end-5-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-6-1">
+<h2>seg_end_6_1<a class="headerlink" href="#seg-end-6-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-7-1">
+<h2>seg_end_7_1<a class="headerlink" href="#seg-end-7-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-8-1">
+<h2>seg_end_8_1<a class="headerlink" href="#seg-end-8-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-end-9-1">
+<h2>seg_end_9_1<a class="headerlink" href="#seg-end-9-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the end of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-10-1">
+<h2>seg_sta_10_1<a class="headerlink" href="#seg-sta-10-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-11-1">
+<h2>seg_sta_11_1<a class="headerlink" href="#seg-sta-11-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-12-1">
+<h2>seg_sta_12_1<a class="headerlink" href="#seg-sta-12-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-13-1">
+<h2>seg_sta_13_1<a class="headerlink" href="#seg-sta-13-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-14-1">
+<h2>seg_sta_14_1<a class="headerlink" href="#seg-sta-14-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-15-1">
+<h2>seg_sta_15_1<a class="headerlink" href="#seg-sta-15-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-16-1">
+<h2>seg_sta_16_1<a class="headerlink" href="#seg-sta-16-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-17-1">
+<h2>seg_sta_17_1<a class="headerlink" href="#seg-sta-17-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-18-1">
+<h2>seg_sta_18_1<a class="headerlink" href="#seg-sta-18-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-19-1">
+<h2>seg_sta_19_1<a class="headerlink" href="#seg-sta-19-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-1-1">
+<h2>seg_sta_1_1<a class="headerlink" href="#seg-sta-1-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-20-1">
+<h2>seg_sta_20_1<a class="headerlink" href="#seg-sta-20-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-2-1">
+<h2>seg_sta_2_1<a class="headerlink" href="#seg-sta-2-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-3-1">
+<h2>seg_sta_3_1<a class="headerlink" href="#seg-sta-3-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-4-1">
+<h2>seg_sta_4_1<a class="headerlink" href="#seg-sta-4-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-5-1">
+<h2>seg_sta_5_1<a class="headerlink" href="#seg-sta-5-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-6-1">
+<h2>seg_sta_6_1<a class="headerlink" href="#seg-sta-6-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-7-1">
+<h2>seg_sta_7_1<a class="headerlink" href="#seg-sta-7-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-8-1">
+<h2>seg_sta_8_1<a class="headerlink" href="#seg-sta-8-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="seg-sta-9-1">
+<h2>seg_sta_9_1<a class="headerlink" href="#seg-sta-9-1" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>long description</em>: Residue number defining the start of the semi-flexible segment.</div>
+<div class="line"><em>group</em>: flexibility</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="tolerance">
+<h2>tolerance<a class="headerlink" href="#tolerance" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 5</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 99</div>
+<div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-air">
+<h2>w_air<a class="headerlink" href="#w-air" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.1</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the distance restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the distance restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-bsa">
+<h2>w_bsa<a class="headerlink" href="#w-bsa" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the buried surface area term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the buried surface area term in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-cdih">
+<h2>w_cdih<a class="headerlink" href="#w-cdih" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the dihedral angle restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the dihedral angle restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-desolv">
+<h2>w_desolv<a class="headerlink" href="#w-desolv" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the desolvation energy term</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the desolvation energy term in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-elec">
+<h2>w_elec<a class="headerlink" href="#w-elec" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.2</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the intermolecular electrostatic energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the intermolecular electrostatic energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-sym">
+<h2>w_sym<a class="headerlink" href="#w-sym" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.1</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the symmetry restraint energy</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the symmetry restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the symmetry restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-vdw">
+<h2>w_vdw<a class="headerlink" href="#w-vdw" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the intermolecular van der Waals energy</div>
+<div class="line"><em>min</em>: -9999</div>
+<div class="line"><em>max</em>: 9999</div>
+<div class="line"><em>short description</em>: Weight of the intermolecular van der Waals energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+<section id="guru">
+<h1>Guru<a class="headerlink" href="#guru" title="Link to this heading"></a></h1>
+<section id="iniseed">
+<h2>iniseed<a class="headerlink" href="#iniseed" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 917</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Random seed</div>
+<div class="line"><em>min</em>: 0</div>
+<div class="line"><em>max</em>: 9999999999999999</div>
+<div class="line"><em>short description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>long description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="log-level">
+<h2>log_level<a class="headerlink" href="#log-level" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘quiet’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>choices</em>: [‘verbose’, ‘normal’, ‘quiet’]</div>
+<div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
+<div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, BonvinLab.
+      <span class="lastupdated">Last updated on Apr 24, 2026.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

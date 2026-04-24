@@ -626,6 +626,26 @@
         <span class="n">chainid_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">chainsegs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">chainid_list</span></div>
 
+
+
+<div class="viewcode-block" id="check_mol_shape">
+<a class="viewcode-back" href="../../../reference/libs/haddock.libs.libpdb.html#haddock.libs.libpdb.check_mol_shape">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_mol_shape</span><span class="p">(</span><span class="n">input_mol</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if molecules provided is a shape or not.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        input_pdb (PDBFile): input PDB to check if shape.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if shape, False if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_mol</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file_mol</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;SHA SHA &#39;</span> <span class="ow">in</span> <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file_mol</span><span class="p">):</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">shape</span></div>
+
 </pre></div>
 
            </div>
@@ -636,7 +656,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 21, 2026.
+      <span class="lastupdated">Last updated on Apr 24, 2026.
       </span></p>
   </div>
 

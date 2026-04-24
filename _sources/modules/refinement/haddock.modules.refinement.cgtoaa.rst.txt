@@ -1,0 +1,15 @@
+haddock.modules.refinement.cgtoaa package
+=========================================
+
+Module contents
+---------------
+
+.. automodule:: haddock.modules.refinement.cgtoaa
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Default Parameters
+---------------
+.. include:: params/cgtoaa.rst
+

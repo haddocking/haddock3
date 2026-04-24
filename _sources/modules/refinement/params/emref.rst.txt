@@ -955,6 +955,19 @@ epsilon
 | *group*: force field
 | *explevel*: expert
 
+epsilon_cg
+~~~~~~~~~~
+
+| *default*: 10.0
+| *type*: float
+| *title*: Dielectric constant for coarse-grained mode
+| *min*: 1
+| *max*: 78
+| *short description*: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+| *long description*: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.
+| *group*: force field
+| *explevel*: expert
+
 fle_end_1
 ~~~~~~~~~
 

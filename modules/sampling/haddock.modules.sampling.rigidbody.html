@@ -1134,7 +1134,7 @@ sure to sample enough the possible interaction space.</p>
 <div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
 <div class="line"><em>choices</em>: [‘cdie’, ‘rdie’]</div>
 <div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
-<div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
+<div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r. Note that with coarse graining cdie will be used.</div>
 <div class="line"><em>group</em>: force field</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
@@ -1149,6 +1149,20 @@ sure to sample enough the possible interaction space.</p>
 <div class="line"><em>max</em>: 78</div>
 <div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
 <div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="epsilon-cg">
+<h4>epsilon_cg<a class="headerlink" href="#epsilon-cg" title="Link to this heading"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Dielectric constant for coarse grained mode</div>
+<div class="line"><em>min</em>: 1</div>
+<div class="line"><em>max</em>: 78</div>
+<div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.</div>
+<div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term in coarse-grained mode.</div>
 <div class="line"><em>group</em>: force field</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
@@ -2625,7 +2639,7 @@ sure to sample enough the possible interaction space.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 21, 2026.
+      <span class="lastupdated">Last updated on Apr 24, 2026.
       </span></p>
   </div>
 

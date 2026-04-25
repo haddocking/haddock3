@@ -1,16 +1,19 @@
 """Create and manage CNS coarse-grained topology.
 
 The ``[topocg]`` module is dedicated to the generation of CNS compatible
-parameters (.param) and topologies (.psf) for each of the input structures.
+parameters and topologies (``.psf``) for each of the input structures.
 
 It will:
 - Convert an all atom model to a Martini coarse-grained model
 - Detect missing atoms 
 - Re-build them when missing
-- Build and write out topologies (psf) and coordinates (pdb) files
+- Build and write out topologies (``.psf``) and coordinates (``.pdb``) files
 - Write out a restrain file to convert back the CG model to all atoms
 
 Only standard amino acids and nucleic acids are supported.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/topology.html#topocg-module>`_
 """
 
 import operator

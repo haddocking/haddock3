@@ -218,6 +218,19 @@ tolerance
 Guru
 ````
 
+acecys_dist
+~~~~~~~~~~~
+
+| *default*: 4.0
+| *type*: float
+| *title*: Cutoff distance for detecting ACE-CYS cyclisation
+| *min*: 0.0
+| *max*: 999999.99
+| *short description*: Cutoff distance in Angstroms for identification of ACE-CYS cyclisation
+| *long description*: Cutoff distance in Angstroms for identification of ACE-CYS cyclisation (CYS S - ACE CA)
+| *group*: molecule
+| *explevel*: guru
+
 cyclicpept_dist
 ~~~~~~~~~~~~~~~
 

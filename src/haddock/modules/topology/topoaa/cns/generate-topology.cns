@@ -506,6 +506,10 @@ $seg1.$counter[a4] $res1.$counter[a4] and $seg2.$counter[a4] $res2.$counter[a4]
         evaluate ($counter=$counter+1)
     end loop cypep
 
+    ! check for covalently-linked Acetylated Nter to CYS
+
+    inline @MODULE:coval-ace-cys.cns
+
 end if ! check for cyclic peptide
 
 
@@ -514,13 +518,10 @@ end if ! check for cyclic peptide
 inline @MODULE:covalheme.cns
 
 
-! check for covalently-linked Acetylated Nter to CYS
-
-inline @MODULE:coval-ace-cys.cns
+! check for FE1 bonds in iron cluster
 
 evaluate ($ironclus=0)
- 
-! check for FE1 bonds in iron cluster
+
 for $id1 in id ( resname CFE and name SG ) loop fes1
 
     show (segid) (id $id1)

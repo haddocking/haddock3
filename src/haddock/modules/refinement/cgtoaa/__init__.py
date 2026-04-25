@@ -2,6 +2,12 @@
 
 The ``[cgtoaa]`` module translate the CG conformations into AA representations, 
 implemented in CNS.
+
+For this module to be functional, it needs to be run in a workflow where ``[topocg]``
+is present upstream.
+
+For more details about this module, please `refer to the haddock3 user manual
+<https://www.bonvinlab.org/haddock3-user-manual/modules/refinement.html#cgtoaa-module>`_
 """
 
 from pathlib import Path

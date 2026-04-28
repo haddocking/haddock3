@@ -82,7 +82,7 @@ class HaddockModule(BaseCNSModule):
         if nmodels > self.params["max_nmodels"]:
             self.finish_with_error(
                 f"Too many models ({nmodels}) to refine, max_nmodels ="
-                f" {self.params["max_nmodels"]}. Please reduce the number"
+                f" {self.params['max_nmodels']}. Please reduce the number"
                 " of models or decrease the sampling_factor."
             )
 

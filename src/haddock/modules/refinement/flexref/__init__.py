@@ -68,26 +68,25 @@ class HaddockModule(BaseCNSModule):
             self.finish_with_error(e)
 
         self.output_models: list[PDBFile] = []
-        idx = 1
+
+        # Validate sampling factor
         sampling_factor = self.params["sampling_factor"]
-        if sampling_factor > 1:
-            self.log(f"sampling_factor={sampling_factor}")
         if sampling_factor == 0:
             self.log("[Warning] sampling_factor cannot be 0, setting it to 1")
             sampling_factor = 1
-        if sampling_factor > 100:
+        elif sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
 
-        max_nmodels = self.params["max_nmodels"]
+        # Validate number of models to generate
         nmodels = len(models_to_refine) * sampling_factor
-        if nmodels > max_nmodels:
+        if nmodels > self.params["max_nmodels"]:
             self.finish_with_error(
                 f"Too many models ({nmodels}) to refine, max_nmodels ="
-                f" {max_nmodels}. Please reduce the number of models or"
-                " decrease the sampling_factor."
+                f" {self.params["max_nmodels"]}. Please reduce the number"
+                " of models or decrease the sampling_factor."
             )
 
-        # checking the ambig_fname:
+        # checking the ambig_fname
         try:
             prev_ambig_fnames = [mod.restr_fname for mod in models_to_refine]
         except Exception as e:  # noqa:F841
@@ -96,17 +95,15 @@ class HaddockModule(BaseCNSModule):
 
         ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
 
-        model_idx = 0
         idx = 1
-        for model in models_to_refine:
+        for model_idx, model in enumerate(models_to_refine):
             # assign ambig_fname
             if ambig_fnames:
                 ambig_fname = ambig_fnames[model_idx]
             else:
                 ambig_fname = self.params["ambig_fname"]
-            model_idx += 1
 
-            for _ in range(self.params["sampling_factor"]):
+            for _ in range(sampling_factor):
                 # prepare cns input
                 flexref_input = prepare_cns_input(
                     idx,
@@ -114,18 +111,18 @@ class HaddockModule(BaseCNSModule):
                     self.path,
                     self.recipe_str,
                     self.params,
-                    "flexref",
+                    self.name,
                     ambig_fname=ambig_fname,
                     native_segid=True,
                     debug=self.params["debug"],
                     seed=model.seed if isinstance(model, PDBFile) else None,
                 )
 
-                out_file = f"flexref_{idx}.out"
-                err_fname = f"flexref_{idx}.cnserr"
+                out_file = f"{self.name}_{idx}.out"
+                err_fname = f"{self.name}_{idx}.cnserr"
 
                 # create the expected PDBobject
-                expected_pdb = prepare_expected_pdb(model, idx, ".", "flexref")
+                expected_pdb = prepare_expected_pdb(model, idx, ".", self.name)
                 expected_pdb.restr_fname = ambig_fname
                 try:
                     expected_pdb.ori_name = model.file_name

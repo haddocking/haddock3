@@ -386,34 +386,42 @@ def prepare_cns_input(
 
     aa_psf_list: list[Path] = []
     cgtoaa_tbl_list: list[Path] = []
-    if cgtoaa==True:
+    if cgtoaa:
         if isinstance(input_element.aa_topology, (list)):
             for psf in input_element.aa_topology:
                 if psf is None:
-                    raise ValueError(f"All-Atom Topology not found {input_element.rel_path}. "
-                    "Conversion to all-atom requires a topology generated with [topoaa] and "
-                    "[topocg].")
+                    raise ValueError(
+                        f"All-Atom Topology not found {input_element.rel_path}. "
+                        "Conversion to all-atom requires a topology generated "
+                        "with [topoaa] and [topocg]."
+                        )
                 else:
                     aa_psf_list.append(psf.rel_path.as_posix())
             for i, tbl in enumerate(input_element.cgtoaa_tbl):
                 if tbl is None and not input_element.shape[i]:
-                    raise ValueError(f"Coarse-Crain to All-Atom restraint file not found "
-                    "{input_element.rel_path}. Conversion to all-atom requires a restraint file "
-                    "generated with [topocg].")
+                    raise ValueError(
+                        f"Coarse-Crain to All-Atom restraint file not found "
+                        f"{input_element.rel_path}. Conversion to all-atom "
+                        "requires a restraint file generated with [topocg]."
+                        )
                 elif not input_element.shape[i]:
                     cgtoaa_tbl_list.append(tbl.as_posix())
         else:
             pdb = input_element
             shape = libpdb.check_mol_shape(pdb.rel_path)
             if pdb.aa_topology is None:
-                raise ValueError(f"All-Atom Topology not found {input_element.rel_path}."
-                "Conversion to all-atom requires a topology generated with [topoaa] and "
-                "[topocg].")
+                raise ValueError(
+                    f"All-Atom Topology not found {input_element.rel_path}."
+                    "Conversion to all-atom requires a topology generated with"
+                    " [topoaa] and [topocg]."
+                    )
             aa_psf_list.append(pdb.aa_topology.rel_path.as_posix())
             if pdb.cgtoaa_tbl is None and not shape:
-                raise ValueError(f"Coarse-Crain to All-Atom restraint file not found for"
-                " entry: {input_element.rel_path}. Conversion to all-atom requires a restraint file "
-                "generated with [topocg].")
+                raise ValueError(
+                    "Coarse-Crain to All-Atom restraint file not found for"
+                    f" entry: {input_element.rel_path}. Conversion to all-atom"
+                    " requires a restraint file generated with [topocg]."
+                    )
             cgtoaa_tbl_list.append(pdb.cgtoaa_tbl.as_posix())
 
     input_str = prepare_multiple_input(
@@ -421,18 +429,20 @@ def prepare_cns_input(
         psf_input_list=[str(p) for p in psf_list],
     )
     
-    if cgtoaa==True:
-        for i in range(len(aa_psf_list)):
+    if cgtoaa:
+        for ind, (aa_psf, cg2aa_tbl) in enumerate(zip(aa_psf_list, cgtoaa_tbl_list), start=1):
             # eval line for psf
-            param_psf = "input_aa_psf_filename_" + str(i+1)
-            input_str += write_eval_line(param_psf, aa_psf_list[i])
+            input_str += write_eval_line(
+                f"input_aa_psf_filename_{i+1}", aa_psf
+                )
             # eval line for pdb
-            param_pdb = "input_aa_pdb_filename_" + str(i+1)
-            input_str += write_eval_line(param_pdb, aa_psf_list[i][:-4]+".pdb")
-        for i in range(len(cgtoaa_tbl_list)):
+            input_str += write_eval_line(
+                f"input_aa_pdb_filename_{i+1}", f"{aa_psf[:-4]}.pdb"
+                )
             # eval line for tbl
-            param_tbl = "input_cgtbl_filename_" + str(i+1)
-            input_str += write_eval_line(param_tbl, cgtoaa_tbl_list[i])
+            input_str += write_eval_line(
+                f"input_cgtbl_filename_{i+1}", cg2aa_tbl
+                )
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
 
@@ -483,17 +493,30 @@ def prepare_expected_pdb(
     identifier: str,
 ) -> PDBFile:
     """Prepare a PDBobject."""
+    # Build filepath
     expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
+    # Initiate a PDBFile object
     pdb = PDBFile(expected_pdb_fname, path=path)
+    # Multiple models as input
     if isinstance(model_obj, tuple):
         pdb.topology = [p.topology for p in model_obj]
         pdb.aa_topology = [p.aa_topology for p in model_obj]
         pdb.cgtoaa_tbl = [p.cgtoaa_tbl for p in model_obj]
         pdb.shape = [p.shape for p in model_obj]
+        # Search for Topology/Parameters among the input models
+        # to pass it to the about-to-become complex
+        for m in model_obj:
+            if m.ligand_param_fname and m.ligand_top_fname:
+                pdb.ligand_param_fname = m.ligand_param_fname
+                pdb.ligand_top_fname = m.ligand_top_fname
+    # Single model / complex
     else:
         pdb.topology = model_obj.topology
         pdb.seed = model_obj.seed
         pdb.aa_topology = model_obj.aa_topology
         pdb.cgtoaa_tbl = model_obj.cgtoaa_tbl
+        pdb.restr_fname = model_obj.restr_fname
         pdb.shape = model_obj.shape
+        pdb.ligand_param_fname = model_obj.ligand_param_fname
+        pdb.ligand_top_fname = model_obj.ligand_top_fname
     return pdb

@@ -498,7 +498,7 @@ def prepare_expected_pdb(
     # Initiate a PDBFile object
     pdb = PDBFile(expected_pdb_fname, path=path)
     # Multiple models as input
-    if isinstance(model_obj, tuple):
+    if isinstance(model_obj, (tuple, list, set)):
         pdb.topology = [p.topology for p in model_obj]
         pdb.aa_topology = [p.aa_topology for p in model_obj]
         pdb.cgtoaa_tbl = [p.cgtoaa_tbl for p in model_obj]

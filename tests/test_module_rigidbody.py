@@ -1,6 +1,5 @@
 """Test the rigidbody module."""
 
-import os
 import random
 import tempfile
 from pathlib import Path
@@ -64,10 +63,10 @@ def test_rigidbody_make_cns_jobs(rigidbody_module):
     )
     inp_list = [
         (
-            [
+            (
                 input_pdb_1,
                 input_pdb_2,
-            ],
+            ),
             cns_input_file,
             ambig_fname,
             seed,
@@ -118,10 +117,10 @@ def test_rigidbody_make_cns_jobs_with_toppar(rigidbody_module):
     )
     inp_list = [
         (
-            [
+            (
                 input_pdb_1,
                 input_pdb_2,
-            ],
+            ),
             cns_input_file,
             ambig_fname,
             seed,

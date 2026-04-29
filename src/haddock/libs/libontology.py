@@ -5,16 +5,18 @@ import itertools
 from enum import Enum
 from os import linesep
 from pathlib import Path
-
+from typing import List, Any
 
 import jsonpickle
 
 from haddock.core.defaults import MODULE_IO_FILE
-from haddock.core.typing import FilePath, Literal, Optional, TypeVar, Union
-from typing import List, Any
+from haddock.core.typing import FilePath, Optional, TypeVar, Union
 
 
 NaN = float("nan")
+
+jsonpickle.set_preferred_backend("json")
+jsonpickle.set_encoder_options("json", sort_keys=True, indent=4)
 
 
 class Format(Enum):
@@ -24,6 +26,7 @@ class Format(Enum):
     PDB_ENSEMBLE = "pdb"
     CNS_INPUT = "inp"
     CNS_OUTPUT = "out"
+    CNS_ERROR_OUTPUT = "cnserr"
     TOPOLOGY = "psf"
     MATRIX = "matrix"
 
@@ -52,12 +55,22 @@ class Persistent:
         self.restr_fname = restr_fname
 
     def __repr__(self) -> str:
-        rep = f"[{self.file_type}|{self.created}] {Path(self.path) / self.file_name}"
+        rep = (
+            f"[{self.file_type}|{self.created}]"
+            f"{Path(self.path) / self.file_name}"
+        )
         return rep
 
     def is_present(self) -> bool:
         """Check if the persisent file exists on disk."""
         return self.rel_path.resolve().exists()
+
+
+class TopologyFile(Persistent):
+    """Represent a CNS-generated topology file."""
+
+    def __init__(self, file_name: FilePath, path: FilePath = ".") -> None:
+        super().__init__(file_name, Format.TOPOLOGY, path)
 
 
 class PDBFile(Persistent):
@@ -66,10 +79,7 @@ class PDBFile(Persistent):
     def __init__(
         self,
         file_name: Union[Path, str],
-        topology: Optional[Any] = None,
-        aa_topology: Optional[Any] = None,
-        cgtoaa_tbl:Optional[Any] = None,
-        shape:Optional[Any] = False,
+        topology: Optional[Union[List[TopologyFile], TopologyFile]] = None,
         path: Union[Path, str] = ".",
         score: float = NaN,
         md5: Optional[str] = None,
@@ -77,23 +87,32 @@ class PDBFile(Persistent):
         unw_energies: Optional[dict[str, float]] = None,
         ligand_top_fname: Optional[Union[Path, str]] = None,
         ligand_param_fname: Optional[Union[Path, str]] = None,
+        aa_topology: Optional[Union[List[TopologyFile], TopologyFile]] = None,
+        cgtoaa_tbl: Optional[Union[List[str], str]] = None,
+        shape: Optional[Union[List[bool], bool]] = None,
     ) -> None:
-        super().__init__(file_name, Format.PDB, path, md5, restr_fname)
+        super().__init__(
+            file_name,
+            Format.PDB,
+            path=path,
+            md5=md5,
+            restr_fname=restr_fname,
+            )
 
         self.topology = topology
-        self.aa_topology = aa_topology 
-        self.cgtoaa_tbl = cgtoaa_tbl
-        self.shape = shape
-        self.score = score
+        self.score: Optional[float] = score
         self.ori_name: Optional[str] = None
         self.clt_id: Union[str, int, None] = None
         self.clt_rank: Optional[int] = None
         self.clt_model_rank: Optional[int] = None
-        self.len = score
-        self.unw_energies = unw_energies
-        self.seed = None
+        self.unw_energies: Optional[dict[str, float]] = unw_energies
+        self.seed: Optional[int] = None
         self.ligand_top_fname = ligand_top_fname
         self.ligand_param_fname = ligand_param_fname
+        self.aa_topology: Optional[Union[List[TopologyFile], TopologyFile]] = aa_topology
+        self.cgtoaa_tbl: Optional[Union[List[str], str]] = cgtoaa_tbl
+        self.shape: Optional[Union[List[bool], bool]] = shape
+        self.len = score
 
     def __lt__(self, other: "PDBFile") -> bool:
         return self.score < other.score
@@ -101,7 +120,7 @@ class PDBFile(Persistent):
     def __gt__(self, other: "PDBFile") -> bool:
         return self.score > other.score
 
-    def __eq__(self, other: "PDBFile") -> bool:  # type: ignore
+    def __eq__(self, other: "PDBFile") -> bool:
         return self.score == other.score
 
     def __hash__(self) -> int:
@@ -119,13 +138,6 @@ class RMSDFile(Persistent):
         return id(self)
 
 
-class TopologyFile(Persistent):
-    """Represent a CNS-generated topology file."""
-
-    def __init__(self, file_name: FilePath, path: FilePath = ".") -> None:
-        super().__init__(file_name, Format.TOPOLOGY, path)
-
-
 class ModuleIO:
     """Intercommunicating modules and exchange input/output information."""
 
@@ -133,37 +145,37 @@ class ModuleIO:
         self.input: List[Any] = []
         self.output: List[Any] = []
 
-    def add(self, persistent, mode="i"):
+    def add(self, persistent, mode: str = "i") -> None:
         """Add a given filename as input or output."""
         if mode == "i":
-            if isinstance(persistent, list):
-                self.input.extend(persistent)
-            else:
-                self.input.append(persistent)
+            self._add(persistent, self.input)
         else:
-            if isinstance(persistent, list):
-                self.output.extend(persistent)
-            else:
-                self.output.append(persistent)
+            self._add(persistent, self.output)
+
+    def _add(self, persistent, holder: list) -> None:
+        """Increment list holder with additional entries."""
+        if isinstance(persistent, list):
+            holder.extend(persistent)
+        else:
+            holder.append(persistent)
 
     def save(self, path: FilePath = ".", filename: FilePath = MODULE_IO_FILE) -> Path:
         """Save Input/Output needed files by this module to disk."""
         fpath = Path(path, filename)
         with open(fpath, "w") as output_handler:
             to_save = {"input": self.input, "output": self.output}
-            jsonpickle.set_encoder_options("json", sort_keys=True, indent=4)
-            output_handler.write(jsonpickle.encode(to_save))  # type: ignore
+            output_handler.write(jsonpickle.encode(to_save))
         return fpath
 
     def load(self, filename: FilePath) -> None:
         """Load the content of a given IO filename."""
-        with open(filename) as json_file:
+        with open(filename, "r") as json_file:
             content = jsonpickle.decode(json_file.read())
             self.input = content["input"]  # type: ignore
             self.output = content["output"]  # type: ignore
 
     def retrieve_models(
-        self, crossdock: bool = False, individualize: bool = False
+        self, crossdock: bool = False, individualize: bool = False,
     ) -> list[Union[PDBFile, list[PDBFile]]]:
         """Retrieve the PDBobjects to be used in the module."""
         # Get the models generated in previous step
@@ -179,25 +191,28 @@ class ModuleIO:
             elif element.file_type == Format.PDB:  # type: ignore
                 model_list.append(element)  # type: ignore
 
-        if input_dic and not crossdock and not individualize:
-            # check if all ensembles contain the same number of models
-            sub_lists = iter(input_dic.values())
-            _len = len(next(sub_lists))
-            if not all(len(sub) == _len for sub in sub_lists):
-                _msg = (
-                    "Different number of models in molecules,"
-                    " cannot prepare pairwise complexes."
-                )
-                raise Exception(_msg)
+        if input_dic:
+            if not crossdock and not individualize:
+                # check if all ensembles contain the same number of models
+                sub_lists = iter(input_dic.values())
+                _len = len(next(sub_lists))
+                if not all(len(sub) == _len for sub in sub_lists):
+                    _msg = (
+                        "Different number of models in molecules,"
+                        " cannot prepare pairwise complexes."
+                    )
+                    raise Exception(_msg)
 
-            # prepare pairwise combinations
-            model_list = [values for values in zip(*input_dic.values())]  # type: ignore
-        elif input_dic and crossdock and not individualize:
-            model_list = [values for values in itertools.product(*input_dic.values())]  # type: ignore
-        elif input_dic and individualize:
-            model_list = list(itertools.chain(*input_dic.values()))
+                # prepare pairwise combinations
+                model_list = [values for values in zip(*input_dic.values())]
+            elif crossdock and not individualize:
+                model_list = [
+                    values for values in itertools.product(*input_dic.values())
+                    ]
+            elif individualize:
+                model_list = list(itertools.chain(*input_dic.values()))
 
-        return model_list  # type: ignore
+        return model_list
 
     def check_faulty(self) -> float:
         """Check how many of the output exists."""

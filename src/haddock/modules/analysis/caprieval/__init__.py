@@ -43,7 +43,7 @@ from haddock.modules.analysis.caprieval.capri import (
     extract_data_from_capri_class,
     extract_models_best_references,
     )
-from haddock.libs.libaa2cg import martinize 
+from haddock.libs.libaa2cg import martinize
 from pdbtools.pdb_wc import run as pdb_wc
 from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
@@ -101,7 +101,7 @@ class HaddockModule(BaseHaddockModule):
                 ff = Path(models[0].topology.rel_path).stem.split("_")[-1]
             except AttributeError:
                 ff = "aa"
-        
+        # In case of issue, fall back to all-atom
         if "martini" not in ff:
             ff = "aa"
 
@@ -215,9 +215,9 @@ class HaddockModule(BaseHaddockModule):
         # dump previously used weights
         dump_weights(self.order)
 
-        # Get reference file
+        # Find force-field
         ff = self.find_ff(models)
-
+        # Get reference file
         if ff == "martini2":
             references = [
                 Path(martinize(ref_aa, self.path.resolve().parent, False))
@@ -299,7 +299,6 @@ class HaddockModule(BaseHaddockModule):
                 add_reference_id=True,
             )
 
-        # Send models to the next step,
-        #  no operation is done on them
+        # Send models to the next step,  no operation is done on them
         self.output_models = models  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
         self.export_io_models()

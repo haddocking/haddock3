@@ -424,6 +424,78 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_cg_backmapping_arguments</span><span class="p">(</span>
+        <span class="n">input_element</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">PDBFile</span><span class="p">]],</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build CG backmapping CNS arguments string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_element (Union[PDBFile, list[PDBFile]]):</span>
+<span class="sd">            Input structure.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: All atom topology not found.</span>
+<span class="sd">        ValueError: CG-to-AA restraints not found.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        input_str: str</span>
+<span class="sd">            String of arguments understood by CNS.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">aa_psf_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cgtoaa_tbl_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">input_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># Structure composed of multiple entries</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_element</span><span class="o">.</span><span class="n">aa_topology</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,)):</span>
+        <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">input_element</span><span class="o">.</span><span class="n">aa_topology</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">psf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;All-Atom Topology not found </span><span class="si">{</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="s2">&quot;Conversion to all-atom requires a topology generated &quot;</span>
+                    <span class="s2">&quot;with [topoaa] and [topocg].&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">aa_psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">rel_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_element</span><span class="o">.</span><span class="n">cgtoaa_tbl</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tbl</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">input_element</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Coarse-Crain to All-Atom restraint file not found &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">. Conversion to all-atom &quot;</span>
+                    <span class="s2">&quot;requires a restraint file generated with [topocg].&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">input_element</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">cgtoaa_tbl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tbl</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+    <span class="c1"># Structure composed of only one entry</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pdb</span> <span class="o">=</span> <span class="n">input_element</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">libpdb</span><span class="o">.</span><span class="n">check_mol_shape</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">aa_topology</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;All-Atom Topology not found </span><span class="si">{</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="s2">&quot;Conversion to all-atom requires a topology generated with&quot;</span>
+                <span class="s2">&quot; [topoaa] and [topocg].&quot;</span>
+                <span class="p">)</span>
+        <span class="n">aa_psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">aa_topology</span><span class="o">.</span><span class="n">rel_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Coarse-Crain to All-Atom restraint file not found for&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; entry: </span><span class="si">{</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">. Conversion to all-atom&quot;</span>
+                <span class="s2">&quot; requires a restraint file generated with [topocg].&quot;</span>
+                <span class="p">)</span>
+        <span class="n">cgtoaa_tbl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">cgtoaa_tbl</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+
+    <span class="c1"># Loop over all the files that need to be added</span>
+    <span class="k">for</span> <span class="n">ind</span><span class="p">,</span> <span class="p">(</span><span class="n">aa_psf</span><span class="p">,</span> <span class="n">cg2aa_tbl</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">aa_psf_list</span><span class="p">,</span> <span class="n">cgtoaa_tbl_list</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># eval line for psf</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;input_aa_psf_filename_</span><span class="si">{</span><span class="n">ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">aa_psf</span><span class="p">)</span>
+        <span class="c1"># eval line for pdb</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;input_aa_pdb_filename_</span><span class="si">{</span><span class="n">ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">aa_psf</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># eval line for tbl</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;input_cgtbl_filename_</span><span class="si">{</span><span class="n">ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cg2aa_tbl</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">input_str</span>
+
+
 <div class="viewcode-block" id="prepare_cns_input">
 <a class="viewcode-back" href="../../../reference/libs/haddock.libs.libcns.html#haddock.libs.libcns.prepare_cns_input">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">prepare_cns_input</span><span class="p">(</span>
@@ -497,58 +569,17 @@
         <span class="n">psf_fname</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">rel_path</span>
         <span class="n">psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf_fname</span><span class="p">)</span>
 
-    <span class="n">aa_psf_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">cgtoaa_tbl_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">cgtoaa</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_element</span><span class="o">.</span><span class="n">aa_topology</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">input_element</span><span class="o">.</span><span class="n">aa_topology</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">psf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All-Atom Topology not found </span><span class="si">{</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">. &quot;</span>
-                    <span class="s2">&quot;Conversion to all-atom requires a topology generated with [topoaa] and &quot;</span>
-                    <span class="s2">&quot;[topocg].&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">aa_psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">rel_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_element</span><span class="o">.</span><span class="n">cgtoaa_tbl</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">tbl</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">input_element</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coarse-Crain to All-Atom restraint file not found &quot;</span>
-                    <span class="s2">&quot;</span><span class="si">{input_element.rel_path}</span><span class="s2">. Conversion to all-atom requires a restraint file &quot;</span>
-                    <span class="s2">&quot;generated with [topocg].&quot;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="ow">not</span> <span class="n">input_element</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                    <span class="n">cgtoaa_tbl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tbl</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pdb</span> <span class="o">=</span> <span class="n">input_element</span>
-            <span class="n">shape</span> <span class="o">=</span> <span class="n">libpdb</span><span class="o">.</span><span class="n">check_mol_shape</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">aa_topology</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All-Atom Topology not found </span><span class="si">{</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="s2">&quot;Conversion to all-atom requires a topology generated with [topoaa] and &quot;</span>
-                <span class="s2">&quot;[topocg].&quot;</span><span class="p">)</span>
-            <span class="n">aa_psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">aa_topology</span><span class="o">.</span><span class="n">rel_path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
-            <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">shape</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coarse-Crain to All-Atom restraint file not found for&quot;</span>
-                <span class="s2">&quot; entry: </span><span class="si">{input_element.rel_path}</span><span class="s2">. Conversion to all-atom requires a restraint file &quot;</span>
-                <span class="s2">&quot;generated with [topocg].&quot;</span><span class="p">)</span>
-            <span class="n">cgtoaa_tbl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">cgtoaa_tbl</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
-
     <span class="n">input_str</span> <span class="o">=</span> <span class="n">prepare_multiple_input</span><span class="p">(</span>
         <span class="n">pdb_input_list</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pdb_list</span><span class="p">],</span>
         <span class="n">psf_input_list</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">psf_list</span><span class="p">],</span>
     <span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">cgtoaa</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aa_psf_list</span><span class="p">)):</span>
-            <span class="c1"># eval line for psf</span>
-            <span class="n">param_psf</span> <span class="o">=</span> <span class="s2">&quot;input_aa_psf_filename_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="n">param_psf</span><span class="p">,</span> <span class="n">aa_psf_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="c1"># eval line for pdb</span>
-            <span class="n">param_pdb</span> <span class="o">=</span> <span class="s2">&quot;input_aa_pdb_filename_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="n">param_pdb</span><span class="p">,</span> <span class="n">aa_psf_list</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cgtoaa_tbl_list</span><span class="p">)):</span>
-            <span class="c1"># eval line for tbl</span>
-            <span class="n">param_tbl</span> <span class="o">=</span> <span class="s2">&quot;input_cgtbl_filename_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="n">param_tbl</span><span class="p">,</span> <span class="n">cgtoaa_tbl_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
+    <span class="c1"># Add the CG-to-AA backmapping CNS arguments</span>
+    <span class="k">if</span> <span class="n">cgtoaa</span><span class="p">:</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="n">_add_cg_backmapping_arguments</span><span class="p">(</span><span class="n">input_element</span><span class="p">)</span>
+
+    <span class="c1"># Setup output filename</span>
     <span class="n">output_pdb_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_number</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
-
     <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Output structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">output</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s2">&quot;output_pdb_filename&quot;</span><span class="p">,</span> <span class="n">output_pdb_filename</span><span class="p">)</span>
 
@@ -574,19 +605,21 @@
 
     <span class="n">output</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="n">model_number</span><span class="p">)</span>
 
+    <span class="c1"># Set pseudo-random seed</span>
     <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">seed</span> <span class="o">=</span> <span class="n">RND</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">99999</span><span class="p">)</span>
-
     <span class="n">seed_str</span> <span class="o">=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
 
+    <span class="c1"># Combine all input parts</span>
     <span class="n">inp</span> <span class="o">=</span> <span class="n">default_params</span> <span class="o">+</span> <span class="n">input_str</span> <span class="o">+</span> <span class="n">seed_str</span> <span class="o">+</span> <span class="n">output</span> <span class="o">+</span> <span class="n">segid_str</span> <span class="o">+</span> <span class="n">recipe_str</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">debug</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">inp</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="c1"># In debug mode we return a file (allowing to debug)</span>
         <span class="n">inp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_number</span><span class="si">}</span><span class="s2">.inp&quot;</span><span class="p">)</span>
         <span class="n">inp_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">inp_file</span></div>
+        <span class="k">return</span> <span class="n">inp_file</span>
+    <span class="c1"># Return input string</span>
+    <span class="k">return</span> <span class="n">inp</span></div>
 
 
 
@@ -599,19 +632,32 @@
     <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PDBFile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare a PDBobject.&quot;&quot;&quot;</span>
+    <span class="c1"># Build filepath</span>
     <span class="n">expected_pdb_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_nb</span><span class="si">}</span><span class="s2">.pdb&quot;</span><span class="p">)</span>
+    <span class="c1"># Initiate a PDBFile object</span>
     <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">expected_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="c1"># Multiple models as input</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_obj</span><span class="p">]</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">aa_topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">aa_topology</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_obj</span><span class="p">]</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_obj</span><span class="p">]</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_obj</span><span class="p">]</span>
+        <span class="c1"># Search for Topology/Parameters among the input models</span>
+        <span class="c1"># to pass it to the about-to-become complex</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model_obj</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">ligand_param_fname</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">ligand_top_fname</span><span class="p">:</span>
+                <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_param_fname</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">ligand_param_fname</span>
+                <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_top_fname</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">ligand_top_fname</span>
+    <span class="c1"># Single model / complex</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">topology</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">seed</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">aa_topology</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">aa_topology</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">cgtoaa_tbl</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">cgtoaa_tbl</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">restr_fname</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">restr_fname</span>
         <span class="n">pdb</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_param_fname</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">ligand_param_fname</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">ligand_top_fname</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">ligand_top_fname</span>
     <span class="k">return</span> <span class="n">pdb</span></div>
 
 </pre></div>
@@ -624,7 +670,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Apr 25, 2026.
+      <span class="lastupdated">Last updated on Apr 29, 2026.
       </span></p>
   </div>
 

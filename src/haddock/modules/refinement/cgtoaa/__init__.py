@@ -45,23 +45,17 @@ class HaddockModule(BaseCNSModule):
 
     def _run(self) -> None:
         """Execute module."""
-        # Pool of jobs to be executed by the CNS engine
-        jobs: list[CNSJob] = []
-
         # Get the models generated in previous step
         try:
             models_to_refine = self.previous_io.retrieve_models()
         except Exception as e:
             self.finish_with_error(e)
-
         self.output_models = []
         sampling_factor = self.params["sampling_factor"]
-        if sampling_factor > 1:
-            self.log(f"sampling_factor={sampling_factor}")
         if sampling_factor == 0:
             self.log("[Warning] sampling_factor cannot be 0, setting it to 1")
             sampling_factor = 1
-        if sampling_factor > 100:
+        elif sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
 
         max_nmodels = self.params["max_nmodels"]
@@ -73,39 +67,38 @@ class HaddockModule(BaseCNSModule):
                 " decrease the sampling_factor."
             )
 
-        model_idx = 0
+        # Pool of jobs to be executed by the CNS engine
+        jobs: list[CNSJob] = []
         idx = 1
         for model in models_to_refine:
-            model_idx += 1
-
             for s_ind in range(sampling_factor):
+                # Prepare CNS input
                 cgtoaa_input = prepare_cns_input(
                     idx,
                     model,
                     self.path,
                     self.recipe_str,
                     self.params,
-                    "cgtoaa",
+                    self.name,
                     native_segid=True,
                     debug=self.params["debug"],
                     seed=(model.seed + s_ind) if isinstance(model, PDBFile) else None,
-                    cgtoaa=True
+                    cgtoaa=True,
                 )
-                out_file = f"cgtoaa_{idx}.out"
-                err_fname = f"cgtoaa_{idx}.cnserr"
+                # Build CNS Job
+                out_file = f"{self.name}_{idx}.out"
+                err_fname = f"{self.name}_{idx}.cnserr"
+                job = CNSJob(cgtoaa_input, out_file, err_fname, envvars=self.envvars)
+                jobs.append(job)
 
                 # create the expected PDBobject
-                expected_pdb = prepare_expected_pdb(model, idx, ".", "cgtoaa")
+                expected_pdb = prepare_expected_pdb(model, idx, ".", self.name)
                 expected_pdb.topology = expected_pdb.aa_topology
                 try:
                     expected_pdb.ori_name = model.file_name
                 except AttributeError:
                     expected_pdb.ori_name = None
                 self.output_models.append(expected_pdb)
-
-                job = CNSJob(cgtoaa_input, out_file, err_fname, envvars=self.envvars)
-
-                jobs.append(job)
 
                 idx += 1
 
@@ -120,12 +113,14 @@ class HaddockModule(BaseCNSModule):
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
 
+        # Loop over expected PDB outputs
         for pdb in self.output_models:
             if pdb.is_present():
+                # Compute score
                 haddock_model = HaddockModel(pdb.file_name)
-                pdb.unw_energies = haddock_model.energies
-
                 haddock_score = haddock_model.calc_haddock_score(**weights)
+                # Hold score as attribute
+                pdb.unw_energies = haddock_model.energies
                 pdb.score = haddock_score
 
         self.export_io_models(faulty_tolerance=self.params["tolerance"])

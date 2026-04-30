@@ -285,8 +285,10 @@ class HaddockModule(BaseCNSModule):
                     _params = self.params
 
                 elif self.params["autotoppar"]:
-                    # No `ligand_top_fname` was provided, check if there are any unknown molecules
+                    # No `ligand_top_fname` was provided, check if there 
+                    # are any unknown residue
                     unknown = libligand.identify_unknown_hetatms(model)
+                    self.log(unknown)
                     if unknown:
                         self.log(
                             f"Unknown ligand(s) {unknown} detected, "
@@ -298,7 +300,10 @@ class HaddockModule(BaseCNSModule):
                             top_path, par_path = libligand.run_prodrg(model, Path("."))
                         except RuntimeError as e:
                             self.finish_with_error(
-                                f"Your input contains unknown atoms, you did not provide the `top`/`param` files and we could not execute PRODRG to get them automatically: {e}"
+                                "Your input contains unknown atoms, you did "
+                                "not provide the `top`/`param` files and we "
+                                "could not execute PRODRG to get them "
+                                f"automatically: {e}"
                             )
                         # Inject the automated toppar into the params for module
                         _params = {
@@ -322,7 +327,11 @@ class HaddockModule(BaseCNSModule):
                             self._output_params["ligand_top_fname"] = top_path
                             self._output_params["ligand_param_fname"] = par_path
 
-                        libpdb.sanitize(model, overwrite=True, custom_topology=top_path)
+                        libpdb.sanitize(
+                            model,
+                            overwrite=True,
+                            custom_topology=top_path,
+                            )
                     else:
                         self.log("No unknown atoms found")
                         libpdb.sanitize(model, overwrite=True)
@@ -345,7 +354,7 @@ class HaddockModule(BaseCNSModule):
 
                 # Add new job to the pool
                 output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
-                err_fname = f"{model.stem}.cnserr"
+                err_fname = f"{model.stem}.{Format.CNS_ERROR_OUTPUT}"
                 job = CNSJob(
                     topoaa_input,
                     output_filename,
@@ -366,6 +375,7 @@ class HaddockModule(BaseCNSModule):
         # Check for generated output, fail it not all expected files
         #  are found
         expected: dict[int, dict[int, PDBFile]] = {}
+        mdl_suffix: str = "_haddock"
         for i in models_dic:
             expected[i] = {}
             md5_dic = ens_dic[i]
@@ -381,8 +391,8 @@ class HaddockModule(BaseCNSModule):
                     md5_hash = md5_dic[model_id]
 
                 model_name = model.stem
-                processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
+                processed_pdb = Path(f"{model_name}{mdl_suffix}.{Format.PDB}")
+                processed_topology = Path(f"{model_name}{mdl_suffix}.{Format.TOPOLOGY}")
 
                 # Check if origin or md5 is available
                 if md5_hash or model_id in origin_names.keys():
@@ -397,10 +407,10 @@ class HaddockModule(BaseCNSModule):
                         model_name = f"{prefix_name}_from_{model_name}"
                         # Rename files
                         processed_pdb = processed_pdb.rename(
-                            f"{model_name}_haddock.{Format.PDB}"
+                            f"{model_name}{mdl_suffix}.{Format.PDB}"
                         )
                         processed_topology = processed_topology.rename(
-                            f"{model_name}_haddock.{Format.TOPOLOGY}"
+                            f"{model_name}{mdl_suffix}.{Format.TOPOLOGY}"
                         )
 
                 topology = TopologyFile(processed_topology, path=".")
@@ -412,14 +422,14 @@ class HaddockModule(BaseCNSModule):
                     ligand_top_fname, ligand_param_fname = model_ligand_files[
                         model.stem
                     ]
-
+                # Build PDBFile object
                 pdb = PDBFile(
                     file_name=processed_pdb,
                     topology=topology,
                     path=".",
                     md5=md5_hash,
-                    ligand_top_fname=ligand_top_fname,
-                    ligand_param_fname=ligand_param_fname,
+                    ligand_top_fname=str(ligand_top_fname),
+                    ligand_param_fname=str(ligand_param_fname),
                 )
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb

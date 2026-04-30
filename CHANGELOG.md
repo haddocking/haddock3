@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-04-30: Fixes ligand ensemble topo/param files - Issue #1540
 - 2026-04-24: Exposing distance cutoff for ACE-CYS cyclisation - Issue #1535
 - 2026-04-23: Merging the coarse-graining branch into the main branch.
 - 2026-04-13: Fixed issue with shape in cgtoa module and added shape docking example

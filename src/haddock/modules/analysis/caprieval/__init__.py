@@ -35,6 +35,9 @@ from haddock.core.defaults import MODULE_DEFAULT_YAML
 from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libaa2cg import martinize
+from haddock.libs.libstructure import find_ff
+from haddock.libs.libpdb import handle_input_reference
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
@@ -43,9 +46,6 @@ from haddock.modules.analysis.caprieval.capri import (
     extract_data_from_capri_class,
     extract_models_best_references,
     )
-from haddock.libs.libaa2cg import martinize
-from pdbtools.pdb_wc import run as pdb_wc
-from pdbtools.pdb_splitmodel import run as pdb_splitmodel
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -77,96 +77,6 @@ class HaddockModule(BaseHaddockModule):
                 return True
         return False
 
-    @staticmethod
-    def find_ff(models: list[PDBFile]) -> str:
-        """Finds the force-field information (all-atom or martini) from the topology 
-        associated to the first model.
-
-        The assumption is that the force-fields will be identical between models.
-        
-        Parameters
-        -----------
-        models : list[PDBFile]
-            List of models where to find the topology
-        
-        Return
-        -------
-        ff : str
-            The force-field used in those models.
-        """
-        try:
-            ff = Path(models[0].topology[0].rel_path).stem.split("_")[-1]
-        except TypeError:
-            try:
-                ff = Path(models[0].topology.rel_path).stem.split("_")[-1]
-            except AttributeError:
-                ff = "aa"
-        # In case of issue, fall back to all-atom
-        if "martini" not in ff:
-            ff = "aa"
-
-        return ff
-
-    def handle_input_reference(self, reference: Path) -> list[Path]:
-        """Validate the reference file by returning only one model.
-
-        Parameters
-        ----------
-        reference : Path
-            Path to the input reference structure, possibly containing
-            an ensemble.
-
-        Returns
-        -------
-        reference or first_model_path : Path
-            Path to the reference structure to be used downstream.
-        """
-        # Extremly complicated stuff to manage the gathering of the sys.stdout,
-        # as the pdb_tools.pdb_wc is basically writing on it.
-        import sys
-        from io import TextIOWrapper, BytesIO
-        # Memorize previous sys.stdout
-        original_stdout = sys.stdout
-        # setup the new stdout environment
-        sys.stdout = TextIOWrapper(BytesIO(), sys.stdout.encoding)
-
-        # Count number of models
-        with open(reference, "r") as fh:
-            pdb_wc(fh, "m")
-        # Get output
-        sys.stdout.seek(0)  # Jump to the start
-        wc_return = sys.stdout.read()  # Read output
-        # Restore original stdout
-        sys.stdout.close()
-        sys.stdout = original_stdout
-        # Parse output
-        # using here `\n` (and not os.linesep) as it is the output for pdb_wc
-        for line in wc_return.split("\n"):
-            if "No. models" in line:
-                sline = line.strip().split()
-                nb_models = int(sline[-1])
-                break
-        # Return reference as only one structure present
-        if nb_models == 1:
-            return [reference]
-
-        self.log(
-            f"Multiple structures ({nb_models}) found in reference file. "
-            "Using all conformations as reference."
-            )
-        # Split models
-        with open(reference, "r") as ref_in:
-            pdb_splitmodel(ref_in, "reference_model")
-        # Gather individual references and sort them
-        references = sorted(
-            list(Path(".").glob("reference_model_*.pdb")),
-            key=lambda k: int(k.stem.split("_")[-1]),
-            )
-        assert len(references) == nb_models, (
-                "Issue while splitting references conformation: "
-                f"{nb_models} detected, {len(references)} generated"
-            )
-        return references
 
     def get_reference(self, models: list[PDBFile]) -> list[Path]:
         """Manage to obtain the reference structure to be used downstream.
@@ -184,7 +94,7 @@ class HaddockModule(BaseHaddockModule):
         """
         if self.params["reference_fname"]:
             _reference = Path(self.params["reference_fname"])
-            references = self.handle_input_reference(_reference)
+            references = handle_input_reference(_reference)
         else:
             self.log(
                 "No reference structure provided. "
@@ -216,7 +126,7 @@ class HaddockModule(BaseHaddockModule):
         dump_weights(self.order)
 
         # Find force-field
-        ff = self.find_ff(models)
+        ff = find_ff(models)
         # Get reference file
         if ff == "martini2":
             references = [

@@ -47,7 +47,7 @@ class HaddockModule(BaseCNSModule):
         """Execute module."""
         # Get the models generated in previous step
         try:
-            models_to_refine = self.previous_io.retrieve_models()
+            models_to_refine = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
         self.output_models = []
@@ -71,6 +71,7 @@ class HaddockModule(BaseCNSModule):
         jobs: list[CNSJob] = []
         idx = 1
         for model in models_to_refine:
+            if not model.seed: model.seed = self.params["iniseed"]
             for s_ind in range(sampling_factor):
                 # Prepare CNS input
                 cgtoaa_input = prepare_cns_input(

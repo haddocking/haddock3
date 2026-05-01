@@ -31,21 +31,17 @@ from haddock.libs.libparallel import Scheduler
 from haddock.libs.libstructure import find_ff
 from haddock.libs.libpdb import handle_input_reference
 from haddock.modules import BaseHaddockModule
-from haddock.modules.analysis.rmsdfilter.rmsdfilter import RMSDFilter
+from haddock.modules.analysis.rmsdfilter.rmsdfilter import (
+    RMSDFilter,
+    build_sorted_rows,
+    collect_rmsd_map,
+    write_rmsdfilter_multiref,
+    write_rmsdfilter_ss,
+)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, MODULE_DEFAULT_YAML)
-
-
-def _sort_key(row, sortby: str) -> float:
-    model, rmsd = row
-    if sortby == "score":
-        val = model.score
-        if val is None or (isinstance(val, float) and isnan(val)):
-            return float("inf")
-        return val
-    return float("inf") if isnan(rmsd) else rmsd
 
 
 class HaddockModule(BaseHaddockModule):
@@ -150,84 +146,35 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
         results: list[RMSDFilter] = engine.results
 
-        # For each model take the minimum RMSD across all references
-        rmsd_map: dict[int, float] = {}
-        for job in results:
-            current = rmsd_map.get(job.identificator, float("nan"))
-            job_rmsd = job.rmsd
-            if isnan(current):
-                rmsd_map[job.identificator] = job_rmsd
-            elif not isnan(job_rmsd):
-                rmsd_map[job.identificator] = min(current, job_rmsd)
-
-        # Map identificator back to model
         id_to_model: dict[int, PDBFile] = {
             i: m for i, m in enumerate(models, start=1)
         }
 
-        # Sort models to write in output tsv
+        rmsd_map = collect_rmsd_map(results)
+
+        # Get sorting parameters
         sortby = self.params["sortby"]
         sort_ascending = self.params["sort_ascending"]
-
-        # Check if score is available
+        # Check if score sorting is possible
         has_score = any(
-            m.score is not None and not (
-                isinstance(m.score, float) and isnan(m.score)
-            )
+            m.score is not None and not (isinstance(m.score, float) and isnan(m.score))
             for m in models
         )
         if sortby == "score" and not has_score:
-            self.log(
-                "Cannot sort models by score, falling back to sorting by RMSD."
-            )
+            self.log("Cannot sort models by score, falling back to sorting by RMSD.")
             sortby = "rmsd"
 
-        rows = [
-            (id_to_model[i], rmsd_map[i])
-            for i in sorted(rmsd_map.keys())
-        ]
-
-        rows.sort(key=lambda row: _sort_key(row, sortby), reverse=not sort_ascending)
-
-        # Compute filtering stats for the tsv header
+        rows = build_sorted_rows(rmsd_map, id_to_model, sortby, sort_ascending)
+        # Get stats for the header of tvs file and log 
         valid_rows = [(m, r) for m, r in rows if not isnan(r)]
         nan_count = len(rows) - len(valid_rows)
         filtered = [m for m, r in valid_rows if r <= self.params["threshold"]]
         percent_filtered = (1 - len(filtered) / len(models)) * 100
-
-        with open("rmsdfilter_ss.tsv", "w") as fh:
-            fh.write(
-                f"# RMSD filtering threshold is set to {self.params['threshold']:.3f} Å; "
-                f"{len(filtered)} model(s) were kept; {percent_filtered:.2f}% were filtered out. "
-                "This file contains all models for user information.\n"
-            )
-            fh.write("model\tscore\trmsd\n")
-            for model, rmsd in rows:
-                score_str = (
-                    f"{model.score:.3f}"
-                    if model.score is not None and not (
-                        isinstance(model.score, float) and isnan(model.score)
-                    )
-                    else "nan"
-                )
-                rmsd_str = f"{rmsd:.3f}" if not isnan(rmsd) else "nan"
-                fh.write(f"{model.rel_path}\t{score_str}\t{rmsd_str}\n")
-
-        # When multiple references were used, write multiref tsv,
-        # so it is possible to trace from which reference RMSD came from
+        # write tsv header    
+        write_rmsdfilter_ss(rows, filtered, percent_filtered, self.params["threshold"])
+        
         if len(references) > 1:
-            multiref_rows = sorted(
-                results,
-                key=lambda job: (str(id_to_model[job.identificator].rel_path), job.ref_id),
-            )
-            with open("rmsdfilter_ss_multiref.tsv", "w") as fh:
-                fh.write("model\tref_id\trmsd\n")
-                for job in multiref_rows:
-                    model = id_to_model[job.identificator]
-                    rmsd_str = f"{job.rmsd:.3f}" if not isnan(job.rmsd) else "nan"
-                    fh.write(
-                        f"{model.rel_path}\t{job.ref_id}\t{rmsd_str}\n"
-                    )
+            write_rmsdfilter_multiref(results, id_to_model)
 
         if nan_count > 0:
             self.log(
@@ -235,7 +182,7 @@ class HaddockModule(BaseHaddockModule):
                 "(alignment failed) and will be excluded from filtering."
             )
 
-        if not valid_rows: 
+        if not valid_rows:
             self.finish_with_error(
                 "[rmsdfilter] All models have NaN RMSD - alignment failed for every model."
             )
@@ -243,12 +190,13 @@ class HaddockModule(BaseHaddockModule):
         if not filtered:
             self.finish_with_error(
                 f"[rmsdfilter] With threshold {self.params['threshold']:.3f} Å, "
-                "ALL models were filtered out!"
+                "ALL models were filtered out !"
             )
 
         self.log(
-            f"with threshold {self.params['threshold']:.3f} Å:"
-            f"{percent_filtered:6.2f}% of models were filtered out, {len(filtered)} model(s) passed."
+            f"with threshold {self.params['threshold']:.3f} Å: "
+            f"{percent_filtered:6.2f}% of models were filtered out, "
+            f"{len(filtered)} model(s) passed."
         )
 
         self.output_models = filtered

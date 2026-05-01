@@ -1,8 +1,11 @@
-"""RMSD calculation for the rmsdfilter module."""
+"""RMSD calculation and output for the rmsdfilter module."""
 
 import copy
+from math import isnan
 from pathlib import Path
+
 import numpy as np
+
 from haddock import log
 from haddock.libs.libalign import (
     ALIGNError,
@@ -88,7 +91,7 @@ class RMSDFilter:
         Q = np.asarray([ref_coord_dic[k] for k in common_keys])
         P = np.asarray([mod_coord_dic[k] for k in common_keys])
 
-        # Kabsch superposition: centre both structures Q (ref) and P (model), 
+        # Kabsch superposition: centre both structures Q (ref) and P (model),
         # find optimal rotation U, apply it to P, then compute RMSD on the superposed coordinates.
         Q = Q - centroid(Q)
         P = P - centroid(P)
@@ -97,3 +100,83 @@ class RMSDFilter:
 
         self.rmsd = calc_rmsd(P, Q)
         return copy.deepcopy(self)
+
+# helper functions to not clutter init.py
+def _sort_key(row: tuple, sortby: str) -> float:
+    """Return the sort value for a (model, rmsd) row."""
+    model, rmsd = row
+    if sortby == "score":
+        val = model.score
+        if val is None or (isinstance(val, float) and isnan(val)):
+            return float("inf")
+        return val
+    return float("inf") if isnan(rmsd) else rmsd
+
+
+def collect_rmsd_map(results: list) -> dict[int, float]:
+    """Filter per-job results to minimum RMSD per model across all references."""
+    rmsd_map: dict[int, float] = {}
+    for job in results:
+        current = rmsd_map.get(job.identificator, float("nan"))
+        job_rmsd = job.rmsd
+        if isnan(current):
+            rmsd_map[job.identificator] = job_rmsd
+        elif not isnan(job_rmsd):
+            rmsd_map[job.identificator] = min(current, job_rmsd)
+    return rmsd_map
+
+
+def build_sorted_rows(
+    rmsd_map: dict[int, float],
+    id_to_model: dict[int, PDBFile],
+    sortby: str,
+    sort_ascending: bool,
+) -> list[tuple]:
+    """Build a list of (model, rmsd) pairs sorted by sortby."""
+    rows = [(id_to_model[i], rmsd_map[i]) for i in sorted(rmsd_map.keys())]
+    rows.sort(key=lambda row: _sort_key(row, sortby), reverse=not sort_ascending)
+    return rows
+
+
+def write_rmsdfilter_ss(
+    rows: list[tuple],
+    filtered: list[PDBFile],
+    percent_filtered: float,
+    threshold: float,
+    fname: str = "rmsdfilter_ss.tsv",
+) -> None:
+    """Write _ss_.tsv."""
+    with open(fname, "w") as fh:
+        fh.write(
+            f"# RMSD filtering threshold is set to {threshold:.3f} Å; "
+            f"{len(filtered)} model(s) were kept; {percent_filtered:.2f}% were filtered out. "
+            "This file contains all models for user information.\n"
+        )
+        fh.write("model\tscore\trmsd\n")
+        for model, rmsd in rows:
+            score_str = (
+                f"{model.score:.3f}"
+                if model.score is not None
+                and not (isinstance(model.score, float) and isnan(model.score))
+                else "nan"
+            )
+            rmsd_str = f"{rmsd:.3f}" if not isnan(rmsd) else "nan"
+            fh.write(f"{model.rel_path}\t{score_str}\t{rmsd_str}\n")
+
+
+def write_rmsdfilter_multiref(
+    results: list,
+    id_to_model: dict[int, PDBFile],
+    fname: str = "rmsdfilter_ss_multiref.tsv",
+) -> None:
+    """Write multiref file: one row per (model, reference) pair, sorted by model name then ref_id."""
+    multiref_rows = sorted(
+        results,
+        key=lambda job: (str(id_to_model[job.identificator].rel_path), job.ref_id),
+    )
+    with open(fname, "w") as fh:
+        fh.write("model\tref_id\trmsd\n")
+        for job in multiref_rows:
+            model = id_to_model[job.identificator]
+            rmsd_str = f"{job.rmsd:.3f}" if not isnan(job.rmsd) else "nan"
+            fh.write(f"{model.rel_path}\t{job.ref_id}\t{rmsd_str}\n")

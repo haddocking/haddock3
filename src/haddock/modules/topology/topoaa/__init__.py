@@ -220,6 +220,9 @@ class HaddockModule(BaseCNSModule):
         # Pool of jobs to be executed by the CNS engine
         jobs: list[CNSJob] = []
 
+        # Dictionary to store ligand files for each model
+        model_ligand_files: dict[str, tuple[Path, Path]] = {}
+
         models_dic: dict[int, list[Path]] = {}
         ens_dic: dict[int, dict[int, str]] = {}
         origi_ens_dic: dict[int, dict[int, str]] = {}
@@ -265,9 +268,6 @@ class HaddockModule(BaseCNSModule):
             )
             # Update molecule parameters with full path to link files
             parameters_for_this_molecule.update(link_files)
-
-            # Dictionary to store ligand files for each model
-            model_ligand_files: dict[str, tuple[Path, Path]] = {}
 
             # Loop over molecules conformations
             for _task_id, model in enumerate(splited_models):

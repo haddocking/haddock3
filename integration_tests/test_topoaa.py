@@ -259,6 +259,54 @@ def test_topoaa_module_ligand_automated(topoaa_module):
     assert expected_gz.exists()
 
 
+def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
+    """Topoaa with an ensemble of ligands as input without providing topology/parameter files.
+
+    The module should automatically generate the CNS topology and parameters
+    for the unknown ligand using prodrg.
+    """
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "ligand-ens.pdb"),
+        Path(GOLDEN_DATA, "protein-ens.pdb"),
+    ]
+    topoaa_module.params["mol1"]["prot_segid"] = "A"
+    # Create mol2 parameters by copying the ones found for mol1
+    topoaa_module.params["mol2"] = copy.deepcopy(topoaa_module.params["mol1"])
+    topoaa_module.params["mol2"]["prot_segid"] = "B"
+    topoaa_module.params["autotoppar"] = True
+    topoaa_module.params["preprocess"] = False
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected1_inp = Path(topoaa_module.path, "ligand-ens_1.inp")
+    expected1_psf = Path(topoaa_module.path, "dock_1_model_ligand_from_ligand-ens_1_haddock.psf")
+    expected1_pdb = Path(topoaa_module.path, "dock_1_model_ligand_from_ligand-ens_1_haddock.pdb")
+    expected2_inp = Path(topoaa_module.path, "ligand-ens_2.inp")
+    expected2_psf = Path(topoaa_module.path, "dock_2_model_ligand_from_ligand-ens_2_haddock.psf")
+    expected2_pdb = Path(topoaa_module.path, "dock_2_model_ligand_from_ligand-ens_2_haddock.pdb")
+    expected_io = Path(topoaa_module.path, "io.json")
+
+    assert expected1_inp.exists()
+    assert expected1_psf.exists()
+    assert expected1_pdb.exists()
+    assert expected2_inp.exists()
+    assert expected2_psf.exists()
+    assert expected2_pdb.exists()
+
+    # Check if the property was added to the output
+    for structure in topoaa_module.output_models:
+        for model in structure:
+            pdb = structure[model]
+
+            # Check the contents
+            if "ligand" in pdb.file_name:
+                assert pdb.ligand_top_fname.exists()
+                assert pdb.ligand_param_fname.exists()
+
+
+
 def test_topoaa_cyclic(topoaa_module):
     """Test the topoaa module to generate a cyclic peptide."""
     topoaa_module.params["molecules"] = [

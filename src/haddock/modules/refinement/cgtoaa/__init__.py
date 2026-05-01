@@ -71,7 +71,9 @@ class HaddockModule(BaseCNSModule):
         jobs: list[CNSJob] = []
         idx = 1
         for model in models_to_refine:
-            if not model.seed: model.seed = self.params["iniseed"]
+            if isinstance(model, PDBFile):
+                if not model.seed:
+                    model.seed = self.params["iniseed"]
             for s_ind in range(sampling_factor):
                 # Prepare CNS input
                 cgtoaa_input = prepare_cns_input(

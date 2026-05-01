@@ -290,11 +290,15 @@ def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
     assert expected2_psf.exists()
     assert expected2_pdb.exists()
 
-    with open(expected_io, encoding="utf-8", mode="r") as f:
-        file_content = f.read()
+    # Check if the property was added to the output
+    for structure in topoaa_module.output_models:
+        for model in structure:
+            pdb = structure[model]
 
-    assert "ligand-ens_1_prodrg.param" in file_content
-    assert "ligand-ens_2_prodrg.param" in file_content
+            # Check the contents
+            assert pdb.ligand_top_fname.exists()
+            assert pdb.ligand_param_fname.exists()
+
 
 
 def test_topoaa_cyclic(topoaa_module):

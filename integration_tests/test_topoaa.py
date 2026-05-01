@@ -267,8 +267,10 @@ def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
     """
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "ligand-ens.pdb"),
+        Path(GOLDEN_DATA, "protein-ens.pdb"),
     ]
     topoaa_module.params["autotoppar"] = True
+    topoaa_module.params["delenph"] = False
     topoaa_module.params["preprocess"] = False
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True

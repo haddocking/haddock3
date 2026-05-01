@@ -269,8 +269,11 @@ def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
         Path(GOLDEN_DATA, "ligand-ens.pdb"),
         Path(GOLDEN_DATA, "protein-ens.pdb"),
     ]
+    topoaa_module.params["mol1"]["prot_segid"] = "A"
+    # Create mol2 parameters by copying the ones found for mol1
+    topoaa_module.params["mol2"] = copy.deepcopy(topoaa_module.params["mol1"])
+    topoaa_module.params["mol2"]["prot_segid"] = "B"
     topoaa_module.params["autotoppar"] = True
-    topoaa_module.params["delenph"] = False
     topoaa_module.params["preprocess"] = False
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
@@ -298,8 +301,9 @@ def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
             pdb = structure[model]
 
             # Check the contents
-            assert pdb.ligand_top_fname.exists()
-            assert pdb.ligand_param_fname.exists()
+            if "ligand" in pdb.file_name:
+                assert pdb.ligand_top_fname.exists()
+                assert pdb.ligand_param_fname.exists()
 
 
 

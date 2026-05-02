@@ -21,7 +21,10 @@ for $id in id (name BB) loop cg1
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
-    show (name) (bondedto (name $bdname_$bdnum and resid $bdresi_$bdnum) and resid $bdresi_$bdnum and name SC1)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
+    show (name) (bondedto (name $bdname_$bdnum and resid $bdresi_$bdnum and segid $bdsegid_$bdnum) 
+                           and resid $bdresi_$bdnum and name SC1 and segid $bdsegid_$bdnum)
     if ($result NE 0) then
         evaluate ($sbdname_$bdnum = $result)
     else
@@ -52,13 +55,20 @@ while ($ncount < $nend) loop cg2
     evaluate ($bresi2 = $bdresi_$nat2)
     evaluate ($bresi3 = $bdresi_$nat3)
 
+    ! get their segids
+    evaluate ($bsegid1 = $bdsegid_$nat1)
+    evaluate ($bsegid2 = $bdsegid_$nat2)
+    evaluate ($bsegid3 = $bdsegid_$nat3)
+
     ! check for breaks before defining any angle
     evaluate ($break = FALSE)
-    pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
+    pick bond (name $bname1 and resid $bresi1 and segid $bsegid1) 
+              (name $bname2 and resid $bresi2 and segid $bsegid2) geometry
     if ($result > $bdbreak) then
         evaluate ($break = TRUE)
     end if
-    pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3) geometry
+    pick bond (name $bname2 and resid $bresi2 and segid $bsegid2) 
+              (name $bname3 and resid $bresi3 and segid $bsegid3) geometry
     if ($result > $bdbreak) then
         evaluate ($break = TRUE)
     end if
@@ -66,10 +76,10 @@ while ($ncount < $nend) loop cg2
     if ($break EQ FALSE) then
 
         ! apply patch to the selected three beads
-        patch BBBA refe=1=(resid $bresi1 and name BB)
-                   refe=2=(resid $bresi2 and name BB)
-                   refe=3=(resid $bresi3 and name BB) end
-        display PATCH-BB-CG: ADDED ONE ANGLE BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $bname3 $bresi3
+        patch BBBA refe=1=(resid $bresi1 and name BB and segid $bsegid1)
+                   refe=2=(resid $bresi2 and name BB and segid $bsegid2)
+                   refe=3=(resid $bresi3 and name BB and segid $bsegid3) end
+        display PATCH-BB-CG: ADDED ONE ANGLE BETWEEN $bname1 $bresi1 $bsegid1, $bname2 $bresi2 $bsegid2, $bname3 $bresi3 $bsegid3
 
     end if
 
@@ -98,6 +108,10 @@ while ($ncount < $nend) loop cg3
     evaluate ($bresi1 = $bdresi_$nat1)
     evaluate ($bresi2 = $bdresi_$nat2)
 
+    ! get their segids
+    evaluate ($bsegid1 = $bdsegid_$nat1)
+    evaluate ($bsegid2 = $bdsegid_$nat2)
+
     ! check for breaks before defining any angle
     evaluate ($break = FALSE)
     pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
@@ -111,9 +125,9 @@ while ($ncount < $nend) loop cg3
         if ($sbname1 NE "XXX") then
 
             ! apply patch to the selected three beads
-            patch SBBA refe=1=(resid $bresi1 and name SC1)
-                       refe=2=(resid $bresi1 and name BB)
-                       refe=3=(resid $bresi2 and name BB) end
+            patch SBBA refe=1=(resid $bresi1 and name SC1 and segid $bsegid1)
+                       refe=2=(resid $bresi1 and name BB and segid $bsegid2)
+                       refe=3=(resid $bresi2 and name BB and segid $bsegid3) end
             display PATCH-SBB-CG: ADDED ONE SIDE-CHAIN/BB ANGLE BETWEEN $sbname1 $bresi1 , $bname1 $bresi1 , $bname2 $bresi2
 
         end if
@@ -122,9 +136,9 @@ while ($ncount < $nend) loop cg3
         if ($sbname2 NE "XXX") then
             
             ! apply patch to the selected three beads
-            patch BBSA refe=1=(resid $bresi1 and name BB)
-                       refe=2=(resid $bresi2 and name BB)
-                       refe=3=(resid $bresi2 and name SC1) end
+            patch BBSA refe=1=(resid $bresi1 and name BB and segid $bsegid1)
+                       refe=2=(resid $bresi2 and name BB and segid $bsegid2)
+                       refe=3=(resid $bresi2 and name SC1 and segid $bsegid3) end
             display PATCH-BBS-CG: ADDED ONE BB/SIDE-CHAIN ANGLE BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $sbname2 $bresi2
         end if
 
@@ -158,6 +172,12 @@ while ($ncount < $nend) loop cg4
     evaluate ($bresi3 = $bdresi_$nat3)
     evaluate ($bresi4 = $bdresi_$nat4)
 
+    ! get their segids
+    evaluate ($bsegid1 = $bdsegid_$nat1)
+    evaluate ($bsegid2 = $bdsegid_$nat2)
+    evaluate ($bsegid3 = $bdsegid_$nat3)
+    evaluate ($bsegid4 = $bdsegid_$nat4)
+
     ! define atom names for patch
     evaluate ($pat1 = "1"+$bname1)
     evaluate ($pat2 = "2"+$bname2)
@@ -166,15 +186,15 @@ while ($ncount < $nend) loop cg4
 
     evaluate ($break = FALSE)
     ! check for breaks before defining any dihedral
-    pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2) geometry
+    pick bond (name $bname1 and resid $bresi1) (name $bname2 and resid $bresi2 and segid $bsegid2) geometry
     if ($result > $bdbreak) then
         evaluate ($break = TRUE)
     end if
-    pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3) geometry
+    pick bond (name $bname2 and resid $bresi2) (name $bname3 and resid $bresi3 and segid $bsegid3) geometry
     if ($result > $bdbreak) then
         evaluate ($break = TRUE)
     end if
-    pick bond (name $bname3 and resid $bresi3) (name $bname4 and resid $bresi4) geometry
+    pick bond (name $bname3 and resid $bresi3) (name $bname4 and resid $bresi4 and segid $bsegid4) geometry
     if ($result > $bdbreak) then
         evaluate ($break = TRUE)
     end if
@@ -182,11 +202,11 @@ while ($ncount < $nend) loop cg4
     if ($break EQ FALSE) then
 
         ! apply patch to the selected four BB beads
-        patch CGDI refe=1=(resid $bresi1 and name BB)
-                   refe=2=(resid $bresi2 and name BB)
-                   refe=3=(resid $bresi3 and name BB)
-                   refe=4=(resid $bresi4 and name BB) end
-        display PATCH-BB-CG: ADDED ONE DIHEDRAL BETWEEN $bname1 $bresi1 , $bname2 $bresi2 , $bname3 $bresi3 , $bname4 $bresi4
+        patch CGDI refe=1=(resid $bresi1 and name BB and segid $bsegid1)
+                   refe=2=(resid $bresi2 and name BB and segid $bsegid2)
+                   refe=3=(resid $bresi3 and name BB and segid $bsegid3)
+                   refe=4=(resid $bresi4 and name BB and segid $bsegid4) end
+        display PATCH-BB-CG: ADDED ONE DIHEDRAL BETWEEN $bname1 $bresi1 $bsegid1, $bname2 $bresi2 $bsegid2, $bname3 $bresi3 $bsegid3, $bname4 $bresi4 $bsegid4
 
     end if
 

@@ -447,5 +447,22 @@ END
 
 !----------------------------------------------------------------
 
+!---------------------------------!
+! Patch for detected chain breaks !
+!    *same for DNA and RNA*       !
+!---------------------------------!
+
+PRESidue DNCG
+
+  DELETE BOND -BB3 +BB1
+  DELETE ANGLE -BB2 -BB3 +BB1
+  DELETE ANGLE -BB3 +BB1 +BB2
+  DELETE DIHEdral -BB1 -BB2 -BB3 +BB1
+  DELETE DIHEdral -BB2 -BB3 +BB1 +BB2
+  DELETE DIHEdral -BB3 +BB1 +BB2 +BB3
+  DELETE ANGLE -SC1 -BB3 +BB1
+
+END {DNCG}
+
 set message=$old_message echo=$old_echo end
 

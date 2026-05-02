@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-05-02: Fixed autoflex issue with solvent - Issue #1551
 - 2026-05-01: Allows for CG-based scoring workflows - Issues #1546, #1547, #1548
 - 2026-04-30: Fixes ligand ensemble topo/param files - Issue #1540
 - 2026-04-24: Exposing distance cutoff for ACE-CYS cyclisation - Issue #1535

@@ -22,7 +22,7 @@ while ($nchain1 < $data.ncomponents) loop nloop1
 end loop nloop1
 
 ! freeze backbone
-do (store5 = 0) (name CA or name BB or name C or name N or name O)
+do (store5 = 0) (name CA or name BB or name BB# or name C or name N or name O)
 
 do (store5 = 21) (resn WAT or resn HOH or resn TIP*)
 do (store1 = 0) (all)

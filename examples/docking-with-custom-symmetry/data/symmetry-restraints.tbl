@@ -1,0 +1,12 @@
+! N3 <-> CE1 ~= C6 <-> CD2 
+assign (segid B and resi 5 and name N3)
+       (segid A and resi 2 and name CE1)  0.0 0.0 0.0
+assign (segid B and resi 5 and name C6)
+       (segid A and resi 2 and name CD2)  0.0 0.0 0.0
+
+! C2 <-> CD1 == C5 <-> CE2 
+
+assign (segid B and resi 5 and name C2)
+       (segid A and resi 2 and name CD1)  0.0 0.0 0.0
+assign (segid B and resi 5 and name C5)
+       (segid A and resi 2 and name CE2)  0.0 0.0 0.0

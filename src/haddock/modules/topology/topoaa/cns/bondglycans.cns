@@ -27,7 +27,7 @@ define
 
   {- define all beta anomer carbo residues for the links below -}
   beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP 
-          or resname NAG or resname NGA or resname BDP);
+          or resname NAG or resname NGA or resname BDP or resname GCS);
 
   {- Maximum distance between linkable atoms -}
   carbo_dist= 2.0;
@@ -42,8 +42,8 @@ define
 
 eval ($npatch=0)
 
-{- NAG-C1 or NGA-C1 or NDG-C1 or BGC-C1 to ASN-ND2 -}
-for $id1 in id ( (resname NAG or resname NGA or resname NDG or resname BGC) and name C1 and known ) loop B1Na
+{- NAG-C1 or NGA-C1 or NDG-C1 or BGC-C1 or GCS-C1 to ASN-ND2 -}
+for $id1 in id ( (resname NAG or resname NGA or resname NDG or resname BGC or resname GCS) and name C1 and known ) loop B1Na
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)
@@ -89,8 +89,8 @@ for $id1 in id ( (resname NAG or resname NGA or resname NDG or resname BGC) and 
 
 end loop B1Na
 
-{- NAG-C1 or NGA-C1 or NDG-C1 or BGC-C1 to THR-OG1 -}
-for $id1 in id ( (resname NAG or resname NGA or resname NDG or resname BGC) and name C1 and known ) loop B1Ta
+{- NAG-C1 or NGA-C1 or NDG-C1 or BGC-C1 or GCS-C1 to THR-OG1 -}
+for $id1 in id ( (resname NAG or resname NGA or resname NDG or resname BGC or resname GCS) and name C1 and known ) loop B1Ta
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-06-05: Fixed support of custom symmetry restraints - Issue $1563
 - 2026-06-04: Added support for glucosamine (GCS) - Issue $1559
 - 2026-05-02: Fixed autoflex issue with solvent - Issue #1551
 - 2026-05-01: Allows for CG-based scoring workflows - Issues #1546, #1547, #1548

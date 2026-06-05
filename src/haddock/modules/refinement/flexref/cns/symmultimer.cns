@@ -665,7 +665,7 @@ if ($Data.flags.sym eq true) then
     ! Read custom symmetry restraints if defined
     fileexist $symtbl_fname end
     if ($result eq true) then
-        noe class symm @@$symtbl_fname end
+        noe @@$symtbl_fname end
     end if
 
     noe

@@ -8,7 +8,7 @@ To run it locally on your system see the instructions below (does require a work
 
 ---
 
-## Current notebooks
+## Jupyter notebooks
 
 | Notebooks                           |      Description                     |    Colab    |
 |-------------------------------------|--------------------------------------|--------------|
@@ -41,7 +41,37 @@ go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click 
 
 ---
 
-## Other execution options
+## Marimo notebooks
+
+[Marimo](https://marimo.io) notebooks are reactive Python notebooks that run locally. Unlike Jupyter, every cell updates automatically when its inputs change, making them well suited for interactive analysis workflows.
+
+| Notebook | Description |
+|----------|-------------|
+| `HADDOCK3-interface-analysis.py` | Energy minimization → contact map (chord chart + heatmap) with optional alanine scanning, all driven from a single configuration panel |
+
+### Running the interface analysis notebook
+
+**Prerequisites:** HADDOCK3 installed in development mode (`pip install -e '.[dev]'`) and CNS available on your `PATH` (see `docs/CNS.md`).
+
+```bash
+# install marimo (if not already present)
+pip install marimo
+
+# launch the notebook from the repository root
+marimo run notebooks/HADDOCK3-interface-analysis.py
+```
+
+Alternatively you can start it in edit mode to see the Python code and be able to edit it.
+
+```
+marimo run notebooks/HADDOCK3-interface-analysis.py
+```
+
+The notebook opens in your browser at `http://localhost:2718`. Upload a multi-chain PDB file, adjust the configuration panel, and click **Run HADDOCK3 Workflow**.
+
+---
+
+## Other Jupyter execution options
 
 ### [https://notebooks.egi.eu](https://notebooks.egi.eu)
 

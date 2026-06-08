@@ -1,0 +1,387 @@
+import marimo
+
+__generated_with = "0.23.9"
+app = marimo.App(width="full")
+
+
+@app.cell
+def _():
+    import marimo as mo
+    return (mo,)
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    # HADDOCK3 Contact Map Analysis
+
+    Upload a multi-chain PDB complex to run an energy minimization workflow and
+    analyse intermolecular contacts. Results are displayed as an interactive
+    chord chart and heatmap. An optional alanine scanning step estimates the
+    energetic contribution of each interface residue by systematically mutating
+    it to alanine and reporting the change in HADDOCK score.
+
+    **Workflow steps:**
+
+    1. **`topoaa`** — builds CNS all-atom topology and parameters
+    2. **`emref`** — energy minimization refinement via CNS
+    3. **`contactmap`** — computes residue–residue contacts and generates figures
+    4. **`alascan`** *(optional)* — alanine scanning of interface residues
+
+    > **Note:** this notebook supports standard protein, DNA/RNA, and ion
+    > inputs only. Small-molecule ligands requiring custom topology and
+    > parameter files are **not** supported.
+
+    **Requirements:** CNS must be installed and discoverable (see `haddock3-cfg cns_exec`).
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    pdb_upload = mo.ui.file(
+        filetypes=[".pdb"],
+        label="Drop or select a PDB complex file",
+        kind="area",
+    )
+    return (pdb_upload,)
+
+
+@app.cell
+def _(mo):
+    import os as _os
+    _std_aa = ["ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY",
+               "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER",
+               "THR", "TRP", "TYR", "VAL"]
+
+    _ncores_max = _os.cpu_count() or 1
+    ncores_slider = mo.ui.slider(
+        1, _ncores_max, value=_ncores_max, step=1,
+        label="CPU cores",
+        show_value=True,
+    )
+    chordchart_toggle = mo.ui.switch(label="Generate chord chart", value=True)
+    heatmap_toggle = mo.ui.switch(label="Generate heatmap", value=True)
+    alascan_toggle = mo.ui.switch(label="Run alanine scan", value=False)
+    alascan_scan_residue = mo.ui.dropdown(
+        options=_std_aa, value="ALA", label="Scan residue",
+    )
+    alascan_plot_toggle = mo.ui.switch(label="Generate plot", value=True)
+    alascan_show_std = mo.ui.switch(label="Show std deviations", value=False)
+
+    return (
+        alascan_plot_toggle,
+        alascan_scan_residue,
+        alascan_show_std,
+        alascan_toggle,
+        chordchart_toggle,
+        heatmap_toggle,
+        ncores_slider,
+    )
+
+
+@app.cell
+def _(
+    alascan_plot_toggle,
+    alascan_scan_residue,
+    alascan_show_std,
+    alascan_toggle,
+    chordchart_toggle,
+    heatmap_toggle,
+    mo,
+    ncores_slider,
+    pdb_upload,
+):
+    _alascan_sub = (
+        mo.vstack([alascan_scan_residue, alascan_plot_toggle, alascan_show_std], align="start")
+        if alascan_toggle.value
+        else mo.md("")
+    )
+    mo.vstack([
+        mo.md("### Configuration"),
+        mo.hstack([
+            mo.vstack([
+                mo.md("**Input file**"),
+                pdb_upload,
+            ], align="start"),
+            mo.vstack([
+                mo.md("**Execution**"),
+                ncores_slider,
+            ], align="start"),
+            mo.vstack([
+                mo.md("**contactmap outputs**"),
+                chordchart_toggle,
+                heatmap_toggle,
+            ], align="start"),
+            mo.vstack([
+                mo.md("**alanine scan**"),
+                alascan_toggle,
+                _alascan_sub,
+            ], align="start"),
+        ], gap=2, justify="start"),
+    ])
+    return
+
+
+@app.cell
+def _(mo):
+    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Workflow", kind="success")
+    run_btn
+    return (run_btn,)
+
+
+@app.cell
+def _(
+    alascan_plot_toggle,
+    alascan_scan_residue,
+    alascan_toggle,
+    chordchart_toggle,
+    heatmap_toggle,
+    mo,
+    ncores_slider,
+    pdb_upload,
+    run_btn,
+):
+    import logging
+    import os
+    import traceback
+    from contextlib import contextmanager
+    from datetime import datetime
+    from pathlib import Path
+
+    mo.stop(not run_btn.value)
+    mo.stop(
+        not pdb_upload.value,
+        mo.callout(
+            mo.md("**No PDB file loaded.** Upload a PDB complex above, then click Run."),
+            kind="warn",
+        ),
+    )
+
+    # ── Run directory ─────────────────────────────────────────────────────────
+    _pdb_name = pdb_upload.name()
+    _pdb_stem = Path(_pdb_name).stem
+    _timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    _run_dir = Path.cwd() / f"{_pdb_stem}_{_timestamp}"
+    _run_dir.mkdir(exist_ok=True)
+    (_run_dir / _pdb_name).write_bytes(pdb_upload.contents())
+
+    _ncores = ncores_slider.value
+
+    @contextmanager
+    def _cwd(path):
+        _prev = Path.cwd()
+        os.chdir(path)
+        try:
+            yield
+        finally:
+            os.chdir(_prev)
+
+    # ── Live log panel ────────────────────────────────────────────────────────
+    _log_lines = []
+
+    def _render_log(done=False):
+        _label = "✅ Completed" if done else "⏳ Running…"
+        _body = "\n".join(_log_lines) if _log_lines else "(waiting for output…)"
+        _panel = mo.Html(
+            '<div style="height:400px;overflow-y:auto;background:#f0f0f0;'
+            'color:#1a1a1a;font-family:monospace;padding:10px 14px;'
+            'border-radius:6px;font-size:12px;white-space:pre-wrap;'
+            'line-height:1.5;">'
+            + _body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            + "</div>"
+        )
+        mo.output.replace(
+            mo.accordion({f"HADDOCK3 Log — {_label}": _panel})
+        )
+
+    class _LogHandler(logging.Handler):
+        def emit(self, record):
+            _log_lines.append(self.format(record))
+            _render_log(done=False)
+
+    _handler = _LogHandler()
+    _handler.setFormatter(
+        logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s")
+    )
+
+    _render_log()  # show empty panel immediately
+
+    # ── Workflow parameters ───────────────────────────────────────────────────
+    _workflow_params = {
+        "topoaa.1": {
+            "molecules": [Path(_pdb_name)],
+            "autohis": True,
+            "mode": "local",
+            "ncores": _ncores,
+            "clean": False,
+            "offline": False,
+        },
+        "emref.1": {
+            "sampling_factor": 1,
+            "mode": "local",
+            "ncores": _ncores,
+            "clean": False,
+            "offline": False,
+        },
+        "contactmap.1": {
+            "generate_chordchart": chordchart_toggle.value,
+            "generate_heatmap": heatmap_toggle.value,
+            "single_model_analysis": False,
+            "topX": 1,
+            "mode": "local",
+            "ncores": _ncores,
+            "clean": False,
+            "offline": False,
+        },
+    }
+    if alascan_toggle.value:
+        _workflow_params["alascan.1"] = {
+            "scan_residue": alascan_scan_residue.value,
+            "plot": alascan_plot_toggle.value,
+            "mode": "local",
+            "ncores": _ncores,
+            "clean": False,
+            "offline": False,
+        }
+
+    # ── Run ───────────────────────────────────────────────────────────────────
+    _success = False
+    _error = None
+
+    import haddock as _haddock_pkg
+    _haddock_pkg.log.addHandler(_handler)
+    try:
+        from haddock.libs.libworkflow import WorkflowManager
+        with _cwd(_run_dir):
+            _wf = WorkflowManager(_workflow_params, start=0)
+            _wf.run()
+        _success = True
+    except Exception:
+        _error = traceback.format_exc()
+        _log_lines.append(_error)
+    finally:
+        _haddock_pkg.log.removeHandler(_handler)
+
+    _render_log(done=_success)
+
+    run_result = {"success": _success, "error": _error, "run_dir": _run_dir}
+    return (run_result,)
+
+
+@app.cell
+def _(alascan_show_std, mo, run_result):
+    import html as _html
+
+    def _iframe(fragment: str, height: int = 900) -> mo.Html:
+        """Wrap a plotly HTML fragment in a full document served via srcdoc.
+
+        mo.Html() injects content via innerHTML, which browsers block from
+        executing <script> tags. An <iframe srcdoc> runs in its own document
+        context so scripts (including the Plotly CDN loader) execute normally.
+        """
+        _doc = (
+            "<!DOCTYPE html><html><head><meta charset='utf-8'></head>"
+            f"<body style='margin:0;padding:0'>{fragment}</body></html>"
+        )
+        _escaped = _html.escape(_doc, quote=True)
+        return mo.Html(
+            f'<iframe srcdoc="{_escaped}"'
+            f' style="width:100%;height:{height}px;border:none;"></iframe>'
+        )
+
+    if not run_result["success"]:
+        _out = mo.callout(
+            mo.vstack([
+                mo.md("**Workflow failed.**"),
+                mo.code(run_result["error"], language="text"),
+            ]),
+            kind="danger",
+        )
+    else:
+        _run_dir = run_result["run_dir"]
+        _contactmap_dir = _run_dir / "2_contactmap"
+
+        _chord_files = sorted(_contactmap_dir.glob("*_chordchart.html"))
+        _heatmap_files = sorted(_contactmap_dir.glob("*_heatmap.html"))
+
+        _sections = [
+            mo.callout(
+                mo.md(f"Workflow completed. Results saved in `{_run_dir}`"),
+                kind="success",
+            )
+        ]
+
+        if _chord_files:
+            _sections.append(mo.md("---\n## Chord Chart"))
+            for _f in _chord_files:
+                _sections.append(mo.md(f"**{_f.stem}**"))
+                _sections.append(_iframe(_f.read_text(), height=900))
+
+        if _heatmap_files:
+            _sections.append(mo.md("---\n## Heatmap"))
+            for _f in _heatmap_files:
+                _sections.append(mo.md(f"**{_f.stem}**"))
+                _sections.append(_iframe(_f.read_text(), height=900))
+
+        if not _chord_files and not _heatmap_files:
+            _sections.append(
+                mo.callout(
+                    mo.md(
+                        "No chord chart or heatmap files found in "
+                        f"`{_contactmap_dir}`. "
+                        "Check that at least one of the output options is enabled."
+                    ),
+                    kind="warn",
+                )
+            )
+
+        # ── Alanine scan results (shown when the step directory exists) ───────
+        import pandas as _pd
+        _ala_dir = _run_dir / "3_alascan"
+        if _ala_dir.exists():
+            _sections.append(mo.md("---\n## Alanine Scan"))
+            _tsv_files = sorted(_ala_dir.glob("scan_clt_*.tsv"))
+            _ala_html_files = sorted(_ala_dir.glob("scan_clt_*.html"))
+            for _tsv in _tsv_files:
+                _sections.append(mo.md(f"### Results — {_tsv.stem}"))
+                try:
+                    _df = _pd.read_csv(_tsv, sep="\t", comment="#")
+                    # drop the redundant combined label column
+                    _df = _df.drop(columns=["full_resname"], errors="ignore")
+                    _float_cols = _df.select_dtypes(include="float").columns
+                    _df[_float_cols] = _df[_float_cols].round(3)
+                    _std_cols = [c for c in _df.columns if c.endswith("_std")]
+                    _sections.append(mo.ui.table(
+                        _df,
+                        pagination=False,
+                        selection=None,
+                        show_column_summaries=True,
+                        hidden_columns=[] if alascan_show_std.value else _std_cols,
+                    ))
+                except Exception as _e:
+                    _sections.append(mo.callout(mo.md(f"Could not read `{_tsv.name}`: {_e}"), kind="warn"))
+            for _hf in _ala_html_files:
+                import re as _re
+                _hf_content = _hf.read_text()
+                _m = _re.search(r'style="height:(\d+)px', _hf_content)
+                _fig_height = int(_m.group(1)) + 30 if _m else 1030
+                _sections.append(mo.md(f"### Plot — {_hf.stem}"))
+                _sections.append(_iframe(_hf_content, height=_fig_height))
+            if not _tsv_files and not _ala_html_files:
+                _sections.append(
+                    mo.callout(
+                        mo.md("No output files found in `3_alascan/`. Interface residues may not have been detected."),
+                        kind="warn",
+                    )
+                )
+
+        _out = mo.vstack(_sections)
+
+    _out
+    return
+
+
+
+if __name__ == "__main__":
+    app.run()

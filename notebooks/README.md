@@ -64,7 +64,7 @@ marimo run notebooks/HADDOCK3-interface-analysis.py
 Alternatively you can start it in edit mode to see the Python code and be able to edit it.
 
 ```
-marimo run notebooks/HADDOCK3-interface-analysis.py
+marimo edit notebooks/HADDOCK3-interface-analysis.py
 ```
 
 The notebook opens in your browser at `http://localhost:2718`. Upload a multi-chain PDB file, adjust the configuration panel, and click **Run HADDOCK3 Workflow**.

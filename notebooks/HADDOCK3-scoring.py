@@ -200,12 +200,26 @@ def _(
 @app.cell
 def _(mo):
     run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Scoring Workflow", kind="success")
-    run_btn
     return (run_btn,)
 
 
 @app.cell
-def _(
+def _(mo, run_btn):
+    import sys as _sys
+    import threading as _t
+    if "_h3nb_stop" not in _sys.modules:
+        _m = type(_sys)("_h3nb_stop")
+        _m.event = _t.Event()
+        _sys.modules["_h3nb_stop"] = _m
+    stop_btn = mo.ui.run_button(label="⏹  Stop", kind="danger")
+    if stop_btn.value:
+        _sys.modules["_h3nb_stop"].event.set()
+    mo.hstack([run_btn, stop_btn], gap=2, justify="start")
+    return
+
+
+@app.cell
+async def _(
     chordchart_toggle,
     clust_cutoff_slider,
     config_edit_toggle,
@@ -219,8 +233,10 @@ def _(
     topX_slider,
     work_dir_input,
 ):
+    import asyncio as _asyncio
     import logging
     import os
+    import sys as _sys
     import traceback
     from contextlib import contextmanager
     from datetime import datetime
@@ -264,8 +280,13 @@ def _(
     # ── Live log ───────────────────────────────────────────────────────────────
     _log_lines = []
 
-    def _render_log(done=False):
-        _label = "✅ Completed" if done else "⏳ Running…"
+    def _render_log(done=False, stopped=False):
+        if stopped:
+            _label = "🛑 Stopped"
+        elif done:
+            _label = "✅ Completed"
+        else:
+            _label = "⏳ Running…"
         _body = "\n".join(_log_lines) if _log_lines else "(waiting for output…)"
         _panel = mo.Html(
             '<div style="height:400px;overflow-y:auto;background:#f0f0f0;'
@@ -276,10 +297,10 @@ def _(
         )
         mo.output.replace(mo.accordion({f"HADDOCK3 Log — {_label}": _panel}))
 
+    # Log handler only appends; rendering happens after each step in the async loop.
     class _LogHandler(logging.Handler):
         def emit(self, record):
             _log_lines.append(self.format(record))
-            _render_log(done=False)
 
     _handler = _LogHandler()
     _handler.setFormatter(logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s"))
@@ -328,8 +349,14 @@ def _(
         }
 
     # ── Run ───────────────────────────────────────────────────────────────────
+    # Reset the stop flag from any previous run.
+    _stop = _sys.modules.get("_h3nb_stop")
+    if _stop:
+        _stop.event.clear()
+
     _success = False
     _error = None
+    _stopped = False
 
     import haddock as _haddock_pkg
     _haddock_pkg.log.addHandler(_handler)
@@ -337,17 +364,38 @@ def _(
         from haddock.libs.libworkflow import WorkflowManager
         with _cwd(_run_dir):
             _wf = WorkflowManager(_workflow_params, start=0)
-            _wf.run()
-        _success = True
+            # Run steps one at a time so the event loop can process the stop button
+            # between steps (asyncio.to_thread yields to the event loop while each
+            # step executes in a thread-pool worker).
+            for _i, _step in enumerate(_wf.recipe.steps):
+                if _stop and _stop.event.is_set():
+                    _log_lines.append("[notebook] Stop requested — workflow halted after current step.")
+                    _stopped = True
+                    break
+                await _asyncio.to_thread(_step.execute)
+                _render_log()  # update log panel after each completed step
+                # Replicate WorkflowManager.run() output-param forwarding
+                _op = getattr(_step.module, "_output_params", {})
+                if _op:
+                    for _fs in _wf.recipe.steps[_i + 1:]:
+                        for _k, _v in _op.items():
+                            if _fs.config.get(_k) in (None, ""):
+                                _fs.config[_k] = _v
+            else:
+                _success = True
+    except _asyncio.CancelledError:
+        _log_lines.append("[notebook] Workflow execution was cancelled.")
+        _render_log(done=False)
+        raise
     except Exception:
         _error = traceback.format_exc()
         _log_lines.append(_error)
     finally:
         _haddock_pkg.log.removeHandler(_handler)
 
-    _render_log(done=_success)
+    _render_log(done=_success, stopped=_stopped)
 
-    run_result = {"success": _success, "error": _error, "run_dir": _run_dir}
+    run_result = {"success": _success, "error": _error, "run_dir": _run_dir, "stopped": _stopped}
     return (run_result,)
 
 
@@ -409,7 +457,12 @@ def _(mo, run_result):
 
     # ── Results ───────────────────────────────────────────────────────────────
 
-    if not run_result["success"]:
+    if run_result.get("stopped"):
+        _out = mo.callout(
+            mo.md(f"Workflow stopped by user. Partial results may be available in `{run_result['run_dir']}`."),
+            kind="warn",
+        )
+    elif not run_result["success"]:
         _out = mo.callout(
             mo.vstack([
                 mo.md("**Workflow failed.**"),

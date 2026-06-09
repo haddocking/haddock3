@@ -342,7 +342,10 @@ def test_topoaa_cyclic_ace_cys(topoaa_module):
     topoaa_module.params["molecules"] = [
         Path(GOLDEN_DATA, "ace-cys-cyclic-peptide.pdb"),
     ]
-    topoaa_module.params["acecys_dist"] = 5.0
+    topoaa_module.params["acecys_dist"] = 4.0
+    # next give a large value for the cyclic peptide distance
+    # to test it should not be generated
+    topoaa_module.params["cyclicpept_dist"] = 8.0
     topoaa_module.params["mol1"]["cyclicpept"] = True
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
@@ -363,6 +366,7 @@ def test_topoaa_cyclic_ace_cys(topoaa_module):
         file_content = f.read()
 
     assert "COVAL-ACE-CYS" in file_content
+    assert not "cyclic peptide detected" in file_content
 
 
 def test_topoaa_THRglycosylation(topoaa_module):

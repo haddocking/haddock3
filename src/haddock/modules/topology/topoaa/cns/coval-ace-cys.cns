@@ -54,6 +54,8 @@ for $id1 in id ( name CA and resn ACE ) loop ace
         buffer message
             display COVAL-ACE-CYS: ADDED ONE COVALENT BOND BETWEEN $name1 $resid1 AND $name2 $resname2 $resid2
         end
+        ! next is to avoid also detecting a cyclic peptide bond
+        evaluate ($cyclicpept = FALSE)
     end if
 
 end loop ace

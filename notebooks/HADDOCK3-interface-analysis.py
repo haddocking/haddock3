@@ -80,6 +80,7 @@ def _(mo):
     )
     alascan_plot_toggle = mo.ui.switch(label="Generate plot", value=True)
     alascan_show_std = mo.ui.switch(label="Show std deviations", value=False)
+    config_edit_toggle = mo.ui.switch(label="Edit config before running", value=False)
 
     return (
         alascan_plot_toggle,
@@ -87,6 +88,7 @@ def _(mo):
         alascan_show_std,
         alascan_toggle,
         chordchart_toggle,
+        config_edit_toggle,
         heatmap_toggle,
         ncores_slider,
     )
@@ -99,6 +101,7 @@ def _(
     alascan_show_std,
     alascan_toggle,
     chordchart_toggle,
+    config_edit_toggle,
     heatmap_toggle,
     mo,
     ncores_slider,
@@ -136,8 +139,77 @@ def _(
                 _alascan_sub,
             ], align="start"),
         ], gap=2, justify="start"),
+        mo.hstack([mo.md("**Advanced:**"), config_edit_toggle], justify="start"),
     ])
     return
+
+
+@app.cell
+def _(
+    alascan_plot_toggle,
+    alascan_scan_residue,
+    alascan_toggle,
+    chordchart_toggle,
+    config_edit_toggle,
+    heatmap_toggle,
+    mo,
+):
+    def _make_cfg_str():
+        _v = lambda b: "true" if b else "false"
+        _lines = [
+            "# HADDOCK3 interface analysis workflow — module parameters",
+            "# CPU cores, mode, input file and run directory are set by the panel above.",
+            "# Add, remove or reorder [module] sections to change the workflow steps.",
+            "",
+            "[topoaa]",
+            "autohis = true",
+            "",
+            "[emscoring]",
+            "",
+            "[contactmap]",
+            f"generate_chordchart = {_v(chordchart_toggle.value)}",
+            f"generate_heatmap = {_v(heatmap_toggle.value)}",
+            "single_model_analysis = false",
+            "topX = 1",
+            "",
+        ]
+        if alascan_toggle.value:
+            _lines += [
+                "[alascan]",
+                f'scan_residue = "{alascan_scan_residue.value}"',
+                f"plot = {_v(alascan_plot_toggle.value)}",
+                "",
+            ]
+        return "\n".join(_lines)
+
+    _cfg_str = _make_cfg_str()
+
+    if config_edit_toggle.value:
+        config_textarea = mo.ui.text_area(
+            value=_cfg_str,
+            rows=20,
+            full_width=True,
+            label="Workflow configuration (TOML)",
+        )
+        _out = mo.vstack([
+            mo.callout(
+                mo.md(
+                    "**Config editor active.** Edit parameters below — these override the panel "
+                    "settings for module-specific options. Changing a slider or toggle above will "
+                    "regenerate this editor and discard manual edits."
+                ),
+                kind="warn",
+            ),
+            config_textarea,
+        ])
+    else:
+        config_textarea = mo.ui.text_area(value="")
+        _out = mo.accordion(
+            {"View workflow configuration": mo.md(f"```toml\n{_cfg_str}\n```")}
+        )
+
+    _out
+    return (config_textarea,)
 
 
 @app.cell
@@ -153,6 +225,8 @@ def _(
     alascan_scan_residue,
     alascan_toggle,
     chordchart_toggle,
+    config_edit_toggle,
+    config_textarea,
     heatmap_toggle,
     mo,
     ncores_slider,
@@ -228,41 +302,46 @@ def _(
     _render_log()  # show empty panel immediately
 
     # ── Workflow parameters ───────────────────────────────────────────────────
-    _workflow_params = {
-        "topoaa.1": {
-            "molecules": [Path(_pdb_name)],
-            "autohis": True,
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-        "emscoring.1": {
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-        "contactmap.1": {
-            "generate_chordchart": chordchart_toggle.value,
-            "generate_heatmap": heatmap_toggle.value,
-            "single_model_analysis": False,
-            "topX": 1,
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-    }
-    if alascan_toggle.value:
-        _workflow_params["alascan.1"] = {
-            "scan_residue": alascan_scan_residue.value,
-            "plot": alascan_plot_toggle.value,
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
+    _exec = {"mode": "local", "ncores": _ncores, "clean": False, "offline": False}
+
+    if config_edit_toggle.value and config_textarea.value.strip():
+        from haddock.gear.config import loads as _cfg_loads
+        try:
+            _parsed = _cfg_loads(config_textarea.value)["final_cfg"]
+        except Exception as _cfg_err:
+            mo.stop(True, mo.callout(
+                mo.md(f"**Config parse error:** {_cfg_err}"),
+                kind="danger",
+            ))
+        _workflow_params = {}
+        for _step_key, _step_params in _parsed.items():
+            _p = {**_exec, **_step_params}
+            if _step_key.startswith("topoaa"):
+                _p.setdefault("molecules", [Path(_pdb_name)])
+                _p.setdefault("autohis", True)
+            _workflow_params[_step_key] = _p
+    else:
+        _workflow_params = {
+            "topoaa.1": {
+                "molecules": [Path(_pdb_name)],
+                "autohis": True,
+                **_exec,
+            },
+            "emscoring.1": {**_exec},
+            "contactmap.1": {
+                "generate_chordchart": chordchart_toggle.value,
+                "generate_heatmap": heatmap_toggle.value,
+                "single_model_analysis": False,
+                "topX": 1,
+                **_exec,
+            },
         }
+        if alascan_toggle.value:
+            _workflow_params["alascan.1"] = {
+                "scan_residue": alascan_scan_residue.value,
+                "plot": alascan_plot_toggle.value,
+                **_exec,
+            }
 
     # ── Run ───────────────────────────────────────────────────────────────────
     _success = False

@@ -7,6 +7,7 @@ app = marimo.App(width="full")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
@@ -26,7 +27,7 @@ def _(mo):
     mo.md(r"""
     # HADDOCK3 Scoring Workflow
 
-    Upload one or more PDB complex files to score and cluster them with HADDOCK3.
+    Upload a PDB file of complex containing one or an ensemble of model to score and cluster them with HADDOCK3.
     Results include per-model and per-cluster HADDOCK statistics displayed as
     interactive sortable tables, 3D visualisation of the best model from each
     cluster, and a contact-map chord chart for each cluster.
@@ -82,9 +83,11 @@ def _(mo):
     )
     chordchart_toggle = mo.ui.switch(label="Chord chart", value=True)
     heatmap_toggle = mo.ui.switch(label="Heatmap", value=True)
+    config_edit_toggle = mo.ui.switch(label="Edit config before running", value=False)
     return (
         chordchart_toggle,
         clust_cutoff_slider,
+        config_edit_toggle,
         heatmap_toggle,
         min_population_slider,
         ncores_slider,
@@ -96,6 +99,7 @@ def _(mo):
 def _(
     chordchart_toggle,
     clust_cutoff_slider,
+    config_edit_toggle,
     heatmap_toggle,
     min_population_slider,
     mo,
@@ -122,8 +126,75 @@ def _(
                 heatmap_toggle,
             ], align="start"),
         ], gap=2, justify="start"),
+        mo.hstack([mo.md("**Advanced:**"), config_edit_toggle], justify="start"),
     ])
     return
+
+
+@app.cell
+def _(
+    chordchart_toggle,
+    clust_cutoff_slider,
+    config_edit_toggle,
+    heatmap_toggle,
+    min_population_slider,
+    mo,
+    topX_slider,
+):
+    def _make_cfg_str():
+        _v = lambda b: "true" if b else "false"
+        return "\n".join([
+            "# HADDOCK3 scoring workflow — module parameters",
+            "# CPU cores, mode, input files and run directory are set by the panel above.",
+            "# Add, remove or reorder [module] sections to change the workflow steps.",
+            "",
+            "[topoaa]",
+            "autohis = true",
+            "",
+            "[emscoring]",
+            "",
+            "[clustfcc]",
+            f"clust_cutoff = {clust_cutoff_slider.value:.2f}",
+            f"min_population = {min_population_slider.value}",
+            "",
+            "[caprieval]",
+            "",
+            "[contactmap]",
+            f"generate_chordchart = {_v(chordchart_toggle.value)}",
+            f"generate_heatmap = {_v(heatmap_toggle.value)}",
+            "single_model_analysis = false",
+            f"topX = {topX_slider.value}",
+            "",
+        ])
+
+    _cfg_str = _make_cfg_str()
+
+    if config_edit_toggle.value:
+        config_textarea = mo.ui.text_area(
+            value=_cfg_str,
+            rows=22,
+            full_width=True,
+            label="Workflow configuration (TOML)",
+        )
+        _out = mo.vstack([
+            mo.callout(
+                mo.md(
+                    "**Config editor active.** Edit parameters below — these override the panel "
+                    "settings for module-specific options. Changing a slider above will regenerate "
+                    "this editor and discard manual edits."
+                ),
+                kind="warn",
+            ),
+            config_textarea,
+        ])
+    else:
+        config_textarea = mo.ui.text_area(value="")
+        _out = mo.accordion(
+            {"View workflow configuration": mo.md(f"```toml\n{_cfg_str}\n```")}
+        )
+
+    _out
+    return (config_textarea,)
 
 
 @app.cell
@@ -137,6 +208,8 @@ def _(mo):
 def _(
     chordchart_toggle,
     clust_cutoff_slider,
+    config_edit_toggle,
+    config_textarea,
     heatmap_toggle,
     min_population_slider,
     mo,
@@ -213,46 +286,46 @@ def _(
     _render_log()
 
     # ── Workflow parameters ───────────────────────────────────────────────────
-    _workflow_params = {
-        "topoaa.1": {
-            "molecules": _pdb_paths,
-            "autohis": True,
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-        "emscoring.1": {
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-        "clustfcc.1": {
-            "clust_cutoff": clust_cutoff_slider.value,
-            "min_population": min_population_slider.value,
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-        "caprieval.1": {
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-        "contactmap.1": {
-            "generate_chordchart": chordchart_toggle.value,
-            "generate_heatmap": heatmap_toggle.value,
-            "single_model_analysis": False,
-            "topX": topX_slider.value,
-            "mode": "local",
-            "ncores": _ncores,
-            "clean": False,
-            "offline": False,
-        },
-    }
+    _exec = {"mode": "local", "ncores": _ncores, "clean": False, "offline": False}
+
+    if config_edit_toggle.value and config_textarea.value.strip():
+        from haddock.gear.config import loads as _cfg_loads
+        try:
+            _parsed = _cfg_loads(config_textarea.value)["final_cfg"]
+        except Exception as _cfg_err:
+            mo.stop(True, mo.callout(
+                mo.md(f"**Config parse error:** {_cfg_err}"),
+                kind="danger",
+            ))
+        _workflow_params = {}
+        for _step_key, _step_params in _parsed.items():
+            _p = {**_exec, **_step_params}
+            if _step_key.startswith("topoaa"):
+                _p.setdefault("molecules", _pdb_paths)
+                _p.setdefault("autohis", True)
+            _workflow_params[_step_key] = _p
+    else:
+        _workflow_params = {
+            "topoaa.1": {
+                "molecules": _pdb_paths,
+                "autohis": True,
+                **_exec,
+            },
+            "emscoring.1": {**_exec},
+            "clustfcc.1": {
+                "clust_cutoff": clust_cutoff_slider.value,
+                "min_population": min_population_slider.value,
+                **_exec,
+            },
+            "caprieval.1": {**_exec},
+            "contactmap.1": {
+                "generate_chordchart": chordchart_toggle.value,
+                "generate_heatmap": heatmap_toggle.value,
+                "single_model_analysis": False,
+                "topX": topX_slider.value,
+                **_exec,
+            },
+        }
 
     # ── Run ───────────────────────────────────────────────────────────────────
     _success = False

@@ -70,7 +70,7 @@ def _(mo):
         label="CPU cores", show_value=True,
     )
     clust_cutoff_slider = mo.ui.slider(
-        0.50, 1.00, value=0.60, step=0.05,
+        0.40, 1.00, value=0.60, step=0.05,
         label="FCC clustering cutoff", show_value=True,
     )
     min_population_slider = mo.ui.slider(
@@ -78,11 +78,11 @@ def _(mo):
         label="Min cluster population", show_value=True,
     )
     topX_slider = mo.ui.slider(
-        1, 20, value=5, step=1,
+        1, 20, value=4, step=1,
         label="Top models for contact map", show_value=True,
     )
     chordchart_toggle = mo.ui.switch(label="Chord chart", value=True)
-    heatmap_toggle = mo.ui.switch(label="Heatmap", value=True)
+    heatmap_toggle = mo.ui.switch(label="Heatmap", value=False)
     config_edit_toggle = mo.ui.switch(label="Edit config before running", value=False)
     return (
         chordchart_toggle,
@@ -199,18 +199,24 @@ def _(
 
 @app.cell
 def _(mo):
+    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Scoring Workflow", kind="success")
+    run_btn
+    return (run_btn,)
+
+
+@app.cell
+def _(mo):
     import sys as _sys
     import threading as _t
     if "_h3nb_stop" not in _sys.modules:
         _m = type(_sys)("_h3nb_stop")
         _m.event = _t.Event()
         _sys.modules["_h3nb_stop"] = _m
-    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Scoring Workflow", kind="success")
-    stop_btn = mo.ui.run_button(label="⏹  Stop", kind="danger")
+    stop_btn = mo.ui.run_button(label="⏹  Stop workflow", kind="danger")
     if stop_btn.value:
         _sys.modules["_h3nb_stop"].event.set()
-    mo.hstack([run_btn, stop_btn], gap=2, justify="start")
-    return (run_btn,)
+    stop_btn
+    return
 
 
 @app.cell
@@ -395,62 +401,19 @@ async def _(
 
 
 @app.cell
-def _(mo, run_result):
-    import html as _html
-    import json as _json
+def _(mo):
+    clt_show_std = mo.ui.switch(label="Show standard deviations", value=False)
+    return (clt_show_std,)
+
+
+@app.cell
+def _(clt_show_std, mo, run_result):
     import pandas as _pd
     from pathlib import Path as _Path
 
-    # ── Helpers ───────────────────────────────────────────────────────────────
-
-    def _iframe(fragment: str, height: int = 900) -> mo.Html:
-        """Embed an HTML fragment via srcdoc so inline <script> tags execute."""
-        _doc = (
-            "<!DOCTYPE html><html><head><meta charset='utf-8'></head>"
-            f"<body style='margin:0;padding:0'>{fragment}</body></html>"
-        )
-        _escaped = _html.escape(_doc, quote=True)
-        return mo.Html(
-            f'<iframe srcdoc="{_escaped}" style="width:100%;height:{height}px;border:none;"></iframe>'
-        )
-
-    def _mol_viewer(pdb_path: _Path, height: int = 500) -> mo.Html:
-        """3Dmol.js structure viewer embedded in an srcdoc iframe."""
-        _pdb_json = _json.dumps(pdb_path.read_text())
-        _doc = (
-            "<!DOCTYPE html><html>"
-            "<head><meta charset='utf-8'>"
-            "<script src='https://3Dmol.csb.pitt.edu/build/3Dmol-min.js'></script>"
-            "</head>"
-            f"<body style='margin:0;padding:0;overflow:hidden'>"
-            f"<div id='v' style='width:100%;height:{height}px;position:relative;'></div>"
-            "<script>"
-            "let v=$3Dmol.createViewer(document.getElementById('v'),{backgroundColor:'white'});"
-            f"v.addModel({_pdb_json},'pdb');"
-            "v.setStyle({},{cartoon:{colorscheme:'chain'}});"
-            "v.zoomTo();"
-            "v.render();"
-            "</script>"
-            "</body></html>"
-        )
-        _escaped = _html.escape(_doc, quote=True)
-        return mo.Html(
-            f'<iframe srcdoc="{_escaped}" style="width:100%;height:{height}px;border:none;"></iframe>'
-        )
-
-    def _resolve_path(model_str: str, run_dir: _Path) -> _Path:
-        """Resolve a model path that may be absolute or relative to the run dir."""
-        p = _Path(model_str)
-        if p.is_absolute():
-            return p
-        # capri_ss.tsv paths are often relative to the caprieval step dir
-        for base in [run_dir, run_dir / "3_caprieval"]:
-            candidate = (base / p).resolve()
-            if candidate.exists():
-                return candidate
-        return p
-
-    # ── Results ───────────────────────────────────────────────────────────────
+    # Default exports — overwritten when a successful run with clusters exists.
+    clt_table = mo.ui.table(_pd.DataFrame(), selection="single", pagination=False)
+    df_ss = None
 
     if run_result.get("stopped"):
         _out = mo.callout(
@@ -468,7 +431,6 @@ def _(mo, run_result):
     else:
         _run_dir = run_result["run_dir"]
         _caprieval_dir = _run_dir / "3_caprieval"
-        _contactmap_dir = _run_dir / "4_contactmap"
 
         _sections = [
             mo.callout(
@@ -477,22 +439,49 @@ def _(mo, run_result):
             )
         ]
 
-        # ── Single-structure statistics ───────────────────────────────────────
+        # ── Cluster statistics (row selection drives the visualisation below) ──
+        _clt_file = _caprieval_dir / "capri_clt.tsv"
+
+        if _clt_file.exists():
+            _sections.append(mo.md("---\n## Cluster statistics"))
+            _sections.append(mo.md(
+                "*Click a row to display the best model and contact map for that cluster.*"
+            ))
+            try:
+                _df_clt = _pd.read_csv(_clt_file, sep="\t", comment="#")
+                _fc = _df_clt.select_dtypes(include="float").columns
+                _df_clt[_fc] = _df_clt[_fc].round(3)
+                _std_cols = [c for c in _df_clt.columns if c.endswith("_std")]
+                clt_table = mo.ui.table(
+                    _df_clt,
+                    selection="single",
+                    pagination=False,
+                    show_column_summaries=True,
+                    hidden_columns=[] if clt_show_std.value else _std_cols,
+                )
+                _sections.append(mo.hstack([clt_show_std], justify="end"))
+                _sections.append(clt_table)
+            except Exception as _e:
+                _sections.append(mo.callout(
+                    mo.md(f"Could not read `capri_clt.tsv`: {_e}"), kind="warn",
+                ))
+
+        # ── Single-structure statistics (collapsed by default) ────────────────
         _ss_file = _caprieval_dir / "capri_ss.tsv"
-        _df_ss = None
 
         if _ss_file.exists():
-            _sections.append(mo.md("---\n## Single-structure statistics"))
             try:
-                _df_ss = _pd.read_csv(_ss_file, sep="\t", comment="#")
-                _fc = _df_ss.select_dtypes(include="float").columns
-                _df_ss[_fc] = _df_ss[_fc].round(3)
-                _sections.append(mo.ui.table(
-                    _df_ss,
-                    pagination=False,
-                    selection=None,
-                    show_column_summaries=True,
-                ))
+                df_ss = _pd.read_csv(_ss_file, sep="\t", comment="#")
+                _fc = df_ss.select_dtypes(include="float").columns
+                df_ss[_fc] = df_ss[_fc].round(3)
+                _sections.append(mo.accordion({
+                    f"Single-structure statistics ({len(df_ss)} models)": mo.ui.table(
+                        df_ss,
+                        pagination=False,
+                        selection=None,
+                        show_column_summaries=True,
+                    )
+                }))
             except Exception as _e:
                 _sections.append(mo.callout(
                     mo.md(f"Could not read `capri_ss.tsv`: {_e}"), kind="warn",
@@ -502,87 +491,163 @@ def _(mo, run_result):
                 mo.md(f"`capri_ss.tsv` not found in `{_caprieval_dir}`."), kind="warn",
             ))
 
-        # ── Cluster statistics ────────────────────────────────────────────────
-        _clt_file = _caprieval_dir / "capri_clt.tsv"
-
-        if _clt_file.exists():
-            _sections.append(mo.md("---\n## Cluster statistics"))
-            try:
-                _df_clt = _pd.read_csv(_clt_file, sep="\t", comment="#")
-                _fc = _df_clt.select_dtypes(include="float").columns
-                _df_clt[_fc] = _df_clt[_fc].round(3)
-                _sections.append(mo.ui.table(
-                    _df_clt,
-                    pagination=False,
-                    selection=None,
-                    show_column_summaries=True,
-                ))
-            except Exception as _e:
-                _sections.append(mo.callout(
-                    mo.md(f"Could not read `capri_clt.tsv`: {_e}"), kind="warn",
-                ))
-
-        # ── Best model per cluster: 3D viewer + chord chart ───────────────────
-        if _df_ss is not None and "cluster_id" in _df_ss.columns:
-            _clustered = _df_ss[_df_ss["cluster_id"] != -1].copy()
-            _unclustered = _df_ss[_df_ss["cluster_id"] == -1].copy()
-
-            if not _clustered.empty:
-                _sections.append(mo.md("---\n## Best model per cluster"))
-                # Order clusters by mean score (best first)
-                _clt_order = (
-                    _clustered.groupby("cluster_id")["score"]
-                    .mean().sort_values().index.tolist()
-                )
-                for _clt_id in _clt_order:
-                    _clt_rows = _clustered[_clustered["cluster_id"] == _clt_id]
-                    _best = _clt_rows.loc[_clt_rows["score"].idxmin()]
-                    _model_path = _resolve_path(str(_best["model"]), _run_dir)
-                    _stem = _model_path.stem
-
-                    _sections.append(mo.md(
-                        f"### Cluster {int(_clt_id)}"
-                        f"&nbsp;|&nbsp; {len(_clt_rows)} models"
-                        f"&nbsp;|&nbsp; best score: **{_best['score']:.3f}**"
-                    ))
-
-                    if _model_path.exists():
-                        _sections.append(_mol_viewer(_model_path, height=500))
-                    else:
-                        _sections.append(mo.callout(
-                            mo.md(f"Model file not found: `{_model_path}`"), kind="warn",
-                        ))
-
-                    # Chord chart for this model (contactmap uses the model stem)
-                    if _contactmap_dir.exists():
-                        _cf = _contactmap_dir / f"{_stem}_chordchart.html"
-                        _hf = _contactmap_dir / f"{_stem}_heatmap.html"
-                        if _cf.exists():
-                            _m = __import__("re").search(r'style="height:(\d+)px', _cf.read_text())
-                            _ch = int(_m.group(1)) + 30 if _m else 930
-                            _sections.append(_iframe(_cf.read_text(), height=_ch))
-                        if _hf.exists():
-                            _sections.append(_iframe(_hf.read_text(), height=900))
-
-            elif not _unclustered.empty:
-                # No clusters formed — show top unclustered models
-                _sections.append(mo.md("---\n## Top-ranked models (no clusters formed)"))
-                for _, _row in _unclustered.nsmallest(5, "score").iterrows():
-                    _model_path = _resolve_path(str(_row["model"]), _run_dir)
-                    _stem = _model_path.stem
-                    _sections.append(mo.md(
-                        f"### `{_model_path.name}` — score: **{_row['score']:.3f}**"
-                    ))
-                    if _model_path.exists():
-                        _sections.append(_mol_viewer(_model_path, height=500))
-                    if _contactmap_dir.exists():
-                        _cf = _contactmap_dir / f"{_stem}_chordchart.html"
-                        if _cf.exists():
-                            _sections.append(_iframe(_cf.read_text(), height=930))
-
         _out = mo.vstack(_sections)
 
     _out
+    return (clt_table, df_ss)
+
+
+@app.cell
+def _(clt_table, df_ss, mo, run_result):
+    import html as _html
+    import json as _json
+    import re as _re
+    from pathlib import Path as _Path2
+
+    def _iframe(fragment: str, height: int = 900) -> mo.Html:
+        _doc = (
+            "<!DOCTYPE html><html><head><meta charset='utf-8'></head>"
+            f"<body style='margin:0;padding:0'>{fragment}</body></html>"
+        )
+        _esc = _html.escape(_doc, quote=True)
+        return mo.Html(f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>')
+
+    def _mol_viewer(pdb_path: _Path2, height: int = 500) -> mo.Html:
+        _pdb_json = _json.dumps(pdb_path.read_text())
+        _doc = (
+            "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+            "<script src='https://3Dmol.csb.pitt.edu/build/3Dmol-min.js'></script></head>"
+            f"<body style='margin:0;padding:0;overflow:hidden'>"
+            f"<div id='v' style='width:100%;height:{height}px;position:relative;'></div>"
+            "<script>"
+            "let v=$3Dmol.createViewer(document.getElementById('v'),{backgroundColor:'white'});"
+            f"v.addModel({_pdb_json},'pdb');"
+            "v.setStyle({},{cartoon:{colorscheme:'chain'}});"
+            "v.addStyle({elem:'C'},{stick:{colorscheme:'chain',radius:0.12}});"
+            "v.addStyle({elem:'N'},{stick:{color:'#3050F8',radius:0.12}});"
+            "v.addStyle({elem:'O'},{stick:{color:'#FF0D0D',radius:0.12}});"
+            "v.addStyle({elem:'S'},{stick:{color:'#FFFF30',radius:0.12}});"
+            "v.addStyle({elem:'P'},{stick:{color:'#FF8000',radius:0.12}});"
+            "v.zoomTo();v.render();"
+            "</script></body></html>"
+        )
+        _esc = _html.escape(_doc, quote=True)
+        return mo.Html(f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>')
+
+    def _resolve_path(model_str: str, run_dir: _Path2) -> _Path2:
+        p = _Path2(model_str)
+        if p.is_absolute():
+            return p
+        for base in [run_dir, run_dir / "3_caprieval"]:
+            candidate = (base / p).resolve()
+            if candidate.exists():
+                return candidate
+        return p
+
+    def _add_contactmap(base_name: str, contactmap_dir: _Path2, sections: list) -> None:
+        _cf = contactmap_dir / f"{base_name}_chordchart.html"
+        _hf = contactmap_dir / f"{base_name}_heatmap.html"
+        if _cf.exists():
+            _txt = _cf.read_text()
+            _m = _re.search(r'style="height:(\d+)px', _txt)
+            _ch = int(_m.group(1)) + 30 if _m else 930
+            sections.append(_iframe(_txt, height=_ch))
+        if _hf.exists():
+            sections.append(_iframe(_hf.read_text(), height=900))
+
+    # ── Visualisation — driven by cluster table selection ─────────────────────
+
+    if not run_result["success"] or run_result.get("stopped"):
+        _viz_out = mo.md("")
+    elif clt_table.value.empty:
+        _viz_out = mo.callout(
+            mo.md("Select a row in the cluster table above to display the best model and contact map."),
+            kind="info",
+        )
+    else:
+        try:
+            _sel = clt_table.value.iloc[0]
+            # cluster_rank may be int or float depending on pandas dtype — normalise to int
+            _clt_rank = int(float(_sel["cluster_rank"]))
+            _clt_id   = int(float(_sel["cluster_id"]))
+            _score    = float(_sel["score"])
+
+            _run_dir       = run_result["run_dir"]
+            _contactmap_dir = _run_dir / "4_contactmap"
+
+            _vsections = [mo.md(
+                f"---\n## Cluster {_clt_id}"
+                f"&nbsp;|&nbsp; rank {_clt_rank}"
+                f"&nbsp;|&nbsp; mean score: **{_score:.3f}**"
+            )]
+
+            # ── 3D viewer ──────────────────────────────────────────────────
+            if df_ss is None:
+                _vsections.append(mo.callout(
+                    mo.md("Single-structure data (`capri_ss.tsv`) not available — cannot show 3D model."),
+                    kind="warn",
+                ))
+            elif "cluster_ranking" not in df_ss.columns:
+                _vsections.append(mo.callout(
+                    mo.md(f"`cluster_ranking` column not found in capri_ss.tsv. Columns: {list(df_ss.columns)}"),
+                    kind="warn",
+                ))
+            else:
+                # cluster_ranking may also be float — compare as float
+                _clt_models = df_ss[df_ss["cluster_ranking"].apply(
+                    lambda x: int(float(x)) == _clt_rank if x == x else False  # NaN-safe
+                )]
+                if _clt_models.empty:
+                    _vsections.append(mo.callout(
+                        mo.md(
+                            f"No models found for cluster rank **{_clt_rank}** in capri_ss.tsv. "
+                            f"Available ranks: {sorted(df_ss['cluster_ranking'].dropna().unique().tolist())}"
+                        ),
+                        kind="warn",
+                    ))
+                else:
+                    _best = _clt_models.loc[_clt_models["score"].idxmin()]
+                    _model_path = _resolve_path(str(_best["model"]), _run_dir)
+                    _vsections.append(mo.md(
+                        f"Best model: `{_model_path.name}` &nbsp;|&nbsp; score: **{_best['score']:.3f}**"
+                    ))
+                    if _model_path.exists():
+                        _vsections.append(_mol_viewer(_model_path, height=500))
+                    else:
+                        _vsections.append(mo.callout(
+                            mo.md(f"Model file not found: `{_model_path}`"), kind="warn",
+                        ))
+
+            # ── Chord chart / heatmap ──────────────────────────────────────
+            if not _contactmap_dir.exists():
+                _vsections.append(mo.callout(
+                    mo.md(f"Contact map directory not found: `{_contactmap_dir}`"), kind="warn",
+                ))
+            else:
+                _cf = _contactmap_dir / f"cluster{_clt_rank}_chordchart.html"
+                _hf = _contactmap_dir / f"cluster{_clt_rank}_heatmap.html"
+                if not _cf.exists() and not _hf.exists():
+                    _vsections.append(mo.callout(
+                        mo.md(
+                            f"No contact map files found for cluster rank **{_clt_rank}**. "
+                            f"Expected `{_cf.name}` in `{_contactmap_dir}`."
+                        ),
+                        kind="warn",
+                    ))
+                else:
+                    _add_contactmap(f"cluster{_clt_rank}", _contactmap_dir, _vsections)
+
+            _viz_out = mo.vstack(_vsections)
+
+        except Exception as _exc:
+            import traceback as _tb
+            _viz_out = mo.callout(
+                mo.vstack([mo.md("**Error rendering cluster visualisation:**"),
+                           mo.code(_tb.format_exc(), language="text")]),
+                kind="danger",
+            )
+
+    _viz_out
     return
 
 

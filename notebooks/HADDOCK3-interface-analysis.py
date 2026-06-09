@@ -24,7 +24,7 @@ def _(mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    # HADDOCK3 Contact Map Analysis
+    # HADDOCK3 Interface Analysis
 
     Upload a multi-chain PDB complex to run an energy-minimization scoring
     workflow and analyse intermolecular contacts. Results are displayed as an
@@ -73,7 +73,7 @@ def _(mo):
         show_value=True,
     )
     chordchart_toggle = mo.ui.switch(label="Generate chord chart", value=True)
-    heatmap_toggle = mo.ui.switch(label="Generate heatmap", value=True)
+    heatmap_toggle = mo.ui.switch(label="Generate heatmap", value=False)
     alascan_toggle = mo.ui.switch(label="Run alanine scan", value=False)
     alascan_scan_residue = mo.ui.dropdown(
         options=_std_aa, value="ALA", label="Scan residue",
@@ -214,18 +214,24 @@ def _(
 
 @app.cell
 def _(mo):
+    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Workflow", kind="success")
+    run_btn
+    return (run_btn,)
+
+
+@app.cell
+def _(mo):
     import sys as _sys
     import threading as _t
     if "_h3nb_stop" not in _sys.modules:
         _m = type(_sys)("_h3nb_stop")
         _m.event = _t.Event()
         _sys.modules["_h3nb_stop"] = _m
-    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Workflow", kind="success")
-    stop_btn = mo.ui.run_button(label="⏹  Stop", kind="danger")
+    stop_btn = mo.ui.run_button(label="⏹  Stop workflow", kind="danger")
     if stop_btn.value:
         _sys.modules["_h3nb_stop"].event.set()
-    mo.hstack([run_btn, stop_btn], gap=2, justify="start")
-    return (run_btn,)
+    stop_btn
+    return
 
 
 @app.cell

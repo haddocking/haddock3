@@ -12,19 +12,31 @@ def _():
 
 @app.cell
 def _(mo):
+    from pathlib import Path as _Path
+    work_dir_input = mo.ui.text(
+        value=str(_Path.cwd()),
+        label="Working directory",
+        full_width=True,
+    )
+    return (work_dir_input,)
+
+
+@app.cell
+def _(mo):
     mo.md(r"""
     # HADDOCK3 Contact Map Analysis
 
-    Upload a multi-chain PDB complex to run an energy minimization workflow and
-    analyse intermolecular contacts. Results are displayed as an interactive
-    chord chart and heatmap. An optional alanine scanning step estimates the
-    energetic contribution of each interface residue by systematically mutating
-    it to alanine and reporting the change in HADDOCK score.
+    Upload a multi-chain PDB complex to run an energy-minimization scoring
+    workflow and analyse intermolecular contacts. Results are displayed as an
+    interactive chord chart and heatmap. An optional alanine scanning step
+    estimates the energetic contribution of each interface residue by
+    systematically mutating it to alanine and reporting the change in HADDOCK
+    score.
 
     **Workflow steps:**
 
     1. **`topoaa`** — builds CNS all-atom topology and parameters
-    2. **`emref`** — energy minimization refinement via CNS
+    2. **`emscoring`** — energy minimization scoring via CNS
     3. **`contactmap`** — computes residue–residue contacts and generates figures
     4. **`alascan`** *(optional)* — alanine scanning of interface residues
 
@@ -91,6 +103,7 @@ def _(
     mo,
     ncores_slider,
     pdb_upload,
+    work_dir_input,
 ):
     _alascan_sub = (
         mo.vstack([alascan_scan_residue, alascan_plot_toggle, alascan_show_std], align="start")
@@ -103,6 +116,10 @@ def _(
             mo.vstack([
                 mo.md("**Input file**"),
                 pdb_upload,
+            ], align="start"),
+            mo.vstack([
+                mo.md("**Working directory**"),
+                work_dir_input,
             ], align="start"),
             mo.vstack([
                 mo.md("**Execution**"),
@@ -141,6 +158,7 @@ def _(
     ncores_slider,
     pdb_upload,
     run_btn,
+    work_dir_input,
 ):
     import logging
     import os
@@ -162,7 +180,9 @@ def _(
     _pdb_name = pdb_upload.name()
     _pdb_stem = Path(_pdb_name).stem
     _timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    _run_dir = Path.cwd() / f"{_pdb_stem}_{_timestamp}"
+    _base_dir = Path(work_dir_input.value)
+    _base_dir.mkdir(parents=True, exist_ok=True)
+    _run_dir = _base_dir / f"{_pdb_stem}_{_timestamp}"
     _run_dir.mkdir(exist_ok=True)
     (_run_dir / _pdb_name).write_bytes(pdb_upload.contents())
 
@@ -217,8 +237,7 @@ def _(
             "clean": False,
             "offline": False,
         },
-        "emref.1": {
-            "sampling_factor": 1,
+        "emscoring.1": {
             "mode": "local",
             "ncores": _ncores,
             "clean": False,

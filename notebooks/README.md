@@ -48,6 +48,7 @@ go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click 
 | Notebook | Description |
 |----------|-------------|
 | `HADDOCK3-interface-analysis.py` | Energy minimization → contact map (chord chart + heatmap) with optional alanine scanning, all driven from a single configuration panel |
+| `HADDOCK3-scoring.py` | Score and cluster a set of PDB models (emscoring → clustfcc → caprieval → contactmap); displays per-model and per-cluster statistics tables, 3D structure viewer for the best model of each cluster, and contact-map chord charts |
 
 ### Running the interface analysis notebook
 
@@ -68,6 +69,16 @@ marimo edit notebooks/HADDOCK3-interface-analysis.py
 ```
 
 The notebook opens in your browser at `http://localhost:2718`. Upload a multi-chain PDB file, adjust the configuration panel, and click **Run HADDOCK3 Workflow**.
+
+### Running the scoring notebook
+
+```bash
+marimo run notebooks/HADDOCK3-scoring.py
+# or in edit mode:
+marimo edit notebooks/HADDOCK3-scoring.py
+```
+
+Upload one or more PDB complex files (each file is one model of the complex), adjust the clustering and contact-map settings, and click **Run HADDOCK3 Scoring Workflow**. Results include sortable per-model and per-cluster statistics tables, an interactive 3D structure viewer for the best model of each cluster (requires internet access for the 3Dmol.js CDN), and chord charts from the contact-map analysis.
 
 ---
 

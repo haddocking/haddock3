@@ -214,23 +214,18 @@ def _(
 
 @app.cell
 def _(mo):
-    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Workflow", kind="success")
-    return (run_btn,)
-
-
-@app.cell
-def _(mo, run_btn):
     import sys as _sys
     import threading as _t
     if "_h3nb_stop" not in _sys.modules:
         _m = type(_sys)("_h3nb_stop")
         _m.event = _t.Event()
         _sys.modules["_h3nb_stop"] = _m
+    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Workflow", kind="success")
     stop_btn = mo.ui.run_button(label="⏹  Stop", kind="danger")
     if stop_btn.value:
         _sys.modules["_h3nb_stop"].event.set()
     mo.hstack([run_btn, stop_btn], gap=2, justify="start")
-    return
+    return (run_btn,)
 
 
 @app.cell

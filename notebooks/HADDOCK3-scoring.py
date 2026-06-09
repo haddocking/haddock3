@@ -70,7 +70,7 @@ def _(mo):
         label="CPU cores", show_value=True,
     )
     clust_cutoff_slider = mo.ui.slider(
-        0.50, 1.00, value=0.75, step=0.05,
+        0.50, 1.00, value=0.60, step=0.05,
         label="FCC clustering cutoff", show_value=True,
     )
     min_population_slider = mo.ui.slider(
@@ -154,7 +154,7 @@ def _(
             "[emscoring]",
             "",
             "[clustfcc]",
-            f"clust_cutoff = {clust_cutoff_slider.value:.2f}",
+            f"clust_cutoff = {clust_cutoff_slider.value:.2f}",  # default 0.60
             f"min_population = {min_population_slider.value}",
             "",
             "[caprieval]",
@@ -199,23 +199,18 @@ def _(
 
 @app.cell
 def _(mo):
-    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Scoring Workflow", kind="success")
-    return (run_btn,)
-
-
-@app.cell
-def _(mo, run_btn):
     import sys as _sys
     import threading as _t
     if "_h3nb_stop" not in _sys.modules:
         _m = type(_sys)("_h3nb_stop")
         _m.event = _t.Event()
         _sys.modules["_h3nb_stop"] = _m
+    run_btn = mo.ui.run_button(label="▶  Run HADDOCK3 Scoring Workflow", kind="success")
     stop_btn = mo.ui.run_button(label="⏹  Stop", kind="danger")
     if stop_btn.value:
         _sys.modules["_h3nb_stop"].event.set()
     mo.hstack([run_btn, stop_btn], gap=2, justify="start")
-    return
+    return (run_btn,)
 
 
 @app.cell

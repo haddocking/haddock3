@@ -44,7 +44,6 @@ def _(mo):
     > inputs only. Small-molecule ligands requiring custom topology and
     > parameter files are **not** supported.
 
-    **Requirements:** CNS must be installed and discoverable (see `haddock3-cfg cns_exec`).
     """)
     return
 

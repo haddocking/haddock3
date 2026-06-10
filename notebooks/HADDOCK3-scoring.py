@@ -45,7 +45,6 @@ def _(mo):
     > Meaningful clustering requires at least a few models; a single uploaded file will
     > produce one unclustered model.
 
-    **Requirements:** CNS must be installed and discoverable (`haddock3-cfg cns_exec`).
     """)
     return
 

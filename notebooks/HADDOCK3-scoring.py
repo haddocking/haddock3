@@ -413,6 +413,7 @@ def _(clt_show_std, mo, run_result):
 
     # Default exports — overwritten when a successful run with clusters exists.
     clt_table = mo.ui.table(_pd.DataFrame(), selection="single", pagination=False)
+    ss_table = mo.ui.table(_pd.DataFrame(), selection="single", pagination=False)
     df_ss = None
 
     if run_result.get("stopped"):
@@ -466,7 +467,7 @@ def _(clt_show_std, mo, run_result):
                     mo.md(f"Could not read `capri_clt.tsv`: {_e}"), kind="warn",
                 ))
 
-        # ── Single-structure statistics (collapsed by default) ────────────────
+        # ── Single-structure statistics (read data here; displayed below cluster viz) ──
         _ss_file = _caprieval_dir / "capri_ss.tsv"
 
         if _ss_file.exists():
@@ -474,27 +475,21 @@ def _(clt_show_std, mo, run_result):
                 df_ss = _pd.read_csv(_ss_file, sep="\t", comment="#")
                 _fc = df_ss.select_dtypes(include="float").columns
                 df_ss[_fc] = df_ss[_fc].round(3)
-                _sections.append(mo.accordion({
-                    f"Single-structure statistics ({len(df_ss)} models)": mo.ui.table(
-                        df_ss,
-                        pagination=False,
-                        selection=None,
-                        show_column_summaries=True,
-                    )
-                }))
+                ss_table = mo.ui.table(
+                    df_ss,
+                    pagination=False,
+                    selection="single",
+                    show_column_summaries=True,
+                )
             except Exception as _e:
                 _sections.append(mo.callout(
                     mo.md(f"Could not read `capri_ss.tsv`: {_e}"), kind="warn",
                 ))
-        else:
-            _sections.append(mo.callout(
-                mo.md(f"`capri_ss.tsv` not found in `{_caprieval_dir}`."), kind="warn",
-            ))
 
         _out = mo.vstack(_sections)
 
     _out
-    return (clt_table, df_ss)
+    return (clt_table, df_ss, ss_table)
 
 
 @app.cell
@@ -648,6 +643,100 @@ def _(clt_table, df_ss, mo, run_result):
             )
 
     _viz_out
+    return
+
+
+@app.cell
+def _(df_ss, mo, run_result, ss_table):
+    if not run_result["success"] or run_result.get("stopped"):
+        _ss_stats_out = mo.md("")
+    elif df_ss is None:
+        _ss_stats_out = mo.callout(
+            mo.md(f"`capri_ss.tsv` not found in `{run_result['run_dir'] / '3_caprieval'}`."),
+            kind="warn",
+        )
+    else:
+        _ss_stats_out = mo.vstack([
+            mo.md("---\n## Single-structure statistics"),
+            mo.md("*Click a row to display the model in 3D.*"),
+            ss_table,
+        ])
+    _ss_stats_out
+    return
+
+
+@app.cell
+def _(mo, run_result, ss_table):
+    import html as _html3
+    import json as _json3
+    from pathlib import Path as _Path3
+
+    def _mol_viewer_ss(pdb_path, height=500):
+        _pdb_json = _json3.dumps(pdb_path.read_text())
+        _doc = (
+            "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+            "<script src='https://3Dmol.csb.pitt.edu/build/3Dmol-min.js'></script></head>"
+            "<body style='margin:0;padding:0;overflow:hidden'>"
+            f"<div id='v' style='width:100%;height:{height}px;position:relative;'></div>"
+            "<script>"
+            "let v=$3Dmol.createViewer(document.getElementById('v'),{backgroundColor:'white'});"
+            f"v.addModel({_pdb_json},'pdb');"
+            "v.setStyle({},{cartoon:{colorscheme:'chain'}});"
+            "v.addStyle({elem:'C'},{stick:{colorscheme:'chain',radius:0.12}});"
+            "v.addStyle({elem:'N'},{stick:{color:'#3050F8',radius:0.12}});"
+            "v.addStyle({elem:'O'},{stick:{color:'#FF0D0D',radius:0.12}});"
+            "v.addStyle({elem:'S'},{stick:{color:'#FFFF30',radius:0.12}});"
+            "v.addStyle({elem:'P'},{stick:{color:'#FF8000',radius:0.12}});"
+            "v.zoomTo();v.render();"
+            "</script></body></html>"
+        )
+        _esc = _html3.escape(_doc, quote=True)
+        return mo.Html(f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>')
+
+    def _resolve_path_ss(model_str, run_dir):
+        p = _Path3(model_str)
+        if p.is_absolute():
+            return p
+        for base in [run_dir, run_dir / "3_caprieval"]:
+            candidate = (base / p).resolve()
+            if candidate.exists():
+                return candidate
+        return p
+
+    if not run_result["success"] or run_result.get("stopped"):
+        _ss_viz = mo.md("")
+    elif ss_table.value.empty:
+        _ss_viz = mo.callout(
+            mo.md("Select a row in the single-structure table above to display the model in 3D."),
+            kind="info",
+        )
+    else:
+        try:
+            _sel = ss_table.value.iloc[0]
+            _score = float(_sel["score"])
+            _run_dir = run_result["run_dir"]
+            _model_path = _resolve_path_ss(str(_sel["model"]), _run_dir)
+
+            _vsections = [mo.md(
+                f"---\n## `{_model_path.name}`"
+                f"&nbsp;|&nbsp; score: **{_score:.3f}**"
+            )]
+            if _model_path.exists():
+                _vsections.append(_mol_viewer_ss(_model_path, height=500))
+            else:
+                _vsections.append(mo.callout(
+                    mo.md(f"Model file not found: `{_model_path}`"), kind="warn",
+                ))
+            _ss_viz = mo.vstack(_vsections)
+        except Exception:
+            import traceback as _tb3
+            _ss_viz = mo.callout(
+                mo.vstack([mo.md("**Error rendering single-structure visualisation:**"),
+                           mo.code(_tb3.format_exc(), language="text")]),
+                kind="danger",
+            )
+
+    _ss_viz
     return
 
 

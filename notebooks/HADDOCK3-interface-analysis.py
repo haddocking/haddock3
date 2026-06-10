@@ -165,7 +165,9 @@ def _(
             "autohis = true",
             "",
             "[emscoring]",
+            "per_interface_scoring = true",
             "",
+            "[caprieval]",
             "[contactmap]",
             f"generate_chordchart = {_v(chordchart_toggle.value)}",
             f"generate_heatmap = {_v(heatmap_toggle.value)}",
@@ -348,7 +350,7 @@ async def _(
                 "autohis": True,
                 **_exec,
             },
-            "emscoring.1": {**_exec},
+            "emscoring.1": {"per_interface_scoring": True, **_exec},
             "contactmap.1": {
                 "generate_chordchart": chordchart_toggle.value,
                 "generate_heatmap": heatmap_toggle.value,
@@ -413,6 +415,89 @@ async def _(
 
     run_result = {"success": _success, "error": _error, "run_dir": _run_dir, "stopped": _stopped}
     return (run_result,)
+
+
+@app.cell
+def _(mo, run_result):
+    import pandas as _pd
+    from pathlib import Path as _Path
+
+    if not run_result["success"] or run_result.get("stopped"):
+        _score_out = mo.md("")
+    else:
+        try:
+            _run_dir = run_result["run_dir"]
+            _em_dir = _run_dir / "1_emscoring"
+            _main_tsv = _em_dir / "emscoring.tsv"
+
+            if not _main_tsv.exists():
+                _score_out = mo.callout(
+                    mo.md(f"`emscoring.tsv` not found in `{_em_dir}`."), kind="warn",
+                )
+            else:
+                # ── Main HADDOCK score ─────────────────────────────────────────
+                _df = _pd.read_csv(_main_tsv, sep="\t")
+                _df["model"] = _df["original_name"].apply(lambda x: _Path(x).name)
+                _df = _df.rename(columns={"score": "HADDOCK score"})
+                _df = _df.drop(columns=["original_name", "md5"], errors="ignore")
+
+                # ── Energy terms from PDB REMARK headers ──────────────────────
+                from haddock.gear.haddockmodel import HaddockModel as _HaddockModel
+                _extra = []
+                for _struct in _df["structure"]:
+                    _pdb = _em_dir / _struct
+                    _row: dict = {}
+                    if _pdb.exists():
+                        try:
+                            _e = _HaddockModel(str(_pdb)).energies
+                            _row = {
+                                "Evdw": _e.get("vdw"),
+                                "Eelec": _e.get("elec"),
+                                "Edesolv": _e.get("desolv"),
+                                "BSA": _e.get("bsa"),
+                            }
+                        except Exception:
+                            pass
+                    _extra.append(_row)
+                _df = _pd.concat([_df.reset_index(drop=True), _pd.DataFrame(_extra)], axis=1)
+
+                # ── Per-interface scores from emscoring_{interface}.tsv ────────
+                for _iface_tsv in sorted(_em_dir.glob("emscoring_*.tsv")):
+                    _iface = _iface_tsv.stem[len("emscoring_"):]  # e.g., "A_B"
+                    _di = _pd.read_csv(_iface_tsv, sep="\t")[["structure", "score"]]
+                    _di = _di.rename(columns={"score": f"score_{_iface}"})
+                    _df = _df.merge(_di, on="structure", how="left")
+
+                # ── Final column order ─────────────────────────────────────────
+                _df = _df.drop(columns=["structure"], errors="ignore")
+                _base = ["model", "HADDOCK score", "Evdw", "Eelec", "Edesolv", "BSA"]
+                _iface_cols = [c for c in _df.columns if c.startswith("score_")]
+                _df = _df[[c for c in _base if c in _df.columns] + _iface_cols]
+                _fc = _df.select_dtypes(include="float").columns
+                _df[_fc] = _df[_fc].round(3)
+
+                _score_out = mo.vstack([
+                    mo.md("---\n## HADDOCK Scoring"),
+                    mo.ui.table(
+                        _df,
+                        pagination=False,
+                        selection=None,
+                        show_column_summaries=False,
+                    ),
+                ])
+
+        except Exception:
+            import traceback as _tb
+            _score_out = mo.callout(
+                mo.vstack([
+                    mo.md("**Error loading scoring data:**"),
+                    mo.code(_tb.format_exc(), language="text"),
+                ]),
+                kind="danger",
+            )
+
+    _score_out
+    return
 
 
 @app.cell

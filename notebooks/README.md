@@ -47,8 +47,8 @@ go to <http://localhost:8888/notebooks/HADDOCK3-antibody-antigen.ipynb> - click 
 
 | Notebook | Description |
 |----------|-------------|
-| `HADDOCK3-interface-analysis.py` | Energy minimization → contact map (chord chart + heatmap) with optional alanine scanning, all driven from a single configuration panel |
-| `HADDOCK3-scoring.py` | Score and cluster a set of PDB models (emscoring → clustfcc → caprieval → contactmap); displays per-model and per-cluster statistics tables, 3D structure viewer for the best model of each cluster, and contact-map chord charts |
+| `HADDOCK3-interface-analysis.py` | Energy minimization → contact map (chord chart + heatmap) with optional alanine scanning, all driven from a single configuration panel; includes a HADDOCK scoring table with energy terms (Evdw, Eelec, Edesolv, BSA) and per-interface scores for multi-chain complexes |
+| `HADDOCK3-scoring.py` | Score and cluster a set of PDB models (emscoring → clustfcc → caprieval → contactmap); displays per-model and per-cluster statistics tables with traceback to the original input model, interactive 3D viewer and download button for selected models, contact-map chord charts; optional reference structure upload enables full CAPRI metrics (irmsd, fnat, lrmsd, DockQ) |
 
 ### Running the interface analysis notebook
 
@@ -78,7 +78,12 @@ marimo run notebooks/HADDOCK3-scoring.py
 marimo edit notebooks/HADDOCK3-scoring.py
 ```
 
-Upload one or more PDB complex files (each file is one model of the complex), adjust the clustering and contact-map settings, and click **Run HADDOCK3 Scoring Workflow**. Results include sortable per-model and per-cluster statistics tables, an interactive 3D structure viewer for the best model of each cluster (requires internet access for the 3Dmol.js CDN), and chord charts from the contact-map analysis.
+Upload one or more PDB complex files (each file is one model of the complex), optionally upload a reference structure to enable CAPRI quality metrics, adjust the clustering and contact-map settings, and click **Run HADDOCK3 Scoring Workflow**.
+
+Results include:
+- Sortable per-cluster and per-model statistics tables; an **input model** column traces each scored model back to the original uploaded file via `haddock3-traceback`
+- Interactive 3D viewer and a **download button** for any selected model (requires internet access for the 3Dmol.js CDN)
+- Chord charts and heatmaps from the contact-map analysis
 
 ---
 

@@ -58,7 +58,12 @@ def _(mo):
         kind="area",
         multiple=True,
     )
-    return (pdb_upload,)
+    ref_upload = mo.ui.file(
+        filetypes=[".pdb"],
+        label="Reference structure (optional — enables CAPRI metrics)",
+        kind="area",
+    )
+    return (pdb_upload, ref_upload)
 
 
 @app.cell
@@ -105,6 +110,7 @@ def _(
     mo,
     ncores_slider,
     pdb_upload,
+    ref_upload,
     topX_slider,
     work_dir_input,
 ):
@@ -112,6 +118,7 @@ def _(
         mo.md("### Configuration"),
         mo.hstack([
             mo.vstack([mo.md("**Input models**"), pdb_upload], align="start"),
+            mo.vstack([mo.md("**Reference *(optional)***"), ref_upload], align="start"),
             mo.vstack([mo.md("**Working directory**"), work_dir_input], align="start"),
             mo.vstack([mo.md("**Execution**"), ncores_slider], align="start"),
             mo.vstack([
@@ -139,10 +146,15 @@ def _(
     heatmap_toggle,
     min_population_slider,
     mo,
+    ref_upload,
     topX_slider,
 ):
     def _make_cfg_str():
         _v = lambda b: "true" if b else "false"
+        _caprieval_lines = ["[caprieval]"]
+        if ref_upload.value:
+            _caprieval_lines.append(f'reference_fname = "{ref_upload.name()}"')
+        _caprieval_lines.append("")
         return "\n".join([
             "# HADDOCK3 scoring workflow — module parameters",
             "# CPU cores, mode, input files and run directory are set by the panel above.",
@@ -152,13 +164,13 @@ def _(
             "autohis = true",
             "",
             "[emscoring]",
+            "per_interface_scoring = true",
             "",
             "[clustfcc]",
             f"clust_cutoff = {clust_cutoff_slider.value:.2f}",  # default 0.60
             f"min_population = {min_population_slider.value}",
             "",
-            "[caprieval]",
-            "",
+            *_caprieval_lines,
             "[contactmap]",
             f"generate_chordchart = {_v(chordchart_toggle.value)}",
             f"generate_heatmap = {_v(heatmap_toggle.value)}",
@@ -230,6 +242,7 @@ async def _(
     mo,
     ncores_slider,
     pdb_upload,
+    ref_upload,
     run_btn,
     topX_slider,
     work_dir_input,
@@ -266,6 +279,12 @@ async def _(
         _dest = _run_dir / _uf.name
         _dest.write_bytes(_uf.contents)
         _pdb_paths.append(Path(_uf.name))
+
+    _ref_fname = ""
+    if ref_upload.value:
+        _ref_name = ref_upload.name()
+        (_run_dir / _ref_name).write_bytes(ref_upload.contents())
+        _ref_fname = _ref_name
 
     _ncores = ncores_slider.value
 
@@ -339,7 +358,7 @@ async def _(
                 "min_population": min_population_slider.value,
                 **_exec,
             },
-            "caprieval.1": {**_exec},
+            "caprieval.1": {"reference_fname": _ref_fname, **_exec},
             "contactmap.1": {
                 "generate_chordchart": chordchart_toggle.value,
                 "generate_heatmap": heatmap_toggle.value,

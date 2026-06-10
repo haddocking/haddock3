@@ -229,9 +229,15 @@ def _(mo):
         _m.event = _t.Event()
         _sys.modules["_h3nb_stop"] = _m
     stop_btn = mo.ui.run_button(label="⏹  Stop workflow", kind="danger")
-    if stop_btn.value:
-        _sys.modules["_h3nb_stop"].event.set()
     stop_btn
+    return (stop_btn,)
+
+
+@app.cell
+def _(stop_btn):
+    import sys as _sys2
+    if stop_btn.value:
+        _sys2.modules["_h3nb_stop"].event.set()
     return
 
 

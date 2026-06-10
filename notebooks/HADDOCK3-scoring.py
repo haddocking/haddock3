@@ -224,9 +224,15 @@ def _(mo):
         _m.event = _t.Event()
         _sys.modules["_h3nb_stop"] = _m
     stop_btn = mo.ui.run_button(label="⏹  Stop workflow", kind="danger")
-    if stop_btn.value:
-        _sys.modules["_h3nb_stop"].event.set()
     stop_btn
+    return (stop_btn,)
+
+
+@app.cell
+def _(stop_btn):
+    import sys as _sys2
+    if stop_btn.value:
+        _sys2.modules["_h3nb_stop"].event.set()
     return
 
 
@@ -412,6 +418,15 @@ async def _(
     finally:
         _haddock_pkg.log.removeHandler(_handler)
 
+    # ── Traceback ─────────────────────────────────────────────────────────────
+    if _success:
+        try:
+            from haddock.clis.cli_traceback import main as _cli_traceback
+            with _cwd(_run_dir):
+                _cli_traceback("./", offline=True)
+        except Exception as _tb_err:
+            _log_lines.append(f"[notebook] Traceback generation skipped: {_tb_err}")
+
     _render_log(done=_success, stopped=_stopped)
 
     run_result = {"success": _success, "error": _error, "run_dir": _run_dir, "stopped": _stopped}
@@ -426,7 +441,6 @@ def _(mo):
 
 @app.cell
 def _(clt_show_std, mo, run_result):
-    import base64 as _b64
     import pandas as _pd
     from pathlib import Path as _Path
 
@@ -459,39 +473,54 @@ def _(clt_show_std, mo, run_result):
             )
         ]
 
-        # ── Download-link helper ───────────────────────────────────────────────
-        def _dl_link(model_str):
-            p = _Path(model_str)
-            cand = (_caprieval_dir / p).resolve() if not p.is_absolute() else p
-            if not cand.exists():
-                cand = (_run_dir / p).resolve()
-            if not cand.exists():
-                return mo.Html(f'<span style="font-family:monospace">{p.name}</span>')
-            _enc = _b64.b64encode(cand.read_bytes()).decode()
-            return mo.Html(
-                f'<a href="data:chemical/x-pdb;base64,{_enc}" '
-                f'download="{cand.name}" '
-                f'style="font-family:monospace;font-size:0.9em">{cand.name}</a>'
-            )
+        # ── Traceback: map final models → original input filenames ───────────
+        # traceback.tsv columns: 00_topo1, <step>_rank, ... keyed by final model
+        _tb_map: dict = {}  # filename → original input label
+        _tb_file = _run_dir / "traceback" / "traceback.tsv"
+        if _tb_file.exists():
+            try:
+                _df_tb = _pd.read_csv(_tb_file, sep="\t")
+                # Identify topology columns (original inputs) and step columns
+                _topo_cols = [c for c in _df_tb.columns if c.startswith("00_topo")]
+                _step_cols = [c for c in _df_tb.columns
+                              if not c.startswith("00_") and not c.endswith("_rank")]
+                if _step_cols and _topo_cols:
+                    # Last step column holds the final model filename
+                    _final_col = _step_cols[-1]
+                    # Build a combined "input model" label from all topo columns
+                    _df_tb["_input_label"] = _df_tb[_topo_cols].apply(
+                        lambda r: " | ".join(
+                            _Path(str(v)).stem for v in r if str(v) not in ("nan", "-", "")
+                        ),
+                        axis=1,
+                    )
+                    _tb_map = dict(zip(_df_tb[_final_col], _df_tb["_input_label"]))
+            except Exception:
+                pass  # traceback column silently absent if parsing fails
 
-        # ── Single-structure data (read first — needed for cluster download links) ──
+        # ── Single-structure data (read first — needed by cluster table) ──────
         _ss_file = _caprieval_dir / "capri_ss.tsv"
         if _ss_file.exists():
             try:
                 df_ss = _pd.read_csv(_ss_file, sep="\t", comment="#")
                 _fc = df_ss.select_dtypes(include="float").columns
                 df_ss[_fc] = df_ss[_fc].round(3)
-                # Display copy: prepend download column, hide original path + md5.
-                # model column kept as string so downstream viz cells can still
-                # access it via ss_table.value["model"].
+                # Display copy: show filename + optional traceback origin;
+                # keep full path in hidden "model" column for downstream viz.
                 _df_ss_disp = df_ss.copy()
-                _df_ss_disp.insert(0, "download", [_dl_link(str(m)) for m in df_ss["model"]])
+                _df_ss_disp.insert(0, "filename", [_Path(str(m)).name for m in df_ss["model"]])
+                if _tb_map:
+                    _df_ss_disp.insert(1, "input model", [
+                        _tb_map.get(_Path(str(m)).name, "—") for m in df_ss["model"]
+                    ])
                 ss_table = mo.ui.table(
                     _df_ss_disp,
                     pagination=False,
                     selection="single",
                     show_column_summaries=True,
-                    hidden_columns=["model", "md5"],
+                    hidden_columns=["model", "md5",
+                                    "air", "cdih", "coup", "dani", "rdcs",
+                                    "rg", "sym", "vean", "xpcs"],
                 )
             except Exception as _e:
                 _sections.append(mo.callout(
@@ -512,31 +541,36 @@ def _(clt_show_std, mo, run_result):
                 _df_clt[_fc] = _df_clt[_fc].round(3)
                 _std_cols = [c for c in _df_clt.columns if c.endswith("_std")]
 
-                # Prepend a download link for the best model of each cluster.
-                if df_ss is not None and "cluster_ranking" in df_ss.columns:
-                    _dl_col = []
+                # Add input-model column: list the distinct origins of all models
+                # in each cluster, looked up from the traceback map.
+                if _tb_map and df_ss is not None and "cluster_ranking" in df_ss.columns:
+                    _clt_origins = []
                     for _, _crow in _df_clt.iterrows():
                         try:
                             _rank = int(float(_crow["cluster_rank"]))
                         except (ValueError, TypeError):
-                            _dl_col.append(mo.Html("—"))
+                            _clt_origins.append("—")
                             continue
                         _mods = df_ss[df_ss["cluster_ranking"].apply(
                             lambda x: int(float(x)) == _rank if x == x else False
                         )]
-                        if _mods.empty:
-                            _dl_col.append(mo.Html("—"))
-                        else:
-                            _best_m = _mods.loc[_mods["score"].idxmin()]
-                            _dl_col.append(_dl_link(str(_best_m["model"])))
-                    _df_clt.insert(0, "best model", _dl_col)
+                        _origins = sorted({
+                            _tb_map.get(_Path(str(m)).name, "—")
+                            for m in _mods["model"]
+                        })
+                        _clt_origins.append(", ".join(_origins))
+                    _df_clt.insert(0, "input models", _clt_origins)
 
+                _noise_cols = ["air", "cdih", "coup", "dani", "rdcs",
+                               "rg", "sym", "vean", "xpcs"]
+                _noise_cols += [f"{c}_std" for c in _noise_cols]
+                _hidden_clt = _noise_cols + ([] if clt_show_std.value else _std_cols)
                 clt_table = mo.ui.table(
                     _df_clt,
                     selection="single",
                     pagination=False,
                     show_column_summaries=True,
-                    hidden_columns=[] if clt_show_std.value else _std_cols,
+                    hidden_columns=list(dict.fromkeys(_hidden_clt)),
                 )
                 _sections.append(mo.hstack([clt_show_std], justify="end"))
                 _sections.append(clt_table)
@@ -666,6 +700,12 @@ def _(clt_table, df_ss, mo, run_result):
                         f"Best model: `{_model_path.name}` &nbsp;|&nbsp; score: **{_best['score']:.3f}**"
                     ))
                     if _model_path.exists():
+                        _vsections.append(mo.download(
+                            data=_model_path.read_bytes(),
+                            filename=_model_path.name,
+                            mimetype="chemical/x-pdb",
+                            label=f"⬇ {_model_path.name}",
+                        ))
                         _vsections.append(_mol_viewer(_model_path, height=500))
                     else:
                         _vsections.append(mo.callout(
@@ -781,6 +821,12 @@ def _(mo, run_result, ss_table):
                 f"&nbsp;|&nbsp; score: **{_score:.3f}**"
             )]
             if _model_path.exists():
+                _vsections.append(mo.download(
+                    data=_model_path.read_bytes(),
+                    filename=_model_path.name,
+                    mimetype="chemical/x-pdb",
+                    label=f"⬇ {_model_path.name}",
+                ))
                 _vsections.append(_mol_viewer_ss(_model_path, height=500))
             else:
                 _vsections.append(mo.callout(

@@ -422,6 +422,17 @@ $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
 end loop disu
 
 
+! check first for covalently-linked Acetylated Nter to CYS
+! if detected cyclicpept will be set to false to avoid
+! potentially adding an additional cyclic peptide bond
+
+if ($cyclicpept eq TRUE ) then
+
+    inline @MODULE:coval-ace-cys.cns
+
+end if
+
+
 ! check for cyclid peptidic bonds
 
 if ($cyclicpept eq TRUE ) then
@@ -505,10 +516,6 @@ $seg1.$counter[a4] $res1.$counter[a4] and $seg2.$counter[a4] $res2.$counter[a4]
         end
         evaluate ($counter=$counter+1)
     end loop cypep
-
-    ! check for covalently-linked Acetylated Nter to CYS
-
-    inline @MODULE:coval-ace-cys.cns
 
 end if ! check for cyclic peptide
 

@@ -426,6 +426,7 @@ def _(mo):
 
 @app.cell
 def _(clt_show_std, mo, run_result):
+    import base64 as _b64
     import pandas as _pd
     from pathlib import Path as _Path
 
@@ -458,6 +459,45 @@ def _(clt_show_std, mo, run_result):
             )
         ]
 
+        # ── Download-link helper ───────────────────────────────────────────────
+        def _dl_link(model_str):
+            p = _Path(model_str)
+            cand = (_caprieval_dir / p).resolve() if not p.is_absolute() else p
+            if not cand.exists():
+                cand = (_run_dir / p).resolve()
+            if not cand.exists():
+                return mo.Html(f'<span style="font-family:monospace">{p.name}</span>')
+            _enc = _b64.b64encode(cand.read_bytes()).decode()
+            return mo.Html(
+                f'<a href="data:chemical/x-pdb;base64,{_enc}" '
+                f'download="{cand.name}" '
+                f'style="font-family:monospace;font-size:0.9em">{cand.name}</a>'
+            )
+
+        # ── Single-structure data (read first — needed for cluster download links) ──
+        _ss_file = _caprieval_dir / "capri_ss.tsv"
+        if _ss_file.exists():
+            try:
+                df_ss = _pd.read_csv(_ss_file, sep="\t", comment="#")
+                _fc = df_ss.select_dtypes(include="float").columns
+                df_ss[_fc] = df_ss[_fc].round(3)
+                # Display copy: prepend download column, hide original path + md5.
+                # model column kept as string so downstream viz cells can still
+                # access it via ss_table.value["model"].
+                _df_ss_disp = df_ss.copy()
+                _df_ss_disp.insert(0, "download", [_dl_link(str(m)) for m in df_ss["model"]])
+                ss_table = mo.ui.table(
+                    _df_ss_disp,
+                    pagination=False,
+                    selection="single",
+                    show_column_summaries=True,
+                    hidden_columns=["model", "md5"],
+                )
+            except Exception as _e:
+                _sections.append(mo.callout(
+                    mo.md(f"Could not read `capri_ss.tsv`: {_e}"), kind="warn",
+                ))
+
         # ── Cluster statistics (row selection drives the visualisation below) ──
         _clt_file = _caprieval_dir / "capri_clt.tsv"
 
@@ -471,6 +511,26 @@ def _(clt_show_std, mo, run_result):
                 _fc = _df_clt.select_dtypes(include="float").columns
                 _df_clt[_fc] = _df_clt[_fc].round(3)
                 _std_cols = [c for c in _df_clt.columns if c.endswith("_std")]
+
+                # Prepend a download link for the best model of each cluster.
+                if df_ss is not None and "cluster_ranking" in df_ss.columns:
+                    _dl_col = []
+                    for _, _crow in _df_clt.iterrows():
+                        try:
+                            _rank = int(float(_crow["cluster_rank"]))
+                        except (ValueError, TypeError):
+                            _dl_col.append(mo.Html("—"))
+                            continue
+                        _mods = df_ss[df_ss["cluster_ranking"].apply(
+                            lambda x: int(float(x)) == _rank if x == x else False
+                        )]
+                        if _mods.empty:
+                            _dl_col.append(mo.Html("—"))
+                        else:
+                            _best_m = _mods.loc[_mods["score"].idxmin()]
+                            _dl_col.append(_dl_link(str(_best_m["model"])))
+                    _df_clt.insert(0, "best model", _dl_col)
+
                 clt_table = mo.ui.table(
                     _df_clt,
                     selection="single",
@@ -483,25 +543,6 @@ def _(clt_show_std, mo, run_result):
             except Exception as _e:
                 _sections.append(mo.callout(
                     mo.md(f"Could not read `capri_clt.tsv`: {_e}"), kind="warn",
-                ))
-
-        # ── Single-structure statistics (read data here; displayed below cluster viz) ──
-        _ss_file = _caprieval_dir / "capri_ss.tsv"
-
-        if _ss_file.exists():
-            try:
-                df_ss = _pd.read_csv(_ss_file, sep="\t", comment="#")
-                _fc = df_ss.select_dtypes(include="float").columns
-                df_ss[_fc] = df_ss[_fc].round(3)
-                ss_table = mo.ui.table(
-                    df_ss,
-                    pagination=False,
-                    selection="single",
-                    show_column_summaries=True,
-                )
-            except Exception as _e:
-                _sections.append(mo.callout(
-                    mo.md(f"Could not read `capri_ss.tsv`: {_e}"), kind="warn",
                 ))
 
         _out = mo.vstack(_sections)

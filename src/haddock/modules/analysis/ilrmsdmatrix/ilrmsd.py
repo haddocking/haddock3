@@ -10,7 +10,7 @@ from haddock.libs.libalign import (
     get_atoms,
     )
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.caprieval.capri import load_contacts
+from haddock.libs.libcapri import load_contacts
 
 
 class ContactJob:

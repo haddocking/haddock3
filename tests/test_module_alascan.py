@@ -402,7 +402,7 @@ def test_interface_scanner_run(mocker, interface_scanner):
     # mock stand-alone functions
     mock_calc_score = mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7))
-    mock_identify_interface = mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+    mock_identify_interface = mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20]})
     mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms")
     mock_load_coords = mocker.patch("haddock.libs.libalign.load_coords",
@@ -425,7 +425,7 @@ def test_interface_scanner_run(mocker, interface_scanner):
 
 def test_interface_scanner_run_empty_interface(mocker, interface_scanner):
     """Test InterfaceScanner.run() (in haddock mode) with no interface residues."""
-    mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+    mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={}) # no interface 
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7)
@@ -444,7 +444,7 @@ def test_interface_scanner_run_library_mode(mocker, interface_scanner_library, s
         mock_calc_score = mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
             return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7)
         )
-        mock_identify_interface = mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+        mock_identify_interface = mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
             return_value={"A": [19, 20]}
         )
         mock_get_atoms = mocker.patch("haddock.libs.libalign.get_atoms",
@@ -485,7 +485,7 @@ def test_interface_scanner_run_library_mode_fails(mocker, interface_scanner_libr
         mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
             return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7)
         )
-        mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+        mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
             return_value={"A": [19, 20]}
         )
         mocker.patch("haddock.libs.libalign.get_atoms", return_value=[])
@@ -518,7 +518,7 @@ def test_interface_scanner_run_library_mode_no_mutations(mocker, interface_scann
         mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
             return_value=(-113.941, -43.353, -303.753, -9.838, 1579.730)
         )
-        mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+        mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
             return_value={}  # No interface residues
         )
         mocker.patch("haddock.libs.libalign.get_atoms", return_value=[])
@@ -532,7 +532,7 @@ def test_interface_scanner_run_library_mode_no_mutations(mocker, interface_scann
 def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
     """Test chain filtering in InterfaceScanner."""
     params_with_chains = {**params, "chains": ["A"]}
-    mock_identify_interface = mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+    mock_identify_interface = mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20], "B": [30, 31]} )
     mock_calc_score = mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
         return_value=(-106.7, -29.6, -316.5, -13.8, 1494.7))
@@ -559,7 +559,7 @@ def test_interface_scanner_chain_filtering(mocker, params, complex_pdb):
 def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
     """Test residue filtering with resdic parameters."""
     params_with_resdic = {**params, "resdic_A": [19], "resdic_B": [30]}
-    mock_identify_interface = mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+    mock_identify_interface = mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20, 21], "B": [30, 31, 32]}
     )
     mock_calc_score = mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
@@ -586,7 +586,7 @@ def test_interface_scanner_residue_filtering(mocker, complex_pdb, params):
 def test_interface_scanner_residue_filtering_not_in_interface(mocker, complex_pdb, params):
     """Test residue filtering when user residues are not in interface."""
     params_with_resdic = {**params, "resdic_A": [999], "resdic_B": [999]}  # Not in interface
-    mock_identify_interface = mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+    mock_identify_interface = mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20], "B": [30, 31]}  
     )
     mock_calc_score = mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",
@@ -609,7 +609,7 @@ def test_interface_scanner_residue_filtering_not_in_interface(mocker, complex_pd
 
 def test_interface_scanner_skip_same_residue_mutation(mocker, complex_pdb, params):
     """Test that mutations to same residue type are skipped."""
-    mock_identify_interface = mocker.patch("haddock.modules.analysis.caprieval.capri.CAPRI.identify_interface",
+    mock_identify_interface = mocker.patch("haddock.libs.libcapri.CAPRI.identify_interface",
         return_value={"A": [19, 20]} # here 19 is TRP, so should be not mutated 
     )
     mock_calc_score = mocker.patch("haddock.modules.analysis.alascan.scan.calc_score",

@@ -11,15 +11,15 @@ import numpy as np
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.caprieval.capri import (
+from haddock.libs.libcapri import (
     CAPRI,
     calc_stats,
     capri_cluster_analysis,
     extract_data_from_capri_class,
-    get_previous_cns_step,
     load_contacts,
     rank_according_to_score,
 )
+from haddock.modules.analysis.caprieval.capri import get_previous_cns_step
 
 from . import golden_data
 
@@ -1014,7 +1014,7 @@ def test_capri_run(mocker, monkeypatch):
         return_value={"numbering": {1: 1, 2: 2}, "chain_dict": {1: 2}}
     )
     mocker.patch(
-        "haddock.modules.analysis.caprieval.capri.get_align",
+        "haddock.libs.libcapri.get_align",
         return_value=mock_get_align_func,
     )
 
@@ -1119,7 +1119,7 @@ def test_extract_data_from_capri_class(mocker, monkeypatch):
     """???"""
 
     mocker.patch(
-        "haddock.modules.analysis.caprieval.capri.write_nested_dic_to_file",
+        "haddock.libs.libcapri.write_nested_dic_to_file",
         return_value=None,
     )
     mocker.patch.object(CAPRI, "_load_atoms", return_value=None)
@@ -1201,7 +1201,7 @@ def test_extract_data_from_capri_class_multiple_refs(mocker, monkeypatch):
     """Test that the best reference was used to write data in capri table."""
     # Patch some functions/methods
     mocker.patch(
-        "haddock.modules.analysis.caprieval.capri.write_nested_dic_to_file",
+        "haddock.libs.libcapri.write_nested_dic_to_file",
         return_value=None,
     )
     mocker.patch.object(CAPRI, "_load_atoms", return_value=None)

@@ -16,7 +16,7 @@ from haddock.core.typing import Any, Optional, Union
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libplots import make_alascan_plot
-from haddock.modules.analysis.caprieval.capri import CAPRI
+from haddock.libs.libcapri import CAPRI
 from haddock.clis import cli_score
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']

@@ -1,5 +1,6 @@
 import copy
 import gzip
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -339,10 +340,15 @@ def test_topoaa_cyclic(topoaa_module):
 
 def test_topoaa_cyclic_ace_cys(topoaa_module):
     """Test the topoaa module to generate a cyclic ACE-CYS peptide."""
+    src = Path(GOLDEN_DATA, "ace-cys-cyclic-peptide.pdb")
+    local_copy = shutil.copy(src, topoaa_module.path / src.name)
     topoaa_module.params["molecules"] = [
-        Path(GOLDEN_DATA, "ace-cys-cyclic-peptide.pdb"),
+        Path(local_copy),
     ]
-    topoaa_module.params["acecys_dist"] = 5.0
+    topoaa_module.params["acecys_dist"] = 4.0
+    # next give a large value for the cyclic peptide distance
+    # to test it should not be generated
+    topoaa_module.params["cyclicpept_dist"] = 8.0
     topoaa_module.params["mol1"]["cyclicpept"] = True
     topoaa_module.params["cns_exec"] = CNS_EXEC
     topoaa_module.params["debug"] = True
@@ -363,6 +369,7 @@ def test_topoaa_cyclic_ace_cys(topoaa_module):
         file_content = f.read()
 
     assert "COVAL-ACE-CYS" in file_content
+    assert not "cyclic peptide detected" in file_content
 
 
 def test_topoaa_THRglycosylation(topoaa_module):
@@ -627,8 +634,10 @@ def test_topoaa_module_dna_5_oh(topoaa_module):
 
 def test_topoaa_with_ensemble_ligand_files(topoaa_module):
     """Test topoaa module with ensemble containing different ligand files."""
+    prot_src = Path(GOLDEN_DATA, "prot.pdb")
+    prot_copy = shutil.copy(prot_src, topoaa_module.path / prot_src.name)
     molecules = [
-        Path(GOLDEN_DATA, "prot.pdb"),
+        Path(prot_copy),
         Path(GOLDEN_DATA, "oseltamivir_ens.pdb"),
     ]
 

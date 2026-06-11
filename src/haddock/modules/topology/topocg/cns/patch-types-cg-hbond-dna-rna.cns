@@ -10,11 +10,13 @@ for $id in id (name SC2 and resn DA) loop cgda
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "DA"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgda
 
@@ -26,11 +28,13 @@ for $id in id (name SC2 and resn DC) loop cgdc
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "DC"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgdc
 
@@ -42,11 +46,13 @@ for $id in id (name SC2 and resn DG) loop cgdc
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "DG"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgdc
 
@@ -58,11 +64,13 @@ for $id in id (name SC2 and resn DT) loop cgdt
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "DT"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgdt
 
@@ -76,11 +84,13 @@ for $id in id (name SC2 and resn A) loop cga
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "A"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cga
 
@@ -92,11 +102,13 @@ for $id in id (name SC2 and resn C) loop cgc
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "C"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgc
 
@@ -108,11 +120,13 @@ for $id in id (name SC2 and resn G) loop cgc
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "G"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgc
 
@@ -124,10 +138,12 @@ for $id in id (name SC2 and resn U) loop cgu
     evaluate ($bdname_$bdnum = $result)
     show (resid) (id $id)
     evaluate ($bdresi_$bdnum = $result)
+    show (segid) (id $id)
+    evaluate ($bdsegid_$bdnum = $result)
     show (b) (id $id)
     evaluate ($bfactor_$bdnum = $result)
     if ($bfactor_$bdnum = 1 ) then  
         evaluate ($ptype= "U"+encode($bfactor_$bdnum)) 
-        patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+        patch $ptype refe=NIL=(resid $bdresi_$bdnum and segid $bdsegid_$bdnum) end
     end if
 end loop cgu

@@ -103,7 +103,7 @@ def test_mdref_fle(mdref_module, calc_fnat):
         native=Path(GOLDEN_DATA, "2oob.pdb"),
     )
 
-    assert fnat == pytest.approx(0.8, abs=0.1)
+    assert fnat == pytest.approx(0.9, abs=0.1)
 
 
 def test_mdref_mutliple_fle(mdref_module, calc_fnat):

@@ -94,6 +94,17 @@ evaluate ($refine.mass=100)
 
 !==================================================================!
 
+! check for the presence of a CG model
+! and stop if found as not supported in this module
+do (store4 = 0) (all)
+do (store4 = 1) (name BB or name BB#)
+show sum (store4) (all)
+if ($result > 0) then
+    display "COARSE-GRAINING NOT SUPPORTED IN MDSCORING. STOPPING..."
+    stop
+end if
+
+
 {* Read paramters and set various force field related variables *}
 
 @MODULE:read_param.cns

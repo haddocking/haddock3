@@ -99,8 +99,10 @@ evaluate ($nchain=0)
 while ($nchain < $data.ncomponents) loop nloop1
     evaluate ($nchain = $nchain + 1)
     if ($mol_shape_$nchain eq false) then
-        structure @@$input_aa_psf_filename_$nchain end
-        coor @@$input_aa_pdb_filename_$nchain
+        if ($exist_input_aa_psf_filename_$nchain eq true) then
+            structure @@$input_aa_psf_filename_$nchain end
+            coor @@$input_aa_pdb_filename_$nchain
+        end if
     end if
 end loop nloop1
 
@@ -145,7 +147,9 @@ evaluate ($nchain=0)
 while ($nchain < $data.ncomponents) loop nloop1
     evaluate ($nchain = $nchain + 1)
     if ($mol_shape_$nchain eq false) then
-        noe @@$input_cgtbl_filename_$nchain end
+        if ($exists_input_cgtbl_filename_$nchain eq false) then
+            noe @@$input_cgtbl_filename_$nchain end
+        end if
     end if
 end loop nloop1
 

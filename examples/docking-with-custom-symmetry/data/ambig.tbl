@@ -1,7 +1,0 @@
-assign (segid A and resi 2 and name CD1) 
-(
-    (segid B and resi 5 and name C2) or
-    (segid B and resi 5 and name N3) or
-    (segid B and resi 5 and name C6) or
-    (segid B and resi 5 and name C5) 
-) 2.0 2.0 0.0

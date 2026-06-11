@@ -39,13 +39,13 @@ from haddock.libs.libaa2cg import martinize
 from haddock.libs.libstructure import find_ff
 from haddock.libs.libpdb import handle_input_reference
 from haddock.modules import BaseHaddockModule
-from haddock.modules.analysis.caprieval.capri import (
+from haddock.libs.libcapri import (
     CAPRI,
     capri_cluster_analysis,
-    dump_weights,
     extract_data_from_capri_class,
     extract_models_best_references,
     )
+from haddock.modules.analysis.caprieval.capri import dump_weights
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -209,6 +209,6 @@ class HaddockModule(BaseHaddockModule):
                 add_reference_id=True,
             )
 
-        # Send models to the next step,  no operation is done on them
+        # Send models to the next step, no operation is done on them
         self.output_models = models  # type: ignore # ignore this here only if we are checking the return type of `retrieve_models` is not nested!!
         self.export_io_models()

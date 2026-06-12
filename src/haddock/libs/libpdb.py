@@ -1,9 +1,10 @@
 """Parse molecular structures in PDB format."""
 
-from math import log
+from contextlib import redirect_stdout
 import os
 from copy import deepcopy
 from functools import partial
+from io import StringIO
 from pathlib import Path
 
 from pdbtools.pdb_segxchain import run as place_seg_on_chain
@@ -541,38 +542,29 @@ def handle_input_reference(reference: Path) -> list[Path]:
     reference or first_model_path : Path
         Path to the reference structure to be used downstream.
     """
-    # Extremly complicated stuff to manage the gathering of the sys.stdout,
-    # as the pdb_tools.pdb_wc is basically writing on it.
-    import sys
-    from io import TextIOWrapper, BytesIO
-    # Memorize previous sys.stdout
-    original_stdout = sys.stdout
-    # setup the new stdout environment
-    sys.stdout = TextIOWrapper(BytesIO(), sys.stdout.encoding)
-
-    # Count number of models
+    # Check that the file contains at least one coordinate record before
+    # doing anything else — catches empty files, REMARK-only files, non-PDB text.
     with open(reference, "r") as fh:
-        pdb_wc(fh, "m")
-    # Get output
-    sys.stdout.seek(0)  # Jump to the start
-    wc_return = sys.stdout.read()  # Read output
-    # Restore original stdout
-    sys.stdout.close()
-    sys.stdout = original_stdout
-    # Parse output
-    # using here `\n` (and not os.linesep) as it is the output for pdb_wc
-    nb_models = 1  # pdb_wc treats a file without MODEL records as a single model
-    nb_atoms = 0
-    for line in wc_return.split("\n"):
-        if "No. models" in line:
-            nb_models = int(line.strip().split()[-1])
-        if "No. atoms" in line:
-            nb_atoms = int(line.strip().split()[-1])
-    if nb_atoms == 0:
+        has_atoms = any(line.startswith(("ATOM", "HETATM")) for line in fh)
+    if not has_atoms:
         raise ValueError(
             f"No atoms found in reference file: {reference}. "
             "Please check that it is a valid PDB file containing ATOM/HETATM records."
         )
+
+    # pdb_wc writes to stdout; capture it without touching sys.stdout globally.
+    buf = StringIO()
+    with open(reference, "r") as fh, redirect_stdout(buf):
+        pdb_wc(fh, "m")
+    wc_return = buf.getvalue()
+
+    # Parse output
+    # using here `\n` (and not os.linesep) as it is the output for pdb_wc
+    nb_models = 1  # pdb_wc treats a file without MODEL records as a single model
+    for line in wc_return.split("\n"):
+        if "No. models" in line:
+            nb_models = int(line.strip().split()[-1])
+            break
     # Return reference as only one structure present
     if nb_models == 1:
         return [reference]

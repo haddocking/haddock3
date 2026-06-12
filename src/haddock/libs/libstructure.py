@@ -47,7 +47,7 @@ def make_molecules(paths: Iterable[Path], **kwargs: Any) -> list[Molecule]:
 
 def find_ff(models: list[PDBFile]) -> str:
     """Finds the force-field information (all-atom or martini) from the topology 
-    associated to the first model. Used in caprieval and rmsdfilter.
+    associated to the first model. Used in caprieval and caprifilter.
 
     The assumption is that the force-fields will be identical between models.
     

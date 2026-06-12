@@ -541,9 +541,6 @@ def handle_input_reference(reference: Path) -> list[Path]:
     reference or first_model_path : Path
         Path to the reference structure to be used downstream.
     """
-    if reference.stat().st_size == 0:
-        raise ValueError(f"Reference file is empty: {reference}")
-
     # Extremly complicated stuff to manage the gathering of the sys.stdout,
     # as the pdb_tools.pdb_wc is basically writing on it.
     import sys
@@ -565,10 +562,17 @@ def handle_input_reference(reference: Path) -> list[Path]:
     # Parse output
     # using here `\n` (and not os.linesep) as it is the output for pdb_wc
     nb_models = 1  # pdb_wc treats a file without MODEL records as a single model
+    nb_atoms = 0
     for line in wc_return.split("\n"):
         if "No. models" in line:
             nb_models = int(line.strip().split()[-1])
-            break
+        if "No. atoms" in line:
+            nb_atoms = int(line.strip().split()[-1])
+    if nb_atoms == 0:
+        raise ValueError(
+            f"No atoms found in reference file: {reference}. "
+            "Please check that it is a valid PDB file containing ATOM/HETATM records."
+        )
     # Return reference as only one structure present
     if nb_models == 1:
         return [reference]

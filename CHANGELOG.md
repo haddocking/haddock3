@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-06-11: Cosmetic fix in support of custom symmetry restraints - Issue #1563
 - 2026-06-07: Avoid potential double cyclic bonds in ACE-CYS cyclisation - Issue #1564
 - 2026-06-04: Added support for glucosamine (GCS) - Issue $1559
 - 2026-05-02: Fixed autoflex issue with solvent - Issue #1551

@@ -40,10 +40,12 @@ def _(mo):
     4. **`caprieval`** — per-model and per-cluster HADDOCK statistics
     5. **`contactmap`** — contact-map chord chart and heatmap for the top models
 
-    > **Note:** this notebook supports standard protein, DNA/RNA, and ion inputs only.
+    > **Note:** This notebook supports standard protein, DNA/RNA, and ion inputs only.
     > Small-molecule ligands requiring custom topology/parameter files are **not** supported.
     > Meaningful clustering requires at least a few models; a single uploaded file will
     > produce one unclustered model.
+
+    > **Dislaimer:** This notebook was generated with help of AI.
 
     """)
     return

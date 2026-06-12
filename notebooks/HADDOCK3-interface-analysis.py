@@ -40,9 +40,11 @@ def _(mo):
     3. **`contactmap`** — computes residue–residue contacts and generates figures
     4. **`alascan`** *(optional)* — alanine scanning of interface residues
 
-    > **Note:** this notebook supports standard protein, DNA/RNA, and ion
+    > **Note:** This notebook supports standard protein, DNA/RNA, and ion
     > inputs only. Small-molecule ligands requiring custom topology and
     > parameter files are **not** supported.
+
+    > **Dislaimer:** This notebook was generated with help of AI.
 
     """)
     return

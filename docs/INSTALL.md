@@ -1,6 +1,6 @@
 # Installation
 
-Create a virtual environment with Python3.9+
+Create a virtual environment with Python3.10+
 
 You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
@@ -15,7 +15,7 @@ source .venv/bin/activate
 ## with `conda`
 
 ```bash
-conda create -n haddock3 python=3.9
+conda create -n haddock3 python=3.10
 conda activate haddock3
 ```
 
@@ -30,6 +30,12 @@ pip install 'haddock3[mpi]'
 ```
 
 > Instruction on how to use MPI with haddock3 are found in the [tutorials](https://www.bonvinlab.org/haddock3/tutorials/mpi.html)
+
+## (Optional) Install notebooks dependencies
+
+```bash
+pip install 'haddock3[notebooks]'
+```
 
 ## Troubleshooting the CNS executable
 

@@ -71,9 +71,15 @@ docs = [
   "mock>=5.1.0",
   "myst-parser>=3.0.1",
 ]
-mpi = ["mpi4py>=4.0.2"]
+mpi = [
+  "mpi4py>=4.0.2",
+]
 
-notebooks = ["py3Dmol>=2.5.2"]
+notebooks = [
+   "py3Dmol>=2.5.2",
+   "marimo>=0.23.9",
+   "jupyter",
+]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

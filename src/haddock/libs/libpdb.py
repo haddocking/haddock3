@@ -548,7 +548,7 @@ def handle_input_reference(reference: Path) -> list[Path]:
         has_atoms = any(line.startswith(("ATOM", "HETATM")) for line in fh)
     if not has_atoms:
         raise ValueError(
-            f"No atoms found in reference file: {reference}. "
+            f"No atoms found in reference file! "
             "Please check that it is a valid PDB file containing ATOM/HETATM records."
         )
 

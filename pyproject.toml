@@ -77,7 +77,7 @@ mpi = [
 
 notebooks = [
    "py3Dmol>=2.5.2",
-   "marimo>=0.23.9",
+   "marimo>=0.17.6",
    "jupyter",
 ]
 

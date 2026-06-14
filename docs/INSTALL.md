@@ -53,14 +53,14 @@ Home-page:
 Author:
 Author-email: BonvinLab <bonvinlab.support@uu.nl>
 License: Apache License 2.0
-Location: /home/testuser/.venv/lib/python3.9/site-packages
+Location: /home/testuser/.venv/lib/python3.10/site-packages
 ...
 ```
 
 2. Copy your CNS executable to the haddock3 installation:
 
 ```bash
-> cp <my-cns-binary> /home/testuser/.venv/lib/python3.9/site-packages/haddock/bin/cns
+> cp <my-cns-binary> /home/testuser/.venv/lib/python3.10/site-packages/haddock/bin/cns
 ```
 
 ## (Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service
@@ -93,7 +93,7 @@ The use of the openmm module requires the installation of both OpenMM and pdbfix
 
 ### In venv
 
-The venv installation instruction uses `pip` and requires a python version >=3.10 (not functional with python3.9).
+The venv installation instruction uses `pip` and requires a python version >=3.10.
 
 ```bash
 # Create a new virtual env
@@ -109,12 +109,12 @@ pip install https://github.com/openmm/pdbfixer/archive/refs/tags/v1.10.tar.gz
 
 ### In conda
 
-The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.9 and 3.13.
+The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.10 and 3.13.
 
 ```bash
-conda create -n hd3-p39-openmm python=3.9
+conda create -n hd3-p310-openmm python=3.10
 # Activate the haddock3 env
-conda activate hd3-p39-openmm
+conda activate hd3-p310-openmm
 # Install haddock3
 pip install haddock3
 # libstdxx must be installed, maybe already present in your system

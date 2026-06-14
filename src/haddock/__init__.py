@@ -42,6 +42,6 @@ class EmptyPath:
 # version
 version = package_version("haddock3")
 
-v_major, v_minor, v_patch = version.split('.')
+v_major, v_minor, v_patch = version.split('.')[:3]
 
 contact_us = 'https://github.com/haddocking/haddock3/issues'

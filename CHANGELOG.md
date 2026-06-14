@@ -1,5 +1,8 @@
 # Changelog
 
+- 2026-06-11: Cosmetic fix in support of custom symmetry restraints - Issue #1563
+- 2026-06-07: Avoid potential double cyclic bonds in ACE-CYS cyclisation - Issue #1564
+- 2026-06-04: Added support for glucosamine (GCS) - Issue $1559
 - 2026-05-02: Fixed autoflex issue with solvent - Issue #1551
 - 2026-05-01: Allows for CG-based scoring workflows - Issues #1546, #1547, #1548
 - 2026-04-30: Fixes ligand ensemble topo/param files - Issue #1540

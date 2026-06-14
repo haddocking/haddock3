@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "haddock3"
-version = "2026.5.0"
+version = "2026.5.0.dev0"
 description = "HADDOCK3"
 readme = "README.md"
 authors = [{ name = "BonvinLab", email = "bonvinlab.support@uu.nl" }]
@@ -70,15 +70,9 @@ docs = [
   "mock>=5.1.0",
   "myst-parser>=3.0.1",
 ]
-mpi = [
-  "mpi4py>=4.0.2",
-]
+mpi = ["mpi4py>=4.0.2"]
 
-notebooks = [
-   "py3Dmol>=2.5.2",
-   "marimo>=0.17.6",
-   "jupyter",
-]
+notebooks = ["py3Dmol>=2.5.2", "marimo>=0.17.6", "jupyter"]
 
 [project.urls]
 Homepage = "https://github.com/haddocking/haddock3"

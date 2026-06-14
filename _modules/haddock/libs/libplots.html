@@ -971,6 +971,7 @@
     <span class="n">other_structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">max_clusters</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="c1"># drop other clusters from structs_df</span>
     <span class="n">structs_df</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_clusters</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
     <span class="n">other_structs_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;cluster_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Other&#39;</span>
     <span class="n">other_structs_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;cluster_ranking&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_clusters</span>
     <span class="n">inner_rank</span> <span class="o">=</span> <span class="n">other_structs_df</span><span class="p">[</span><span class="s1">&#39;caprieval_rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># noqa : E501</span>
@@ -1796,7 +1797,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 12, 2026.
+      <span class="lastupdated">Last updated on Jun 14, 2026.
       </span></p>
   </div>
 

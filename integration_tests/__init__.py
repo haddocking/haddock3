@@ -40,9 +40,7 @@ try:
 except ImportError:
     GDOCK_ENABLED = False
 
-has_gdock = pytest.mark.skipif(
-    not GDOCK_ENABLED, reason="gdock dependency not found"
-)
+has_gdock = pytest.mark.skipif(not GDOCK_ENABLED, reason="gdock dependency not found")
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 is_linux_x86_64 = pytest.mark.skipif(
     platform.system().lower() != "linux" or platform.machine().lower() != "x86_64",

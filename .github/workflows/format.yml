@@ -20,8 +20,10 @@ jobs:
         with:
           python-version: "3.14"
 
+      - uses: astral-sh/setup-uv@v3
+
       - name: install haddock3 with dev dependencies
-        run: pip install -e '.[dev]'
+        run: uv pip install --system -e '.[dev]'
 
       - name: get changed python files
         id: changed-files

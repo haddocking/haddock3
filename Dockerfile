@@ -1,5 +1,5 @@
 #==============================================================================================
-FROM python:3.14-slim
+FROM python:3.14
 
 # uv is used to speed up dependency resolution and installation
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/

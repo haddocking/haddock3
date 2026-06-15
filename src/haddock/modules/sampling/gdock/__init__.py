@@ -96,7 +96,7 @@ class HaddockModule(BaseHaddockModule):
             )
             gdock_wrapper.run()
             poses = gdock_wrapper.save_poses(
-                self.path, sampling_factor, prefix=f"gdock_{idx}"
+                ".", sampling_factor, prefix=f"gdock_{idx}"
             )
 
             for pose in poses:

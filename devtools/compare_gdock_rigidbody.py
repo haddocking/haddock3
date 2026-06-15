@@ -135,12 +135,23 @@ def run_cfg(folder, cfg, ncores):
     tmp_cfg = folder / f".tmp_{cfg}"
     tmp_cfg.write_text(text)
 
+    log_file = run_dir / "log"
     print(
-        f">>> [{folder.name}] running {cfg} (run_dir={run_dir.name}, ncores={ncores})"
+        f">>> [{folder.name}] running {cfg} (run_dir={run_dir.name}, ncores={ncores}, "
+        f"log={log_file.relative_to(folder)})"
     )
     shutil.rmtree(run_dir, ignore_errors=True)
     try:
-        subprocess.run(["haddock3", tmp_cfg.name], cwd=folder, check=True)
+        subprocess.run(
+            ["haddock3", tmp_cfg.name],
+            cwd=folder,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+        )
+    except subprocess.CalledProcessError:
+        print(f"!!! {cfg} failed, see {log_file}")
+        raise
     finally:
         tmp_cfg.unlink()
 

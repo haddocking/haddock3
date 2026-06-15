@@ -1,0 +1,45 @@
+# ====================================================================
+# Nanobody-antigen ensemble docking example
+# with mutagenesis-mapped epitope definition
+# NOTE: Sampling is performed with gdock instead of rigidbody
+run_dir = "run1-CDR-mutagenesis-gdock"
+ncores = 16
+molecules = ["data/7tgfB-nb_ens.pdb", "data/7y07_l_u.pdb"]
+# ====================================================================
+[topoaa]
+
+[gdock]
+ambig_fname = "data/7tgfB_twohit_ambig.tbl"
+sampling = 1000
+
+[caprieval]
+reference_fname = "data/7tgfB_ref.pdb"
+
+[seletop]
+select = 200
+
+[caprieval.1]
+reference_fname = "data/7tgfB_ref.pdb"
+
+[flexref]
+tolerance = 10
+ambig_fname = "data/7tgfB_twohit_ambig.tbl"
+
+[caprieval.2]
+reference_fname = "data/7tgfB_ref.pdb"
+
+[emref]
+ambig_fname = "data/7tgfB_twohit_ambig.tbl"
+
+[caprieval.3]
+reference_fname = "data/7tgfB_ref.pdb"
+
+[clustfcc]
+
+[seletopclusts]
+top_models = 4
+
+[caprieval.4]
+reference_fname = "data/7tgfB_ref.pdb"
+
+# ====================================================================

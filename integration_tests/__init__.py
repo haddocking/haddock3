@@ -32,6 +32,17 @@ except ImportError:
     MPI_ENABLED = False
 
 has_mpi = pytest.mark.skipif(not MPI_ENABLED, reason="MPI is not enabled")
+
+try:
+    import gdock  # noqa: F401
+
+    GDOCK_ENABLED = True
+except ImportError:
+    GDOCK_ENABLED = False
+
+has_gdock = pytest.mark.skipif(
+    not GDOCK_ENABLED, reason="gdock dependency not found"
+)
 has_grid = pytest.mark.skipif(not ping_dirac(), reason="Dirac not reachable")
 is_linux_x86_64 = pytest.mark.skipif(
     platform.system().lower() != "linux" or platform.machine().lower() != "x86_64",

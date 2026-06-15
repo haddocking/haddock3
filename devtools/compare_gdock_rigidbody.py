@@ -5,7 +5,12 @@ results.
 USAGE:
 
     $ python devtools/compare_gdock_rigidbody.py --list
-    $ python devtools/compare_gdock_rigidbody.py [-p PAIR ...] [--compare-only] [--ncores N]
+    $ python devtools/compare_gdock_rigidbody.py [-p NAME ...] [--compare-only] [--ncores N]
+
+Where NAME is one of the pair names shown by `--list` (e.g. "CDR-NMR-CSP").
+Use `-p` multiple times to select more than one pair, e.g.:
+
+    $ python devtools/compare_gdock_rigidbody.py -p CDR-NMR-CSP -p protein-protein
 
 With no `-p` given, all pairs are processed.
 

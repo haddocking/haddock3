@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from haddock.libs import libpdb
 from haddock.libs.libontology import PDBFile
 from haddock.modules.sampling.gdock import DEFAULT_CONFIG as GDOCK_CONF
 from haddock.modules.sampling.gdock import HaddockModule as GdockModule
@@ -21,7 +22,15 @@ class MockPreviousIO:
         src = GOLDEN_DATA / "protprot_complex_1.pdb"
         dst = Path(self.path, src.name)
         shutil.copy(src, dst)
-        return [PDBFile(file_name=dst.name, path=self.path)]
+        chain_pdbs = [Path(m).resolve() for m in libpdb.split_by_chain(dst)]
+        receptor = next(m for m in chain_pdbs if m.stem.endswith("_A"))
+        ligand = next(m for m in chain_pdbs if m.stem.endswith("_B"))
+        return [
+            (
+                PDBFile(file_name=receptor.name, path=self.path),
+                PDBFile(file_name=ligand.name, path=self.path),
+            )
+        ]
 
 
 @pytest.fixture

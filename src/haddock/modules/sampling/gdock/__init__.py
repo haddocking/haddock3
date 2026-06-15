@@ -1,4 +1,5 @@
 """gdock integration sampling module."""
+
 from pathlib import Path
 
 from haddock import log
@@ -80,13 +81,14 @@ class HaddockModule(BaseHaddockModule):
 
         sampling_factor = max(1, self.params["sampling"] // len(models_to_dock))
 
+        log.info(f"ncores={self.params['ncores']} sampling={self.params['sampling']}")
+
         expected: list[PDBFile] = []
         for idx, combination in enumerate(models_to_dock, start=1):
             receptor, ligand = self._identify_receptor_ligand(
                 combination, rec_chain, lig_chain
             )
 
-            log.info("Running gdock")
             gdock_wrapper = GdockWrapper(
                 receptor_pdb_file=Path(receptor.path, receptor.file_name),
                 ligand_pdb_file=Path(ligand.path, ligand.file_name),

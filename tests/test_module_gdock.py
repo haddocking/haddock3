@@ -29,13 +29,27 @@ def test_parse_restraints_receptor_to_ligand():
     assert pairs == [(933, 6), (933, 8)]
 
 
+def test_parse_restraints_resid_keyword():
+    """The `resid` keyword (used by HADDOCK AIR files) is also supported."""
+    tbl_content = (
+        "assign (resid 933 and segid A)\n"
+        "(\n"
+        "       (resid 6 and segid B)\n"
+        ") 2.0 2.0 0.0\n"
+    )
+    with tempfile.NamedTemporaryFile("w", suffix=".tbl", delete=False) as tbl_file:
+        tbl_file.write(tbl_content)
+        tbl_path = tbl_file.name
+
+    pairs = parse_restraints(tbl_path, receptor_chain="A", ligand_chain="B")
+
+    assert pairs == [(933, 6)]
+
+
 def test_parse_restraints_ligand_to_receptor():
     """Anchor residue in the ligand chain, partner in the receptor chain."""
     tbl_content = (
-        "assign (resi 6 and segid B)\n"
-        "(\n"
-        "       (resi 933 and segid A)\n"
-        ") 2.0 2.0 0.0\n"
+        "assign (resi 6 and segid B)\n(\n       (resi 933 and segid A)\n) 2.0 2.0 0.0\n"
     )
     with tempfile.NamedTemporaryFile("w", suffix=".tbl", delete=False) as tbl_file:
         tbl_file.write(tbl_content)
@@ -49,10 +63,7 @@ def test_parse_restraints_ligand_to_receptor():
 def test_parse_restraints_unrelated_chains_skipped():
     """Restraints that do not span receptor/ligand chains are ignored."""
     tbl_content = (
-        "assign (resi 1 and segid A)\n"
-        "(\n"
-        "       (resi 2 and segid A)\n"
-        ") 2.0 2.0 0.0\n"
+        "assign (resi 1 and segid A)\n(\n       (resi 2 and segid A)\n) 2.0 2.0 0.0\n"
     )
     with tempfile.NamedTemporaryFile("w", suffix=".tbl", delete=False) as tbl_file:
         tbl_file.write(tbl_content)

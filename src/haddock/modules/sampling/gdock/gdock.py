@@ -1,14 +1,18 @@
 """Wrapper around the `gdock` package."""
+
 import re
 from pathlib import Path
+
+from pdbtools.pdb_chainxseg import run as chain_to_seg
+from pdbtools.pdb_reatom import run as renumber_atoms
 
 from haddock.core.typing import FilePath, Optional
 from haddock.libs.librestraints import extract_restraint_entries
 
 
 _SELECTION_RE = re.compile(
-    r"\(\s*(?:resi\s+(\d+)\s+and\s+segid\s+(\w+)"
-    r"|segid\s+(\w+)\s+and\s+resi\s+(\d+))\s*\)",
+    r"\(\s*(?:resid?\s+(\d+)\s+and\s+segid\s+(\w+)"
+    r"|segid\s+(\w+)\s+and\s+resid?\s+(\d+))\s*\)",
     re.IGNORECASE,
 )
 
@@ -128,13 +132,30 @@ class GdockWrapper:
         if self.result is None:
             raise RuntimeError("`run` must be called before `save_poses`")
 
-        receptor_pdb = self.receptor_pdb_file.read_text()
+        # Drop the receptor's trailing END record: it would otherwise
+        # terminate CNS's coordinate reading before the ligand atoms below it.
+        receptor_lines = [
+            line
+            for line in self.receptor_pdb_file.read_text().splitlines(keepends=True)
+            if line.strip() != "END"
+        ]
+        receptor_pdb = "".join(receptor_lines)
         poses = sorted(self.result["poses"], key=lambda p: p["rank"])[:top]
 
         saved = []
         for pose in poses:
             file_name = f"{prefix}_{pose['rank']}.pdb"
-            complex_pdb = receptor_pdb + pose["pdb"]
+            # gdock's output PDB for the ligand pose lacks the segID column
+            # (cols 73-76), which CNS relies on to map atoms to the PSF. Fill
+            # it in from the chain ID column before assembling the complex.
+            ligand_pdb = "".join(chain_to_seg(pose["pdb"].splitlines(keepends=True)))
+            complex_pdb = receptor_pdb + ligand_pdb
+            # gdock numbers the ligand pose atoms starting from 1, which
+            # collides with the receptor's atom serials and confuses CNS's
+            # PDB reader (it expects strictly increasing serial numbers).
+            complex_pdb = "".join(
+                renumber_atoms(complex_pdb.splitlines(keepends=True), 1)
+            )
             Path(output_dir, file_name).write_text(complex_pdb)
             saved.append(
                 {

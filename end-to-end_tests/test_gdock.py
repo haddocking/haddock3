@@ -1,4 +1,4 @@
-"""End-to-end test for the topoaa -> gdock interaction."""
+"""End-to-end test for the gdock implementation."""
 
 import gzip
 import shutil
@@ -44,6 +44,9 @@ ambig_fname = "data/e2a-hpr_air.tbl"
 max_generations = 2
 sampling = 1
 seed = 1
+
+[flexref]
+ambig_fname = "data/e2a-hpr_air.tbl"
 """
 
 
@@ -65,11 +68,12 @@ def _write_single_model(src: Path, dst: Path) -> None:
     dst.write_text("".join(lines))
 
 
-def test_topoaa_gdock(monkeypatch):
-    """Test the topoaa -> gdock interaction.
+def test_topoaa_gdock_flexref(monkeypatch):
+    """Test the topoaa -> gdock -> flexref interaction.
 
-    Uses a minimal config (topoaa, gdock) to verify that gdock correctly
-    receives the receptor/ligand combinations produced by topoaa.
+    Verifies that the complex PDB produced by gdock is correctly passed on
+    to flexref (i.e. flexref can read its coordinates/topology and produce a
+    refined model).
     """
     warnings.simplefilter("ignore", PDBConstructionWarning)
 
@@ -80,7 +84,7 @@ def test_topoaa_gdock(monkeypatch):
             Path(tmpdir, "data", "hpr_ensemble_1.pdb"),
         )
 
-        cfg = Path(tmpdir, "docking-protein-protein-gdock-test.cfg")
+        cfg = Path(tmpdir, "docking-protein-protein-gdock-flexref-test.cfg")
         cfg.write_text(CFG_CONTENT)
 
         monkeypatch.chdir(tmpdir)
@@ -90,10 +94,11 @@ def test_topoaa_gdock(monkeypatch):
 
         assert Path(run_dir, "0_topoaa").exists(), "0_topoaa not created"
         assert Path(run_dir, "1_gdock").exists(), "1_gdock not created"
+        assert Path(run_dir, "2_flexref").exists(), "2_flexref not created"
 
-        gdock_pdb = Path(run_dir, "1_gdock", "gdock_1_1.pdb.gz")
-        assert gdock_pdb.exists(), "gdock_1_1.pdb.gz not created"
+        flexref_pdb = Path(run_dir, "2_flexref", "flexref_1.pdb.gz")
+        assert flexref_pdb.exists(), "flexref_1.pdb.gz not created"
 
-        with gzip.open(gdock_pdb, "rt") as f:
+        with gzip.open(flexref_pdb, "rt") as f:
             chains = {line[21] for line in f if line.startswith(("ATOM", "HETATM"))}
         assert chains == {"A", "B"}, f"Expected chains A and B, got {chains}"

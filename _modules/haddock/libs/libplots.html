@@ -1045,6 +1045,10 @@
             <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
                 <span class="n">to_replace</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;(\.pdb)$&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;.pdb.gz&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
+        <span class="c1"># ss_file is in NN_caprieval/ while report is in</span>
+        <span class="c1"># analysis/NN_caprieval_analysis/</span>
+        <span class="c1"># need to correct model paths by prepending ../</span>
+        <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;../&quot;</span> <span class="o">+</span> <span class="n">structs_df</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># ss_file is in NN_caprieval/ while report is in</span>
         <span class="c1"># analysis/NN_caprieval_analysis/</span>

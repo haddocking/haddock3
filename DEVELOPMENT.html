@@ -114,6 +114,17 @@ pytest<span class="w"> </span>end-to-end_tests/
 </pre></div>
 </div>
 </section>
+<section id="code-formatting">
+<h2>Code Formatting<a class="headerlink" href="#code-formatting" title="Link to this heading"></a></h2>
+<p>HADDOCK3 uses <a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a> to format Python code
+(included in the <code class="docutils literal notranslate"><span class="pre">dev</span></code> extra). Before submitting a pull request, format any
+files you changed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>format<span class="w"> </span>&lt;path/to/changed_file.py&gt;
+</pre></div>
+</div>
+<p>CI checks the formatting of changed files on every pull request and will
+fail if <code class="docutils literal notranslate"><span class="pre">ruff</span> <span class="pre">format</span> <span class="pre">--check</span></code> reports differences.</p>
+</section>
 <section id="cns-executable-troubleshooting">
 <h2>CNS Executable Troubleshooting<a class="headerlink" href="#cns-executable-troubleshooting" title="Link to this heading"></a></h2>
 <p>If you encounter CNS related errors please refer to <a class="reference internal" href="#docs/CNS.md"><span class="xref myst">CNS.md</span></a></p>

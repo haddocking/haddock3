@@ -14,9 +14,9 @@ Use `-p` multiple times to select more than one pair, e.g.:
 
 With no `-p` given, all pairs are processed.
 
-Both configs in a pair are run with `mode = "local"` and `ncores = N`
-(default 8), regardless of what is set in the original config files, so
-that the comparison is run under identical conditions.
+Both configs in a pair are run with `mode = "local"`, `ncores = N`
+(default 8) and `debug = false`, regardless of what is set in the original
+config files, so that the comparison is run under identical conditions.
 
 Requires the haddock3 python environment to be active.
 """
@@ -98,26 +98,27 @@ def run_dir_of(cfg_path):
     return match.group(1)
 
 
-def set_mode_and_ncores(text, ncores):
-    """Force `mode = "local"` and `ncores = <ncores>` in a config's text."""
-    if re.search(r"^\s*mode\s*=", text, re.MULTILINE):
+def _set_key(text, key, value):
+    """Set/override a top-level `key = value` line in a config's text."""
+    if re.search(rf"^\s*{key}\s*=", text, re.MULTILINE):
         text = re.sub(
-            r"^\s*mode\s*=.*$", 'mode = "local"', text, count=1, flags=re.MULTILINE
+            rf"^\s*{key}\s*=.*$", f"{key} = {value}", text, count=1, flags=re.MULTILINE
         )
     else:
-        text = f'mode = "local"\n{text}'
+        text = f"{key} = {value}\n{text}"
 
-    if re.search(r"^\s*ncores\s*=", text, re.MULTILINE):
-        text = re.sub(
-            r"^\s*ncores\s*=.*$",
-            f"ncores = {ncores}",
-            text,
-            count=1,
-            flags=re.MULTILINE,
-        )
-    else:
-        text = f"ncores = {ncores}\n{text}"
+    return text
 
+
+def normalize_config(text, ncores):
+    """Force `mode = "local"`, `ncores = <ncores>` and `debug = false`.
+
+    `debug = true` makes haddock3 dump a lot of extra intermediate files,
+    which would make the rigidbody/gdock comparison unfair (and slower).
+    """
+    text = _set_key(text, "mode", '"local"')
+    text = _set_key(text, "ncores", ncores)
+    text = _set_key(text, "debug", "false")
     return text
 
 
@@ -131,7 +132,7 @@ def run_cfg(folder, cfg, ncores):
     cfg_path = folder / cfg
     run_dir = folder / run_dir_of(cfg_path)
 
-    text = set_mode_and_ncores(cfg_path.read_text(), ncores)
+    text = normalize_config(cfg_path.read_text(), ncores)
     tmp_cfg = folder / f".tmp_{cfg}"
     tmp_cfg.write_text(text)
 

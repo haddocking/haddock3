@@ -1,5 +1,4 @@
 """gdock integration sampling module."""
-import shutil
 from pathlib import Path
 
 from haddock import log
@@ -43,45 +42,35 @@ class HaddockModule(BaseHaddockModule):
                 " available, please check the installation instructions"
             )
 
+    def _identify_receptor_ligand(
+        self, combination: tuple[PDBFile, ...], rec_chain: str, lig_chain: str
+    ) -> tuple[PDBFile, PDBFile]:
+        """Identify the receptor and ligand PDBFile in a model combination."""
+        by_chain: dict[str, PDBFile] = {}
+        for pdb in combination:
+            _, chains = libpdb.identify_chainseg(Path(pdb.path, pdb.file_name))
+            for chain in chains:
+                by_chain.setdefault(chain, pdb)
+
+        receptor = by_chain.get(rec_chain)
+        ligand = by_chain.get(lig_chain)
+        if receptor is None or ligand is None:
+            self.finish_with_error(
+                f"Could not find receptor chain '{rec_chain}' and ligand"
+                f" chain '{lig_chain}' among the input models"
+                f" {[c.file_name for c in combination]}"
+            )
+
+        return receptor, ligand  # type: ignore
+
     def _run(self) -> None:
         """Execute module."""
-        models = self.previous_io.retrieve_models()
-
-        if len(models) > 1:
-            self.finish_with_error("Only one model allowed in gdock sampling module")
-
-        model = models[0]
-
-        # Make sure chain IDs are present, copy a local working copy
-        _path = Path(model.path, model.file_name)
-        segids, chains = libpdb.identify_chainseg(_path)
-        if set(segids) != set(chains):
-            log.info("No chain IDs found, using segid information")
-            libpdb.swap_segid_chain(
-                Path(model.path, model.file_name),
-                Path(self.path, model.file_name),
-            )
-        elif Path(model.path, model.file_name).resolve() != Path(
-            self.path, model.file_name
-        ).resolve():
-            shutil.copyfile(
-                Path(model.path, model.file_name),
-                Path(self.path, model.file_name),
-            )
-
-        model_with_chains = self.path / model.file_name
-
-        # Split the complex into receptor and ligand structures
-        new_models = libpdb.split_by_chain(model_with_chains)
-        if model_with_chains in new_models:
-            self.finish_with_error(
-                f"Input {model_with_chains} cannot be split by chain"
-            )
+        # Each combination is a tuple with one PDBFile per input molecule,
+        #  e.g. (receptor, ligand), as produced by `topoaa`.
+        models_to_dock = self.previous_io.retrieve_models()
 
         rec_chain = self.params["receptor_chains"][0]
         lig_chain = self.params["ligand_chains"][0]
-        receptor_pdb_file = self.path / f"{Path(model.file_name).stem}_{rec_chain}.pdb"
-        ligand_pdb_file = self.path / f"{Path(model.file_name).stem}_{lig_chain}.pdb"
 
         # Convert restraints, if provided, to gdock's residue pair format
         restraints = None
@@ -89,33 +78,42 @@ class HaddockModule(BaseHaddockModule):
         if ambig_fname:
             restraints = parse_restraints(ambig_fname, rec_chain, lig_chain)
 
-        log.info("Running gdock")
-        gdock_wrapper = GdockWrapper(
-            receptor_pdb_file=receptor_pdb_file,
-            ligand_pdb_file=ligand_pdb_file,
-            restraints=restraints,
-            max_generations=self.params["max_generations"],
-            seed=self.params["seed"],
-        )
-        gdock_wrapper.run()
-        poses = gdock_wrapper.save_poses(self.path, self.params["sampling"])
+        sampling_factor = max(1, self.params["sampling"] // len(models_to_dock))
 
         expected: list[PDBFile] = []
-        for pose in poses:
-            expected.append(
-                PDBFile(
-                    pose["file_name"],
-                    topology=model.topology,
-                    path=self.path,
-                    score=pose["fitness"],
-                    unw_energies={
-                        "vdw": pose["vdw"],
-                        "elec": pose["elec"],
-                        "desolv": pose["desolv"],
-                        "air": pose["air"],
-                    },
-                )
+        for idx, combination in enumerate(models_to_dock, start=1):
+            receptor, ligand = self._identify_receptor_ligand(
+                combination, rec_chain, lig_chain
             )
+
+            log.info("Running gdock")
+            gdock_wrapper = GdockWrapper(
+                receptor_pdb_file=Path(receptor.path, receptor.file_name),
+                ligand_pdb_file=Path(ligand.path, ligand.file_name),
+                restraints=restraints,
+                max_generations=self.params["max_generations"],
+                seed=self.params["seed"],
+            )
+            gdock_wrapper.run()
+            poses = gdock_wrapper.save_poses(
+                self.path, sampling_factor, prefix=f"gdock_{idx}"
+            )
+
+            for pose in poses:
+                expected.append(
+                    PDBFile(
+                        pose["file_name"],
+                        topology=[receptor.topology, ligand.topology],
+                        path=self.path,
+                        score=pose["fitness"],
+                        unw_energies={
+                            "vdw": pose["vdw"],
+                            "elec": pose["elec"],
+                            "desolv": pose["desolv"],
+                            "air": pose["air"],
+                        },
+                    )
+                )
 
         self.output_models = expected
         self.export_io_models()

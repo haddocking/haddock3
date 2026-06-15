@@ -110,7 +110,9 @@ class GdockWrapper:
             seed=self.seed,
         )
 
-    def save_poses(self, output_dir: FilePath, top: int) -> list[dict]:
+    def save_poses(
+        self, output_dir: FilePath, top: int, prefix: str = "gdock"
+    ) -> list[dict]:
         """Write the top-ranked poses as receptor+ligand complex PDB files.
 
         gdock only returns the transformed ligand structure for each pose,
@@ -131,7 +133,7 @@ class GdockWrapper:
 
         saved = []
         for pose in poses:
-            file_name = f"gdock_{pose['rank']}.pdb"
+            file_name = f"{prefix}_{pose['rank']}.pdb"
             complex_pdb = receptor_pdb + pose["pdb"]
             Path(output_dir, file_name).write_text(complex_pdb)
             saved.append(

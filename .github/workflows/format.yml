@@ -1,0 +1,35 @@
+---
+name: format
+
+on:
+  pull_request:
+  workflow_dispatch: ~
+
+jobs:
+  ruff-format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: install haddock3 with dev dependencies
+        run: pip install -e '.[dev]'
+
+      - name: get changed python files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **/*.py
+
+      - name: check formatting on changed files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: ruff format --check --diff ${{ steps.changed-files.outputs.all_changed_files }}

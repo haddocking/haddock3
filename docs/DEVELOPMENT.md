@@ -37,11 +37,11 @@ pytest end-to-end_tests/
 
 ## Code Formatting
 
-HADDOCK3 uses [ruff](https://docs.astral.sh/ruff/) to format Python code.
-Before submitting a pull request, format any files you changed:
+HADDOCK3 uses [ruff](https://docs.astral.sh/ruff/) to format Python code
+(included in the `dev` extra). Before submitting a pull request, format any
+files you changed:
 
 ```bash
-pip install ruff
 ruff format <path/to/changed_file.py>
 ```
 

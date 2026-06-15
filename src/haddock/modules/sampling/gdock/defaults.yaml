@@ -1,0 +1,69 @@
+receptor_chains:
+  default: A
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: Receptor chain ID
+  short: Chain ID of the receptor molecule.
+  long: Chain ID of the receptor molecule, used to split the input complex
+    before docking with gdock.
+  group: 'restraints'
+  explevel: easy
+ligand_chains:
+  default: B
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: Ligand chain ID
+  short: Chain ID of the ligand molecule.
+  long: Chain ID of the ligand molecule, used to split the input complex
+    before docking with gdock.
+  group: 'restraints'
+  explevel: easy
+#
+# Group distance restraints
+#
+ambig_fname:
+  default: ''
+  type: file
+  title: Ambiguous distance restraints filename
+  short: Filename of the ambiguous distance restraints file
+  long: Filename of the ambiguous distance restraints file. Restraints
+    between the receptor and ligand chains are converted to residue pairs
+    and used by gdock to bias the genetic algorithm search.
+  group: 'distance restraints'
+  explevel: easy
+#
+# Group sampling
+#
+max_generations:
+  default: 250
+  type: integer
+  min: 1
+  max: 100000
+  title: Maximum number of generations
+  short: Maximum number of genetic algorithm generations.
+  long: Maximum number of genetic algorithm generations run by gdock.
+  group: 'sampling'
+  explevel: easy
+seed:
+  default: 42
+  type: integer
+  min: 0
+  max: 999999999
+  title: Random seed
+  short: Random seed used by gdock's genetic algorithm.
+  long: Random seed used by gdock's genetic algorithm, for reproducibility.
+  group: 'sampling'
+  explevel: easy
+sampling:
+  default: 10
+  type: integer
+  min: 1
+  max: 50000
+  title: Number of models to generate
+  short: Number of top-ranked gdock poses to output as models.
+  long: Number of top-ranked gdock poses to output as models. If gdock
+    returns fewer poses than this value, only those are used.
+  group: 'sampling'
+  explevel: easy

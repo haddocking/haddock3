@@ -1,4 +1,5 @@
 """HADDOCK3 library."""
+
 import logging
 import sys
 from pathlib import Path
@@ -8,8 +9,9 @@ log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(logging.Formatter(
-    "[%(asctime)s %(module)s %(levelname)s] %(message)s"))
+handler.setFormatter(
+    logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s")
+)
 log.addHandler(handler)
 
 haddock3_source_path = Path(__file__).resolve().parent
@@ -18,8 +20,8 @@ core_path = Path(haddock3_source_path, "core")
 toppar_path = Path(haddock3_source_path, "cns", "toppar")
 modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 
-FCC_path = Path(haddock3_source_path.parent, 'fcc')
-RMSD_path = Path(haddock3_source_path.parent, 'fast-rmsdmatrix')
+FCC_path = Path(haddock3_source_path.parent, "fcc")
+RMSD_path = Path(haddock3_source_path.parent, "fast-rmsdmatrix")
 
 config_expert_levels = ("easy", "expert", "guru")
 # yaml parameters with this `explevel` should be ignored when reading the yaml
@@ -42,6 +44,6 @@ class EmptyPath:
 # version
 version = package_version("haddock3")
 
-v_major, v_minor, v_patch = version.split('.')
+v_major, v_minor, v_patch = version.split(".")[:3]
 
-contact_us = 'https://github.com/haddocking/haddock3/issues'
+contact_us = "https://github.com/haddocking/haddock3/issues"

@@ -11,6 +11,7 @@ on:
       - docs/*
       - pyproject.toml
       - setup.py
+      - Dockerfile
   pull_request:
   workflow_dispatch: ~
   schedule:
@@ -119,3 +120,20 @@ jobs:
       - name: run integration tests
         run: >-
           pytest -v --random-order integration_tests/
+
+  # Verify the Docker image still builds successfully (image is not pushed)
+  docker-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: build docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false

@@ -41,6 +41,8 @@ src/haddock/
 - **Naming**: Use descriptive variable names
 - **Comments**: Explain *why* not *how*
 - **Documentation**: Update docstrings and markdown files
+- **Formatting**: Code is formatted with [ruff](https://docs.astral.sh/ruff/)
+  (`ruff format`); CI checks formatting of changed files on every pull request
 
 ### Testing Requirements
 

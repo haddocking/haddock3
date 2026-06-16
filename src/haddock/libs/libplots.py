@@ -920,6 +920,10 @@ def clt_table_handler(
             structs_df['model'] = structs_df['model'].replace(
                 to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True,
             )
+        # ss_file is in NN_caprieval/ while report is in
+        # analysis/NN_caprieval_analysis/
+        # need to correct model paths by prepending ../
+        structs_df['model'] = "../" + structs_df['model']
     else:
         # ss_file is in NN_caprieval/ while report is in
         # analysis/NN_caprieval_analysis/

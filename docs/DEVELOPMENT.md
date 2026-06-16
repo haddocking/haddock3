@@ -35,6 +35,19 @@ pytest integration_tests/
 pytest end-to-end_tests/
 ```
 
+## Code Formatting
+
+HADDOCK3 uses [ruff](https://docs.astral.sh/ruff/) to format Python code
+(included in the `dev` extra). Before submitting a pull request, format any
+files you changed:
+
+```bash
+ruff format <path/to/changed_file.py>
+```
+
+CI checks the formatting of changed files on every pull request and will
+fail if `ruff format --check` reports differences.
+
 ## CNS Executable Troubleshooting
 
 If you encounter CNS related errors please refer to [CNS.md](docs/CNS.md)

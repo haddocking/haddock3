@@ -9,14 +9,15 @@ import pytest
 import tempfile
 
 from haddock.libs.libplots import (
-    box_plot_handler,   
+    box_plot_handler,
+    clt_table_handler,
     create_other_cluster,
     find_best_struct,
     make_alascan_plot,
     offline_js_manager,
     scatter_plot_handler,
     read_capri_table,
-    )
+)
 from . import data_folder, golden_data, has_chrome
 
 
@@ -35,16 +36,18 @@ def fixture_loaded_capri_ss(example_capri_ss):
 @pytest.fixture(name="example_capri_clt")
 def fixture_example_capri_clt():
     """Provide example capri_clt.tsv filepath."""
-    return Path(golden_data, "capri_ss_example.tsv")
+    return Path(golden_data, "capri_clt_example.tsv")
+
 
 @pytest.fixture(name="cluster_ranking")
 def fixture_cluster_ranking(example_capri_clt):
     """Provide top 10 ranking from capri_clt.tsv."""
     from haddock.clis.cli_analyse import get_cluster_ranking
+
     _cluster_ranking = get_cluster_ranking(
         example_capri_clt,
         10,
-        )
+    )
     return _cluster_ranking
 
 
@@ -226,6 +229,7 @@ def example_capri_ss_dashcluster():
     """Provide example capri_ss.tsv filename."""
     return Path(data_folder, "capri_ss_-cluster.tsv")
 
+
 # TODO find a way to not duplicate this fixture from test_module_alascan.py
 # maybe move to conftest.py file?
 @pytest.fixture
@@ -233,12 +237,40 @@ def example_df_scan_clt():
     """Return example alascan clt DataFrame."""
     example_clt_data = [
         [
-            "A", 38, "ASP", "A-38-ASP", -2.0, -1.0, 0.1, -0.4, 0.04, -2.3,
-            0.23, -0.5, 0.05, -7.2, 0.72, 1.0,
+            "A",
+            38,
+            "ASP",
+            "A-38-ASP",
+            -2.0,
+            -1.0,
+            0.1,
+            -0.4,
+            0.04,
+            -2.3,
+            0.23,
+            -0.5,
+            0.05,
+            -7.2,
+            0.72,
+            1.0,
         ],
         [
-            "A", 69, "LYS", "A-38-ASP", -0.0, 1.0, 0.1, -0.4, 0.04, -2.3,
-            0.23, -0.5, 0.05, -7.2, 0.72, 1.0,
+            "A",
+            69,
+            "LYS",
+            "A-38-ASP",
+            -0.0,
+            1.0,
+            0.1,
+            -0.4,
+            0.04,
+            -2.3,
+            0.23,
+            -0.5,
+            0.05,
+            -7.2,
+            0.72,
+            1.0,
         ],
     ]
     columns = [
@@ -276,6 +308,7 @@ def test_make_alascan_plot(example_df_scan_clt, monkeypatch):
 def test_plotly_cdn_url():
     """Test to obtain plotly cdn url function."""
     from plotly.io._utils import plotly_cdn_url
+
     plotly_cdn_full_url = plotly_cdn_url()
     assert type(plotly_cdn_full_url) == str
 
@@ -283,6 +316,7 @@ def test_plotly_cdn_url():
 def test_plotly_offline():
     """Test to obtain plotly self contained javascript."""
     from plotly.offline.offline import get_plotlyjs
+
     plotly_self_contained = get_plotlyjs()
     assert type(plotly_self_contained) == str
 
@@ -297,6 +331,7 @@ def test_offline_js_manager():
         assert Path(tmpdir, "plotly_bundle.js").exists()
     # Offline == False
     from plotly.io._utils import plotly_cdn_url
+
     plotly_cdn_full_url = plotly_cdn_url()
     offline_plotly_js = offline_js_manager(tmpdir, offline=False)
     assert plotly_cdn_full_url in offline_plotly_js
@@ -312,7 +347,7 @@ def test_box_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
             cluster_ranking,
             None,  # When not set (default), goes for html file generation
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) == 0
 
@@ -327,7 +362,7 @@ def test_box_plot_handler_format(example_capri_ss, cluster_ranking, monkeypatch)
             cluster_ranking,
             "png",
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) > 0
 
@@ -341,7 +376,7 @@ def test_scatter_plot_handler(example_capri_ss, cluster_ranking, monkeypatch):
             cluster_ranking,
             None,  # When not set (default), goes for html file generation
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) == 0
 
@@ -356,6 +391,59 @@ def test_scatter_plot_handler_format(example_capri_ss, cluster_ranking, monkeypa
             cluster_ranking,
             "png",
             1.0,
-            )
+        )
         assert len(list(Path(".").glob("*.html"))) > 0
         assert len(list(Path(".").glob("*.png"))) > 0
+
+
+def test_clt_table_handler_model_paths_relative_to_report():
+    """Model paths in the report table must resolve from analysis/NN_step_analysis/.
+
+    The capri_ss.tsv `model` column holds paths relative to the
+    `NN_caprieval/` directory (e.g. `../01_rigidbody/model.pdb`), but the
+    report.html lives one directory deeper, in
+    `analysis/NN_caprieval_analysis/report.html`. Links built straight from
+    the tsv values therefore resolve to a non-existent location
+    (e.g. `analysis/NN_caprieval_analysis/01_rigidbody/...`), causing a 404
+    (see issue #1568). An extra `../` must be prepended so links resolve to
+    `analysis/NN_caprieval_analysis/../../01_rigidbody/...`.
+    """
+    clt_file = Path(golden_data, "capri_clt_example.tsv")
+    ss_file = Path(golden_data, "capri_ss_example.tsv")
+
+    df = clt_table_handler(clt_file, ss_file)
+
+    model_columns = [col for col in df.columns if col.startswith("best")]
+    assert model_columns, "expected at least one best<N> model column"
+
+    for col in model_columns:
+        for model_path in df[col]:
+            if not model_path:
+                continue
+            assert model_path.startswith("../../"), (
+                f"model path {model_path!r} in column {col!r} should be "
+                "relative to analysis/NN_step_analysis/ (prefixed with "
+                "'../../')"
+            )
+
+
+def test_clt_table_handler_model_paths_relative_to_report_cleaned():
+    """Same as above, but for a cleaned run where models are gzipped."""
+    clt_file = Path(golden_data, "capri_clt_example.tsv")
+    ss_file = Path(golden_data, "capri_ss_example.tsv")
+
+    df = clt_table_handler(clt_file, ss_file, is_cleaned=True)
+
+    model_columns = [col for col in df.columns if col.startswith("best")]
+    assert model_columns, "expected at least one best<N> model column"
+
+    for col in model_columns:
+        for model_path in df[col]:
+            if not model_path:
+                continue
+            assert model_path.startswith("../../"), (
+                f"model path {model_path!r} in column {col!r} should be "
+                "relative to analysis/NN_step_analysis/ (prefixed with "
+                "'../../')"
+            )
+            assert model_path.endswith(".pdb.gz")

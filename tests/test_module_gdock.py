@@ -75,8 +75,8 @@ def test_parse_restraints_unrelated_chains_skipped():
 
 
 @has_gdock
-def test_gdock_wrapper_run_and_save_poses():
-    """Test running gdock and saving the resulting poses to disk."""
+def test_gdock_wrapper_run_and_save_models():
+    """Test running gdock and saving the resulting models to disk."""
     with tempfile.TemporaryDirectory() as tempdir:
         tmp_complex = Path(tempdir, "complex.pdb")
         tmp_complex.write_bytes(
@@ -93,15 +93,16 @@ def test_gdock_wrapper_run_and_save_poses():
             ligand_pdb_file=ligand_pdb_file,
             max_generations=2,
             seed=1,
+            sampling=2,
         )
         wrapper.run()
-        poses = wrapper.save_poses(tempdir, top=2)
+        models = wrapper.save_models(tempdir)
 
-        assert len(poses) <= 2
-        for pose in poses:
-            pose_path = Path(tempdir, pose["file_name"])
-            assert pose_path.exists()
-            content = pose_path.read_text()
+        assert len(models) <= 2
+        for model in models:
+            model_path = Path(tempdir, model["file_name"])
+            assert model_path.exists()
+            content = model_path.read_text()
             assert "ATOM" in content
             for key in ("fitness", "vdw", "elec", "desolv", "air"):
-                assert isinstance(pose[key], float)
+                assert isinstance(model[key], float)

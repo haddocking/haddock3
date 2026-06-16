@@ -95,6 +95,7 @@ class HaddockModule(BaseHaddockModule):
                 restraints=restraints,
                 max_generations=self.params["max_generations"],
                 number_of_individuals=self.params["number_of_individuals"],
+                ncores=self.params["ncores"],
                 seed=self.params["seed"],
                 sampling=sampling_factor,
             )

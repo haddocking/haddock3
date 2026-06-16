@@ -91,6 +91,7 @@ class GdockWrapper:
         restraints: Optional[list[tuple[int, int]]] = None,
         max_generations: int = 250,
         number_of_individuals: int = 150,
+        ncores: int = 1,
         seed: int = 42,
         sampling: Optional[int] = None,
     ) -> None:
@@ -99,6 +100,7 @@ class GdockWrapper:
         self.restraints = restraints
         self.max_generations = max_generations
         self.number_of_individuals = number_of_individuals
+        self.ncores = ncores
         self.seed = seed
         self.sampling = sampling
         self.result: Optional[dict] = None
@@ -116,6 +118,7 @@ class GdockWrapper:
             restraints=self.restraints,
             max_generations=self.max_generations,
             population_size=self.number_of_individuals,
+            ncores=self.ncores,
             seed=self.seed,
             sampling=self.sampling,
         )

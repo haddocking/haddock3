@@ -1,56 +1,58 @@
 # ====================================================================
 # Nanobody-antigen ensemble docking example
 # with true paratope and epitope definition
+#
 # NOTE: Sampling is performed with gdock instead of rigidbody
+#
 run_dir = "run1-Para-Epi-gdock"
 ncores = 16
 molecules = ["data/7tgfB-nb_ens.pdb", "data/7y07_l_u.pdb"]
 # ====================================================================
-[topoaa]
 # Generate CNS-compatible topology and parameters for all input molecules.
+[topoaa]
 #--------------------------------------------------------------------#
-[gdock]
 # Sample docking conformations using a genetic algorithm.
+[gdock]
 ambig_fname = "data/7tgfB_real_ambig.tbl"
 sampling = 1000
 #--------------------------------------------------------------------#
-[caprieval]
 # Evaluate the gdock models against the reference structure.
+[caprieval]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
-[seletop]
 # Select the top-scoring models for downstream refinement.
+[seletop]
 select = 200
 #--------------------------------------------------------------------#
-[caprieval.1]
 # Re-evaluate after top-model selection.
+[caprieval.1]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
-[flexref]
 # Refine docking models with flexible backbone and side chains.
+[flexref]
 tolerance = 10
 ambig_fname = "data/7tgfB_real_ambig.tbl"
 #--------------------------------------------------------------------#
-[caprieval.2]
 # Evaluate models after flexible refinement.
+[caprieval.2]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
-[emref]
 # Final energy minimization to remove clashes and optimize geometry.
+[emref]
 ambig_fname = "data/7tgfB_real_ambig.tbl"
 #--------------------------------------------------------------------#
-[caprieval.3]
 # Evaluate models after energy minimization.
+[caprieval.3]
 reference_fname = "data/7tgfB_ref.pdb"
 #--------------------------------------------------------------------#
-[clustfcc]
 # Cluster models by fraction of common contacts (FCC).
+[clustfcc]
 #--------------------------------------------------------------------#
-[seletopclusts]
 # Select the best-scoring models from each cluster.
+[seletopclusts]
 top_models = 4
 #--------------------------------------------------------------------#
-[caprieval.4]
 # Final evaluation of cluster representatives.
+[caprieval.4]
 reference_fname = "data/7tgfB_ref.pdb"
 # ====================================================================

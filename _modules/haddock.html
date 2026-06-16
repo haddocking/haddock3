@@ -79,6 +79,7 @@
              
   <h1>Source code for haddock</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 library.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -88,8 +89,9 @@
 <span class="n">log</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 <span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-<span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
-    <span class="s2">&quot;[</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="si">%(module)s</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">))</span>
+<span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="si">%(module)s</span><span class="s2"> </span><span class="si">%(levelname)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="p">)</span>
 <span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
 
 <span class="n">haddock3_source_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
@@ -98,8 +100,8 @@
 <span class="n">toppar_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">haddock3_source_path</span><span class="p">,</span> <span class="s2">&quot;cns&quot;</span><span class="p">,</span> <span class="s2">&quot;toppar&quot;</span><span class="p">)</span>
 <span class="n">modules_defaults_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">haddock3_source_path</span><span class="p">,</span> <span class="s2">&quot;modules&quot;</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
 
-<span class="n">FCC_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">haddock3_source_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;fcc&#39;</span><span class="p">)</span>
-<span class="n">RMSD_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">haddock3_source_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;fast-rmsdmatrix&#39;</span><span class="p">)</span>
+<span class="n">FCC_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">haddock3_source_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;fcc&quot;</span><span class="p">)</span>
+<span class="n">RMSD_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">haddock3_source_path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;fast-rmsdmatrix&quot;</span><span class="p">)</span>
 
 <span class="n">config_expert_levels</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;easy&quot;</span><span class="p">,</span> <span class="s2">&quot;expert&quot;</span><span class="p">,</span> <span class="s2">&quot;guru&quot;</span><span class="p">)</span>
 <span class="c1"># yaml parameters with this `explevel` should be ignored when reading the yaml</span>
@@ -125,9 +127,9 @@
 <span class="c1"># version</span>
 <span class="n">version</span> <span class="o">=</span> <span class="n">package_version</span><span class="p">(</span><span class="s2">&quot;haddock3&quot;</span><span class="p">)</span>
 
-<span class="n">v_major</span><span class="p">,</span> <span class="n">v_minor</span><span class="p">,</span> <span class="n">v_patch</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="n">v_major</span><span class="p">,</span> <span class="n">v_minor</span><span class="p">,</span> <span class="n">v_patch</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
 
-<span class="n">contact_us</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/haddocking/haddock3/issues&#39;</span>
+<span class="n">contact_us</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/haddocking/haddock3/issues&quot;</span>
 </pre></div>
 
            </div>
@@ -138,7 +140,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 15, 2026.
+      <span class="lastupdated">Last updated on Jun 16, 2026.
       </span></p>
   </div>
 

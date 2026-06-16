@@ -48,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#with-venv">with <code class="docutils literal notranslate"><span class="pre">venv</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#with-conda">with <code class="docutils literal notranslate"><span class="pre">conda</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#optional-install-mpi-dependencies">(Optional) Install MPI dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-install-notebooks-dependencies">(Optional) Install notebooks dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#troubleshooting-the-cns-executable">Troubleshooting the CNS executable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#optional-install-web-service-dependencies-if-you-intend-to-run-haddock3-restraints-web-service">(Optional) Install web service dependencies if you intend to run HADDOCK3 restraints web service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
@@ -98,7 +99,7 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
-<p>Create a virtual environment with Python3.9+</p>
+<p>Create a virtual environment with Python3.10+</p>
 <p>You can use Python’s <code class="docutils literal notranslate"><span class="pre">venv</span></code> or <code class="docutils literal notranslate"><span class="pre">conda</span></code> depending on your choice.
 Commands are provided below:</p>
 <section id="with-venv">
@@ -110,7 +111,7 @@ Commands are provided below:</p>
 </section>
 <section id="with-conda">
 <h2>with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#with-conda" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>haddock3<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>haddock3<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
 conda<span class="w"> </span>activate<span class="w"> </span>haddock3
 </pre></div>
 </div>
@@ -127,6 +128,12 @@ conda<span class="w"> </span>activate<span class="w"> </span>haddock3
 <div><p>Instruction on how to use MPI with haddock3 are found in the <a class="reference external" href="https://www.bonvinlab.org/haddock3/tutorials/mpi.html">tutorials</a></p>
 </div></blockquote>
 </section>
+<section id="optional-install-notebooks-dependencies">
+<h2>(Optional) Install notebooks dependencies<a class="headerlink" href="#optional-install-notebooks-dependencies" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;haddock3[notebooks]&#39;</span>
+</pre></div>
+</div>
+</section>
 <section id="troubleshooting-the-cns-executable">
 <h2>Troubleshooting the CNS executable<a class="headerlink" href="#troubleshooting-the-cns-executable" title="Link to this heading"></a></h2>
 <p>Depending on your architecture, the CNS executable coming with the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> command (see above), might give errors because of some missing libraries.
@@ -142,14 +149,14 @@ Home-page:
 Author:
 Author-email:<span class="w"> </span>BonvinLab<span class="w"> </span>&lt;bonvinlab.support@uu.nl&gt;
 License:<span class="w"> </span>Apache<span class="w"> </span>License<span class="w"> </span><span class="m">2</span>.0
-Location:<span class="w"> </span>/home/testuser/.venv/lib/python3.9/site-packages
+Location:<span class="w"> </span>/home/testuser/.venv/lib/python3.10/site-packages
 ...
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Copy your CNS executable to the haddock3 installation:</p></li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>cp<span class="w"> </span>&lt;my-cns-binary&gt;<span class="w"> </span>/home/testuser/.venv/lib/python3.9/site-packages/haddock/bin/cns
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>cp<span class="w"> </span>&lt;my-cns-binary&gt;<span class="w"> </span>/home/testuser/.venv/lib/python3.10/site-packages/haddock/bin/cns
 </pre></div>
 </div>
 </section>
@@ -180,7 +187,7 @@ doubts, please let us know.</p>
 <p>The use of the openmm module requires the installation of both OpenMM and pdbfixer.</p>
 <section id="in-venv">
 <h3>In venv<a class="headerlink" href="#in-venv" title="Link to this heading"></a></h3>
-<p>The venv installation instruction uses <code class="docutils literal notranslate"><span class="pre">pip</span></code> and requires a python version &gt;=3.10 (not functional with python3.9).</p>
+<p>The venv installation instruction uses <code class="docutils literal notranslate"><span class="pre">pip</span></code> and requires a python version &gt;=3.10.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new virtual env</span>
 python3.12<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>hd3-openmm
 <span class="nb">source</span><span class="w"> </span>hd3-openmm/bin/activate
@@ -195,10 +202,10 @@ pip<span class="w"> </span>install<span class="w"> </span>https://github.com/ope
 </section>
 <section id="in-conda">
 <h3>In conda<a class="headerlink" href="#in-conda" title="Link to this heading"></a></h3>
-<p>The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.9 and 3.13.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>hd3-p39-openmm<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
+<p>The Conda installation instructions are using conda-forge to retrieve packages and requires a python3 version between 3.10 and 3.13.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>hd3-p310-openmm<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
 <span class="c1"># Activate the haddock3 env</span>
-conda<span class="w"> </span>activate<span class="w"> </span>hd3-p39-openmm
+conda<span class="w"> </span>activate<span class="w"> </span>hd3-p310-openmm
 <span class="c1"># Install haddock3</span>
 pip<span class="w"> </span>install<span class="w"> </span>haddock3
 <span class="c1"># libstdxx must be installed, maybe already present in your system</span>
@@ -227,7 +234,7 @@ of the project for a full description of the installation procedure.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2026, BonvinLab.
-      <span class="lastupdated">Last updated on Jun 15, 2026.
+      <span class="lastupdated">Last updated on Jun 16, 2026.
       </span></p>
   </div>
 

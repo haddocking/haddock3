@@ -7,12 +7,14 @@ app = marimo.App(width="full")
 @app.cell
 def _():
     import marimo as mo
+
     return (mo,)
 
 
 @app.cell
 def _(mo):
     from pathlib import Path as _Path
+
     work_dir_input = mo.ui.text(
         value=str(_Path.cwd()),
         label="Working directory",
@@ -63,13 +65,36 @@ def _(mo):
 @app.cell
 def _(mo):
     import os as _os
-    _std_aa = ["ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY",
-               "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER",
-               "THR", "TRP", "TYR", "VAL"]
+
+    _std_aa = [
+        "ALA",
+        "ARG",
+        "ASN",
+        "ASP",
+        "CYS",
+        "GLN",
+        "GLU",
+        "GLY",
+        "HIS",
+        "ILE",
+        "LEU",
+        "LYS",
+        "MET",
+        "PHE",
+        "PRO",
+        "SER",
+        "THR",
+        "TRP",
+        "TYR",
+        "VAL",
+    ]
 
     _ncores_max = _os.cpu_count() or 1
     ncores_slider = mo.ui.slider(
-        1, _ncores_max, value=_ncores_max, step=1,
+        1,
+        _ncores_max,
+        value=_ncores_max,
+        step=1,
         label="CPU cores",
         show_value=True,
     )
@@ -77,7 +102,9 @@ def _(mo):
     heatmap_toggle = mo.ui.switch(label="Generate heatmap", value=False)
     alascan_toggle = mo.ui.switch(label="Run alanine scan", value=False)
     alascan_scan_residue = mo.ui.dropdown(
-        options=_std_aa, value="ALA", label="Scan residue",
+        options=_std_aa,
+        value="ALA",
+        label="Scan residue",
     )
     alascan_plot_toggle = mo.ui.switch(label="Generate plot", value=True)
     alascan_show_std = mo.ui.switch(label="Show std deviations", value=False)
@@ -110,38 +137,61 @@ def _(
     work_dir_input,
 ):
     _alascan_sub = (
-        mo.vstack([alascan_scan_residue, alascan_plot_toggle, alascan_show_std], align="start")
+        mo.vstack(
+            [alascan_scan_residue, alascan_plot_toggle, alascan_show_std], align="start"
+        )
         if alascan_toggle.value
         else mo.md("")
     )
-    mo.vstack([
-        mo.md("### Configuration"),
-        mo.hstack([
-            mo.vstack([
-                mo.md("**Input file**"),
-                pdb_upload,
-            ], align="start"),
-            mo.vstack([
-                mo.md("**Working directory**"),
-                work_dir_input,
-            ], align="start"),
-            mo.vstack([
-                mo.md("**Execution**"),
-                ncores_slider,
-            ], align="start"),
-            mo.vstack([
-                mo.md("**contactmap outputs**"),
-                chordchart_toggle,
-                heatmap_toggle,
-            ], align="start"),
-            mo.vstack([
-                mo.md("**alanine scan**"),
-                alascan_toggle,
-                _alascan_sub,
-            ], align="start"),
-        ], gap=2, justify="start"),
-        mo.hstack([mo.md("**Advanced:**"), config_edit_toggle], justify="start"),
-    ])
+    mo.vstack(
+        [
+            mo.md("### Configuration"),
+            mo.hstack(
+                [
+                    mo.vstack(
+                        [
+                            mo.md("**Input file**"),
+                            pdb_upload,
+                        ],
+                        align="start",
+                    ),
+                    mo.vstack(
+                        [
+                            mo.md("**Working directory**"),
+                            work_dir_input,
+                        ],
+                        align="start",
+                    ),
+                    mo.vstack(
+                        [
+                            mo.md("**Execution**"),
+                            ncores_slider,
+                        ],
+                        align="start",
+                    ),
+                    mo.vstack(
+                        [
+                            mo.md("**contactmap outputs**"),
+                            chordchart_toggle,
+                            heatmap_toggle,
+                        ],
+                        align="start",
+                    ),
+                    mo.vstack(
+                        [
+                            mo.md("**alanine scan**"),
+                            alascan_toggle,
+                            _alascan_sub,
+                        ],
+                        align="start",
+                    ),
+                ],
+                gap=2,
+                justify="start",
+            ),
+            mo.hstack([mo.md("**Advanced:**"), config_edit_toggle], justify="start"),
+        ]
+    )
     return
 
 
@@ -194,17 +244,19 @@ def _(
             full_width=True,
             label="Workflow configuration (TOML)",
         )
-        _out = mo.vstack([
-            mo.callout(
-                mo.md(
-                    "**Config editor active.** Edit parameters below — these override the panel "
-                    "settings for module-specific options. Changing a slider or toggle above will "
-                    "regenerate this editor and discard manual edits."
+        _out = mo.vstack(
+            [
+                mo.callout(
+                    mo.md(
+                        "**Config editor active.** Edit parameters below — these override the panel "
+                        "settings for module-specific options. Changing a slider or toggle above will "
+                        "regenerate this editor and discard manual edits."
+                    ),
+                    kind="warn",
                 ),
-                kind="warn",
-            ),
-            config_textarea,
-        ])
+                config_textarea,
+            ]
+        )
     else:
         config_textarea = mo.ui.text_area(value="")
         _out = mo.accordion(
@@ -226,6 +278,7 @@ def _(mo):
 def _(mo):
     import sys as _sys
     import threading as _t
+
     if "_h3nb_stop" not in _sys.modules:
         _m = type(_sys)("_h3nb_stop")
         _m.event = _t.Event()
@@ -238,6 +291,7 @@ def _(mo):
 @app.cell
 def _(stop_btn):
     import sys as _sys2
+
     if stop_btn.value:
         _sys2.modules["_h3nb_stop"].event.set()
     return
@@ -271,7 +325,9 @@ async def _(
     mo.stop(
         not pdb_upload.value,
         mo.callout(
-            mo.md("**No PDB file loaded.** Upload a PDB complex above, then click Run."),
+            mo.md(
+                "**No PDB file loaded.** Upload a PDB complex above, then click Run."
+            ),
             kind="warn",
         ),
     )
@@ -310,15 +366,13 @@ async def _(
         _body = "\n".join(_log_lines) if _log_lines else "(waiting for output…)"
         _panel = mo.Html(
             '<div style="height:400px;overflow-y:auto;background:#f0f0f0;'
-            'color:#1a1a1a;font-family:monospace;padding:10px 14px;'
-            'border-radius:6px;font-size:12px;white-space:pre-wrap;'
+            "color:#1a1a1a;font-family:monospace;padding:10px 14px;"
+            "border-radius:6px;font-size:12px;white-space:pre-wrap;"
             'line-height:1.5;">'
             + _body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
             + "</div>"
         )
-        mo.output.replace(
-            mo.accordion({f"HADDOCK3 Log — {_label}": _panel})
-        )
+        mo.output.replace(mo.accordion({f"HADDOCK3 Log — {_label}": _panel}))
 
     # Log handler only appends; rendering happens after each step in the async loop.
     class _LogHandler(logging.Handler):
@@ -336,13 +390,17 @@ async def _(
 
     if config_edit_toggle.value and config_textarea.value.strip():
         from haddock.gear.config import loads as _cfg_loads
+
         try:
             _parsed = _cfg_loads(config_textarea.value)["final_cfg"]
         except Exception as _cfg_err:
-            mo.stop(True, mo.callout(
-                mo.md(f"**Config parse error:** {_cfg_err}"),
-                kind="danger",
-            ))
+            mo.stop(
+                True,
+                mo.callout(
+                    mo.md(f"**Config parse error:** {_cfg_err}"),
+                    kind="danger",
+                ),
+            )
         _workflow_params = {}
         for _step_key, _step_params in _parsed.items():
             _p = {**_exec, **_step_params}
@@ -384,9 +442,11 @@ async def _(
     _stopped = False
 
     import haddock as _haddock_pkg
+
     _haddock_pkg.log.addHandler(_handler)
     try:
         from haddock.libs.libworkflow import WorkflowManager
+
         with _cwd(_run_dir):
             _wf = WorkflowManager(_workflow_params, start=0)
             # Run steps one at a time so the event loop can process the stop button
@@ -394,7 +454,9 @@ async def _(
             # step executes in a thread-pool worker).
             for _i, _step in enumerate(_wf.recipe.steps):
                 if _stop and _stop.event.is_set():
-                    _log_lines.append("[notebook] Stop requested — workflow halted after current step.")
+                    _log_lines.append(
+                        "[notebook] Stop requested — workflow halted after current step."
+                    )
                     _stopped = True
                     break
                 await _asyncio.to_thread(_step.execute)
@@ -402,7 +464,7 @@ async def _(
                 # Replicate WorkflowManager.run() output-param forwarding
                 _op = getattr(_step.module, "_output_params", {})
                 if _op:
-                    for _fs in _wf.recipe.steps[_i + 1:]:
+                    for _fs in _wf.recipe.steps[_i + 1 :]:
                         for _k, _v in _op.items():
                             if _fs.config.get(_k) in (None, ""):
                                 _fs.config[_k] = _v
@@ -420,7 +482,12 @@ async def _(
 
     _render_log(done=_success, stopped=_stopped)
 
-    run_result = {"success": _success, "error": _error, "run_dir": _run_dir, "stopped": _stopped}
+    run_result = {
+        "success": _success,
+        "error": _error,
+        "run_dir": _run_dir,
+        "stopped": _stopped,
+    }
     return (run_result,)
 
 
@@ -439,7 +506,8 @@ def _(mo, run_result):
 
             if not _main_tsv.exists():
                 _score_out = mo.callout(
-                    mo.md(f"`emscoring.tsv` not found in `{_em_dir}`."), kind="warn",
+                    mo.md(f"`emscoring.tsv` not found in `{_em_dir}`."),
+                    kind="warn",
                 )
             else:
                 # ── Main HADDOCK score ─────────────────────────────────────────
@@ -450,6 +518,7 @@ def _(mo, run_result):
 
                 # ── Energy terms from PDB REMARK headers ──────────────────────
                 from haddock.gear.haddockmodel import HaddockModel as _HaddockModel
+
                 _extra = []
                 for _struct in _df["structure"]:
                     _pdb = _em_dir / _struct
@@ -466,11 +535,13 @@ def _(mo, run_result):
                         except Exception:
                             pass
                     _extra.append(_row)
-                _df = _pd.concat([_df.reset_index(drop=True), _pd.DataFrame(_extra)], axis=1)
+                _df = _pd.concat(
+                    [_df.reset_index(drop=True), _pd.DataFrame(_extra)], axis=1
+                )
 
                 # ── Per-interface scores from emscoring_{interface}.tsv ────────
                 for _iface_tsv in sorted(_em_dir.glob("emscoring_*.tsv")):
-                    _iface = _iface_tsv.stem[len("emscoring_"):]  # e.g., "A_B"
+                    _iface = _iface_tsv.stem[len("emscoring_") :]  # e.g., "A_B"
                     _di = _pd.read_csv(_iface_tsv, sep="\t")[["structure", "score"]]
                     _di = _di.rename(columns={"score": f"score_{_iface}"})
                     _df = _df.merge(_di, on="structure", how="left")
@@ -483,23 +554,28 @@ def _(mo, run_result):
                 _fc = _df.select_dtypes(include="float").columns
                 _df[_fc] = _df[_fc].round(3)
 
-                _score_out = mo.vstack([
-                    mo.md("---\n## HADDOCK Scoring"),
-                    mo.ui.table(
-                        _df,
-                        pagination=False,
-                        selection=None,
-                        show_column_summaries=False,
-                    ),
-                ])
+                _score_out = mo.vstack(
+                    [
+                        mo.md("---\n## HADDOCK Scoring"),
+                        mo.ui.table(
+                            _df,
+                            pagination=False,
+                            selection=None,
+                            show_column_summaries=False,
+                        ),
+                    ]
+                )
 
         except Exception:
             import traceback as _tb
+
             _score_out = mo.callout(
-                mo.vstack([
-                    mo.md("**Error loading scoring data:**"),
-                    mo.code(_tb.format_exc(), language="text"),
-                ]),
+                mo.vstack(
+                    [
+                        mo.md("**Error loading scoring data:**"),
+                        mo.code(_tb.format_exc(), language="text"),
+                    ]
+                ),
                 kind="danger",
             )
 
@@ -530,15 +606,19 @@ def _(alascan_show_std, mo, run_result):
 
     if run_result.get("stopped"):
         _out = mo.callout(
-            mo.md(f"Workflow stopped by user. Partial results may be available in `{run_result['run_dir']}`."),
+            mo.md(
+                f"Workflow stopped by user. Partial results may be available in `{run_result['run_dir']}`."
+            ),
             kind="warn",
         )
     elif not run_result["success"]:
         _out = mo.callout(
-            mo.vstack([
-                mo.md("**Workflow failed.**"),
-                mo.code(run_result["error"], language="text"),
-            ]),
+            mo.vstack(
+                [
+                    mo.md("**Workflow failed.**"),
+                    mo.code(run_result["error"], language="text"),
+                ]
+            ),
             kind="danger",
         )
     else:
@@ -581,6 +661,7 @@ def _(alascan_show_std, mo, run_result):
 
         # ── Alanine scan results (shown when the step directory exists) ───────
         import pandas as _pd
+
         _ala_dir = _run_dir / "3_alascan"
         if _ala_dir.exists():
             _sections.append(mo.md("---\n## Alanine Scan"))
@@ -595,17 +676,24 @@ def _(alascan_show_std, mo, run_result):
                     _float_cols = _df.select_dtypes(include="float").columns
                     _df[_float_cols] = _df[_float_cols].round(3)
                     _std_cols = [c for c in _df.columns if c.endswith("_std")]
-                    _sections.append(mo.ui.table(
-                        _df,
-                        pagination=False,
-                        selection=None,
-                        show_column_summaries=True,
-                        hidden_columns=[] if alascan_show_std.value else _std_cols,
-                    ))
+                    _sections.append(
+                        mo.ui.table(
+                            _df,
+                            pagination=False,
+                            selection=None,
+                            show_column_summaries=True,
+                            hidden_columns=[] if alascan_show_std.value else _std_cols,
+                        )
+                    )
                 except Exception as _e:
-                    _sections.append(mo.callout(mo.md(f"Could not read `{_tsv.name}`: {_e}"), kind="warn"))
+                    _sections.append(
+                        mo.callout(
+                            mo.md(f"Could not read `{_tsv.name}`: {_e}"), kind="warn"
+                        )
+                    )
             for _hf in _ala_html_files:
                 import re as _re
+
                 _hf_content = _hf.read_text()
                 _m = _re.search(r'style="height:(\d+)px', _hf_content)
                 _fig_height = int(_m.group(1)) + 30 if _m else 1030
@@ -614,7 +702,9 @@ def _(alascan_show_std, mo, run_result):
             if not _tsv_files and not _ala_html_files:
                 _sections.append(
                     mo.callout(
-                        mo.md("No output files found in `3_alascan/`. Interface residues may not have been detected."),
+                        mo.md(
+                            "No output files found in `3_alascan/`. Interface residues may not have been detected."
+                        ),
                         kind="warn",
                     )
                 )
@@ -623,7 +713,6 @@ def _(alascan_show_std, mo, run_result):
 
     _out
     return
-
 
 
 if __name__ == "__main__":

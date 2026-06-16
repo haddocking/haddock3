@@ -14,6 +14,7 @@ def _():
 @app.cell
 def _(mo):
     from pathlib import Path as _Path
+
     work_dir_input = mo.ui.text(
         value=str(_Path.cwd()),
         label="Working directory",
@@ -70,22 +71,39 @@ def _(mo):
 @app.cell
 def _(mo):
     import os as _os
+
     _ncores_max = _os.cpu_count() or 1
     ncores_slider = mo.ui.slider(
-        1, _ncores_max, value=_ncores_max, step=1,
-        label="CPU cores", show_value=True,
+        1,
+        _ncores_max,
+        value=_ncores_max,
+        step=1,
+        label="CPU cores",
+        show_value=True,
     )
     clust_cutoff_slider = mo.ui.slider(
-        0.40, 1.00, value=0.60, step=0.05,
-        label="FCC clustering cutoff", show_value=True,
+        0.40,
+        1.00,
+        value=0.60,
+        step=0.05,
+        label="FCC clustering cutoff",
+        show_value=True,
     )
     min_population_slider = mo.ui.slider(
-        1, 20, value=4, step=1,
-        label="Min cluster population", show_value=True,
+        1,
+        20,
+        value=4,
+        step=1,
+        label="Min cluster population",
+        show_value=True,
     )
     topX_slider = mo.ui.slider(
-        1, 20, value=4, step=1,
-        label="Top models for contact map", show_value=True,
+        1,
+        20,
+        value=4,
+        step=1,
+        label="Top models for contact map",
+        show_value=True,
     )
     chordchart_toggle = mo.ui.switch(label="Chord chart", value=True)
     heatmap_toggle = mo.ui.switch(label="Heatmap", value=False)
@@ -115,27 +133,43 @@ def _(
     topX_slider,
     work_dir_input,
 ):
-    mo.vstack([
-        mo.md("### Configuration"),
-        mo.hstack([
-            mo.vstack([mo.md("**Input models**"), pdb_upload], align="start"),
-            mo.vstack([mo.md("**Reference *(optional)***"), ref_upload], align="start"),
-            mo.vstack([mo.md("**Working directory**"), work_dir_input], align="start"),
-            mo.vstack([mo.md("**Execution**"), ncores_slider], align="start"),
-            mo.vstack([
-                mo.md("**Clustering (clustfcc)**"),
-                clust_cutoff_slider,
-                min_population_slider,
-            ], align="start"),
-            mo.vstack([
-                mo.md("**Contact map**"),
-                topX_slider,
-                chordchart_toggle,
-                heatmap_toggle,
-            ], align="start"),
-        ], gap=2, justify="start"),
-        mo.hstack([mo.md("**Advanced:**"), config_edit_toggle], justify="start"),
-    ])
+    mo.vstack(
+        [
+            mo.md("### Configuration"),
+            mo.hstack(
+                [
+                    mo.vstack([mo.md("**Input models**"), pdb_upload], align="start"),
+                    mo.vstack(
+                        [mo.md("**Reference *(optional)***"), ref_upload], align="start"
+                    ),
+                    mo.vstack(
+                        [mo.md("**Working directory**"), work_dir_input], align="start"
+                    ),
+                    mo.vstack([mo.md("**Execution**"), ncores_slider], align="start"),
+                    mo.vstack(
+                        [
+                            mo.md("**Clustering (clustfcc)**"),
+                            clust_cutoff_slider,
+                            min_population_slider,
+                        ],
+                        align="start",
+                    ),
+                    mo.vstack(
+                        [
+                            mo.md("**Contact map**"),
+                            topX_slider,
+                            chordchart_toggle,
+                            heatmap_toggle,
+                        ],
+                        align="start",
+                    ),
+                ],
+                gap=2,
+                justify="start",
+            ),
+            mo.hstack([mo.md("**Advanced:**"), config_edit_toggle], justify="start"),
+        ]
+    )
     return
 
 
@@ -156,29 +190,31 @@ def _(
         if ref_upload.value:
             _caprieval_lines.append(f'reference_fname = "{ref_upload.name()}"')
         _caprieval_lines.append("")
-        return "\n".join([
-            "# HADDOCK3 scoring workflow — module parameters",
-            "# CPU cores, mode, input files and run directory are set by the panel above.",
-            "# Add, remove or reorder [module] sections to change the workflow steps.",
-            "",
-            "[topoaa]",
-            "autohis = true",
-            "",
-            "[emscoring]",
-            "per_interface_scoring = true",
-            "",
-            "[clustfcc]",
-            f"clust_cutoff = {clust_cutoff_slider.value:.2f}",  # default 0.60
-            f"min_population = {min_population_slider.value}",
-            "",
-            *_caprieval_lines,
-            "[contactmap]",
-            f"generate_chordchart = {_v(chordchart_toggle.value)}",
-            f"generate_heatmap = {_v(heatmap_toggle.value)}",
-            "single_model_analysis = false",
-            f"topX = {topX_slider.value}",
-            "",
-        ])
+        return "\n".join(
+            [
+                "# HADDOCK3 scoring workflow — module parameters",
+                "# CPU cores, mode, input files and run directory are set by the panel above.",
+                "# Add, remove or reorder [module] sections to change the workflow steps.",
+                "",
+                "[topoaa]",
+                "autohis = true",
+                "",
+                "[emscoring]",
+                "per_interface_scoring = true",
+                "",
+                "[clustfcc]",
+                f"clust_cutoff = {clust_cutoff_slider.value:.2f}",  # default 0.60
+                f"min_population = {min_population_slider.value}",
+                "",
+                *_caprieval_lines,
+                "[contactmap]",
+                f"generate_chordchart = {_v(chordchart_toggle.value)}",
+                f"generate_heatmap = {_v(heatmap_toggle.value)}",
+                "single_model_analysis = false",
+                f"topX = {topX_slider.value}",
+                "",
+            ]
+        )
 
     _cfg_str = _make_cfg_str()
 
@@ -189,17 +225,19 @@ def _(
             full_width=True,
             label="Workflow configuration (TOML)",
         )
-        _out = mo.vstack([
-            mo.callout(
-                mo.md(
-                    "**Config editor active.** Edit parameters below — these override the panel "
-                    "settings for module-specific options. Changing a slider above will regenerate "
-                    "this editor and discard manual edits."
+        _out = mo.vstack(
+            [
+                mo.callout(
+                    mo.md(
+                        "**Config editor active.** Edit parameters below — these override the panel "
+                        "settings for module-specific options. Changing a slider above will regenerate "
+                        "this editor and discard manual edits."
+                    ),
+                    kind="warn",
                 ),
-                kind="warn",
-            ),
-            config_textarea,
-        ])
+                config_textarea,
+            ]
+        )
     else:
         config_textarea = mo.ui.text_area(value="")
         _out = mo.accordion(
@@ -221,6 +259,7 @@ def _(mo):
 def _(mo):
     import sys as _sys
     import threading as _t
+
     if "_h3nb_stop" not in _sys.modules:
         _m = type(_sys)("_h3nb_stop")
         _m.event = _t.Event()
@@ -233,6 +272,7 @@ def _(mo):
 @app.cell
 def _(stop_btn):
     import sys as _sys2
+
     if stop_btn.value:
         _sys2.modules["_h3nb_stop"].event.set()
     return
@@ -267,7 +307,9 @@ async def _(
     mo.stop(
         not pdb_upload.value,
         mo.callout(
-            mo.md("**No PDB file loaded.** Upload at least one PDB complex above, then click Run."),
+            mo.md(
+                "**No PDB file loaded.** Upload at least one PDB complex above, then click Run."
+            ),
             kind="warn",
         ),
     )
@@ -317,7 +359,7 @@ async def _(
         _body = "\n".join(_log_lines) if _log_lines else "(waiting for output…)"
         _panel = mo.Html(
             '<div style="height:400px;overflow-y:auto;background:#f0f0f0;'
-            'color:#1a1a1a;font-family:monospace;padding:10px 14px;'
+            "color:#1a1a1a;font-family:monospace;padding:10px 14px;"
             'border-radius:6px;font-size:12px;white-space:pre-wrap;line-height:1.5;">'
             + _body.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
             + "</div>"
@@ -330,7 +372,9 @@ async def _(
             _log_lines.append(self.format(record))
 
     _handler = _LogHandler()
-    _handler.setFormatter(logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s"))
+    _handler.setFormatter(
+        logging.Formatter("[%(asctime)s %(module)s %(levelname)s] %(message)s")
+    )
     _render_log()
 
     # ── Workflow parameters ───────────────────────────────────────────────────
@@ -338,13 +382,17 @@ async def _(
 
     if config_edit_toggle.value and config_textarea.value.strip():
         from haddock.gear.config import loads as _cfg_loads
+
         try:
             _parsed = _cfg_loads(config_textarea.value)["final_cfg"]
         except Exception as _cfg_err:
-            mo.stop(True, mo.callout(
-                mo.md(f"**Config parse error:** {_cfg_err}"),
-                kind="danger",
-            ))
+            mo.stop(
+                True,
+                mo.callout(
+                    mo.md(f"**Config parse error:** {_cfg_err}"),
+                    kind="danger",
+                ),
+            )
         _workflow_params = {}
         for _step_key, _step_params in _parsed.items():
             _p = {**_exec, **_step_params}
@@ -386,9 +434,11 @@ async def _(
     _stopped = False
 
     import haddock as _haddock_pkg
+
     _haddock_pkg.log.addHandler(_handler)
     try:
         from haddock.libs.libworkflow import WorkflowManager
+
         with _cwd(_run_dir):
             _wf = WorkflowManager(_workflow_params, start=0)
             # Run steps one at a time so the event loop can process the stop button
@@ -396,7 +446,9 @@ async def _(
             # step executes in a thread-pool worker).
             for _i, _step in enumerate(_wf.recipe.steps):
                 if _stop and _stop.event.is_set():
-                    _log_lines.append("[notebook] Stop requested — workflow halted after current step.")
+                    _log_lines.append(
+                        "[notebook] Stop requested — workflow halted after current step."
+                    )
                     _stopped = True
                     break
                 await _asyncio.to_thread(_step.execute)
@@ -404,7 +456,7 @@ async def _(
                 # Replicate WorkflowManager.run() output-param forwarding
                 _op = getattr(_step.module, "_output_params", {})
                 if _op:
-                    for _fs in _wf.recipe.steps[_i + 1:]:
+                    for _fs in _wf.recipe.steps[_i + 1 :]:
                         for _k, _v in _op.items():
                             if _fs.config.get(_k) in (None, ""):
                                 _fs.config[_k] = _v
@@ -424,6 +476,7 @@ async def _(
     if _success:
         try:
             from haddock.clis.cli_traceback import main as _cli_traceback
+
             with _cwd(_run_dir):
                 _cli_traceback("./", offline=True)
         except Exception as _tb_err:
@@ -431,7 +484,12 @@ async def _(
 
     _render_log(done=_success, stopped=_stopped)
 
-    run_result = {"success": _success, "error": _error, "run_dir": _run_dir, "stopped": _stopped}
+    run_result = {
+        "success": _success,
+        "error": _error,
+        "run_dir": _run_dir,
+        "stopped": _stopped,
+    }
     return (run_result,)
 
 
@@ -453,15 +511,19 @@ def _(clt_show_std, mo, run_result):
 
     if run_result.get("stopped"):
         _out = mo.callout(
-            mo.md(f"Workflow stopped by user. Partial results may be available in `{run_result['run_dir']}`."),
+            mo.md(
+                f"Workflow stopped by user. Partial results may be available in `{run_result['run_dir']}`."
+            ),
             kind="warn",
         )
     elif not run_result["success"]:
         _out = mo.callout(
-            mo.vstack([
-                mo.md("**Workflow failed.**"),
-                mo.code(run_result["error"], language="text"),
-            ]),
+            mo.vstack(
+                [
+                    mo.md("**Workflow failed.**"),
+                    mo.code(run_result["error"], language="text"),
+                ]
+            ),
             kind="danger",
         )
     else:
@@ -484,15 +546,20 @@ def _(clt_show_std, mo, run_result):
                 _df_tb = _pd.read_csv(_tb_file, sep="\t")
                 # Identify topology columns (original inputs) and step columns
                 _topo_cols = [c for c in _df_tb.columns if c.startswith("00_topo")]
-                _step_cols = [c for c in _df_tb.columns
-                              if not c.startswith("00_") and not c.endswith("_rank")]
+                _step_cols = [
+                    c
+                    for c in _df_tb.columns
+                    if not c.startswith("00_") and not c.endswith("_rank")
+                ]
                 if _step_cols and _topo_cols:
                     # Last step column holds the final model filename
                     _final_col = _step_cols[-1]
                     # Build a combined "input model" label from all topo columns
                     _df_tb["_input_label"] = _df_tb[_topo_cols].apply(
                         lambda r: " | ".join(
-                            _Path(str(v)).stem for v in r if str(v) not in ("nan", "-", "")
+                            _Path(str(v)).stem
+                            for v in r
+                            if str(v) not in ("nan", "-", "")
                         ),
                         axis=1,
                     )
@@ -510,33 +577,52 @@ def _(clt_show_std, mo, run_result):
                 # Display copy: show filename + optional traceback origin;
                 # keep full path in hidden "model" column for downstream viz.
                 _df_ss_disp = df_ss.copy()
-                _df_ss_disp.insert(0, "filename", [_Path(str(m)).name for m in df_ss["model"]])
+                _df_ss_disp.insert(
+                    0, "filename", [_Path(str(m)).name for m in df_ss["model"]]
+                )
                 if _tb_map:
-                    _df_ss_disp.insert(1, "input model", [
-                        _tb_map.get(_Path(str(m)).name, "—") for m in df_ss["model"]
-                    ])
+                    _df_ss_disp.insert(
+                        1,
+                        "input model",
+                        [_tb_map.get(_Path(str(m)).name, "—") for m in df_ss["model"]],
+                    )
                 ss_table = mo.ui.table(
                     _df_ss_disp,
                     pagination=False,
                     selection="single",
                     show_column_summaries=True,
-                    hidden_columns=["model", "md5",
-                                    "air", "cdih", "coup", "dani", "rdcs",
-                                    "rg", "sym", "vean", "xpcs"],
+                    hidden_columns=[
+                        "model",
+                        "md5",
+                        "air",
+                        "cdih",
+                        "coup",
+                        "dani",
+                        "rdcs",
+                        "rg",
+                        "sym",
+                        "vean",
+                        "xpcs",
+                    ],
                 )
             except Exception as _e:
-                _sections.append(mo.callout(
-                    mo.md(f"Could not read `capri_ss.tsv`: {_e}"), kind="warn",
-                ))
+                _sections.append(
+                    mo.callout(
+                        mo.md(f"Could not read `capri_ss.tsv`: {_e}"),
+                        kind="warn",
+                    )
+                )
 
         # ── Cluster statistics (row selection drives the visualisation below) ──
         _clt_file = _caprieval_dir / "capri_clt.tsv"
 
         if _clt_file.exists():
             _sections.append(mo.md("---\n## Cluster statistics"))
-            _sections.append(mo.md(
-                "*Click a row to display the best model and contact map for that cluster.*"
-            ))
+            _sections.append(
+                mo.md(
+                    "*Click a row to display the best model and contact map for that cluster.*"
+                )
+            )
             try:
                 _df_clt = _pd.read_csv(_clt_file, sep="\t", comment="#")
                 _fc = _df_clt.select_dtypes(include="float").columns
@@ -553,18 +639,31 @@ def _(clt_show_std, mo, run_result):
                         except (ValueError, TypeError):
                             _clt_origins.append("—")
                             continue
-                        _mods = df_ss[df_ss["cluster_ranking"].apply(
-                            lambda x: int(float(x)) == _rank if x == x else False
-                        )]
-                        _origins = sorted({
-                            _tb_map.get(_Path(str(m)).name, "—")
-                            for m in _mods["model"]
-                        })
+                        _mods = df_ss[
+                            df_ss["cluster_ranking"].apply(
+                                lambda x: int(float(x)) == _rank if x == x else False
+                            )
+                        ]
+                        _origins = sorted(
+                            {
+                                _tb_map.get(_Path(str(m)).name, "—")
+                                for m in _mods["model"]
+                            }
+                        )
                         _clt_origins.append(", ".join(_origins))
                     _df_clt.insert(0, "input models", _clt_origins)
 
-                _noise_cols = ["air", "cdih", "coup", "dani", "rdcs",
-                               "rg", "sym", "vean", "xpcs"]
+                _noise_cols = [
+                    "air",
+                    "cdih",
+                    "coup",
+                    "dani",
+                    "rdcs",
+                    "rg",
+                    "sym",
+                    "vean",
+                    "xpcs",
+                ]
                 _noise_cols += [f"{c}_std" for c in _noise_cols]
                 _hidden_clt = _noise_cols + ([] if clt_show_std.value else _std_cols)
                 clt_table = mo.ui.table(
@@ -577,9 +676,12 @@ def _(clt_show_std, mo, run_result):
                 _sections.append(mo.hstack([clt_show_std], justify="end"))
                 _sections.append(clt_table)
             except Exception as _e:
-                _sections.append(mo.callout(
-                    mo.md(f"Could not read `capri_clt.tsv`: {_e}"), kind="warn",
-                ))
+                _sections.append(
+                    mo.callout(
+                        mo.md(f"Could not read `capri_clt.tsv`: {_e}"),
+                        kind="warn",
+                    )
+                )
 
         _out = mo.vstack(_sections)
 
@@ -600,7 +702,9 @@ def _(clt_table, df_ss, mo, run_result):
             f"<body style='margin:0;padding:0'>{fragment}</body></html>"
         )
         _esc = _html.escape(_doc, quote=True)
-        return mo.Html(f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>')
+        return mo.Html(
+            f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
+        )
 
     def _mol_viewer(pdb_path: _Path2, height: int = 500) -> mo.Html:
         _pdb_json = _json.dumps(pdb_path.read_text())
@@ -622,7 +726,9 @@ def _(clt_table, df_ss, mo, run_result):
             "</script></body></html>"
         )
         _esc = _html.escape(_doc, quote=True)
-        return mo.Html(f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>')
+        return mo.Html(
+            f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
+        )
 
     def _resolve_path(model_str: str, run_dir: _Path2) -> _Path2:
         p = _Path2(model_str)
@@ -651,7 +757,9 @@ def _(clt_table, df_ss, mo, run_result):
         _viz_out = mo.md("")
     elif clt_table.value.empty:
         _viz_out = mo.callout(
-            mo.md("Select a row in the cluster table above to display the best model and contact map."),
+            mo.md(
+                "Select a row in the cluster table above to display the best model and contact map."
+            ),
             kind="info",
         )
     else:
@@ -659,77 +767,105 @@ def _(clt_table, df_ss, mo, run_result):
             _sel = clt_table.value.iloc[0]
             # cluster_rank may be int or float depending on pandas dtype — normalise to int
             _clt_rank = int(float(_sel["cluster_rank"]))
-            _clt_id   = int(float(_sel["cluster_id"]))
-            _score    = float(_sel["score"])
+            _clt_id = int(float(_sel["cluster_id"]))
+            _score = float(_sel["score"])
 
-            _run_dir       = run_result["run_dir"]
+            _run_dir = run_result["run_dir"]
             _contactmap_dir = _run_dir / "4_contactmap"
 
-            _vsections = [mo.md(
-                f"---\n## Cluster {_clt_id}"
-                f"&nbsp;|&nbsp; rank {_clt_rank}"
-                f"&nbsp;|&nbsp; mean score: **{_score:.3f}**"
-            )]
+            _vsections = [
+                mo.md(
+                    f"---\n## Cluster {_clt_id}"
+                    f"&nbsp;|&nbsp; rank {_clt_rank}"
+                    f"&nbsp;|&nbsp; mean score: **{_score:.3f}**"
+                )
+            ]
 
             # ── 3D viewer ──────────────────────────────────────────────────
             if df_ss is None:
-                _vsections.append(mo.callout(
-                    mo.md("Single-structure data (`capri_ss.tsv`) not available — cannot show 3D model."),
-                    kind="warn",
-                ))
-            elif "cluster_ranking" not in df_ss.columns:
-                _vsections.append(mo.callout(
-                    mo.md(f"`cluster_ranking` column not found in capri_ss.tsv. Columns: {list(df_ss.columns)}"),
-                    kind="warn",
-                ))
-            else:
-                # cluster_ranking may also be float — compare as float
-                _clt_models = df_ss[df_ss["cluster_ranking"].apply(
-                    lambda x: int(float(x)) == _clt_rank if x == x else False  # NaN-safe
-                )]
-                if _clt_models.empty:
-                    _vsections.append(mo.callout(
+                _vsections.append(
+                    mo.callout(
                         mo.md(
-                            f"No models found for cluster rank **{_clt_rank}** in capri_ss.tsv. "
-                            f"Available ranks: {sorted(df_ss['cluster_ranking'].dropna().unique().tolist())}"
+                            "Single-structure data (`capri_ss.tsv`) not available — cannot show 3D model."
                         ),
                         kind="warn",
-                    ))
+                    )
+                )
+            elif "cluster_ranking" not in df_ss.columns:
+                _vsections.append(
+                    mo.callout(
+                        mo.md(
+                            f"`cluster_ranking` column not found in capri_ss.tsv. Columns: {list(df_ss.columns)}"
+                        ),
+                        kind="warn",
+                    )
+                )
+            else:
+                # cluster_ranking may also be float — compare as float
+                _clt_models = df_ss[
+                    df_ss["cluster_ranking"].apply(
+                        lambda x: (
+                            int(float(x)) == _clt_rank if x == x else False
+                        )  # NaN-safe
+                    )
+                ]
+                if _clt_models.empty:
+                    _vsections.append(
+                        mo.callout(
+                            mo.md(
+                                f"No models found for cluster rank **{_clt_rank}** in capri_ss.tsv. "
+                                f"Available ranks: {sorted(df_ss['cluster_ranking'].dropna().unique().tolist())}"
+                            ),
+                            kind="warn",
+                        )
+                    )
                 else:
                     _best = _clt_models.loc[_clt_models["score"].idxmin()]
                     _model_path = _resolve_path(str(_best["model"]), _run_dir)
-                    _vsections.append(mo.md(
-                        f"Best model: `{_model_path.name}` &nbsp;|&nbsp; score: **{_best['score']:.3f}**"
-                    ))
+                    _vsections.append(
+                        mo.md(
+                            f"Best model: `{_model_path.name}` &nbsp;|&nbsp; score: **{_best['score']:.3f}**"
+                        )
+                    )
                     if _model_path.exists():
-                        _vsections.append(mo.download(
-                            data=_model_path.read_bytes(),
-                            filename=_model_path.name,
-                            mimetype="chemical/x-pdb",
-                            label=f"⬇ {_model_path.name}",
-                        ))
+                        _vsections.append(
+                            mo.download(
+                                data=_model_path.read_bytes(),
+                                filename=_model_path.name,
+                                mimetype="chemical/x-pdb",
+                                label=f"⬇ {_model_path.name}",
+                            )
+                        )
                         _vsections.append(_mol_viewer(_model_path, height=500))
                     else:
-                        _vsections.append(mo.callout(
-                            mo.md(f"Model file not found: `{_model_path}`"), kind="warn",
-                        ))
+                        _vsections.append(
+                            mo.callout(
+                                mo.md(f"Model file not found: `{_model_path}`"),
+                                kind="warn",
+                            )
+                        )
 
             # ── Chord chart / heatmap ──────────────────────────────────────
             if not _contactmap_dir.exists():
-                _vsections.append(mo.callout(
-                    mo.md(f"Contact map directory not found: `{_contactmap_dir}`"), kind="warn",
-                ))
+                _vsections.append(
+                    mo.callout(
+                        mo.md(f"Contact map directory not found: `{_contactmap_dir}`"),
+                        kind="warn",
+                    )
+                )
             else:
                 _cf = _contactmap_dir / f"cluster{_clt_rank}_chordchart.html"
                 _hf = _contactmap_dir / f"cluster{_clt_rank}_heatmap.html"
                 if not _cf.exists() and not _hf.exists():
-                    _vsections.append(mo.callout(
-                        mo.md(
-                            f"No contact map files found for cluster rank **{_clt_rank}**. "
-                            f"Expected `{_cf.name}` in `{_contactmap_dir}`."
-                        ),
-                        kind="warn",
-                    ))
+                    _vsections.append(
+                        mo.callout(
+                            mo.md(
+                                f"No contact map files found for cluster rank **{_clt_rank}**. "
+                                f"Expected `{_cf.name}` in `{_contactmap_dir}`."
+                            ),
+                            kind="warn",
+                        )
+                    )
                 else:
                     _add_contactmap(f"cluster{_clt_rank}", _contactmap_dir, _vsections)
 
@@ -737,9 +873,14 @@ def _(clt_table, df_ss, mo, run_result):
 
         except Exception as _exc:
             import traceback as _tb
+
             _viz_out = mo.callout(
-                mo.vstack([mo.md("**Error rendering cluster visualisation:**"),
-                           mo.code(_tb.format_exc(), language="text")]),
+                mo.vstack(
+                    [
+                        mo.md("**Error rendering cluster visualisation:**"),
+                        mo.code(_tb.format_exc(), language="text"),
+                    ]
+                ),
                 kind="danger",
             )
 
@@ -753,15 +894,19 @@ def _(df_ss, mo, run_result, ss_table):
         _ss_stats_out = mo.md("")
     elif df_ss is None:
         _ss_stats_out = mo.callout(
-            mo.md(f"`capri_ss.tsv` not found in `{run_result['run_dir'] / '3_caprieval'}`."),
+            mo.md(
+                f"`capri_ss.tsv` not found in `{run_result['run_dir'] / '3_caprieval'}`."
+            ),
             kind="warn",
         )
     else:
-        _ss_stats_out = mo.vstack([
-            mo.md("---\n## Single-structure statistics"),
-            mo.md("*Click a row to display the model in 3D.*"),
-            ss_table,
-        ])
+        _ss_stats_out = mo.vstack(
+            [
+                mo.md("---\n## Single-structure statistics"),
+                mo.md("*Click a row to display the model in 3D.*"),
+                ss_table,
+            ]
+        )
     _ss_stats_out
     return
 
@@ -792,7 +937,9 @@ def _(mo, run_result, ss_table):
             "</script></body></html>"
         )
         _esc = _html3.escape(_doc, quote=True)
-        return mo.Html(f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>')
+        return mo.Html(
+            f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
+        )
 
     def _resolve_path_ss(model_str, run_dir):
         p = _Path3(model_str)
@@ -808,7 +955,9 @@ def _(mo, run_result, ss_table):
         _ss_viz = mo.md("")
     elif ss_table.value.empty:
         _ss_viz = mo.callout(
-            mo.md("Select a row in the single-structure table above to display the model in 3D."),
+            mo.md(
+                "Select a row in the single-structure table above to display the model in 3D."
+            ),
             kind="info",
         )
     else:
@@ -818,28 +967,39 @@ def _(mo, run_result, ss_table):
             _run_dir = run_result["run_dir"]
             _model_path = _resolve_path_ss(str(_sel["model"]), _run_dir)
 
-            _vsections = [mo.md(
-                f"---\n## `{_model_path.name}`"
-                f"&nbsp;|&nbsp; score: **{_score:.3f}**"
-            )]
+            _vsections = [
+                mo.md(
+                    f"---\n## `{_model_path.name}`&nbsp;|&nbsp; score: **{_score:.3f}**"
+                )
+            ]
             if _model_path.exists():
-                _vsections.append(mo.download(
-                    data=_model_path.read_bytes(),
-                    filename=_model_path.name,
-                    mimetype="chemical/x-pdb",
-                    label=f"⬇ {_model_path.name}",
-                ))
+                _vsections.append(
+                    mo.download(
+                        data=_model_path.read_bytes(),
+                        filename=_model_path.name,
+                        mimetype="chemical/x-pdb",
+                        label=f"⬇ {_model_path.name}",
+                    )
+                )
                 _vsections.append(_mol_viewer_ss(_model_path, height=500))
             else:
-                _vsections.append(mo.callout(
-                    mo.md(f"Model file not found: `{_model_path}`"), kind="warn",
-                ))
+                _vsections.append(
+                    mo.callout(
+                        mo.md(f"Model file not found: `{_model_path}`"),
+                        kind="warn",
+                    )
+                )
             _ss_viz = mo.vstack(_vsections)
         except Exception:
             import traceback as _tb3
+
             _ss_viz = mo.callout(
-                mo.vstack([mo.md("**Error rendering single-structure visualisation:**"),
-                           mo.code(_tb3.format_exc(), language="text")]),
+                mo.vstack(
+                    [
+                        mo.md("**Error rendering single-structure visualisation:**"),
+                        mo.code(_tb3.format_exc(), language="text"),
+                    ]
+                ),
                 kind="danger",
             )
 

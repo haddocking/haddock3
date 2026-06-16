@@ -43,26 +43,35 @@ class HaddockModule(BaseHaddockModule):
                 " available, please check the installation instructions"
             )
 
-    def _identify_receptor_ligand(
-        self, combination: tuple[PDBFile, ...], rec_chain: str, lig_chain: str
-    ) -> tuple[PDBFile, PDBFile]:
-        """Identify the receptor and ligand PDBFile in a model combination."""
-        by_chain: dict[str, PDBFile] = {}
-        for pdb in combination:
-            _, chains = libpdb.identify_chainseg(Path(pdb.path, pdb.file_name))
-            for chain in chains:
-                by_chain.setdefault(chain, pdb)
+    def _split_combination(
+        self, combination: tuple[PDBFile, ...]
+    ) -> tuple[PDBFile, str, PDBFile, str]:
+        """Return (receptor, rec_chain, ligand, lig_chain) from a combination.
 
-        receptor = by_chain.get(rec_chain)
-        ligand = by_chain.get(lig_chain)
-        if receptor is None or ligand is None:
+        The molecule order follows the `molecules` list in the run config, so
+        index 0 is always the receptor and index 1 is always the ligand.
+        Chain IDs are read directly from the files.
+        """
+        if len(combination) != 2:
             self.finish_with_error(
-                f"Could not find receptor chain '{rec_chain}' and ligand"
-                f" chain '{lig_chain}' among the input models"
-                f" {[c.file_name for c in combination]}"
+                f"gdock requires exactly 2 input molecules per combination, "
+                f"got {len(combination)}: {[c.file_name for c in combination]}"
             )
 
-        return receptor, ligand  # type: ignore
+        receptor, ligand = combination[0], combination[1]
+
+        _, rec_chains = libpdb.identify_chainseg(
+            Path(receptor.path, receptor.file_name)
+        )
+        _, lig_chains = libpdb.identify_chainseg(Path(ligand.path, ligand.file_name))
+
+        if not rec_chains or not lig_chains:
+            self.finish_with_error(
+                f"Could not detect chain IDs in receptor '{receptor.file_name}' "
+                f"or ligand '{ligand.file_name}'"
+            )
+
+        return receptor, rec_chains[0], ligand, lig_chains[0]  # type: ignore
 
     def _run(self) -> None:
         """Execute module."""
@@ -70,24 +79,21 @@ class HaddockModule(BaseHaddockModule):
         #  e.g. (receptor, ligand), as produced by `topoaa`.
         models_to_dock = self.previous_io.retrieve_models()
 
-        rec_chain = self.params["receptor_chains"][0]
-        lig_chain = self.params["ligand_chains"][0]
-
-        # Convert restraints, if provided, to gdock's residue pair format
-        restraints = None
-        ambig_fname = self.params["ambig_fname"]
-        if ambig_fname:
-            restraints = parse_restraints(ambig_fname, rec_chain, lig_chain)
-
         sampling_factor = max(1, self.params["sampling"] // len(models_to_dock))
 
         log.info(f"ncores={self.params['ncores']} sampling={self.params['sampling']}")
 
         expected: list[PDBFile] = []
         for idx, combination in enumerate(models_to_dock, start=1):
-            receptor, ligand = self._identify_receptor_ligand(
-                combination, rec_chain, lig_chain
+            receptor, rec_chain, ligand, lig_chain = self._split_combination(
+                combination
             )
+
+            # Convert restraints using chain IDs read from the actual files.
+            restraints = None
+            ambig_fname = self.params["ambig_fname"]
+            if ambig_fname:
+                restraints = parse_restraints(ambig_fname, rec_chain, lig_chain)
 
             gdock_wrapper = GdockWrapper(
                 receptor_pdb_file=Path(receptor.path, receptor.file_name),

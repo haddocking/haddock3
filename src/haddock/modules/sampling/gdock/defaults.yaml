@@ -1,25 +1,3 @@
-receptor_chains:
-  default: A
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: Receptor chain ID
-  short: Chain ID of the receptor molecule.
-  long: Chain ID of the receptor molecule, used to split the input complex
-    before docking with gdock.
-  group: "restraints"
-  explevel: easy
-ligand_chains:
-  default: B
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: Ligand chain ID
-  short: Chain ID of the ligand molecule.
-  long: Chain ID of the ligand molecule, used to split the input complex
-    before docking with gdock.
-  group: "restraints"
-  explevel: easy
 #
 # Group distance restraints
 #

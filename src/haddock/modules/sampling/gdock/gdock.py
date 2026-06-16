@@ -82,7 +82,7 @@ def parse_restraints(
 
 
 class GdockWrapper:
-    """Wrapper to run `gdock`'s genetic algorithm docking and save its poses."""
+    """Wrapper to run `gdock`'s genetic algorithm docking and save its models."""
 
     def __init__(
         self,
@@ -90,13 +90,17 @@ class GdockWrapper:
         ligand_pdb_file: FilePath,
         restraints: Optional[list[tuple[int, int]]] = None,
         max_generations: int = 250,
+        number_of_individuals: int = 150,
         seed: int = 42,
+        sampling: Optional[int] = None,
     ) -> None:
         self.receptor_pdb_file = Path(receptor_pdb_file)
         self.ligand_pdb_file = Path(ligand_pdb_file)
         self.restraints = restraints
         self.max_generations = max_generations
+        self.number_of_individuals = number_of_individuals
         self.seed = seed
+        self.sampling = sampling
         self.result: Optional[dict] = None
 
     def run(self) -> None:
@@ -111,48 +115,36 @@ class GdockWrapper:
             ligand_pdb,
             restraints=self.restraints,
             max_generations=self.max_generations,
+            population_size=self.number_of_individuals,
             seed=self.seed,
+            sampling=self.sampling,
         )
 
-    def save_poses(
-        self, output_dir: FilePath, top: int, prefix: str = "gdock"
-    ) -> list[dict]:
-        """Write the top-ranked poses as receptor+ligand complex PDB files.
+    def save_models(self, output_dir: FilePath, prefix: str = "gdock") -> list[dict]:
+        """Write all ranked models as PDB files to `output_dir`.
 
-        gdock only returns the transformed ligand structure for each pose,
-        so the (unchanged) receptor structure is prepended to reconstruct
-        the full complex.
+        Each model PDB already contains the full receptor+ligand complex as
+        returned by gdock. The segID column (cols 73-76) is filled from the
+        chain ID before writing so that CNS can map atoms to the PSF, and atom
+        serials are renumbered to ensure they are strictly increasing.
 
         Returns
         -------
         list[dict]
-            One entry per saved pose with keys `file_name`, `fitness`,
+            One entry per saved model with keys `file_name`, `fitness`,
             `vdw`, `elec`, `desolv` and `air`.
         """
         if self.result is None:
-            raise RuntimeError("`run` must be called before `save_poses`")
-
-        # Drop the receptor's trailing END record: it would otherwise
-        # terminate CNS's coordinate reading before the ligand atoms below it.
-        receptor_lines = [
-            line
-            for line in self.receptor_pdb_file.read_text().splitlines(keepends=True)
-            if line.strip() != "END"
-        ]
-        receptor_pdb = "".join(receptor_lines)
-        poses = sorted(self.result["poses"], key=lambda p: p["rank"])[:top]
+            raise RuntimeError("`run` must be called before `save_models`")
 
         saved = []
-        for pose in poses:
-            file_name = f"{prefix}_{pose['rank']}.pdb"
-            # gdock's output PDB for the ligand pose lacks the segID column
-            # (cols 73-76), which CNS relies on to map atoms to the PSF. Fill
-            # it in from the chain ID column before assembling the complex.
-            ligand_pdb = "".join(chain_to_seg(pose["pdb"].splitlines(keepends=True)))
-            complex_pdb = receptor_pdb + ligand_pdb
-            # gdock numbers the ligand pose atoms starting from 1, which
-            # collides with the receptor's atom serials and confuses CNS's
-            # PDB reader (it expects strictly increasing serial numbers).
+        for model in self.result["models"]:
+            file_name = f"{prefix}_{model['rank']}.pdb"
+            # Fill in the segID column (cols 73-76) from chain ID: CNS relies
+            # on segIDs to map atoms to the PSF topology.
+            complex_pdb = "".join(chain_to_seg(model["pdb"].splitlines(keepends=True)))
+            # Renumber atoms so serials are strictly increasing across the
+            # combined receptor+ligand complex, as CNS's PDB reader requires.
             complex_pdb = "".join(
                 renumber_atoms(complex_pdb.splitlines(keepends=True), 1)
             )
@@ -160,11 +152,11 @@ class GdockWrapper:
             saved.append(
                 {
                     "file_name": file_name,
-                    "fitness": pose["fitness"],
-                    "vdw": pose["vdw"],
-                    "elec": pose["elec"],
-                    "desolv": pose["desolv"],
-                    "air": pose["air"],
+                    "fitness": model["fitness"],
+                    "vdw": model["vdw"],
+                    "elec": model["elec"],
+                    "desolv": model["desolv"],
+                    "air": model["air"],
                 }
             )
 

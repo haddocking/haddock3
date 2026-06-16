@@ -46,6 +46,18 @@ max_generations:
   long: Maximum number of genetic algorithm generations run by gdock.
   group: "sampling"
   explevel: easy
+number_of_individuals:
+  default: 150
+  type: integer
+  min: 2
+  max: 100000
+  title: Number of individuals
+  short: Number of individuals in the GA population.
+  long: Number of individuals (chromosomes) in each generation of gdock's
+    genetic algorithm. Larger populations explore the conformational space more
+    broadly but increase runtime proportionally.
+  group: "sampling"
+  explevel: easy
 seed:
   default: 42
   type: integer
@@ -62,8 +74,10 @@ sampling:
   min: 1
   max: 50000
   title: Number of models to generate
-  short: Number of top-ranked gdock poses to output as models.
-  long: Number of top-ranked gdock poses to output as models. If gdock
-    returns fewer poses than this value, only those are used.
+  short: Maximum number of unique conformations gdock collects per input model.
+  long: Controls gdock's Hall-of-Fame capacity. gdock accumulates up to this
+    many unique conformations during the genetic algorithm run and returns them
+    all sorted by fitness. The total sampling budget is divided evenly across
+    the input models in the previous step.
   group: "sampling"
   explevel: easy

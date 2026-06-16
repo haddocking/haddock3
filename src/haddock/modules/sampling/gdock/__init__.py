@@ -94,25 +94,25 @@ class HaddockModule(BaseHaddockModule):
                 ligand_pdb_file=Path(ligand.path, ligand.file_name),
                 restraints=restraints,
                 max_generations=self.params["max_generations"],
+                number_of_individuals=self.params["number_of_individuals"],
                 seed=self.params["seed"],
+                sampling=sampling_factor,
             )
             gdock_wrapper.run()
-            poses = gdock_wrapper.save_poses(
-                ".", sampling_factor, prefix=f"gdock_{idx}"
-            )
+            models = gdock_wrapper.save_models(".", prefix=f"gdock_{idx}")
 
-            for pose in poses:
+            for m in models:
                 expected.append(
                     PDBFile(
-                        pose["file_name"],
+                        m["file_name"],
                         topology=[receptor.topology, ligand.topology],
                         path=self.path,
-                        score=pose["fitness"],
+                        score=m["fitness"],
                         unw_energies={
-                            "vdw": pose["vdw"],
-                            "elec": pose["elec"],
-                            "desolv": pose["desolv"],
-                            "air": pose["air"],
+                            "vdw": m["vdw"],
+                            "elec": m["elec"],
+                            "desolv": m["desolv"],
+                            "air": m["air"],
                         },
                     )
                 )

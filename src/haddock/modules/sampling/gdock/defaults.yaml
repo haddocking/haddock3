@@ -49,7 +49,7 @@ max_generations:
 number_of_individuals:
   default: 150
   type: integer
-  min: 2
+  min: 1
   max: 100000
   title: Number of individuals
   short: Number of individuals in the GA population.
@@ -69,15 +69,14 @@ seed:
   group: "sampling"
   explevel: easy
 sampling:
-  default: 10
+  default: 1000
   type: integer
   min: 1
-  max: 50000
-  title: Number of models to generate
+  max: 500000
+  title: Number of maximum models to generate
   short: Maximum number of unique conformations gdock collects per input model.
   long: Controls gdock's Hall-of-Fame capacity. gdock accumulates up to this
     many unique conformations during the genetic algorithm run and returns them
-    all sorted by fitness. The total sampling budget is divided evenly across
-    the input models in the previous step.
+    all sorted by fitness.
   group: "sampling"
   explevel: easy

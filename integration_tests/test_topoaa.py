@@ -428,6 +428,33 @@ def test_topoaa_THRglycosylationAA(topoaa_module):
     assert "HG21" in file_content
 
 
+def test_topoaa_SERglycosylation(topoaa_module):
+    """Test the topoaa module to detect SER-glycosylation."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "ser-glycosylation.pdb"),
+    ]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "ser-glycosylation.inp")
+    expected_psf = Path(topoaa_module.path, "ser-glycosylation_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "ser-glycosylation_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "ser-glycosylation.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with open(expected_pdb, encoding="utf-8", mode="r") as f:
+        file_content = f.read()
+
+    assert "SER-glycosylation" in file_content
+    assert "detected" in file_content
+
+
 def test_topoaa_module_protein_noCter(topoaa_module):
     """Topoaa module with uncharged Cter and charged Nter."""
     topoaa_module.params["molecules"] = [

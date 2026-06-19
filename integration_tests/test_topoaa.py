@@ -282,12 +282,19 @@ def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
     topoaa_module.run()
 
     expected1_inp = Path(topoaa_module.path, "ligand-ens_1.inp")
-    expected1_psf = Path(topoaa_module.path, "dock_1_model_ligand_from_ligand-ens_1_haddock.psf")
-    expected1_pdb = Path(topoaa_module.path, "dock_1_model_ligand_from_ligand-ens_1_haddock.pdb")
+    expected1_psf = Path(
+        topoaa_module.path, "dock_1_model_ligand_from_ligand-ens_1_haddock.psf"
+    )
+    expected1_pdb = Path(
+        topoaa_module.path, "dock_1_model_ligand_from_ligand-ens_1_haddock.pdb"
+    )
     expected2_inp = Path(topoaa_module.path, "ligand-ens_2.inp")
-    expected2_psf = Path(topoaa_module.path, "dock_2_model_ligand_from_ligand-ens_2_haddock.psf")
-    expected2_pdb = Path(topoaa_module.path, "dock_2_model_ligand_from_ligand-ens_2_haddock.pdb")
-    expected_io = Path(topoaa_module.path, "io.json")
+    expected2_psf = Path(
+        topoaa_module.path, "dock_2_model_ligand_from_ligand-ens_2_haddock.psf"
+    )
+    expected2_pdb = Path(
+        topoaa_module.path, "dock_2_model_ligand_from_ligand-ens_2_haddock.pdb"
+    )
 
     assert expected1_inp.exists()
     assert expected1_psf.exists()
@@ -305,7 +312,6 @@ def test_topoaa_module_ligand_ensemble_automated(topoaa_module):
             if "ligand" in pdb.file_name:
                 assert pdb.ligand_top_fname.exists()
                 assert pdb.ligand_param_fname.exists()
-
 
 
 def test_topoaa_cyclic(topoaa_module):
@@ -369,7 +375,7 @@ def test_topoaa_cyclic_ace_cys(topoaa_module):
         file_content = f.read()
 
     assert "COVAL-ACE-CYS" in file_content
-    assert not "cyclic peptide detected" in file_content
+    assert "cyclic peptide detected" not in file_content
 
 
 def test_topoaa_THRglycosylation(topoaa_module):
@@ -426,6 +432,33 @@ def test_topoaa_THRglycosylationAA(topoaa_module):
     assert "THR-glycosylation" in file_content
     assert "detected" in file_content
     assert "HG21" in file_content
+
+
+def test_topoaa_SERglycosylation(topoaa_module):
+    """Test the topoaa module to detect SER-glycosylation."""
+    topoaa_module.params["molecules"] = [
+        Path(GOLDEN_DATA, "ser-glycosylation.pdb"),
+    ]
+    topoaa_module.params["cns_exec"] = CNS_EXEC
+    topoaa_module.params["debug"] = True
+
+    topoaa_module.run()
+
+    expected_inp = Path(topoaa_module.path, "ser-glycosylation.inp")
+    expected_psf = Path(topoaa_module.path, "ser-glycosylation_haddock.psf")
+    expected_pdb = Path(topoaa_module.path, "ser-glycosylation_haddock.pdb")
+    expected_gz = Path(topoaa_module.path, "ser-glycosylation.out.gz")
+
+    assert expected_inp.exists(), f"{expected_inp} does not exist"
+    assert expected_psf.exists(), f"{expected_psf} does not exist"
+    assert expected_gz.exists(), f"{expected_gz} does not exist"
+    assert expected_pdb.exists(), f"{expected_pdb} does not exist"
+
+    with open(expected_pdb, encoding="utf-8", mode="r") as f:
+        file_content = f.read()
+
+    assert "SER-glycosylation" in file_content
+    assert "detected" in file_content
 
 
 def test_topoaa_module_protein_noCter(topoaa_module):

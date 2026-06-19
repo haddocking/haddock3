@@ -65,12 +65,16 @@ REMARKS B1S: beta link from C1(D-) to Ser OG.
 REMARKS A1S: alpha link from C1(D-) to Ser OG.
 REMARKS B1T: beta link from C1(D-) to Thr OG1.
 REMARKS A1T: alpha link from C1(D-) to Thr OG1.
+REMARKS B1S: beta link from C1(D-) to Ser OG.
+REMARKS A1S: alpha link from C1(D-) to Ser OG.
 REMARKS B1C: beta link from C1(D-) to Cys SG.
 REMARKS A1C: alpha link from C1(D-) to Cys SG.
 REMARKS B1SL: beta link from C1(L-) to Ser OG.
 REMARKS A1SL: alpha link from C1(L-) to Ser OG.
 REMARKS B1TL: beta link from C1(L-) to Thr OG1.
 REMARKS A1TL: alpha link from C1(L-) to Thr OG1.
+REMARKS B1SL: beta link from C1(L-) to Ser OG.
+REMARKS A1SL: alpha link from C1(L-) to Ser OG.
 REMARKS B1CL: beta link from C1(L-) to Cys SG.
 REMARKS A1CL: alpha link from C1(L-) to Cys SG.
 
@@ -2921,9 +2925,7 @@ PRESidue A1T {alpha link from C1 to Thr OG1}
 END
 
 PRESidue B1T {beta link from C1 to Thr OG1}
-! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
- MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
-! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END
  DELEte  ATOM +HG1                         END
  MODIfy  ATOM -C1           CHARge= 0.20   END
  DELEte  ATOM -O1                          END
@@ -2943,10 +2945,29 @@ PRESidue B1T {beta link from C1 to Thr OG1}
 
 END
 
+PRESidue B1S {beta link from C1 to Ser OG}
+ MODIfy  ATOM +OG TYPE=OAS CHARge=-0.365   END
+ DELEte  ATOM +HG                         END
+ MODIfy  ATOM -C1           CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG
+ 
+ ADD ANGLe +CB +OG -C1  
+ ADD ANGLe +OG -C1 -C2  
+ ADD ANGLe +OG -C1 -O5  
+ ADD ANGLe +OG -C1 -H1  
+
+ ADD DIHEdral  +CA   +CB  +OG -C1
+ ADD DIHEdral  +CB   +OG  -C1 -H1
+
+ ADD IMPRoper -H1 +OG -O5 -C2  {beta}
+
+END
+
 PRESidue B1TL {beta link from L-C1 to Thr OG1}
-! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
- MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
-! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END
  DELEte  ATOM +HG1                         END
  MODIfy  ATOM -C1           CHARge= 0.20   END
  DELEte  ATOM -O1                          END
@@ -2966,10 +2987,29 @@ PRESidue B1TL {beta link from L-C1 to Thr OG1}
 
 END
 
+PRESidue B1SL {beta link from L-C1 to Ser OG}
+ MODIfy  ATOM +OG TYPE=OAS CHARge=-0.365  END
+ DELEte  ATOM +HG                         END
+ MODIfy  ATOM -C1           CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG1   
+ 
+ ADD ANGLe +CB  +OG  -C1  
+ ADD ANGLe +OG1 -C1  -C2  
+ ADD ANGLe +OG1 -C1  -O5  
+ ADD ANGLe +OG1 -C1  -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG  -C1
+ ADD DIHEdral  +CB   +OG   -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +OG  -C2  {alpha}
+
+END
+
 PRESidue A1TL {alpha link from L-C1 to Thr OG1}
-! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
- MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
-! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END
  DELEte  ATOM +HG1                         END
  MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END
  DELEte  ATOM -O1                          END
@@ -2986,6 +3026,27 @@ PRESidue A1TL {alpha link from L-C1 to Thr OG1}
  ADD DIHEdral  +CB   +OG1  -C1  -H1
 
  ADD IMPRoper -H1 +OG1 -O5 -C2  {beta}
+
+END
+
+PRESidue A1SL {alpha link from L-C1 to Ser OG}
+ MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.365  END
+ DELEte  ATOM +HG                          END
+ MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG
+ 
+ ADD ANGLe +CB  +OG  -C1  
+ ADD ANGLe +OG  -C1  -C2  
+ ADD ANGLe +OG  -C1  -O5  
+ ADD ANGLe +OG  -C1  -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG  -C1
+ ADD DIHEdral  +CB   +OG   -C1  -H1
+
+ ADD IMPRoper -H1 +OG -O5 -C2  {beta}
 
 END
 

@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-06-18: Added support for O1-methylated NAG - Issue #1579
 - 2026-06-18: Added support for O-glycosylated serine - Issue #1577
 - 2026-06-14: Dropped support for Python 3.9, minimum required version is now 3.10
 - 2026-06-11: Cosmetic fix in support of custom symmetry restraints - Issue #1563

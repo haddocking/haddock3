@@ -578,7 +578,7 @@ ident (store4) ( ( &alpha or &beta) and name O4 and known )
 {- for A16: alpha(1,6)  link from alpha-anomer to any -}
 ident (store6) ( ( &alpha or &beta) and name O6 and known ) 
 
-for $id1 in id ( &alpha and name C1 and known ) loop A1
+for $id1 in id ( &alpha and name C1 and known and not resname NAM) loop A1
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)

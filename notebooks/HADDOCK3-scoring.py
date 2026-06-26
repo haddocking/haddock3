@@ -185,7 +185,8 @@ def _(
     topX_slider,
 ):
     def _make_cfg_str():
-        _v = lambda b: "true" if b else "false"
+        def _v(b):
+            return "true" if b else "false"
         _caprieval_lines = ["[caprieval]"]
         if ref_upload.value:
             _caprieval_lines.append(f'reference_fname = "{ref_upload.name()}"')

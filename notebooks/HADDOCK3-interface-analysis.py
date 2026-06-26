@@ -238,7 +238,8 @@ def _(
     topX_slider,
 ):
     def _make_cfg_str():
-        _v = lambda b: "true" if b else "false"
+        def _v(b):
+            return "true" if b else "false"
         _topX = (
             max(topX_slider.value, 10) if single_model_analysis_toggle.value else topX_slider.value
         )

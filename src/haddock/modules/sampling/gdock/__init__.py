@@ -106,6 +106,10 @@ class HaddockModule(BaseHaddockModule):
                 sampling=sampling_factor,
             )
             gdock_wrapper.run()
+            log.info(
+                f"gdock run {idx}: generations_run={gdock_wrapper.result['generationsRun']}"
+                f" converged_early={gdock_wrapper.converged_early}"
+            )
             models = gdock_wrapper.save_models(".", prefix=f"gdock_{idx}")
 
             for m in models:

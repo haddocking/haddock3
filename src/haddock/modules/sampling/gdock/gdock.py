@@ -104,6 +104,7 @@ class GdockWrapper:
         self.seed = seed
         self.sampling = sampling
         self.result: Optional[dict] = None
+        self.converged_early: bool = False
 
     def run(self) -> None:
         """Run gdock's docking pipeline."""
@@ -122,6 +123,7 @@ class GdockWrapper:
             seed=self.seed,
             sampling=self.sampling,
         )
+        self.converged_early = self.result.get("convergedEarly", False)
 
     def save_models(self, output_dir: FilePath, prefix: str = "gdock") -> list[dict]:
         """Write all ranked models as PDB files to `output_dir`.

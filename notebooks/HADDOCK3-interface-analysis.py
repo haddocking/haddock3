@@ -240,8 +240,11 @@ def _(
     def _make_cfg_str():
         def _v(b):
             return "true" if b else "false"
+
         _topX = (
-            max(topX_slider.value, 10) if single_model_analysis_toggle.value else topX_slider.value
+            max(topX_slider.value, 10)
+            if single_model_analysis_toggle.value
+            else topX_slider.value
         )
         _lines = [
             "# HADDOCK3 interface analysis workflow — module parameters",
@@ -594,22 +597,35 @@ def _(mo, run_result):
                 # ── Final column order ─────────────────────────────────────────
                 # Keep "structure" (the emscoring PDB stem) so the visualisation
                 # cell can match it against contactmap filenames; hide it in the UI.
-                _base = ["structure", "model", "HADDOCK score", "Evdw", "Eelec", "Edesolv", "BSA"]
+                _base = [
+                    "structure",
+                    "model",
+                    "HADDOCK score",
+                    "Evdw",
+                    "Eelec",
+                    "Edesolv",
+                    "BSA",
+                ]
                 _iface_cols = [c for c in _df.columns if c.startswith("score_")]
                 _df = _df[[c for c in _base if c in _df.columns] + _iface_cols]
                 _fc = _df.select_dtypes(include="float").columns
                 _df[_fc] = _df[_fc].round(3)
 
                 # Map structure stem → original model name for chart labelling.
-                model_map = dict(
-                    zip(
-                        _df["structure"].apply(lambda s: s.rsplit(".", 1)[0]),
-                        _df["model"],
+                model_map = (
+                    dict(
+                        zip(
+                            _df["structure"].apply(lambda s: s.rsplit(".", 1)[0]),
+                            _df["model"],
+                        )
                     )
-                ) if "structure" in _df.columns and "model" in _df.columns else {}
+                    if "structure" in _df.columns and "model" in _df.columns
+                    else {}
+                )
 
                 # Replace "model" column with HTML download links via base64 data URI.
                 import base64 as _b64
+
                 _model_links = []
                 for _, _row in _df.iterrows():
                     _pdb_path = (_em_dir / str(_row["structure"])) if _em_dir else None
@@ -669,7 +685,10 @@ def _(mo, run_result):
             )
 
     _score_out
-    return (model_map, score_table,)
+    return (
+        model_map,
+        score_table,
+    )
 
 
 @app.cell
@@ -699,7 +718,9 @@ def _(mo, model_map, run_result, score_table):
         )
         _esc = _html_3d.escape(_doc, quote=True)
         return mo.Html(
-            '<iframe srcdoc="' + _esc + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
+            '<iframe srcdoc="'
+            + _esc
+            + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
         )
 
     def _resolve_em_path(structure: str, run_dir: _Path_3d) -> _Path_3d:
@@ -715,11 +736,11 @@ def _(mo, model_map, run_result, score_table):
 
     if not run_result["success"] or run_result.get("stopped"):
         _3d_out = mo.md("")
-    elif score_table is None or (
-        score_table.value.empty and len(model_map) != 1
-    ):
+    elif score_table is None or (score_table.value.empty and len(model_map) != 1):
         _3d_out = mo.callout(
-            mo.md("Select a row in the scoring table above to display the model in 3D."),
+            mo.md(
+                "Select a row in the scoring table above to display the model in 3D."
+            ),
             kind="info",
         )
     else:
@@ -740,7 +761,12 @@ def _(mo, model_map, run_result, score_table):
             _model_path = _resolve_em_path(_structure, _run_dir)
 
             import math as _math_3d
-            _score_str = f"&nbsp;|&nbsp; HADDOCK score: **{_score:.3f}**" if not _math_3d.isnan(_score) else ""
+
+            _score_str = (
+                f"&nbsp;|&nbsp; HADDOCK score: **{_score:.3f}**"
+                if not _math_3d.isnan(_score)
+                else ""
+            )
             _vsections = [
                 mo.md(f"---\n## 3D Visualisation — `{_model_name}`{_score_str}")
             ]
@@ -869,7 +895,9 @@ def _(alascan_show_std, mo, model_map, run_result, score_table):
             if _multi_charts and not _has_selection:
                 _sections.append(
                     mo.callout(
-                        mo.md("Select a row in the scoring table above to display the contact map."),
+                        mo.md(
+                            "Select a row in the scoring table above to display the contact map."
+                        ),
                         kind="info",
                     )
                 )

@@ -187,6 +187,7 @@ def _(
     def _make_cfg_str():
         def _v(b):
             return "true" if b else "false"
+
         _caprieval_lines = ["[caprieval]"]
         if ref_upload.value:
             _caprieval_lines.append(f'reference_fname = "{ref_upload.name()}"')
@@ -592,11 +593,16 @@ def _(clt_show_std, mo, run_result):
                 # Download name = original input model name (from traceback) or
                 # emscoring filename, with "_EM" inserted before .pdb extension.
                 import base64 as _b64_ss
+
                 _fname_links = []
                 for _, _ss_row in _df_ss_disp.iterrows():
                     _model_str = str(_ss_row.get("model", ""))
                     _fname = str(_ss_row.get("filename", _Path(_model_str).name))
-                    _input = str(_ss_row.get("input model", "")) if "input model" in _df_ss_disp.columns else ""
+                    _input = (
+                        str(_ss_row.get("input model", ""))
+                        if "input model" in _df_ss_disp.columns
+                        else ""
+                    )
                     _dl_stem = (
                         _input.rsplit(".", 1)[0]
                         if _input and _input not in ("—", "")
@@ -630,11 +636,21 @@ def _(clt_show_std, mo, run_result):
                     selection="single",
                     show_column_summaries=True,
                     hidden_columns=[
-                        c for c in [
-                            "model", "md5",
-                            "air", "cdih", "coup", "dani", "rdcs",
-                            "rg", "sym", "vean", "xpcs",
-                        ] if c in _ss_existing
+                        c
+                        for c in [
+                            "model",
+                            "md5",
+                            "air",
+                            "cdih",
+                            "coup",
+                            "dani",
+                            "rdcs",
+                            "rg",
+                            "sym",
+                            "vean",
+                            "xpcs",
+                        ]
+                        if c in _ss_existing
                     ],
                 )
             except Exception as _e:
@@ -704,7 +720,9 @@ def _(clt_show_std, mo, run_result):
                     selection="single",
                     pagination=False,
                     show_column_summaries=True,
-                    hidden_columns=list(dict.fromkeys(c for c in _hidden_clt if c in _existing)),
+                    hidden_columns=list(
+                        dict.fromkeys(c for c in _hidden_clt if c in _existing)
+                    ),
                 )
                 _sections.append(mo.hstack([clt_show_std], justify="end"))
                 _sections.append(clt_table)
@@ -760,7 +778,9 @@ def _(clt_table, df_ss, mo, run_result):
         )
         _esc = _html.escape(_doc, quote=True)
         return mo.Html(
-            '<iframe srcdoc="' + _esc + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
+            '<iframe srcdoc="'
+            + _esc
+            + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
         )
 
     def _resolve_path(model_str: str, run_dir: _Path2) -> _Path2:
@@ -964,7 +984,9 @@ def _(mo, run_result, ss_table):
         )
         _esc = _html3.escape(_doc, quote=True)
         return mo.Html(
-            '<iframe srcdoc="' + _esc + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
+            '<iframe srcdoc="'
+            + _esc
+            + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
         )
 
     def _resolve_path_ss(model_str, run_dir):

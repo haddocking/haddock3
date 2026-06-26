@@ -52,6 +52,7 @@ jobs:
           coverage xml
 
       - uses: codacy/codacy-coverage-reporter-action@v1
+        if: github.event.pull_request.head.repo.full_name == github.repository
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ./coverage.xml
@@ -85,7 +86,7 @@ jobs:
         os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
         # Test only newest and oldest python version
         # > versions in the middle are unlikely to have compatibility issues
-        python-version: ["3.9", "3.14"]
+        python-version: ["3.10", "3.14"]
         exclude:
           # Already covered by test-linux-py314, don't run again
           - os: ubuntu-latest

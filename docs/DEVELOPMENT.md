@@ -4,7 +4,7 @@ This guide provides instructions for setting up a HADDOCK3 development environme
 
 ## System Requirements
 
-- **Python**: 3.9-3.14
+- **Python**: 3.10-3.14
 - **MPI**: OpenMPI (optional, required for MPI support)
 
 ## Development Environment Setup

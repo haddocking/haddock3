@@ -10,7 +10,7 @@ contributing effectively.
 ### 1. Prerequisites
 
 - Install HADDOCK3 following [INSTALL.md](docs/INSTALL.md)
-- Python 3.9+ development environment
+- Python 3.10+ development environment
 - Familiarity with Git and GitHub workflows
 
 ### 2. Development Process
@@ -36,7 +36,7 @@ src/haddock/
 
 ### Coding Standards
 
-- **Python Version**: Minimum 3.9 compatibility
+- **Python Version**: Minimum 3.10 compatibility
 - **Function Design**: Small, testable functions preferred over complex classes
 - **Naming**: Use descriptive variable names
 - **Comments**: Explain *why* not *how*

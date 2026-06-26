@@ -67,6 +67,10 @@ has_chrome = pytest.mark.skipif(
     not any(shutil.which(b) for b in _CHROME_BINS),
     reason="Google Chrome not found (required by Kaleido for PNG export)",
 )
+has_mpi_launcher = pytest.mark.skipif(
+    not any(shutil.which(b) for b in ("mpirun", "srun")),
+    reason="MPI launcher not found",
+)
 is_linux_x86_64 = pytest.mark.skipif(
     platform.system().lower() != "linux" or platform.machine().lower() != "x86_64",
     reason="Only runs on x86_64 Linux systems",

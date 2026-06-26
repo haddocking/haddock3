@@ -5,15 +5,15 @@ for HADDOCK3 development and usage.
 
 ## Python Version Requirements
 
-HADDOCK3 requires Python 3.9 or later:
+HADDOCK3 requires Python 3.10 or later:
 
 - **Recommended**: Python 3.14+ for best compatibility
-- **Supported versions**: 3.9-3.14
-- **Minimum required**: Python 3.9
+- **Supported versions**: 3.10-3.14
+- **Minimum required**: Python 3.10
 
 ## Python Installation
 
-HADDOCK3 requires Python 3.9 or later.
+HADDOCK3 requires Python 3.10 or later.
 
 ### Using uv (Recommended)
 

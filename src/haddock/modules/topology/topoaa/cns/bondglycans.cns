@@ -27,7 +27,7 @@ define
 
   {- define all beta anomer carbo residues for the links below -}
   beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP 
-          or resname NAG or resname NGA or resname BDP or resname GCS);
+          or resname NAG or resname NAM or resname NGA or resname BDP or resname GCS);
 
   {- Maximum distance between linkable atoms -}
   carbo_dist= 2.0;
@@ -132,7 +132,7 @@ for $id1 in id ( (resname NAG or resname NGA or resname NDG or resname BGC or re
        end if
    end if
 
-  end loop B1Sb
+  end loop B1Tb
 
   for $id2 in id ( resname SER and name OG and known ) loop B1Sb
 
@@ -391,13 +391,13 @@ end loop A28a
 {- for B12: beta(1,2)  link from beta-anomer to any -}
 ident (store2) ( ( &alpha or &beta ) and name O2 and known ) 
 {- for B13: beta(1,3)  link from beta-anomer to any -}
-ident (store3) ( ( &alpha or &beta ) and name O3 and known ) 
+ident (store3) ( ( &alpha or &beta ) and name O3 and known )
 {- for B14: beta(1,4)  link from beta-anomer to any -}
 ident (store4) ( ( &alpha or &beta ) and name O4 and known ) 
 {- for B16: beta(1,6)  link from beta-anomer to any -}
 ident (store6) ( ( &alpha or &beta ) and name O6 and known ) 
 
-for $id1 in id ( &beta and name C1 and known ) loop B1
+for $id1 in id ( &beta and name C1 and known and not resname NAM) loop B1
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)
@@ -578,7 +578,7 @@ ident (store4) ( ( &alpha or &beta) and name O4 and known )
 {- for A16: alpha(1,6)  link from alpha-anomer to any -}
 ident (store6) ( ( &alpha or &beta) and name O6 and known ) 
 
-for $id1 in id ( &alpha and name C1 and known ) loop A1
+for $id1 in id ( &alpha and name C1 and known and not resname NAM) loop A1
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)

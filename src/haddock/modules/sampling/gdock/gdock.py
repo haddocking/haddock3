@@ -106,10 +106,7 @@ def extract_pairs_from_tbl(
     list[tuple[int, int]]
         Sorted list of `(receptor_resseq, ligand_resseq)` active-active pairs.
     """
-    entries = [
-        _extract_selections(e)
-        for e in extract_restraint_entries(tbl_filename)
-    ]
+    entries = [_extract_selections(e) for e in extract_restraint_entries(tbl_filename)]
 
     # Collect active residues: those that appear as an anchor (first selection)
     active_rec: set[int] = set()
@@ -129,9 +126,17 @@ def extract_pairs_from_tbl(
             continue
         anchor_chain, anchor_resi = selections[0]
         for chain, resi in selections[1:]:
-            if anchor_chain == receptor_chain and chain == ligand_chain and resi in active_lig:
+            if (
+                anchor_chain == receptor_chain
+                and chain == ligand_chain
+                and resi in active_lig
+            ):
                 pairs.add((anchor_resi, resi))
-            elif anchor_chain == ligand_chain and chain == receptor_chain and resi in active_rec:
+            elif (
+                anchor_chain == ligand_chain
+                and chain == receptor_chain
+                and resi in active_rec
+            ):
                 pairs.add((resi, anchor_resi))
 
     return sorted(pairs)

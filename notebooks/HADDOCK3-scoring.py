@@ -586,23 +586,54 @@ def _(clt_show_std, mo, run_result):
                         "input model",
                         [_tb_map.get(_Path(str(m)).name, "—") for m in df_ss["model"]],
                     )
+
+                # Replace "filename" column with base64 download links.
+                # Download name = original input model name (from traceback) or
+                # emscoring filename, with "_EM" inserted before .pdb extension.
+                import base64 as _b64_ss
+                _fname_links = []
+                for _, _ss_row in _df_ss_disp.iterrows():
+                    _model_str = str(_ss_row.get("model", ""))
+                    _fname = str(_ss_row.get("filename", _Path(_model_str).name))
+                    _input = str(_ss_row.get("input model", "")) if "input model" in _df_ss_disp.columns else ""
+                    _dl_stem = (
+                        _input.rsplit(".", 1)[0]
+                        if _input and _input not in ("—", "")
+                        else _fname.rsplit(".", 1)[0]
+                    )
+                    _dl_name = _dl_stem + "_EM.pdb"
+                    _pdb_p = _Path(_model_str)
+                    if not _pdb_p.is_absolute():
+                        for _base in [_run_dir, _caprieval_dir]:
+                            _cand = (_base / _pdb_p).resolve()
+                            if _cand.exists():
+                                _pdb_p = _cand
+                                break
+                    if _pdb_p.exists():
+                        _b64_data = _b64_ss.b64encode(_pdb_p.read_bytes()).decode()
+                        _fname_links.append(
+                            mo.Html(
+                                f'<a href="data:chemical/x-pdb;base64,{_b64_data}"'
+                                f' download="{_dl_name}">{_fname}</a>'
+                            )
+                        )
+                    else:
+                        _fname_links.append(_fname)
+                _df_ss_disp = _df_ss_disp.copy()
+                _df_ss_disp["filename"] = _fname_links
+
+                _ss_existing = set(_df_ss_disp.columns)
                 ss_table = mo.ui.table(
                     _df_ss_disp,
                     pagination=False,
                     selection="single",
                     show_column_summaries=True,
                     hidden_columns=[
-                        "model",
-                        "md5",
-                        "air",
-                        "cdih",
-                        "coup",
-                        "dani",
-                        "rdcs",
-                        "rg",
-                        "sym",
-                        "vean",
-                        "xpcs",
+                        c for c in [
+                            "model", "md5",
+                            "air", "cdih", "coup", "dani", "rdcs",
+                            "rg", "sym", "vean", "xpcs",
+                        ] if c in _ss_existing
                     ],
                 )
             except Exception as _e:
@@ -666,12 +697,13 @@ def _(clt_show_std, mo, run_result):
                 ]
                 _noise_cols += [f"{c}_std" for c in _noise_cols]
                 _hidden_clt = _noise_cols + ([] if clt_show_std.value else _std_cols)
+                _existing = set(_df_clt.columns)
                 clt_table = mo.ui.table(
                     _df_clt,
                     selection="single",
                     pagination=False,
                     show_column_summaries=True,
-                    hidden_columns=list(dict.fromkeys(_hidden_clt)),
+                    hidden_columns=list(dict.fromkeys(c for c in _hidden_clt if c in _existing)),
                 )
                 _sections.append(mo.hstack([clt_show_std], justify="end"))
                 _sections.append(clt_table)
@@ -706,13 +738,13 @@ def _(clt_table, df_ss, mo, run_result):
             f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
         )
 
-    def _mol_viewer(pdb_path: _Path2, height: int = 500) -> mo.Html:
+    def _mol_viewer(pdb_path: _Path2) -> mo.Html:
         _pdb_json = _json.dumps(pdb_path.read_text())
         _doc = (
-            "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+            "<!DOCTYPE html><html style='height:100%'><head><meta charset='utf-8'>"
             "<script src='https://3Dmol.csb.pitt.edu/build/3Dmol-min.js'></script></head>"
-            f"<body style='margin:0;padding:0;overflow:hidden'>"
-            f"<div id='v' style='width:100%;height:{height}px;position:relative;'></div>"
+            "<body style='margin:0;padding:0;overflow:hidden;height:100%'>"
+            "<div id='v' style='width:100%;height:100%;position:relative;'></div>"
             "<script>"
             "let v=$3Dmol.createViewer(document.getElementById('v'),{backgroundColor:'white'});"
             f"v.addModel({_pdb_json},'pdb');"
@@ -727,7 +759,7 @@ def _(clt_table, df_ss, mo, run_result):
         )
         _esc = _html.escape(_doc, quote=True)
         return mo.Html(
-            f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
+            '<iframe srcdoc="' + _esc + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
         )
 
     def _resolve_path(model_str: str, run_dir: _Path2) -> _Path2:
@@ -828,15 +860,7 @@ def _(clt_table, df_ss, mo, run_result):
                         )
                     )
                     if _model_path.exists():
-                        _vsections.append(
-                            mo.download(
-                                data=_model_path.read_bytes(),
-                                filename=_model_path.name,
-                                mimetype="chemical/x-pdb",
-                                label=f"⬇ {_model_path.name}",
-                            )
-                        )
-                        _vsections.append(_mol_viewer(_model_path, height=500))
+                        _vsections.append(_mol_viewer(_model_path))
                     else:
                         _vsections.append(
                             mo.callout(
@@ -904,6 +928,7 @@ def _(df_ss, mo, run_result, ss_table):
             [
                 mo.md("---\n## Single-structure statistics"),
                 mo.md("*Click a row to display the model in 3D.*"),
+                mo.md("\n*Click on a filename do download the corresponding model.*"),
                 ss_table,
             ]
         )
@@ -917,13 +942,13 @@ def _(mo, run_result, ss_table):
     import json as _json3
     from pathlib import Path as _Path3
 
-    def _mol_viewer_ss(pdb_path, height=500):
+    def _mol_viewer_ss(pdb_path):
         _pdb_json = _json3.dumps(pdb_path.read_text())
         _doc = (
-            "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+            "<!DOCTYPE html><html style='height:100%'><head><meta charset='utf-8'>"
             "<script src='https://3Dmol.csb.pitt.edu/build/3Dmol-min.js'></script></head>"
-            "<body style='margin:0;padding:0;overflow:hidden'>"
-            f"<div id='v' style='width:100%;height:{height}px;position:relative;'></div>"
+            "<body style='margin:0;padding:0;overflow:hidden;height:100%'>"
+            "<div id='v' style='width:100%;height:100%;position:relative;'></div>"
             "<script>"
             "let v=$3Dmol.createViewer(document.getElementById('v'),{backgroundColor:'white'});"
             f"v.addModel({_pdb_json},'pdb');"
@@ -938,7 +963,7 @@ def _(mo, run_result, ss_table):
         )
         _esc = _html3.escape(_doc, quote=True)
         return mo.Html(
-            f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
+            '<iframe srcdoc="' + _esc + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
         )
 
     def _resolve_path_ss(model_str, run_dir):
@@ -973,15 +998,7 @@ def _(mo, run_result, ss_table):
                 )
             ]
             if _model_path.exists():
-                _vsections.append(
-                    mo.download(
-                        data=_model_path.read_bytes(),
-                        filename=_model_path.name,
-                        mimetype="chemical/x-pdb",
-                        label=f"⬇ {_model_path.name}",
-                    )
-                )
-                _vsections.append(_mol_viewer_ss(_model_path, height=500))
+                _vsections.append(_mol_viewer_ss(_model_path))
             else:
                 _vsections.append(
                     mo.callout(

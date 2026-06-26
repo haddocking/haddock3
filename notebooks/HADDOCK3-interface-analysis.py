@@ -677,13 +677,13 @@ def _(mo, model_map, run_result, score_table):
     import json as _json_3d
     from pathlib import Path as _Path_3d
 
-    def _mol_viewer(pdb_path: _Path_3d, height: int = 500) -> mo.Html:
+    def _mol_viewer(pdb_path: _Path_3d) -> mo.Html:
         _pdb_json = _json_3d.dumps(pdb_path.read_text())
         _doc = (
-            "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+            "<!DOCTYPE html><html style='height:100%'><head><meta charset='utf-8'>"
             "<script src='https://3Dmol.csb.pitt.edu/build/3Dmol-min.js'></script></head>"
-            f"<body style='margin:0;padding:0;overflow:hidden'>"
-            f"<div id='v' style='width:100%;height:{height}px;position:relative;'></div>"
+            "<body style='margin:0;padding:0;overflow:hidden;height:100%'>"
+            "<div id='v' style='width:100%;height:100%;position:relative;'></div>"
             "<script>"
             "let v=$3Dmol.createViewer(document.getElementById('v'),{backgroundColor:'white'});"
             f"v.addModel({_pdb_json},'pdb');"
@@ -698,7 +698,7 @@ def _(mo, model_map, run_result, score_table):
         )
         _esc = _html_3d.escape(_doc, quote=True)
         return mo.Html(
-            f'<iframe srcdoc="{_esc}" style="width:100%;height:{height}px;border:none;"></iframe>'
+            '<iframe srcdoc="' + _esc + '" style="width:100%;aspect-ratio:3/2;border:none;"></iframe>'
         )
 
     def _resolve_em_path(structure: str, run_dir: _Path_3d) -> _Path_3d:
@@ -744,7 +744,7 @@ def _(mo, model_map, run_result, score_table):
                 mo.md(f"---\n## 3D Visualisation — `{_model_name}`{_score_str}")
             ]
             if _model_path.exists():
-                _vsections.append(_mol_viewer(_model_path, height=500))
+                _vsections.append(_mol_viewer(_model_path))
             else:
                 _vsections.append(
                     mo.callout(

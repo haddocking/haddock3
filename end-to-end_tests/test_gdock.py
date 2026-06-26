@@ -9,6 +9,7 @@ from pathlib import Path
 from Bio.PDB.PDBExceptions import PDBConstructionWarning
 
 from haddock.clis.cli import main as cli_main
+from haddock.libs.libplots import read_capri_table
 
 
 EXAMPLE_DIR = (
@@ -47,6 +48,9 @@ seed = 1
 
 [flexref]
 ambig_fname = "data/e2a-hpr_air.tbl"
+
+[caprieval]
+reference_fname = "data/e2a-hpr_1GGR.pdb"
 """
 
 
@@ -95,6 +99,7 @@ def test_topoaa_gdock_flexref(monkeypatch):
         assert Path(run_dir, "0_topoaa").exists(), "0_topoaa not created"
         assert Path(run_dir, "1_gdock").exists(), "1_gdock not created"
         assert Path(run_dir, "2_flexref").exists(), "2_flexref not created"
+        assert Path(run_dir, "3_caprieval").exists(), "3_caprieval not created"
 
         flexref_pdb = Path(run_dir, "2_flexref", "flexref_1.pdb.gz")
         assert flexref_pdb.exists(), "flexref_1.pdb.gz not created"
@@ -102,3 +107,17 @@ def test_topoaa_gdock_flexref(monkeypatch):
         with gzip.open(flexref_pdb, "rt") as f:
             chains = {line[21] for line in f if line.startswith(("ATOM", "HETATM"))}
         assert chains == {"A", "B"}, f"Expected chains A and B, got {chains}"
+
+        # Check structural integrity via caprieval metrics
+        capri_ss = Path(run_dir, "3_caprieval", "capri_ss.tsv")
+        assert capri_ss.exists(), "capri_ss.tsv not created by caprieval"
+
+        df = read_capri_table(capri_ss)
+        assert len(df) > 0, "capri_ss.tsv is empty"
+
+        row = df.iloc[0]
+
+        # FIXME: This is not really checking anything
+        assert row["irmsd"] >= 0.0, "irmsd must be non-negative"
+        assert 0.0 <= row["fnat"] <= 1.0, "fnat must be in [0, 1]"
+        assert 0.0 <= row["dockq"] <= 1.0, "dockq must be in [0, 1]"

@@ -1,0 +1,32 @@
+preprocess:
+  default: false
+  type: boolean
+  title: Tries to correct input PDBs
+  short: If true, evaluates and tries to correct the input PDB before the
+    workflow.
+  long: HADDOCK3 checks and processes the input PDB files to ensure they
+    all comply with HADDOCK3's requirements. These checks concerns, for example,
+    residue numbering, compatibility of chain IDs, and many others. You can see
+    all checks performs in the live issue
+    https://github.com/haddocking/haddock3/issues/143. If set to false, no
+    checks are performed and HADDOCK3 directly uses the original input PDBs.
+  explevel: easy
+postprocess:
+  default: true
+  type: boolean
+  title: Executes haddock3-analyse on the CAPRI folders at the end of the run
+  short: If true, executes haddock3-analyse on the CAPRI folders at the end of 
+    the workflow
+  long: haddock3-analyse is a cli (see https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_analyse.py)
+    used to plot the results of a HADDOCK3 workflow. If this option, this command
+    is automatically executed at the end of the workflow (on the caprieval folders).
+  explevel: easy
+gen_archive:
+  default: false
+  type: boolean
+  title: Generates an archive of the run and of the analysis.
+  short: If true, executes haddock3-analyse in self_contained mode and generates
+    archives of the run_directory and of the analysis in two separated tgz files.
+  long: If true, executes haddock3-analyse in self_contained mode and generates
+    archives of the run_directory and of the analysis in two separated tgz files.
+  explevel: easy

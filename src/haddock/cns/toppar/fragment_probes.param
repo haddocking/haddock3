@@ -223,8 +223,6 @@ DIHEdral   oh__   c3__   c3__   hc__  MULT 2   0.250    1     0.00
                                            0.000    0     0.00
 DIHEdral   c3__   c3__   oh__   ho__  MULT 2   0.250    1     0.00
                                            0.160    3     0.00
-                                           0.160    3     0.00
-                                           0.000    0     0.00
 
 { Proper Dihedrals: from Cagliari }
 DIHEdral    C_   CD_    N_    C_           0.650    2   180.00
@@ -313,9 +311,6 @@ DIHEdral    O_    C_   CT_   HC_  MULT 2   0.800    1     0.00
                                            0.080    3   180.00
 DIHEdral   HC_   CT_   CT_   OH_  MULT 2   0.250    1     0.00
                                            0.000    0     0.00
-                                           0.200    2     0.00
-                                           0.400    3     0.00
-                                           0.000    0     0.00
 DIHEdral   CM_   CD_    N_    C_  MULT 2   1.200    1   180.00
                                            0.650    2   180.00
 DIHEdral   CM_   CD_    C_   O2_  MULT 2   2.175    2   180.00
@@ -324,9 +319,6 @@ DIHEdral   CT_   CT_   OH_   HO_  MULT 2   0.250    1     0.00
                                            0.160    3     0.00
 DIHEdral   CT_    S_   CM_   CD_  MULT 2   1.100    2   180.00
                                            0.700    3   180.00
-                                           2.000    2     0.00
-                                           0.400    3     0.00
-                                           0.000    0     0.00
 DIHEdral   CT_   CT_   CT_   CT_  MULT 3   0.200    1   180.00
                                            0.250    2   180.00
                                            0.180    3     0.00

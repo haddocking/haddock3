@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-06-27: Fix bug in reading cg-to-aa restraints in cgtoaa module - Issue #1592
 - 2026-06-26: Removed duplicated definition in param files - Issue ##1589
 - 2026-06-18: Added support for O1-methylated NAG - Issue #1579
 - 2026-06-18: Added support for O-glycosylated serine - Issue #1577

@@ -75,7 +75,7 @@ haddock3-mpitask      # MPI worker task (spawned internally by MPIScheduler)
 
 ## Architecture
 
-See also: docs/architecture.md
+See also: [docs/architecture.md](docs/architecture.md)
 
 The platform has three layers: the **gear layer** (workflow orchestration, config parsing, validation), the **module layer** (individual docking/analysis steps), and the **CNS layer** (external sampling/refinement engine). Data flows between modules as lists of `PDBFile` objects serialised in `io.json` files inside numbered step folders.
 
@@ -155,9 +155,10 @@ Plugin-like functionality that operates at the workflow level rather than within
 After making changes, run the verification loop:
 
 ```bash
-ruff check          # lint
-pytest tests/       # unit tests
-```
+ruff check                  # lint
+pytest tests/               # unit tests
+pytest integration_tests/   # integration tests
+pytest end-to-end_tests/    # end-to-end workflow tests```
 
 ## Adding a New Module
 
@@ -177,5 +178,5 @@ Follow the template in `src/haddock/modules/_template_cat/_template_mod/`:
 - `CHANGELOG.md` updated
 - No new dependencies without discussion
 - haddock3 user-manual updated (separate repo)
-  Don't introduce new lint/type errors.
+- Don't introduce new lint/type errors.
 - Prefer small, incremental refactors with passing tests at each step over large rewrites.

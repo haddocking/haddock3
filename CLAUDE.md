@@ -75,6 +75,8 @@ haddock3-mpitask      # MPI worker task (spawned internally by MPIScheduler)
 
 See also: docs/architecture.md
 
+The platform has three layers: the **gear layer** (workflow orchestration, config parsing, validation), the **module layer** (individual docking/analysis steps), and the **CNS layer** (external sampling/refinement engine). Data flows between modules as lists of `PDBFile` objects serialised in `io.json` files inside numbered step folders.
+
 ### Workflow Engine
 
 `gear/prepare_run.py` reads a TOML-like config file and builds the workflow. `libs/libworkflow.py:WorkflowManager` iterates through steps, calling `step.execute()` on each. Output from one step (stored in `io.json` in each step folder) feeds into the next via `libs/libontology.py:ModuleIO`.
@@ -164,13 +166,6 @@ Follow the template in `src/haddock/modules/_template_cat/_template_mod/`:
 4. Implement `confirm_installation()` and `_run()` methods
 5. Create `defaults.yaml` with parameter schema
 6. Add tests in `tests/test_module_<module_name>.py`
-
-
-## Testing principles
-
-- After making changes, run the verification loop:
-  - `ruff check`
-  - `pytest`
 
 
 ## Pull Request Checklist

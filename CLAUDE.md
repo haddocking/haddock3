@@ -19,6 +19,8 @@ CNS executable must be available. See `docs/CNS.md` for setup instructions.
 
 ## Setup & Installation
 
+HADDOCK3 requires a Python3 version >=3.10 up to 3.14.
+
 ```bash
 # Development install
 pip install -e '.[dev]'

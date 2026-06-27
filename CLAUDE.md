@@ -158,7 +158,8 @@ After making changes, run the verification loop:
 ruff check                  # lint
 pytest tests/               # unit tests
 pytest integration_tests/   # integration tests
-pytest end-to-end_tests/    # end-to-end workflow tests```
+pytest end-to-end_tests/    # end-to-end workflow tests
+```
 
 ## Adding a New Module
 

@@ -77,7 +77,9 @@ class HaddockModule(BaseHaddockModule):
         """Execute module."""
         # Each combination is a tuple with one PDBFile per input molecule,
         #  e.g. (receptor, ligand), as produced by `topoaa`.
-        models_to_dock = self.previous_io.retrieve_models()
+        models_to_dock = self.previous_io.retrieve_models(
+            crossdock=self.params["crossdock"]
+        )
 
         sampling_factor = max(1, self.params["sampling"] // len(models_to_dock))
 

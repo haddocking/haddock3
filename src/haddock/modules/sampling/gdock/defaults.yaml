@@ -58,3 +58,14 @@ sampling:
     all sorted by fitness.
   group: "sampling"
   explevel: easy
+crossdock:
+  default: true
+  type: boolean
+  title: Cross docking of starting ensembles
+  short: If true, all combinations of input models are docked; if false, models are paired by index.
+  long: Controls how starting model ensembles are combined. When true (default), gdock docks
+    all combinations of receptor x ligand models (same as rigidbody crossdock=true).
+    When false, the first receptor model is paired with the first ligand model, etc.;
+    this requires both ensembles to have the same number of models.
+  group: "sampling"
+  explevel: expert
